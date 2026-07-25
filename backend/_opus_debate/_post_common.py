@@ -34,7 +34,16 @@ def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str 
     apex_file = Path(apex_file)
     if not skep_dir.is_dir():
         return apx
+    # ANCHOR (2026-07-24): freshness is measured against the DIRECTOR's write, not the file's mtime.
+    # The post layer rewrites this same file, so using mtime meant every re-run pushed the anchor
+    # forward and re-aged its own inputs — run the post layer twice and same-day shards flipped to
+    # "stale". post_anchor_ts is stamped once, on the first post-processing after a Director write
+    # (a fresh Director file has no stamp, so a genuinely new run re-anchors correctly).
     apex_mtime = apex_file.stat().st_mtime if apex_file.exists() else 0
+    if isinstance(apx.get("post_anchor_ts"), (int, float)):
+        apex_mtime = apx["post_anchor_ts"]
+    else:
+        apx["post_anchor_ts"] = apex_mtime
     # Freshness window (2026-07-10, two-tier restructure): the skeptic phase now runs BEFORE the
     # Director inside the same weekly workflow, so a same-run shard is legitimately a few minutes-to-
     # hours OLDER than the apex file. The old strict `< apex_mtime - 1` guard would discard every
@@ -408,16 +417,49 @@ def corr_breach_caps(corr, max_units=1.5):
     return caps
 
 
-def exits_block(picks, quotes, thesis_break):
-    """Thesis-break exit levels, sanity-checked against live price (0 < tb < px). thesis_break(p) is the
-    CALLER-SUPPLIED getter (value: p['thesis_break_px']; regime books map their own field)."""
+# TRIM RULE (2026-07-24, Bruno). Both books had a FLOOR (thesis break) and no CEILING: a name could
+# grind from deeply discounted to fully valued and nothing ever fired, because the only exit test was
+# "is the thesis broken?" — it isn't, so it is held. Observed live: EEFT rode its cushion from ~44%
+# down to ~9% and was still KEEP. Trimming at a fraction of base fair value banks the win the
+# discount-closing thesis actually predicted, without needing the thesis to break first.
+TRIM_AT_FRAC = 0.85          # price >= 85% of base fair value -> TRIM (the discount has mostly closed)
+
+
+def exits_block(picks, quotes, thesis_break, fair_value=None):
+    """Exit plan per seat: a FLOOR (thesis break) and, when a fair value is supplied, a CEILING
+    (trim level). Both sanity-checked against the live price. thesis_break(p) / fair_value(p) are
+    CALLER-SUPPLIED getters so each book maps its own fields."""
     out = {}
     for p in picks:
-        px = (quotes.get(p["symbol"]) or {}).get("price")
+        sym = p["symbol"]
+        px = (quotes.get(sym) or {}).get("price")
         tb = thesis_break(p)
         valid = isinstance(tb, (int, float)) and isinstance(px, (int, float)) and 0 < tb < px
-        out[p["symbol"]] = {"thesis_break_px": tb if valid else None, "valid": bool(valid),
-                            "review_trigger": "weekly refresh OR close < thesis_break_px"}
+        fv = fair_value(p) if fair_value else None
+        # fair value must be a positive number in the SAME ballpark as the quote — this is the guard
+        # that catches unit/currency slips (a 21 "target" on a $291 stock, an 8 on a 7,310 yen name).
+        fv_ok = (isinstance(fv, (int, float)) and fv > 0 and isinstance(px, (int, float)) and px > 0
+                 and 0.2 < px / fv < 5)
+        trim = round(fv * TRIM_AT_FRAC, 4) if fv_ok else None
+        action = "HOLD"
+        if valid and px <= tb:
+            action = "EXIT_REVIEW"                     # floor breached — the thesis is on the clock
+        elif trim is not None and px >= trim:
+            action = "TRIM"                            # ceiling reached — bank part of the re-rate
+        out[sym] = {"thesis_break_px": tb if valid else None, "valid": bool(valid),
+                    "fair_value_px": fv if fv_ok else None, "trim_at_px": trim,
+                    "pct_of_fair_value": round(px / fv, 3) if fv_ok else None,
+                    "action": action,
+                    "review_trigger": "weekly refresh OR close < thesis_break_px OR close >= trim_at_px"}
+        p["trim_at_px"] = trim
+        p["exit_action"] = action
         if tb and not valid:
-            print(f"WARN exits: {p['symbol']} thesis_break_px={tb} fails sanity vs px={px}")
+            print(f"WARN exits: {sym} thesis_break_px={tb} fails sanity vs px={px}")
+        if fv is not None and not fv_ok:
+            print(f"WARN exits: {sym} fair_value={fv} implausible vs px={px} — no trim level set")
+    n_trim = sum(1 for v in out.values() if v["action"] == "TRIM")
+    n_exit = sum(1 for v in out.values() if v["action"] == "EXIT_REVIEW")
+    if n_trim or n_exit:
+        print(f"exits: {n_trim} at/above the trim level, {n_exit} below the thesis break "
+              f"-> {[s for s, v in out.items() if v['action'] != 'HOLD']}")
     return out

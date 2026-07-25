@@ -175,9 +175,20 @@ def stamp_entry_plans(picks, quotes):
         p["entry_plan"] = "3 tranches / 4 wks (knife: <5% above 52w low)" if near else "2 tranches / 2 wks"
 
 
-def exits_block(picks, quotes):
-    """Fix 5d — thesis-break exit levels, sanity-checked against live price (shared; tb = thesis_break_px)."""
-    return _pc.exits_block(picks, quotes, thesis_break=lambda p: p.get("thesis_break_px"))
+def exits_block(picks, quotes, gin=None):
+    """Fix 5d — thesis-break FLOOR, plus (2026-07-24) the trim CEILING. Fair value is rebuilt from the
+    CRO-normalized margin of safety in the grade input (price x (1 + sop_mos_pct/100)) rather than
+    parsed out of prose — same system-of-record the value rubric grades on, and no parse to get wrong."""
+    gin = gin or {}
+
+    def _fv(p):
+        g = gin.get(p.get("symbol")) or {}
+        mos, px = g.get("sop_mos_pct"), g.get("price")
+        if isinstance(mos, (int, float)) and isinstance(px, (int, float)) and px > 0:
+            return round(px * (1 + mos / 100.0), 4)
+        return None
+
+    return _pc.exits_block(picks, quotes, thesis_break=lambda p: p.get("thesis_break_px"), fair_value=_fv)
 
 
 # ───────────────────────── Fix 1 — market-based stress ─────────────────────────
@@ -251,7 +262,7 @@ def main():
     apx["weights"] = weights
     apx["stress_test"] = stress_block(picks, weights, quotes, asof)   # fix 1
     apx["correlation"] = corr                                         # fix 4
-    apx["exits"] = exits_block(picks, quotes)                         # fix 5d
+    apx["exits"] = exits_block(picks, quotes, gin)                    # fix 5d + trim ceiling
     apx["value_post_applied"] = True   # publish gate keys on this (mirror of the regime moat_post_applied)
     json.dump(apx, open(APEX_F, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
     gate_sync(gin)                                                   # fix 7 (regime side; separate file)
