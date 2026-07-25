@@ -79,6 +79,15 @@ def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str 
             p["skeptic_verdict"] = "MISSING"
             p["skeptic_missing"] = True
             missing.append(sym)
+    # STICKY-FLAG FIX (2026-07-24): the loop above only ever SETS skeptic_missing, and the post layer
+    # re-reads the apex JSON it previously stamped — so a name flagged by an early run stayed
+    # half-sized forever, even after the skeptic ran and CONFIRMED it. Observed live: all 9 apex seats
+    # carried skeptic_missing=True from the first regime-post, collapsing the Director's 0.4-1.1
+    # sizing spread to a flat 0.5. Clear the flag for every name that now HAS a fresh verdict.
+    for p in apx.get("apex_basket", []):
+        if p.get("symbol") in merged:
+            p.pop("skeptic_missing", None)
+            p.pop("skeptic_stale_refuted", None)
     if missing:
         print(f"WARN skeptic-coverage: {len(missing)} apex member(s) have NO fresh skeptic shard -> "
               f"stamped MISSING + half-sized: {missing} (fix: run the skeptic workflow)")
@@ -128,10 +137,22 @@ def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str 
     return apx
 
 
+# EQUAL WEIGHT (2026-07-24, Bruno's call). Every book publishes equal weight. Evidence: across 2151
+# dated debate records the Director's conviction had NO monotone relation to forward return (buckets
+# 1-5: +1.36/+1.48/+1.94/+1.22/+1.69%) and its TOP grade was its WORST bucket (verdict-A -1.92%, 38%
+# win); the live equal-weight apex chain also leads the conviction-weighted one (111.9 vs 107.8).
+# Weighting by a signal with no demonstrated edge just adds variance. The size_units the Director and
+# the caps produce are STILL computed and stored (size_units_effective) so the teeth stay auditable
+# and this is one flag to flip back the day conviction earns its keep.
+EQUAL_WEIGHT_BOOKS = True
+
+
 def build_weights(apx, picks, extra_caps=None, memo_units=None, per_name_cap=None):
     """Normalize size_units -> weight_pct, honoring per-name half-caps + combined/extra caps.
     per_name_cap(p, u) -> u' applies the teeth (cro_only / stale_anchor / moat_erosion). extra_caps and
-    apx['combined_caps'] share the schema {names:[...], max_units: float, axis: str}."""
+    apx['combined_caps'] share the schema {names:[...], max_units: float, axis: str}.
+    With EQUAL_WEIGHT_BOOKS the caps still run (size_units_effective is stamped as before) but the
+    PUBLISHED weight_pct is 1/n — see the note above."""
     memo_units = memo_units or {}
     units = {}
     for p in picks:
@@ -149,11 +170,16 @@ def build_weights(apx, picks, extra_caps=None, memo_units=None, per_name_cap=Non
             scale = mx / tot
             for s in names:
                 units[s] = round(units[s] * scale, 3)
-    W = sum(units.values()) or 1.0
-    weights = {s: round(u / W, 4) for s, u in units.items()}
+    if EQUAL_WEIGHT_BOOKS and units:
+        eq = 1.0 / len(units)
+        weights = {s: round(eq, 4) for s in units}
+    else:
+        W = sum(units.values()) or 1.0
+        weights = {s: round(u / W, 4) for s, u in units.items()}
     for p in picks:
-        p["size_units_effective"] = units[p["symbol"]]
+        p["size_units_effective"] = units[p["symbol"]]   # still stamped: the teeth stay auditable
         p["weight_pct"] = round(weights[p["symbol"]] * 100, 2)
+        p["weight_basis"] = "equal" if EQUAL_WEIGHT_BOOKS else "size_units"
     return weights
 
 
