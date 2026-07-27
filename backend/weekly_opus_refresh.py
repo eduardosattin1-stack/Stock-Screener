@@ -3650,6 +3650,18 @@ def prep():
           .replace("__N_RADAR__", str(len(radar_groups))))
     out = ROOT / "_weekly_debate.js"
     out.write_text(js, encoding="utf-8", newline="\n")
+    # RUN MARKER (2026-07-27). The weekly launchers used to gate on apex_basket_opus_regime.json's
+    # mtime as a proxy for "a debate ran this week" — but regime-post and publish rewrite that same
+    # file, so ANY mid-week maintenance made the next scheduled run stand down. That silently killed
+    # the 2026-07-26 run (log: "SKIPPED: regime apex is only 0.6 days old"). This stamp is written
+    # ONLY here, at the start of a real debate cycle, and nothing downstream touches it.
+    try:
+        (ROOT / "_last_debate_run.json").write_text(json.dumps({
+            "prep_at": datetime.now().isoformat(timespec="seconds"),
+            "debated": len(syms) + len(no_tx), "delta": len(delta_syms),
+            "coverage": len(coverage_syms), "carried": len(carried)}), encoding="utf-8")
+    except OSError as _e:
+        print(f"WARN: could not write the run marker ({_e})")
     print(f"PREP OK: {len(syms)} full-debate w/ FMP transcripts + {len(no_tx)} full-debate online "
           f"+ {len(delta_syms)} DELTA seats + {len(coverage_syms)} coverage-refresh "
           f"+ {len(recheck)} ledger re-checks + {len(carried)} CARRIED "

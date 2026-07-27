@@ -69,10 +69,18 @@ if (-not (Test-Path $skill)) { "FATAL: SKILL.md not found at $skill" | Tee-Objec
 # (the 2026-07-11 Friday run would otherwise re-run on Sunday for zero new information).
 # Override: set SPECULAIR_FORCE=1 to run regardless. ASCII ONLY in this file: it has no BOM,
 # so PowerShell 5.1 reads it as ANSI and UTF-8 punctuation decodes into string-breaking quotes.
-if ((Test-Path $apex) -and ($env:SPECULAIR_FORCE -ne "1")) {
-    $ageDays = ((Get-Date) - (Get-Item $apex).LastWriteTime).TotalDays
+# CORRECTED 2026-07-27: gate on the RUN MARKER, not the apex file. regime-post and publish rewrite
+# apex_basket_opus_regime.json, so any mid-week maintenance reset its mtime and made the next
+# scheduled run stand down - that is exactly what killed the 2026-07-26 run ("only 0.6 days old")
+# after a Saturday re-publish. _last_debate_run.json is written ONLY by prep, at the start of a real
+# debate cycle, so it means "a debate ran" rather than "a file was touched". Falls back to the apex
+# mtime when the marker is absent (first run after this change).
+$marker = Join-Path $repo "backend\_opus_debate\_last_debate_run.json"
+$gateFile = if (Test-Path $marker) { $marker } else { $apex }
+if ((Test-Path $gateFile) -and ($env:SPECULAIR_FORCE -ne "1")) {
+    $ageDays = ((Get-Date) - (Get-Item $gateFile).LastWriteTime).TotalDays
     if ($ageDays -lt 4) {
-        "SKIPPED: regime apex is only {0:N1} days old (under 4d) - this week's refresh already ran. Set SPECULAIR_FORCE=1 to override." -f $ageDays | Tee-Object -FilePath $log -Append
+        "SKIPPED: last debate run was {0:N1} days ago (under 4d) - this week's refresh already ran. Set SPECULAIR_FORCE=1 to override." -f $ageDays | Tee-Object -FilePath $log -Append
         exit 0
     }
 }
