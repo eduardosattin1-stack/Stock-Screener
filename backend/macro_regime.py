@@ -511,7 +511,8 @@ def fetch_macro_regime(fmp_func, rate_limit_func=None) -> dict:
                 ("2025-04-01", 30485.729), ("2025-01-01", 30042.113),
             ]
 
-    return _compute_regime(rates, vix_price, vix_sma200, cpi_values, gdp_values)
+    return _attach_debt_cycle(
+        _compute_regime(rates, vix_price, vix_sma200, cpi_values, gdp_values), fmp_func)
 
 # ---------------------------------------------------------------------------
 # HISTORICAL: Fetch macro data as of a past date (for backtest_full.py)
@@ -686,7 +687,23 @@ def _compute_regime(rates: dict, vix_price: float, vix_sma200: float,
         "features":   features,
         "tilts":      REGIME_TILTS[regime],
         "rates":      rates,
+        # Dalio debt-cycle phase (backend/debt_cycle.py, 2026-07-27) — third axis, spliced
+        # by _attach_debt_cycle in the fetchers, NOT computed here (this function is pure).
     }
+
+
+def _attach_debt_cycle(result: dict, fmp_func) -> dict:
+    """Splice the Dalio debt-cycle phase (backend/debt_cycle.py) onto a regime result.
+    Read-only (advance=False): only the weekly publish ticks the state machine.
+    Deliberately called from BOTH the v7 and v8 fetchers so a future v8 switch cannot
+    strip this axis the way it would have stripped the quadrant. Fail-soft."""
+    try:
+        from debt_cycle import fetch_debt_cycle
+        result["debt_cycle"] = fetch_debt_cycle(fmp_func, advance=False)
+    except Exception as e:
+        log.debug(f"  debt_cycle splice skipped: {e}")
+        result["debt_cycle"] = {"debt_cycle_phase": "UNKNOWN", "fallback": True}
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -1094,14 +1111,14 @@ def fetch_macro_regime_v8(fmp_func, rate_limit_func=None) -> dict:
     except Exception:
         pass
 
-    return _compute_regime_v8(
+    return _attach_debt_cycle(_compute_regime_v8(
         rates=rates,
         vix_price=vix_price, vix_sma200=vix_sma200,
         cpi_values=cpi_values, gdp_values=gdp_values,
         unemp_values=unemp_values,
         sent_values=sent_values,
         rec_values=rec_values,
-    )
+    ), fmp_func)
 
 
 # ---------------------------------------------------------------------------

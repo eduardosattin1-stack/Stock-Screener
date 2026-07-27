@@ -9,6 +9,13 @@ interface Pick {
   entry_price?: number;
   entry_date?: string;
   source_methodologies?: string[];
+  // Debt-cycle badge fields (2026-07-27): deterministic payback-speed label +
+  // whether the phase duration cap trimmed this seat's weight.
+  duration_bucket?: string;
+  duration_bucket_source?: string;
+  cycle_capped?: boolean;
+  cycle_cap_note?: string;
+  phase_fit?: string;
 }
 
 type Quote = { price: number; changesPercentage: number };
@@ -175,6 +182,20 @@ export function SpeculairTracker() {
         <div style={{ display: "flex", alignItems: "center", gap: 5, minWidth: 0 }}>
           <Link href={`/stock/${p.symbol}`} style={{ textDecoration: "none", color: "var(--text)", fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.symbol}</Link>
           <span style={convStyle(p.conviction)}>{p.conviction}</span>
+          {/* Payback-speed badge (debt-cycle layer): C = cash_now (FCF yield ≥4%),
+              P = payback 2-3y, S = story (no FCF yet — capped hardest in DISCIPLINE/FORCING).
+              Ring turns red + ✂ when the phase duration cap trimmed this seat. */}
+          {p.duration_bucket && (() => {
+            const b = p.duration_bucket;
+            const letter = b === "cash_now" ? "C" : b === "payback_2_3y" ? "P" : "S";
+            const bc = b === "cash_now" ? "var(--green)" : b === "payback_2_3y" ? "var(--amber)" : "var(--red)";
+            const tip = `Payback speed: ${b}${p.duration_bucket_source === "director_override" ? " (director override)" : ""}${p.phase_fit ? ` · Cycle fit: ${p.phase_fit}` : ""}${p.cycle_capped ? ` · TRIMMED by the phase duration cap: ${p.cycle_cap_note || ""}` : ""}`;
+            return (
+              <span title={tip} style={{ fontFamily: "var(--font-mono)", fontSize: 8, fontWeight: 700, minWidth: 12, height: 12, lineHeight: "12px", textAlign: "center", borderRadius: 3, color: bc, background: "color-mix(in srgb, currentColor 12%, transparent)", border: `1px solid ${p.cycle_capped ? "var(--red)" : `color-mix(in srgb, ${bc} 40%, transparent)`}`, cursor: "help", flexShrink: 0, padding: "0 2px" }}>
+                {letter}{p.cycle_capped ? "✂" : ""}
+              </span>
+            );
+          })()}
         </div>
         <div style={{ textAlign: "right", color: "var(--text-light)" }}>{entry > 0 ? fmtPrice(entry) : PENDING}</div>
         <div style={{ textAlign: "right", color: "var(--text-secondary)" }}>{last != null ? fmtPrice(last) : PENDING}</div>

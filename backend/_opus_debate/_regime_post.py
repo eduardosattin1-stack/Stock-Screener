@@ -51,6 +51,21 @@ CONV_CLAMP_PTS = 10                                # |Δ conviction| beyond this
 _DATED_RE = re.compile(
     r"\b20\d\d-\d\d(-\d\d)?\b|\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2},?\s*20\d\d\b"
     r"|\b(Q[1-4])\s*(FY)?\s*20\d\d\b", re.IGNORECASE)
+# Debt-cycle phase citations are NOT a per-name dated fact (spec §6.3: macro touches
+# weights via the duration cap, never conviction). A delta_justification whose only
+# dated content lives in a phase/cycle sentence is treated as unjustified.
+_PHASE_JUST_RE = re.compile(
+    r"\b(debt[- ]?cycle|monetiz|monetis|discipline\s+phase|forcing\s+phase|cycle\s+phase|"
+    r"DISCIPLINE|FORCING|MONETIZATION|EXPANSION\s+phase)\b", re.IGNORECASE)
+
+
+def _dated_fact_outside_phase(just: str) -> bool:
+    """True when the justification carries a dated fact in a sentence that is NOT a
+    debt-cycle-phase citation. 'MONETIZATION began 2026-08-01' alone must not unlock
+    a conviction move; 'guide cut 2026-07-30; also MONETIZATION' still passes."""
+    sents = re.split(r"(?<=[.;])\s+", just or "")
+    keep = " ".join(s for s in sents if not _PHASE_JUST_RE.search(s))
+    return bool(_DATED_RE.search(keep))
 
 
 def _load(p, default=None):
@@ -142,8 +157,10 @@ def conviction_clamp(picks):
         if abs(delta) <= CONV_CLAMP_PTS:
             continue
         just = str(p.get("delta_justification") or "")
-        if _DATED_RE.search(just):
-            continue                                          # big move, dated fact -> legitimate
+        if _PHASE_JUST_RE.search(just):
+            p["phase_cited_in_delta"] = True                  # visibility even when it also passes
+        if _dated_fact_outside_phase(just):
+            continue                                          # big move, dated NON-phase fact -> legitimate
         eff = prior + (CONV_CLAMP_PTS if delta > 0 else -CONV_CLAMP_PTS)
         p["director_conviction_orig"] = conv
         p["director_conviction"] = eff
@@ -169,6 +186,92 @@ def stamp_valuation(picks):
             if isinstance(tb, (int, float)):
                 p["thesis_break_px"] = tb
                 p["thesis_break_source"] = "bear_px_fallback"
+
+
+def stamp_duration_buckets(picks, scan_by):
+    """Deterministic payback-speed label per pick (debt_cycle.duration_bucket) from scan
+    FCF fundamentals. The Director may override only WITH a written justification —
+    duration_bucket is the first macro-adjacent field with numeric authority (it feeds
+    the phase duration cap), so the default must never be vibes."""
+    from debt_cycle import duration_bucket
+    for p in picks:
+        p.update(duration_bucket(
+            scan_by.get(p.get("symbol"), {}) or {},
+            override=p.get("duration_bucket_override"),
+            override_reason=str(p.get("duration_bucket_override_reason") or ""),
+        ))
+
+
+def enforce_duration_caps(apx, picks, cycle):
+    """FORK 2/B — phase-conditioned duration cap, the same kind of object as the
+    secular-theme and correlation caps: an AGGREGATE-EXPOSURE judgement, never an
+    eligibility one. When the story-bucket share exceeds the phase cap, the
+    LOWEST-conviction story seats are trimmed toward a 0.1-unit floor (trimming is a
+    weight action; demotion belongs to the skeptic/numeric gates). cash_now_min and
+    real_asset_floor are WARN/advisory — a cap cannot conjure names that aren't seated.
+    UNKNOWN phase carries the loosest caps (fail-open). Records cap_binding so a
+    binding cap is visible, not inferred."""
+    cycle = cycle or {}
+    phase = cycle.get("debt_cycle_phase") or "UNKNOWN"
+    caps = cycle.get("duration_caps") or {}
+    if not caps:
+        from debt_cycle import PHASE_DURATION_CAPS
+        caps = PHASE_DURATION_CAPS.get(phase, PHASE_DURATION_CAPS["UNKNOWN"])
+    apx["debt_cycle_phase_applied"] = phase
+    apx["duration_caps_applied"] = caps
+    binding, warnings = [], []
+    units = {p["symbol"]: float(p.get("size_units_effective") or 0) for p in picks}
+    tot = sum(units.values())
+    if not picks or tot <= 0:
+        apx["cap_binding"] = binding
+        return apx
+
+    smax = caps.get("story_max")
+    story = [p for p in picks if p.get("duration_bucket") == "story"]
+    if isinstance(smax, (int, float)) and story and smax < 1.0:
+        s_units = sum(units[p["symbol"]] for p in story)
+        # story share after trim: Us' / (tot - Us + Us') <= smax  =>  Us' <= smax*(tot-Us)/(1-smax)
+        target = smax * (tot - s_units) / (1.0 - smax)
+        if s_units > target + 1e-9:
+            need = s_units - target
+            for p in sorted(story, key=lambda x: float(x.get("director_conviction") or 0)):
+                if need <= 1e-9:
+                    break
+                u = units[p["symbol"]]
+                cut = min(need, max(0.0, u - 0.1))          # trim toward floor, never to zero
+                if cut > 1e-9:
+                    units[p["symbol"]] = round(u - cut, 3)
+                    p["cycle_capped"] = True
+                    p["cycle_cap_note"] = (f"trimmed {cut:.2f}u by {phase} duration cap "
+                                           f"(story <= {smax:.0%} of book)")
+                    need -= cut
+            binding.append("duration_story")
+            if need > 1e-9:
+                warnings.append(f"story legs all at 0.1u floor and still {need:.2f}u over the "
+                                f"{phase} story cap — floor respected, residual overage published")
+            W = sum(units.values()) or 1.0
+            for p in picks:
+                p["size_units_effective"] = units[p["symbol"]]
+                p["weight_pct"] = round(units[p["symbol"]] / W * 100, 2)
+            apx["weights"] = {s: round(u / W, 4) for s, u in units.items()}
+            print(f"duration-cap: {phase} story<= {smax:.0%} BOUND — trimmed "
+                  f"{[p['symbol'] for p in story if p.get('cycle_capped')]}")
+
+    cmin = caps.get("cash_now_min")
+    if isinstance(cmin, (int, float)):
+        W = sum(units.values()) or 1.0
+        c_share = sum(units[p["symbol"]] for p in picks if p.get("duration_bucket") == "cash_now") / W
+        if c_share < cmin - 1e-9:
+            warnings.append(f"cash_now share {c_share:.0%} < {phase} floor {cmin:.0%} — "
+                            f"WARN only (a cap cannot conjure names); Director must own it in the memo")
+    if "real_asset_floor" in caps:
+        warnings.append(f"{phase} real_asset_floor {caps['real_asset_floor']:.0%} is ADVISORY "
+                        f"(no deterministic real-asset classification yet)")
+    for w in warnings:
+        print(f"WARN duration-cap: {w}")
+    apx["cap_binding"] = binding
+    apx["duration_cap_warnings"] = warnings
+    return apx
 
 
 def process(apx, uni, scan_by, market=None):
@@ -198,6 +301,12 @@ def process(apx, uni, scan_by, market=None):
     weights = _pc.build_weights(apx, picks, extra_caps=extra, memo_units=memo, per_name_cap=_pc.moat_per_name_cap)
     apx["weights"] = weights
     apx["secular_theme_caps"] = extra
+    # ── Dalio debt-cycle duration layer (2026-07-27, FORK 2/B): stamp the deterministic
+    # payback-speed label, then enforce the phase story-cap AFTER build_weights (it
+    # re-normalizes in place). Fail-open: missing snapshot => UNKNOWN => loosest caps.
+    stamp_duration_buckets(picks, scan_by)
+    _cycle = (_load(ROOT / "macro_regime.json", {}) or {}).get("debt_cycle") or {}
+    apx = enforce_duration_caps(apx, picks, _cycle)
     if market:
         quotes, weekly_rets, asof = market
         apx["stress_test"] = _pc.stress_block(picks, weights, quotes, asof,

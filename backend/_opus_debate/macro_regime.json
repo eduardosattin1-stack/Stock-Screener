@@ -12,5 +12,46 @@
   "macro_yield_spread": 31.0
  },
  "version": "",
- "asof": "2026-06-29"
+ "asof": "2026-06-29",
+ "debt_cycle": {
+  "debt_cycle_phase": "DISCIPLINE",
+  "prior_phase": "DISCIPLINE",
+  "weeks_in_phase": 1,
+  "cycle_score": 0.665,
+  "cycle_target": "DISCIPLINE",
+  "transition_blocked": false,
+  "transition_implied": null,
+  "pending_target": null,
+  "pending_count": 0,
+  "confidence": "low",
+  "seeded": true,
+  "phase_basis": "real 30y 2.90% (rising) x 30y-3m +120bp",
+  "cycle_sub_scores": {
+   "real_long_rate": 1.0,
+   "term_premium": 0.7,
+   "auction_quality": 0.5,
+   "debt_service": 0.5,
+   "credit_stress": 0.5,
+   "cb_balance_sheet": 0.5
+  },
+  "cycle_sub_sources": {
+   "real_long_rate": "live",
+   "term_premium": "live",
+   "auction_quality": "missing",
+   "debt_service": "missing",
+   "credit_stress": "missing",
+   "cb_balance_sheet": "missing"
+  },
+  "reserve_asset_check": {
+   "consistent_with_phase": null,
+   "note": "gold data unavailable — check skipped"
+  },
+  "phase_detail": "Positive real long rates being imposed and holding. Duration punished, cash flow rewarded. Real assets not yet.",
+  "duration_caps": {
+   "story_max": 0.2,
+   "cash_now_min": 0.35
+  },
+  "expected_horizon_months": 18,
+  "asof": "2026-07-27"
+ }
 }

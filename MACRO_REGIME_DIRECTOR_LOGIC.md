@@ -375,6 +375,37 @@ Documented so nobody assumes a connection that isn't there.
 
 ---
 
+## 9b — Addendum (2026-07-27): the Dalio debt-cycle axis shipped
+
+The handover spec's third axis is now live, which retires several §9 gaps:
+
+- **`backend/debt_cycle.py`** — `EXPANSION → DISCIPLINE → FORCING → MONETIZATION`,
+  6 gauges (real 30y rate, term premium, TreasuryDirect auction quality, interest/receipts,
+  HY OAS, Fed balance sheet), path-dependent state machine (2-publish hysteresis, one legal
+  step per publish, illegal jumps logged as `transition_blocked`). Convention inverted vs
+  this file's classifier: higher sub-score = later in the cycle. Gold is a falsification
+  check only, never an input.
+- **Authority (FORK 2/B):** the phase modifies the quadrant stance (DISCIPLINE caps at
+  `balanced`, FORCING floors at `defensive`, MONETIZATION unlocks `aggressive` even from a
+  RISK_OFF quadrant) and caps the aggregate `story` duration-bucket share in
+  `_regime_post.enforce_duration_caps`. It still never gates eligibility or moves conviction —
+  §8's table stays true, with "sizing: none directly" amended to "aggregate duration caps only."
+- **§9.1 partially retired:** the snapshot's feature copy is now whitelist-free with a
+  fail-loud check. (`apply_macro_tilt`/`regime_composite_floor` remain dead — wire-or-delete
+  still open.)
+- **§9.3 retired:** `run_macro_strategist` now injects the classifier snapshot (regime +
+  quadrant + phase + falsifiers) into the live Director's macro brief, and a phase transition
+  forces a live-Director re-run outside the 30-day cadence.
+- **New surfaces:** briefing `CYCLE` chip with dated falsifiers, C/P/S payback badges (✂ when
+  the cap trimmed a seat), `_cycle_ledger.jsonl` with the realized duration mix per publish.
+- **Ops:** TreasuryDirect auction fetch runs Saturdays 05:00 Amsterdam
+  (`python backend/debt_cycle.py fetch-auctions`), before the weekly routine; the classifier
+  self-heals a stale cache inline.
+
+See `CLAUDE.md` (repo root) for the locked fork decisions and invariants.
+
+---
+
 ## 10 — Quick reference
 
 | Question | Answer |

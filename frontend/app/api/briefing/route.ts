@@ -203,12 +203,38 @@ export async function GET(req: Request) {
         : (inf === "decelerating" ? "RISK_OFF" : "STAGFLATION"))
     : null;
   const quadrant = mrFull.quadrant && mrFull.quadrant !== "UNKNOWN" ? mrFull.quadrant : quadrantFallback;
+  // Dalio debt-cycle chip (2026-07-27) — published with the weekly baskets. phaseFallback
+  // mirrors quadrantFallback's job for the pre-regeneration snapshot: the phase cannot be
+  // derived from labels (it is a path-dependent state machine), so the fallback is simply
+  // "absent chip" rather than a synthesized value — display-labeling only, no signal here.
+  const dc = spec?.debt_cycle || {};
+  const phase = dc.debt_cycle_phase && dc.debt_cycle_phase !== "UNKNOWN" ? dc.debt_cycle_phase : null;
+  const rrPhase = spec?.regime_read?.phase_falsifiers;
+  const cycleFalsifiers = (Array.isArray(rrPhase) ? rrPhase : [])
+    .filter((f: any) => f && f.condition)
+    .sort((a: any, b: any) => String(a.check_by || "9999").localeCompare(String(b.check_by || "9999")))
+    .slice(0, 3);
+  const cycle_pulse = phase ? {
+    phase,
+    weeks_in_phase: dc.weeks_in_phase ?? null,
+    confidence: dc.confidence || null,
+    phase_basis: dc.phase_basis || null,
+    phase_detail: dc.phase_detail || null,
+    duration_caps: dc.duration_caps || null,
+    cap_binding: dc.cap_binding || [],
+    transition_blocked: !!dc.transition_blocked,
+    transition_implied: dc.transition_implied || null,
+    reserve_asset_note: dc.reserve_asset_check?.note || null,
+    phase_view: spec?.regime_read?.phase_view || null,
+    falsifiers: cycleFalsifiers,
+  } : null;
   const regime_pulse = {
     regime,
     score: r2(score),
     quadrant,
     quadrant_detail: quadrant ? `growth ${g || "?"} × inflation ${inf || "?"}` : null,
     regime_read: spec?.regime_read || null,
+    cycle: cycle_pulse,
     summary: `Macro regime ${regime}. ${sentiment}`,
     action: `Rates ${rd.rates || "neutral"}, credit ${rd.credit || "stable"}, VIX ${vix ?? "—"}. ${stance}`,
   };

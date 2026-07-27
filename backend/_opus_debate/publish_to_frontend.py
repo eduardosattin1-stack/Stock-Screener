@@ -300,6 +300,8 @@ for p in picks:
         rationale += f"  ·  Lane: {p['lane']}"
     if p.get("regime_fit"):
         rationale += f"  ·  Regime: {p['regime_fit']}"
+    if p.get("phase_fit"):
+        rationale += f"  ·  Cycle: {p['phase_fit']}"
     entries.append({
         "symbol": sym,
         "conviction": int(p.get("director_conviction", 0)),
@@ -353,6 +355,15 @@ for p in picks:
         "sector_class": sc.get("sector_class", "operating"),
         "methodology_applicable": meth_app,
         "lane": p.get("lane", ""), "regime_fit": p.get("regime_fit", ""),
+        # Debt-cycle badge fields (FORK 2/B, 2026-07-27): the deterministic payback-speed
+        # label + whether the phase duration cap trimmed this seat — a bound cap must be
+        # VISIBLE on the pick, not inferred from weights.
+        "phase_fit": p.get("phase_fit", ""),
+        "duration_bucket": p.get("duration_bucket", ""),
+        "duration_bucket_source": p.get("duration_bucket_source", ""),
+        "duration_bucket_override_reason": p.get("duration_bucket_override_reason", ""),
+        "cycle_capped": bool(p.get("cycle_capped")),
+        "cycle_cap_note": p.get("cycle_cap_note", ""),
         "size_units": p.get("size_units"),
         "size_units_effective": p.get("size_units_effective"),
         # equity special-sit lane (catalyst-framed B13 non-binaries): downside floor for risk-to-floor
@@ -513,12 +524,37 @@ for e in entries:
         _hor_tot += e["horizon_months"] * w; _hor_w += w
 _stance_map = {"RISK_ON": "aggressive", "NEUTRAL": "balanced", "CAUTIOUS": "balanced", "RISK_OFF": "defensive"}
 baskets["return_goal"] = _goal
-baskets["risk_stance"] = director.get("risk_stance") or _stance_map.get(_macro.get("regime"), "balanced")
+# Deterministic fallback stance now passes through the debt-cycle phase modifier
+# (DISCIPLINE caps balanced / FORCING floors defensive / MONETIZATION unlocks aggressive)
+# so a Director that omitted risk_stance still lands on a phase-consistent posture.
+_cycle_pub = _macro.get("debt_cycle") or {}
+_stance_raw = director.get("risk_stance") or _stance_map.get(_macro.get("regime"), "balanced")
+try:
+    from debt_cycle import apply_phase_to_stance as _apts
+    _stance_eff, _stance_note = _apts(_stance_raw, _cycle_pub.get("debt_cycle_phase", "UNKNOWN"))
+except Exception:
+    _stance_eff, _stance_note = _stance_raw, ""
+baskets["risk_stance"] = _stance_eff
+if _stance_note and _stance_eff != _stance_raw:
+    baskets["risk_stance_modifier_note"] = f"{_stance_raw} -> {_stance_eff}: {_stance_note}"
+    print(f"  phase stance modifier: {baskets['risk_stance_modifier_note']}")
 baskets["macro_read"] = director.get("macro_read", "")
+baskets["phase_read"] = director.get("phase_read", "")
+baskets["expected_horizon_months"] = director.get("expected_horizon_months")
 baskets["macro_regime"] = {"regime": _macro.get("regime"), "score": _macro.get("score"),
                            "regime_detail": _macro.get("regime_detail", {}),
                            # growth x inflation 2x2 (2026-07-16) — the briefing's quadrant chip
                            "quadrant": _macro.get("quadrant"), "quadrant_basis": _macro.get("quadrant_basis", "")}
+# Dalio debt-cycle block (2026-07-27) — the briefing's cycle chip + falsifier strip
+baskets["debt_cycle"] = {k: _cycle_pub.get(k) for k in
+                         ("debt_cycle_phase", "prior_phase", "weeks_in_phase", "cycle_score",
+                          "confidence", "phase_basis", "phase_detail", "duration_caps",
+                          "transition_blocked", "transition_implied", "reserve_asset_check",
+                          "expected_horizon_months", "asof")}
+baskets["debt_cycle"]["phase_applied_by_director"] = director.get("debt_cycle_phase")
+# cap_binding / duration_caps_applied are stamped onto the director doc by _regime_post
+baskets["debt_cycle"]["cap_binding"] = director.get("cap_binding") or []
+baskets["debt_cycle"]["duration_caps_applied"] = director.get("duration_caps_applied") or {}
 # Agent regime read (RegimeRead phase, weekly) — AGREE/CONTRADICT vs the dials + dated
 # falsifiers. Published for the UI; the dials stay authoritative.
 _rr = load(BK / "regime_read.json", {}) or {}
@@ -549,6 +585,43 @@ try:
           f" / agent {_ledger_row.get('agent_view') or 'n/a'}")
 except Exception as _e:
     print(f"WARN: regime ledger append failed ({_e})")
+
+# ── Debt-cycle ledger (2026-07-27) — one row per publish so the phase dial earns a
+# live-forward track record like the regime dial. The realized duration mix is the
+# field that makes it scoreable: did DISCIPLINE precede story-vs-cash_now
+# underperformance? did the cap bind, and did binding help or cost? did the state
+# machine block a transition that should have happened (the hysteresis cost)? ──
+try:
+    _dur_mix = {}
+    for _e2 in entries:
+        _b = _e2.get("duration_bucket") or "unlabeled"
+        _dur_mix[_b] = round(_dur_mix.get(_b, 0.0) + (apex_weights.get(_e2["symbol"], 0) or 0), 4)
+    _cyc_row = {
+        "date": TODAY, "book": "cycle",
+        "debt_cycle_phase": _cycle_pub.get("debt_cycle_phase"),
+        "prior_phase": _cycle_pub.get("prior_phase"),
+        "weeks_in_phase": _cycle_pub.get("weeks_in_phase"),
+        "cycle_score": _cycle_pub.get("cycle_score"),
+        "cycle_sub_scores": _cycle_pub.get("cycle_sub_scores"),
+        "transition_blocked": _cycle_pub.get("transition_blocked"),
+        "transition_implied": _cycle_pub.get("transition_implied"),
+        "reserve_asset_consistent": (_cycle_pub.get("reserve_asset_check") or {}).get("consistent_with_phase"),
+        "agent_phase_view": _rr.get("phase_view"), "agent_confidence": _rr.get("confidence"),
+        "phase_falsifiers": _rr.get("phase_falsifiers"),
+        "risk_stance": baskets.get("risk_stance"),
+        "risk_stance_modifier": baskets.get("risk_stance_modifier_note", ""),
+        "phase_applied_by_director": director.get("debt_cycle_phase"),
+        "expected_horizon_months": director.get("expected_horizon_months"),
+        "duration_caps": director.get("duration_caps_applied") or {},
+        "cap_binding": director.get("cap_binding") or [],
+        "duration_mix": _dur_mix,
+    }
+    with open(BK / "_cycle_ledger.jsonl", "a", encoding="utf-8") as _lf:
+        _lf.write(json.dumps(_cyc_row, ensure_ascii=False) + "\n")
+    print(f"  cycle ledger += {TODAY} {_cyc_row.get('debt_cycle_phase')} "
+          f"({_cyc_row.get('weeks_in_phase')}w) / mix {_dur_mix} / binding {_cyc_row['cap_binding'] or 'none'}")
+except Exception as _e:
+    print(f"WARN: cycle ledger append failed ({_e})")
 baskets["book_expected_return_pct"] = round(_exp_tot / _exp_w, 1) if _exp_w > 0 else None
 baskets["book_horizon_months"] = round(_hor_tot / _hor_w, 1) if _hor_w > 0 else None
 # GOAL GATE (warn-only, never blocks): the Apex mandate is +30-50%/12mo — an under-goal book still

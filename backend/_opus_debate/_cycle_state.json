@@ -1,0 +1,11 @@
+{
+ "phase": "DISCIPLINE",
+ "weeks_in_phase": 1,
+ "pending_target": null,
+ "pending_count": 0,
+ "seeded": true,
+ "transition_blocked": false,
+ "transition_implied": null,
+ "asof": "2026-07-27",
+ "prior_phase": "DISCIPLINE"
+}

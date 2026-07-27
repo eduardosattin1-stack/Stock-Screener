@@ -211,10 +211,40 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
                 </span>
               );
             })()}
+            {/* Dalio debt-cycle chip (third axis, weekly state machine) — answers what the
+                quadrant can't: are positive real rates chosen by a hot economy, or imposed
+                by the bond market? DISCIPLINE = duration punished / real assets not yet. */}
+            {regime_pulse.cycle?.phase && (() => {
+              const c = regime_pulse.cycle;
+              const pc = c.phase === "EXPANSION" ? "var(--green)" : c.phase === "DISCIPLINE" ? "var(--amber)" : c.phase === "FORCING" ? "var(--red)" : "#a855f7";
+              const tip = `Debt-cycle phase (${c.confidence || "?"} confidence): ${c.phase_detail || ""}${c.phase_basis ? ` Basis: ${c.phase_basis}.` : ""}${c.transition_blocked ? ` State machine blocked a jump to ${c.transition_implied} (hysteresis).` : ""}${c.reserve_asset_note ? ` Reserve check: ${c.reserve_asset_note}` : ""}${c.phase_view === "CONTRADICT" ? " Agent regime read DISPUTES the phase dials." : ""}`;
+              return (
+                <span title={tip} style={{ fontFamily: "var(--font-mono)", fontSize: 9, fontWeight: 700, padding: "2px 7px", borderRadius: 4, color: pc, background: "color-mix(in srgb, currentColor 12%, transparent)", border: `1px solid color-mix(in srgb, ${pc} 40%, transparent)`, cursor: "help", letterSpacing: "0.06em" }}>
+                  CYCLE · {c.phase}{typeof c.weeks_in_phase === "number" ? ` (${c.weeks_in_phase}w)` : ""}{c.phase_view === "CONTRADICT" ? " · agent disputes" : ""}
+                </span>
+              );
+            })()}
           </div>
           {regime_pulse.quadrant_detail && (
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)", marginTop: -4, marginBottom: 8 }}>
               {regime_pulse.quadrant_detail}
+            </div>
+          )}
+          {/* Cycle read + dated falsifiers — what would break the phase call, with check-by
+              dates (at most 3, nearest first). The falsifiers are the ledger entries the
+              next weekly run gets scored against. */}
+          {regime_pulse.cycle?.phase && (
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)", marginTop: -2, marginBottom: 8 }}>
+              {regime_pulse.cycle.phase_detail}
+              {(regime_pulse.cycle.falsifiers || []).length > 0 && (
+                <div style={{ marginTop: 4, paddingTop: 4, borderTop: "1px dotted var(--border)" }}>
+                  {regime_pulse.cycle.falsifiers.map((f: any, i: number) => (
+                    <div key={i} style={{ opacity: 0.85 }}>
+                      ⚠ breaks if: {f.condition}{f.check_by ? ` (by ${f.check_by})` : ""}{f.implies ? ` → ${f.implies}` : ""}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
           <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5, fontFamily: "var(--font-sans)", marginBottom: 12 }}>

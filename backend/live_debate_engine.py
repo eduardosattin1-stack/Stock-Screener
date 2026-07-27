@@ -394,24 +394,83 @@ def _load_existing_speculair() -> dict:
     return {}
 
 
+def _load_macro_snapshot() -> dict:
+    """The structured classifier snapshot (backend/_opus_debate/macro_regime.json):
+    regime + quadrant + Dalio debt_cycle block. Written by the weekly Opus pipeline
+    (_write_macro_regime). Returns {} if missing/stale-unreadable."""
+    try:
+        p = BASE_DIR / "_opus_debate" / "macro_regime.json"
+        return json.loads(p.read_text(encoding="utf-8")) or {}
+    except Exception as e:
+        log.debug(f"macro snapshot load failed: {e}")
+        return {}
+
+
+def _phase_transition_check(existing_spec: dict) -> tuple[bool, str]:
+    """Fork 4 (2026-07-27): compare the snapshot's current debt-cycle phase against the
+    phase stamped at the LAST director run. A transition (e.g. DISCIPLINE -> FORCING)
+    forces a director re-run regardless of the 30-day cost-guard — 'the bond market is
+    cracking' is exactly the alert that must not sit unread. UNKNOWN never triggers
+    (fail-open: a data outage must not burn a ~EUR20 director run)."""
+    now = ((_load_macro_snapshot().get("debt_cycle") or {}).get("debt_cycle_phase")) or "UNKNOWN"
+    prior = existing_spec.get("director_last_phase") or ""
+    transitioned = bool(prior and now not in ("UNKNOWN", "") and now != prior)
+    if transitioned:
+        log.info(f"Debt-cycle phase transition detected: {prior} -> {now} — overriding director cost-guard.")
+    return transitioned, now
+
+
 def run_macro_strategist(candidate_sectors: dict, before_date: str = None) -> str:
     """Once-per-scan macro regime brief for the director (opus). Tilts toward the sectors
     where the debated opportunities cluster. Returns markdown, or '' on failure (the
-    director still runs without it). NOTE: reflects the model's macro knowledge; wiring a
-    live rates/inflation/breadth data feed is a planned enhancement."""
+    director still runs without it).
+
+    2026-07-27: now GROUNDED in the classifier snapshot (macro_regime.json — regime,
+    growth x inflation quadrant, Dalio debt-cycle phase + falsifiers) instead of model
+    recall. The 'planned enhancement' note from the original docstring is done: the same
+    dials the weekly Apex Director reads now anchor the live brief, closing the gap
+    where one Director family flew on data and the other on vibes."""
     sectors = ", ".join(f"{s} ({n})" for s, n in sorted(candidate_sectors.items(), key=lambda x: -x[1])) or "n/a"
     day = before_date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    snap = _load_macro_snapshot()
+    cyc = snap.get("debt_cycle") or {}
+    dial_lines = []
+    if snap.get("regime"):
+        dial_lines.append(f"- Risk regime (deterministic classifier): {snap['regime']} "
+                          f"(score {snap.get('score')}) — detail {json.dumps(snap.get('regime_detail', {}))}")
+    if snap.get("quadrant") and snap.get("quadrant") != "UNKNOWN":
+        dial_lines.append(f"- Growth x inflation quadrant: {snap['quadrant']} ({snap.get('quadrant_basis', '')})")
+    if cyc.get("debt_cycle_phase") and cyc.get("debt_cycle_phase") != "UNKNOWN":
+        dial_lines.append(
+            f"- Dalio debt-cycle phase: {cyc['debt_cycle_phase']} ({cyc.get('weeks_in_phase', '?')} weeks in; "
+            f"basis: {cyc.get('phase_basis', '')}). Implication: {cyc.get('phase_detail', '')} "
+            f"Stance rule: DISCIPLINE caps at balanced, FORCING floors at defensive, "
+            f"MONETIZATION unlocks aggressive real-asset positioning.")
+        rac = cyc.get("reserve_asset_check") or {}
+        if rac.get("note"):
+            dial_lines.append(f"- Reserve-asset cross-check: {rac['note']}")
+    dials = ("\n\nDETERMINISTIC DIALS (weekly classifier snapshot, asof "
+             f"{snap.get('asof', '?')}) — these are AUTHORITATIVE; your prose interprets them, "
+             "it does not override them:\n" + "\n".join(dial_lines)) if dial_lines else \
+            "\n\n(No classifier snapshot available — flag to the director that this brief is UNGROUNDED model recall.)"
+
     system = (
         "You are the Macro Strategist for a high-conviction equity committee. Write a concise, "
         "decision-useful MACRO REGIME BRIEF for the portfolio director: the rates / inflation / growth "
         "backdrop and its trajectory, the dominant risk-on vs risk-off posture, and explicit "
         "tailwind/headwind calls for the sectors where this cycle's opportunities cluster. Be specific "
-        "about what would flip the regime. No hedging filler."
+        "about what would flip the regime. No hedging filler. When deterministic dials are supplied, "
+        "anchor every posture call to them — including the debt-cycle phase's duration discipline "
+        "(in DISCIPLINE, long-duration story names are headwind regardless of sector)."
     )
     user = (
-        f"Today is {day}. The debated opportunity set clusters in these sectors (name + count): {sectors}.\n"
-        "Provide: (1) the macro regime in 3-5 sentences; (2) a per-sector tailwind/headwind line for the "
-        "clustered sectors; (3) the single macro risk the director should most avoid clustering the basket around."
+        f"Today is {day}. The debated opportunity set clusters in these sectors (name + count): {sectors}."
+        f"{dials}\n\n"
+        "Provide: (1) the macro regime in 3-5 sentences, reconciling the dials; (2) a per-sector "
+        "tailwind/headwind line for the clustered sectors; (3) the single macro risk the director should "
+        "most avoid clustering the basket around; (4) one line on what the debt-cycle phase means for "
+        "duration appetite in THIS basket."
     )
     return query_claude(MACRO_MODEL, system, user, max_tokens=3000) or ""
 
@@ -1747,6 +1806,7 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False,
     log.info("=" * 70)
     
     # Pre-flight health checks
+    director_last_phase = ""            # stamped below; safe default for exception paths
     openai_ok = _openai_health_check()
     if not openai_ok:
         log.warning("⚠ OpenAI health check failed — Architect/Moderator agents will fail. "
@@ -1890,7 +1950,12 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False,
             days_since = (datetime.now(timezone.utc).date() - datetime.fromisoformat(last_run).date()).days if last_run else 9999
         except Exception:
             days_since = 9999
-        if (not dry_run) and held_apex and (not held_reported) and days_since < DIRECTOR_CADENCE_DAYS:
+        # Debt-cycle phase-transition trigger (2026-07-27, Fork 4 = yes): a phase change —
+        # e.g. DISCIPLINE -> FORCING — is exactly the event that must NOT sit unread for up
+        # to 30 days, so it overrides the cost-guard and forces a director re-run.
+        phase_transitioned, _phase_now = _phase_transition_check(existing_spec)
+        if (not dry_run) and held_apex and (not held_reported) and (not phase_transitioned) \
+                and days_since < DIRECTOR_CADENCE_DAYS:
             log.info(f"Director cost-guard: no held name reported + review not due ({days_since}d < "
                      f"{DIRECTOR_CADENCE_DAYS}d) — holding existing basket, skipping the director.")
             director_result = {
@@ -1902,9 +1967,13 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False,
                 "auto_vetoed": 0,
             }
             director_last_run = last_run
+            # carry the last-run phase forward (seed with current on first-ever stamp) so a
+            # future transition is still detected against the phase the director LAST saw
+            director_last_phase = existing_spec.get("director_last_phase") or _phase_now
         else:
             why = ("first run / empty basket" if not held_apex
                    else "held name reported earnings" if held_reported
+                   else f"debt-cycle phase transition -> {_phase_now}" if phase_transitioned
                    else f"periodic review due ({days_since}d >= {DIRECTOR_CADENCE_DAYS}d)")
             log.info(f"Director running — trigger: {why}.")
             # Once-per-scan macro regime brief, tilted to where the opportunities cluster.
@@ -1920,6 +1989,7 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False,
             director_result = run_director_allocation(director_pool, dry_run=dry_run,
                                                       macro_brief=macro_brief, current_basket=current_basket)
             director_last_run = datetime.now(timezone.utc).date().isoformat()
+            director_last_phase = _phase_now    # the phase this director run actually saw
         
         # If it's a live run and we used the fallback because the Director LLM failed:
         if not dry_run and "Fallback" in director_result.get("director_memo", ""):
@@ -1946,6 +2016,9 @@ def debate_and_allocate(before_date: str = None, dry_run: bool = False,
         "apex_basket": director_result.get("apex_basket", []),
         "capitulation_watchlist": director_result.get("capitulation_watchlist", []),
         "director_last_run": director_last_run,
+        # Fork 4: the debt-cycle phase as of the last director run — the transition
+        # trigger compares the live snapshot against this stamp.
+        "director_last_phase": director_last_phase,
         "per_methodology_baskets": {},
         "director_memo": director_result.get("director_memo", ""),
         "debate_stats": {
