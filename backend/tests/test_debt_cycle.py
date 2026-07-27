@@ -11,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from debt_cycle import (  # noqa: E402
     compute_debt_cycle, advance_state, apply_phase_to_stance, duration_bucket,
+    _parse_auction_rows, _score_auction_quality,
     PHASE_DURATION_CAPS, HYSTERESIS_PUBLISHES, _UNKNOWN_RESULT,
 )
 
@@ -125,6 +126,60 @@ check("director override with justification honored + provenance kept",
 ov2 = duration_bucket(_story_rec, override="cash_now", override_reason="")
 check("override WITHOUT justification rejected",
       ov2["duration_bucket"] == "story" and ov2.get("duration_bucket_override_rejected") == "cash_now")
+
+print("\n=== TreasuryDirect auction parser (FORK 3/A) ===")
+# Realistic TA_WS payload: numbers arrive as STRINGS, and 10y/30y originals are sold
+# quarterly then REOPENED monthly — a reopening's securityTerm is fractional, so
+# matching securityTerm alone silently drops ~2/3 of the auctions that matter.
+TD_PAYLOAD = [
+    {"cusip": "91282CLM1", "securityType": "Note", "securityTerm": "10-Year",
+     "originalSecurityTerm": "10-Year", "auctionDate": "2026-05-12",
+     "bidToCoverRatio": "2.55", "indirectBidderAccepted": "26520000000", "totalAccepted": "39000000000"},
+    {"cusip": "91282CLM1", "securityType": "Note", "securityTerm": "9-Year 10-Month",
+     "originalSecurityTerm": "10-Year", "auctionDate": "2026-06-10",
+     "bidToCoverRatio": "2.50", "indirectBidderAccepted": "25740000000", "totalAccepted": "39000000000"},
+    {"cusip": "91282CLM1", "securityType": "Note", "securityTerm": "9-Year 9-Month",
+     "originalSecurityTerm": "10-Year", "auctionDate": "2026-07-09",
+     "bidToCoverRatio": "2.41", "indirectBidderAccepted": "23790000000", "totalAccepted": "39000000000"},
+    {"cusip": "912810UF3", "securityType": "Bond", "securityTerm": "30-Year",
+     "originalSecurityTerm": "30-Year", "auctionDate": "2026-05-13",
+     "bidToCoverRatio": "2.42", "indirectBidderAccepted": "14300000000", "totalAccepted": "22000000000"},
+    {"cusip": "912810UF3", "securityType": "Bond", "securityTerm": "29-Year 11-Month",
+     "originalSecurityTerm": "30-Year", "auctionDate": "2026-06-11",
+     "bidToCoverRatio": "2.38", "indirectBidderAccepted": "13640000000", "totalAccepted": "22000000000"},
+    {"cusip": "912810UF3", "securityType": "Bond", "securityTerm": "29-Year 10-Month",
+     "originalSecurityTerm": "30-Year", "auctionDate": "2026-07-10",
+     "bidToCoverRatio": "2.30", "indirectBidderAccepted": "12760000000", "totalAccepted": "22000000000"},
+    # must be ignored: wrong tenors
+    {"cusip": "912797XX1", "securityType": "Bill", "securityTerm": "4-Week",
+     "originalSecurityTerm": "4-Week", "auctionDate": "2026-07-21", "bidToCoverRatio": "2.90"},
+    {"cusip": "91282CLL3", "securityType": "Note", "securityTerm": "2-Year",
+     "originalSecurityTerm": "2-Year", "auctionDate": "2026-07-22", "bidToCoverRatio": "2.60"},
+    {"cusip": "912828ZZ9", "securityType": "Note", "securityTerm": "20-Year",
+     "originalSecurityTerm": "20-Year", "auctionDate": "2026-07-15", "bidToCoverRatio": "2.45"},
+    # must be ignored: no bid-to-cover
+    {"cusip": "91282CLM9", "securityType": "Note", "securityTerm": "10-Year",
+     "originalSecurityTerm": "10-Year", "auctionDate": "2026-04-08", "bidToCoverRatio": ""},
+]
+parsed = _parse_auction_rows(TD_PAYLOAD)
+check("keeps 10y+30y originals AND reopenings (6 rows)", len(parsed) == 6, f"{len(parsed)}")
+check("reopenings retained and flagged",
+      sum(1 for r in parsed if r["reopening"]) == 4, f"{[r['reopening'] for r in parsed]}")
+check("2y / 20y / 4-week bills excluded",
+      all(r["term"] in ("10y", "30y") for r in parsed), f"{[r['term'] for r in parsed]}")
+check("term label is clean (10y / 30y, not '10-Yy')",
+      sorted({r["term"] for r in parsed}) == ["10y", "30y"], f"{sorted({r['term'] for r in parsed})}")
+check("string numerics coerced", isinstance(parsed[0]["btc"], float) and parsed[0]["btc"] > 0)
+check("indirect share computed", abs(parsed[0]["indirect_pct"] - 0.68) < 0.01, f"{parsed[0]['indirect_pct']}")
+check("auction with no bid-to-cover dropped", all(r["date"] != "2026-04-08" for r in parsed))
+check("sorted oldest-first", [r["date"] for r in parsed] == sorted(r["date"] for r in parsed))
+check("6 parsed rows clear the >=5 minimum the gauge needs",
+      _score_auction_quality(parsed) is not None, "gauge returned None")
+check("softening demand scores as DISCIPLINE evidence, not FORCING (<0.7)",
+      0.4 < _score_auction_quality(parsed) < 0.7, f"{_score_auction_quality(parsed)}")
+check("empty/garbage payload is safe",
+      _parse_auction_rows([]) == [] and _parse_auction_rows(None) == []
+      and _parse_auction_rows([{"junk": 1}]) == [])
 
 print("\n=== duration cap (FORK 2/B) — portion control, not eligibility ===")
 try:

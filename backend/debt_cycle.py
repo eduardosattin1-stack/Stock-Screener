@@ -64,6 +64,7 @@ import csv
 import io
 import json
 import logging
+import re
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -156,9 +157,51 @@ def _fetch_fred_csv(series_id: str, timeout: int = 15) -> list:
         return []
 
 
+def _parse_auction_rows(payload) -> list:
+    """Pure parser for a TreasuryDirect TA_WS/securities/auctioned payload →
+    [{date, term, btc, indirect_pct, reopening}].
+
+    Matches on `originalSecurityTerm` FIRST, and that is load-bearing: Treasury sells
+    10y/30y originals QUARTERLY and reopens them monthly in between, and a reopening's
+    `securityTerm` is fractional ("9-Year 10-Month", "29-Year 11-Month"). Matching
+    securityTerm alone kept ~4 auctions/yr/tenor instead of ~12 — the 5-auction minimum
+    would have taken months to satisfy and the trailing-4 average would have spanned half
+    a year, leaving auction_quality effectively dead. TreasuryDirect also serves every
+    numeric field as a STRING, hence the float() coercions."""
+    rows = []
+    for a in payload if isinstance(payload, list) else []:
+        term = str(a.get("originalSecurityTerm") or a.get("securityTerm") or a.get("term") or "")
+        m = re.match(r"\s*(\d+)\s*-\s*Year", term, re.IGNORECASE)
+        if not m or m.group(1) not in ("10", "30"):
+            continue
+        try:
+            btc = float(a.get("bidToCoverRatio") or 0)
+        except (TypeError, ValueError):
+            btc = 0.0
+        if btc <= 0:
+            continue
+        ind_pct = None
+        try:
+            ind = float(a.get("indirectBidderAccepted") or 0)
+            tot = float(a.get("totalAccepted") or 0)
+            if tot > 0:
+                ind_pct = ind / tot
+        except (TypeError, ValueError):
+            pass
+        d = str(a.get("auctionDate") or "")[:10]
+        if not d:
+            continue
+        sec_term = str(a.get("securityTerm") or "")
+        rows.append({"date": d, "term": f"{m.group(1)}y", "btc": btc, "indirect_pct": ind_pct,
+                     "reopening": bool(sec_term and not re.match(r"\s*(10|30)\s*-\s*Year\s*$",
+                                                                sec_term, re.IGNORECASE))})
+    rows.sort(key=lambda x: (x["date"], x["term"]))
+    return rows
+
+
 def fetch_auction_results(days: int = 370) -> list:
-    """TreasuryDirect auction results for 10-Year Notes + 30-Year Bonds.
-    Returns [{date, term, btc, indirect_pct}] oldest-first. FORK 3/A fetcher —
+    """TreasuryDirect auction results for 10-Year Notes + 30-Year Bonds (incl. reopenings).
+    Returns [{date, term, btc, indirect_pct, reopening}] oldest-first. FORK 3/A fetcher —
     run weekly (Saturday, before the routine) via CLI `fetch-auctions`."""
     rows = []
     try:
@@ -169,32 +212,12 @@ def fetch_auction_results(days: int = 370) -> list:
                 params={"days": days, "type": sec_type, "format": "json"}, timeout=20,
             )
             if r.status_code != 200:
+                log.warning(f"  TreasuryDirect {sec_type}: HTTP {r.status_code}")
                 continue
-            for a in r.json() if isinstance(r.json(), list) else []:
-                term = str(a.get("securityTerm") or a.get("term") or "")
-                if not (term.startswith("10-") or term.startswith("30-")):
-                    continue
-                try:
-                    btc = float(a.get("bidToCoverRatio") or 0)
-                except (TypeError, ValueError):
-                    btc = 0.0
-                if btc <= 0:
-                    continue
-                ind_pct = None
-                try:
-                    ind = float(a.get("indirectBidderAccepted") or 0)
-                    tot = float(a.get("totalAccepted") or 0)
-                    if tot > 0:
-                        ind_pct = ind / tot
-                except (TypeError, ValueError):
-                    pass
-                d = str(a.get("auctionDate") or "")[:10]
-                if d:
-                    rows.append({"date": d, "term": term[:4].rstrip("-") + "y",
-                                 "btc": btc, "indirect_pct": ind_pct})
+            rows.extend(_parse_auction_rows(r.json()))
     except Exception as e:
-        log.debug(f"  TreasuryDirect fetch failed: {e}")
-    rows.sort(key=lambda x: x["date"])
+        log.warning(f"  TreasuryDirect fetch failed: {e}")
+    rows.sort(key=lambda x: (x["date"], x["term"]))
     return rows
 
 
@@ -287,10 +310,29 @@ def _score_term_premium(rates_now: dict, rates_3mo: dict) -> Optional[float]:
 
 
 def _score_auction_quality(auctions: list) -> Optional[float]:
-    """Deterioration of the latest 10y/30y auctions vs the trailing 4-auction
-    average — bid-to-cover 60%, indirect share 40%. Needs ≥5 auctions."""
+    """Deterioration of the latest 10y/30y auction vs its OWN trailing average —
+    bid-to-cover 60%, indirect share 40%, then averaged across the tenors that have
+    enough history (≥3 auctions each).
+
+    Scored PER TENOR deliberately: 10y notes structurally cover better than 30y bonds
+    (~2.5x vs ~2.4x), so pooling them and comparing "latest vs trailing 4" makes the
+    reading depend on which tenor happened to auction last — a 30y following three 10y
+    prints looks like deteriorating demand when nothing moved. Like-for-like only."""
     rows = [a for a in (auctions or []) if isinstance(a.get("btc"), (int, float)) and a["btc"] > 0]
-    if len(rows) < 5:
+    by_tenor = {}
+    for a in rows:
+        by_tenor.setdefault(a.get("term") or "?", []).append(a)
+    scores = [s for t, rs in sorted(by_tenor.items())
+              if (s := _score_tenor_auctions(rs)) is not None]
+    if not scores:
+        return None
+    return round(sum(scores) / len(scores), 4)
+
+
+def _score_tenor_auctions(rows: list) -> Optional[float]:
+    """One tenor's demand-deterioration score. Needs ≥3 auctions (latest + ≥2 trailing);
+    uses up to the trailing 4."""
+    if len(rows) < 3:
         return None
     latest, trail = rows[-1], rows[-5:-1]
     btc_avg = sum(a["btc"] for a in trail) / len(trail)
