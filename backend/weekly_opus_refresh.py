@@ -3077,7 +3077,7 @@ BOOKS = {
         "engine": "opus-5-debate-mining-v1",
         "post_script": "_mining_post.py",                     # TWO post clones, never a shared module (§C.6)
         "post_stamp": "mining_post_applied",
-        "skeptic_shards": ROOT / "_skeptic_mining",           # reserved: Lane A runs no skeptic tier today (§5)
+        "skeptic_shards": ROOT / "_skeptic_mining",           # populated by `mining-skeptic` (_SKEPTIC_BOOKS["mining"])
         "benchmark_legs": {"XME": 0.5, "GDX": 0.5},
         "benchmark_label": "50/50 XME+GDX",
         "chain_caps": {"max_names": 3, "max_weight": 30.0},
@@ -3116,7 +3116,7 @@ BOOKS = {
         "engine": "opus-5-debate-fdt-v1",
         "post_script": "_fdt_post.py",
         "post_stamp": "fdt_post_applied",
-        "skeptic_shards": ROOT / "_skeptic_fdt",
+        "skeptic_shards": ROOT / "_skeptic_fdt",              # populated by `fdt-skeptic` (_SKEPTIC_BOOKS["fdt"])
         "benchmark_legs": {"GRID": 0.5, "QQQ": 0.5},
         "benchmark_label": "50/50 GRID+QQQ",
         "chain_caps": {"max_names": 3, "max_weight": 30.0},
@@ -4560,7 +4560,9 @@ def book_publish(bk, push_gcs=False):
 #    book_prep). chain_map + deterministic metrics in the bundle; typed valuation block [pipeline-v3
 #    step 6b/7] emitted from day one so _numeric_gate works on these records; BATCH=8; NO
 #    in-workflow Director — <key>-input builds the grade input AFTER the debates, then ONE Director
-#    agent grades it; NO skeptic tier for Lane A. ──
+#    agent grades it, THEN <key>-skeptic kill-tiers the finalists (unlike the FR template this was
+#    cloned from — FR has none by design, spec §5; mining/fdt do NOT repeat that gap, see
+#    _SKEPTIC_BOOKS). ──
 _BOOK_WORKFLOW_TEMPLATE = r"""export const meta = {
   name: '__WORKFLOW_NAME__',
   description: 'Weekly __BOOK_NAME__ Lane A debate (the chain map already produced competitors). Director runs separately after __KEY__-input.',
@@ -4605,7 +4607,7 @@ for (let b = 0; b < ALL.length; b += BATCH) {
 }
 // NO in-workflow Director: the Director grades the grade-input file, which `__KEY__-input` builds
 // from THESE debate results AFTER this workflow (sequence: Workflow -> __KEY__-numeric-gate
-// --enforce -> __KEY__-input -> Director agent -> __KEY__-post). NO skeptic tier for Lane A.
+// --enforce -> __KEY__-input -> Director agent -> __KEY__-skeptic -> Workflow -> __KEY__-post).
 log('__BOOK_NAME__ debate complete (Director runs separately after __KEY__-input).')
 return 'DONE'
 """
