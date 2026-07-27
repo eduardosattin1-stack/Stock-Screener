@@ -34,7 +34,16 @@ def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str 
     apex_file = Path(apex_file)
     if not skep_dir.is_dir():
         return apx
+    # ANCHOR (2026-07-24): freshness is measured against the DIRECTOR's write, not the file's mtime.
+    # The post layer rewrites this same file, so using mtime meant every re-run pushed the anchor
+    # forward and re-aged its own inputs — run the post layer twice and same-day shards flipped to
+    # "stale". post_anchor_ts is stamped once, on the first post-processing after a Director write
+    # (a fresh Director file has no stamp, so a genuinely new run re-anchors correctly).
     apex_mtime = apex_file.stat().st_mtime if apex_file.exists() else 0
+    if isinstance(apx.get("post_anchor_ts"), (int, float)):
+        apex_mtime = apx["post_anchor_ts"]
+    else:
+        apx["post_anchor_ts"] = apex_mtime
     # Freshness window (2026-07-10, two-tier restructure): the skeptic phase now runs BEFORE the
     # Director inside the same weekly workflow, so a same-run shard is legitimately a few minutes-to-
     # hours OLDER than the apex file. The old strict `< apex_mtime - 1` guard would discard every
@@ -79,6 +88,15 @@ def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str 
             p["skeptic_verdict"] = "MISSING"
             p["skeptic_missing"] = True
             missing.append(sym)
+    # STICKY-FLAG FIX (2026-07-24): the loop above only ever SETS skeptic_missing, and the post layer
+    # re-reads the apex JSON it previously stamped — so a name flagged by an early run stayed
+    # half-sized forever, even after the skeptic ran and CONFIRMED it. Observed live: all 9 apex seats
+    # carried skeptic_missing=True from the first regime-post, collapsing the Director's 0.4-1.1
+    # sizing spread to a flat 0.5. Clear the flag for every name that now HAS a fresh verdict.
+    for p in apx.get("apex_basket", []):
+        if p.get("symbol") in merged:
+            p.pop("skeptic_missing", None)
+            p.pop("skeptic_stale_refuted", None)
     if missing:
         print(f"WARN skeptic-coverage: {len(missing)} apex member(s) have NO fresh skeptic shard -> "
               f"stamped MISSING + half-sized: {missing} (fix: run the skeptic workflow)")
@@ -128,10 +146,22 @@ def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str 
     return apx
 
 
+# EQUAL WEIGHT (2026-07-24, Bruno's call). Every book publishes equal weight. Evidence: across 2151
+# dated debate records the Director's conviction had NO monotone relation to forward return (buckets
+# 1-5: +1.36/+1.48/+1.94/+1.22/+1.69%) and its TOP grade was its WORST bucket (verdict-A -1.92%, 38%
+# win); the live equal-weight apex chain also leads the conviction-weighted one (111.9 vs 107.8).
+# Weighting by a signal with no demonstrated edge just adds variance. The size_units the Director and
+# the caps produce are STILL computed and stored (size_units_effective) so the teeth stay auditable
+# and this is one flag to flip back the day conviction earns its keep.
+EQUAL_WEIGHT_BOOKS = True
+
+
 def build_weights(apx, picks, extra_caps=None, memo_units=None, per_name_cap=None):
     """Normalize size_units -> weight_pct, honoring per-name half-caps + combined/extra caps.
     per_name_cap(p, u) -> u' applies the teeth (cro_only / stale_anchor / moat_erosion). extra_caps and
-    apx['combined_caps'] share the schema {names:[...], max_units: float, axis: str}."""
+    apx['combined_caps'] share the schema {names:[...], max_units: float, axis: str}.
+    With EQUAL_WEIGHT_BOOKS the caps still run (size_units_effective is stamped as before) but the
+    PUBLISHED weight_pct is 1/n — see the note above."""
     memo_units = memo_units or {}
     units = {}
     for p in picks:
@@ -149,11 +179,16 @@ def build_weights(apx, picks, extra_caps=None, memo_units=None, per_name_cap=Non
             scale = mx / tot
             for s in names:
                 units[s] = round(units[s] * scale, 3)
-    W = sum(units.values()) or 1.0
-    weights = {s: round(u / W, 4) for s, u in units.items()}
+    if EQUAL_WEIGHT_BOOKS and units:
+        eq = 1.0 / len(units)
+        weights = {s: round(eq, 4) for s in units}
+    else:
+        W = sum(units.values()) or 1.0
+        weights = {s: round(u / W, 4) for s, u in units.items()}
     for p in picks:
-        p["size_units_effective"] = units[p["symbol"]]
+        p["size_units_effective"] = units[p["symbol"]]   # still stamped: the teeth stay auditable
         p["weight_pct"] = round(weights[p["symbol"]] * 100, 2)
+        p["weight_basis"] = "equal" if EQUAL_WEIGHT_BOOKS else "size_units"
     return weights
 
 
@@ -382,16 +417,49 @@ def corr_breach_caps(corr, max_units=1.5):
     return caps
 
 
-def exits_block(picks, quotes, thesis_break):
-    """Thesis-break exit levels, sanity-checked against live price (0 < tb < px). thesis_break(p) is the
-    CALLER-SUPPLIED getter (value: p['thesis_break_px']; regime books map their own field)."""
+# TRIM RULE (2026-07-24, Bruno). Both books had a FLOOR (thesis break) and no CEILING: a name could
+# grind from deeply discounted to fully valued and nothing ever fired, because the only exit test was
+# "is the thesis broken?" — it isn't, so it is held. Observed live: EEFT rode its cushion from ~44%
+# down to ~9% and was still KEEP. Trimming at a fraction of base fair value banks the win the
+# discount-closing thesis actually predicted, without needing the thesis to break first.
+TRIM_AT_FRAC = 0.85          # price >= 85% of base fair value -> TRIM (the discount has mostly closed)
+
+
+def exits_block(picks, quotes, thesis_break, fair_value=None):
+    """Exit plan per seat: a FLOOR (thesis break) and, when a fair value is supplied, a CEILING
+    (trim level). Both sanity-checked against the live price. thesis_break(p) / fair_value(p) are
+    CALLER-SUPPLIED getters so each book maps its own fields."""
     out = {}
     for p in picks:
-        px = (quotes.get(p["symbol"]) or {}).get("price")
+        sym = p["symbol"]
+        px = (quotes.get(sym) or {}).get("price")
         tb = thesis_break(p)
         valid = isinstance(tb, (int, float)) and isinstance(px, (int, float)) and 0 < tb < px
-        out[p["symbol"]] = {"thesis_break_px": tb if valid else None, "valid": bool(valid),
-                            "review_trigger": "weekly refresh OR close < thesis_break_px"}
+        fv = fair_value(p) if fair_value else None
+        # fair value must be a positive number in the SAME ballpark as the quote — this is the guard
+        # that catches unit/currency slips (a 21 "target" on a $291 stock, an 8 on a 7,310 yen name).
+        fv_ok = (isinstance(fv, (int, float)) and fv > 0 and isinstance(px, (int, float)) and px > 0
+                 and 0.2 < px / fv < 5)
+        trim = round(fv * TRIM_AT_FRAC, 4) if fv_ok else None
+        action = "HOLD"
+        if valid and px <= tb:
+            action = "EXIT_REVIEW"                     # floor breached — the thesis is on the clock
+        elif trim is not None and px >= trim:
+            action = "TRIM"                            # ceiling reached — bank part of the re-rate
+        out[sym] = {"thesis_break_px": tb if valid else None, "valid": bool(valid),
+                    "fair_value_px": fv if fv_ok else None, "trim_at_px": trim,
+                    "pct_of_fair_value": round(px / fv, 3) if fv_ok else None,
+                    "action": action,
+                    "review_trigger": "weekly refresh OR close < thesis_break_px OR close >= trim_at_px"}
+        p["trim_at_px"] = trim
+        p["exit_action"] = action
         if tb and not valid:
-            print(f"WARN exits: {p['symbol']} thesis_break_px={tb} fails sanity vs px={px}")
+            print(f"WARN exits: {sym} thesis_break_px={tb} fails sanity vs px={px}")
+        if fv is not None and not fv_ok:
+            print(f"WARN exits: {sym} fair_value={fv} implausible vs px={px} — no trim level set")
+    n_trim = sum(1 for v in out.values() if v["action"] == "TRIM")
+    n_exit = sum(1 for v in out.values() if v["action"] == "EXIT_REVIEW")
+    if n_trim or n_exit:
+        print(f"exits: {n_trim} at/above the trim level, {n_exit} below the thesis break "
+              f"-> {[s for s, v in out.items() if v['action'] != 'HOLD']}")
     return out

@@ -252,24 +252,48 @@ def risk_badge(rec, p=None):
     return None
 
 
-def target_px(sop_fv):
-    """Parse the CRO/Director fair-value prose ('~$44', '$78-88 (base ~$82)') to ONE number so the
-    UI can draw expected-vs-realized per seat (the basket-13 convention). Base-case > range-midpoint."""
+def target_px(sop_fv, rec=None, live=None):
+    """ONE fair-value number per seat for the UI's expected-vs-realized draw.
+
+    2026-07-24: prefer the TYPED valuation.base_fv_px over parsing prose. The prose parse produced
+    real corruption on live seats — INTU '$358 per share (base case), about 21% above ...' matched the
+    "base" branch on the 21 of "21%", and 7974.T 'Approximately 8,200 yen' split on the comma to 8.
+    The typed block already carries the right number (358 / 8200) and is arithmetic-gated, so it wins;
+    prose is the fallback, and the fallback is now sanity-checked against the live price."""
+    if isinstance(rec, dict):
+        tv = (rec.get("valuation") or {}).get("base_fv_px")
+        if isinstance(tv, (int, float)) and tv > 0:
+            return float(tv)
     if sop_fv is None:
         return None
     txt = str(sop_fv)
-    m = re.search(r'base[^$0-9]{0,14}\$?\s*([0-9]+(?:\.[0-9]+)?)', txt, re.I)
-    if m:
-        return float(m.group(1))
+    txt = re.sub(r'(?<=\d),(?=\d{3}\b)', '', txt)   # '8,200 yen' -> '8200' (the 7974.T -> 8 bug)
+
+    def _sane(v):
+        """Reject a parsed level that cannot be this stock's fair value (unit/currency/percent slip)."""
+        if v is None or v <= 0:
+            return None
+        if isinstance(live, (int, float)) and live > 0 and not (0.2 < live / v < 5):
+            print(f"WARN target_px: parsed {v} implausible vs live {live} — dropped")
+            return None
+        return float(v)
+
+    m = re.search(r'base[^$0-9]{0,14}\$?\s*([0-9]+(?:\.[0-9]+)?)\s*(?!%)', txt, re.I)
+    if m and "%" not in txt[m.end(1):m.end(1) + 1]:  # '(base case), about 21% above' must NOT match the 21
+        v = _sane(float(m.group(1)))
+        if v:
+            return v
     m = re.search(r'([0-9]+(?:\.[0-9]+)?)\s*(?:/sh\w*)?\s*\((?:range|vs)', txt, re.I)
     if m:                                          # '~$120 (range $105-135)' -> the leading base, not the range midpoint
-        return float(m.group(1))
+        v = _sane(float(m.group(1)))
+        if v:
+            return v
     vals = [float(x) for x in re.findall(r'([0-9]+(?:\.[0-9]+)?)', txt)]
     if not vals:
         return None
     if len(vals) >= 2 and vals[1] <= vals[0] * 3:
-        return round((vals[0] + vals[1]) / 2, 2)
-    return vals[0]
+        return _sane(round((vals[0] + vals[1]) / 2, 2))
+    return _sane(vals[0])
 
 
 # Authoritative entry prices live in the apex tracking file's positions (mirrors value_publish).
@@ -333,7 +357,13 @@ for p in picks:
         "interrogator_score": interro,
         "trajectory": traj,
         "sop_fair_value": rec.get("sop_fair_value", "") or p.get("sop_fair_value", ""),
-        "target_px": target_px(rec.get("sop_fair_value", "") or p.get("sop_fair_value", "")),
+        "target_px": target_px(rec.get("sop_fair_value", "") or p.get("sop_fair_value", ""),
+                               rec=rec, live=rec.get("live_price") or p.get("live_price")),
+        # exit plan (2026-07-24): the FLOOR and the CEILING both reach the site now — they were
+        # computed by _regime_post all along and simply never carried into the published payload.
+        "thesis_break_px": p.get("thesis_break_px"),
+        "trim_at_px": p.get("trim_at_px"),
+        "exit_action": p.get("exit_action"),
         "forensic_cap": bool(p.get("forensic_cap")),
         "sop_breakdown": rec.get("sop_breakdown", ""),
         "sop_bull": rec.get("sop_bull", ""), "sop_bear": rec.get("sop_bear", ""),
@@ -434,9 +464,17 @@ SS_LANE_CAP = 0.15        # the equity special-sit lane in aggregate <= 15% of t
 
 
 from _post_common import banded_units as _banded_units  # noqa: E402  shared with _regime_post (one sizing map)
+from _post_common import EQUAL_WEIGHT_BOOKS as _EQUAL_WEIGHT  # noqa: E402  one switch for every book
 
 
 def _apex_weights(es):
+    # EQUAL WEIGHT (2026-07-24): this is the SECOND sizing path — _post_common.build_weights stamps
+    # weight_pct in the post layer, and this function then recomputes it at publish time. Missing this
+    # one meant the post layer said "equal" and the published book was still unit-weighted. The
+    # special-sit floor caps below are deliberately skipped: with 1/n there is nothing to redistribute.
+    if _EQUAL_WEIGHT and es:
+        eq = round(1.0 / len(es), 4)
+        return {e["symbol"]: eq for e in es}
     units = {}
     for e in es:
         eff = e.get("size_units_effective")   # post moat-erosion + secular-theme caps from _regime_post
@@ -499,6 +537,10 @@ baskets["director_memo"] = director.get("director_memo", baskets.get("director_m
 # Publish them; the UI prefers runner_ups when present (dated), keeping the legacy list as fallback.
 baskets["runner_ups"] = [r for r in (director.get("runner_ups") or []) if isinstance(r, dict)]
 baskets["runner_ups_as_of"] = TODAY
+# The book-level exit plan (floor + trim ceiling per seat) — computed by _regime_post, previously
+# stranded in the local director file and never published, so the site showed no exit rules at all.
+if director.get("exits"):
+    baskets["exits"] = director["exits"]
 baskets["regime_changes"] = director.get("regime_changes", "")
 baskets["regime_basis"] = "CATALYST_WATCH_REGIME.md (2026-06-05 baseline)"
 baskets["engine"] = "opus-5"  # Fable retired from the Director/Skeptic seats 2026-07-10 (pipeline-v3 Week 1) -- all-Opus again

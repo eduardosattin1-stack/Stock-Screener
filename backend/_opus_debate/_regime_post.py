@@ -181,6 +181,10 @@ def stamp_valuation(picks):
         val = rec.get("valuation") or {}
         if isinstance(val.get("bear_px"), (int, float)) and not isinstance(p.get("bear_fv_px"), (int, float)):
             p["bear_fv_px"] = val["bear_px"]
+        # base fair value: the TYPED number, never the prose. This is what the trim ceiling keys off,
+        # and it is why the ceiling is trustworthy where a parsed target was not (2026-07-24).
+        if isinstance(val.get("base_fv_px"), (int, float)) and not isinstance(p.get("base_fv_px"), (int, float)):
+            p["base_fv_px"] = val["base_fv_px"]
         if not isinstance(p.get("thesis_break_px"), (int, float)):
             tb = val.get("bear_px")
             if isinstance(tb, (int, float)):
@@ -326,7 +330,8 @@ def process(apx, uni, scan_by, market=None):
         apx["stress_test"] = _pc.stress_block(picks, weights, quotes, asof,
                                               bear_px=lambda p: p.get("bear_fv_px"),
                                               bear_label="valuation.bear_px")
-        apx["exits"] = _pc.exits_block(picks, quotes, thesis_break=lambda p: p.get("thesis_break_px"))
+        apx["exits"] = _pc.exits_block(picks, quotes, thesis_break=lambda p: p.get("thesis_break_px"),
+                                       fair_value=lambda p: p.get("base_fv_px"))
     apx["moat_post_applied"] = True
     apx["numeric_post_applied"] = True
     return apx, picks, extra

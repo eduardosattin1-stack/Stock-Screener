@@ -205,7 +205,24 @@ try:
     w = pc.build_weights(apx, cap_picks, extra_caps=entries, memo_units=memo,
                          per_name_cap=pc.moat_per_name_cap)
     story_share = sum(w[p["symbol"]] for p in cap_picks if p["duration_bucket"] == "story")
-    check("story share trimmed to the DISCIPLINE cap", story_share <= 0.20 + 1e-6, f"{story_share:.4f}")
+    story_units = sum(p["size_units_effective"] for p in cap_picks if p["duration_bucket"] == "story")
+    tot_units = sum(p["size_units_effective"] for p in cap_picks)
+    # The cap ALWAYS bites the units (the audit trail). Whether it reaches the PUBLISHED
+    # weight depends on _post_common.EQUAL_WEIGHT_BOOKS (Bruno's 2026-07-24 call: every book
+    # publishes 1/n because Director conviction showed no monotone relation to forward
+    # return). Under equal weight the duration cap — like the secular-theme and correlation
+    # caps — is auditable but does not move money. Assert both truths explicitly rather than
+    # letting one silently mask the other.
+    check("story UNITS trimmed to the DISCIPLINE cap (audit trail always bites)",
+          story_units / tot_units <= 0.20 + 1e-6, f"{story_units / tot_units:.4f}")
+    if getattr(pc, "EQUAL_WEIGHT_BOOKS", False):
+        check("EQUAL_WEIGHT_BOOKS on => published weights stay 1/n (cap is ADVISORY)",
+              all(abs(w[p["symbol"]] - 1.0 / len(cap_picks)) < 1e-3 for p in cap_picks),
+              f"story weight share {story_share:.2f} vs units share {story_units / tot_units:.2f}")
+        print("      note: duration cap does NOT move published weight while EQUAL_WEIGHT_BOOKS=True")
+    else:
+        check("story WEIGHT share trimmed to the DISCIPLINE cap",
+              story_share <= 0.20 + 1e-6, f"{story_share:.4f}")
     check("cap emitted in the shared extra_caps schema",
           all(set(e) >= {"names", "max_units", "axis"} and e["axis"] == "duration:story" for e in entries))
     check("lowest-conviction story seats hit the 0.1u floor first",
