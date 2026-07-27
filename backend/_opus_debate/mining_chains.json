@@ -1,0 +1,272 @@
+{
+ "version": "2.0",
+ "updated": "2026-07-27",
+ "basket": "mining",
+ "lineage": {
+  "supersedes": "future_resources_chains.json v1.3 (frozen, never edited)",
+  "chain_moves": {
+   "copper_electrification": "split: producer/royalty side -> mining:copper_mining; equipment/utility side -> fdt:electrification_grid",
+   "power_for_ai": "stays in fdt (grid-equipment layer -> fdt:electrification_grid, SMR-developer layer -> fdt:nuclear_smr)",
+   "robotics_automation": "stays in fdt",
+   "quantum": "stays in fdt"
+  }
+ },
+ "exchanges": [
+  "NYSE",
+  "NASDAQ",
+  "AMEX"
+ ],
+ "floors": {
+  "lane_a": {
+   "market_cap_usd": 500000000,
+   "adv_usd": 5000000,
+   "price_min": 2
+  },
+  "lane_b": {
+   "market_cap_usd": 150000000,
+   "adv_usd": 2000000,
+   "price_min": 1
+  }
+ },
+ "chains": [
+  {
+   "id": "uranium_fuel_cycle",
+   "name": "Uranium & nuclear fuel cycle",
+   "thesis": "Reactor restarts, life extensions, new builds and datacenter-driven nuclear PPAs collide with a decade of mine under-investment; the term-contracting cycle reprices the whole fuel chain — miners, converters, enrichers, fuel services — years before spot moves show it.",
+   "value_chain_layers": [
+    "mining & ISR production",
+    "conversion & enrichment",
+    "fuel fabrication & services",
+    "physical trusts & royalties",
+    "developers (restart/greenfield)"
+   ],
+   "fmp_sectors": [
+    "Energy",
+    "Basic Materials"
+   ],
+   "fmp_industries": [
+    "Uranium"
+   ],
+   "keyword_hints": [
+    "enrichment",
+    "SWU",
+    "conversion",
+    "term contract",
+    "restart",
+    "ISR",
+    "NRC license",
+    "HALEU",
+    "utility contracting"
+   ],
+   "anchor_examples": [
+    "CCJ",
+    "UEC",
+    "UUUU",
+    "LEU",
+    "NXE",
+    "DNN",
+    "UROY"
+   ],
+   "commodity": {
+    "fmp_symbol": null,
+    "proxy_etf": "URA",
+    "spot_source": "web-cited (UxC/Numerco via press) or SRUUF/U.UN trust NAV proxy — uranium spot is NOT an FMP commodity",
+    "monetary_metal": false
+   },
+   "notes": "The one chain where the contracting cycle (term vs spot) is the regime tell. UROY is the royalty pure-play (business_model=royalty_streamer, auto-passes cash gates). Restart/greenfield developers (NXE, DNN-class) are lane_b via dated milestones (permits, FID, first drum).",
+   "fmp_industries_verify": []
+  },
+  {
+   "id": "copper_mining",
+   "name": "Copper & industrial-metal producers",
+   "thesis": "Grid build-out, datacenters, EVs and reshored manufacturing add structural copper demand into a thin project pipeline — new mines take 10+ years from discovery to first cathode; the cost curve reprices producers long before the deficit closes.",
+   "value_chain_layers": [
+    "majors & mid-tier producers",
+    "developers (permitted/FID-stage)",
+    "smelting & refining",
+    "royalty & streaming"
+   ],
+   "fmp_sectors": [
+    "Basic Materials"
+   ],
+   "fmp_industries": [
+    "Copper",
+    "Industrial Materials",
+    "Aluminum"
+   ],
+   "fmp_industries_verify": [
+    "Aluminum"
+   ],
+   "keyword_hints": [
+    "cathode",
+    "concentrate",
+    "TC/RC",
+    "AISC",
+    "porphyry",
+    "record of decision",
+    "feasibility",
+    "offtake",
+    "brownfield expansion"
+   ],
+   "anchor_examples": [
+    "FCX",
+    "SCCO",
+    "ERO",
+    "HBM",
+    "TECK"
+   ],
+   "commodity": {
+    "fmp_symbol": "HGUSD",
+    "proxy_etf": "COPX",
+    "monetary_metal": false,
+    "spot_source": "FMP commodities (COMEX HG front month) — feed-verified 2026-07-27"
+   },
+   "notes": "The PRODUCER/ROYALTY half of v1.3's copper_electrification. 'Copper' is PROVEN live (SCCO, FCX); 'Aluminum' stays unverified (no member confirmed yet) so it sits in fmp_industries_verify. SPLIT RULE: business_model producer|royalty_streamer belongs here; equipment_services|utility belongs to fdt:electrification_grid and is a mapping error if it maps here (printed + dropped). Diversified miners (TECK-class) may carry copper_mining + diversified_miners — legal 2-chain WITHIN this book."
+  },
+  {
+   "id": "precious_metals",
+   "name": "Precious metals — producers & royalties",
+   "thesis": "A monetary-debasement and central-bank-bid regime meets a decade of reserve depletion and falling grades: producers gear FCF to the gold/silver price, royalty/streamers gear to it without carrying the capex. The cycle question is whether all-in cost inflation is eating the metal move — margin, not the metal, is the thesis.",
+   "value_chain_layers": [
+    "senior producers",
+    "mid-tier & emerging producers",
+    "royalty & streaming",
+    "silver-primary producers",
+    "developers (permitted/construction-stage)"
+   ],
+   "fmp_sectors": [
+    "Basic Materials"
+   ],
+   "fmp_industries": [
+    "Gold",
+    "Silver",
+    "Other Precious Metals"
+   ],
+   "fmp_industries_verify": [],
+   "keyword_hints": [
+    "AISC",
+    "all-in sustaining cost",
+    "grade",
+    "mill throughput",
+    "royalty",
+    "stream",
+    "NSR",
+    "doré",
+    "reserve replacement",
+    "mine life",
+    "byproduct credit"
+   ],
+   "anchor_examples": [
+    "AEM",
+    "NEM",
+    "WPM",
+    "FNV",
+    "RGLD",
+    "PAAS",
+    "AG",
+    "HL"
+   ],
+   "commodity": {
+    "fmp_symbol": "GCUSD",
+    "fmp_symbol_secondary": "SIUSD",
+    "proxy_etf": "GDX",
+    "monetary_metal": true,
+    "spot_source": "FMP commodities (COMEX GC + SI front month) — both feed-verified 2026-07-27"
+   },
+   "notes": "ALL THREE industry strings PROVEN live 2026-07-27: Gold (AEM/NEM/WPM/FNV/RGLD), Silver (PAAS/AG), Other Precious Metals (HL). WPM/FNV/RGLD map business_model=royalty_streamer and auto-pass the Lane A cash/profit gates (existing bypass) but NEVER the forensic gate. MONETARY_METAL=true is load-bearing: the commodity-macro scoreboard NEUTRALIZES this chain's momentum and percentile legs so gold's own price action can never score it (CLAUDE.md gold momentum-loop guard). It ranks on miners-confirmation, the Dalio tilt and the regime read instead. Silver-primary names beta against fmp_symbol_secondary when the chain map stamps dominant_metal=silver."
+  },
+  {
+   "id": "rare_earth_strategic",
+   "name": "Rare earths & strategic metals",
+   "thesis": "Export controls turned rare earths, antimony, gallium and tungsten from commodities into strategic chokepoints; Western governments now act as forced buyers (price floors, DoD/DOE awards, stockpiles), repricing every ex-China ounce on policy datelines rather than spot.",
+   "value_chain_layers": [
+    "mining (ex-China)",
+    "separation & refining",
+    "magnet & alloy production",
+    "recycling",
+    "developers (permit/DFS-stage)"
+   ],
+   "fmp_sectors": [
+    "Basic Materials",
+    "Industrials"
+   ],
+   "fmp_industries": [
+    "Industrial Materials",
+    "Chemicals - Specialty"
+   ],
+   "keyword_hints": [
+    "rare earth",
+    "NdPr",
+    "separation",
+    "magnet",
+    "antimony",
+    "gallium",
+    "tungsten",
+    "export control",
+    "Section 232",
+    "DPA Title III",
+    "price floor",
+    "stockpile"
+   ],
+   "anchor_examples": [
+    "MP",
+    "USAR",
+    "UUUU"
+   ],
+   "commodity": {
+    "fmp_symbol": null,
+    "proxy_etf": "REMX",
+    "spot_source": "web-cited (Shanghai Metals Market NdPr via press) — NdPr is NOT an FMP commodity",
+    "monetary_metal": false
+   },
+   "notes": "The policy chain: most catalysts are government datelines, not price. 'Other Precious Metals & Mining' and 'Specialty Chemicals' are (verify) — Specialty Chemicals is included ONLY to catch processors/separators FMP files there; the chain map must drop actual chemical companies (chain_fit_confidence=low). UUUU carries uranium_fuel_cycle AND this chain (counts toward both caps).",
+   "fmp_industries_verify": []
+  },
+  {
+   "id": "diversified_miners",
+   "name": "Diversified mining majors",
+   "thesis": "The BHP/RIO class is the cash-returning, low-cost-quartile backbone of the basket: multi-commodity books that survive any single metal's downcycle and fund the next one from operating cash. The read here is capital discipline against the capex cycle — who is building at the top — not any one commodity price.",
+   "value_chain_layers": [
+    "multi-commodity majors",
+    "iron-ore & bulk producers",
+    "base-metal mid-tiers",
+    "met-coal & bulk adjacencies"
+   ],
+   "fmp_sectors": [
+    "Basic Materials"
+   ],
+   "fmp_industries": [
+    "Industrial Materials",
+    "Steel"
+   ],
+   "fmp_industries_verify": [],
+   "keyword_hints": [
+    "iron ore",
+    "met coal",
+    "capital allocation",
+    "shareholder returns",
+    "unit cost",
+    "strip ratio",
+    "brownfield",
+    "portfolio",
+    "divestment"
+   ],
+   "anchor_examples": [
+    "BHP",
+    "RIO",
+    "VALE",
+    "TECK"
+   ],
+   "commodity": {
+    "fmp_symbol": null,
+    "proxy_etf": "XME",
+    "monetary_metal": false,
+    "spot_source": "no single spot — a diversified book has no one price. commodity_beta_2y runs against proxy_etf XME (feed-verified); the per-name commodity_revenue_share from the chain map carries the actual mix"
+   },
+   "notes": "PROVEN live 2026-07-27: 'Industrial Materials' (BHP/RIO/TECK), 'Steel' (VALE). The spec's proposed 'Other Industrial Metals & Mining' DOES NOT EXIST in FMP's vocabulary — it would have screened 0 rows silently, the exact v1.0 failure mode. 'Steel' is a COARSE net: it also returns scrap-based converters (NUE/STLD/X-class) that mine NOTHING. The chain map MUST drop them — the physical anchor has to be EXTRACTION (an owned orebody/mine), not conversion or fabrication; a converter is chain_fit_confidence=low, printed and dropped. commodity_revenue_share is REQUIRED from the chain map for every name here and must NEVER default to 1.0 — a diversified book's torque is its actual mix."
+  }
+ ],
+ "vocab_note": "fmp_industries are EXACT strings from FMP /stable/available-industries — verified live 2026-07-27 against real company profiles, not guessed. Any string listed in a chain's fmp_industries_verify is NOT yet proven to return members: 0 rows there prints a WARN and the build continues; 0 rows on a PROVEN string STOPs (the anti-shrink guard). Once a live run confirms a string, delete it from fmp_industries_verify — config edit only, never code.",
+ "torque_note": "torque_metrics=false chains (equipment/tech/service cohorts) get the non-commodity metric set — gm_trajectory / rev_yoy / fcf_margin / ndebt_ebitda — and NEVER fcf_torque_10pct: there is no spot price for their output to be levered to, so a torque number would be fabricated precision. Commodity chains without an FMP spot symbol still get commodity_beta_2y against their proxy_etf.",
+ "split_note": "SPLIT RULE (FUTURE_RESOURCES_SPLIT_SPEC §3): business_model producer|royalty_streamer -> this book; equipment_services|utility -> fdt; developer -> the book owning the physical asset being developed (a copper-mine developer here, an SMR developer in fdt). royalty_streamer is a legal business_model ONLY in this book. Cross-book dual membership is FORBIDDEN — basket-dedup resolves straddlers by producer revenue share, ties to Mining, and the publish-time backstop STOPs on any intersection with the fdt payload."
+}

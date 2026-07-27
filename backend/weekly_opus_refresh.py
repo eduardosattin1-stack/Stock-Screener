@@ -2566,6 +2566,56 @@ def fr_csv():
     return len(rows)
 
 
+# ════════════════════ MINING — commodity-macro dials + winner scoreboard (SPLIT_SPEC §2) ════════════════════
+def mining_macro_mode(push_gcs=False):
+    """Build _opus_debate/mining/commodity_macro.json — the Tavi-Costa dial set + the per-chain
+    winner scoreboard the /commodities page renders and the Mining Director cites.
+
+    Runs BEFORE the Mining debates in the weekly routine so the Director cites fresh dials. The math
+    lives in _opus_debate/mining_macro.py (injectable fetchers, unit-tested offline); this wrapper
+    only supplies screener_v6.fmp, stages the payload for the frontend, and pushes to GCS.
+
+    --gcs is NOT optional in the routine: the page fetches scans/commodity_macro.json GCS-first, so
+    a run without it leaves the live object stale however fresh the local file is.
+
+    Fail-open by construction: a total FMP outage still writes a payload (every scoreboard leg pays
+    its neutral midpoint, so scores compress symmetrically and no chain is singled out) and this
+    function still exits 0 — a degraded macro read must never block the Mining publish."""
+    import subprocess
+    # KEY ORDER IS LOAD-BEARING: screener_v6 binds FMP_KEY at import (screener_v6.py:70), so keys
+    # must be in the environment BEFORE it is imported — the _fr_post.py precedent. And because
+    # another mode in this process may already have imported it with an empty key, re-bind the
+    # module attribute explicitly. Getting this wrong doesn't error, it silently produces a fully
+    # degraded payload (every dial 'missing') that LOOKS like an FMP outage.
+    E.load_api_keys()
+    import screener_v6                                          # noqa: E402
+    if not screener_v6.FMP_KEY:
+        screener_v6.FMP_KEY = os.environ.get("FMP_API_KEY", "")
+    if not screener_v6.FMP_KEY:
+        print("WARN mining-macro: no FMP_API_KEY — every dial will read 'missing' and the "
+              "scoreboard will compress to neutral. This is fail-open, not a live read.")
+    sys.path.insert(0, str(ROOT))
+    import mining_macro as MM
+    payload = MM.run(screener_v6.fmp)
+    PUB = E.FRONTEND_DIR / "public"
+    PUB.mkdir(parents=True, exist_ok=True)
+    staged = PUB / "commodity_macro.json"
+    staged.write_text(json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(f"staged {staged}")
+    if push_gcs:
+        try:
+            r = subprocess.run(f'gcloud storage cp "{staged}" '
+                               f'"gs://screener-signals-carbonbridge/scans/commodity_macro.json"',
+                               shell=True, capture_output=True, text=True, timeout=120)
+            print(f"  GCS push scans/commodity_macro.json: "
+                  f"{'OK' if r.returncode == 0 else 'FAILED ' + (r.stderr or '')[-140:]}")
+        except Exception as e:
+            print(f"  GCS push scans/commodity_macro.json ERR: {e}")
+    else:
+        print("  (no --gcs: the page reads GCS first, so the LIVE dials stay stale until you push)")
+    return len(payload.get("scoreboard") or [])
+
+
 def fr_publish(push_gcs=False):
     """Stage the public Future Resources Lane A payload (frontend/public/speculair_future_resources.json)
     AND maintain the Lane A live-forward NAV (spec §7, mirrors value_publish/disruptor_publish).
@@ -4417,6 +4467,8 @@ if __name__ == "__main__":
         fr_csv()
     elif mode == "fr-publish":
         fr_publish(push_gcs=("--gcs" in sys.argv))
+    elif mode in ("mining-macro", "mining_macro"):
+        mining_macro_mode(push_gcs=("--gcs" in sys.argv))
     elif mode in ("value-skeptic", "value_skeptic"):
         value_skeptic()
     elif mode in ("regime-skeptic", "regime_skeptic"):
