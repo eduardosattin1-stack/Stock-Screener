@@ -646,8 +646,37 @@ def build_payload(data, meta, taxonomy, regime, snapshot, today=None):
         "taxonomy_version": taxonomy.get("version"),
         "debt_cycle_phase": phase,
         "quadrant": quadrant,
+        "quadrant_basis": (snapshot or {}).get("quadrant_basis", ""),
         "risk_regime": (snapshot or {}).get("regime"),
+        "risk_score": (snapshot or {}).get("score"),
+        "regime_detail": (snapshot or {}).get("regime_detail") or {},
         "macro_asof": dc.get("asof") or (snapshot or {}).get("as_of"),
+        # The debt-cycle detail the /commodities macro header renders (gauge strip with its live/
+        # missing chips, hysteresis state, seeded/confidence honesty flags, and the gold
+        # falsification chip). Carried HERE rather than published as a second GCS object: this mode
+        # already reads the snapshot, so one producer and one fetch means the header can never
+        # disagree with the tilt and scoreboard rendered beside it. Everything is passed through
+        # verbatim — this module computes no phase and scores nothing from it.
+        "debt_cycle": {
+            "phase": phase,
+            "phase_basis": dc.get("phase_basis", ""),
+            "phase_detail": dc.get("phase_detail", ""),
+            "weeks_in_phase": dc.get("weeks_in_phase"),
+            "prior_phase": dc.get("prior_phase"),
+            "cycle_score": dc.get("cycle_score"),
+            "cycle_target": dc.get("cycle_target"),
+            "pending_target": dc.get("pending_target"),
+            "pending_count": dc.get("pending_count"),
+            "transition_blocked": dc.get("transition_blocked"),
+            "transition_implied": dc.get("transition_implied"),
+            "sub_scores": dc.get("cycle_sub_scores") or {},
+            "sub_sources": dc.get("cycle_sub_sources") or {},
+            "confidence": dc.get("confidence"),
+            "seeded": bool(dc.get("seeded")),
+            "reserve_asset_check": dc.get("reserve_asset_check") or {},
+            "expected_horizon_months": dc.get("expected_horizon_months"),
+            "sub_score_convention": "INVERTED vs the risk regime — higher = LATER in the cycle / more stress",
+        },
         "dials": dials,
         "scoreboard": board,
         "scoreboard_authority": (
