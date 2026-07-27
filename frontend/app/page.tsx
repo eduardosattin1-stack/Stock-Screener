@@ -4946,6 +4946,17 @@ export default function Dashboard(){
                   )}
 
                   {/* Speculair Future Disruptive Tech — the machine/equipment half of the Future Resources split (FUTURE_RESOURCES_SPLIT_SPEC.md); the mining half lives on /commodities. Reads GCS live, falling back to the still-live FR payload until the maiden fdt-publish --gcs lands. */}
+                  {(() => {
+                    // Detect the migration fallback: no NATIVE fdt tracking/engine present means the
+                    // card is rendering the still-live Future Resources payload under the new title.
+                    // That data carries the OLD v1.3 six-chain taxonomy (uranium_fuel_cycle,
+                    // copper_electrification, etc.) which no longer exists in fdt_chains.json, plus
+                    // the old XME+URA benchmark and "FR"-prefixed thesis text — all correct for what
+                    // it is, but silently confusing under an "FDT" label without saying so. Honest
+                    // banner (house convention) rather than letting stale-taxonomy data pass as native.
+                    const isLegacyFallback = !fdtApex.fdt_tracking && !fdtApex.fdt_tracking_weighted
+                      && !!(fdtApex.fr_tracking || fdtApex.fr_tracking_weighted || (fdtApex.apex_basket || []).length);
+                    return (
                   <div style={{ background: "var(--bg-surface)", border: "1px solid var(--amber)", borderRadius: 12, padding: "20px 24px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                       <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>
@@ -4958,6 +4969,11 @@ export default function Dashboard(){
                     <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 14, lineHeight: 1.5 }}>
                       The machines that build the future: grid &amp; electrification equipment, SMR and reactor services, power-for-AI, robotics, and quantum. Backlog durability, gross-margin trajectory and capital discipline drive the score; valuation is a guard, never the driver. Every seat still names the physical thing it makes, moves, powers or instruments (the anti-Visa rule). The mining half of this book — uranium, copper, precious metals, rare earths, diversified miners — now has its own page at /commodities with the Dalio/Costa macro layer. Own NAV chain, never blended with any other book; Lane B developers are a separate event tracker, not part of this NAV.
                     </div>
+                    {isLegacyFallback && (
+                      <div style={{ fontSize: 9.5, color: "var(--amber)", fontFamily: "var(--font-mono)", lineHeight: 1.5, marginBottom: 14, padding: "8px 12px", borderRadius: 6, background: "var(--amber-light)", border: "1px solid var(--amber)" }}>
+                        ⚠ Showing the still-live Future Resources holdings (old six-chain taxonomy, "FR"-prefixed thesis, 50/50 XME+URA benchmark) as an interim placeholder — the maiden fdt-publish hasn&apos;t landed yet. This is NOT the Future Disruptive Tech book; it will replace this record automatically once fdt-publish --gcs runs.
+                      </div>
+                    )}
                     {(fdtApex.apex_basket || []).length === 0 && (
                       <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)", padding: "10px 12px", borderRadius: 6, background: "var(--bg)", border: "1px dashed var(--border)" }}>
                         Awaiting the maiden publish. The chain runs locally on the operator box (fdt-universe → chain map → debates → Director → fdt-publish --gcs); this card lights up the moment the payload lands on GCS.
@@ -5129,6 +5145,7 @@ export default function Dashboard(){
                       </div>
                     )}
                   </div>
+                    ); })()}
 
                   {/* FR Director Memo — the Future Resources Director's reasoning (gates, chain-concentration stress, rotation, sizing) */}
                   {(fdtApex.fdt_memo || fdtApex.fr_memo) && (
