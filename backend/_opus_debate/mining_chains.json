@@ -159,6 +159,7 @@
    "anchor_examples": [
     "AEM",
     "NEM",
+    "B",
     "WPM",
     "FNV",
     "RGLD",
@@ -173,7 +174,7 @@
     "monetary_metal": true,
     "spot_source": "FMP commodities (COMEX GC + SI front month) — both feed-verified 2026-07-27"
    },
-   "notes": "ALL THREE industry strings PROVEN live 2026-07-27: Gold (AEM/NEM/WPM/FNV/RGLD), Silver (PAAS/AG), Other Precious Metals (HL). WPM/FNV/RGLD map business_model=royalty_streamer and auto-pass the Lane A cash/profit gates (existing bypass) but NEVER the forensic gate. MONETARY_METAL=true is load-bearing: the commodity-macro scoreboard NEUTRALIZES this chain's momentum and percentile legs so gold's own price action can never score it (CLAUDE.md gold momentum-loop guard). It ranks on miners-confirmation, the Dalio tilt and the regime read instead. Silver-primary names beta against fmp_symbol_secondary when the chain map stamps dominant_metal=silver."
+   "notes": "ALL THREE industry strings PROVEN live 2026-07-27: Gold (AEM/NEM/WPM/FNV/RGLD), Silver (PAAS/AG), Other Precious Metals (HL). WPM/FNV/RGLD map business_model=royalty_streamer and auto-pass the Lane A cash/profit gates (existing bypass) but NEVER the forensic gate. MONETARY_METAL=true is load-bearing: the commodity-macro scoreboard NEUTRALIZES this chain's momentum and percentile legs so gold's own price action can never score it (CLAUDE.md gold momentum-loop guard). It ranks on miners-confirmation, the Dalio tilt and the regime read instead. Silver-primary names beta against fmp_symbol_secondary when the chain map stamps dominant_metal=silver. TICKER NOTE (verified live 2026-07-27): Barrick now trades as 'B' (Barrick Mining Corporation) — the old GOLD ticker is dead; a first-run checklist that greps for GOLD will report a false miss. Measured cohort health: the 'Gold' string alone returns ~25 US-listed names at mcap>=$500M, so this chain screens rich; TSX/TO dual listings and funds (FSAGX-class) are excluded upstream by the exchange filter and isEtf/isFund=false."
   },
   {
    "id": "rare_earth_strategic",
@@ -263,7 +264,7 @@
     "monetary_metal": false,
     "spot_source": "no single spot — a diversified book has no one price. commodity_beta_2y runs against proxy_etf XME (feed-verified); the per-name commodity_revenue_share from the chain map carries the actual mix"
    },
-   "notes": "PROVEN live 2026-07-27: 'Industrial Materials' (BHP/RIO/TECK), 'Steel' (VALE). The spec's proposed 'Other Industrial Metals & Mining' DOES NOT EXIST in FMP's vocabulary — it would have screened 0 rows silently, the exact v1.0 failure mode. 'Steel' is a COARSE net: it also returns scrap-based converters (NUE/STLD/X-class) that mine NOTHING. The chain map MUST drop them — the physical anchor has to be EXTRACTION (an owned orebody/mine), not conversion or fabrication; a converter is chain_fit_confidence=low, printed and dropped. commodity_revenue_share is REQUIRED from the chain map for every name here and must NEVER default to 1.0 — a diversified book's torque is its actual mix."
+   "notes": "PROVEN live 2026-07-27: 'Industrial Materials' (BHP/RIO/TECK), 'Steel' (VALE). The spec's proposed 'Other Industrial Metals & Mining' DOES NOT EXIST in FMP's vocabulary — it would have screened 0 rows silently, the exact v1.0 failure mode. MEASURED 2026-07-27: 'Steel' on NYSE at mcap>=$500M returns 14 names and exactly ONE (VALE) belongs here — the other 13 are converters/processors (NUE, MT, CRS, RS, PKX, GGB, TX, CMC, CLF, WS, SID, MTUS, SXC). Expect ~93% drop on this string; that is the designed cost of not losing VALE, whose FMP industry is 'Steel' and which appears under no other string. THE DISCRIMINATOR IS REVENUE SOURCE, NOT 'does it own a mine' — CLF, MT and PKX all hold captive ore and would pass a naive extraction test. A name belongs here only if it SELLS THE ORE/CONCENTRATE (VALE sells iron ore; BHP sells copper/iron/coal); a name that sells steel products made from ore — captive or purchased — is a CONVERTER: chain_fit_confidence=low, printed and dropped, however integrated it is. commodity_revenue_share is REQUIRED from the chain map for every name here and must NEVER default to 1.0 — a diversified book's torque is its actual mix."
   }
  ],
  "vocab_note": "fmp_industries are EXACT strings from FMP /stable/available-industries — verified live 2026-07-27 against real company profiles, not guessed. Any string listed in a chain's fmp_industries_verify is NOT yet proven to return members: 0 rows there prints a WARN and the build continues; 0 rows on a PROVEN string STOPs (the anti-shrink guard). Once a live run confirms a string, delete it from fmp_industries_verify — config edit only, never code.",
