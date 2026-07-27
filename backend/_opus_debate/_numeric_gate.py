@@ -64,14 +64,33 @@ RR_DIVERGE_PCT = 0.25      # asserted prose ratio vs computed ratio diverging be
 ER_TOL_PTS = 5.0           # Director expected_return_pct vs recomputed -- beyond this -> overwrite + WARN
 
 
-def check_record(rec, live_quotes=None):
+def check_record(rec, live_quotes=None, scan_by=None):
     """Run G0-G8 against one results_regime-style record (with a `valuation` block, real or
     --legacy-synthesized). Returns {gate, reasons[], computed{}}. Never raises; a computation it
     cannot perform is a WARN with a stated reason, not a crash."""
     live_quotes = live_quotes or {}
+    scan_by = scan_by or {}
     reasons = []
     val = rec.get("valuation") or {}
     sym = rec.get("symbol") or "?"
+    scan_row = scan_by.get(sym) or {}          # G4b mechanical floor anchor reads year_low from here
+
+    # G-Q — QUANT COVERAGE (2026-07-27, Bruno: "let's not pass stocks without the quantitative layer").
+    # A name absent from the nightly scan carries NONE of the deterministic cross-checks every other
+    # seat had to survive — no p_fcf, no ROIC, no Piotroski, no Altman-Z, no multi-model MoS spread.
+    # The moat-erosion screen, the duration bucket and the 52-week floor anchor are all structurally
+    # blind on it, so it competes for a seat having bypassed the quantitative layer entirely (DUE.DE
+    # held an apex seat this way). Such a name may still be DEBATED and tracked; it may not be SEATED.
+    # FAIL-OPEN, deliberately: this fires ONLY when the scan is demonstrably loaded (a populated
+    # scan_by) and this symbol is genuinely missing from it. With no scan at all — GCS down, mirror
+    # absent — every name would otherwise be excluded at once, and a data outage must never empty the
+    # book (the standing invariant). Absence of evidence is not evidence of absence.
+    if scan_by and len(scan_by) > 200 and sym not in scan_by:
+        return {"gate": "EXCLUDE_ELIGIBILITY",
+                "reasons": ["GQ_NO_QUANT_COVERAGE(absent from the nightly scan — no p_fcf/ROIC/"
+                            "Piotroski/Altman-Z/multi-model MoS; moat, duration and floor checks "
+                            "cannot evaluate it)"],
+                "computed": {"quant_coverage": False}}
 
     # G0 — schema presence, with a FETCH RESCUE before rejecting. A record missing live_price is not
     # necessarily a bad pick — the debate agent may simply have skipped the quote step (the exact
@@ -150,6 +169,38 @@ def check_record(rec, live_quotes=None):
         computed["floor_distance_pct"] = round((live - bear) / live * 100, 2) if live else None
         if bear >= live:
             reasons.append("G4_BEAR_ABOVE_SPOT")
+
+    # G4b — MECHANICAL FLOOR ANCHOR (2026-07-27, Bruno: "the floor seems purely mechanical as well").
+    # bear_px is the CRO's JUDGEMENT, and judgement anchors to the screen: after WKL.AS rallied 9% its
+    # fresh committee wrote an adverse case of 64 against a 67.36 quote — 17% ABOVE the 54.64 the stock
+    # actually traded at inside the same twelve months. Six of ten thin-floor names had a "worst case"
+    # above their own 52-week low. So when the market has DEMONSTRATED a lower price, that traded price
+    # outranks the opinion: the effective bear becomes min(model bear, 52-week low).
+    # Direction is one-way and that is the point — this can only ever make an adverse case DEEPER. It
+    # cannot be used to manufacture a passing ratio: a deeper bear widens the floor (helping the floor
+    # check, which exists to confirm the cushion is real) while SHRINKING rr (a less flattering ratio).
+    # WKL.AS becomes an honest 2.25:1 on 18.9% real downside instead of a fabricated 8.52:1 on 4.99%.
+    # The model's number is preserved as bear_px_model; a bear already below the low is left alone.
+    # The scan row must describe the SAME reality as the record before its low is trusted: if the
+    # scan's own price is nowhere near the record's live price, the row is stale, a different listing,
+    # or simply a different security, and its 52-week low says nothing about this position.
+    yl = None
+    if isinstance(scan_row, dict):
+        _sp = scan_row.get("price")
+        if (isinstance(_sp, (int, float)) and _sp > 0 and isinstance(live, (int, float)) and live > 0
+                and abs(_sp / live - 1) <= 0.25):
+            yl = scan_row.get("year_low")
+    if have_bear and isinstance(yl, (int, float)) and yl > 0 and live and yl < live and bear > yl:
+        computed["bear_px_model"] = bear
+        computed["bear_px_source"] = "52w_low_anchor"
+        computed["year_low"] = yl
+        bear = float(yl)
+        computed["bear_px_effective"] = bear
+        reasons.append(f"FLOOR_ANCHORED_TO_52W_LOW(model={computed['bear_px_model']},low={yl})")
+        computed["bear_return_pct"] = round((bear / live - 1) * 100, 2)
+        computed["floor_distance_pct"] = round((live - bear) / live * 100, 2)
+    elif have_bear:
+        computed["bear_px_source"] = "model"
 
     # G5 — R:R recompute + prose-ratio kill; G6 — expected-return arithmetic
     rr_flags = []
@@ -296,6 +347,34 @@ def run(dry_run=True, legacy=True, only_symbol=None, offline=False, enforce=Fals
                     continue
             live_quotes = _nc.fetch_live_quotes(syms, fmp_key=key)
 
+    # Scan rows for the G4b mechanical floor anchor (year_low). Local mirror first, then GCS — the
+    # operator box has no frontend/public/latest_global.json, and a silent {} here would quietly turn
+    # the anchor off (the exact fail-silent class that left the moat teeth inert on 2026-07-27).
+    # --offline skips it entirely: no network, and it keeps the unit tests hermetic (their fixtures use
+    # real-looking tickers, so a live scan would anchor a synthetic record to a real 52-week low and
+    # would exclude any fixture symbol the scan happens not to carry).
+    scan_by = {}
+    if offline:
+        print("floor anchor: --offline, scan not loaded (bear cases stay as written, no coverage rule)")
+    for _p in ([] if offline else
+               (BK.parent / "frontend" / "public" / "latest_global.json", ROOT / "latest_global.json")):
+        try:
+            _d = json.load(open(_p, encoding="utf-8"))
+            scan_by = {x.get("symbol"): x for x in _d.get("stocks", []) if x.get("symbol")}
+            if scan_by:
+                break
+        except Exception:
+            continue
+    if not scan_by and not offline:
+        try:
+            sys.path.insert(0, str(BK / "alpha_compounder"))
+            import gcs_io
+            _d = gcs_io.gcs_read_json("scans/latest_global.json") or {}
+            scan_by = {x.get("symbol"): x for x in _d.get("stocks", []) if x.get("symbol")}
+        except Exception as _e:
+            print(f"WARN gate: no scan for the 52w-low floor anchor ({_e}) — bear cases stay as written")
+    print(f"floor anchor: {len(scan_by)} scan rows available for the 52-week-low check")
+
     counts = {"PASS": 0, "WARN": 0, "REJECT": 0, "EXCLUDE_ELIGIBILITY": 0}
     reason_counts = {}
     rows = []
@@ -310,7 +389,7 @@ def run(dry_run=True, legacy=True, only_symbol=None, offline=False, enforce=Fals
         if legacy and "valuation" not in rec:
             work = dict(rec)
             work["valuation"] = synthesize_legacy_valuation(rec)
-        result = check_record(work, live_quotes)
+        result = check_record(work, live_quotes, scan_by)
         # --final: post-repair sweep — a record STILL rejecting after its one repair re-debate batch
         # downgrades to EXCLUDE_ELIGIBILITY so the pipeline (Director/publish) never wedges on it.
         if final and result["gate"] == "REJECT":

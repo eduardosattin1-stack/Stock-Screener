@@ -1240,6 +1240,169 @@ def value_publish(push_gcs=False):
 RECOVERY_FAMS = ("iv15_deep_value", "ev_gross_profit", "ev_gp", "acquirers_multiple")
 
 
+_REPAIR_WORKFLOW = r"""export const meta = {
+  name: 'gate-repair',
+  description: 'Re-derive the specific number a record got wrong, blind to the gate threshold',
+  phases: [{ title: 'Repair', model: 'opus' }],
+}
+const DIR = 'backend/_opus_debate'
+const JOBS = __JOBS__
+const BATCH = 6
+phase('Repair')
+log(`Repairing ${JOBS.length} record(s) whose numbers - not whose theses - failed the gate.`)
+for (let b = 0; b < JOBS.length; b += BATCH) {
+  await parallel(JOBS.slice(b, b + BATCH).map(j => () => agent(
+    'RECORD REPAIR for ' + j.sym + '. A deterministic arithmetic check found a DEFECT in one part of this '
+    + 'record. Your job is to re-derive that part CORRECTLY from evidence. This is NOT a re-underwriting: '
+    + 'the thesis, the verdict and the conviction are NOT yours to change.\n\n'
+    + 'THE DEFECT: ' + j.brief + '\n\n'
+    + '1. Read ' + DIR + '/results_regime/' + j.sym + '.json IN FULL - especially bear_thesis, sop_bear and '
+    + 'the valuation block.\n'
+    + '2. Fetch the CURRENT quote via the FMP MCP tools (ToolSearch, keyword "FMP quote"). State the price '
+    + 'and the currency of the listing you are quoting. For a dual-listed name, use the listing the record '
+    + 'is written in.\n'
+    + '3. Re-derive ONLY the defective field(s), from evidence. For an ADVERSE-CASE (bear_px) re-derivation, '
+    + 'build it bottom-up from what would actually happen to THIS business in a bad outcome - the trough '
+    + 'multiple it traded at in its last real drawdown, the earnings decline its own bear_thesis describes, '
+    + 'balance-sheet stress, the loss of the specific driver the bear names. Do NOT derive it from the '
+    + 'current price, and do NOT pick a round number below spot.\n'
+    + '4. HONESTY REQUIREMENT, and this outranks everything else: report the number your evidence supports. '
+    + 'If that adverse case sits close to the current price, KEEP IT CLOSE and say why - a business whose '
+    + 'downside is genuinely limited is a legitimate finding, not a problem to solve. If your evidence says '
+    + 'the adverse case is far below spot, say that. You are NOT being asked to move any number in any '
+    + 'direction, and no threshold, target or passing condition applies to your answer. An unchanged number '
+    + 'with a documented basis is a complete and successful repair.\n'
+    + '5. Write (Write tool) VALID JSON to ' + DIR + '/_gate_repair/' + j.sym + '.json = {symbol:"' + j.sym + '", '
+    + 'live_price(number), price_currency(string), bear_px(number|null), base_fv_px(number|null), '
+    + 'bull_px(number|null), downside_floor_px(number|null - ONLY a structural floor: deal terms, net cash '
+    + 'per share, a tender; else null), basis(2-4 sentences: exactly how you derived each number you changed, '
+    + 'with the dated evidence), changed(array of the field names you actually changed), unchanged_reason'
+    + '(string - "" unless you changed nothing, in which case why the original stands)}. Never fabricate a '
+    + 'price or a filing. Reply exactly: DONE',
+    { label: 'repair:' + j.sym, phase: 'Repair', agentType: 'general-purpose', model: 'opus' })))
+}
+log('Repair pass complete - re-run the numeric gate to see what survives.')
+return 'DONE'
+"""
+
+# Gate-failure taxonomy (2026-07-27, Bruno: "could the pipeline fix the record instead of just dropping a
+# good pick?"). Only DATA and FLOOR defects are repairable, and only by re-deriving from evidence — the
+# repair agent is never told the threshold, never told which direction to move, and an unchanged number is
+# an accepted outcome. THESIS failures (skeptic REFUTED / forensic EXCLUDE) are NEVER repaired: a kill is a
+# judgement, not an arithmetic slip. CLOSED failures are not defects at all — the price passed the target.
+_REPAIR_DATA_CODES = ("G0_NO_CURRENCY", "G1B_CURRENCY_MISMATCH", "G1B_CURRENCY_UNSTATED",
+                      "G1A_PRICE_MISMATCH", "G1A_PRICE_DRIFT")
+_REPAIR_FLOOR_CODES = ("THIN_FLOOR", "TINY_FLOOR")
+
+
+def _classify_gate_failure(rec):
+    """-> (category, brief). category in {data, floor, closed, thesis, none}."""
+    g = rec.get("numeric_gate")
+    if g not in ("REJECT", "EXCLUDE_ELIGIBILITY"):
+        return "none", ""
+    codes = [str(c) for c in (rec.get("numeric_gate_reasons") or [])]
+    val = rec.get("valuation") or {}
+    live, base, bear = rec.get("live_price"), val.get("base_fv_px"), val.get("bear_px")
+    # CLOSED: the quote has caught or passed the base case — nothing to repair, the opportunity is gone.
+    if isinstance(live, (int, float)) and isinstance(base, (int, float)) and base > 0 and live >= base * 0.98:
+        return "closed", f"live {live} has reached the base case {base} — no upside left to underwrite"
+    if any(c.startswith(_REPAIR_DATA_CODES) for c in codes):
+        return "data", ("the record's stated price/currency does not reconcile with the live quote "
+                        f"({'; '.join(c for c in codes if c.startswith(_REPAIR_DATA_CODES))}). "
+                        "Restate the whole valuation block off the correct live quote and currency.")
+    if any(c.startswith(_REPAIR_FLOOR_CODES) for c in codes):
+        return "floor", (f"the adverse case ({bear}) sits very close to the live price ({live}), so the "
+                         "record's risk/reward is being produced by the size of that gap rather than by "
+                         "the business. Re-derive the adverse case from evidence.")
+    if bear is None or base is None:
+        return "data", "the record carries no typed valuation numbers at all — derive bear/base/bull."
+    return "thesis", "; ".join(codes)
+
+
+def gate_repair():
+    """Emit a focused repair workflow for records whose NUMBERS failed the gate (never their theses).
+    Prints the taxonomy so the operator can see what is repairable and what is genuinely dead."""
+    (ROOT / "_gate_repair").mkdir(parents=True, exist_ok=True)
+    for f in (ROOT / "_gate_repair").glob("*.json"):
+        try:
+            f.unlink()
+        except OSError:
+            pass
+    buckets = {"data": [], "floor": [], "closed": [], "thesis": []}
+    jobs = []
+    for f in sorted(RES.glob("*.json")):
+        try:
+            rec = json.load(open(f, encoding="utf-8"))
+        except Exception:
+            continue
+        cat, brief = _classify_gate_failure(rec)
+        if cat in ("none", ""):
+            continue
+        sym = rec.get("symbol") or f.stem
+        buckets[cat].append(sym)
+        if cat in ("data", "floor"):
+            jobs.append({"sym": sym, "cat": cat, "brief": brief})
+    print(f"gate-repair taxonomy: {len(jobs)} repairable "
+          f"[data={len(buckets['data'])} {buckets['data']}, floor={len(buckets['floor'])} {buckets['floor']}] "
+          f"| NOT repaired: closed={len(buckets['closed'])} {buckets['closed']} "
+          f"(price reached the target), thesis={len(buckets['thesis'])} {buckets['thesis']}")
+    if not jobs:
+        print("gate-repair: nothing to repair.")
+        return 0
+    out = ROOT / "_gate_repair_workflow.js"
+    out.write_text(_REPAIR_WORKFLOW.replace("__JOBS__", json.dumps(jobs)), encoding="utf-8", newline="\n")
+    print(f"REPAIR_WORKFLOW={out.resolve()}")
+    return len(jobs)
+
+
+def gate_repair_merge():
+    """Fold accepted repairs back into the records, with provenance. Idempotent; prints every change so a
+    reviewer can see exactly which number moved and on whose say-so. Re-run `numeric-gate --enforce` after."""
+    d = ROOT / "_gate_repair"
+    if not d.is_dir():
+        print("gate-repair-merge: no repair shards.")
+        return 0
+    n_applied = n_same = 0
+    for f in sorted(d.glob("*.json")):
+        try:
+            rp = json.load(open(f, encoding="utf-8"))
+        except Exception as e:
+            print(f"  WARN unreadable shard {f.name}: {e}")
+            continue
+        sym = rp.get("symbol") or f.stem
+        recf = RES / f"{sym}.json"
+        if not recf.exists():
+            continue
+        rec = json.load(open(recf, encoding="utf-8"))
+        val = dict(rec.get("valuation") or {})
+        before = {k: val.get(k) for k in ("live_price", "price_currency", "bear_px", "base_fv_px", "bull_px")}
+        changed = {}
+        for k in ("live_price", "price_currency", "bear_px", "base_fv_px", "bull_px", "downside_floor_px"):
+            v = rp.get(k)
+            if v is not None and v != val.get(k):
+                val[k] = v
+                changed[k] = {"from": before.get(k), "to": v}
+        if isinstance(rp.get("live_price"), (int, float)):
+            rec["live_price"] = rp["live_price"]
+        if not changed:
+            n_same += 1
+            print(f"  {sym}: UNCHANGED — {str(rp.get('unchanged_reason') or rp.get('basis'))[:120]}")
+            rec.setdefault("gate_repair", {}).update({"at": datetime.now().strftime("%Y-%m-%d"),
+                                                      "outcome": "unchanged",
+                                                      "basis": str(rp.get("basis") or "")[:600]})
+        else:
+            n_applied += 1
+            print(f"  {sym}: REPAIRED {list(changed)} — " + "; ".join(
+                f"{k} {c['from']}->{c['to']}" for k, c in changed.items()))
+            rec["valuation"] = val
+            rec["gate_repair"] = {"at": datetime.now().strftime("%Y-%m-%d"), "outcome": "repaired",
+                                  "changed": changed, "basis": str(rp.get("basis") or "")[:600]}
+        recf.write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(f"gate-repair-merge: {n_applied} record(s) repaired, {n_same} left unchanged by the repairer "
+          f"(an unchanged number IS a valid outcome). Re-run `numeric-gate --legacy --enforce` now.")
+    return n_applied
+
+
 def recovery_sleeve(push_gcs=False):
     """PAPER recovery sleeve (2026-07-21 apex-reassessment #3, Bruno's decision): FIRED as an ENTRY
     signal, not a down-rate. The 2026-07 study: the top basket winners (DAVE +55%, SEZL +45%, ...)

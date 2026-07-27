@@ -76,10 +76,35 @@ def _load(p, default=None):
 
 
 def _scan_by_sym():
+    """The scan, for the moat teeth and the duration bucket. FAILS LOUD (2026-07-27).
+
+    This used to read two LOCAL paths and silently return {} when neither existed — which is exactly
+    what happened on the operator box, where frontend/public/latest_global.json is not materialised.
+    An empty scan does not raise: moat_features just sees no p_fcf/roic and stamps erosion="" /
+    roic_below_hurdle=False, and every seat gets duration_bucket="unknown". So the moat terminal-erosion
+    cap and the debt-cycle duration cap both went INERT on the 2026-07-27 book without a single error —
+    the caps reported "nothing to cap" when the truth was "nothing to look at". GCS is now the fallback,
+    and an empty result is a loud WARN rather than a shrug."""
     for p in (BK.parent / "frontend" / "public" / "latest_global.json", ROOT / "latest_global.json"):
         d = _load(p)
         if d:
-            return {x.get("symbol"): x for x in d.get("stocks", []) if x.get("symbol")}
+            by = {x.get("symbol"): x for x in d.get("stocks", []) if x.get("symbol")}
+            if by:
+                return by
+    try:
+        if str(BK / "alpha_compounder") not in sys.path:
+            sys.path.insert(0, str(BK / "alpha_compounder"))   # gcs_io lives in the subpackage
+        import gcs_io
+        d = gcs_io.gcs_read_json("scans/latest_global.json") or {}
+        by = {x.get("symbol"): x for x in d.get("stocks", []) if x.get("symbol")}
+        if by:
+            print(f"scan: local mirror absent -> read {len(by)} names from GCS")
+            return by
+    except Exception as e:
+        print(f"WARN scan: GCS fallback failed ({e})")
+    print("WARN scan: NO scan data available (local mirror absent, GCS unreachable) — the moat-erosion "
+          "teeth and the duration bucket CANNOT evaluate and will report nothing-to-cap. Do not read "
+          "that as a clean book.")
     return {}
 
 
