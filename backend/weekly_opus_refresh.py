@@ -335,7 +335,12 @@ def _fmp_segments(sym):
 
 _RADAR_FIELDS = ("p_fcf", "dcf_fcff_mos", "epv_mos", "graham_revised_mos", "owner_earnings_mos",
                  "iv15_deep_value_mos", "revenue_yoy", "revenue_cagr_3y", "eps_yoy", "gross_margin",
-                 "net_margin", "roic_avg", "altman_z", "sma200", "proximity_52wk", "sector_momentum")
+                 "net_margin", "roic_avg", "altman_z", "sma200", "proximity_52wk", "sector_momentum",
+                 # 2026-07-28: year_high/year_low were MISSING, so value_input's pct_off_52w_high —
+                 # which reads this universe, not the scan — evaluated to None on all 176 rows and the
+                 # narrow washout exception (shipped 2026-07-21) could never fire on any name. The lows
+                 # also feed the gate's 52-week floor anchor when it reads through this path.
+                 "year_high", "year_low")
 
 
 # ── Peer-identity / live-multiple overrides (Radar mis-map backstop) ──────────
@@ -728,7 +733,15 @@ def value_input():
         price = s.get("price") or u.get("price")
         net_debt_gt_mktcap = bool(isinstance(net_debt, (int, float)) and isinstance(mktcap, (int, float))
                                   and net_debt > 0 and net_debt > mktcap)
-        sop_num = _val_money(r.get("sop_fair_value"))
+        # TYPED FIRST (2026-07-28). sop_mos_pct is the value rubric's SYSTEM OF RECORD, and it was
+        # mined out of prose: BOSS.DE's "38 (base case = the final cash offer; standalone intrinsic
+        # ~76 ...)" averaged two unrelated numbers into ~57 and published a 50.3% margin of safety on
+        # a name trading 0.2% BELOW its own cash offer. OPM.PA (47.7 vs its own stated ~22%) and FOX
+        # (13.3 vs ~7%) failed the same way. The typed block is arithmetic-gated and already carries
+        # the right number, so it wins; prose remains the fallback for pre-typed records.
+        _typed_fv = (r.get("valuation") or {}).get("base_fv_px")
+        sop_num = _typed_fv if isinstance(_typed_fv, (int, float)) and _typed_fv > 0 \
+            else _val_money(r.get("sop_fair_value"))
         sop_mos = round((sop_num - price) / price * 100, 1) if (sop_num and isinstance(price, (int, float)) and price > 0) else None
         freshness_stale = False
         fresh_note = ""
@@ -2528,7 +2541,10 @@ def fr_input():
         mt = rm.get(sym) or {}
         val = r.get("valuation") or {}
         price = r.get("live_price") or val.get("live_price") or u.get("price")
-        sop_num = _val_money(r.get("sop_fair_value")) or (val.get("base_fv_px") if isinstance(val.get("base_fv_px"), (int, float)) else None)
+        # TYPED FIRST (2026-07-28) — same inversion as value_input carried: the prose parse was tried
+        # BEFORE the arithmetic-gated typed number, so a mis-parsed sentence beat a correct field.
+        sop_num = (val.get("base_fv_px") if isinstance(val.get("base_fv_px"), (int, float)) and val.get("base_fv_px") > 0
+                   else _val_money(r.get("sop_fair_value")))
         sop_mos = round((sop_num - price) / price * 100, 1) if (sop_num and isinstance(price, (int, float)) and price > 0) else None
         iscore = r.get("interrogator_score")
         traj = (r.get("trajectory") or "").upper()
@@ -3244,6 +3260,23 @@ def prep():
     for p in baskets.get("apex_basket", []):
         if p.get("symbol"):
             sym_meths.setdefault(p["symbol"], []).append("apex")
+    # HELD VALUE SEATS (2026-07-28). The union above covers the REGIME apex only, so a value-book seat
+    # that aged out of the raw screen entered no universe, got no debate, and left the value Director
+    # grading it on last week's numbers with no record to check — NTES did exactly that on 2026-07-27
+    # (absent from the 184-name screen, absent from the regime apex, so absent from value_grade_input
+    # entirely while still holding a seat). A name you own is re-underwritten, full stop.
+    try:
+        _vapex = gcs_io.gcs_read_json("scans/speculair_value_apex.json") or {}
+        _vheld = [p.get("symbol") for p in
+                  (list(_vapex.get("apex_basket") or _vapex.get("apex") or [])
+                   + list(_vapex.get("runner_ups") or [])) if isinstance(p, dict) and p.get("symbol")]
+        _vadded = [s for s in _vheld if s not in sym_meths]
+        for s in _vheld:
+            sym_meths.setdefault(s, []).append("value_apex")
+        if _vadded:
+            print(f"held value seats unioned into the universe: {len(_vadded)} not otherwise screened {_vadded}")
+    except Exception as _e:
+        print(f"WARN: could not union the held value seats ({_e}) — a value holding may go un-underwritten")
 
     scan = gcs_io.gcs_read_json("scans/latest_global.json") or json.load(
         open("../frontend/public/latest_global.json", encoding="utf-8"))
