@@ -1466,6 +1466,17 @@ _SKEPTIC_BOOKS = {
                "wf": "_regime_skeptic_workflow.js", "env_line": "REGIME_SKEPTIC_WORKFLOW"},
     "disruptor": {"apex": "disruptor/apex_basket_disruptor.json", "shards": "_skeptic_disruptor",
                   "wf": "_disruptor_skeptic_workflow.js", "env_line": "DISRUPTOR_SKEPTIC_WORKFLOW"},
+    # mining/fdt (2026-07-27 split): the FR Lane A chain these books were cloned from shipped with
+    # NO skeptic tier by design (spec §5 — physical/commodity names leaned on the Interrogator gate +
+    # numeric gate + deterministic caps instead). _mining_post.py/_fdt_post.py were built WITH
+    # consume_skeptic wired in from day one ("the disruptor got its skeptic late, precisely because
+    # the highest-vol book lacked one — do not repeat that gap" is this project's own repeated
+    # lesson) — but nothing produced the shards until this entry: consume_skeptic no-ops silently
+    # when the shard dir doesn't exist, so the post layer's skeptic teeth were dead code without it.
+    "mining": {"apex": "mining/apex_basket_mining.json", "shards": "_skeptic_mining",
+               "wf": "_mining_skeptic_workflow.js", "env_line": "MINING_SKEPTIC_WORKFLOW"},
+    "fdt": {"apex": "fdt/apex_basket_fdt.json", "shards": "_skeptic_fdt",
+            "wf": "_fdt_skeptic_workflow.js", "env_line": "FDT_SKEPTIC_WORKFLOW"},
 }
 
 _SKEPTIC_ATTACKS = {
@@ -1478,6 +1489,12 @@ _SKEPTIC_ATTACKS = {
     # fresh-crash lane (2026-07-17): the name reached the debate BECAUSE it just broke hard -
     # so the strongest bear case is that the market is right and the knife keeps falling.
     "fresh_crash": "(a) THE CRASH IS DESERVED - this name is here because it broke 20%+ in weeks; find WHAT broke it (the specific print, guide-down, loss, ruling) from primary sources and attack the debate's framing of it as temporary: is the cause actually STRUCTURAL (demand reset, share loss, pricing regime change) dressed as a one-quarter miss? (b) TRAILING-METRIC ILLUSION - every quality metric in the bundle (ROIC, margins, Piotroski) is PRE-crash trailing data; rebuild the forward picture from the newest guidance/estimates - does the quality survive the event, or is the screen crediting a business that no longer exists? (c) FALLING-KNIFE MECHANICS - estimate-revision momentum, insider/institutional selling since the break, index/fund forced supply still overhanging; a fresh break with revisions still falling has no washout. (d) HIDDEN DISQUALIFIER - covenant proximity at the new run-rate, guidance withdrawn, auditor/CFO changes around the event.",
+    # mining lane (2026-07-27 split): the resource sector's promoter-density attacks — cost-curve
+    # and reserve claims are the load-bearing numbers a physical producer can most easily dress up.
+    "mining": "(a) COST-CURVE TRUTH - does the debate's cost-curve/AISC or unit-cost claim verify against the company's own PRIMARY cost guidance (10-K/technical report/investor day), not just the deterministic ebitda_margin_band proxy? (b) RESERVE/CONTRACT TRUTH - does the reserve life or contract-cover figure verify against the latest technical report/10-K, or is it stale, aggregated misleadingly, or narrative without a filed number? (c) CYCLICAL-PEAK CHEAPNESS - is the valuation guard passing because the name is genuinely cheap, or because peak-cycle commodity earnings make ANY producer look cheap right now (cross-check the chain's regime state - a TAILWIND-regime chain near its cycle tripwires with a passing valuation guard is the classic trap)? (d) HIDDEN DISQUALIFIER - an undisclosed reserve downgrade, a permit/license risk, serial equity dilution funding a capex overrun, a 'royalty' or 'streaming' claim that is actually a disguised loan with a debt-like repayment structure.",
+    # fdt lane (2026-07-27 split): equipment/tech names live or die on backlog and margin trajectory,
+    # not a commodity price - the attack surface is whether the demand is real and THIS name's.
+    "fdt": "(a) BACKLOG TRUTH - does the claimed backlog, order book, or book-to-bill figure verify against the latest primary filing, or is it stale, a cherry-picked quarter, or aggregated across segments to flatter one? (b) GM-TRAJECTORY TRUTH - is the claimed gross-margin trajectory (expanding/compressing) verified against the actual reported gross-margin series, not just asserted from a bundled proxy? (c) THESIS WEAKNESS - is the demand genuinely flowing to THIS name specifically (a named contract, a qualification win, a share gain), or is a broad theme (grid buildout, SMR, robotics, quantum) being used to justify a name with no differentiated, verifiable position? (d) HIDDEN DISQUALIFIER - customer concentration risk, an unpriced regulatory/NRC/interconnection-queue delay, dilution funding a capex-heavy ramp with no near-term revenue to show for it.",
 }
 
 
@@ -1527,6 +1544,8 @@ def skeptic_gen(book):
         lane, res, doss = "value", f"results_regime/{s}.json", f"dossiers/{s}.md"
         if book == "disruptor":
             lane, res, doss = "disruptor", f"disruptor/results/{s}.json", f"disruptor/dossiers/{s}.md"
+        elif book in ("mining", "fdt"):
+            lane, res, doss = book, f"{book}/results/{s}.json", f"{book}/dossiers/{s}.md"
         elif book == "regime":
             try:
                 rec = json.load(open(ROOT / "results_regime" / (s + ".json"), encoding="utf-8"))
@@ -1572,7 +1591,12 @@ def skeptic_gen(book):
     out = ROOT / cfg["wf"]
     out.write_text(js, encoding="utf-8", newline="\n")
     n_ref = sum(1 for h in hints.values() if h.get("refute_candidate"))
-    n_lanes = {ln: sum(1 for v in lanes.values() if v["lane"] == ln) for ln in ("value", "event", "disruptor")}
+    # derived from the lanes actually assigned this run, not a hardcoded tuple — a hardcoded
+    # ("value","event","disruptor") silently reported {value:0,event:0,disruptor:0} for the
+    # mining/fdt lanes (real assignments, just invisible in the summary line).
+    n_lanes = {}
+    for v in lanes.values():
+        n_lanes[v["lane"]] = n_lanes.get(v["lane"], 0) + 1
     print(f"{book}_skeptic (unified): {len(finalists)} to run (+{len(carried)} carried) | lanes={n_lanes} "
           f"| moat REFUTE-candidates={n_ref} | {SKEPTIC_MODEL} kill-tier")
     print(f"{cfg['env_line']}={out.resolve()}")
@@ -1588,6 +1612,20 @@ def value_skeptic():
 def regime_skeptic():
     """Unified-skeptic wrapper (X1) - the regime/apex book (special-sit seats get the EVENT rubric)."""
     return skeptic_gen("regime")
+
+
+def mining_skeptic():
+    """Unified-skeptic wrapper - the mining book. Run AFTER the Mining Director writes
+    apex_basket_mining.json (skeptic_gen reads its apex_basket for the finalist list) and BEFORE
+    mining-post (which consumes the shards: REFUTED demotes to runner_ups, MISSING/stale-REFUTED
+    half-sizes the seat)."""
+    return skeptic_gen("mining")
+
+
+def fdt_skeptic():
+    """Unified-skeptic wrapper - the FDT book. Same ordering as mining_skeptic: AFTER the FDT
+    Director writes apex_basket_fdt.json, BEFORE fdt-post."""
+    return skeptic_gen("fdt")
 
 
 def control_sample():
@@ -6208,6 +6246,10 @@ if __name__ == "__main__":
         value_skeptic()
     elif mode in ("regime-skeptic", "regime_skeptic"):
         regime_skeptic()
+    elif mode in ("mining-skeptic", "mining_skeptic"):
+        mining_skeptic()
+    elif mode in ("fdt-skeptic", "fdt_skeptic"):
+        fdt_skeptic()
     elif mode in ("catalyst-prep", "catalyst_prep"):
         catalyst_prep()
     elif mode in ("catalyst-seed", "catalyst_seed"):
