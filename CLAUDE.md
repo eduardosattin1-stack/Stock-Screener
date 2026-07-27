@@ -34,11 +34,17 @@ full wiring before touching any of it.
 - **Fork 4 — yes.** A phase transition forces a live-Director re-run outside the 30-day
   cost-guard (`live_debate_engine._phase_transition_check`; last-seen phase stamped as
   `director_last_phase` in the speculair output).
-- **Payback-speed label** (`duration_bucket`: cash_now / payback_2_3y / story) is
-  DETERMINISTIC (`debt_cycle.duration_bucket`, from scan `p_fcf`/`fcf_margin`).
+- **Payback-speed label** (`duration_bucket`: cash_now / payback_2_3y / story / **unknown**)
+  is DETERMINISTIC (`debt_cycle.duration_bucket`, from scan `p_fcf`/`fcf_margin`).
   Director may override only with a written dated justification; unjustified overrides
   are dropped. This is the first macro-adjacent field with numeric sizing authority —
   treat changes to it as cap changes, not cosmetics.
+- **`story` vs `unknown` is load-bearing — do not collapse them.** screener_v6 defaults
+  `p_fcf`/`fcf_margin` to 0.0, so a name with no cash-flow data is byte-identical to one
+  with genuinely no FCF. The first build collapsed both to `story`, and a thin scan pinned
+  the ENTIRE book to the 0.1u floor under the DISCIPLINE cap — a data gap tightening the
+  book, which the fail-open rule forbids. `unknown` sits OUTSIDE the story cap and prints
+  a WARN. Regression test: "a no-FCF-data book is NOT trimmed by the story cap".
 
 ### Invariants (do not break)
 

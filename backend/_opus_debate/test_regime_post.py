@@ -34,7 +34,15 @@ def main():
               f"units->{p.get('size_units')}->{p.get('size_units_effective')} wt={p.get('weight_pct')}%")
     print("secular-theme caps:", extra)
     s = round(sum(weights.values()), 4)
-    assert abs(s - 1.0) < 1e-6, f"weights must sum to 1.0, got {s}"
+    # build_weights rounds EACH weight to 4dp, so the sum lands within ~1e-4 of 1.0 rather
+    # than exactly on it whenever the units don't divide cleanly (this fixture: 1.1/7.2 ->
+    # 0.1528 x3 + 0.75/7.2 -> 0.1042 x2 + 0.8/7.2 -> 0.1111 x3 = 1.0001; a bare
+    # [1.4,1.1,0.8] basket drifts the same way). The 1e-6 assert was stricter than the
+    # shared sizing path's actual guarantee and failed on this fixture regardless of the
+    # cycle layer — verified red at 03f3a71, pre-debt-cycle. Asserted at the real
+    # guarantee; tighten only by making build_weights renormalize exactly (which would
+    # move published weights in BOTH the apex and value books).
+    assert abs(s - 1.0) < 1e-3, f"weights must sum to ~1.0 (4dp rounding), got {s}"
     assert all(isinstance(p.get("weight_pct"), (int, float)) for p in picks), "every pick needs weight_pct"
     print(f"OK: weights sum={s}, every pick weighted, no crash.")
 

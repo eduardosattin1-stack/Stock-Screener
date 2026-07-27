@@ -108,14 +108,104 @@ check("EXPANSION leaves stance alone", apply_phase_to_stance("aggressive", "EXPA
 
 check("bucket: p_fcf 18 → cash_now", duration_bucket({"p_fcf": 18.0})["duration_bucket"] == "cash_now")
 check("bucket: p_fcf 40 → payback_2_3y", duration_bucket({"p_fcf": 40.0})["duration_bucket"] == "payback_2_3y")
-check("bucket: no FCF → story", duration_bucket({"p_fcf": 0.0, "fcf_margin": -0.1})["duration_bucket"] == "story")
-ov = duration_bucket({"p_fcf": 0.0}, override="payback_2_3y", override_reason="consensus FCF+ Q2 FY27 (2026-07-20 guide)")
+check("bucket: MEASURED negative FCF → story",
+      duration_bucket({"p_fcf": 0.0, "fcf_margin": -0.1})["duration_bucket"] == "story")
+# The fail-open split: screener_v6 defaults both fields to 0.0, so 'no data' and
+# 'genuinely no FCF' are byte-identical. Only the latter may be capped.
+check("bucket: NO FCF data → unknown (not story)",
+      duration_bucket({})["duration_bucket"] == "unknown"
+      and duration_bucket({"p_fcf": 0.0, "fcf_margin": 0.0})["duration_bucket"] == "unknown")
+check("unknown carries a no_fcf_data provenance flag",
+      duration_bucket({})["duration_bucket_source"] == "no_fcf_data")
+_story_rec = {"p_fcf": 0.0, "fcf_margin": -0.08}
+ov = duration_bucket(_story_rec, override="payback_2_3y", override_reason="consensus FCF+ Q2 FY27 (2026-07-20 guide)")
 check("director override with justification honored + provenance kept",
       ov["duration_bucket"] == "payback_2_3y" and ov["duration_bucket_computed"] == "story"
       and ov["duration_bucket_source"] == "director_override")
-ov2 = duration_bucket({"p_fcf": 0.0}, override="cash_now", override_reason="")
+ov2 = duration_bucket(_story_rec, override="cash_now", override_reason="")
 check("override WITHOUT justification rejected",
       ov2["duration_bucket"] == "story" and ov2.get("duration_bucket_override_rejected") == "cash_now")
+
+print("\n=== duration cap (FORK 2/B) — portion control, not eligibility ===")
+try:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "_opus_debate"))
+    import _regime_post as rp
+    import _post_common as pc
+
+    cap_picks = [
+        {"symbol": "AAA", "director_conviction": 92, "size_units": 1.4, "duration_bucket": "cash_now"},
+        {"symbol": "BBB", "director_conviction": 78, "size_units": 1.1, "duration_bucket": "cash_now"},
+        {"symbol": "CCC", "director_conviction": 71, "size_units": 1.1, "duration_bucket": "payback_2_3y"},
+        {"symbol": "DDD", "director_conviction": 85, "size_units": 1.1, "duration_bucket": "story"},
+        {"symbol": "EEE", "director_conviction": 64, "size_units": 0.8, "duration_bucket": "story"},
+        {"symbol": "FFF", "director_conviction": 55, "size_units": 0.8, "duration_bucket": "story"},
+    ]
+    apx = {"apex_basket": cap_picks}
+    memo = {p["symbol"]: pc.banded_units(p["director_conviction"]) for p in cap_picks}
+    cyc = {"debt_cycle_phase": "DISCIPLINE", "duration_caps": {"story_max": 0.20, "cash_now_min": 0.35}}
+    # process() order: build_weights FIRST (the cap reads size_units_effective as its basis),
+    # then derive caps, then re-run build_weights with them appended.
+    pc.build_weights(apx, cap_picks, extra_caps=[], memo_units=memo, per_name_cap=pc.moat_per_name_cap)
+    entries = rp.duration_cap_entries(apx, cap_picks, cyc)
+    w = pc.build_weights(apx, cap_picks, extra_caps=entries, memo_units=memo,
+                         per_name_cap=pc.moat_per_name_cap)
+    story_share = sum(w[p["symbol"]] for p in cap_picks if p["duration_bucket"] == "story")
+    check("story share trimmed to the DISCIPLINE cap", story_share <= 0.20 + 1e-6, f"{story_share:.4f}")
+    check("cap emitted in the shared extra_caps schema",
+          all(set(e) >= {"names", "max_units", "axis"} and e["axis"] == "duration:story" for e in entries))
+    check("lowest-conviction story seats hit the 0.1u floor first",
+          cap_picks[4]["size_units_effective"] == 0.1 and cap_picks[5]["size_units_effective"] == 0.1)
+    check("highest-conviction story seat keeps the most",
+          cap_picks[3]["size_units_effective"] > cap_picks[4]["size_units_effective"],
+          f"DDD={cap_picks[3]['size_units_effective']} EEE={cap_picks[4]['size_units_effective']}")
+    check("NO name demoted — cap is a weight action only", len(apx["apex_basket"]) == 6)
+    check("trimmed seats badged for the UI",
+          all(p.get("cycle_capped") and p.get("cycle_cap_note") for p in cap_picks[3:6]))
+    check("untrimmed seats carry no badge", not any(p.get("cycle_capped") for p in cap_picks[:3]))
+    check("cap_binding recorded", apx.get("cap_binding") == ["duration_story"])
+    # NOTE: build_weights rounds each weight to 4dp, so the sum can land on 0.9999 for
+    # units that don't divide cleanly. Pre-existing + shared with the value book (a bare
+    # [1.4,1.1,0.8] basket drifts identically) — asserted at the repo's real guarantee.
+    check("weights renormalize (4dp rounding tolerance)", abs(sum(w.values()) - 1.0) < 1e-3,
+          f"{sum(w.values())}")
+
+    # UNKNOWN phase = LOOSEST caps (40%), not "no caps" — it must trim strictly less
+    # than DISCIPLINE on the identical book.
+    def _fresh(phase, caps=None):
+        ps = [dict(p) for p in cap_picks]
+        for p in ps:
+            p.pop("cycle_capped", None); p.pop("cycle_cap_note", None)
+            p["size_units_effective"] = p["size_units"]
+        a = {"apex_basket": ps}
+        cy = {"debt_cycle_phase": phase}
+        if caps:
+            cy["duration_caps"] = caps
+        return a, ps, rp.duration_cap_entries(a, ps, cy)
+
+    _, u_picks, u_entries = _fresh("UNKNOWN")
+    u_trim = sum(1 for p in u_picks if p.get("cycle_capped"))
+    check("UNKNOWN phase uses the LOOSEST caps (trims less than DISCIPLINE)",
+          u_trim < 3, f"UNKNOWN trimmed {u_trim} seats")
+
+    # FAIL-OPEN REGRESSION (caught by test_regime_post 2026-07-27): a book whose scan
+    # records carry NO cash-flow data must NOT be pinned to the floor. Before the
+    # story/unknown split, every no-data name defaulted to 'story' and DISCIPLINE
+    # slammed the whole book to 0.1u — a data gap tightening the book.
+    nodata = []
+    for p in cap_picks:
+        q = {k: v for k, v in p.items() if k not in ("cycle_capped", "cycle_cap_note")}
+        q["duration_bucket"] = duration_bucket({})["duration_bucket"]   # no scan FCF data
+        q["size_units_effective"] = q["size_units"]
+        nodata.append(q)
+    check("no FCF data => 'unknown', never 'story'",
+          all(p["duration_bucket"] == "unknown" for p in nodata), nodata[0]["duration_bucket"])
+    nd_entries = rp.duration_cap_entries({"apex_basket": nodata}, nodata,
+                                         {"debt_cycle_phase": "DISCIPLINE",
+                                          "duration_caps": {"story_max": 0.20}})
+    check("a no-FCF-data book is NOT trimmed by the story cap (fail-open)",
+          nd_entries == [] and not any(p.get("cycle_capped") for p in nodata), f"{nd_entries}")
+except Exception as e:  # pragma: no cover
+    check("duration cap section importable", False, f"{type(e).__name__}: {e}")
 
 print()
 if FAILURES:

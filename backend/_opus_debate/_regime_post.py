@@ -202,15 +202,19 @@ def stamp_duration_buckets(picks, scan_by):
         ))
 
 
-def enforce_duration_caps(apx, picks, cycle):
-    """FORK 2/B — phase-conditioned duration cap, the same kind of object as the
-    secular-theme and correlation caps: an AGGREGATE-EXPOSURE judgement, never an
-    eligibility one. When the story-bucket share exceeds the phase cap, the
-    LOWEST-conviction story seats are trimmed toward a 0.1-unit floor (trimming is a
-    weight action; demotion belongs to the skeptic/numeric gates). cash_now_min and
-    real_asset_floor are WARN/advisory — a cap cannot conjure names that aren't seated.
-    UNKNOWN phase carries the loosest caps (fail-open). Records cap_binding so a
-    binding cap is visible, not inferred."""
+def duration_cap_entries(apx, picks, cycle):
+    """FORK 2/B — phase-conditioned duration cap, returned in the SAME extra_caps schema
+    the existing machinery already consumes ({names, max_units, axis}), so _pc.build_weights
+    stays the single normalization path (secular_theme_caps / corr_breach_caps do the same).
+
+    It is an AGGREGATE-EXPOSURE judgement, never an eligibility one: when the story-bucket
+    share exceeds the phase cap, the LOWEST-conviction story seats are trimmed toward a
+    0.1-unit floor and emitted as single-name caps — trimming is a weight action; demotion
+    belongs to the skeptic/numeric gates. Proportional scaling is deliberately NOT used:
+    it would cut the highest-conviction story seat as hard as the weakest.
+
+    cash_now_min and real_asset_floor are WARN/advisory — a cap cannot conjure names that
+    are not seated. UNKNOWN phase carries the loosest caps (fail-open)."""
     cycle = cycle or {}
     phase = cycle.get("debt_cycle_phase") or "UNKNOWN"
     caps = cycle.get("duration_caps") or {}
@@ -219,15 +223,23 @@ def enforce_duration_caps(apx, picks, cycle):
         caps = PHASE_DURATION_CAPS.get(phase, PHASE_DURATION_CAPS["UNKNOWN"])
     apx["debt_cycle_phase_applied"] = phase
     apx["duration_caps_applied"] = caps
-    binding, warnings = [], []
+    entries, binding, warnings = [], [], []
+    # Basis = the effective units from the first build_weights pass (post moat/theme teeth).
     units = {p["symbol"]: float(p.get("size_units_effective") or 0) for p in picks}
     tot = sum(units.values())
     if not picks or tot <= 0:
         apx["cap_binding"] = binding
-        return apx
+        return entries
 
     smax = caps.get("story_max")
+    # ONLY measured-story names are capped. 'unknown' (no FCF data in the scan record)
+    # is deliberately outside the cap — see debt_cycle.duration_bucket: collapsing
+    # no-data into story let a thin scan pin the whole book to the 0.1u floor.
     story = [p for p in picks if p.get("duration_bucket") == "story"]
+    n_unknown = sum(1 for p in picks if p.get("duration_bucket") == "unknown")
+    if n_unknown:
+        warnings.append(f"{n_unknown}/{len(picks)} seats have NO FCF data (duration_bucket=unknown) "
+                        f"— excluded from the story cap (fail-open); check scan freshness")
     if isinstance(smax, (int, float)) and story and smax < 1.0:
         s_units = sum(units[p["symbol"]] for p in story)
         # story share after trim: Us' / (tot - Us + Us') <= smax  =>  Us' <= smax*(tot-Us)/(1-smax)
@@ -240,7 +252,8 @@ def enforce_duration_caps(apx, picks, cycle):
                 u = units[p["symbol"]]
                 cut = min(need, max(0.0, u - 0.1))          # trim toward floor, never to zero
                 if cut > 1e-9:
-                    units[p["symbol"]] = round(u - cut, 3)
+                    entries.append({"names": [p["symbol"]], "max_units": round(u - cut, 3),
+                                    "axis": "duration:story"})
                     p["cycle_capped"] = True
                     p["cycle_cap_note"] = (f"trimmed {cut:.2f}u by {phase} duration cap "
                                            f"(story <= {smax:.0%} of book)")
@@ -249,18 +262,12 @@ def enforce_duration_caps(apx, picks, cycle):
             if need > 1e-9:
                 warnings.append(f"story legs all at 0.1u floor and still {need:.2f}u over the "
                                 f"{phase} story cap — floor respected, residual overage published")
-            W = sum(units.values()) or 1.0
-            for p in picks:
-                p["size_units_effective"] = units[p["symbol"]]
-                p["weight_pct"] = round(units[p["symbol"]] / W * 100, 2)
-            apx["weights"] = {s: round(u / W, 4) for s, u in units.items()}
             print(f"duration-cap: {phase} story<= {smax:.0%} BOUND — trimmed "
                   f"{[p['symbol'] for p in story if p.get('cycle_capped')]}")
 
     cmin = caps.get("cash_now_min")
-    if isinstance(cmin, (int, float)):
-        W = sum(units.values()) or 1.0
-        c_share = sum(units[p["symbol"]] for p in picks if p.get("duration_bucket") == "cash_now") / W
+    if isinstance(cmin, (int, float)) and tot > 0:
+        c_share = sum(units[p["symbol"]] for p in picks if p.get("duration_bucket") == "cash_now") / tot
         if c_share < cmin - 1e-9:
             warnings.append(f"cash_now share {c_share:.0%} < {phase} floor {cmin:.0%} — "
                             f"WARN only (a cap cannot conjure names); Director must own it in the memo")
@@ -271,7 +278,7 @@ def enforce_duration_caps(apx, picks, cycle):
         print(f"WARN duration-cap: {w}")
     apx["cap_binding"] = binding
     apx["duration_cap_warnings"] = warnings
-    return apx
+    return entries
 
 
 def process(apx, uni, scan_by, market=None):
@@ -302,11 +309,18 @@ def process(apx, uni, scan_by, market=None):
     apx["weights"] = weights
     apx["secular_theme_caps"] = extra
     # ── Dalio debt-cycle duration layer (2026-07-27, FORK 2/B): stamp the deterministic
-    # payback-speed label, then enforce the phase story-cap AFTER build_weights (it
-    # re-normalizes in place). Fail-open: missing snapshot => UNKNOWN => loosest caps.
+    # payback-speed label, derive the phase story-cap from the FIRST weight pass, then
+    # re-run build_weights with those caps appended — one normalization path, no bespoke
+    # re-normalization. Fail-open: missing snapshot => UNKNOWN => loosest caps.
     stamp_duration_buckets(picks, scan_by)
     _cycle = (_load(ROOT / "macro_regime.json", {}) or {}).get("debt_cycle") or {}
-    apx = enforce_duration_caps(apx, picks, _cycle)
+    _dur = duration_cap_entries(apx, picks, _cycle)
+    if _dur:
+        extra = extra + _dur
+        weights = _pc.build_weights(apx, picks, extra_caps=extra, memo_units=memo,
+                                    per_name_cap=_pc.moat_per_name_cap)
+        apx["weights"] = weights
+        apx["secular_theme_caps"] = extra
     if market:
         quotes, weekly_rets, asof = market
         apx["stress_test"] = _pc.stress_block(picks, weights, quotes, asof,

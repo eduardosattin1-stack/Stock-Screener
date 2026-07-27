@@ -531,20 +531,33 @@ def duration_bucket(scan_rec: dict, override: Optional[str] = None,
 
       cash_now     positive FCF and FCF yield ≥ 4%  (p_fcf ≤ 25)
       payback_2_3y positive FCF, yield < 4%
-      story        no positive FCF (deviation from spec: no consensus-estimate
-                   feed for 'FCF-positive within 8q', so non-FCF-positive is
-                   conservatively 'story')
+      story        EVIDENCE of no positive FCF (deviation from spec: no
+                   consensus-estimate feed for 'FCF-positive within 8q', so
+                   measured-negative FCF is conservatively 'story')
+      unknown      NO usable FCF data — NOT 'story'
+
+    The story/unknown split is load-bearing and fail-open. screener_v6 defaults
+    p_fcf and fcf_margin to 0.0, so a name whose scan record simply lacks cash-flow
+    data is byte-identical to a name with genuinely no FCF. Collapsing both to
+    'story' let a stale/thin scan pin the ENTIRE book to the 0.1u floor under the
+    DISCIPLINE cap — a data gap tightening the book, which the spec forbids
+    (§3.7 fail-open). 'unknown' sits outside the story cap by design.
     """
     p_fcf = scan_rec.get("p_fcf")
     fcf_margin = scan_rec.get("fcf_margin")
-    if isinstance(p_fcf, (int, float)) and 0 < p_fcf <= 25:
+    _pf = p_fcf if isinstance(p_fcf, (int, float)) else None
+    _fm = fcf_margin if isinstance(fcf_margin, (int, float)) else None
+    has_signal = (_pf is not None and _pf != 0) or (_fm is not None and _fm != 0)
+    if not has_signal:
+        computed = "unknown"
+    elif _pf is not None and 0 < _pf <= 25:
         computed = "cash_now"
-    elif (isinstance(p_fcf, (int, float)) and p_fcf > 25) or \
-         (isinstance(fcf_margin, (int, float)) and fcf_margin > 0):
+    elif (_pf is not None and _pf > 25) or (_fm is not None and _fm > 0):
         computed = "payback_2_3y"
     else:
         computed = "story"
-    out = {"duration_bucket": computed, "duration_bucket_source": "computed"}
+    out = {"duration_bucket": computed,
+           "duration_bucket_source": "computed" if computed != "unknown" else "no_fcf_data"}
     if override in ("cash_now", "payback_2_3y", "story") and override != computed:
         if override_reason.strip():
             out.update({"duration_bucket": override, "duration_bucket_source": "director_override",

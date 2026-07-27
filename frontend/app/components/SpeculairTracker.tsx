@@ -185,7 +185,7 @@ export function SpeculairTracker() {
           {/* Payback-speed badge (debt-cycle layer): C = cash_now (FCF yield ≥4%),
               P = payback 2-3y, S = story (no FCF yet — capped hardest in DISCIPLINE/FORCING).
               Ring turns red + ✂ when the phase duration cap trimmed this seat. */}
-          {p.duration_bucket && (() => {
+          {p.duration_bucket && p.duration_bucket !== "unknown" && (() => {
             const b = p.duration_bucket;
             const letter = b === "cash_now" ? "C" : b === "payback_2_3y" ? "P" : "S";
             const bc = b === "cash_now" ? "var(--green)" : b === "payback_2_3y" ? "var(--amber)" : "var(--red)";
