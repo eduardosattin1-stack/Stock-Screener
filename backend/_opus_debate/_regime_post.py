@@ -207,15 +207,25 @@ def stamp_duration_buckets(picks, scan_by):
 
 
 def duration_cap_entries(apx, picks, cycle):
-    """FORK 2/B — phase-conditioned duration cap, returned in the SAME extra_caps schema
-    the existing machinery already consumes ({names, max_units, axis}), so _pc.build_weights
-    stays the single normalization path (secular_theme_caps / corr_breach_caps do the same).
+    """Phase-conditioned duration cap, returned in the SAME extra_caps schema the existing
+    machinery already consumes ({names, max_units, axis}), so _pc.build_weights stays the
+    single normalization path (secular_theme_caps / corr_breach_caps do the same).
 
-    It is an AGGREGATE-EXPOSURE judgement, never an eligibility one: when the story-bucket
-    share exceeds the phase cap, the LOWEST-conviction story seats are trimmed toward a
-    0.1-unit floor and emitted as single-name caps — trimming is a weight action; demotion
-    belongs to the skeptic/numeric gates. Proportional scaling is deliberately NOT used:
-    it would cut the highest-conviction story seat as hard as the weakest.
+    ADVISORY BY DECISION (Bruno, 2026-07-27): "the macro should give us trends/direction,
+    not weigh on the picks." With _post_common.EQUAL_WEIGHT_BOOKS=True every book publishes
+    1/n, so this cap — exactly like the secular-theme and correlation caps — bites
+    size_units_effective and the audit trail ONLY. IT MOVES NO PUBLISHED WEIGHT. It is kept
+    live-but-inert so _cycle_ledger.jsonl accumulates the realized duration mix and the
+    question "would trimming story duration in DISCIPLINE have helped?" becomes answerable
+    from evidence rather than from priors. Macro reaches the book through risk_stance, the
+    STEP-3a entry-discount floor and the horizon stretch — never through sizing.
+    Flipping EQUAL_WEIGHT_BOOKS off makes this cap LIVE, which is a sizing change: read the
+    FORK-2 note in CLAUDE.md first.
+
+    Mechanics when it is live: an AGGREGATE-EXPOSURE judgement, never an eligibility one —
+    the LOWEST-conviction story seats are trimmed toward a 0.1-unit floor and emitted as
+    single-name caps; demotion belongs to the skeptic/numeric gates. Proportional scaling is
+    deliberately NOT used: it would cut the strongest story seat as hard as the weakest.
 
     cash_now_min and real_asset_floor are WARN/advisory — a cap cannot conjure names that
     are not seated. UNKNOWN phase carries the loosest caps (fail-open)."""
@@ -225,8 +235,11 @@ def duration_cap_entries(apx, picks, cycle):
     if not caps:
         from debt_cycle import PHASE_DURATION_CAPS
         caps = PHASE_DURATION_CAPS.get(phase, PHASE_DURATION_CAPS["UNKNOWN"])
+    advisory = bool(getattr(_pc, "EQUAL_WEIGHT_BOOKS", False))
     apx["debt_cycle_phase_applied"] = phase
     apx["duration_caps_applied"] = caps
+    # "advisory" = trims units + audit trail only; "live" = also moves published weight.
+    apx["duration_cap_effect"] = "advisory" if advisory else "live"
     entries, binding, warnings = [], [], []
     # Basis = the effective units from the first build_weights pass (post moat/theme teeth).
     units = {p["symbol"]: float(p.get("size_units_effective") or 0) for p in picks}
@@ -259,14 +272,18 @@ def duration_cap_entries(apx, picks, cycle):
                     entries.append({"names": [p["symbol"]], "max_units": round(u - cut, 3),
                                     "axis": "duration:story"})
                     p["cycle_capped"] = True
-                    p["cycle_cap_note"] = (f"trimmed {cut:.2f}u by {phase} duration cap "
-                                           f"(story <= {smax:.0%} of book)")
+                    p["cycle_cap_note"] = (
+                        f"{phase} duration cap: {cut:.2f}u trimmed (story <= {smax:.0%} of book)"
+                        + (" — ADVISORY only, the book publishes equal weight so this seat's "
+                           "published weight is unchanged" if advisory else ""))
+                    p["cycle_cap_effect"] = "advisory" if advisory else "live"
                     need -= cut
             binding.append("duration_story")
             if need > 1e-9:
                 warnings.append(f"story legs all at 0.1u floor and still {need:.2f}u over the "
                                 f"{phase} story cap — floor respected, residual overage published")
-            print(f"duration-cap: {phase} story<= {smax:.0%} BOUND — trimmed "
+            print(f"duration-cap [{'ADVISORY — no published weight moves' if advisory else 'LIVE'}]: "
+                  f"{phase} story<= {smax:.0%} BOUND — units trimmed on "
                   f"{[p['symbol'] for p in story if p.get('cycle_capped')]}")
 
     cmin = caps.get("cash_now_min")

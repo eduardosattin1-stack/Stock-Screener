@@ -219,6 +219,11 @@ try:
         check("EQUAL_WEIGHT_BOOKS on => published weights stay 1/n (cap is ADVISORY)",
               all(abs(w[p["symbol"]] - 1.0 / len(cap_picks)) < 1e-3 for p in cap_picks),
               f"story weight share {story_share:.2f} vs units share {story_units / tot_units:.2f}")
+        check("cap self-labels as advisory so the UI cannot imply weight moved",
+              apx.get("duration_cap_effect") == "advisory"
+              and all(p.get("cycle_cap_effect") == "advisory"
+                      for p in cap_picks if p.get("cycle_capped")),
+              f"{apx.get('duration_cap_effect')}")
         print("      note: duration cap does NOT move published weight while EQUAL_WEIGHT_BOOKS=True")
     else:
         check("story WEIGHT share trimmed to the DISCIPLINE cap",

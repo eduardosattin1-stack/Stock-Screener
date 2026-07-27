@@ -20,12 +20,21 @@ full wiring before touching any of it.
   Rationale: the quadrant lives only in v7 and would have been silently stripped by a
   v8 switch; a separate module can't be lost that way. Do not fold it into
   `macro_regime.py`.
-- **FORK 2/B — portion control, with a badge.** The phase NEVER gates eligibility or
-  touches conviction. It caps the aggregate `story` duration-bucket share of the book
-  (`_regime_post.enforce_duration_caps`, trims lowest-conviction first toward a 0.1u
-  floor, never demotes) and modifies stance (`apply_phase_to_stance`). Every director
-  pick publishes `duration_bucket` + `cycle_capped` badge fields; the tracker renders
-  C/P/S chips with a ✂ when trimmed.
+- **FORK 2/B → ADVISORY (amended 2026-07-27 after the ux-revamp merge).** Bruno:
+  *"the macro should give us trends/direction, not weigh on the picks."* The phase NEVER
+  gates eligibility, never touches conviction, and — while `_post_common.EQUAL_WEIGHT_BOOKS`
+  is True — **moves no published weight either.** `_regime_post.duration_cap_entries` still
+  trims `size_units_effective` (lowest-conviction story seats toward a 0.1u floor, never
+  demotes) and stamps `duration_cap_effect: "advisory"`, so the audit trail and
+  `_cycle_ledger.jsonl` accumulate the evidence; the published book stays 1/n. Note the
+  secular-theme and correlation caps are inert in exactly the same way — this is not
+  special to the cycle layer.
+  **How macro actually reaches the book:** `risk_stance` (posture), the STEP-3a
+  entry-discount floor (≥20% GOLDILOCKS/REFLATION · ≥25% STAGFLATION · ≥30% RISK_OFF —
+  a bar to clear, not a weight), the horizon stretch (12 → 18-24mo in DISCIPLINE/FORCING),
+  and `phase_fit` as judgement input to the Director. That's it.
+  Flipping `EQUAL_WEIGHT_BOOKS` off makes every cap live again — that is a SIZING change,
+  not a display change. Score `_cycle_ledger.jsonl` first.
 - **FORK 3/A — auction fetcher built.** TreasuryDirect 10y/30y results feed
   `auction_quality`. Saturday job BEFORE the weekly routine:
   `python backend/debt_cycle.py fetch-auctions`

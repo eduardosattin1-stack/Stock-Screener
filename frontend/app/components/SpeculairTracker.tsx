@@ -15,6 +15,7 @@ interface Pick {
   duration_bucket_source?: string;
   cycle_capped?: boolean;
   cycle_cap_note?: string;
+  cycle_cap_effect?: string;   // "advisory" (equal-weight book) | "live"
   phase_fit?: string;
 }
 
@@ -189,10 +190,15 @@ export function SpeculairTracker() {
             const b = p.duration_bucket;
             const letter = b === "cash_now" ? "C" : b === "payback_2_3y" ? "P" : "S";
             const bc = b === "cash_now" ? "var(--green)" : b === "payback_2_3y" ? "var(--amber)" : "var(--red)";
-            const tip = `Payback speed: ${b}${p.duration_bucket_source === "director_override" ? " (director override)" : ""}${p.phase_fit ? ` · Cycle fit: ${p.phase_fit}` : ""}${p.cycle_capped ? ` · TRIMMED by the phase duration cap: ${p.cycle_cap_note || ""}` : ""}`;
+            // The book publishes EQUAL WEIGHT, so a cycle "trim" is an audit-trail event,
+            // not a weight change. Only show ✂ (and the red ring) when the cap is LIVE;
+            // when advisory, say so in the tooltip and leave the chip visually neutral —
+            // a scissors icon on a seat whose weight did not move would be a lie.
+            const capLive = !!p.cycle_capped && p.cycle_cap_effect !== "advisory";
+            const tip = `Payback speed: ${b}${p.duration_bucket_source === "director_override" ? " (director override)" : ""}${p.phase_fit ? ` · Cycle fit: ${p.phase_fit}` : ""}${p.cycle_capped ? ` · ${p.cycle_cap_note || ""}` : ""}${p.cycle_capped && !capLive ? " (book is equal-weight: this seat's published weight is unchanged)" : ""}`;
             return (
-              <span title={tip} style={{ fontFamily: "var(--font-mono)", fontSize: 8, fontWeight: 700, minWidth: 12, height: 12, lineHeight: "12px", textAlign: "center", borderRadius: 3, color: bc, background: "color-mix(in srgb, currentColor 12%, transparent)", border: `1px solid ${p.cycle_capped ? "var(--red)" : `color-mix(in srgb, ${bc} 40%, transparent)`}`, cursor: "help", flexShrink: 0, padding: "0 2px" }}>
-                {letter}{p.cycle_capped ? "✂" : ""}
+              <span title={tip} style={{ fontFamily: "var(--font-mono)", fontSize: 8, fontWeight: 700, minWidth: 12, height: 12, lineHeight: "12px", textAlign: "center", borderRadius: 3, color: bc, background: "color-mix(in srgb, currentColor 12%, transparent)", border: `1px solid ${capLive ? "var(--red)" : `color-mix(in srgb, ${bc} 40%, transparent)`}`, cursor: "help", flexShrink: 0, padding: "0 2px" }}>
+                {letter}{capLive ? "✂" : ""}
               </span>
             );
           })()}

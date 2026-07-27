@@ -394,6 +394,9 @@ for p in picks:
         "duration_bucket_override_reason": p.get("duration_bucket_override_reason", ""),
         "cycle_capped": bool(p.get("cycle_capped")),
         "cycle_cap_note": p.get("cycle_cap_note", ""),
+        # "advisory" while the book publishes equal weight — the trim lives in the audit
+        # trail (size_units_effective), NOT in this seat's published weight.
+        "cycle_cap_effect": p.get("cycle_cap_effect", "advisory"),
         "size_units": p.get("size_units"),
         "size_units_effective": p.get("size_units_effective"),
         # equity special-sit lane (catalyst-framed B13 non-binaries): downside floor for risk-to-floor
@@ -594,9 +597,12 @@ baskets["debt_cycle"] = {k: _cycle_pub.get(k) for k in
                           "transition_blocked", "transition_implied", "reserve_asset_check",
                           "expected_horizon_months", "asof")}
 baskets["debt_cycle"]["phase_applied_by_director"] = director.get("debt_cycle_phase")
-# cap_binding / duration_caps_applied are stamped onto the director doc by _regime_post
+# cap_binding / duration_caps_applied / duration_cap_effect are stamped by _regime_post.
+# duration_cap_effect is "advisory" while the books publish equal weight (Bruno 2026-07-27:
+# macro gives direction, not sizing) — the UI must not imply weight moved.
 baskets["debt_cycle"]["cap_binding"] = director.get("cap_binding") or []
 baskets["debt_cycle"]["duration_caps_applied"] = director.get("duration_caps_applied") or {}
+baskets["debt_cycle"]["duration_cap_effect"] = director.get("duration_cap_effect") or "advisory"
 # Agent regime read (RegimeRead phase, weekly) — AGREE/CONTRADICT vs the dials + dated
 # falsifiers. Published for the UI; the dials stay authoritative.
 _rr = load(BK / "regime_read.json", {}) or {}
@@ -656,6 +662,10 @@ try:
         "expected_horizon_months": director.get("expected_horizon_months"),
         "duration_caps": director.get("duration_caps_applied") or {},
         "cap_binding": director.get("cap_binding") or [],
+        # advisory => the mix below is what the book ACTUALLY published (equal weight),
+        # not a capped mix. That is the point: it is the evidence for whether the cap
+        # should ever go live.
+        "cap_effect": director.get("duration_cap_effect") or "advisory",
         "duration_mix": _dur_mix,
     }
     with open(BK / "_cycle_ledger.jsonl", "a", encoding="utf-8") as _lf:
