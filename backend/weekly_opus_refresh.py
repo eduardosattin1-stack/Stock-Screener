@@ -3714,7 +3714,8 @@ def _book_resource_metrics(bk, members, offline):
     try:
         import _resource_metrics as RM
         try:
-            return RM.compute(members, offline=offline, taxonomy=bk["taxonomy"])
+            return RM.compute(members, offline=offline, taxonomy=bk["taxonomy"],
+                              cache_path=bk["dir"] / "_resource_metrics_cache.json")
         except TypeError:
             print(f"WARN: _resource_metrics.compute() takes no taxonomy= parameter — falling back to "
                   f"its default (future_resources_chains.json). Chains outside that file get NO torque "
