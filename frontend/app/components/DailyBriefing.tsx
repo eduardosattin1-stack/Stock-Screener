@@ -86,6 +86,10 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
   const [briefing, setBriefing] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [nonce, setNonce] = useState(0);
+  // The debt-cycle phase call used to state itself three times in a row (plain gloss,
+  // dial-speak detail, Director narrative) and swamped the card. Only the gloss is
+  // now unconditional; the reasoning is one tap away.
+  const [showPhaseRead, setShowPhaseRead] = useState(false);
 
   useEffect(() => {
     // Prefer the authoritative scan-macro regime/score (so Regime Pulse matches the
@@ -230,48 +234,64 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
               {regime_pulse.quadrant_detail}
             </div>
           )}
-          {/* Cycle read + dated falsifiers — what would break the phase call, with check-by
-              dates (at most 3, nearest first). The falsifiers are the ledger entries the
-              next weekly run gets scored against. */}
-          {regime_pulse.cycle?.phase && (
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)", marginTop: -2, marginBottom: 8 }}>
-              {/* Plain-language phase line, same register as quadrant_detail above. Pure
-                  display labeling off the published debt_cycle block — the implication
-                  clause is a fixed gloss per phase, not a computed signal. Fails soft:
-                  an unmapped or absent phase simply drops the clause / the whole line. */}
-              {(() => {
-                const PHASE_MEANS: Record<string, string> = {
-                  EXPANSION: "credit is cheap and flowing, so borrowing to grow is still rewarded and profit-later promises still get funded",
-                  DISCIPLINE: "lenders are demanding real compensation, so businesses producing cash now are favoured over promises of profit later",
-                  FORCING: "the debt burden is being forced onto someone, so balance-sheet strength matters more than growth",
-                  MONETIZATION: "the debt is being inflated away, so real assets and pricing power beat fixed cash streams",
-                };
-                const p = String(regime_pulse.cycle.phase);
-                const w = regime_pulse.cycle.weeks_in_phase;
-                const means = PHASE_MEANS[p];
-                const head = `${p}${typeof w === "number" ? `, week ${w}` : ""}`;
-                return <div style={{ marginBottom: 3 }}>{means ? `${head} — ${means}.` : `${head}.`}</div>;
-              })()}
-              {regime_pulse.cycle.phase_detail}
-              {(regime_pulse.cycle.falsifiers || []).length > 0 && (
-                <div style={{ marginTop: 4, paddingTop: 4, borderTop: "1px dotted var(--border)" }}>
-                  {regime_pulse.cycle.falsifiers.map((f: any, i: number) => (
-                    <div key={i} style={{ opacity: 0.85 }}>
-                      ⚠ breaks if: {f.condition}{f.check_by ? ` (by ${f.check_by})` : ""}{f.implies ? ` → ${f.implies}` : ""}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-          {/* The Director's own phase narrative (spec.phase_read), relayed verbatim by the
-              briefing route. Sits between the dials one-liners and the sentiment summary.
-              Absent phase / absent block = nothing rendered, no placeholder. */}
-          {regime_pulse.cycle?.phase_read && (
-            <div style={{ fontSize: 11, color: "var(--text-secondary)", lineHeight: 1.55, fontFamily: "var(--font-sans)", marginBottom: 10, paddingTop: 8, borderTop: "1px dotted var(--border)" }}>
-              {regime_pulse.cycle.phase_read}
-            </div>
-          )}
+          {/* Cycle read — ONE plain-language line by default. The Director's narrative and
+              the dated falsifiers sit behind the `why` toggle: same content, but the phase
+              call no longer restates itself three ways down the card. The dial-speak
+              `phase_detail` is dropped from the body entirely — the CYCLE chip's tooltip
+              above already carries it verbatim, so nothing is lost. */}
+          {regime_pulse.cycle?.phase && (() => {
+            const falsifiers: any[] = regime_pulse.cycle.falsifiers || [];
+            const hasWhy = Boolean(regime_pulse.cycle.phase_read) || falsifiers.length > 0;
+            return (
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)", marginTop: -2, marginBottom: 8 }}>
+                {/* Plain-language phase line, same register as quadrant_detail above. Pure
+                    display labeling off the published debt_cycle block — the implication
+                    clause is a fixed gloss per phase, not a computed signal. Fails soft:
+                    an unmapped or absent phase simply drops the clause / the whole line. */}
+                {(() => {
+                  const PHASE_MEANS: Record<string, string> = {
+                    EXPANSION: "credit is cheap and flowing, so borrowing to grow is still rewarded and profit-later promises still get funded",
+                    DISCIPLINE: "lenders are demanding real compensation, so businesses producing cash now are favoured over promises of profit later",
+                    FORCING: "the debt burden is being forced onto someone, so balance-sheet strength matters more than growth",
+                    MONETIZATION: "the debt is being inflated away, so real assets and pricing power beat fixed cash streams",
+                  };
+                  const p = String(regime_pulse.cycle.phase);
+                  const w = regime_pulse.cycle.weeks_in_phase;
+                  const means = PHASE_MEANS[p];
+                  const head = `${p}${typeof w === "number" ? `, week ${w}` : ""}`;
+                  return (
+                    <span>
+                      {means ? `${head} — ${means}.` : `${head}.`}
+                      {hasWhy && (
+                        <button onClick={() => setShowPhaseRead((v) => !v)}
+                          title={showPhaseRead ? "Hide the Director's phase reasoning" : "Read the Director's phase reasoning and what would break it"}
+                          style={{ marginLeft: 6, background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-muted)", textDecoration: "underline dotted", whiteSpace: "nowrap" }}>
+                          why {showPhaseRead ? "▾" : "▸"}
+                        </button>
+                      )}
+                    </span>
+                  );
+                })()}
+                {hasWhy && showPhaseRead && (
+                  <div style={{ marginTop: 6, paddingTop: 6, borderTop: "1px dotted var(--border)" }}>
+                    {regime_pulse.cycle.phase_read && (
+                      <div style={{ fontSize: 11, color: "var(--text-secondary)", lineHeight: 1.55, fontFamily: "var(--font-sans)", marginBottom: falsifiers.length ? 8 : 0 }}>
+                        {regime_pulse.cycle.phase_read}
+                      </div>
+                    )}
+                    {/* Dated falsifiers — what would break the phase call, with check-by dates
+                        (at most 3, nearest first). These are the ledger entries the next weekly
+                        run gets scored against. */}
+                    {falsifiers.map((f: any, i: number) => (
+                      <div key={i} style={{ opacity: 0.85 }}>
+                        ⚠ breaks if: {f.condition}{f.check_by ? ` (by ${f.check_by})` : ""}{f.implies ? ` → ${f.implies}` : ""}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
           <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5, fontFamily: "var(--font-sans)", marginBottom: 12 }}>
             {regime_pulse.summary}
           </div>
