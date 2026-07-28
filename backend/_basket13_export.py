@@ -17,10 +17,15 @@ OUTJ = os.path.join(BASE, "_basket13_out.json")
 DIRJ = os.path.join(BASE, "_opus_debate", "_catalyst_director.json")
 TS = os.path.join(ROOT, "frontend", "app", "data", "basket13.ts")
 
-# mirror of the inject cap dials, displayed as "n / cap" in the UI
-MAX_PER_DRIVER, MAX_SUPER_PCT, MAX_NAMES = 2, 40.0, 20
-MAX_PER_LANE = {"bio_convergence": 5}
-MAX_WATCHLIST, MAX_WATCHLIST_PER_DRIVER = 10, 5
+# IMPORT the cap dials — never mirror them (fixed 2026-07-28). This file used to keep its own
+# copy and had drifted a full week stale: it was still publishing max_per_driver 2 and a
+# bio_convergence lane cap of 5 to the UI, both LIFTED in inject on 2026-07-20. The page was
+# showing the user caps that no longer existed.
+import sys as _sys
+_sys.path.insert(0, BASE)
+from _basket13_inject import (MAX_PER_DRIVER, MAX_SUPER_PTS as MAX_SUPER_PCT, MAX_PER_LANE,
+                              MAX_WATCHLIST, MAX_WATCHLIST_PER_DRIVER, UNCAPPED_DRIVERS,
+                              UNCAPPED_CLUSTERS, INVESTED_PCT, EQUAL_WEIGHT)
 
 
 def main():
@@ -96,10 +101,14 @@ def main():
         "invested_pct": invested,
         "pending_pct": pending_w,
         "cash_pct": round(100 - invested - pending_w, 2),
-        "caps": {"max_per_driver": MAX_PER_DRIVER, "max_super_pct": MAX_SUPER_PCT, "max_names": MAX_NAMES,
+        "caps": {"max_per_driver": MAX_PER_DRIVER, "max_super_pct": MAX_SUPER_PCT,
+                 "max_names": None,                      # head-count cap removed 2026-07-28
                  "max_per_lane": MAX_PER_LANE, "max_watchlist": MAX_WATCHLIST,
                  "max_watchlist_per_driver": MAX_WATCHLIST_PER_DRIVER,
-                 "risk_to_floor_pct": 1.5, "binary_premium_pct": 2.0},
+                 "uncapped_drivers": sorted(UNCAPPED_DRIVERS),
+                 "uncapped_clusters": sorted(UNCAPPED_CLUSTERS)},
+        "sizing": {"equal_weight": EQUAL_WEIGHT, "invested_pct": INVESTED_PCT,
+                   "weight_per_seat": round(INVESTED_PCT / len(unresolved), 4) if unresolved else None},
         "driver_utilization": dict(sorted(drv.items(), key=lambda kv: -kv[1])),
         "cluster_utilization": dict(sorted(clus.items(), key=lambda kv: -kv[1])),
         "lane_utilization": dict(sorted(lanes.items(), key=lambda kv: -kv[1])),
@@ -109,6 +118,20 @@ def main():
         "non_selections": t.get("non_selections", []),
         "runs": t.get("runs", []),
         "marks": t.get("marks", []),    # daily NAV series (_basket13_mark.py) — the track record
+        # PRIOR BOOKS (2026-07-28): a re-founding restarts marks[] at 100, which would otherwise
+        # make the realized record vanish from the UI. Ship the archived books' resolutions so the
+        # closed track record stays visible and clearly labelled as a prior book.
+        "prior_books": [{"closed": b.get("closed"), "reason": b.get("reason"),
+                         "final_nav": b.get("final_nav"), "n_entries": b.get("n_entries"),
+                         "resolutions": [{"symbol": e["symbol"], "entry_price": e.get("entry_price"),
+                                          "expected_return_pct": None,
+                                          "weight_pct": e.get("weight_pct"),
+                                          **{k: v for k, v in (e.get("resolution") or {}).items()}}
+                                         for e in b.get("entries", []) if e.get("resolution")]}
+                        for b in t.get("book_archive", [])],
+        # stamping corrections (e.g. a resolution reversed as a wrong assessment) — kept visible so
+        # a reversal is auditable rather than a number that quietly changed
+        "corrections": t.get("corrections", []),
         "memo": (t.get("runs") or [{}])[-1].get("memo", ""),
     }
     hdr = ("// Basket 13 — Catalyst sleeve (paper, event-resolution tracker view).\n"

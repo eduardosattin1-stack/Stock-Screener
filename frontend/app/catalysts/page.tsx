@@ -119,6 +119,13 @@ export default function CatalystsPage() {
   const resolved = entries.filter((e) => e.resolution);
   const marks: any[] = B13.marks || [];
   const lastMark = marks[marks.length - 1] || {};
+  // A re-founding restarts the NAV at 100 and archives the outgoing book. Prior books keep their
+  // realized resolutions so the closed record stays on the page, labelled as a prior book.
+  const priorBooks: any[] = B13.prior_books || [];
+  const priorResolutions: any[] = priorBooks.flatMap((b: any) =>
+    (b.resolutions || []).map((r: any) => ({ ...r, _book_closed: b.closed })));
+  const corrections: any[] = B13.corrections || [];
+  const sizing: any = B13.sizing || {};
   const latest: any = B13.latest_debate || null;
   const assessBySym: Record<string, any> = useMemo(() => {
     const m: Record<string, any> = {};
@@ -176,7 +183,20 @@ export default function CatalystsPage() {
 
   // hero numbers
   const sinceIncept = typeof lastMark.nav === "number" ? lastMark.nav - 100 : null;
-  const wins = resolved.filter((e) => (e.resolution?.realized_return_pct ?? 0) > 0).length;
+  const allRes = resolved.length ? resolved.map((e) => e.resolution) : priorResolutions;
+  const wins = allRes.filter((r: any) => (r?.realized_return_pct ?? 0) > 0).length;
+  // One row shape for both the live book's resolutions and an archived book's, so the ledger
+  // survives a re-founding instead of emptying out.
+  const resolutionRows = useMemo(() => {
+    const live = resolved.map((e) => ({
+      symbol: e.symbol, entry_price: e.entry_price, expected_return_pct: e.expected_return_pct,
+      post_track: e.post_track, post_track_status: e.post_track_status, prior: false,
+      ...(e.resolution || {}),
+    }));
+    const old = priorResolutions.map((r: any) => ({ ...r, prior: true }));
+    return [...live, ...old].sort((a: any, b: any) =>
+      String(b.resolution_date || b.date || "").localeCompare(String(a.resolution_date || a.date || "")));
+  }, [resolved, priorResolutions]);
   const days = marks.length >= 2
     ? Math.round((new Date(lastMark.date).getTime() - new Date(marks[0].date).getTime()) / 86400000)
     : 0;
@@ -249,7 +269,7 @@ export default function CatalystsPage() {
           </div>
           <Sparkline marks={marks} />
           <div style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)", textAlign: "right" }}>
-            <div>NAV {typeof lastMark.nav === "number" ? lastMark.nav.toFixed(2) : "—"} · {open.length} held · {pending.length} resting · {resolved.length} resolved{resolved.length ? ` · win ${Math.round((wins / resolved.length) * 100)}%` : ""}</div>
+            <div>NAV {typeof lastMark.nav === "number" ? lastMark.nav.toFixed(2) : "—"} · {open.length} held · {pending.length} resting · {allRes.length} resolved{allRes.length ? ` · win ${Math.round((wins / allRes.length) * 100)}%` : ""}{priorResolutions.length && !resolved.length ? " (prior book)" : ""}</div>
             <div style={{ marginTop: 4 }}>debated {latest?.asof || "—"} · book stamped {B13.generated} · marked through {B13.marked_through || "—"}</div>
             <div style={{ fontSize: 8, marginTop: 4 }}>live-forward, not back-filled · equal-scrutiny paper sleeve</div>
           </div>
@@ -402,7 +422,10 @@ export default function CatalystsPage() {
         </div>
         <div style={{ fontSize: 8.5, color: "var(--text-light)", marginTop: 12 }}>
           Chips: the resolution radar flags a seat (never sells it) — exits are stamped by hand on primary sources. Paper — no orders are placed.
-          Caps: ≤{B13.caps?.max_per_driver}/driver (FDA drivers exempt) · ≤{B13.caps?.max_super_pct}% per super-cluster · ≤{B13.caps?.max_names} names.
+          {sizing.equal_weight
+            ? ` Equal weight: every seat carries ${sizing.weight_per_seat}% (${sizing.invested_pct}% invested, ${(100 - sizing.invested_pct).toFixed(0)}% cash). No seat cap — adding a name dilutes every other, and that dilution is the discipline. The Director picks the expression, not the size.`
+            : ""}
+          {" "}Caps: ≤{B13.caps?.max_per_driver}/driver (FDA drivers exempt) · ≤{B13.caps?.max_super_pct}% per super-cluster{(B13.caps?.uncapped_clusters || []).length ? ` (${(B13.caps.uncapped_clusters).join(", ")} uncapped)` : ""}.
         </div>
       </div>
 
@@ -519,9 +542,15 @@ export default function CatalystsPage() {
       </div>
 
       {/* ── resolutions ledger (bottom, per Bruno) ── */}
-      {resolved.length > 0 && (
+      {resolutionRows.length > 0 && (
         <div style={CARD}>
-          <div style={CARD_TITLE}><Clock size={13} /> Resolutions — {resolved.length} closed, win {resolved.length ? Math.round((wins / resolved.length) * 100) : 0}%</div>
+          <div style={CARD_TITLE}><Clock size={13} /> Resolutions — {resolutionRows.length} closed, win {resolutionRows.length ? Math.round((wins / resolutionRows.length) * 100) : 0}%</div>
+          {priorBooks.length > 0 && (
+            <div style={{ fontSize: 10, color: "var(--text-light)", marginBottom: 10, lineHeight: 1.5 }}>
+              The book was re-founded on {priorBooks[priorBooks.length - 1].closed} (equal weight, no seat cap) and the NAV re-based to 100.
+              Rows marked <span style={{ ...CHIP_MUTED, display: "inline-block" }}>prior book</span> are the closed record of the book that ended at NAV {priorBooks[priorBooks.length - 1].final_nav} — kept because a re-founding must not erase a track record.
+            </div>
+          )}
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead><tr>
@@ -533,25 +562,27 @@ export default function CatalystsPage() {
                 <th style={TH}>After the exit</th>
               </tr></thead>
               <tbody>
-                {[...resolved].sort((a, b) => String(b.resolution?.resolution_date || b.resolution?.date || "").localeCompare(String(a.resolution?.resolution_date || a.resolution?.date || ""))).map((e) => {
-                  const r = e.resolution || {};
+                {resolutionRows.map((r: any, i: number) => {
                   // realized_return_pct is stored as a FRACTION in the tracker (0.0533 = +5.33%)
                   const realized = typeof r.realized_return_pct === "number" ? r.realized_return_pct * 100 : null;
-                  const pt = (e.post_track || [])[Math.max(0, (e.post_track || []).length - 1)];
+                  const pt = (r.post_track || [])[Math.max(0, (r.post_track || []).length - 1)];
                   return (
-                    <tr key={e.symbol}>
-                      <td style={TD}><Link href={`/stock/${encodeURIComponent(e.symbol)}?tab=debate`} style={{ color: "var(--text)", fontWeight: 700, textDecoration: "none" }}>{e.symbol}</Link></td>
+                    <tr key={`${r.symbol}-${r.resolution_date || r.date}-${i}`}>
+                      <td style={TD}>
+                        <Link href={`/stock/${encodeURIComponent(r.symbol)}?tab=debate`} style={{ color: "var(--text)", fontWeight: 700, textDecoration: "none" }}>{r.symbol}</Link>
+                        {r.prior && <span style={{ ...CHIP_MUTED, marginLeft: 5 }}>prior book</span>}
+                      </td>
                       <td style={TD}><span style={(realized ?? 0) > 0 ? CHIP_GREEN : CHIP_RED}>{r.resolution_type || r.type || "—"}</span></td>
                       <td style={{ ...TD, color: "var(--text-light)" }}>{dShort(r.resolution_date || r.date)}</td>
-                      <td style={{ ...TD, textAlign: "right", color: "var(--text-light)" }}>{fmtPx(e.entry_price)}→{fmtPx(r.exit_price)}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "var(--text-light)" }}>{fmtPx(r.entry_price)}→{fmtPx(r.exit_price)}</td>
                       <td style={{ ...TD, textAlign: "right", fontWeight: 700, color: perfColor(realized) }}>{fmtPct(realized)}</td>
-                      <td style={{ ...TD, textAlign: "right", color: "var(--text-light)" }}>{fmtPct(e.expected_return_pct)}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "var(--text-light)" }}>{fmtPct(r.expected_return_pct)}</td>
                       <td style={{ ...TD, textAlign: "right", color: "var(--text-light)" }}>{r.days_held ?? "—"}</td>
                       <td style={TD}>
-                        {e.post_track_status ? (
-                          <span style={e.post_track_status === "ROUND_TRIP" ? CHIP_GREEN : e.post_track_status === "RERATE_COMPLETED" ? CHIP_RED : CHIP_MUTED}
+                        {r.post_track_status ? (
+                          <span style={r.post_track_status === "ROUND_TRIP" ? CHIP_GREEN : r.post_track_status === "RERATE_COMPLETED" ? CHIP_RED : CHIP_MUTED}
                             title={pt ? `since exit ${fmtPct(pt.since_exit_pct)} (${pt.date})` : ""}>
-                            {e.post_track_status === "RERATE_COMPLETED" ? "FINISHED WITHOUT US" : e.post_track_status === "ROUND_TRIP" ? "ROUND-TRIPPED" : e.post_track_status === "WINDOW_CLOSED" ? "WINDOW CLOSED" : `TRACKING ${pt ? fmtPct(pt.since_exit_pct) : ""}`}
+                            {r.post_track_status === "RERATE_COMPLETED" ? "FINISHED WITHOUT US" : r.post_track_status === "ROUND_TRIP" ? "ROUND-TRIPPED" : r.post_track_status === "WINDOW_CLOSED" ? "WINDOW CLOSED" : `TRACKING ${pt ? fmtPct(pt.since_exit_pct) : ""}`}
                           </span>
                         ) : <span style={CHIP_MUTED}>—</span>}
                       </td>
@@ -561,6 +592,23 @@ export default function CatalystsPage() {
               </tbody>
             </table>
           </div>
+          {corrections.length > 0 && (
+            <div style={{ marginTop: 12, borderTop: "1px solid var(--border-subtle)", paddingTop: 10 }}>
+              <div style={{ fontSize: 9, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>
+                Stamping corrections — {corrections.length}
+              </div>
+              {corrections.map((c: any, i: number) => (
+                <div key={i} style={{ fontSize: 10.5, lineHeight: 1.55, color: "var(--text-light)", marginBottom: 6 }}>
+                  <span style={{ ...CHIP_AMBER, marginRight: 6 }}>{c.type === "RESOLUTION_REVERSED" ? "REVERSED" : c.type}</span>
+                  <strong style={{ color: "var(--text)" }}>{c.symbol}</strong> ({c.date}) — {c.reason}
+                  {c.reversed_resolution && <span> Reversed stamp: {c.reversed_resolution.resolution_type} @ {fmtPx(c.reversed_resolution.exit_price)} on {c.reversed_resolution.resolution_date}.</span>}
+                </div>
+              ))}
+              <div style={{ fontSize: 8.5, color: "var(--text-light)" }}>
+                A reversed resolution counts as a stamping error, not a realized outcome — excluded from realized-return calibration, kept here so the misjudgement stays countable.
+              </div>
+            </div>
+          )}
           <div style={{ fontSize: 8.5, color: "var(--text-light)", marginTop: 8 }}>
             “After the exit” grades the exit itself for 90 days: green = the tape round-tripped (right to leave), red = the re-rate finished without us (left too early).
           </div>

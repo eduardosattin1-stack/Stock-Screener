@@ -32,6 +32,11 @@ Usage:
 """
 import json, os, argparse, datetime
 BASE = os.path.dirname(os.path.abspath(__file__))
+# single source of truth for the sizing dial — never re-declare it here (the export layer used to
+# keep its own copy of the caps and silently drifted stale; see _basket13_export.py)
+import sys as _sys
+_sys.path.insert(0, BASE)
+from _basket13_inject import INVESTED_PCT
 CAND = os.path.join(BASE, "_basket13_candidates.json")
 OUT  = os.path.join(BASE, "_basket13_workflow.js")
 ap = argparse.ArgumentParser()
@@ -261,26 +266,31 @@ NAMES (${batch.length}): ${JSON.stringify(batch)}` }
 
 function directorPrompt(survivors){ return `Today is __TODAY__. You are the CATALYST DIRECTOR for "Basket 13", a tracked PAPER basket (a calibration sleeve — NO live orders; expression + size are RECORDED, not executed). You receive the Catalyst-CRO survivors (TRADE / TRADE_WITH_CONDITIONS), each with its native board fields + the CRO's live checks. Build the basket under HARD rules — constraints, not preferences:
 ${HELD.n_seats ? `
-LOCKED HELD BOOK (${HELD.n_seats} seats, ${HELD.invested_pct}% invested — these run to resolution; do NOT re-select them, and they CONSUME cap headroom): ${JSON.stringify(HELD.names)}. ALREADY USED toward the COMBINED caps: per-driver ${JSON.stringify(HELD.by_driver)} (cap 2 each, EXCEPT the FDA drivers FDA_clinical_readout / FDA_approval_decision / FDA_pathway_feedback which are UNCAPPED as of 2026-07-20), per-cluster weight-points ${JSON.stringify(HELD.by_cluster)} (cap 40 each), seats ${HELD.n_seats}/20. You are ADDING NEW seats from the survivors below into the REMAINING headroom ONLY. If nothing fits at acceptable edge, return picks:[] — NEVER force a seat or breach a combined cap.
+LOCKED HELD BOOK (${HELD.n_seats} seats, ${HELD.invested_pct}% invested — these run to resolution; do NOT re-select them, and they CONSUME cap headroom): ${JSON.stringify(HELD.names)}. ALREADY USED toward the COMBINED caps: per-driver ${JSON.stringify(HELD.by_driver)} (cap 2 each, EXCEPT the FDA drivers FDA_clinical_readout / FDA_approval_decision / FDA_pathway_feedback which are UNCAPPED as of 2026-07-20), per-cluster weight-points ${JSON.stringify(HELD.by_cluster)} (cap 40 each, EXCEPT FDA/biotech which is uncapped), ${HELD.n_seats} seats held (NO seat cap). You are ADDING NEW seats from the survivors below. There is no headroom to run out of — the constraint is dilution: with ${HELD.n_seats} held, each new seat takes every seat to __INVESTED_PCT__/(${HELD.n_seats}+k). If nothing clears the median seat you already hold, return picks:[] — NEVER force a seat or breach a combined cap.
 ` : ``}${WATCHLIST.n_on_deck ? `
 PRIOR ON-DECK WATCHLIST (${WATCHLIST.n_on_deck} names you nominated in a previous run — CARRIED FORWARD by default and tracked to resolution): ${JSON.stringify(WATCHLIST.names)}. You are ACCOUNTABLE to these prior calls. A carried name leaves the on-deck book ONLY when its catalyst resolves or it graduates into the held book — you may NOT silently drop it. For each carried name you must do exactly ONE of: (a) RE-NOMINATE it in watchlist[] (keeps it active; if it was de_prioritized, set a stance_change_rationale explaining what changed); (b) DE-PRIORITIZE it — still list it in watchlist[] but with a stance_change_rationale stating why you cooled on it (it stays tracked, flagged); or (c) DEMOTE it on merit to passed[] with a concrete passed_because. If you championed a name last run and now want it gone, you owe a one-sentence reason — that asymmetry (added then dismissed) is exactly what the rationale captures.
 ` : ``}
 REGIME CONTEXT (as of 2026-07; STALE after ~2026-10 - if today is materially past that, IGNORE this block and note it in the memo): biotech M&A is at a record pace (37 takeouts >=$1B YTD 2026, $216B total deal value; acquirers paying up for late-stage, commercially-ready assets - Nuvalent $10.6B pre-approval, Apogee $10.9B in Phase 3; patent-cliff-driven, FTC light-touch). Two-sided implication: comp-backed takeout optionality legitimately fattens the WIN leg of late-stage bio seats that clear the gates on their own - but the same hot tape (XBI at a 5-year high) means entry edges are more compressed and market-implied win probs richer than in a cold tape; do not loosen entry discipline because the regime is warm.
 SELECTION: free choice among survivors; when two names are comparable, PREFER DRIVER DIVERSITY over raw score. FAST-RETURN HORIZON (2026-07-20): this sleeve prioritizes resolution WITHIN 2026 -- a name whose milestone or realistic resolution path lands in 2027+ is a PASS on merit (the validator hard-rejects dated milestones beyond 2026), and an undated staging name needs a plausible resolution path within ~2 quarters to deserve a seat. Honor each name's "weekly_diagnosis" where present: a fresh skeptic REFUTED / catalyst FIRED is a hard pass (the inject layer rejects it), and a fresh verdict-A/conviction-5 debate is a strong tailwind worth a seat if the CRO's trade surfaces clear.
+DEBT-CYCLE PHASE (2026-07-28 — ADVISORY ONLY, read this carefully): the macro layer says we are in __PHASE__ (__PHASE_BASIS__). This is DIRECTION, NOT A GATE. It must NOT make any name eligible or ineligible, must NOT change conviction, and cannot change size (sizing is mechanical). Use it for exactly one thing: JUDGEMENT about which catalyst families actually get PAID in this phase, stated in your memo.
+  - EXPANSION — cheap money; refinancing/levered-recap and growth-story catalysts complete easily; deal financing is available.
+  - DISCIPLINE — the cost of waiting is punished. Catalysts that pay CASH SOON (approvals with launch revenue, closing deals, forced sellers, capital returns) are favoured; catalysts that only re-rate a distant terminal value are fighting the discount rate, however good the science. Deal financing is tighter, so financing-contingent milestones carry more slip risk.
+  - FORCING — policy/regulator intervention dominates; forced-seller and mandated-divestiture drivers get more numerous and more reliable.
+  - MONETIZATION — long-duration and story assets get paid again as the discount rate falls; distant terminal-value catalysts stop fighting the tape.
+A phase citation is NEVER a reason to seat or skip a name on its own — the dated evidence is. If the phase argues against a name you still believe in, seat it and say so in the memo.
 CAPS (hard, COMBINED with the locked held book above — a basket that breaks one is rejected by the downstream validator):
   - <= 2 names per resolution_driver (held + new) — EXCEPT FDA_clinical_readout / FDA_approval_decision / FDA_pathway_feedback, which carry NO per-driver cap (2026-07-20: the bio gate is lifted; quality gates are the only bio filter). There is NO bio_convergence lane cap either.
-  - <= 40 NAV weight-points per super_cluster (held + new; e.g. held 22 -> only 18 left).
-  - 8-20 names total (held + new).
-SIZING (Kelly-lite on the bounded floor; weight_pct are % of basket NAV, target sum ~100):
-  - weight proportional to edge x independence (independence = resolves on its OWN driver, not the tape).
-  - RISK-TO-FLOOR per ratio name <= 1.5% NAV: weight_pct * (live_price - downside_floor)/live_price <= 1.5. (A name with a 20% floor-distance caps near 7.5% weight.)
-  - BINARIES (valuation_method=binary_prob): DEFINED-RISK only; premium-at-risk <= 2% NAV per name (weight_pct <= 2 for a debit structure); size off ev_pct, NOT the payoff.
-EXPRESSION:
+  - <= 40 NAV weight-points per super_cluster (held + new) — EXCEPT FDA/biotech, which is UNCAPPED as of 2026-07-28 (the last binding limit on biotech head-count, now removed).
+  - NO head-count cap. Book size is your free choice; dilution is the only cost (see SIZING).
+SIZING — NOT YOURS ANY MORE (2026-07-28, Bruno). The book is EQUAL WEIGHT: every unresolved seat carries __INVESTED_PCT__/n of NAV, computed by the stamping layer, with the remainder held in cash. Do NOT size, do NOT rank by size, do NOT propose a weight you care about (emit weight_pct:0 and it will be overwritten). This mirrors the apex book, where conviction-proportional sizing was retired for carrying no predictive signal. Two consequences you MUST reason with:
+  - DILUTION IS THE DISCIPLINE. There is no head-count cap any more. But every seat you add shrinks EVERY other seat, including your best one. So the only question per candidate is binary: does this name deserve to make the whole book smaller? If it is not at least as good as the median seat you already hold, it is a pass — that is now the entire cost model.
+  - EXPRESSION IS YOUR ONLY RISK LEVER. Because you cannot size a name down, the way you control what a bad outcome costs is the STRUCTURE you choose. A defined-risk option caps the loss at the premium; equity does not. Use it deliberately, especially on binaries.
+EXPRESSION (your lever — choose per name and say why in entry_rationale):
   - dated <= 6 months (days_to_milestone <= ~183) -> defined_risk_option clearing the milestone by +1 monthly expiry.
   - 6-12 months / structural / staging -> equity (or leaps if liquid).
-  - binaries -> debit_spread (or defined_risk_option); never naked.
-  - STAGING names (staging=true): equity ONLY, weight <= HALF a normal weight (~ (100/N)/2) — no options on an undated catalyst (theta with no timeline).
-__PROMO__OUTPUT: picks[] {symbol, weight_pct, expression{type, expiry?, strikes?}, entry_rationale (<=2 sentences), resolution_driver, super_cluster, expected_rr OR expected_ev (binaries), invalidation (what kills the trade), review_trigger (the next dated milestone)}. Then classify EVERY non-selected CRO survivor into EXACTLY ONE of: watchlist[] {symbol, blocked_by (which COMBINED cap is full: a specific driver / a super-cluster / the 12-seat count), would_enter_if (what frees a seat, e.g. "an FDA_clinical_readout seat opens when CELC or AMLX resolves"), intended_weight_pct, note} — for names you WOULD seat now but CANNOT solely because a combined cap is full (on-deck; first to enter when a held seat resolves and frees its cap) — OR passed[] {symbol, passed_because} — for names you'd skip on merit regardless of headroom (weaker/compressed edge, untradeable, undated). A name is on the WATCHLIST only if headroom is the ONLY thing stopping it; cap FRESH watchlist nominations at the 10 strongest on-deck names AND at most 5 per resolution_driver — once a driver hits 5 on the watchlist, route its remaining names to passed[] and fill the freed watchlist slots with the best on-deck names from OTHER drivers, so one abundant driver (e.g. FDA_clinical_readout) cannot monopolize the queue. ACCOUNTABILITY: for ANY name whose stance CHANGES vs the PRIOR ON-DECK WATCHLIST above — newly added, de-prioritized, or re-championed after being de-prioritized — emit a one-sentence stance_change_rationale (unchanged names leave it null); to remove a carried name on merit, route it to passed[] with a passed_because (never just omit it — a resolved catalyst or graduation is the only silent exit). Then a short memo (cluster mix + why this shape). RE-CHECK every cap before emitting. Emit ONE StructuredOutput {picks, watchlist, passed, memo}.
+  - BINARIES (valuation_method=binary_prob): DEFINED-RISK ONLY — debit_spread or defined_risk_option, never naked, never plain equity. This is a HARD validator gate, and it is the reason equal weight is survivable on a book this binary-heavy: the structure, not the size, is what bounds the loss.
+  - STAGING names (staging=true): equity ONLY — no options on an undated catalyst (theta with no timeline).
+__PROMO__OUTPUT: picks[] {symbol, weight_pct, expression{type, expiry?, strikes?}, entry_rationale (<=2 sentences), resolution_driver, super_cluster, expected_rr OR expected_ev (binaries), invalidation (what kills the trade), review_trigger (the next dated milestone)}. Then classify EVERY non-selected CRO survivor into EXACTLY ONE of: watchlist[] {symbol, blocked_by (which COMBINED cap is full: a specific driver or a super-cluster — NOT a seat count, there is none), would_enter_if (what frees it, e.g. "a Deal-completion seat opens when DDL resolves"), intended_weight_pct, note} — for names you WOULD seat now but CANNOT solely because a combined cap is full (on-deck; first to enter when a held seat resolves and frees its cap) — OR passed[] {symbol, passed_because} — for names you'd skip on merit regardless of headroom (weaker/compressed edge, untradeable, undated). A name is on the WATCHLIST only if headroom is the ONLY thing stopping it; cap FRESH watchlist nominations at the 10 strongest on-deck names AND at most 5 per resolution_driver — once a driver hits 5 on the watchlist, route its remaining names to passed[] and fill the freed watchlist slots with the best on-deck names from OTHER drivers, so one abundant driver (e.g. FDA_clinical_readout) cannot monopolize the queue. ACCOUNTABILITY: for ANY name whose stance CHANGES vs the PRIOR ON-DECK WATCHLIST above — newly added, de-prioritized, or re-championed after being de-prioritized — emit a one-sentence stance_change_rationale (unchanged names leave it null); to remove a carried name on merit, route it to passed[] with a passed_because (never just omit it — a resolved catalyst or graduation is the only silent exit). Then a short memo (cluster mix + why this shape). RE-CHECK every cap before emitting. Emit ONE StructuredOutput {picks, watchlist, passed, memo}.
 
 SURVIVORS (${survivors.length}): ${JSON.stringify(survivors)}` }
 
@@ -356,10 +366,29 @@ if PROMOTE:
         "PROMOTION, not a full re-debate: re-nominate every OTHER carried name from the PRIOR ON-DECK "
         "WATCHLIST unchanged in watchlist[] (stance_change_rationale null) — you were given no fresh "
         "dossiers on them, so you have no basis to change their stances. ")
+# DEBT-CYCLE PHASE (2026-07-28) — advisory context for the Director, from the SAME v7 snapshot
+# the apex/value books read. Fail-open by design: an unreadable snapshot yields UNKNOWN and the
+# prompt tells the Director to ignore the block, exactly like the apex's UNKNOWN-phase contract.
+# It NEVER gates eligibility and NEVER moves size (sizing is mechanical) — see CLAUDE.md FORK 2/B.
+_MACRO = os.path.join(BASE, "_opus_debate", "macro_regime.json")
+_phase, _phase_basis = "UNKNOWN", "macro snapshot unavailable — ignore the phase block"
+try:
+    _dc = (json.load(open(_MACRO, encoding="utf-8")).get("debt_cycle") or {})
+    if _dc.get("debt_cycle_phase"):
+        _phase = _dc["debt_cycle_phase"]
+        _phase_basis = (f"{_dc.get('weeks_in_phase', '?')}w in phase, confidence "
+                        f"{_dc.get('confidence', '?')}; {_dc.get('phase_basis', '')}").strip()
+except Exception as _e:
+    print(f"  WARN debt cycle unreadable ({_e}) — Director gets UNKNOWN phase (fail-open)")
+print(f"  debt-cycle phase for the Director: {_phase}")
+
 js = (JS.replace("__NAMES__", json.dumps(names, ensure_ascii=False))
         .replace("__HELD__", json.dumps(held_summary, ensure_ascii=False))
         .replace("__WATCHLIST__", json.dumps(watchlist_ctx, ensure_ascii=False))
         .replace("__PROMO__", promo_note)
+        .replace("__PHASE_BASIS__", _phase_basis)
+        .replace("__PHASE__", _phase)
+        .replace("__INVESTED_PCT__", str(INVESTED_PCT))
         .replace("__MODEL__", MODEL)
         .replace("__TODAY__", datetime.date.today().isoformat()))
 if PROMOTE:

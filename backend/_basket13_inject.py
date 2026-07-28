@@ -55,13 +55,39 @@ UNCAPPED_DRIVERS   = {"FDA_clinical_readout", "FDA_approval_decision", "FDA_path
                                # • 2026-07-20 (Bruno): bio/FDA drivers exempt from the per-driver cap —
                                #   quality gates (dossier/CRO/skeptic) remain the only bio gate
 MAX_SUPER_PTS      = 40.0    # weight-POINTS of NAV per super-cluster (pinned basis — see header)
-MIN_NAMES, MAX_NAMES = 8, 20   # • basket head-count cap
+UNCAPPED_CLUSTERS  = {"FDA/biotech"}
+                               # • 2026-07-28 (Bruno): the bio gate is fully lifted — with equal
+                               #   weight the super-cluster cap had become the LAST binding limit on
+                               #   biotech head-count (n seats x INVESTED_PCT/n crosses 40 pts as the
+                               #   book grows), so exempting the cluster is what "remove the biotech
+                               #   limit" actually requires. Quality gates (dossier/CRO/skeptic/
+                               #   weekly diagnosis) remain the only bio filter.
 MAX_PER_LANE       = {}        # • 2026-07-20 (Bruno): bio_convergence 5-name lane cap LIFTED (was {"bio_convergence": 5})
+
+# ---- SIZING (2026-07-28, Bruno) — EQUAL WEIGHT, NO HEAD-COUNT CAP ----------------------
+# The Director no longer sizes. He SELECTS and chooses EXPRESSION; the weight is mechanical:
+# every unresolved seat carries INVESTED_PCT/n. Adding a seat dilutes every other seat — that
+# dilution IS the discipline that replaced the old 8-20 head-count cap (same move the apex book
+# made when EQUAL_WEIGHT_BOOKS went in: conviction carried no predictive signal, so sizing on it
+# was noise). Weights re-equalize at each STAMP (a run), never intra-cycle: positions still
+# RESOLVE rather than rebalance between runs.
+#
+# INVESTED_PCT is the part-invested sleeve (Bruno's call, 2026-07-28): the cash remainder is the
+# shock absorber. It matters because ~8 of the current seats are binary_prob readouts whose
+# premium goes to ZERO on a miss — the retired BINARY_PREMIUM_PCT=2.0 cap was structural, not
+# conviction sizing, and full 1/n deployment would have raised per-binary loss ~4.5x. At 50%
+# with 12 seats a binary risks ~4.2% of NAV instead of 2.0% (deliberate, ~2x) rather than ~9.1%.
+EQUAL_WEIGHT       = True
+INVESTED_PCT       = 50.0    # • target deployed capital; 100 - this stays in cash
 MAX_WATCHLIST      = 10        # • on-deck watchlist length (shown below the basket)
 MAX_WATCHLIST_PER_DRIVER = 5   # • per-driver diversity cap on the on-deck watchlist — one abundant
                                #   driver (e.g. FDA_clinical_readout) can't crowd out the queue
-RISK_TO_FLOOR_PCT  = 1.5     # weight_pct * (live-floor)/live <= this, per ratio name
-BINARY_PREMIUM_PCT = 2.0     # weight_pct <= this for a binary defined-risk structure
+# RETIRED as WEIGHT checks 2026-07-28 (equal weight made them un-actionable — a breach would be
+# the arithmetic's fault, not the Director's). Kept as REPORTED diagnostics so the risk they
+# measured stays visible, and the STRUCTURAL half survives as a hard gate: a binary must still be
+# expressed defined-risk (see validate) — that is now the Director's only downside lever.
+RISK_TO_FLOOR_PCT  = 1.5     # informational: weight_pct * (live-floor)/live per ratio name
+BINARY_PREMIUM_PCT = 2.0     # informational: premium-at-risk per binary seat
 MAX_MILESTONE_YEAR = 2026    # • 2026-07-20 (Bruno): fast-return sleeve — a NEW seat's dated
                              #   milestone must resolve within 2026; 2027+ stories (e.g. LBTYK's
                              #   maybe-2027 spin) are passes, not seats. Applies to NEW picks only.
@@ -345,9 +371,11 @@ def validate(picks, bysym, live_px=None, held_syms=None):
     add retroactively breach seats that were legal when stamped)."""
     live_px = live_px or {}
     held_syms = held_syms or set()
+    _notes = []                            # informational risk lines (never block a stamp)
     v, n = [], len(picks)
-    if not (MIN_NAMES <= n <= MAX_NAMES):
-        v.append(f"COUNT {n} outside [{MIN_NAMES},{MAX_NAMES}]")
+    # HEAD-COUNT CAP REMOVED 2026-07-28 (Bruno): book size is the Director's free call. Equal
+    # weight makes every add self-limiting — a new seat shrinks every existing one — so the
+    # discipline is arithmetic rather than a number someone had to defend.
     bydrv = {}
     for p in picks:
         bydrv.setdefault(p.get("resolution_driver"), []).append(p["symbol"])
@@ -359,6 +387,8 @@ def validate(picks, bysym, live_px=None, held_syms=None):
         sc = p.get("super_cluster") or bysym.get(p["symbol"], {}).get("super_cluster")
         bysc[sc] = bysc.get(sc, 0.0) + (p.get("weight_pct") or 0)
     for sc, w in bysc.items():
+        if sc in UNCAPPED_CLUSTERS:            # 2026-07-28: bio gate fully lifted (see dials)
+            continue
         if w > MAX_SUPER_PTS + TOL:
             v.append(f"SUPER_CLUSTER {sc}: {w:.1f} NAV weight-points > {MAX_SUPER_PTS}")
     bylane = {}
@@ -379,21 +409,23 @@ def validate(picks, bysym, live_px=None, held_syms=None):
         vm, staging = c.get("valuation_method"), c.get("staging")
         live = live_px.get(p["symbol"]) or c.get("live_price")
         floor = c.get("downside_floor")
+        # STRUCTURAL gates survive equal weight; WEIGHT gates became un-actionable with it
+        # (weights are arithmetic now, so a breach would be nobody's decision). The weight
+        # numbers are still COMPUTED and reported — the risk they measured did not go away,
+        # it just stopped being a veto.
         if vm == "binary_prob" and not staging:
             if exp not in ("debit_spread", "defined_risk_option"):
                 v.append(f"{p['symbol']} binary expression '{exp}' not defined-risk")
             if w > BINARY_PREMIUM_PCT + TOL:
-                v.append(f"{p['symbol']} binary weight {w:.1f}% > {BINARY_PREMIUM_PCT}% premium-at-risk")
+                _notes.append(f"{p['symbol']} binary premium-at-risk {w:.1f}% (was capped {BINARY_PREMIUM_PCT}% "
+                              f"pre-equal-weight) — bounded by the defined-risk structure")
         elif vm != "binary_prob" and isinstance(live, (int, float)) and isinstance(floor, (int, float)) and live > 0 and live > floor:
             rtf = w * (live - floor) / live
             if rtf > RISK_TO_FLOOR_PCT + TOL:
-                v.append(f"{p['symbol']} risk-to-floor {rtf:.2f}% > {RISK_TO_FLOOR_PCT}% (w={w}, live={live}, floor={floor})")
-        if staging:
-            half = 0.5 * (100.0 / max(n, 1))
-            if exp != "equity":
-                v.append(f"{p['symbol']} STAGING must be equity, got '{exp}'")
-            if w > half + 0.5:
-                v.append(f"{p['symbol']} STAGING weight {w:.1f}% > half-normal {half:.1f}%")
+                _notes.append(f"{p['symbol']} risk-to-floor {rtf:.2f}% (was capped {RISK_TO_FLOOR_PCT}% "
+                              f"pre-equal-weight; w={w}, live={live}, floor={floor})")
+        if staging and exp != "equity":
+            v.append(f"{p['symbol']} STAGING must be equity, got '{exp}' — no options on an undated catalyst")
         # FAST-RETURN HORIZON (2026-07-20, Bruno): new seats must resolve within MAX_MILESTONE_YEAR.
         # Lenient parse — dated_milestone formats vary ("2026-09-30", "2026-mid", "2027-03-31").
         dm = str(c.get("dated_milestone") or "")
@@ -408,7 +440,29 @@ def validate(picks, bysym, live_px=None, held_syms=None):
         dg = _diag_gate(p["symbol"])
         if dg:
             v.append(dg)
+    for note in _notes:
+        print(f"  note (informational, not a breach): {note}")
     return v
+
+
+def equalize_weights(entries, invested_pct=None):
+    """EQUAL WEIGHT (2026-07-28): every UNRESOLVED seat carries invested_pct/n. Returns n.
+
+    Called at STAMP time only — between runs the book is append-only and does NOT rebalance
+    (a catalyst position resolves, it does not drift back to target). Resolved seats keep the
+    weight they carried while held, so the realized track record stays honest.
+    """
+    if not EQUAL_WEIGHT:
+        return 0
+    inv = INVESTED_PCT if invested_pct is None else invested_pct
+    live = [e for e in entries if not e.get("resolution")]
+    if not live:
+        return 0
+    w = round(inv / len(live), 4)
+    for e in live:
+        e["weight_pct"] = w
+        e["weight_basis"] = "equal"
+    return len(live)
 
 
 DIAG_FRESH_DAYS = 10   # ONE freshness window, shared with _basket13_gen (red-team condition)
@@ -481,7 +535,8 @@ def headroom_scan(quiet=False):
     for e in held:
         by_drv[e.get("resolution_driver")] = by_drv.get(e.get("resolution_driver"), 0) + 1
     if not quiet:
-        print(f"HEADROOM: {len(held)}/{MAX_NAMES} seats | invested {invested}% | by_driver {by_drv}")
+        print(f"HEADROOM: {len(held)} seats (no cap) | invested {invested}% "
+              f"| next add dilutes to {round(INVESTED_PCT / (len(held) + 1), 2)}%/seat | by_driver {by_drv}")
     first, also_fit = None, []
     for w in t.get("watchlist", []):
         sym = w.get("symbol")
@@ -641,6 +696,22 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
                                 "lane_canon": e.get("lane_canon"), "live_price": e.get("entry_price")}
         live_v[e["symbol"]] = e.get("entry_price") or e.get("limit_price")
 
+    # EQUAL WEIGHT (2026-07-28): overwrite whatever the Director proposed BEFORE validating, so
+    # the caps are checked against the weights the book will actually carry. The Director's
+    # weight_pct is now advisory-at-best and deliberately ignored — he owns selection and
+    # expression; sizing is arithmetic.
+    if EQUAL_WEIGHT:
+        _n_book = len(held_pseudo) + len(picks)
+        if _n_book:
+            _w = round(INVESTED_PCT / _n_book, 4)
+            _proposed = {p["symbol"]: p.get("weight_pct") for p in picks if p.get("weight_pct") is not None}
+            for _p in held_pseudo + picks:
+                _p["weight_pct"] = _w
+            print(f"EQUAL WEIGHT: {_n_book} seats x {_w}% = {INVESTED_PCT}% invested "
+                  f"({round(100 - INVESTED_PCT, 2)}% cash)")
+            if _proposed:
+                print(f"  Director's proposed weights IGNORED (sizing is mechanical): {_proposed}")
+
     viol = validate(held_pseudo + picks, bysym_v, live_px=live_v, held_syms=held_syms)
     if viol:
         print("CAP VALIDATION FAILED — basket NOT stamped:")
@@ -652,9 +723,28 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
 
     t = load_tracker()
     if restamp:
-        t["entries"], t["non_selections"], t["runs"] = [], [], []
+        # ARCHIVE, NEVER DELETE (fixed 2026-07-28). This used to do
+        #   t["entries"], t["non_selections"], t["runs"] = [], [], []
+        # which destroyed three calibration assets outright: the realized resolution record, the
+        # counterfactual ledger (every pass with its price0/spy0 — the only measure of whether the
+        # Director's PASSES are good), and the decision history. A re-founding changes the BOOK;
+        # it must not erase the evidence the book was judged on.
+        # non_selections + runs are cross-book ledgers and are CARRIED, not archived.
+        if t.get("entries") or t.get("marks"):
+            t.setdefault("book_archive", []).append({
+                "closed": stamp_date,
+                "reason": "re-founding (restamp)",
+                "final_nav": (t.get("marks") or [{}])[-1].get("nav"),
+                "n_entries": len(t.get("entries", [])),
+                "n_resolved": len([e for e in t.get("entries", []) if e.get("resolution")]),
+                "entries": t.get("entries", []),
+                "marks": t.get("marks", []),
+                "watchlist_marks": t.get("watchlist_marks", []),
+            })
+        t["entries"] = []
         t["marks"] = [{"date": stamp_date, "nav": 100.0, "basket_ret_pct": 0.0, "seats": {},
                        "note": "inception — entries stamped at CRO-verified live prices"}]
+        t["watchlist_marks"] = []
         # re-founding clears the on-deck book too — but ARCHIVE its audit trail first (never silently
         # erase the continuity ledger). watchlist_resolutions + archive persist across re-foundings.
         if t.get("watchlist_history"):
@@ -711,6 +801,11 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
                                         ("catalyst_status", "thesis_summary", "discrepancies", "kill_risk")}
         t["entries"].append(entry)
         (pending if is_pend else added).append(sym)
+
+    # re-equalize the WHOLE unresolved book (held + newly stamped) — the authoritative weights
+    _n_eq = equalize_weights(t["entries"])
+    if _n_eq:
+        print(f"  book re-equalized: {_n_eq} unresolved seats @ {round(INVESTED_PCT / _n_eq, 4)}% each")
 
     # counterfactuals (incl. stamp-time exclusions) — stamped WITH the pass-time price and a
     # SPY reference, so every pass can later be graded (what did passing actually cost/save vs
