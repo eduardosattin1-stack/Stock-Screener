@@ -292,12 +292,10 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
               </div>
             );
           })()}
-          <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5, fontFamily: "var(--font-sans)", marginBottom: 12 }}>
-            {regime_pulse.summary}
-          </div>
-          <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)", borderTop: "1px dashed var(--border)", paddingTop: 12 }}>
-            <strong style={{ color: "var(--text)", fontWeight: 600 }}>Action:</strong> {regime_pulse.action}
-          </div>
+          {/* The `summary` and `action` lines are deliberately NOT rendered: the
+              regime label, quadrant and cycle chips above already state the read,
+              and the sub-signal bars below carry the rates/credit/VIX detail the
+              action line restated in prose. Both remain in the payload. */}
           <RegimePulseDetail macro={macro} />
         </div>
 
@@ -321,7 +319,10 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
                     <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700, color: "var(--text)" }}>{it.symbol}</span>
                     {sourceChip(it.source)}
                   </div>
-                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-muted)", marginTop: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{it.text}</div>
+                  {/* The two books' MoS figures come from different methods (apex =
+                      discount to the debate's typed fair value at the live mark;
+                      value = the rubric's own stamp). The row says which. */}
+                  <div title={it.mos_basis || undefined} style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-muted)", marginTop: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", cursor: it.mos_basis ? "help" : undefined }}>{it.text}</div>
                 </div>
               ))}
               {radar_watch.total > radar_watch.items.length && (

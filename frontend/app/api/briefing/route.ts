@@ -350,11 +350,33 @@ export async function GET(req: Request) {
   //      Falls back to the debate-authored forcing_function (FIRED is already
   //      resolved — not forward-looking, so it's excluded from the radar either way).
   //    - Value Lens: deliberately catalyst-free by design (the pure-value re-grade
-  //      strips the catalyst overlay) — its radar signal is MoS% + the thesis-break
-  //      price level to watch instead. ──
+  //      strips the catalyst overlay), so it shows no beat-streak/upgrade flags —
+  //      but the earnings COUNTDOWN is a calendar fact, not a catalyst signal, and
+  //      is carried here so both books answer "when does this name next move?".
+  //    Both books now read on the same three fields: what's dated · MoS · floor.
+  //    The two MoS figures are NOT the same arithmetic and deliberately so — the
+  //    value book publishes `sop_mos_pct` stamped by its own rubric at debate time,
+  //    while the apex carries no MoS field, so its figure is computed here as the
+  //    discount to the debate's typed fair value (`target_px`, the field 557eb3fe
+  //    made authoritative over prose) at the live mark. Each row's tooltip states
+  //    which of the two it is rather than letting one label imply one method. ──
   const truncate = (s: any, n: number) => {
     const t = String(s || "").trim();
     return t.length > n ? `${t.slice(0, n - 1).trimEnd()}…` : t;
+  };
+  // Floor price. No currency field is published per pick, so a "$" is only correct
+  // for US listings — a dotted suffix (WKL.AS, SCR.PA) is priced in its home
+  // currency and gets a bare number rather than a wrong currency sign.
+  const floorTxt = (sym: string, px: any): string | null => {
+    const v = num(px);
+    if (!(v > 0)) return null;
+    const n = v >= 100 ? Math.round(v) : r2(v);
+    return sym.includes(".") ? `floor ${n}` : `floor $${n}`;
+  };
+  // Earnings countdown only — the beat-streak tail stays an apex-side signal.
+  const earnIn = (sym: string): string | null => {
+    const f = (catalystFlags.get(sym) || []).find((x) => /^earnings in\s*\d+\s*d/i.test(x));
+    return f ? (/^earnings in\s*\d+\s*d/i.exec(f) || [])[0] || null : null;
   };
   const radarSeen = new Set<string>();
   const radarItems: any[] = [];
@@ -364,9 +386,21 @@ export async function GET(req: Request) {
     if (p.catalyst_status !== "PENDING_HARD" && p.catalyst_status !== "SOFT_EXTENDED") continue;
     radarSeen.add(sym);
     const flags = catalystFlags.get(sym);
-    const text = flags?.length ? flags.slice(0, 2).join(" · ") : truncate(p.forcing_function, 90);
+    const parts: string[] = [];
+    const dated = flags?.length ? flags.slice(0, 2).join(" · ") : truncate(p.forcing_function, 90);
+    if (dated) parts.push(dated);
+    const fv = num(p.target_px), px = num(p.live_price) || num(p.entry_price);
+    // 1dp, matching the value book's own sop_mos_pct precision — two figures side by
+    // side in the same column shouldn't differ only in how many digits they show.
+    const mos = fv > 0 && px > 0 ? Math.round(((fv - px) / fv) * 1000) / 10 : null;
+    if (mos != null) parts.push(`MoS ${sign(mos)}${mos}%`);
+    const fl = floorTxt(sym, p.thesis_break_px);
+    if (fl) parts.push(fl);
     const urgent = p.catalyst_status === "PENDING_HARD" || Boolean(flags?.some((f: string) => f.includes("⚠")));
-    radarItems.push({ symbol: p.symbol, source: "apex", urgent, text });
+    radarItems.push({
+      symbol: p.symbol, source: "apex", urgent, text: parts.join(" · "),
+      mos_basis: mos != null ? `MoS = discount to the debate's typed fair value (${fv} vs ${r2(px)} live)` : null,
+    });
   }
   for (const p of (valueApex?.apex_basket || [])) {
     const sym = String(p?.symbol || "").toUpperCase();
@@ -377,8 +411,14 @@ export async function GET(req: Request) {
     radarSeen.add(sym);
     const parts: string[] = [];
     if (mos != null) parts.push(`MoS ${sign(num(mos))}${r2(num(mos))}%`);
-    if (breakPx != null) parts.push(`thesis breaks below $${num(breakPx)}`);
-    radarItems.push({ symbol: p.symbol, source: "value", urgent: false, text: parts.join(" · ") });
+    const fl = floorTxt(sym, breakPx);
+    if (fl) parts.push(fl);
+    const e = earnIn(sym);
+    if (e) parts.push(e);
+    radarItems.push({
+      symbol: p.symbol, source: "value", urgent: false, text: parts.join(" · "),
+      mos_basis: mos != null ? "MoS as stamped by the value rubric at debate time (sop_mos_pct)" : null,
+    });
   }
   radarItems.sort((a, b) => (b.urgent ? 1 : 0) - (a.urgent ? 1 : 0));
   const radar_watch = { total: radarItems.length, items: radarItems.slice(0, 7) };
