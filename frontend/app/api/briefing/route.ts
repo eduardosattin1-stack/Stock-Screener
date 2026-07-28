@@ -139,7 +139,7 @@ export async function GET(req: Request) {
     return pages.flatMap((d) => (Array.isArray(d) ? d : []));
   };
 
-  const [macro, sectors, calibV2, spec, apexTrkEqual, apexTrkWeighted, valueApex, methodologyTracking, catalystFlags, spyHistRaw, senateRaw, houseRaw, targetsRaw] = await Promise.all([
+  const [macro, sectors, calibV2, spec, apexTrkEqual, apexTrkWeighted, valueApex, valueTrkEqual, valueTrkWeighted, methodologyTracking, catalystFlags, spyHistRaw, senateRaw, houseRaw, targetsRaw] = await Promise.all([
     get("/api/macro", {}),
     get("/api/sectors", {}),
     get("/api/performance/calibration-v2", { records: [] }),
@@ -147,6 +147,11 @@ export async function GET(req: Request) {
     getGcsFirst("speculair_apex_tracking.json", {}),
     getGcsFirst("speculair_apex_tracking_weighted.json", {}),
     getGcsFirst("speculair_value_apex.json", {}),
+    // The value chain embedded in speculair_value_apex.json carries NAV/history but no
+    // positions or last_prices — those live only in these standalone state files, which
+    // is why Basket Pulse needs them to put value seats in the top/worst-name race.
+    getGcsFirst("speculair_value_tracking.json", {}),
+    getGcsFirst("speculair_value_tracking_weighted.json", {}),
     // Per-basket nav_history (uniform start 2026-07-20 across all 12 baskets, unlike
     // their staggered tracking_start) — powers the basket_pulse MTD/week winner below.
     getGcsFirst("methodology_tracking.json", {}),
@@ -303,9 +308,6 @@ export async function GET(req: Request) {
   const picks: any[] = [];
   for (const p of d9new) { const k = p.symbol.toUpperCase(); if (seenP.has(k)) continue; seenP.add(k); picks.push(p); }
 
-  const apex: any[] = (spec?.apex_basket || [])
-    .slice()
-    .sort((a: any, b: any) => num(b.conviction) - num(a.conviction));
   const secs: any[] = (sectors?.sectors || []).filter((s: any) => s.week != null || s.day != null);
   const hotSecs = secs.slice().sort((a, b) => num(b.week ?? b.day) - num(a.week ?? a.day));
   const model_focus = {
@@ -322,10 +324,15 @@ export async function GET(req: Request) {
       peak: r2(p.maxPlus),
       enteredDaysAgo: isFresh(p.entryDate) && p.entryDate ? Math.max(0, Math.floor((NOW - Date.parse(p.entryDate)) / 86400000)) : null,
     })),
+    // Two windows per sector — MTD (1M) and WEEK (5D) — from the SAME
+    // stock-price-change pull /api/sectors already makes for its own cards, so
+    // the extra column costs no additional FMP call. Ranking stays on the week
+    // (that's what "hot" means here); `month` is context beside it.
     hot_sectors: hotSecs.slice(0, 3).map((s) => ({
       name: s.name,
       symbol: s.symbol,
       week: r2(num(s.week ?? s.day)),
+      month: s.month != null ? r2(num(s.month)) : null,
       is_week: s.week != null,
       neg: num(s.week ?? s.day) < 0,
     })),
@@ -374,7 +381,7 @@ export async function GET(req: Request) {
     radarItems.push({ symbol: p.symbol, source: "value", urgent: false, text: parts.join(" · ") });
   }
   radarItems.sort((a, b) => (b.urgent ? 1 : 0) - (a.urgent ? 1 : 0));
-  const radar_watch = { total: radarItems.length, items: radarItems.slice(0, 5) };
+  const radar_watch = { total: radarItems.length, items: radarItems.slice(0, 7) };
 
   // Shared NAV-window helper (reused below for basket MTD/week AND the Live
   // Tracking section further down) — return from the earliest history point ON
@@ -392,8 +399,12 @@ export async function GET(req: Request) {
   const THIRTY_D_AGO = NOW - 30 * 86400000;
   const SEVEN_D_AGO = NOW - 7 * 86400000;
 
-  // ── 12-basket pulse ──
-  // Portfolio-level read across the 12 Speculair methodology baskets.
+  // ── Basket pulse ──
+  // Portfolio-level read across the 12 Speculair methodology baskets, reported on
+  // ONE clock: every line carries the same two windows (MTD = trailing 30d, WEEK =
+  // trailing 7d). Ranking follows the primary column (MTD), so "Leader" always
+  // means "best MTD" — the card can no longer show a leader whose headline number
+  // came from a different window than the columns beside it.
   const BLABEL: Record<string, string> = {
     dcf_fcff: "DCF-FCFF", earnings_yield_gap: "Earnings Yield", ev_gross_profit: "Gross Profit.",
     rd_capitalized_dcf: "R&D DCF", owner_earnings: "Owner Earn.", epv: "EPV", graham_revised: "Graham",
@@ -403,59 +414,85 @@ export async function GET(req: Request) {
   const md = (d: any) => { const x = new Date(d); return Number.isNaN(x.getTime()) ? "" : x.toLocaleDateString("en-US", { month: "short", day: "numeric" }); };
   const pmb: Record<string, any> = spec?.per_methodology_baskets || {};
   const basketRets = Object.keys(pmb).map((k) => ({ key: k, label: BLABEL[k] || k, ret: r2(num(pmb[k]?.ytd_return) * 100), start: pmb[k]?.tracking_start }));
-  // Leader/Laggard: previously ranked ALL 12 by since-their-OWN-tracking_start
-  // return — but 3 of the 12 started weeks later (06-02/06-04/06-10 vs the
-  // majority's 05-27), so a later-started basket simply having had less time
-  // to compound (or less time to draw down) made the "race" unfair. Restrict
-  // the comparison to the cohort sharing the most common tracking_start (the
-  // real majority launch date) — apples-to-apples, never a fabricated
-  // since-May-27 return for a basket that didn't exist yet on May 27.
-  const startCounts = new Map<string, number>();
-  for (const b of basketRets) if (b.start) startCounts.set(b.start, (startCounts.get(b.start) || 0) + 1);
-  const commonStart = [...startCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || null;
-  const comparableB = (commonStart ? basketRets.filter((b) => b.start === commonStart) : basketRets.slice())
-    .sort((a, b) => b.ret - a.ret);
-  const leaderB = comparableB[0] || null;
-  const laggardB = comparableB[comparableB.length - 1] || null;
-  const greenB = basketRets.filter((b) => b.ret > 0).length;
 
-  // MTD/week basket winner — from methodology_tracking.json's nav_history, which
-  // (unlike tracking_start) begins on the SAME date for all 12 baskets, so this
-  // comparison is always apples-to-apples regardless of each basket's own launch
-  // date. The log only started 2026-07-20, so right now both windows fall back to
-  // that same short real span (week ≈ MTD) — honest given the real data, and it
-  // naturally differentiates as more nightly snapshots accumulate.
+  // Basket MTD/week — from methodology_tracking.json's nav_history, which (unlike
+  // each basket's own tracking_start) begins on the SAME date for all 12, so the
+  // race is apples-to-apples regardless of launch date. The log only started
+  // 2026-07-20, so right now both windows fall back to that same short real span
+  // (week ≈ MTD) — honest given the real data, and it naturally differentiates as
+  // more nightly snapshots accumulate. Sorted by MTD: [0] = leader, last = laggard.
   const methTrackMeths = methodologyTracking?.methodologies || {};
   const basketWindows = Object.keys(pmb).map((k) => {
     const hist = methTrackMeths[k]?.nav_history || [];
     return { key: k, label: BLABEL[k] || k, mtd: navReturnSince(hist, THIRTY_D_AGO), week: navReturnSince(hist, SEVEN_D_AGO), since: md(hist[0]?.date) };
   }).filter((b) => b.mtd != null).sort((a, b) => (b.mtd as number) - (a.mtd as number));
-  const mtdWinnerB = basketWindows[0] || null;
+  const bWin = (b: any) => (b ? { label: b.label, mtd: r2(b.mtd as number), week: b.week != null ? r2(b.week) : null, since: b.since } : null);
+  // Fail-soft: no nav_history at all (fresh deploy / missing file) → fall back to
+  // the since-inception ranking with empty windows, so the card degrades to names
+  // without numbers rather than disappearing.
+  const fallbackB = basketRets.slice().sort((a, b) => b.ret - a.ret);
+  const leaderB = basketWindows.length ? bWin(basketWindows[0]) : (fallbackB[0] ? { label: fallbackB[0].label, mtd: null, week: null, since: null } : null);
+  const laggardB = basketWindows.length ? bWin(basketWindows[basketWindows.length - 1])
+    : (fallbackB.length > 1 ? { label: fallbackB[fallbackB.length - 1].label, mtd: null, week: null, since: null } : null);
 
-  const apos: Record<string, any> = apexTrk?.positions || {};
-  const alp: Record<string, any> = apexTrk?.last_prices || {};
-  const nameRets = Object.keys(apos).map((sym) => {
-    const e = num(apos[sym]?.entry_price); const last = num(alp[sym]);
-    return e > 0 && last > 0 ? { sym, ret: r2((last / e - 1) * 100), since: md(apos[sym]?.entry_date) } : null;
-  }).filter(Boolean).sort((a: any, b: any) => b.ret - a.ret) as any[];
+  // Top / worst NAME across BOTH live books — apex and value lens. Restricting this
+  // to the apex would let the system's best (or worst) seat go unreported just
+  // because the value book is the one holding it; each row is badged with the book
+  // it comes from, and a name seated in both carries both badges.
+  // The tracking files carry entry price + latest mark but no per-symbol history, so
+  // the windows come from FMP `stock-price-change` — ONE call for the union of seats
+  // (comma list; verified to cover .AS/.MI/.PA/.HK listings, not just US). Ranked by
+  // MTD to match the columns; the since-entry return survives as the row tooltip.
+  const vtWeighted = valueApex?.value_tracking_weighted;
+  const vtIsWeighted = !!(vtWeighted && (vtWeighted.history || []).length >= 4);
+  const vt = vtIsWeighted ? vtWeighted : (valueApex?.value_tracking || {});
+  // Seats come from the standalone state file matching whichever chain was promoted.
+  const valueTrk = vtIsWeighted ? valueTrkWeighted : valueTrkEqual;
+  const BOOK_SEATS: [string, Record<string, any>, Record<string, any>][] = [
+    ["apex", apexTrk?.positions || {}, apexTrk?.last_prices || {}],
+    ["value", valueTrk?.positions || {}, valueTrk?.last_prices || {}],
+  ];
+  const posSyms = [...new Set(BOOK_SEATS.flatMap(([, pos]) => Object.keys(pos)))];
+  const chgRaw: any[] = posSyms.length
+    ? await get(`/api/fmp?e=stock-price-change&symbol=${encodeURIComponent(posSyms.join(","))}`, [])
+    : [];
+  const nullable = (v: any): number | null => (Number.isFinite(Number(v)) ? r2(Number(v)) : null);
+  const chgBy = new Map<string, { mtd: number | null; week: number | null }>();
+  for (const c of Array.isArray(chgRaw) ? chgRaw : []) {
+    const s = String(c?.symbol || "").toUpperCase();
+    if (s) chgBy.set(s, { mtd: nullable(c["1M"]), week: nullable(c["5D"]) });
+  }
+  // One row per SYMBOL, not per seat — a name held by both books would otherwise be
+  // able to take the top and worst slot at once (two entry prices, one tape). The
+  // first book to seat it owns the since-entry figure; `sources` records both.
+  const byName = new Map<string, any>();
+  for (const [book, pos, last_prices] of BOOK_SEATS) {
+    for (const sym of Object.keys(pos)) {
+      const e = num(pos[sym]?.entry_price); const last = num(last_prices[sym]);
+      if (!(e > 0 && last > 0)) continue;
+      const prior = byName.get(sym);
+      if (prior) { if (!prior.sources.includes(book)) prior.sources.push(book); continue; }
+      const c = chgBy.get(sym.toUpperCase());
+      byName.set(sym, {
+        sym, sources: [book],
+        ret: r2((last / e - 1) * 100), since: md(pos[sym]?.entry_date),
+        mtd: c?.mtd ?? null, week: c?.week ?? null,
+      });
+    }
+  }
+  const nameRets = [...byName.values()];
+  // Rank by MTD when the pull landed, else by since-entry return — never a silent
+  // mix of the two: if ANY seat is missing its window, the whole list falls back.
+  const haveWindows = nameRets.length > 0 && nameRets.every((n) => n.mtd != null);
+  nameRets.sort((a, b) => (haveWindows ? b.mtd - a.mtd : b.ret - a.ret));
+
   const basket_pulse = {
-    total: basketRets.length,
-    green: greenB,
-    since_common: md(commonStart),
-    leader: leaderB ? { label: leaderB.label, ret: leaderB.ret } : null,
-    laggard: laggardB ? { label: laggardB.label, ret: laggardB.ret } : null,
-    mtd_winner: mtdWinnerB ? { label: mtdWinnerB.label, mtd: r2(mtdWinnerB.mtd as number), week: mtdWinnerB.week != null ? r2(mtdWinnerB.week) : null, since: mtdWinnerB.since } : null,
+    leader: leaderB,
+    laggard: laggardB,
     top_name: nameRets[0] || null,
     worst_name: nameRets.length > 1 ? nameRets[nameRets.length - 1] : null,
+    ranked_by: haveWindows ? "mtd" : "since_entry",
   };
-
-  // ── System pulse footer — live calibration_tracking v2 coverage stat, NOT
-  //    the frozen four-method tracker's win-rate (removed 2026-07-23; see
-  //    [[feedback_no_hardcoded_decile_snapshots]]). matched_touch_pct is the
-  //    touch rate among MATURED (resolved) picks only — a real, live number,
-  //    not a fabricated one. ──
-  const cyc30 = calibV2?.horizons?.["30d"]?.cycle || {};
-  const matchedTouchPct = num(cyc30.n_matured) > 0 ? Math.round((num(cyc30.n_touched) / num(cyc30.n_matured)) * 100) : null;
 
   // Live tracking — Apex + Value Lens vs SPY, MATCHED windows. Previously this
   // compared the apex book's trailing-30d return against SPY's calendar-YTD
@@ -466,10 +503,6 @@ export async function GET(req: Request) {
   // fabricated calendar-YTD either: both launched in June, so a Jan-1 baseline
   // would silently claim performance for months the book didn't exist.
   const apexMtdPct = navReturnSince(at.history, THIRTY_D_AGO);
-
-  const vtWeighted = valueApex?.value_tracking_weighted;
-  const vtIsWeighted = !!(vtWeighted && (vtWeighted.history || []).length >= 4);
-  const vt = vtIsWeighted ? vtWeighted : (valueApex?.value_tracking || {});
   const valueMtdPct = navReturnSince(vt.history, THIRTY_D_AGO);
 
   const spySeries: { date: string; price: number }[] = (Array.isArray(spyHistRaw) ? spyHistRaw : [])
@@ -511,20 +544,13 @@ export async function GET(req: Request) {
     ] as any[]).filter(Boolean),
   };
 
-  const system_pulse = {
-    live_tracking,
-    avg_coverage: matchedTouchPct != null
-      ? `${matchedTouchPct}% touched of matured · ${num(cyc30.n_total)} tracked (30d live)`
-      : `${num(cyc30.n_total)} tracked (30d live)`,
-  };
+  const system_pulse = { live_tracking };
 
   // ── System Debate — surface the LAST names added to the apex as click-through chips
   //    so the user can open each stock's debate tab. Prefer names flagged fresh this
   //    run (held_since_prior === false); on a quiet run that flags none, fall back to
   //    the most-recently-dated entry cohort (then top-conviction) so the row is never
-  //    empty. Plus the ACT / WAIT read. ──
-  const ds = spec?.debate_stats || {};
-  const watch = (spec?.capitulation_watchlist || []).length;
+  //    empty. ──
   const apexMembers: any[] = spec?.apex_basket || [];
   let new_tickers = apexMembers.filter((p: any) => !p.held_since_prior).map((p: any) => p.symbol);
   if (!new_tickers.length && apexMembers.length) {
@@ -566,15 +592,7 @@ export async function GET(req: Request) {
   });
   const bounded = [...boundedMap.values()].sort((a, b) => (b.rr ?? 0) - (a.rr ?? 0)).slice(0, 6);
 
-  const debate = {
-    new_tickers,
-    bounded,
-    act:
-      ds.apex_selected != null
-        ? `${ds.apex_selected} names cleared the full multi-agent debate into the apex${ds.fully_debated != null ? ` (of ${ds.fully_debated} debated)` : ""}.`
-        : `${apex.length} names hold the apex after the debate.`,
-    wait: `${watch} on the capitulation watchlist${ds.radar_filtered != null ? ` · ${ds.radar_filtered} filtered pre-debate` : ""}${ds.auto_vetoed != null ? ` · ${ds.auto_vetoed} auto-vetoed` : ""}.`,
-  };
+  const debate = { new_tickers, bounded };
 
   // ── Congress Watch — big STOCK Act filings (last 30 days, both chambers) ──
   // Filed-date window (disclosureDate), not trade-date: the briefing tracks what

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from "next/navigation";
-import { Activity, RefreshCw, BarChart2, Target, Radar, TrendingUp, TrendingDown, Award, Landmark } from 'lucide-react';
+import { Activity, RefreshCw, Target, Radar, TrendingUp, TrendingDown, Award, Landmark } from 'lucide-react';
 
 // ── Regime Pulse (shared) ───────────────────────────────────────────────────
 // Rich macro card used both inside the Daily Briefing (default view) and
@@ -350,16 +350,28 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
 
           {model_focus?.hot_sectors?.length > 0 && (
             <div style={{ borderTop: "1px dashed var(--border)", paddingTop: 12, marginTop: 12 }}>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.16em", color: "var(--text-light)", textTransform: "uppercase", marginBottom: 6 }}>
-                Hot sectors{model_focus.hot_sectors[0].is_week ? " (1wk)" : ""}
+              {/* Same two-window grammar as Basket Pulse: MTD (1M) and WEEK (5D)
+                  columns. Ranking stays on the week — that's what "hot" means here. */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 52px 52px", gap: 8, alignItems: "center", marginBottom: 6 }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.16em", color: "var(--text-light)", textTransform: "uppercase" }}>Hot sectors</span>
+                <span title="Trailing 30 days" style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.12em", color: "var(--text-light)", textAlign: "right", cursor: "help" }}>MTD</span>
+                <span title="Trailing 7 days — sectors are ranked by this column" style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.12em", color: "var(--text-light)", textAlign: "right", cursor: "help" }}>WEEK</span>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                {model_focus.hot_sectors.map((s: any) => (
-                  <div key={s.name} style={{ display: "flex", justifyContent: "space-between", fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)" }}>
-                    <b style={{ color: "var(--text)", fontWeight: 600 }}>{s.name}</b>
-                    <span style={{ color: s.neg ? "var(--red)" : "var(--green)" }}>{s.neg ? "" : "+"}{s.week}%</span>
-                  </div>
-                ))}
+                {model_focus.hot_sectors.map((s: any) => {
+                  const cell = (v: number | null) => (
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 600, textAlign: "right", color: v == null ? "var(--text-light)" : v >= 0 ? "var(--green)" : "var(--red)" }}>
+                      {v == null ? "—" : `${v >= 0 ? "+" : ""}${v}%`}
+                    </span>
+                  );
+                  return (
+                    <div key={s.name} style={{ display: "grid", gridTemplateColumns: "1fr 52px 52px", gap: 8, alignItems: "baseline", fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)" }}>
+                      <b style={{ color: "var(--text)", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.name}</b>
+                      {cell(s.month ?? null)}
+                      {cell(s.week ?? null)}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -406,16 +418,6 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
               </div>
             </div>
           )}
-          <div style={{ display: "flex", gap: 12 }}>
-            <div style={{ flex: 1, paddingRight: 16, borderRight: "1px solid var(--border-subtle)" }}>
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, color: "var(--green)", marginRight: 8 }}>ACT</span>
-              <span style={{ fontSize: 13, color: "var(--text-secondary)", fontFamily: "var(--font-sans)" }}>{debate.act}</span>
-            </div>
-            <div style={{ flex: 1, paddingLeft: 4 }}>
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, color: "var(--amber)", marginRight: 8 }}>WAIT</span>
-              <span style={{ fontSize: 13, color: "var(--text-secondary)", fontFamily: "var(--font-sans)" }}>{debate.wait}</span>
-            </div>
-          </div>
           {/* Live-tracking footer (system pulse) — each book's own MTD (trailing 30d) and
               since-inception return, each paired against SPY over that SAME window (not a
               mismatched MTD-vs-YTD comparison, and no fabricated YTD for books that only
@@ -438,52 +440,48 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
                 </span>
               </div>
             ))}
-            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>
-              <BarChart2 size={12} /> {system_pulse.avg_coverage}
-            </div>
           </div>
         </div>
 
-        {/* 12-basket pulse — leader / laggard / top single name across the methodology baskets */}
+        {/* Basket pulse — leader / laggard basket + best / worst apex name, every row
+            read on the SAME two windows (MTD = trailing 30d, WEEK = trailing 7d) so
+            the columns and the ranking can't disagree. Rows are ranked by MTD (the
+            route falls back to since-entry ranking only if the window pull fails —
+            it stamps `ranked_by` and the header note says which). */}
         <div style={{ background: "var(--bg)", padding: 20, borderRadius: 8, border: "1px solid var(--border)" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 58px 58px", gap: 8, alignItems: "center", marginBottom: 12 }}>
             <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.18em", color: "var(--text-muted)", textTransform: "uppercase" }}>Basket Pulse</span>
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)" }}>{basket_pulse?.total ?? 12} baskets</span>
+            <span title={basket_pulse?.ranked_by === "mtd" ? "Trailing 30 days — rows are ranked by this column" : "Trailing 30 days"} style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.12em", color: "var(--text-light)", textAlign: "right", cursor: "help" }}>MTD</span>
+            <span title="Trailing 7 days" style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.12em", color: "var(--text-light)", textAlign: "right", cursor: "help" }}>WEEK</span>
           </div>
           {basket_pulse && (basket_pulse.leader || basket_pulse.top_name) ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
-              {basket_pulse.leader && (
-                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-secondary)" }}><TrendingUp size={11} style={{ verticalAlign: -1, marginRight: 4, color: "var(--green)" }} />Leader: <b style={{ color: "var(--text)" }}>{basket_pulse.leader.label}</b></span>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, color: basket_pulse.leader.ret >= 0 ? "var(--green)" : "var(--red)" }}>{basket_pulse.leader.ret >= 0 ? "+" : ""}{basket_pulse.leader.ret}%</span>
-                </div>
-              )}
-              {basket_pulse.laggard && (
-                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-secondary)" }}><TrendingDown size={11} style={{ verticalAlign: -1, marginRight: 4, color: "var(--red)" }} />Laggard: <b style={{ color: "var(--text)" }}>{basket_pulse.laggard.label}</b></span>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, color: basket_pulse.laggard.ret >= 0 ? "var(--green)" : "var(--red)" }}>{basket_pulse.laggard.ret >= 0 ? "+" : ""}{basket_pulse.laggard.ret}%</span>
-                </div>
-              )}
-              {basket_pulse.mtd_winner && (
-                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-secondary)" }}><Activity size={11} style={{ verticalAlign: -1, marginRight: 4, color: "var(--green)" }} />MTD: <b style={{ color: "var(--text)" }}>{basket_pulse.mtd_winner.label}</b></span>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11 }}>
-                    <span style={{ fontWeight: 700, color: basket_pulse.mtd_winner.mtd >= 0 ? "var(--green)" : "var(--red)" }}>{basket_pulse.mtd_winner.mtd >= 0 ? "+" : ""}{basket_pulse.mtd_winner.mtd}%</span>
-                    {basket_pulse.mtd_winner.week != null && (
-                      <span style={{ color: "var(--text-light)", fontSize: 10 }}> · wk {basket_pulse.mtd_winner.week >= 0 ? "+" : ""}{basket_pulse.mtd_winner.week}%</span>
-                    )}
+              {([
+                basket_pulse.leader && { key: "leader", icon: <TrendingUp size={11} style={{ verticalAlign: -1, marginRight: 4, color: "var(--green)" }} />, label: "Leader", name: basket_pulse.leader.label, row: basket_pulse.leader, sym: null, tip: basket_pulse.leader.since ? `Best MTD of the 12 methodology baskets · logged since ${basket_pulse.leader.since}` : "Best MTD of the 12 methodology baskets" },
+                basket_pulse.laggard && { key: "laggard", icon: <TrendingDown size={11} style={{ verticalAlign: -1, marginRight: 4, color: "var(--red)" }} />, label: "Laggard", name: basket_pulse.laggard.label, row: basket_pulse.laggard, sym: null, tip: basket_pulse.laggard.since ? `Worst MTD of the 12 methodology baskets · logged since ${basket_pulse.laggard.since}` : "Worst MTD of the 12 methodology baskets" },
+                basket_pulse.top_name && { key: "top", icon: <Award size={11} style={{ verticalAlign: -1, marginRight: 4, color: "var(--amber)" }} />, label: "Top name", name: basket_pulse.top_name.sym, row: basket_pulse.top_name, sym: basket_pulse.top_name.sym, tip: `${basket_pulse.top_name.ret >= 0 ? "+" : ""}${basket_pulse.top_name.ret}% since the book entered it${basket_pulse.top_name.since ? ` on ${basket_pulse.top_name.since}` : ""}` },
+                basket_pulse.worst_name && { key: "worst", icon: <Award size={11} style={{ verticalAlign: -1, marginRight: 4, color: "var(--text-light)" }} />, label: "Worst name", name: basket_pulse.worst_name.sym, row: basket_pulse.worst_name, sym: basket_pulse.worst_name.sym, tip: `${basket_pulse.worst_name.ret >= 0 ? "+" : ""}${basket_pulse.worst_name.ret}% since the book entered it${basket_pulse.worst_name.since ? ` on ${basket_pulse.worst_name.since}` : ""}` },
+              ].filter(Boolean) as any[]).map((r) => {
+                const cell = (v: number | null) => (
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, textAlign: "right", color: v == null ? "var(--text-light)" : v >= 0 ? "var(--green)" : "var(--red)" }}>
+                    {v == null ? "—" : `${v >= 0 ? "+" : ""}${v}%`}
                   </span>
-                </div>
-              )}
-              {basket_pulse.top_name && (
-                <div onClick={() => router.push(`/stock/${encodeURIComponent(basket_pulse.top_name.sym)}`)} style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8, cursor: "pointer" }}>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-secondary)" }}><Award size={11} style={{ verticalAlign: -1, marginRight: 4, color: "var(--amber)" }} />Top name: <b style={{ color: "var(--text)" }}>{basket_pulse.top_name.sym}</b></span>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, color: basket_pulse.top_name.ret >= 0 ? "var(--green)" : "var(--red)" }}>{basket_pulse.top_name.ret >= 0 ? "+" : ""}{basket_pulse.top_name.ret}%</span>
-                </div>
-              )}
-              <div style={{ borderTop: "1px dashed var(--border)", paddingTop: 10, marginTop: 2, fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)" }}>
-                {basket_pulse.green}/{basket_pulse.total} baskets green{basket_pulse.since_common ? ` · since ${basket_pulse.since_common}` : ""}{basket_pulse.top_name?.since ? ` · top name since ${basket_pulse.top_name.since}` : ""}
-              </div>
+                );
+                return (
+                  <div key={r.key} title={r.tip}
+                    onClick={r.sym ? () => router.push(`/stock/${encodeURIComponent(r.sym)}`) : undefined}
+                    style={{ display: "grid", gridTemplateColumns: "1fr 58px 58px", gap: 8, alignItems: "baseline", cursor: r.sym ? "pointer" : "help" }}>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-secondary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {r.icon}{r.label}: <b style={{ color: "var(--text)" }}>{r.name}</b>
+                      {/* Which book holds the name — the same APEX/VALUE chip On Your
+                          Radar uses. A name seated in both books shows both chips. */}
+                      {(r.row.sources || []).map((s: string) => <React.Fragment key={s}> {sourceChip(s)}</React.Fragment>)}
+                    </span>
+                    {cell(r.row.mtd)}
+                    {cell(r.row.week)}
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <div style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-sans)", lineHeight: 1.5 }}>Basket tracking not available yet.</div>
