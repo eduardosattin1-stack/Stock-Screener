@@ -235,6 +235,23 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
               next weekly run gets scored against. */}
           {regime_pulse.cycle?.phase && (
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)", marginTop: -2, marginBottom: 8 }}>
+              {/* Plain-language phase line, same register as quadrant_detail above. Pure
+                  display labeling off the published debt_cycle block — the implication
+                  clause is a fixed gloss per phase, not a computed signal. Fails soft:
+                  an unmapped or absent phase simply drops the clause / the whole line. */}
+              {(() => {
+                const PHASE_MEANS: Record<string, string> = {
+                  EXPANSION: "credit is cheap and flowing, so borrowing to grow is still rewarded and profit-later promises still get funded",
+                  DISCIPLINE: "lenders are demanding real compensation, so businesses producing cash now are favoured over promises of profit later",
+                  FORCING: "the debt burden is being forced onto someone, so balance-sheet strength matters more than growth",
+                  MONETIZATION: "the debt is being inflated away, so real assets and pricing power beat fixed cash streams",
+                };
+                const p = String(regime_pulse.cycle.phase);
+                const w = regime_pulse.cycle.weeks_in_phase;
+                const means = PHASE_MEANS[p];
+                const head = `${p}${typeof w === "number" ? `, week ${w}` : ""}`;
+                return <div style={{ marginBottom: 3 }}>{means ? `${head} — ${means}.` : `${head}.`}</div>;
+              })()}
               {regime_pulse.cycle.phase_detail}
               {(regime_pulse.cycle.falsifiers || []).length > 0 && (
                 <div style={{ marginTop: 4, paddingTop: 4, borderTop: "1px dotted var(--border)" }}>
@@ -245,6 +262,14 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
                   ))}
                 </div>
               )}
+            </div>
+          )}
+          {/* The Director's own phase narrative (spec.phase_read), relayed verbatim by the
+              briefing route. Sits between the dials one-liners and the sentiment summary.
+              Absent phase / absent block = nothing rendered, no placeholder. */}
+          {regime_pulse.cycle?.phase_read && (
+            <div style={{ fontSize: 11, color: "var(--text-secondary)", lineHeight: 1.55, fontFamily: "var(--font-sans)", marginBottom: 10, paddingTop: 8, borderTop: "1px dotted var(--border)" }}>
+              {regime_pulse.cycle.phase_read}
             </div>
           )}
           <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5, fontFamily: "var(--font-sans)", marginBottom: 12 }}>

@@ -3244,6 +3244,65 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
         </Card>
       )}
 
+      {/* ── Where this sits in the debt cycle (apex-only; Dalio phase layer) ──
+          Plain-language read of cycle_fit: the phase we are in, what this business is to
+          the cycle (payback speed), the phase its payoff needs, and the Director's sentence.
+          Renders ONLY when cycle_fit exists — never a placeholder, and a missing/unknown
+          bucket reads as "not enough data", never as "story" (a data gap must not read as
+          a slow-payback verdict). Display only: nothing here moves published weight. */}
+      {debateData.cycle_fit && typeof debateData.cycle_fit === "object" && (() => {
+        const cf: any = debateData.cycle_fit;
+        const verdict = String(cf.verdict || "unknown");
+        const VMAP: Record<string, { c: string; label: string }> = {
+          aligned: { c: T.green, label: "Paid in the phase we are in" },
+          waiting_on_phase: { c: T.amber, label: "Waiting on the cycle to turn" },
+          phase_passed: { c: T.red, label: "Its phase has already passed" },
+          phase_agnostic: { c: T.textMuted, label: "Not tied to the cycle" },
+          unknown: { c: T.textMuted, label: "Not enough data" },
+        };
+        const v = VMAP[verdict] || VMAP.unknown;
+        const BUCKETS: Record<string, string> = {
+          cash_now: "earns cash now",
+          payback_2_3y: "earns in a few years",
+          story: "earns far in the future",
+          unknown: "not enough data",
+        };
+        const bucket = BUCKETS[String(cf.duration_bucket || "unknown")] || "not enough data";
+        const phaseNow = cf.current_phase ? String(cf.current_phase) : null;
+        const phaseNeeded = cf.phase_needed ? String(cf.phase_needed) : null;
+        const steps = typeof cf.phases_away === "number" ? cf.phases_away : null;
+        const horizon = typeof cf.horizon_months === "number" ? cf.horizon_months : null;
+        const Row = ({ k, val }: { k: string; val: string }) => (
+          <div style={{ display: "flex", gap: 6, alignItems: "baseline", minWidth: 0 }}>
+            <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textMuted, textTransform: "uppercase", letterSpacing: "0.06em", flexShrink: 0 }}>{k}</span>
+            <span style={{ fontSize: 11, fontFamily: T.mono, color: T.text }}>{val}</span>
+          </div>
+        );
+        return (
+          <Card style={{ padding: "16px 20px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: T.amber, textTransform: "uppercase", marginBottom: 10, paddingBottom: 6, borderBottom: `1px solid ${T.divider}` }}>
+              <Clock size={12} /> Where this sits in the debt cycle
+              <span style={{ marginLeft: "auto", fontSize: 10, fontWeight: 700, fontFamily: T.mono, letterSpacing: "0.04em", textTransform: "none", padding: "2px 8px", borderRadius: 4, color: v.c, background: v.c + "22", border: `1px solid ${v.c}55` }}>
+                {v.label}
+              </span>
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 18px", marginBottom: cf.read ? 10 : 0 }}>
+              {phaseNow && <Row k="Cycle now" val={phaseNow} />}
+              <Row k="This business" val={bucket} />
+              {phaseNeeded && <Row k="Pays off in" val={phaseNeeded + (steps != null && steps > 0 ? ` (${steps} phase step${steps === 1 ? "" : "s"} away)` : "")} />}
+              {horizon != null && (
+                <Row k="Our horizon" val={`${horizon} months${cf.horizon_survives_wait === false ? " — may run out before then" : ""}`} />
+              )}
+            </div>
+            {cf.read && (
+              <p style={{ fontSize: 12, color: T.textLight, lineHeight: 1.6, fontFamily: T.sans, margin: 0 }}>
+                {String(cf.read)}
+              </p>
+            )}
+          </Card>
+        );
+      })()}
+
       {/* ── CRO Final Synthesis ── */}
       {debateData.moderator_conclusion && (
         <Card style={{ padding: "16px 20px" }}>
