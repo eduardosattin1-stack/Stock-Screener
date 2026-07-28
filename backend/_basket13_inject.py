@@ -712,12 +712,31 @@ def inject(path, force=False, entry_date=None, restamp=False, excludes=None):
         t["entries"].append(entry)
         (pending if is_pend else added).append(sym)
 
-    for p in passed:                                # counterfactuals (incl. stamp-time exclusions)
+    # counterfactuals (incl. stamp-time exclusions) — stamped WITH the pass-time price and a
+    # SPY reference, so every pass can later be graded (what did passing actually cost/save vs
+    # the market?). Without price0/spy0 a pass is an assertion, not a measurable decision.
+    spy0 = None
+    try:
+        from _post_board import fetch_live_quotes as _flq
+        _pass_syms = [p["symbol"] for p in passed if live_map.get(p["symbol"]) is None
+                      and bysym.get(p["symbol"], {}).get("live_price") is None]
+        _pq = _flq(["SPY"] + _pass_syms)
+        spy0 = _pq.get("SPY")
+        for _s in _pass_syms:
+            if _pq.get(_s.upper()) is not None:
+                live_map.setdefault(_s, _pq[_s.upper()])
+    except Exception as _e:
+        print(f"  WARN pass-stamp quotes unavailable ({_e}) — price0/spy0 may be None on this run")
+    for p in passed:
         c = bysym.get(p["symbol"], {})
+        px0 = live_map.get(p["symbol"])
+        if px0 is None:
+            px0 = c.get("live_price")
         t["non_selections"].append({
             "symbol": p["symbol"], "date": stamp_date, "passed_because": p.get("passed_because", ""),
             "score": c.get("score"), "edge_grade": c.get("edge_grade"),
             "lane_canon": c.get("lane_canon"), "resolution_driver": c.get("resolution_driver"),
+            "price0": px0, "spy0": spy0,
         })
     # on-deck WATCHLIST — PERSISTENT book (carry-forward; never silently drop an un-resolved name).
     # See build_watchlist() for the full contract. wl_state persists each name's marking basis +

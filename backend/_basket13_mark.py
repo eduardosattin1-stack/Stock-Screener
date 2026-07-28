@@ -44,15 +44,23 @@ def main():
         if not res or e.get("post_track_status") in ("RERATE_COMPLETED", "ROUND_TRIP", "WINDOW_CLOSED"):
             return False
         try:
-            rd = datetime.date.fromisoformat(str(res.get("date"))[:10])
+            # resolutions stamp "resolution_date" (inject's resolve mode); "date" kept as a
+            # legacy fallback. Reading only "date" left post-exit grading DEAD for every
+            # resolved seat from 07-06 to 07-28 — nothing ever entered the window.
+            rd = datetime.date.fromisoformat(str(res.get("resolution_date") or res.get("date"))[:10])
         except Exception:
             return False
         return (datetime.date.today() - rd).days <= POST_TRACK_DAYS
     post_tracked = [e for e in entries if _in_post_window(e)]
+    # priced counterfactuals (non_selections carrying price0) are quoted too — a pass is only
+    # a measurable decision if we keep marking what it did after we passed. SPY rides along as
+    # the market leg of the same comparison.
+    priced_passes = [n for n in t.get("non_selections", []) if isinstance(n.get("price0"), (int, float))]
     syms = [e["symbol"] for e in unresolved]
     syms += [e["hedge"]["symbol"] for e in unresolved if e.get("hedge")]
     syms += [s for s in wl_state]                        # watchlist underlyings (one combined quote fetch)
     syms += [e["symbol"] for e in post_tracked]
+    syms += [n["symbol"] for n in priced_passes] + (["SPY"] if priced_passes else [])
     quotes = fetch_live_quotes(list(dict.fromkeys(syms)))
     today = datetime.date.today().isoformat()
 
@@ -268,6 +276,26 @@ def main():
         wlm = [m for m in t.get("watchlist_marks", []) if m.get("date") != today]   # idempotent per day
         wlm.append(wl_mark)
         t["watchlist_marks"] = sorted(wlm, key=lambda m: m["date"])
+
+    # 4. COUNTERFACTUAL MARK (2026-07-28, Bruno): every pass with a stamped price0/spy0 gets its
+    # since-pass return refreshed in place — last_price / since_pass_pct / spy_since_pass_pct /
+    # alpha_pp (negative alpha = the pass SAVED money vs buying it). Overwritten each mark, not a
+    # series: the ledger grades decisions, it doesn't chart them.
+    spy_now = quotes.get("SPY")
+    cf_n = 0
+    for n in priced_passes:
+        px = quotes.get(n["symbol"].upper())
+        if px is None:
+            continue
+        n["last_price"] = px
+        n["since_pass_pct"] = round((px / n["price0"] - 1) * 100, 2)
+        if isinstance(n.get("spy0"), (int, float)) and spy_now:
+            n["spy_since_pass_pct"] = round((spy_now / n["spy0"] - 1) * 100, 2)
+            n["alpha_pp"] = round(n["since_pass_pct"] - n["spy_since_pass_pct"], 2)
+        n["cf_marked"] = today
+        cf_n += 1
+    if cf_n:
+        print(f"  counterfactuals: {cf_n}/{len(priced_passes)} priced passes re-marked vs SPY")
 
     json.dump(t, open(TRK, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
     print(f"MARKED {today}: NAV {mark['nav']}  basket {mark['basket_ret_pct']:+.2f}%  ({len(seats)} seats"
