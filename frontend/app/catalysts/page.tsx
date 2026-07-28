@@ -217,7 +217,7 @@ export default function CatalystsPage() {
   const runRows = (B13.runs || []).filter((r: any) => hit(r.memo) || hit(r.run_date)).slice().reverse();
 
   return (
-    <div style={{ maxWidth: 1240, margin: "0 auto", padding: "24px 16px 60px" }}>
+    <div style={{ maxWidth: 1540, margin: "0 auto", padding: "24px 16px 60px" }}>
 
       {/* ══ THE BOOK CARD — same grammar as the Speculair Apex Basket ══ */}
       <div style={{ background: "var(--bg-surface)", border: "1px solid var(--green)", borderRadius: 12, padding: "20px 24px", marginBottom: 16 }}>
@@ -255,6 +255,61 @@ export default function CatalystsPage() {
           </div>
         </div>
 
+        {/* ── today's board — the Director's ranking, reconciled against the held book ──
+            This is the debate's OUTPUT (would-seat names in rank order). The held book below
+            is append-only and resolves on events, so the two can differ; the HELD / NOT HELD
+            chip states the reconciliation instead of leaving the reader to infer it. */}
+        {(() => {
+          const heldSet = new Set([...open, ...pending].map((e) => e.symbol));
+          const rank: string[] = latest?.ranking || [];
+          const board = rank
+            .map((sym: string) => assessBySym[sym])
+            .filter((a: any) => a && a.would_seat);
+          if (!board.length) return null;
+          const resolvedBy: Record<string, any> = {};
+          resolved.forEach((e) => { resolvedBy[e.symbol] = e.resolution; });
+          return (
+            <div style={{ border: "1px solid var(--border)", background: "var(--bg)", borderRadius: 8, padding: "10px 14px", marginBottom: 12 }}>
+              <div style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-light)", marginBottom: 6 }}>
+                Director&apos;s board · {latest?.asof} — {board.length} would-seat names, in rank order
+              </div>
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                  <thead><tr>
+                    <th style={TH}>#</th><th style={TH}>Symbol</th>
+                    <th style={{ ...TH, textAlign: "right" }}>Conv</th>
+                    <th style={{ ...TH, textAlign: "right" }}>Exp. return</th>
+                    <th style={TH}>Catalyst</th><th style={TH}>Posture</th><th style={TH}>Book</th>
+                  </tr></thead>
+                  <tbody>
+                    {board.map((a: any, i: number) => {
+                      const held = heldSet.has(a.symbol);
+                      const res = resolvedBy[a.symbol];
+                      return (
+                        <tr key={a.symbol}>
+                          <td style={{ ...TD, color: "var(--text-light)" }}>{i + 1}</td>
+                          <td style={TD}><Link href={`/stock/${encodeURIComponent(a.symbol)}?tab=debate`} style={{ color: "var(--text)", fontWeight: 700, textDecoration: "none" }}>{a.symbol}</Link></td>
+                          <td style={{ ...TD, textAlign: "right" }}><span style={convChip(a.conviction ?? 0)}>★ {a.conviction ?? "—"}</span></td>
+                          <td style={{ ...TD, textAlign: "right", color: "var(--green)", fontWeight: 700 }}>{fmtPct(a.expected_return_pct, 0)}</td>
+                          <td style={{ ...TD, fontSize: 9.5 }}>{a.catalyst_status || "—"}</td>
+                          <td style={{ ...TD, fontSize: 9.5, color: "var(--text-light)" }}>{String(a.posture || "—").replace(/_/g, " ")}</td>
+                          <td style={TD} title={a.binding_reason || ""}>
+                            {held
+                              ? <span style={CHIP_GREEN}>HELD</span>
+                              : res
+                                ? <span style={CHIP_AMBER} title={`resolved ${res.resolution_type || ""} ${dShort(res.resolution_date)} — the Director would re-seat; re-entry is a bi-weekly re-debate stamp, not automatic`}>NOT HELD · resolved {dShort(res.resolution_date)}</span>
+                                : <span style={CHIP_AMBER}>NOT HELD</span>}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          );
+        })()}
+
         {/* NAV chart, tucked like the rotation log */}
         <details style={{ marginBottom: 14 }}>
           <summary style={{ fontSize: 11, fontFamily: "var(--font-mono)", cursor: "pointer", color: "var(--text-light)" }}>
@@ -263,9 +318,13 @@ export default function CatalystsPage() {
           <div style={{ paddingTop: 8 }}><NavChart marks={marks} /></div>
         </details>
 
-        {/* ── seat cards (apex pick-card idiom) ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(400px, 1fr))", gap: 14 }}>
-          {[...open, ...pending].map((e) => {
+        {/* ── seat cards (apex pick-card idiom: same minmax(420px) grid as the apex book) ──
+            Ordered by TODAY'S Director conviction (desc), so the book reads in the same
+            order as the board strip above; seats the Director didn't assess sort last. */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: 14 }}>
+          {[...open, ...pending].sort((x, y) =>
+            ((assessBySym[y.symbol]?.conviction ?? -1) - (assessBySym[x.symbol]?.conviction ?? -1))
+            || ((y.weight_pct || 0) - (x.weight_pct || 0))).map((e) => {
             const a = assessBySym[e.symbol];
             const due = e.resolution_due;
             const refuted = due && /REFUTED/i.test(due.reason || "");
