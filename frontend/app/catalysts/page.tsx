@@ -1,30 +1,29 @@
 "use client";
 
-// BASKET 13 — the catalyst book, in the same idiom as the apex/value books.
+// BASKET 13 — the catalyst book, in the SAME idiom as the Speculair apex/value books.
 //
-// 2026-07-28 revamp (Bruno): one Director, one basket, one ledger. The page is
-// basket-first — NAV track record, the held seats, the Director's memo + decision
-// history (searchable), the resolutions ledger, and the counterfactual scoreboard
-// (every pass priced at pass time and graded vs SPY by the daily mark).
+// 2026-07-28 revamp (Bruno): one Director, one basket, one ledger — and the same look
+// and feel as the apex book: a green-bordered book card with a banner strip, the live
+// track-record hero, and per-seat CARDS (conviction chip, vitals rows, clamped PM
+// rationale with ▾ more). Below the book: the Director's searchable memo & decisions,
+// the counterfactual scoreboard, and the resolutions ledger at the bottom.
 //
-// RETIRED here (deliberately, not lost): the Loeb/Bloom deep-scan depth view, the
-// candidates sidebar and the standalone watchlist cards. The deep scan's
-// deterministic evidence (arb math, credit gate) feeds the debate pipeline, not
-// this page; per-name depth now lives on the stock page's Speculair Debate tab,
-// which serves the same week's multi-agent debate for every name here.
+// RETIRED (deliberately, not lost): the Loeb/Bloom deep-scan depth view, the
+// candidates sidebar and the standalone watchlist cards. Per-name depth lives on the
+// stock page's Speculair Debate tab, which serves the same week's debate.
 //
 // Data: app/data/basket13.ts (auto-gen by backend/_basket13_export.py) +
 // /basket13_dossiers.json (latest re-underwrites) + /api/quotes (60s live poll).
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { Activity, Clock, Search, ChevronDown, ChevronRight, FileText, Scale, SkipForward } from "lucide-react";
+import { Clock, Search, FileText, SkipForward } from "lucide-react";
 import { BASKET13 } from "../data/basket13";
 
 const B13: any = BASKET13;
 
 // ---------- helpers (house grammar) ----------
-const fmtPx = (v: any) => (typeof v === "number" ? (v >= 100 ? v.toFixed(2) : v >= 10 ? v.toFixed(2) : v.toFixed(3)) : "–.––");
+const fmtPx = (v: any) => (typeof v === "number" ? (v >= 10 ? v.toFixed(2) : v.toFixed(3)) : "–.––");
 const fmtPct = (v: any, dp = 1) => (typeof v === "number" ? `${v >= 0 ? "+" : ""}${v.toFixed(dp)}%` : "—");
 const perfColor = (v: any) => (typeof v !== "number" ? "var(--text-light)" : v >= 0 ? "var(--green)" : "var(--red)");
 const dShort = (d: any) => (typeof d === "string" ? d.slice(2) : "—");
@@ -37,6 +36,9 @@ const CHIP_GREEN = chip("var(--green-light)", "var(--green)");
 const CHIP_AMBER = chip("var(--amber-light)", "var(--amber)");
 const CHIP_RED = chip("var(--red-light)", "var(--red)");
 const CHIP_MUTED = chip("var(--bg-elevated)", "var(--text-light)");
+const convChip = (c: number) =>
+  chip(c >= 85 ? "var(--green-light)" : c >= 70 ? "var(--amber-light)" : "var(--bg-elevated)",
+       c >= 85 ? "var(--green)" : c >= 70 ? "var(--amber)" : "var(--text-light)");
 
 const TH: React.CSSProperties = {
   fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-light)",
@@ -54,6 +56,11 @@ const CARD_TITLE: React.CSSProperties = {
   fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 6,
   textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 12,
 };
+const VROW: React.CSSProperties = {
+  display: "flex", justifyContent: "space-between", gap: 12, fontSize: 11,
+  fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums", lineHeight: 1.8,
+};
+const VLAB: React.CSSProperties = { color: "var(--text-light)" };
 
 // ---------- NAV chart (basket/[key] idiom: base-100 dashed ref, min/max labels only) ----------
 function NavChart({ marks }: { marks: any[] }) {
@@ -144,7 +151,7 @@ export default function CatalystsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // latest re-underwrites (deep-dossier store) — per-seat kill-risk in the expanded row
+  // latest re-underwrites (deep-dossier store) — per-seat kill-risk in the expanded card
   const [dossiers, setDossiers] = useState<Record<string, any>>({});
   useEffect(() => {
     fetch("/basket13_dossiers.json")
@@ -153,7 +160,7 @@ export default function CatalystsPage() {
       .catch(() => {});
   }, []);
 
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [moreSym, setMoreSym] = useState<string | null>(null);
   const [memoQuery, setMemoQuery] = useState("");
   const [showAllPasses, setShowAllPasses] = useState(false);
 
@@ -174,6 +181,14 @@ export default function CatalystsPage() {
     ? Math.round((new Date(lastMark.date).getTime() - new Date(marks[0].date).getTime()) / 86400000)
     : 0;
 
+  // banner: expected book return ON NAV = sum(weight% x seat EV). Weights are %NAV so cash
+  // drag is included — binary biotech EVs are large by design, and printing the honest
+  // aggregate against the realized NAV is exactly the calibration this sleeve exists for.
+  const bookExp = useMemo(() => {
+    const rows = open.filter((e) => typeof e.expected_return_pct === "number" && e.weight_pct);
+    return rows.length ? rows.reduce((s, e) => s + (e.weight_pct / 100) * e.expected_return_pct, 0) : null;
+  }, [open]);
+
   // counterfactual ledger (priced passes only; artifacts without price0 excluded from stats)
   const passes: any[] = (B13.non_selections || []).filter((n: any) => typeof n?.alpha_pp === "number");
   const goodPasses = passes.filter((n) => n.alpha_pp <= 0).length;
@@ -187,6 +202,13 @@ export default function CatalystsPage() {
     () => [...passes].sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.alpha_pp - a.alpha_pp)),
     [passes]);
 
+  // banner tokens — risk_stance/regime are PROSE in the director file; show the compact head
+  // ("SELECTIVE-DEFENSIVE", "NEUTRAL / GOLDILOCKS / DISCIPLINE") with the full text on hover
+  const stanceTok = latest?.risk_stance ? String(latest.risk_stance).trim().split(/\s+/)[0].toUpperCase() : null;
+  const regimeTok = latest?.regime
+    ? String(latest.regime).split("(")[0].split("/").map((p: string) => p.trim().split(/\s+/)[0].toUpperCase()).filter(Boolean).join(" / ")
+    : null;
+
   // memo/decision search — "find the evidence later": filters the decision table AND the run history
   const q = memoQuery.trim().toLowerCase();
   const hit = (s: any) => !q || String(s || "").toLowerCase().includes(q);
@@ -195,106 +217,133 @@ export default function CatalystsPage() {
   const runRows = (B13.runs || []).filter((r: any) => hit(r.memo) || hit(r.run_date)).slice().reverse();
 
   return (
-    <div style={{ maxWidth: 1100, margin: "0 auto", padding: "24px 16px 60px" }}>
+    <div style={{ maxWidth: 1240, margin: "0 auto", padding: "24px 16px 60px" }}>
 
-      {/* ── hero: live track record (apex idiom) ── */}
-      <div style={{ ...CARD, border: "1px solid var(--green)" }}>
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 18, justifyContent: "space-between" }}>
+      {/* ══ THE BOOK CARD — same grammar as the Speculair Apex Basket ══ */}
+      <div style={{ background: "var(--bg-surface)", border: "1px solid var(--green)", borderRadius: 12, padding: "20px 24px", marginBottom: 16 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
+          <div style={{ fontSize: 16, fontWeight: 700 }}>Basket 13 — Catalyst Book</div>
+          <div style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
+            {open.length} seats · resolve-on-event · <span style={CHIP_MUTED}>paper</span>
+          </div>
+        </div>
+        <div style={{ fontSize: 11, color: "var(--text-light)", lineHeight: 1.6, margin: "6px 0 12px" }}>
+          The catalyst book: dated-event special situations from the weekly multi-agent catalyst debate (dossier → CRO → skeptic → Director).
+          Seats resolve on their event — they do not rebalance. Live-forward NAV, never back-filled.
+        </div>
+
+        {/* banner strip (goal-banner idiom) */}
+        <div style={{ border: "1px solid var(--border)", background: "var(--bg)", borderRadius: 8, padding: "7px 12px", fontSize: 11, fontFamily: "var(--font-mono)", marginBottom: 12, display: "flex", flexWrap: "wrap", gap: 14 }}>
+          <span>⚑ resolve-by-event · milestones within 2026</span>
+          {stanceTok && <span title={String(latest.risk_stance)}>stance <strong style={{ color: "var(--amber)" }}>{stanceTok}</strong></span>}
+          {regimeTok && <span title={String(latest.regime)}>macro <strong style={{ color: "var(--amber)" }}>{regimeTok}</strong></span>}
+          {typeof bookExp === "number" && <span title="sum of weight% x seat EV over the open book — binary EVs are large by design; compare with the realized NAV above">book exp <strong style={{ color: "var(--green)" }}>{fmtPct(bookExp)}</strong> on NAV</span>}
+        </div>
+
+        {/* live track record hero */}
+        <div style={{ border: "1px solid var(--border)", background: "var(--bg)", borderRadius: 8, padding: "12px 16px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 18, justifyContent: "space-between", marginBottom: 12 }}>
           <div>
-            <div style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-light)", marginBottom: 4 }}>
-              Basket 13 — Catalyst book · <span style={CHIP_MUTED}>paper</span>
-            </div>
-            <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "var(--font-mono)", color: perfColor(sinceIncept) }}>
-              {fmtPct(sinceIncept, 2)}
-            </div>
-            <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>
-              since {marks[0]?.date || "—"} · {days}d
-            </div>
+            <div style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-light)", marginBottom: 4 }}>Live track record</div>
+            <div style={{ fontSize: 20, fontWeight: 800, fontFamily: "var(--font-mono)", color: perfColor(sinceIncept) }}>{fmtPct(sinceIncept, 2)}</div>
+            <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>since {marks[0]?.date || "—"} · {days}d</div>
           </div>
           <Sparkline marks={marks} />
           <div style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)", textAlign: "right" }}>
             <div>NAV {typeof lastMark.nav === "number" ? lastMark.nav.toFixed(2) : "—"} · {open.length} held · {pending.length} resting · {resolved.length} resolved{resolved.length ? ` · win ${Math.round((wins / resolved.length) * 100)}%` : ""}</div>
-            <div style={{ marginTop: 4 }}>
-              debated {latest?.asof || "—"} · book stamped {B13.generated} · marked through {B13.marked_through || "—"}
-            </div>
+            <div style={{ marginTop: 4 }}>debated {latest?.asof || "—"} · book stamped {B13.generated} · marked through {B13.marked_through || "—"}</div>
             <div style={{ fontSize: 8, marginTop: 4 }}>live-forward, not back-filled · equal-scrutiny paper sleeve</div>
           </div>
         </div>
-      </div>
 
-      {/* ── NAV chart ── */}
-      <div style={CARD}>
-        <div style={CARD_TITLE}><Activity size={13} /> Track record</div>
-        <NavChart marks={marks} />
-      </div>
+        {/* NAV chart, tucked like the rotation log */}
+        <details style={{ marginBottom: 14 }}>
+          <summary style={{ fontSize: 11, fontFamily: "var(--font-mono)", cursor: "pointer", color: "var(--text-light)" }}>
+            ▸ NAV chart · {marks.length} marks
+          </summary>
+          <div style={{ paddingTop: 8 }}><NavChart marks={marks} /></div>
+        </details>
 
-      {/* ── held seats ── */}
-      <div style={CARD}>
-        <div style={CARD_TITLE}><Scale size={13} /> The basket — {open.length} seats{pending.length ? ` + ${pending.length} resting limits` : ""}</div>
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead><tr>
-              <th style={TH}></th><th style={TH}>Symbol</th><th style={TH}>Driver</th>
-              <th style={TH}>Entry</th><th style={{ ...TH, textAlign: "right" }}>Entry px</th>
-              <th style={{ ...TH, textAlign: "right" }}>Live</th><th style={{ ...TH, textAlign: "right" }}>Return</th>
-              <th style={{ ...TH, textAlign: "right" }}>Wt</th><th style={TH}>Milestone</th><th style={TH}>Status</th>
-            </tr></thead>
-            <tbody>
-              {[...open, ...pending].map((e) => {
-                const ret = liveRet(e);
-                const a = assessBySym[e.symbol];
-                const due = e.resolution_due;
-                const refuted = due && /REFUTED/i.test(due.reason || "");
-                const isOpen = expanded === e.symbol;
-                const doss = dossiers[e.symbol];
-                return (
-                  <FragmentRow key={e.symbol}>
-                    <tr onClick={() => setExpanded(isOpen ? null : e.symbol)} style={{ cursor: "pointer" }}>
-                      <td style={{ ...TD, width: 18, color: "var(--text-light)" }}>{isOpen ? <ChevronDown size={11} /> : <ChevronRight size={11} />}</td>
-                      <td style={TD}>
-                        <Link href={`/stock/${encodeURIComponent(e.symbol)}?tab=debate`} onClick={(ev) => ev.stopPropagation()}
-                          style={{ fontWeight: 700, color: "var(--text)", textDecoration: "none" }}>{e.symbol}</Link>
-                      </td>
-                      <td style={{ ...TD, fontSize: 9.5, color: "var(--text-light)", maxWidth: 150, overflow: "hidden", textOverflow: "ellipsis" }}>{e.resolution_driver || "—"}</td>
-                      <td style={{ ...TD, color: "var(--text-light)" }}>{dShort(e.entry_date || e.order_date)}</td>
-                      <td style={{ ...TD, textAlign: "right" }}>{e.status === "PENDING_LIMIT" ? `lim ${fmtPx(e.limit_price)}` : fmtPx(e.entry_price)}</td>
-                      <td style={{ ...TD, textAlign: "right" }}>{fmtPx(livePx(e.symbol))}</td>
-                      <td style={{ ...TD, textAlign: "right", color: perfColor(ret), fontWeight: 700 }}>{e.status === "PENDING_LIMIT" ? "–.––" : fmtPct(ret)}</td>
-                      <td style={{ ...TD, textAlign: "right" }}>{e.weight_pct != null ? `${e.weight_pct}%` : "—"}</td>
-                      <td style={{ ...TD, color: "var(--text-light)" }}>{e.dated_milestone || "—"}</td>
-                      <td style={TD}>
-                        <span style={{ display: "inline-flex", gap: 4 }}>
-                          {e.status === "PENDING_LIMIT" && <span style={CHIP_MUTED}>RESTING</span>}
-                          {refuted && <span style={CHIP_RED} title={due.reason}>REFUTED — REVIEW</span>}
-                          {due && !refuted && <span style={CHIP_AMBER} title={due.reason}>REVIEW DUE</span>}
-                          {a && a.would_seat === false && !due && (
-                            <span style={CHIP_AMBER} title={a.binding_reason}>DIR PASS</span>)}
-                          {a && a.would_seat === true && <span style={CHIP_GREEN} title={a.binding_reason}>DIR BACKS</span>}
-                          {!a && !due && <span style={CHIP_MUTED}>HELD</span>}
-                        </span>
-                      </td>
-                    </tr>
-                    {isOpen && (
-                      <tr><td colSpan={10} style={{ ...TD, whiteSpace: "normal", background: "var(--bg)", fontFamily: "var(--font-sans)", fontSize: 11, lineHeight: 1.55, padding: "10px 14px" }}>
-                        {due && <div style={{ color: refuted ? "var(--red)" : "var(--amber)", fontWeight: 600, marginBottom: 6 }}>Resolution radar ({due.date}): {due.reason}</div>}
-                        {a && <div style={{ marginBottom: 6 }}><strong>Director {latest?.asof}:</strong> {a.would_seat ? "would seat" : "would NOT seat"} · conviction {a.conviction} · {a.catalyst_status} — {a.binding_reason}</div>}
-                        {doss && <div style={{ marginBottom: 6 }}><strong>Re-underwritten {doss.asof || ""}:</strong> {doss.thesis_summary || ""}{doss.kill_risk ? <span style={{ color: "var(--red)" }}> · kill risk: {typeof doss.kill_risk === "string" ? doss.kill_risk : JSON.stringify(doss.kill_risk)}</span> : null}</div>}
-                        {e.entry_rationale && <div style={{ marginBottom: 6 }}><strong>Entry rationale ({dShort(e.order_date)}):</strong> {e.entry_rationale}</div>}
-                        {e.invalidation && <div style={{ marginBottom: 6 }}><strong>Invalidation:</strong> {e.invalidation}</div>}
-                        {e.review_trigger && <div><strong>Review trigger:</strong> {e.review_trigger}</div>}
-                        <div style={{ marginTop: 6, fontSize: 9, color: "var(--text-light)" }}>
-                          floor {fmtPx(e.downside_floor)} · target {fmtPx(e.fair_value_target)} · expected {fmtPct(e.expected_return_pct)} · CRO {e.cro_verdict || "—"} · full debate on the <Link href={`/stock/${encodeURIComponent(e.symbol)}?tab=debate`} style={{ color: "var(--green)" }}>stock page →</Link>
+        {/* ── seat cards (apex pick-card idiom) ── */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(400px, 1fr))", gap: 14 }}>
+          {[...open, ...pending].map((e) => {
+            const a = assessBySym[e.symbol];
+            const due = e.resolution_due;
+            const refuted = due && /REFUTED/i.test(due.reason || "");
+            const isPend = e.status === "PENDING_LIMIT";
+            const px = livePx(e.symbol);
+            const ret = liveRet(e);
+            const basis = px || e.entry_price || e.limit_price;
+            const tgtUp = typeof e.fair_value_target === "number" && basis ? (e.fair_value_target / basis - 1) * 100 : null;
+            const isMore = moreSym === e.symbol;
+            const doss = dossiers[e.symbol];
+            return (
+              <div key={e.symbol} style={{ background: "var(--bg)", border: `1px solid ${refuted ? "var(--red)" : due ? "var(--amber)" : "var(--border)"}`, borderRadius: 10, padding: "14px 16px" }}>
+                {/* header row */}
+                <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                  <Link href={`/stock/${encodeURIComponent(e.symbol)}?tab=debate`}
+                    style={{ fontSize: 15, fontWeight: 700, fontFamily: "var(--font-mono)", color: "var(--text)", textDecoration: "none" }}>{e.symbol}</Link>
+                  {a && typeof a.conviction === "number" && <span style={convChip(a.conviction)}>★ {a.conviction}/100</span>}
+                  <span style={CHIP_MUTED}>wt {e.weight_pct != null ? `${e.weight_pct}%` : "—"}</span>
+                  {isPend && <span style={CHIP_MUTED}>RESTING lim {fmtPx(e.limit_price)}</span>}
+                  {refuted && <span style={CHIP_RED} title={due.reason}>REFUTED — REVIEW</span>}
+                  {due && !refuted && <span style={CHIP_AMBER} title={due.reason}>REVIEW DUE</span>}
+                  {a && a.would_seat === false && !due && <span style={CHIP_AMBER} title={a.binding_reason}>DIR PASS</span>}
+                  {a && a.would_seat === true && <span style={CHIP_GREEN} title={a.binding_reason}>DIR BACKS</span>}
+                  <span style={{ marginLeft: "auto", fontSize: 13, fontWeight: 700, fontFamily: "var(--font-mono)", color: perfColor(ret) }}>
+                    {isPend ? "–.––" : fmtPct(ret)}
+                  </span>
+                </div>
+                {/* chips row */}
+                <div style={{ display: "flex", gap: 4, flexWrap: "wrap", margin: "6px 0 8px" }}>
+                  <span style={CHIP_MUTED}>{e.resolution_driver || "—"}</span>
+                  {e.lane_canon && <span style={CHIP_MUTED}>{e.lane_canon}</span>}
+                  {e.cro_verdict && <span style={chip("var(--bg-elevated)", "var(--lavender)")}>CRO {String(e.cro_verdict).slice(0, 18)}</span>}
+                </div>
+                {/* vitals */}
+                <div style={{ marginBottom: 8 }}>
+                  <div style={VROW}><span style={VLAB}>Entry:</span><span>{isPend ? `resting @ ${fmtPx(e.limit_price)}` : `$${fmtPx(e.entry_price)} (${e.entry_date || e.order_date})`}</span></div>
+                  <div style={VROW}><span style={VLAB}>Current:</span><span>${fmtPx(px)}</span></div>
+                  <div style={VROW}>
+                    <span style={VLAB}>target upside / floor:</span>
+                    <span>
+                      <span style={{ color: "var(--green)", fontWeight: 700 }}>{fmtPct(tgtUp, 0)}</span>
+                      {typeof e.downside_floor === "number" && <> · <span style={{ color: "var(--red)", fontWeight: 700 }}>floor ${fmtPx(e.downside_floor)}</span></>}
+                    </span>
+                  </div>
+                  <div style={VROW}>
+                    <span style={VLAB}>catalyst:</span>
+                    <span title={e.dated_milestone || ""} style={{ maxWidth: 260, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textAlign: "right" }}>{e.dated_milestone || "—"}</span>
+                  </div>
+                </div>
+                {/* PM rationale, 6-line clamp with ▾ more (apex idiom) */}
+                {(e.entry_rationale || due || a) && (
+                  <div style={{ fontSize: 11, lineHeight: 1.55, color: "var(--text)", borderTop: "1px solid var(--border-subtle)", paddingTop: 8 }}>
+                    <div style={isMore ? {} : { display: "-webkit-box", WebkitLineClamp: 6, WebkitBoxOrient: "vertical", overflow: "hidden" } as React.CSSProperties}>
+                      {due && <div style={{ color: refuted ? "var(--red)" : "var(--amber)", fontWeight: 600, marginBottom: 4 }}>Radar ({due.date}): {due.reason}</div>}
+                      <span style={{ color: "var(--text-light)" }}><strong>PM</strong> </span>{e.entry_rationale || "—"}
+                      {isMore && (
+                        <div style={{ marginTop: 8, color: "var(--text-light)" }}>
+                          {a && <div style={{ marginBottom: 5 }}><strong>Director {latest?.asof}:</strong> {a.would_seat ? "would seat" : "would NOT seat"} · conviction {a.conviction} · {a.catalyst_status} — {a.binding_reason}</div>}
+                          {doss && <div style={{ marginBottom: 5 }}><strong>Re-underwritten {doss.asof || ""}:</strong> {doss.thesis_summary || ""}{doss.kill_risk ? <span style={{ color: "var(--red)" }}> · kill risk: {typeof doss.kill_risk === "string" ? doss.kill_risk : JSON.stringify(doss.kill_risk)}</span> : null}</div>}
+                          {e.invalidation && <div style={{ marginBottom: 5 }}><strong>Invalidation:</strong> {e.invalidation}</div>}
+                          {e.review_trigger && <div style={{ marginBottom: 5 }}><strong>Review trigger:</strong> {e.review_trigger}</div>}
+                          <div style={{ fontSize: 9 }}>expected {fmtPct(e.expected_return_pct)} · full debate on the <Link href={`/stock/${encodeURIComponent(e.symbol)}?tab=debate`} style={{ color: "var(--green)" }}>stock page →</Link></div>
                         </div>
-                      </td></tr>
-                    )}
-                  </FragmentRow>
-                );
-              })}
-            </tbody>
-          </table>
+                      )}
+                    </div>
+                    <button onClick={() => setMoreSym(isMore ? null : e.symbol)}
+                      style={{ background: "none", border: "none", color: "var(--text-light)", fontSize: 10, fontFamily: "var(--font-mono)", cursor: "pointer", padding: "4px 0 0" }}>
+                      {isMore ? "▴ less" : "▾ more"}
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
-        <div style={{ fontSize: 8.5, color: "var(--text-light)", marginTop: 8 }}>
-          Seats resolve on their event — they do not rebalance. Chips: the resolution radar flags a seat (never sells it); exits are stamped by hand on primary sources.
+        <div style={{ fontSize: 8.5, color: "var(--text-light)", marginTop: 12 }}>
+          Chips: the resolution radar flags a seat (never sells it) — exits are stamped by hand on primary sources. Paper — no orders are placed.
+          Caps: ≤{B13.caps?.max_per_driver}/driver (FDA drivers exempt) · ≤{B13.caps?.max_super_pct}% per super-cluster · ≤{B13.caps?.max_names} names.
         </div>
       </div>
 
@@ -347,55 +396,6 @@ export default function CatalystsPage() {
           </details>
         ))}
       </div>
-
-      {/* ── resolutions ledger ── */}
-      {resolved.length > 0 && (
-        <div style={CARD}>
-          <div style={CARD_TITLE}><Clock size={13} /> Resolutions — {resolved.length} closed, win {resolved.length ? Math.round((wins / resolved.length) * 100) : 0}%</div>
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
-              <thead><tr>
-                <th style={TH}>Symbol</th><th style={TH}>Type</th><th style={TH}>Resolved</th>
-                <th style={{ ...TH, textAlign: "right" }}>Entry→Exit</th>
-                <th style={{ ...TH, textAlign: "right" }}>Realized</th>
-                <th style={{ ...TH, textAlign: "right" }}>Expected</th>
-                <th style={{ ...TH, textAlign: "right" }}>Days</th>
-                <th style={TH}>After the exit</th>
-              </tr></thead>
-              <tbody>
-                {[...resolved].sort((a, b) => String(b.resolution?.resolution_date || b.resolution?.date || "").localeCompare(String(a.resolution?.resolution_date || a.resolution?.date || ""))).map((e) => {
-                  const r = e.resolution || {};
-                  // realized_return_pct is stored as a FRACTION in the tracker (0.0533 = +5.33%)
-                  const realized = typeof r.realized_return_pct === "number" ? r.realized_return_pct * 100 : null;
-                  const pt = (e.post_track || [])[Math.max(0, (e.post_track || []).length - 1)];
-                  return (
-                    <tr key={e.symbol}>
-                      <td style={TD}><Link href={`/stock/${encodeURIComponent(e.symbol)}?tab=debate`} style={{ color: "var(--text)", fontWeight: 700, textDecoration: "none" }}>{e.symbol}</Link></td>
-                      <td style={TD}><span style={(realized ?? 0) > 0 ? CHIP_GREEN : CHIP_RED}>{r.resolution_type || r.type || "—"}</span></td>
-                      <td style={{ ...TD, color: "var(--text-light)" }}>{dShort(r.resolution_date || r.date)}</td>
-                      <td style={{ ...TD, textAlign: "right", color: "var(--text-light)" }}>{fmtPx(e.entry_price)}→{fmtPx(r.exit_price)}</td>
-                      <td style={{ ...TD, textAlign: "right", fontWeight: 700, color: perfColor(realized) }}>{fmtPct(realized)}</td>
-                      <td style={{ ...TD, textAlign: "right", color: "var(--text-light)" }}>{fmtPct(e.expected_return_pct)}</td>
-                      <td style={{ ...TD, textAlign: "right", color: "var(--text-light)" }}>{r.days_held ?? "—"}</td>
-                      <td style={TD}>
-                        {e.post_track_status ? (
-                          <span style={e.post_track_status === "ROUND_TRIP" ? CHIP_GREEN : e.post_track_status === "RERATE_COMPLETED" ? CHIP_RED : CHIP_MUTED}
-                            title={pt ? `since exit ${fmtPct(pt.since_exit_pct)} (${pt.date})` : ""}>
-                            {e.post_track_status === "RERATE_COMPLETED" ? "FINISHED WITHOUT US" : e.post_track_status === "ROUND_TRIP" ? "ROUND-TRIPPED" : e.post_track_status === "WINDOW_CLOSED" ? "WINDOW CLOSED" : `TRACKING ${pt ? fmtPct(pt.since_exit_pct) : ""}`}
-                          </span>
-                        ) : <span style={CHIP_MUTED}>—</span>}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-          <div style={{ fontSize: 8.5, color: "var(--text-light)", marginTop: 8 }}>
-            “After the exit” grades the exit itself for 90 days: green = the tape round-tripped (right to leave), red = the re-rate finished without us (left too early).
-          </div>
-        </div>
-      )}
 
       {/* ── counterfactual scoreboard ── */}
       <div style={CARD}>
@@ -459,17 +459,54 @@ export default function CatalystsPage() {
         )}
       </div>
 
-      {/* ── footer ── */}
-      <div style={{ fontSize: 8.5, color: "var(--text-light)", lineHeight: 1.6 }}>
-        Paper sleeve — no orders are placed; entries are stamped at CRO-verified live prices, resting limits never get fiction fills.
-        Caps: ≤{B13.caps?.max_per_driver}/driver (FDA drivers exempt) · ≤{B13.caps?.max_super_pct}% per super-cluster · ≤{B13.caps?.max_names} names.
-        Per-name depth (bull/bear, skeptic, valuation) lives on each stock page&apos;s Speculair Debate tab — same debate, same week.
-      </div>
+      {/* ── resolutions ledger (bottom, per Bruno) ── */}
+      {resolved.length > 0 && (
+        <div style={CARD}>
+          <div style={CARD_TITLE}><Clock size={13} /> Resolutions — {resolved.length} closed, win {resolved.length ? Math.round((wins / resolved.length) * 100) : 0}%</div>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead><tr>
+                <th style={TH}>Symbol</th><th style={TH}>Type</th><th style={TH}>Resolved</th>
+                <th style={{ ...TH, textAlign: "right" }}>Entry→Exit</th>
+                <th style={{ ...TH, textAlign: "right" }}>Realized</th>
+                <th style={{ ...TH, textAlign: "right" }}>Expected</th>
+                <th style={{ ...TH, textAlign: "right" }}>Days</th>
+                <th style={TH}>After the exit</th>
+              </tr></thead>
+              <tbody>
+                {[...resolved].sort((a, b) => String(b.resolution?.resolution_date || b.resolution?.date || "").localeCompare(String(a.resolution?.resolution_date || a.resolution?.date || ""))).map((e) => {
+                  const r = e.resolution || {};
+                  // realized_return_pct is stored as a FRACTION in the tracker (0.0533 = +5.33%)
+                  const realized = typeof r.realized_return_pct === "number" ? r.realized_return_pct * 100 : null;
+                  const pt = (e.post_track || [])[Math.max(0, (e.post_track || []).length - 1)];
+                  return (
+                    <tr key={e.symbol}>
+                      <td style={TD}><Link href={`/stock/${encodeURIComponent(e.symbol)}?tab=debate`} style={{ color: "var(--text)", fontWeight: 700, textDecoration: "none" }}>{e.symbol}</Link></td>
+                      <td style={TD}><span style={(realized ?? 0) > 0 ? CHIP_GREEN : CHIP_RED}>{r.resolution_type || r.type || "—"}</span></td>
+                      <td style={{ ...TD, color: "var(--text-light)" }}>{dShort(r.resolution_date || r.date)}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "var(--text-light)" }}>{fmtPx(e.entry_price)}→{fmtPx(r.exit_price)}</td>
+                      <td style={{ ...TD, textAlign: "right", fontWeight: 700, color: perfColor(realized) }}>{fmtPct(realized)}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "var(--text-light)" }}>{fmtPct(e.expected_return_pct)}</td>
+                      <td style={{ ...TD, textAlign: "right", color: "var(--text-light)" }}>{r.days_held ?? "—"}</td>
+                      <td style={TD}>
+                        {e.post_track_status ? (
+                          <span style={e.post_track_status === "ROUND_TRIP" ? CHIP_GREEN : e.post_track_status === "RERATE_COMPLETED" ? CHIP_RED : CHIP_MUTED}
+                            title={pt ? `since exit ${fmtPct(pt.since_exit_pct)} (${pt.date})` : ""}>
+                            {e.post_track_status === "RERATE_COMPLETED" ? "FINISHED WITHOUT US" : e.post_track_status === "ROUND_TRIP" ? "ROUND-TRIPPED" : e.post_track_status === "WINDOW_CLOSED" ? "WINDOW CLOSED" : `TRACKING ${pt ? fmtPct(pt.since_exit_pct) : ""}`}
+                          </span>
+                        ) : <span style={CHIP_MUTED}>—</span>}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <div style={{ fontSize: 8.5, color: "var(--text-light)", marginTop: 8 }}>
+            “After the exit” grades the exit itself for 90 days: green = the tape round-tripped (right to leave), red = the re-rate finished without us (left too early).
+          </div>
+        </div>
+      )}
     </div>
   );
-}
-
-// React needs keyed fragments for the expandable two-row pattern
-function FragmentRow({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
 }
