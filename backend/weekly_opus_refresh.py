@@ -335,7 +335,12 @@ def _fmp_segments(sym):
 
 _RADAR_FIELDS = ("p_fcf", "dcf_fcff_mos", "epv_mos", "graham_revised_mos", "owner_earnings_mos",
                  "iv15_deep_value_mos", "revenue_yoy", "revenue_cagr_3y", "eps_yoy", "gross_margin",
-                 "net_margin", "roic_avg", "altman_z", "sma200", "proximity_52wk", "sector_momentum")
+                 "net_margin", "roic_avg", "altman_z", "sma200", "proximity_52wk", "sector_momentum",
+                 # 2026-07-28: year_high/year_low were MISSING, so value_input's pct_off_52w_high —
+                 # which reads this universe, not the scan — evaluated to None on all 176 rows and the
+                 # narrow washout exception (shipped 2026-07-21) could never fire on any name. The lows
+                 # also feed the gate's 52-week floor anchor when it reads through this path.
+                 "year_high", "year_low")
 
 
 # ── Peer-identity / live-multiple overrides (Radar mis-map backstop) ──────────
@@ -728,7 +733,15 @@ def value_input():
         price = s.get("price") or u.get("price")
         net_debt_gt_mktcap = bool(isinstance(net_debt, (int, float)) and isinstance(mktcap, (int, float))
                                   and net_debt > 0 and net_debt > mktcap)
-        sop_num = _val_money(r.get("sop_fair_value"))
+        # TYPED FIRST (2026-07-28). sop_mos_pct is the value rubric's SYSTEM OF RECORD, and it was
+        # mined out of prose: BOSS.DE's "38 (base case = the final cash offer; standalone intrinsic
+        # ~76 ...)" averaged two unrelated numbers into ~57 and published a 50.3% margin of safety on
+        # a name trading 0.2% BELOW its own cash offer. OPM.PA (47.7 vs its own stated ~22%) and FOX
+        # (13.3 vs ~7%) failed the same way. The typed block is arithmetic-gated and already carries
+        # the right number, so it wins; prose remains the fallback for pre-typed records.
+        _typed_fv = (r.get("valuation") or {}).get("base_fv_px")
+        sop_num = _typed_fv if isinstance(_typed_fv, (int, float)) and _typed_fv > 0 \
+            else _val_money(r.get("sop_fair_value"))
         sop_mos = round((sop_num - price) / price * 100, 1) if (sop_num and isinstance(price, (int, float)) and price > 0) else None
         freshness_stale = False
         fresh_note = ""
@@ -1238,6 +1251,169 @@ def value_publish(push_gcs=False):
 
 
 RECOVERY_FAMS = ("iv15_deep_value", "ev_gross_profit", "ev_gp", "acquirers_multiple")
+
+
+_REPAIR_WORKFLOW = r"""export const meta = {
+  name: 'gate-repair',
+  description: 'Re-derive the specific number a record got wrong, blind to the gate threshold',
+  phases: [{ title: 'Repair', model: 'opus' }],
+}
+const DIR = 'backend/_opus_debate'
+const JOBS = __JOBS__
+const BATCH = 6
+phase('Repair')
+log(`Repairing ${JOBS.length} record(s) whose numbers - not whose theses - failed the gate.`)
+for (let b = 0; b < JOBS.length; b += BATCH) {
+  await parallel(JOBS.slice(b, b + BATCH).map(j => () => agent(
+    'RECORD REPAIR for ' + j.sym + '. A deterministic arithmetic check found a DEFECT in one part of this '
+    + 'record. Your job is to re-derive that part CORRECTLY from evidence. This is NOT a re-underwriting: '
+    + 'the thesis, the verdict and the conviction are NOT yours to change.\n\n'
+    + 'THE DEFECT: ' + j.brief + '\n\n'
+    + '1. Read ' + DIR + '/results_regime/' + j.sym + '.json IN FULL - especially bear_thesis, sop_bear and '
+    + 'the valuation block.\n'
+    + '2. Fetch the CURRENT quote via the FMP MCP tools (ToolSearch, keyword "FMP quote"). State the price '
+    + 'and the currency of the listing you are quoting. For a dual-listed name, use the listing the record '
+    + 'is written in.\n'
+    + '3. Re-derive ONLY the defective field(s), from evidence. For an ADVERSE-CASE (bear_px) re-derivation, '
+    + 'build it bottom-up from what would actually happen to THIS business in a bad outcome - the trough '
+    + 'multiple it traded at in its last real drawdown, the earnings decline its own bear_thesis describes, '
+    + 'balance-sheet stress, the loss of the specific driver the bear names. Do NOT derive it from the '
+    + 'current price, and do NOT pick a round number below spot.\n'
+    + '4. HONESTY REQUIREMENT, and this outranks everything else: report the number your evidence supports. '
+    + 'If that adverse case sits close to the current price, KEEP IT CLOSE and say why - a business whose '
+    + 'downside is genuinely limited is a legitimate finding, not a problem to solve. If your evidence says '
+    + 'the adverse case is far below spot, say that. You are NOT being asked to move any number in any '
+    + 'direction, and no threshold, target or passing condition applies to your answer. An unchanged number '
+    + 'with a documented basis is a complete and successful repair.\n'
+    + '5. Write (Write tool) VALID JSON to ' + DIR + '/_gate_repair/' + j.sym + '.json = {symbol:"' + j.sym + '", '
+    + 'live_price(number), price_currency(string), bear_px(number|null), base_fv_px(number|null), '
+    + 'bull_px(number|null), downside_floor_px(number|null - ONLY a structural floor: deal terms, net cash '
+    + 'per share, a tender; else null), basis(2-4 sentences: exactly how you derived each number you changed, '
+    + 'with the dated evidence), changed(array of the field names you actually changed), unchanged_reason'
+    + '(string - "" unless you changed nothing, in which case why the original stands)}. Never fabricate a '
+    + 'price or a filing. Reply exactly: DONE',
+    { label: 'repair:' + j.sym, phase: 'Repair', agentType: 'general-purpose', model: 'opus' })))
+}
+log('Repair pass complete - re-run the numeric gate to see what survives.')
+return 'DONE'
+"""
+
+# Gate-failure taxonomy (2026-07-27, Bruno: "could the pipeline fix the record instead of just dropping a
+# good pick?"). Only DATA and FLOOR defects are repairable, and only by re-deriving from evidence — the
+# repair agent is never told the threshold, never told which direction to move, and an unchanged number is
+# an accepted outcome. THESIS failures (skeptic REFUTED / forensic EXCLUDE) are NEVER repaired: a kill is a
+# judgement, not an arithmetic slip. CLOSED failures are not defects at all — the price passed the target.
+_REPAIR_DATA_CODES = ("G0_NO_CURRENCY", "G1B_CURRENCY_MISMATCH", "G1B_CURRENCY_UNSTATED",
+                      "G1A_PRICE_MISMATCH", "G1A_PRICE_DRIFT")
+_REPAIR_FLOOR_CODES = ("THIN_FLOOR", "TINY_FLOOR")
+
+
+def _classify_gate_failure(rec):
+    """-> (category, brief). category in {data, floor, closed, thesis, none}."""
+    g = rec.get("numeric_gate")
+    if g not in ("REJECT", "EXCLUDE_ELIGIBILITY"):
+        return "none", ""
+    codes = [str(c) for c in (rec.get("numeric_gate_reasons") or [])]
+    val = rec.get("valuation") or {}
+    live, base, bear = rec.get("live_price"), val.get("base_fv_px"), val.get("bear_px")
+    # CLOSED: the quote has caught or passed the base case — nothing to repair, the opportunity is gone.
+    if isinstance(live, (int, float)) and isinstance(base, (int, float)) and base > 0 and live >= base * 0.98:
+        return "closed", f"live {live} has reached the base case {base} — no upside left to underwrite"
+    if any(c.startswith(_REPAIR_DATA_CODES) for c in codes):
+        return "data", ("the record's stated price/currency does not reconcile with the live quote "
+                        f"({'; '.join(c for c in codes if c.startswith(_REPAIR_DATA_CODES))}). "
+                        "Restate the whole valuation block off the correct live quote and currency.")
+    if any(c.startswith(_REPAIR_FLOOR_CODES) for c in codes):
+        return "floor", (f"the adverse case ({bear}) sits very close to the live price ({live}), so the "
+                         "record's risk/reward is being produced by the size of that gap rather than by "
+                         "the business. Re-derive the adverse case from evidence.")
+    if bear is None or base is None:
+        return "data", "the record carries no typed valuation numbers at all — derive bear/base/bull."
+    return "thesis", "; ".join(codes)
+
+
+def gate_repair():
+    """Emit a focused repair workflow for records whose NUMBERS failed the gate (never their theses).
+    Prints the taxonomy so the operator can see what is repairable and what is genuinely dead."""
+    (ROOT / "_gate_repair").mkdir(parents=True, exist_ok=True)
+    for f in (ROOT / "_gate_repair").glob("*.json"):
+        try:
+            f.unlink()
+        except OSError:
+            pass
+    buckets = {"data": [], "floor": [], "closed": [], "thesis": []}
+    jobs = []
+    for f in sorted(RES.glob("*.json")):
+        try:
+            rec = json.load(open(f, encoding="utf-8"))
+        except Exception:
+            continue
+        cat, brief = _classify_gate_failure(rec)
+        if cat in ("none", ""):
+            continue
+        sym = rec.get("symbol") or f.stem
+        buckets[cat].append(sym)
+        if cat in ("data", "floor"):
+            jobs.append({"sym": sym, "cat": cat, "brief": brief})
+    print(f"gate-repair taxonomy: {len(jobs)} repairable "
+          f"[data={len(buckets['data'])} {buckets['data']}, floor={len(buckets['floor'])} {buckets['floor']}] "
+          f"| NOT repaired: closed={len(buckets['closed'])} {buckets['closed']} "
+          f"(price reached the target), thesis={len(buckets['thesis'])} {buckets['thesis']}")
+    if not jobs:
+        print("gate-repair: nothing to repair.")
+        return 0
+    out = ROOT / "_gate_repair_workflow.js"
+    out.write_text(_REPAIR_WORKFLOW.replace("__JOBS__", json.dumps(jobs)), encoding="utf-8", newline="\n")
+    print(f"REPAIR_WORKFLOW={out.resolve()}")
+    return len(jobs)
+
+
+def gate_repair_merge():
+    """Fold accepted repairs back into the records, with provenance. Idempotent; prints every change so a
+    reviewer can see exactly which number moved and on whose say-so. Re-run `numeric-gate --enforce` after."""
+    d = ROOT / "_gate_repair"
+    if not d.is_dir():
+        print("gate-repair-merge: no repair shards.")
+        return 0
+    n_applied = n_same = 0
+    for f in sorted(d.glob("*.json")):
+        try:
+            rp = json.load(open(f, encoding="utf-8"))
+        except Exception as e:
+            print(f"  WARN unreadable shard {f.name}: {e}")
+            continue
+        sym = rp.get("symbol") or f.stem
+        recf = RES / f"{sym}.json"
+        if not recf.exists():
+            continue
+        rec = json.load(open(recf, encoding="utf-8"))
+        val = dict(rec.get("valuation") or {})
+        before = {k: val.get(k) for k in ("live_price", "price_currency", "bear_px", "base_fv_px", "bull_px")}
+        changed = {}
+        for k in ("live_price", "price_currency", "bear_px", "base_fv_px", "bull_px", "downside_floor_px"):
+            v = rp.get(k)
+            if v is not None and v != val.get(k):
+                val[k] = v
+                changed[k] = {"from": before.get(k), "to": v}
+        if isinstance(rp.get("live_price"), (int, float)):
+            rec["live_price"] = rp["live_price"]
+        if not changed:
+            n_same += 1
+            print(f"  {sym}: UNCHANGED — {str(rp.get('unchanged_reason') or rp.get('basis'))[:120]}")
+            rec.setdefault("gate_repair", {}).update({"at": datetime.now().strftime("%Y-%m-%d"),
+                                                      "outcome": "unchanged",
+                                                      "basis": str(rp.get("basis") or "")[:600]})
+        else:
+            n_applied += 1
+            print(f"  {sym}: REPAIRED {list(changed)} — " + "; ".join(
+                f"{k} {c['from']}->{c['to']}" for k, c in changed.items()))
+            rec["valuation"] = val
+            rec["gate_repair"] = {"at": datetime.now().strftime("%Y-%m-%d"), "outcome": "repaired",
+                                  "changed": changed, "basis": str(rp.get("basis") or "")[:600]}
+        recf.write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(f"gate-repair-merge: {n_applied} record(s) repaired, {n_same} left unchanged by the repairer "
+          f"(an unchanged number IS a valid outcome). Re-run `numeric-gate --legacy --enforce` now.")
+    return n_applied
 
 
 def recovery_sleeve(push_gcs=False):
@@ -2403,7 +2579,10 @@ def fr_input():
         mt = rm.get(sym) or {}
         val = r.get("valuation") or {}
         price = r.get("live_price") or val.get("live_price") or u.get("price")
-        sop_num = _val_money(r.get("sop_fair_value")) or (val.get("base_fv_px") if isinstance(val.get("base_fv_px"), (int, float)) else None)
+        # TYPED FIRST (2026-07-28) — same inversion as value_input carried: the prose parse was tried
+        # BEFORE the arithmetic-gated typed number, so a mis-parsed sentence beat a correct field.
+        sop_num = (val.get("base_fv_px") if isinstance(val.get("base_fv_px"), (int, float)) and val.get("base_fv_px") > 0
+                   else _val_money(r.get("sop_fair_value")))
         sop_mos = round((sop_num - price) / price * 100, 1) if (sop_num and isinstance(price, (int, float)) and price > 0) else None
         iscore = r.get("interrogator_score")
         traj = (r.get("trajectory") or "").upper()
@@ -4864,6 +5043,23 @@ def prep():
     for p in baskets.get("apex_basket", []):
         if p.get("symbol"):
             sym_meths.setdefault(p["symbol"], []).append("apex")
+    # HELD VALUE SEATS (2026-07-28). The union above covers the REGIME apex only, so a value-book seat
+    # that aged out of the raw screen entered no universe, got no debate, and left the value Director
+    # grading it on last week's numbers with no record to check — NTES did exactly that on 2026-07-27
+    # (absent from the 184-name screen, absent from the regime apex, so absent from value_grade_input
+    # entirely while still holding a seat). A name you own is re-underwritten, full stop.
+    try:
+        _vapex = gcs_io.gcs_read_json("scans/speculair_value_apex.json") or {}
+        _vheld = [p.get("symbol") for p in
+                  (list(_vapex.get("apex_basket") or _vapex.get("apex") or [])
+                   + list(_vapex.get("runner_ups") or [])) if isinstance(p, dict) and p.get("symbol")]
+        _vadded = [s for s in _vheld if s not in sym_meths]
+        for s in _vheld:
+            sym_meths.setdefault(s, []).append("value_apex")
+        if _vadded:
+            print(f"held value seats unioned into the universe: {len(_vadded)} not otherwise screened {_vadded}")
+    except Exception as _e:
+        print(f"WARN: could not union the held value seats ({_e}) — a value holding may go un-underwritten")
 
     scan = gcs_io.gcs_read_json("scans/latest_global.json") or json.load(
         open("../frontend/public/latest_global.json", encoding="utf-8"))
@@ -5641,7 +5837,7 @@ await agent(
   'STEP 3a — ENTRY DISCOUNT FLOOR, SCALED BY THE REGIME (2026-07-24). A thin discount is not a seat: at a ~10% margin the trim ceiling (85% of fair value) is already within touching distance, so you would be buying something with no room to work and real room to fall. For a NEW seat (decision ADD or RE-ADD) the computed expected return to base_fv_px must clear: >= +20% in GOLDILOCKS/REFLATION (reach), >= +25% in STAGFLATION, >= +30% in RISK_OFF (you must be paid more to take risk when the tape is against you). A HELD seat is NOT force-sold for slipping under the floor — that is what the trim ceiling is for — but a held name below the floor may not be ADDED to, and you must say in the memo whether you are keeping it for carry or letting the trim rule take it. THE BOOK HAS NO FIXED SIZE (2026-07-24, Bruno). Do NOT pad to a target and do NOT stop at one either: seat EVERY name that clears the floor and survives STEP 4, however many that is. If only 6 qualify, seat 6 and say so. If 18 qualify and each one genuinely earns its place, seat 18. THE DISCIPLINE THAT REPLACES A SEAT CAP IS DILUTION: the book is EQUAL-WEIGHTED, so every seat you add shrinks every other seat. Add a name ONLY if it is at least as good as the CURRENT MEDIAN seat on computed expected return and skeptic cleanliness — if it is worse than your median, adding it makes the book worse even though the name itself clears the floor. State the final count in the memo with one line on why the book is that size this week. You MAY Read individual ' + RES + '/<SYM>.json for finalists.\n' +
   'STEP 3b — BASKET-13 SEPARATION (HARD RULE, 2026-07-08): the Basket-13 catalyst book (merger-arb spreads, forced-seller recovery, SoP breakups, spins, FDA binaries — anything whose thesis is a dated EVENT rather than a franchise) is a FULLY SEPARATE book with its own funnel, debate, sizing and tracker. You may NOT seat any equity special-sit / event-driven name in this apex basket — no exceptions, no "sleeve". If a name in results_regime carries lane/source values like equity_special_sit / special_sit / opus_catalyst, or its thesis is primarily a dated corporate event, it is INELIGIBLE for a seat here (it may be a runner_up with an explicit note that it belongs to B13). This book seats COMPOUNDERS and value re-rates only: durable franchises where the value case stands without the event.\n' +
   'STEP 4 — CORRELATION/EXPOSURE STRESS over the proposed book, whatever its size (MANDATORY, beyond the <=3/sector cap): decompose on (a) DEMAND-CYCLE beta (cyclical industrials/consumption that de-rate together in a recession), (b) REGULATORY JURISDICTION (e.g. Italian/EU sign-off) — INCLUDING any peer entry tagged `convergence`="sector_regulatory" where the thesis is "cheap vs a peer" and BOTH names de-rated on the SAME regulatory factor (e.g. PLX.PA/Pluxee vs a now-~10x Edenred on the shared Brazil-PAT/Italy-voucher reform): that is sector BETA, so it must NOT be sized as idiosyncratic apex alpha — discount it or hold it as a watch/sized leg, (c) LIQUIDITY/POSITIONING (small-caps that de-gross together), (d) POSTURE (count of wait-for-the-flush entries — a correlated timing bet), (e) SECULAR-DISRUPTION THEME (each name carries a secular_theme from the debate: ai-displacement / payments-disintermediation / linear-media-decline / autonomous-mobility / labor-arbitrage-deflation / reimbursement-compression / retail-channel-shift / energy-transition-loser). No hidden factor may carry >3 names AND no secular_theme may carry >2 names; for any secular_theme with >=2 names you MUST emit a combined_caps entry {names, max_units, axis:"secular-theme:<id>"} (a WIDE non-eroding moat counts at HALF toward the theme budget — a durable anchor that merely carries the narrative is not the tail risk). Do NOT let one melting tail (e.g. AI-displacement across ADBE+IT+GLOB) carry the book. Stress the book against a EUROPEAN-CYCLICAL-RECESSION + CORRELATED-DE-GROSS scenario and diversify if it fails; sequence entries assuming flushes arrive together.\n' +
-  'STEP 5 — FIRST read backend/_opus_debate/_director_ledger_regime.txt (your currently-HELD names with why + every name you DROPPED in 2026) and apply ROTATION DISCIPLINE: KEEP each held name UNLESS its thesis is BROKEN (price through thesis_break, a thesis whose ONLY leg was a now-elapsed event and whose value case no longer stands on its own, a forensic/solvency flip, or confirmed moat terminal-erosion — a fired catalyst on a name whose value case still stands is NOT thesis-broken) OR you have a STRICTLY-BETTER orthogonal name for that seat — do NOT drop a held compounder merely because another name graded a hair higher; you may RE-ADD a previously-dropped name ONLY by citing a DOCUMENTED THESIS CHANGE since the drop date (a better grade is NOT a thesis change) — override allowed but you must OWN it in whats_changed. CONVICTION RUBRIC (0-100, BANDED — your conviction is anchored, not free-floating): 90-100 = table-pounding: computed expected return >= +40% to base_fv_px AND a structural floor or paid-to-wait carry AND a clean skeptic AND a credible 12-mo re-rate path (a live dated driver STRENGTHENS but is NOT required — an earnings trajectory, buyback cadence, or mean-reversion of a de-rated multiple on a clean franchise qualifies); 70-89 = high conviction: computed ER +25-40%, credible re-rate path (dated or undated), clean forensic; 50-69 = solid hold: ER +15-25%, or the re-rate path is weak/contingent, or the record carries WARN/THIN_FLOOR flags; 30-49 = runner-up only; <30 = no seat. CONSISTENCY RULE: conviction >= 70 on a name whose COMPUTED expected return is < +15% requires an explicit carry justification (dividend/buyback floor) in goal_note, else it is a rubric violation. ANCHORING: the ledger shows your PRIOR conviction per held seat — emit conviction_prior (echo it) and conviction_delta (new minus prior) for every KEEP/RE-ADD; when |conviction_delta| > 10 you MUST fill delta_justification with the DATED fact that moved it (the deterministic post layer CLAMPS unjustified moves to prior ±10 — save yourself the clamp). Then for each pick: symbol, sector, director_conviction (0-100 per the rubric), conviction_prior (number or null for ADDs), conviction_delta (number or null), delta_justification (dated fact when |delta|>10; else ""), size_units (float 0.1-1.5 — your explicit seat size: 1.0=full unit, 1.4=max-conviction anchor, 0.5=half; sizing is decoupled from conviction, so SIZE the seat deliberately; NOTE the published book is EQUAL-WEIGHT since 2026-07-24 — your units still drive the caps and the audit trail, not the live weights), thesis_break_px (number: the price at which this thesis is BROKEN — below it the seat exits at the next review; derive it from your downside-to-break, NOT from a round-number guess. Omit only if you genuinely cannot name one, in which case the pipeline falls back to the bear_px from the debate), one-sentence thesis, sop_fair_value, catalyst_status, lane, regime_fit, phase_fit (one sentence: how THIS seat sits in the current debt-cycle phase — a story-duration reach in DISCIPLINE must say so and own it), duration_bucket_override (OPTIONAL: \"cash_now\"|\"payback_2_3y\"|\"story\" ONLY when you dispute the deterministic FCF-based label the post layer will stamp, PLUS duration_bucket_override_reason with a dated fact — an unjustified override is dropped), exposure_axes (hidden factors it carries), secular_theme (the name dominant secular-decline theme id from secular_themes.json or ""), moat (WIDE|NARROW|ERODING|NONE from the debate), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <the dated event>" | "wait_for_weakness" — derive it from your STEP 4 SEQUENCING: a structural/carry anchor that needs no catalyst and pays you to wait = enter_now_carry; a standard tranche-in = scale_in; a leg gated on a dated/ARB event = on_confirmation with that event; a cyclical/de-gross tail or a knife-catch near the 52w low = wait_for_weakness), wheel (where a wheel SUITS this seat — a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your "happy to own" level — a support/downside-to-break below spot), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait)}; else {suits:false}), expected_return_pct (your base-case % upside to sop_fair_value from the current price), horizon_months (WHEN the bulk of that re-rate lands — tie it to the driver/catalyst/trend, not "eventually"), meets_goal (bool: can this credibly deliver ~+30-50% within ~12 months given your stance), goal_note (the 12-month driver; or, for a longer-horizon name you keep, why it still earns a seat), decision ("KEEP"|"ADD"|"RE-ADD" vs the ledger), decision_rationale (one sentence reconciling this seat to the ledger), whats_changed (REQUIRED non-empty ONLY for RE-ADD: what materially changed since the drop; else ""). Plus ~6 runner_ups and a director_memo stating the correlation-stress result. The director_memo MUST OPEN with a "ROTATION" subsection — the running record of what you changed and why, so a reader can follow the book week to week without re-reading the JSON. Format it as one line per decision, grouped: ADDED (symbol — the one fact that earned the seat, and which name it displaced if any), DROPPED (symbol — the broken-thesis reason, or "trimmed out at the ceiling"; every name in last week apex that is not in this one MUST appear here), KEPT (symbol — one clause; group the unchanged ones on a single line), RE-ADDED (symbol — the documented thesis change since the drop date). If NOTHING rotated, say "No rotation this week" and give the one-sentence reason the book was left alone. Then a SECULAR-THEME CONCENTRATION subsection naming each >=2-name theme and how it was resolved (diversified -> the swap; or kept-with-cap -> the combined_caps numbers, durable WIDE anchors counted at half), AND end with a "BEAR REBUTTAL" subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing — if you cannot articulate the bear in one sentence, you do not understand the position.\n' +
+  'STEP 5 — FIRST read backend/_opus_debate/_director_ledger_regime.txt (your currently-HELD names with why + every name you DROPPED in 2026) and apply ROTATION DISCIPLINE: KEEP each held name UNLESS its thesis is BROKEN (price through thesis_break, a thesis whose ONLY leg was a now-elapsed event and whose value case no longer stands on its own, a forensic/solvency flip, or confirmed moat terminal-erosion — a fired catalyst on a name whose value case still stands is NOT thesis-broken) OR you have a STRICTLY-BETTER orthogonal name for that seat — do NOT drop a held compounder merely because another name graded a hair higher; you may RE-ADD a previously-dropped name ONLY by citing a DOCUMENTED THESIS CHANGE since the drop date (a better grade is NOT a thesis change) — override allowed but you must OWN it in whats_changed. CONVICTION RUBRIC (0-100, BANDED — your conviction is anchored, not free-floating): 90-100 = table-pounding: computed expected return >= +40% to base_fv_px AND a structural floor or paid-to-wait carry AND a clean skeptic AND a credible 12-mo re-rate path (a live dated driver STRENGTHENS but is NOT required — an earnings trajectory, buyback cadence, or mean-reversion of a de-rated multiple on a clean franchise qualifies); 70-89 = high conviction: computed ER +25-40%, credible re-rate path (dated or undated), clean forensic; 50-69 = solid hold: ER +15-25%, or the re-rate path is weak/contingent, or the record carries WARN/THIN_FLOOR flags; 30-49 = runner-up only; <30 = no seat. CONSISTENCY RULE: conviction >= 70 on a name whose COMPUTED expected return is < +15% requires an explicit carry justification (dividend/buyback floor) in goal_note, else it is a rubric violation. ANCHORING: the ledger shows your PRIOR conviction per held seat — emit conviction_prior (echo it) and conviction_delta (new minus prior) for every KEEP/RE-ADD; when |conviction_delta| > 10 you MUST fill delta_justification with the DATED fact that moved it (the deterministic post layer CLAMPS unjustified moves to prior ±10 — save yourself the clamp). Then for each pick: symbol, sector, director_conviction (0-100 per the rubric), conviction_prior (number or null for ADDs), conviction_delta (number or null), delta_justification (dated fact when |delta|>10; else ""), size_units (float 0.1-1.5 — your explicit seat size: 1.0=full unit, 1.4=max-conviction anchor, 0.5=half; sizing is decoupled from conviction, so SIZE the seat deliberately; NOTE the published book is EQUAL-WEIGHT since 2026-07-24 — your units still drive the caps and the audit trail, not the live weights), thesis_break_px (number: the price at which this thesis is BROKEN — below it the seat exits at the next review; derive it from your downside-to-break, NOT from a round-number guess. Omit only if you genuinely cannot name one, in which case the pipeline falls back to the bear_px from the debate), one-sentence thesis, sop_fair_value, catalyst_status, lane, regime_fit, phase_fit (one sentence: how THIS seat sits in the current debt-cycle phase — a story-duration reach in DISCIPLINE must say so and own it), duration_bucket_override (OPTIONAL: \"cash_now\"|\"payback_2_3y\"|\"story\" ONLY when you dispute the deterministic FCF-based label the post layer will stamp, PLUS duration_bucket_override_reason with a dated fact — an unjustified override is dropped), phase_needed (OPTIONAL: \"EXPANSION\"|\"DISCIPLINE\"|\"FORCING\"|\"MONETIZATION\"|\"ANY\" — which debt-cycle phase this payoff actually NEEDS in order to be paid, which is NOT the same as which phase we are in. A cash-generative name is paid in DISCIPLINE; a name whose value sits in a terminal year needs MONETIZATION; a payoff that does not hinge on the cost of waiting is ANY. Omit it and the post layer derives it deterministically from duration_bucket — state it only when you disagree, and say why in phase_fit. This is what makes a phase-three trade bought in phase one visible BEFORE it is bought), exposure_axes (hidden factors it carries), secular_theme (the name dominant secular-decline theme id from secular_themes.json or ""), moat (WIDE|NARROW|ERODING|NONE from the debate), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <the dated event>" | "wait_for_weakness" — derive it from your STEP 4 SEQUENCING: a structural/carry anchor that needs no catalyst and pays you to wait = enter_now_carry; a standard tranche-in = scale_in; a leg gated on a dated/ARB event = on_confirmation with that event; a cyclical/de-gross tail or a knife-catch near the 52w low = wait_for_weakness), wheel (where a wheel SUITS this seat — a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your "happy to own" level — a support/downside-to-break below spot), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait)}; else {suits:false}), expected_return_pct (your base-case % upside to sop_fair_value from the current price), horizon_months (WHEN the bulk of that re-rate lands — tie it to the driver/catalyst/trend, not "eventually"), meets_goal (bool: can this credibly deliver ~+30-50% within ~12 months given your stance), goal_note (the 12-month driver; or, for a longer-horizon name you keep, why it still earns a seat), decision ("KEEP"|"ADD"|"RE-ADD" vs the ledger), decision_rationale (one sentence reconciling this seat to the ledger), whats_changed (REQUIRED non-empty ONLY for RE-ADD: what materially changed since the drop; else ""). Plus ~6 runner_ups and a director_memo stating the correlation-stress result. The director_memo MUST OPEN with a "ROTATION" subsection — the running record of what you changed and why, so a reader can follow the book week to week without re-reading the JSON. Format it as one line per decision, grouped: ADDED (symbol — the one fact that earned the seat, and which name it displaced if any), DROPPED (symbol — the broken-thesis reason, or "trimmed out at the ceiling"; every name in last week apex that is not in this one MUST appear here), KEPT (symbol — one clause; group the unchanged ones on a single line), RE-ADDED (symbol — the documented thesis change since the drop date). If NOTHING rotated, say "No rotation this week" and give the one-sentence reason the book was left alone. Then a SECULAR-THEME CONCENTRATION subsection naming each >=2-name theme and how it was resolved (diversified -> the swap; or kept-with-cap -> the combined_caps numbers, durable WIDE anchors counted at half), AND end with a "BEAR REBUTTAL" subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing — if you cannot articulate the bear in one sentence, you do not understand the position.\n' +
   'STEP 6 — Write (Write tool) VALID JSON to ' + DIR + '/apex_basket_opus_regime.json = {apex_basket:[...], director_memo, runner_ups:[...], combined_caps:[{names, max_units, axis}], risk_stance ("aggressive"|"balanced"|"defensive" — AFTER the phase modifier), regime_quadrant (echo the quadrant you applied), debt_cycle_phase (echo the phase you applied), phase_read (one sentence tying the phase to the return goal and the horizon you actually adopted), expected_horizon_months (integer — 12 in EXPANSION/MONETIZATION, up to 18-24 in DISCIPLINE/FORCING; makes the horizon stretch explicit and scoreable), macro_read (one sentence interpreting macro_regime.json + the regime read + the +30-50%/12mo goal)}. Reply exactly: DONE',
   { label: 'director', phase: 'Director', model: '__DIRECTOR_MODEL__' })
 log('Radar + coverage + delta + underwrite + gates + skeptic + director complete.')

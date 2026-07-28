@@ -220,6 +220,9 @@ export async function GET(req: Request) {
     confidence: dc.confidence || null,
     phase_basis: dc.phase_basis || null,
     phase_detail: dc.phase_detail || null,
+    // Director-authored phase narrative, published with the baskets (publish_to_frontend.py
+    // writes baskets["phase_read"]). Relayed verbatim — no prose is synthesized here.
+    phase_read: typeof spec?.phase_read === "string" && spec.phase_read.trim() ? spec.phase_read.trim() : null,
     duration_caps: dc.duration_caps || null,
     cap_binding: dc.cap_binding || [],
     transition_blocked: !!dc.transition_blocked,

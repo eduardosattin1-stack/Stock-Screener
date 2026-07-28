@@ -76,10 +76,35 @@ def _load(p, default=None):
 
 
 def _scan_by_sym():
+    """The scan, for the moat teeth and the duration bucket. FAILS LOUD (2026-07-27).
+
+    This used to read two LOCAL paths and silently return {} when neither existed — which is exactly
+    what happened on the operator box, where frontend/public/latest_global.json is not materialised.
+    An empty scan does not raise: moat_features just sees no p_fcf/roic and stamps erosion="" /
+    roic_below_hurdle=False, and every seat gets duration_bucket="unknown". So the moat terminal-erosion
+    cap and the debt-cycle duration cap both went INERT on the 2026-07-27 book without a single error —
+    the caps reported "nothing to cap" when the truth was "nothing to look at". GCS is now the fallback,
+    and an empty result is a loud WARN rather than a shrug."""
     for p in (BK.parent / "frontend" / "public" / "latest_global.json", ROOT / "latest_global.json"):
         d = _load(p)
         if d:
-            return {x.get("symbol"): x for x in d.get("stocks", []) if x.get("symbol")}
+            by = {x.get("symbol"): x for x in d.get("stocks", []) if x.get("symbol")}
+            if by:
+                return by
+    try:
+        if str(BK / "alpha_compounder") not in sys.path:
+            sys.path.insert(0, str(BK / "alpha_compounder"))   # gcs_io lives in the subpackage
+        import gcs_io
+        d = gcs_io.gcs_read_json("scans/latest_global.json") or {}
+        by = {x.get("symbol"): x for x in d.get("stocks", []) if x.get("symbol")}
+        if by:
+            print(f"scan: local mirror absent -> read {len(by)} names from GCS")
+            return by
+    except Exception as e:
+        print(f"WARN scan: GCS fallback failed ({e})")
+    print("WARN scan: NO scan data available (local mirror absent, GCS unreachable) — the moat-erosion "
+          "teeth and the duration bucket CANNOT evaluate and will report nothing-to-cap. Do not read "
+          "that as a clean book.")
     return {}
 
 
@@ -204,6 +229,69 @@ def stamp_duration_buckets(picks, scan_by):
             override=p.get("duration_bucket_override"),
             override_reason=str(p.get("duration_bucket_override_reason") or ""),
         ))
+
+
+# ── CYCLE FIT (2026-07-28) ────────────────────────────────────────────────────────────────────────
+# Bruno's ask: name, per stock, WHICH phase a payoff actually needs — so "a phase-three trade being
+# bought in phase one" is said out loud before it is bought, rather than discovered afterwards. The
+# lesson it encodes is his own: a thematically-right asset with the wrong discount-rate exposure
+# (gold and the SMR names through 2026) is not an entry, it is a wait.
+#
+# DETERMINISTIC, and deliberately so: derived from duration_bucket (itself computed from the scan's
+# FCF), never from a probability an agent invented. The Director may override with phase_needed +
+# a written reason, exactly like duration_bucket_override.
+PHASE_ORDER = ["EXPANSION", "DISCIPLINE", "FORCING", "MONETIZATION"]
+# What a payoff of this shape NEEDS to be paid: money arriving now is rewarded exactly when duration
+# is being punished (DISCIPLINE); value that lives in a terminal year needs the cost of waiting to
+# fall again (MONETIZATION). payback sits in between and is not phase-fussy.
+_BUCKET_NEEDS = {"cash_now": "DISCIPLINE", "payback_2_3y": "ANY", "story": "MONETIZATION",
+                 "unknown": "UNKNOWN"}
+MIN_WEEKS_PER_STEP = 2      # the state machine's own hysteresis: 2 consecutive publishes per step
+
+
+def stamp_cycle_fit(picks, cycle):
+    """Per seat: which phase its payoff needs, how far that is from where we are, and whether its own
+    stated horizon survives the wait. Stamps cycle_fit{} — advisory, never an eligibility gate."""
+    cur = str((cycle or {}).get("debt_cycle_phase") or "UNKNOWN").upper()
+    for p in picks:
+        bucket = str(p.get("duration_bucket") or "unknown")
+        needed = str(p.get("phase_needed") or "").upper() or _BUCKET_NEEDS.get(bucket, "UNKNOWN")
+        src = "director_override" if p.get("phase_needed") else f"derived_from_{bucket}"
+        fit = {"current_phase": cur, "phase_needed": needed, "source": src,
+               "duration_bucket": bucket, "horizon_months": p.get("horizon_months")}
+        if needed in ("ANY", "UNKNOWN") or cur not in PHASE_ORDER or needed not in PHASE_ORDER:
+            fit["verdict"] = "phase_agnostic" if needed == "ANY" else "unknown"
+            fit["read"] = ("This payoff does not depend much on where the borrowing cycle sits."
+                           if needed == "ANY" else
+                           "Not enough data to place this payoff in the cycle.")
+        else:
+            gap = PHASE_ORDER.index(needed) - PHASE_ORDER.index(cur)
+            fit["phases_away"] = gap
+            if gap == 0:
+                fit["verdict"] = "aligned"
+                fit["read"] = f"Paid in the phase we are actually in ({cur})."
+            elif gap < 0:
+                fit["verdict"] = "phase_passed"
+                fit["read"] = (f"The phase that paid this ({needed}) is behind us; we are in {cur}. "
+                               f"The thesis has to work on its own merits now, not on the cycle.")
+            else:
+                wks = gap * MIN_WEEKS_PER_STEP
+                hz = p.get("horizon_months")
+                survives = (isinstance(hz, (int, float)) and hz * 4.3 >= wks * 2)
+                fit["verdict"] = "waiting_on_phase"
+                fit["min_weeks_away"] = wks
+                fit["horizon_survives_wait"] = bool(survives)
+                fit["read"] = (
+                    f"This is paid in {needed}, and we are in {cur} — {gap} phase step"
+                    f"{'s' if gap > 1 else ''} away, which the cycle cannot cross in under ~{wks} "
+                    f"weeks by its own rules and realistically takes far longer. "
+                    + (f"Its {hz}-month horizon has room to wait." if survives and hz else
+                       f"Its {hz}-month horizon may expire before the phase arrives." if hz else
+                       "It states no horizon, so the wait is open-ended."))
+        p["cycle_fit"] = fit
+    waiting = [p["symbol"] for p in picks if (p.get("cycle_fit") or {}).get("verdict") == "waiting_on_phase"]
+    if waiting:
+        print(f"cycle-fit: {len(waiting)} seat(s) waiting on a phase that has not arrived: {waiting}")
 
 
 def duration_cap_entries(apx, picks, cycle):
@@ -335,6 +423,7 @@ def process(apx, uni, scan_by, market=None):
     # re-normalization. Fail-open: missing snapshot => UNKNOWN => loosest caps.
     stamp_duration_buckets(picks, scan_by)
     _cycle = (_load(ROOT / "macro_regime.json", {}) or {}).get("debt_cycle") or {}
+    stamp_cycle_fit(picks, _cycle)              # which phase each payoff NEEDS vs where we are
     _dur = duration_cap_entries(apx, picks, _cycle)
     if _dur:
         extra = extra + _dur
