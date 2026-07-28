@@ -54,7 +54,15 @@
    "resolution_due": {
     "date": "2026-07-20",
     "reason": "weekly diagnosis: verdict=REFUTED"
-   }
+   },
+   "post_track": [
+    {
+     "date": "2026-07-28",
+     "price": 13.16,
+     "since_exit_pct": -2.01
+    }
+   ],
+   "post_track_status": "TRACKING"
   },
   {
    "symbol": "UNF",
@@ -118,7 +126,15 @@
    "resolution_due": {
     "date": "2026-07-20",
     "reason": "weekly diagnosis: verdict=REFUTED"
-   }
+   },
+   "post_track": [
+    {
+     "date": "2026-07-28",
+     "price": 297.46,
+     "since_exit_pct": 2.53
+    }
+   ],
+   "post_track_status": "RERATE_COMPLETED"
   },
   {
    "symbol": "FIP",
@@ -178,7 +194,15 @@
    "resolution_due": {
     "date": "2026-07-21",
     "reason": "weekly diagnosis: verdict=REFUTED"
-   }
+   },
+   "post_track": [
+    {
+     "date": "2026-07-28",
+     "price": 4.15,
+     "since_exit_pct": 1.47
+    }
+   ],
+   "post_track_status": "TRACKING"
   },
   {
    "symbol": "FIG",
@@ -227,7 +251,7 @@
    },
    "entry_rationale": "Post-IPO lockup supply-clearing mean-reversion: live R:R improved to ~3.85 at $20.49 vs the $17.50 floor, and at ~$340M/day ADV it is the most executable flow trade in the pool. Staging half-weight equity; thesis is supply clearing, so exit near FV $32, not an open-ended re-rate.",
    "resolution_due": {
-    "date": "2026-07-21",
+    "date": "2026-07-28",
     "reason": "weekly diagnosis: verdict=REFUTED"
    },
    "manual_hold": {
@@ -322,7 +346,15 @@
    "resolution_due": {
     "date": "2026-07-20",
     "reason": "weekly diagnosis: verdict=REFUTED"
-   }
+   },
+   "post_track": [
+    {
+     "date": "2026-07-28",
+     "price": 16.28,
+     "since_exit_pct": 2.52
+    }
+   ],
+   "post_track_status": "TRACKING"
   },
   {
    "symbol": "CELC",
@@ -379,7 +411,15 @@
    "resolution_due": {
     "date": "2026-07-20",
     "reason": "weekly diagnosis: catalyst_status=FIRED -- THE FDA APPROVED REVTORPYK (GEDATOLISIB) ON 14 JULY 2026, THREE DAYS AHEAD OF THE 17 JULY 2026 GOAL DATE SET WHEN THE APPLICATION WAS ACCEPTED UNDER PRIORITY REVIEW IN JANUARY 2026. THE APPROVAL COVERS HORMONE-RECEPTOR-POSITIVE, HER2-NEGATIVE, LOCALLY ADVANCED OR METASTATIC BREAST CANCER WITHOUT A DETECTED PIK3CA MUTATION, AFTER PROGRESSION ON AT LEAST ONE PRIOR ENDOCRINE THERAPY. THE STOCK FELL ABOUT 17.6% ON THE ANNOUNCEMENT AND A FURTHER 3.5% ON 16 JULY, CLOSING AT $88.29 -- THE RE-RATING IS SPENT AND IT WENT THE WRONG WAY. NO DATED, BINDING EVENT REMAINS: THE LAUNCH IS GUIDED ONLY TO LATE IN THE THIRD QUARTER OF 2026 AND THE PIK3CA-MUTANT SUPPLEMENTAL FILING IS A THIRD-QUARTER 2026 SUBMISSION WITH NO DECISION DATE ASSIGNED OR ASSIGNABLE UNTIL THE AGENCY ACCEPTS IT.; weekly diagnosis: verdict=REFUTED"
-   }
+   },
+   "post_track": [
+    {
+     "date": "2026-07-28",
+     "price": 82.27,
+     "since_exit_pct": -9.04
+    }
+   ],
+   "post_track_status": "TRACKING"
   },
   {
    "symbol": "VRDN",
@@ -436,7 +476,15 @@
    "resolution_due": {
     "date": "2026-07-06",
     "reason": "weekly diagnosis: catalyst_status=FIRED; weekly diagnosis: verdict=REFUTED"
-   }
+   },
+   "post_track": [
+    {
+     "date": "2026-07-28",
+     "price": 19.7,
+     "since_exit_pct": 1.44
+    }
+   ],
+   "post_track_status": "TRACKING"
   },
   {
    "symbol": "AQST",
@@ -507,6 +555,10 @@
     "fair_value_target": 8.5,
     "downside_floor": 2.75,
     "asof": "2026-07-21"
+   },
+   "resolution_due": {
+    "date": "2026-07-28",
+    "reason": "weekly diagnosis: verdict=REFUTED"
    }
   },
   {
@@ -584,6 +636,10 @@
     "fair_value_target": 10.37,
     "downside_floor": 3.3,
     "asof": "2026-07-21"
+   },
+   "resolution_due": {
+    "date": "2026-07-28",
+    "reason": "weekly diagnosis: verdict=REFUTED"
    }
   },
   {
@@ -634,8 +690,8 @@
    },
    "entry_rationale": "Only FDA_clinical_readout survivor that is hard-dated (Q3-2026 LUCIDITY avexitide topline, 109d) AND non-staging, so the mandated defined-risk option for a dated binary is actually constructible; ev_pct 0.4512 at win 0.62 with edge surviving the +12% run-up (payoff still >half-dossier).",
    "resolution_due": {
-    "date": "2026-07-21",
-    "reason": "weekly diagnosis: verdict=REFUTED"
+    "date": "2026-07-28",
+    "reason": "dossier edge-gone: EV 19.20 <= live 19.49 (p=0.6, fv=30.0, floor=3.0); weekly diagnosis: verdict=REFUTED"
    },
    "stamped": {
     "resolution_driver": "FDA_clinical_readout",
@@ -711,10 +767,6 @@
     ]
    },
    "resolution": null,
-   "resolution_due": {
-    "date": "2026-07-21",
-    "reason": "weekly diagnosis: verdict=REFUTED"
-   },
    "stamped": {
     "resolution_driver": "Foreign_regulator",
     "valuation_method": "spread",
@@ -798,7 +850,15 @@
    "resolution_due": {
     "date": "2026-07-20",
     "reason": "dossier edge-gone: rr 0.20 < 1.0 (fv 19, floor 10, live 17.48); weekly diagnosis: verdict=REFUTED"
-   }
+   },
+   "post_track": [
+    {
+     "date": "2026-07-28",
+     "price": 17.59,
+     "since_exit_pct": 1.15
+    }
+   ],
+   "post_track_status": "TRACKING"
   },
   {
    "symbol": "THRM",
@@ -849,7 +909,15 @@
     "days_held": 4,
     "catalyst_fired": true,
     "notes": "Board dossier misread the RMT: stock-for-stock, THRM is the ACQUIRER, no consideration flows to holders - the 30% spread to $44 never existed. HSR fired 3/26 pre-valuation. Fable dossier + CRO NO_TRADE 7/06."
-   }
+   },
+   "post_track": [
+    {
+     "date": "2026-07-28",
+     "price": 42.07,
+     "since_exit_pct": 23.26
+    }
+   ],
+   "post_track_status": "TRACKING"
   },
   {
    "symbol": "ZYME",
@@ -896,10 +964,6 @@
    "resolution": null,
    "board_resolution_driver": "Deal_close_generic",
    "retag_note": "2026-07-06 Fable deep-dossier: the 8/25 event is Jazz's Ziihera 1L-GEA PDUFA (triggers ZYME's contractual $250M milestone) - ZYME is the Theravance ACQUIRER, not an arb target; board's Deal_close_generic/merger_arb tag corrected. Post-VRDN-resolution the driver count is a legal 2/2 (AQST+ZYME).",
-   "resolution_due": {
-    "date": "2026-07-21",
-    "reason": "weekly diagnosis: verdict=REFUTED"
-   },
    "stamped": {
     "resolution_driver": "FDA_approval_decision",
     "valuation_method": "binary_prob",
@@ -1057,7 +1121,15 @@
    "resolution_due": {
     "date": "2026-07-20",
     "reason": "weekly diagnosis: verdict=REFUTED"
-   }
+   },
+   "post_track": [
+    {
+     "date": "2026-07-28",
+     "price": 9.59,
+     "since_exit_pct": -4.05
+    }
+   ],
+   "post_track_status": "TRACKING"
   },
   {
    "symbol": "LZM",
@@ -1108,7 +1180,15 @@
     "days_held": 4,
     "catalyst_fired": false,
     "notes": "Mid-2026 FID slipped to late-2026; spot-marked target $4.95 puts entry R:R ~0.95, below the kill line (deck target $7.04 conditional on nickel recovering toward $8.49/lb). Catalyst real but edge gone at tape; RKAB 7/31 + StanChart term-sheet tracked post-resolution."
-   }
+   },
+   "post_track": [
+    {
+     "date": "2026-07-28",
+     "price": 3.31,
+     "since_exit_pct": -14.69
+    }
+   ],
+   "post_track_status": "TRACKING"
   },
   {
    "symbol": "VIR",
@@ -1411,7 +1491,11 @@
     "win_prob": null,
     "super_cluster": "FDA/biotech"
    },
-   "win_prob": 0.6
+   "win_prob": 0.6,
+   "resolution_due": {
+    "date": "2026-07-28",
+    "reason": "close 6.995 <= floor 7.0; weekly diagnosis: verdict=REFUTED"
+   }
   }
  ],
  "non_selections": [
@@ -1422,7 +1506,16 @@
    "score": 6.0,
    "edge_grade": "M",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 13.46,
+   "spy0": 725.43,
+   "price0_date": "2026-06-10",
+   "backfilled": true,
+   "last_price": 19.49,
+   "since_pass_pct": 44.8,
+   "spy_since_pass_pct": 1.88,
+   "alpha_pp": 42.92,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "ZYME",
@@ -1431,7 +1524,16 @@
    "score": 6.0,
    "edge_grade": "M",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_approval_decision"
+   "resolution_driver": "FDA_approval_decision",
+   "price0": 22.85,
+   "spy0": 725.43,
+   "price0_date": "2026-06-10",
+   "backfilled": true,
+   "last_price": 23.0,
+   "since_pass_pct": 0.66,
+   "spy_since_pass_pct": 1.88,
+   "alpha_pp": -1.22,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "BBIO",
@@ -1440,7 +1542,16 @@
    "score": 6.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_approval_decision"
+   "resolution_driver": "FDA_approval_decision",
+   "price0": 67.41,
+   "spy0": 725.43,
+   "price0_date": "2026-06-10",
+   "backfilled": true,
+   "last_price": 84.12,
+   "since_pass_pct": 24.79,
+   "spy_since_pass_pct": 1.88,
+   "alpha_pp": 22.91,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "VIR",
@@ -1449,7 +1560,16 @@
    "score": 5.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 8.25,
+   "spy0": 725.43,
+   "price0_date": "2026-06-10",
+   "backfilled": true,
+   "last_price": 8.8,
+   "since_pass_pct": 6.67,
+   "spy_since_pass_pct": 1.88,
+   "alpha_pp": 4.79,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "RARE",
@@ -1458,7 +1578,16 @@
    "score": 4.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_approval_decision"
+   "resolution_driver": "FDA_approval_decision",
+   "price0": 22.97,
+   "spy0": 725.43,
+   "price0_date": "2026-06-10",
+   "backfilled": true,
+   "last_price": 26.89,
+   "since_pass_pct": 17.07,
+   "spy_since_pass_pct": 1.88,
+   "alpha_pp": 15.19,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "MGNI",
@@ -1467,7 +1596,16 @@
    "score": 7.2,
    "edge_grade": "M",
    "lane_canon": "forced_seller",
-   "resolution_driver": "Forced_divest_flow"
+   "resolution_driver": "Forced_divest_flow",
+   "price0": 15.67,
+   "spy0": 725.43,
+   "price0_date": "2026-06-10",
+   "backfilled": true,
+   "last_price": 19.09,
+   "since_pass_pct": 21.83,
+   "spy_since_pass_pct": 1.88,
+   "alpha_pp": 19.95,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "ANNX",
@@ -1476,7 +1614,16 @@
    "score": 6.5,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 4.72,
+   "spy0": 725.43,
+   "price0_date": "2026-06-10",
+   "backfilled": true,
+   "last_price": 5.13,
+   "since_pass_pct": 8.69,
+   "spy_since_pass_pct": 1.88,
+   "alpha_pp": 6.81,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "OLMA",
@@ -1485,7 +1632,16 @@
    "score": 6.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 9.82,
+   "spy0": 725.43,
+   "price0_date": "2026-06-10",
+   "backfilled": true,
+   "last_price": 12.01,
+   "since_pass_pct": 22.3,
+   "spy_since_pass_pct": 1.88,
+   "alpha_pp": 20.42,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "RLMD",
@@ -1494,7 +1650,16 @@
    "score": 6.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 6.38,
+   "spy0": 725.43,
+   "price0_date": "2026-06-10",
+   "backfilled": true,
+   "last_price": 5.2,
+   "since_pass_pct": -18.5,
+   "spy_since_pass_pct": 1.88,
+   "alpha_pp": -20.38,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "CLVT",
@@ -1503,7 +1668,16 @@
    "score": 5.0,
    "edge_grade": "H",
    "lane_canon": "forced_seller",
-   "resolution_driver": "Forced_divest_flow"
+   "resolution_driver": "Forced_divest_flow",
+   "price0": 2.27,
+   "spy0": 725.43,
+   "price0_date": "2026-06-10",
+   "backfilled": true,
+   "last_price": 2.13,
+   "since_pass_pct": -6.17,
+   "spy_since_pass_pct": 1.88,
+   "alpha_pp": -8.05,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "DBVT",
@@ -1512,7 +1686,16 @@
    "score": 5.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 16.04,
+   "spy0": 725.43,
+   "price0_date": "2026-06-10",
+   "backfilled": true,
+   "last_price": 13.9,
+   "since_pass_pct": -13.34,
+   "spy_since_pass_pct": 1.88,
+   "alpha_pp": -15.22,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "GLUE",
@@ -1521,7 +1704,16 @@
    "score": 5.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 16.52,
+   "spy0": 725.43,
+   "price0_date": "2026-06-10",
+   "backfilled": true,
+   "last_price": 22.56,
+   "since_pass_pct": 36.56,
+   "spy_since_pass_pct": 1.88,
+   "alpha_pp": 34.68,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "PVLA",
@@ -1530,7 +1722,16 @@
    "score": 5.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 102.19,
+   "spy0": 725.43,
+   "price0_date": "2026-06-10",
+   "backfilled": true,
+   "last_price": 141.77,
+   "since_pass_pct": 38.73,
+   "spy_since_pass_pct": 1.88,
+   "alpha_pp": 36.85,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "CERS",
@@ -1539,7 +1740,16 @@
    "score": 4.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_approval_decision"
+   "resolution_driver": "FDA_approval_decision",
+   "price0": 2.56,
+   "spy0": 725.43,
+   "price0_date": "2026-06-10",
+   "backfilled": true,
+   "last_price": 3.07,
+   "since_pass_pct": 19.92,
+   "spy_since_pass_pct": 1.88,
+   "alpha_pp": 18.04,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "NKTR",
@@ -1548,7 +1758,16 @@
    "score": 4.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 56.78,
+   "spy0": 725.43,
+   "price0_date": "2026-06-10",
+   "backfilled": true,
+   "last_price": 71.35,
+   "since_pass_pct": 25.66,
+   "spy_since_pass_pct": 1.88,
+   "alpha_pp": 23.78,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "EYPT",
@@ -1557,7 +1776,16 @@
    "score": 6.5,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 12.33,
+   "spy0": 725.43,
+   "price0_date": "2026-06-10",
+   "backfilled": true,
+   "last_price": 12.41,
+   "since_pass_pct": 0.65,
+   "spy_since_pass_pct": 1.88,
+   "alpha_pp": -1.23,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "EYPT",
@@ -1566,7 +1794,16 @@
    "score": 6.5,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 13.03,
+   "spy0": 741.75,
+   "price0_date": "2026-06-12",
+   "backfilled": true,
+   "last_price": 12.41,
+   "since_pass_pct": -4.76,
+   "spy_since_pass_pct": -0.36,
+   "alpha_pp": -4.4,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "AMLX_note",
@@ -1584,7 +1821,16 @@
    "score": 6.5,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 4.71,
+   "spy0": 741.75,
+   "price0_date": "2026-06-12",
+   "backfilled": true,
+   "last_price": 5.13,
+   "since_pass_pct": 8.92,
+   "spy_since_pass_pct": -0.36,
+   "alpha_pp": 9.28,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "OLMA",
@@ -1593,7 +1839,16 @@
    "score": 6.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 9.87,
+   "spy0": 741.75,
+   "price0_date": "2026-06-12",
+   "backfilled": true,
+   "last_price": 12.01,
+   "since_pass_pct": 21.68,
+   "spy_since_pass_pct": -0.36,
+   "alpha_pp": 22.04,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "RLMD",
@@ -1602,7 +1857,16 @@
    "score": 6.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 6.65,
+   "spy0": 741.75,
+   "price0_date": "2026-06-12",
+   "backfilled": true,
+   "last_price": 5.2,
+   "since_pass_pct": -21.8,
+   "spy_since_pass_pct": -0.36,
+   "alpha_pp": -21.44,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "AVIR",
@@ -1611,7 +1875,16 @@
    "score": 5.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 4.49,
+   "spy0": 741.75,
+   "price0_date": "2026-06-12",
+   "backfilled": true,
+   "last_price": 4.82,
+   "since_pass_pct": 7.35,
+   "spy_since_pass_pct": -0.36,
+   "alpha_pp": 7.71,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "GLUE",
@@ -1620,7 +1893,16 @@
    "score": 5.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 18.24,
+   "spy0": 741.75,
+   "price0_date": "2026-06-12",
+   "backfilled": true,
+   "last_price": 22.56,
+   "since_pass_pct": 23.68,
+   "spy_since_pass_pct": -0.36,
+   "alpha_pp": 24.04,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "PVLA",
@@ -1629,7 +1911,16 @@
    "score": 5.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 108.81,
+   "spy0": 741.75,
+   "price0_date": "2026-06-12",
+   "backfilled": true,
+   "last_price": 141.77,
+   "since_pass_pct": 30.29,
+   "spy_since_pass_pct": -0.36,
+   "alpha_pp": 30.65,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "ZYME",
@@ -1638,7 +1929,16 @@
    "score": 6.0,
    "edge_grade": "M",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_approval_decision"
+   "resolution_driver": "FDA_approval_decision",
+   "price0": 22.88,
+   "spy0": 741.75,
+   "price0_date": "2026-06-12",
+   "backfilled": true,
+   "last_price": 23.0,
+   "since_pass_pct": 0.52,
+   "spy_since_pass_pct": -0.36,
+   "alpha_pp": 0.88,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "BBIO",
@@ -1647,7 +1947,16 @@
    "score": 6.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_approval_decision"
+   "resolution_driver": "FDA_approval_decision",
+   "price0": 66.8,
+   "spy0": 741.75,
+   "price0_date": "2026-06-12",
+   "backfilled": true,
+   "last_price": 84.12,
+   "since_pass_pct": 25.93,
+   "spy_since_pass_pct": -0.36,
+   "alpha_pp": 26.29,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "CERS",
@@ -1656,7 +1965,16 @@
    "score": 4.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_approval_decision"
+   "resolution_driver": "FDA_approval_decision",
+   "price0": 2.56,
+   "spy0": 741.75,
+   "price0_date": "2026-06-12",
+   "backfilled": true,
+   "last_price": 3.07,
+   "since_pass_pct": 19.92,
+   "spy_since_pass_pct": -0.36,
+   "alpha_pp": 20.28,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "MGNI",
@@ -1665,7 +1983,16 @@
    "score": 7.2,
    "edge_grade": "M",
    "lane_canon": "forced_seller",
-   "resolution_driver": "Forced_divest_flow"
+   "resolution_driver": "Forced_divest_flow",
+   "price0": 16.25,
+   "spy0": 741.75,
+   "price0_date": "2026-06-12",
+   "backfilled": true,
+   "last_price": 19.09,
+   "since_pass_pct": 17.48,
+   "spy_since_pass_pct": -0.36,
+   "alpha_pp": 17.84,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "CLVT",
@@ -1674,7 +2001,16 @@
    "score": 5.0,
    "edge_grade": "H",
    "lane_canon": "forced_seller",
-   "resolution_driver": "Forced_divest_flow"
+   "resolution_driver": "Forced_divest_flow",
+   "price0": 2.21,
+   "spy0": 741.75,
+   "price0_date": "2026-06-12",
+   "backfilled": true,
+   "last_price": 2.13,
+   "since_pass_pct": -3.62,
+   "spy_since_pass_pct": -0.36,
+   "alpha_pp": -3.26,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "DFTX",
@@ -1683,7 +2019,16 @@
    "score": 8.0,
    "edge_grade": "M",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 24.75,
+   "spy0": 741.75,
+   "price0_date": "2026-06-12",
+   "backfilled": true,
+   "last_price": 42.65,
+   "since_pass_pct": 72.32,
+   "spy_since_pass_pct": -0.36,
+   "alpha_pp": 72.68,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "RARE",
@@ -1692,7 +2037,16 @@
    "score": 4.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_approval_decision"
+   "resolution_driver": "FDA_approval_decision",
+   "price0": 24.35,
+   "spy0": 741.75,
+   "price0_date": "2026-06-12",
+   "backfilled": true,
+   "last_price": 26.89,
+   "since_pass_pct": 10.43,
+   "spy_since_pass_pct": -0.36,
+   "alpha_pp": 10.79,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "ANNX",
@@ -1701,7 +2055,16 @@
    "score": 6.5,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 4.71,
+   "spy0": 741.75,
+   "price0_date": "2026-06-12",
+   "backfilled": true,
+   "last_price": 5.13,
+   "since_pass_pct": 8.92,
+   "spy_since_pass_pct": -0.36,
+   "alpha_pp": 9.28,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "OLMA",
@@ -1710,7 +2073,16 @@
    "score": 6.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 9.87,
+   "spy0": 741.75,
+   "price0_date": "2026-06-12",
+   "backfilled": true,
+   "last_price": 12.01,
+   "since_pass_pct": 21.68,
+   "spy_since_pass_pct": -0.36,
+   "alpha_pp": 22.04,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "RLMD",
@@ -1719,7 +2091,16 @@
    "score": 6.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 6.65,
+   "spy0": 741.75,
+   "price0_date": "2026-06-12",
+   "backfilled": true,
+   "last_price": 5.2,
+   "since_pass_pct": -21.8,
+   "spy_since_pass_pct": -0.36,
+   "alpha_pp": -21.44,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "CERS",
@@ -1728,7 +2109,16 @@
    "score": 4.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_approval_decision"
+   "resolution_driver": "FDA_approval_decision",
+   "price0": 2.56,
+   "spy0": 741.75,
+   "price0_date": "2026-06-12",
+   "backfilled": true,
+   "last_price": 3.07,
+   "since_pass_pct": 19.92,
+   "spy_since_pass_pct": -0.36,
+   "alpha_pp": 20.28,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "NKTR",
@@ -1737,7 +2127,16 @@
    "score": 4.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 59.38,
+   "spy0": 741.75,
+   "price0_date": "2026-06-12",
+   "backfilled": true,
+   "last_price": 71.35,
+   "since_pass_pct": 20.16,
+   "spy_since_pass_pct": -0.36,
+   "alpha_pp": 20.52,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "ZYME",
@@ -1746,7 +2145,16 @@
    "score": 7.0,
    "edge_grade": "M",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_approval_decision"
+   "resolution_driver": "FDA_approval_decision",
+   "price0": 26.14,
+   "spy0": 746.77,
+   "price0_date": "2026-06-30",
+   "backfilled": true,
+   "last_price": 23.0,
+   "since_pass_pct": -12.01,
+   "spy_since_pass_pct": -1.03,
+   "alpha_pp": -10.98,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "IMCR",
@@ -1755,7 +2163,16 @@
    "score": 6.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 31.75,
+   "spy0": 746.77,
+   "price0_date": "2026-06-30",
+   "backfilled": true,
+   "last_price": 33.77,
+   "since_pass_pct": 6.36,
+   "spy_since_pass_pct": -1.03,
+   "alpha_pp": 7.39,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "DBVT",
@@ -1764,7 +2181,16 @@
    "score": 5.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_approval_decision"
+   "resolution_driver": "FDA_approval_decision",
+   "price0": 16.4,
+   "spy0": 746.77,
+   "price0_date": "2026-06-30",
+   "backfilled": true,
+   "last_price": 13.9,
+   "since_pass_pct": -15.24,
+   "spy_since_pass_pct": -1.03,
+   "alpha_pp": -14.21,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "ANNX",
@@ -1773,7 +2199,16 @@
    "score": 7.0,
    "edge_grade": "M",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 5.46,
+   "spy0": 744.78,
+   "price0_date": "2026-07-02",
+   "backfilled": true,
+   "last_price": 5.13,
+   "since_pass_pct": -6.04,
+   "spy_since_pass_pct": -0.76,
+   "alpha_pp": -5.28,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "ALTI",
@@ -1782,7 +2217,16 @@
    "score": 5.0,
    "edge_grade": "M",
    "lane_canon": "forced_seller",
-   "resolution_driver": "Forced_divest_flow"
+   "resolution_driver": "Forced_divest_flow",
+   "price0": 3.7,
+   "spy0": 744.78,
+   "price0_date": "2026-07-02",
+   "backfilled": true,
+   "last_price": 3.63,
+   "since_pass_pct": -1.89,
+   "spy_since_pass_pct": -0.76,
+   "alpha_pp": -1.13,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "AXTA",
@@ -1791,7 +2235,16 @@
    "score": 7.0,
    "edge_grade": "M",
    "lane_canon": "merger_arb",
-   "resolution_driver": "Foreign_regulator"
+   "resolution_driver": "Foreign_regulator",
+   "price0": 32.12,
+   "spy0": 742.09,
+   "price0_date": "2026-07-20",
+   "backfilled": true,
+   "last_price": 33.74,
+   "since_pass_pct": 5.04,
+   "spy_since_pass_pct": -0.4,
+   "alpha_pp": 5.44,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "MP",
@@ -1800,7 +2253,16 @@
    "score": 5.5,
    "edge_grade": "H",
    "lane_canon": "supply_timing",
-   "resolution_driver": "Supply_timing"
+   "resolution_driver": "Supply_timing",
+   "price0": 45.7,
+   "spy0": 742.09,
+   "price0_date": "2026-07-20",
+   "backfilled": true,
+   "last_price": 43.13,
+   "since_pass_pct": -5.62,
+   "spy_since_pass_pct": -0.4,
+   "alpha_pp": -5.22,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "KDP",
@@ -1809,7 +2271,16 @@
    "score": 5.0,
    "edge_grade": "M",
    "lane_canon": "spinoff",
-   "resolution_driver": "Spin_index_flow"
+   "resolution_driver": "Spin_index_flow",
+   "price0": 30.44,
+   "spy0": 742.09,
+   "price0_date": "2026-07-20",
+   "backfilled": true,
+   "last_price": 30.12,
+   "since_pass_pct": -1.05,
+   "spy_since_pass_pct": -0.4,
+   "alpha_pp": -0.65,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "OLMA",
@@ -1818,7 +2289,16 @@
    "score": 6.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_clinical_readout"
+   "resolution_driver": "FDA_clinical_readout",
+   "price0": 11.35,
+   "spy0": 742.09,
+   "price0_date": "2026-07-20",
+   "backfilled": true,
+   "last_price": 12.01,
+   "since_pass_pct": 5.81,
+   "spy_since_pass_pct": -0.4,
+   "alpha_pp": 6.21,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "KDP",
@@ -1827,7 +2307,16 @@
    "score": 5.0,
    "edge_grade": "M",
    "lane_canon": "spinoff",
-   "resolution_driver": "Spin_index_flow"
+   "resolution_driver": "Spin_index_flow",
+   "price0": 30.44,
+   "spy0": 742.09,
+   "price0_date": "2026-07-20",
+   "backfilled": true,
+   "last_price": 30.12,
+   "since_pass_pct": -1.05,
+   "spy_since_pass_pct": -0.4,
+   "alpha_pp": -0.65,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "BBIO",
@@ -1836,7 +2325,16 @@
    "score": null,
    "edge_grade": null,
    "lane_canon": null,
-   "resolution_driver": null
+   "resolution_driver": null,
+   "price0": 82.45,
+   "spy0": 748.28,
+   "price0_date": "2026-07-21",
+   "backfilled": true,
+   "last_price": 84.12,
+   "since_pass_pct": 2.03,
+   "spy_since_pass_pct": -1.23,
+   "alpha_pp": 3.26,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "DBVT",
@@ -1845,7 +2343,16 @@
    "score": 5.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
-   "resolution_driver": "FDA_approval_decision"
+   "resolution_driver": "FDA_approval_decision",
+   "price0": 14.22,
+   "spy0": 748.28,
+   "price0_date": "2026-07-21",
+   "backfilled": true,
+   "last_price": 13.9,
+   "since_pass_pct": -2.25,
+   "spy_since_pass_pct": -1.23,
+   "alpha_pp": -1.02,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "GERN",
@@ -1854,7 +2361,16 @@
    "score": null,
    "edge_grade": null,
    "lane_canon": null,
-   "resolution_driver": null
+   "resolution_driver": null,
+   "price0": 1.44,
+   "spy0": 748.28,
+   "price0_date": "2026-07-21",
+   "backfilled": true,
+   "last_price": 1.48,
+   "since_pass_pct": 2.78,
+   "spy_since_pass_pct": -1.23,
+   "alpha_pp": 4.01,
+   "cf_marked": "2026-07-28"
   },
   {
    "symbol": "CLVT",
@@ -1863,7 +2379,322 @@
    "score": null,
    "edge_grade": null,
    "lane_canon": null,
-   "resolution_driver": null
+   "resolution_driver": null,
+   "price0": 2.25,
+   "spy0": 748.28,
+   "price0_date": "2026-07-21",
+   "backfilled": true,
+   "last_price": 2.13,
+   "since_pass_pct": -5.33,
+   "spy_since_pass_pct": -1.23,
+   "alpha_pp": -4.1,
+   "cf_marked": "2026-07-28"
+  },
+  {
+   "symbol": "MLYS",
+   "date": "2026-07-28",
+   "passed_because": "The 22 Dec 2026 PDUFA is hard, statutory and unmoved and AstraZeneca's 15 May 2026 baxdrostat approval de-risks the identical enzyme in the identical patients, but the skeptic showed the entry-timing argument runs backwards: roughly five of about nine and a half review months remain, so the advisory-committee notice window and the three-month-extension risk both sit ahead in October-November rather than behind, against an inverted payoff of +42% up versus -51% down.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": "FDA/biotech",
+   "director_conviction": 58,
+   "price0": 27.21,
+   "spy0": 739.09,
+   "source": "weekly_director",
+   "last_price": 27.21,
+   "since_pass_pct": 0.0,
+   "spy_since_pass_pct": 0.0,
+   "alpha_pp": 0.0,
+   "cf_marked": "2026-07-28"
+  },
+  {
+   "symbol": "LBTYK",
+   "date": "2026-07-28",
+   "passed_because": "Best raw ratio in the funnel at about 5.3 to 1 from a sponsor that has completed this exact manoeuvre before (Sunrise) with every sub-milestone cleared, but there is no record date, no listing prospectus and no scheduled vote, the company's own words are 'as early as mid-2027', and the skeptic showed the floor's largest component is a guided 31-Dec-2026 cash forecast rather than a balance, with $808.5m of the verified $1,610.1m trapped in the Telenet and VM Ireland borrowing groups.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": "Idiosyncratic",
+   "director_conviction": 57,
+   "price0": 9.59,
+   "spy0": 739.09,
+   "source": "weekly_director",
+   "last_price": 9.59,
+   "since_pass_pct": 0.0,
+   "spy_since_pass_pct": 0.0,
+   "alpha_pp": 0.0,
+   "cf_marked": "2026-07-28"
+  },
+  {
+   "symbol": "SRRK",
+   "date": "2026-07-28",
+   "passed_because": "The 30 Sep 2026 PDUFA is real and 65 days out, but the single load-bearing claim of the bull case, that the US decision is not gated on Catalent Indiana (the site whose inspection caused the September 2025 refusal), is contradicted verbatim by the company's own Form 10-Q stating the BLA was resubmitted with BOTH fill-finish facilities included, and the payoff is inverted at 0.77 to 1.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": "FDA/biotech",
+   "director_conviction": 55,
+   "price0": 48.93,
+   "spy0": 739.09,
+   "source": "weekly_director",
+   "last_price": 48.93,
+   "since_pass_pct": 0.0,
+   "spy_since_pass_pct": 0.0,
+   "alpha_pp": 0.0,
+   "cf_marked": "2026-07-28"
+  },
+  {
+   "symbol": "EYPT",
+   "date": "2026-07-28",
+   "passed_because": "REFUTED on the target: Ocular Therapeutix has ALREADY won the same pivotal wet-AMD result and carries roughly $1.2bn of enterprise value, while the file asks about $3.1bn for EyePoint on a not-yet-won non-inferiority label second to file in the same biosimilar-compressed category, and the 'the price has not moved to reflect it' consensus-delta pillar is factually false against the 17 Feb tape (+15.2% on 8.72m shares versus 790k the prior session).",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": "FDA/biotech",
+   "director_conviction": 44,
+   "price0": 12.41,
+   "spy0": 739.09,
+   "source": "weekly_director",
+   "last_price": 12.41,
+   "since_pass_pct": 0.0,
+   "spy_since_pass_pct": 0.0,
+   "alpha_pp": 0.0,
+   "cf_marked": "2026-07-28"
+  },
+  {
+   "symbol": "GDOT",
+   "date": "2026-07-28",
+   "passed_because": "A genuinely binding deal that survived both of the skeptic's structural attacks (signed Nov 2025, 99%+ shareholder approval 23 June, $8.11 cash plus 0.2215 CONE shares with no adjustment mechanism, outside date Nov 2026 extending to Feb 2027), but only 8.1% of upside remains against a floor the skeptic moved from $11.00 down to an $8.50-9.50 band with a $7.46 unaffected-price tail, which inverts the trade.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": "Deal-completion",
+   "director_conviction": 42,
+   "price0": 13.16,
+   "spy0": 739.09,
+   "source": "weekly_director",
+   "last_price": 13.16,
+   "since_pass_pct": 0.0,
+   "spy_since_pass_pct": 0.0,
+   "alpha_pp": 0.0,
+   "cf_marked": "2026-07-28"
+  },
+  {
+   "symbol": "DBVT",
+   "date": "2026-07-28",
+   "passed_because": "The asset genuinely improved (December 2025 pivotal cleared its bar at the lower edge of the interval, 96.2% compliance, the only approved competitor withdraws 31 July, FDA has asked for no additional data), but the driver is labelled FDA_approval_decision and as of 28 July no BLA has been filed at all: the first regulator-controlled date is an acceptance roughly sixty days after a Q3 submission, so November-December at the earliest.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": "FDA/biotech",
+   "director_conviction": 40,
+   "price0": 13.9,
+   "spy0": 739.09,
+   "source": "weekly_director",
+   "last_price": 13.9,
+   "since_pass_pct": 0.0,
+   "spy_since_pass_pct": 0.0,
+   "alpha_pp": 0.0,
+   "cf_marked": "2026-07-28"
+  },
+  {
+   "symbol": "UNF",
+   "date": "2026-07-28",
+   "passed_because": "Section 5.5(d) of the executed merger agreement is an express ANTI-divestiture carve-out relieving Cintas of any obligation to offer or accept any remedy and barring UniFirst from offering one without Cintas's written consent, the exact opposite of the remedy-path assumption the whole thesis rests on, against a 0.25-to-1 payoff (+6.9% up, -27.7% down) that needs an ~80% close rate merely to break even.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": "Deal-completion",
+   "director_conviction": 34,
+   "price0": 297.46,
+   "spy0": 739.09,
+   "source": "weekly_director",
+   "last_price": 297.46,
+   "since_pass_pct": 0.0,
+   "spy_since_pass_pct": 0.0,
+   "alpha_pp": 0.0,
+   "cf_marked": "2026-07-28"
+  },
+  {
+   "symbol": "MP",
+   "date": "2026-07-28",
+   "passed_because": "No binding dated event pays MP a defined sum: the 1 Jan 2027 DFARS date is an industry-wide procurement rule with live nonavailability and COTS escape valves that merely widens a ban already in force since 2026, neither the board's $35 nor the file's $32 floor exists against about $11 a share of common book equity, and every value-resolving milestone (Apple 2027, 10X commissioning 2028, the profit target around 2029) sits outside any underwritable window.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": "Idiosyncratic",
+   "director_conviction": 28,
+   "price0": 43.13,
+   "spy0": 739.09,
+   "source": "weekly_director",
+   "last_price": 43.13,
+   "since_pass_pct": 0.0,
+   "spy_since_pass_pct": 0.0,
+   "alpha_pp": 0.0,
+   "cf_marked": "2026-07-28"
+  },
+  {
+   "symbol": "KDP",
+   "date": "2026-07-28",
+   "passed_because": "No Form 10 for Global Coffee Co. exists anywhere on the SEC record: an EDGAR full-text sweep plus an independent universe-wide check of every 10-12B filed since April 2026 returns the other live spins (Honeywell Aerospace, Envirii, FedEx Freight, ADI Global, Marex, BioStem) and no coffee registrant of any kind, so the Spin_index_flow driver has no schedule behind it, and the 4.5x leverage presented as observed fact is a company projection.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": "Idiosyncratic",
+   "director_conviction": 27,
+   "price0": 30.12,
+   "spy0": 739.09,
+   "source": "weekly_director",
+   "last_price": 30.12,
+   "since_pass_pct": 0.0,
+   "spy_since_pass_pct": 0.0,
+   "alpha_pp": 0.0,
+   "cf_marked": "2026-07-28"
+  },
+  {
+   "symbol": "CELC",
+   "date": "2026-07-28",
+   "passed_because": "The binary this seat was underwritten for resolved FAVOURABLY and early (full, not accelerated, FDA approval of REVTORPYK on 14 July, three days ahead of the PDUFA) and the equity fell 17.6% the next session and kept falling to $82.27 against a $151.02 high, so the spread did not close but inverted, and the claimed floor is deleted by $575m of June converts plus $201.25m of 2031 notes the dossier omitted.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": "FDA/biotech",
+   "director_conviction": 26,
+   "price0": 82.27,
+   "spy0": 739.09,
+   "source": "weekly_director",
+   "last_price": 82.27,
+   "since_pass_pct": 0.0,
+   "spy_since_pass_pct": 0.0,
+   "alpha_pp": 0.0,
+   "cf_marked": "2026-07-28"
+  },
+  {
+   "symbol": "AXTA",
+   "date": "2026-07-28",
+   "passed_because": "The spread is not thin, it is NEGATIVE: recomputing the terms with the file's own method on live prices ($33.74 AXTA, EUR 58.44 AkzoNobel, EUR 13.76 pre-completion distribution) gives $33.24, below the live price, and the board's $42.64 was an arithmetic artifact multiplying the 0.6539 ratio by AkzoNobel's price while ignoring the EUR 2.5bn cash distribution Axalta holders never receive.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": "Deal-completion",
+   "director_conviction": 25,
+   "price0": 33.74,
+   "spy0": 739.09,
+   "source": "weekly_director",
+   "last_price": 33.74,
+   "since_pass_pct": 0.0,
+   "spy_since_pass_pct": 0.0,
+   "alpha_pp": 0.0,
+   "cf_marked": "2026-07-28"
+  },
+  {
+   "symbol": "VRDN",
+   "date": "2026-07-28",
+   "passed_because": "The best available version of the event arrived (Lumvoa approved 26 June, four days early, no advisory committee, no CRL, a broader label than expected, immediate launch) and the stock popped about 12% then gave it all back inside a month, which means the market is pricing the 30 March elegrobart data the approval did not address; base-case fair value of $19.85 against a $19.70 price is no trade.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": "FDA/biotech",
+   "director_conviction": 24,
+   "price0": 19.7,
+   "spy0": 739.09,
+   "source": "weekly_director",
+   "last_price": 19.7,
+   "since_pass_pct": 0.0,
+   "spy_since_pass_pct": 0.0,
+   "alpha_pp": 0.0,
+   "cf_marked": "2026-07-28"
+  },
+  {
+   "symbol": "BLCO",
+   "date": "2026-07-28",
+   "passed_because": "The separation has been a soft, self-referential intention for six years (stated 2020, restated three times, taken to market in 2024, abandoned outright in February 2025, then the parent refinanced $7.9bn out to 2031-2032), and the skeptic adds that January 2026's RED-C Phase 3 failure broke the second of the CFO's own three gating variables, with no Form 10, S-1, record date or vote anywhere in the filing record.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": "Idiosyncratic",
+   "director_conviction": 22,
+   "price0": 16.28,
+   "spy0": 739.09,
+   "source": "weekly_director",
+   "last_price": 16.28,
+   "since_pass_pct": 0.0,
+   "spy_since_pass_pct": 0.0,
+   "alpha_pp": 0.0,
+   "cf_marked": "2026-07-28"
+  },
+  {
+   "symbol": "PRX.AS",
+   "date": "2026-07-28",
+   "passed_because": "The forced sale is finished and was never sized to move this security: the residual 16.8% Delivery Hero stake tendered into Uber's EUR 41.50 offer is worth roughly EUR 0.09 per Prosus share and settles in the second half of 2027, the re-rating accrued to Delivery Hero's own shareholders, and the recorded 37.365 floor is not stale but BROKEN (37.27 intraday, 36.17 fifty-two-week low).",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": "Idiosyncratic",
+   "director_conviction": 21,
+   "price0": 38.465,
+   "spy0": 739.09,
+   "source": "weekly_director",
+   "last_price": 38.415,
+   "since_pass_pct": -0.13,
+   "spy_since_pass_pct": 0.0,
+   "alpha_pp": -0.13,
+   "cf_marked": "2026-07-28"
+  },
+  {
+   "symbol": "FUN",
+   "date": "2026-07-28",
+   "passed_because": "The one structural forcing date passed without a shot fired: the 26 May annual meeting was uncontested, JANA ran no slate, and the board bought a standstill from a DIFFERENT activist (H Partners) a week earlier, leaving an undated non-binding sale demand attached to a roughly 7x-levered stub ($5.53bn debt, $279m book equity, ~$29m trailing free cash flow) whose $16.50 floor was broken at $12.51 inside the last twelve months.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": "Idiosyncratic",
+   "director_conviction": 20,
+   "price0": 17.59,
+   "spy0": 739.09,
+   "source": "weekly_director",
+   "last_price": 17.59,
+   "since_pass_pct": 0.0,
+   "spy_since_pass_pct": 0.0,
+   "alpha_pp": 0.0,
+   "cf_marked": "2026-07-28"
+  },
+  {
+   "symbol": "LZM",
+   "date": "2026-07-28",
+   "passed_because": "The FY2025 Form 20-F carries an explicit substantial-doubt going-concern disclosure and states the $60m bridge is ringfenced to the Kabanga project so parent-level funding is required within about six months (roughly September 2026), most likely via further equity at the LZM level, with holders carrying no preemptive or anti-dilution rights: a floor with no mechanism sitting directly above a disclosed dilution event.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": "Idiosyncratic",
+   "director_conviction": 18,
+   "price0": 3.31,
+   "spy0": 739.09,
+   "source": "weekly_director",
+   "last_price": 3.31,
+   "since_pass_pct": 0.0,
+   "spy_since_pass_pct": 0.0,
+   "alpha_pp": 0.0,
+   "cf_marked": "2026-07-28"
+  },
+  {
+   "symbol": "THRM",
+   "date": "2026-07-28",
+   "passed_because": "The named driver was spent four months before the review (the S-4 states verbatim that early termination of the HSR waiting period was granted at 11:25 a.m. ET on 26 March 2026) and it was never an arbitrage at all: Gentherm is the ACQUIRER and ISSUER in a Reverse Morris Trust, so no counterparty has contracted to pay anything for a THRM share, leaving 4.6% of upside against 28.7% of downside plus a false 'international clearance secured' claim the S-4 contradicts.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": "Deal-completion",
+   "director_conviction": 16,
+   "price0": 42.07,
+   "spy0": 739.09,
+   "source": "weekly_director",
+   "last_price": 42.07,
+   "since_pass_pct": 0.0,
+   "spy_since_pass_pct": 0.0,
+   "alpha_pp": 0.0,
+   "cf_marked": "2026-07-28"
   }
  ],
  "runs": [
@@ -3241,6 +4072,97 @@
      "ret_pct": 1.51
     }
    }
+  },
+  {
+   "date": "2026-07-28",
+   "nav": 99.565,
+   "basket_ret_pct": -0.435,
+   "seats": {
+    "GDOT": {
+     "price": 13.43,
+     "ret_pct": 5.33
+    },
+    "UNF": {
+     "price": 290.11,
+     "ret_pct": 8.66
+    },
+    "FIP": {
+     "price": 4.09,
+     "ret_pct": -10.31
+    },
+    "FIG": {
+     "price": 22.94,
+     "ret_pct": 11.96
+    },
+    "BLCO": {
+     "price": 15.88,
+     "ret_pct": 1.47
+    },
+    "CELC": {
+     "price": 90.45,
+     "ret_pct": -2.31
+    },
+    "VRDN": {
+     "price": 19.42,
+     "ret_pct": 19.07
+    },
+    "AQST": {
+     "price": 3.73,
+     "ret_pct": -6.52
+    },
+    "WVE": {
+     "price": 5.92,
+     "ret_pct": 2.42
+    },
+    "AMLX": {
+     "price": 19.49,
+     "ret_pct": 33.58
+    },
+    "AAUC": {
+     "price": 20.85,
+     "ret_pct": -10.9
+    },
+    "FUN": {
+     "price": 17.39,
+     "ret_pct": -15.42
+    },
+    "THRM": {
+     "price": 34.13,
+     "ret_pct": 0.74
+    },
+    "ZYME": {
+     "price": 23.0,
+     "ret_pct": -12.58
+    },
+    "DDL": {
+     "price": 2.39,
+     "ret_pct": 23.2
+    },
+    "LBTYK": {
+     "price": 9.995,
+     "ret_pct": -8.3
+    },
+    "LZM": {
+     "price": 3.88,
+     "ret_pct": 4.02
+    },
+    "VIR": {
+     "price": 8.8,
+     "ret_pct": -4.97
+    },
+    "OLMA": {
+     "price": 12.01,
+     "ret_pct": 3.8
+    },
+    "AVIR": {
+     "price": 4.82,
+     "ret_pct": -0.21
+    },
+    "CAPR": {
+     "price": 6.995,
+     "ret_pct": -63.59
+    }
+   }
   }
  ],
  "watchlist": [
@@ -4246,6 +5168,42 @@
     "GERN": {
      "price": 1.44,
      "ret_pct": 12.5
+    }
+   }
+  },
+  {
+   "date": "2026-07-28",
+   "nav": 107.2,
+   "ret_pct": 7.2,
+   "n": 7,
+   "seats": {
+    "CLVT": {
+     "price": 2.13,
+     "ret_pct": -3.62
+    },
+    "BBIO": {
+     "price": 84.12,
+     "ret_pct": 25.93
+    },
+    "EYPT": {
+     "price": 12.41,
+     "ret_pct": -4.76
+    },
+    "PVLA": {
+     "price": 141.77,
+     "ret_pct": 19.29
+    },
+    "DBVT": {
+     "price": 13.9,
+     "ret_pct": -11.46
+    },
+    "MGNI": {
+     "price": 19.09,
+     "ret_pct": 9.4
+    },
+    "GERN": {
+     "price": 1.48,
+     "ret_pct": 15.62
     }
    }
   }

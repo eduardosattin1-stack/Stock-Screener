@@ -5,7 +5,10 @@ import Link from "next/link";
 
 interface Pick {
   symbol: string;
+  // Apex: 0-100 Director conviction. Recovery sleeve: the 1-5 interrogator score.
   conviction: number;
+  // Value Lens scores its own seats 0-100 and carries no regime conviction.
+  value_score?: number;
   entry_price?: number;
   entry_date?: string;
   source_methodologies?: string[];
@@ -27,29 +30,43 @@ const fmtPrice = (p: number | null | undefined) => (p == null ? null : p >= 1000
 const fmtPct = (pct: number | null | undefined) => (pct == null ? null : `${pct > 0 ? "+" : ""}${Math.abs(pct) >= 100 ? pct.toFixed(0) : pct.toFixed(1)}%`);
 const PENDING = <span style={{ color: "var(--text-light)" }}>–.––</span>;
 
-// Compact live tracker for the Speculair Apex Basket + Capitulation Watchlist.
-// Designed to sit underneath the Watchlist inside the shared right rail.
+// Compact live tracker for the three live Speculair books — Apex, Value Lens and
+// the (paper) Recovery sleeve. Designed to sit underneath the Watchlist inside the
+// shared right rail. Each book gets the same two elements: a NAV stat card (its own
+// chained track record) and a collapsible seat ledger.
 export function SpeculairTracker() {
   const [baskets, setBaskets] = useState<any>(null);
   const [quotes, setQuotes] = useState<Record<string, Quote>>({});
   const [loading, setLoading] = useState(false);
   const [openApex, setOpenApex] = useState(true);
-  const [openCap, setOpenCap] = useState(true);
-  const [openClosed, setOpenClosed] = useState(false);
+  const [openValue, setOpenValue] = useState(true);
+  const [openRecovery, setOpenRecovery] = useState(false);
   const [trackingEqual, setTrackingEqual] = useState<any>(null);
   const [trackingWeighted, setTrackingWeighted] = useState<any>(null);
+  const [valueApex, setValueApex] = useState<any>(null);
+  const [recoverySleeve, setRecoverySleeve] = useState<any>(null);
+  const [recoveryTracking, setRecoveryTracking] = useState<any>(null);
 
-  // Load baskets: GCS first, public file fallback (mirrors page.tsx).
-  useEffect(() => {
-    fetch("/api/gcs/scans/speculair_baskets.json")
+  // GCS first, public-file fallback (mirrors page.tsx) — the public copy is frozen
+  // at the last frontend deploy, so it is a fallback only, never the primary read.
+  const loadGcsFirst = (name: string, set: (d: any) => void, ok: (d: any) => boolean = Boolean) => {
+    fetch(`/api/gcs/scans/${name}`)
       .then((r) => { if (r.ok) return r.json(); throw new Error("gcs"); })
-      .then((d) => { if (d) setBaskets(d); })
+      .then((d) => { if (d && ok(d)) set(d); else throw new Error("empty"); })
       .catch(() => {
-        fetch("/speculair_baskets.json")
+        fetch(`/${name}`)
           .then((r) => (r.ok ? r.json() : null))
-          .then((d) => { if (d) setBaskets(d); })
+          .then((d) => { if (d && ok(d)) set(d); })
           .catch(() => {});
       });
+  };
+
+  useEffect(() => {
+    loadGcsFirst("speculair_baskets.json", setBaskets);
+    loadGcsFirst("speculair_value_apex.json", setValueApex);
+    loadGcsFirst("speculair_recovery_sleeve.json", setRecoverySleeve);
+    loadGcsFirst("speculair_recovery_tracking.json", setRecoveryTracking, (d) => !!d.nav);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Load Apex track record (chained NAV + closed rotations): GCS first, public fallback.
@@ -58,32 +75,30 @@ export function SpeculairTracker() {
   // card on / (page.tsx) and the Daily Briefing headline, so this "Apex since ..." figure
   // always matches those instead of quietly reporting a different chain.
   useEffect(() => {
-    fetch("/api/gcs/scans/speculair_apex_tracking.json")
-      .then((r) => { if (r.ok) return r.json(); throw new Error("gcs"); })
-      .then((d) => { if (d && d.nav) setTrackingEqual(d); })
-      .catch(() => {
-        fetch("/speculair_apex_tracking.json")
-          .then((r) => (r.ok ? r.json() : null))
-          .then((d) => { if (d && d.nav) setTrackingEqual(d); })
-          .catch(() => {});
-      });
-    fetch("/api/gcs/scans/speculair_apex_tracking_weighted.json")
-      .then((r) => { if (r.ok) return r.json(); throw new Error("gcs"); })
-      .then((d) => { if (d && d.nav) setTrackingWeighted(d); })
-      .catch(() => {
-        fetch("/speculair_apex_tracking_weighted.json")
-          .then((r) => (r.ok ? r.json() : null))
-          .then((d) => { if (d && d.nav) setTrackingWeighted(d); })
-          .catch(() => {});
-      });
+    loadGcsFirst("speculair_apex_tracking.json", setTrackingEqual, (d) => !!d.nav);
+    loadGcsFirst("speculair_apex_tracking_weighted.json", setTrackingWeighted, (d) => !!d.nav);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const trackingIsWeighted = !!(trackingWeighted && (trackingWeighted.history || []).length >= 4);
   const tracking = trackingIsWeighted ? trackingWeighted : trackingEqual;
 
+  // Value Lens rides the same weighted-vs-equal promotion rule as the apex, so the
+  // "Value Lens since ..." figure here matches the Daily Briefing's live-tracking row.
+  const vtWeighted = valueApex?.value_tracking_weighted;
+  const valueIsWeighted = !!(vtWeighted && (vtWeighted.history || []).length >= 4);
+  const valueTracking = valueIsWeighted ? vtWeighted : valueApex?.value_tracking;
+  // Recovery sleeve has one (equal-weight) chain; the standalone tracking file carries
+  // the entry prices, the sleeve file the seat list. Either can stand in for the other's
+  // NAV block so a single missing file doesn't blank the card.
+  const recTracking = recoveryTracking || recoverySleeve?.tracking;
+
   const apex: Pick[] = baskets?.apex_basket || [];
-  const cap: Pick[] = baskets?.capitulation_watchlist || [];
-  const symbolsKey = Array.from(new Set([...apex, ...cap].map((p) => p.symbol))).join(",");
+  const value: Pick[] = valueApex?.apex_basket || [];
+  const recovery: Pick[] = recoverySleeve?.sleeve || [];
+  // Recovery picks carry no entry price of their own — the tracker's positions map does.
+  const recPositions: Record<string, any> = recoveryTracking?.positions || {};
+  const symbolsKey = Array.from(new Set([...apex, ...value, ...recovery].map((p) => p.symbol))).join(",");
 
   const fetchQuotes = async () => {
     if (!symbolsKey) return;
@@ -113,37 +128,39 @@ export function SpeculairTracker() {
 
   if (!baskets) return null;
 
-  // Conviction chip — number only, theme vars (no hardcoded rgba/#hex).
-  const convStyle = (c: number) => ({
-    fontSize: 9, padding: "1px 4px", borderRadius: 3, fontFamily: "var(--font-mono)", fontWeight: 700, flexShrink: 0,
-    background: c >= 85 ? "var(--green-light)" : c >= 70 ? "var(--amber-light)" : "var(--bg-elevated)",
-    color: c >= 85 ? "var(--green)" : c >= 70 ? "var(--amber)" : "var(--text-light)",
-  });
+  // Conviction chip — number only, theme vars (no hardcoded rgba/#hex). Two scales:
+  // the apex/value books score 0-100, the recovery sleeve carries the interrogator's
+  // 1-5 score. Rendering a "3" on the 0-100 ramp would read as near-zero conviction,
+  // so the five-point scale prints as "3/5" and gets its own thresholds.
+  const convStyle = (c: number, scale: "pct" | "five" = "pct") => {
+    const hi = scale === "five" ? c >= 4 : c >= 85;
+    const mid = scale === "five" ? c >= 3 : c >= 70;
+    return {
+      fontSize: 9, padding: "1px 4px", borderRadius: 3, fontFamily: "var(--font-mono)", fontWeight: 700, flexShrink: 0,
+      background: hi ? "var(--green-light)" : mid ? "var(--amber-light)" : "var(--bg-elevated)",
+      color: hi ? "var(--green)" : mid ? "var(--amber)" : "var(--text-light)",
+    };
+  };
 
-  // Apex track-record (paper-traded NAV since basket inception, base 100).
-  const navHist: { date: string; nav: number }[] = tracking?.history || [];
-  const nav: number | null = tracking?.nav ?? null;
-  const sinceInception = nav != null ? nav - 100 : null;
-  const closed: any[] = tracking?.closed || [];
   const fmtDay = (s?: string) => (s ? new Date(s + "T00:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric" }) : "");
-  const daysSince = tracking?.inception_date && tracking?.last_date
-    ? Math.max(0, Math.round((new Date(tracking.last_date + "T00:00:00").getTime() - new Date(tracking.inception_date + "T00:00:00").getTime()) / 86400000))
-    : null;
-  const perfColor = sinceInception == null ? "var(--text-light)" : sinceInception > 0 ? "var(--green)" : sinceInception < 0 ? "var(--red)" : "var(--text-light)";
+
+  // Entry price per book. Apex and Value publish it on the pick; the recovery sleeve
+  // publishes only the seat (its entry lives in the tracker's positions map), so it
+  // reads the tracker first and falls back to the pick if that file is missing.
+  const apexEntry = (p: Pick) => p.entry_price || 0;
+  const recEntry = (p: Pick) => Number(recPositions[p.symbol]?.entry_price) || p.entry_price || 0;
 
   // Live P&L% vs entry for one pick (null when either side is missing).
-  const livePnl = (p: Pick): number | null => {
+  const livePnl = (p: Pick, entryOf: (p: Pick) => number): number | null => {
     const q = quotes[p.symbol];
-    const e = p.entry_price || 0;
+    const e = entryOf(p);
     return q?.price != null && e > 0 ? ((q.price / e) - 1) * 100 : null;
   };
   // Collapsed-section aggregate: mean live P&L across rows with data.
-  const meanPnl = (rows: Pick[]): number | null => {
-    const vals = rows.map(livePnl).filter((v): v is number => v != null);
+  const meanPnl = (rows: Pick[], entryOf: (p: Pick) => number): number | null => {
+    const vals = rows.map((p) => livePnl(p, entryOf)).filter((v): v is number => v != null);
     return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
   };
-  const rotVals = closed.map((c) => c.return_pct).filter((v: any): v is number => typeof v === "number");
-  const rotAgg = rotVals.length ? rotVals.reduce((a: number, b: number) => a + b, 0) / rotVals.length : null;
 
   // NAV sparkline — scale always includes the base (100) so the dashed baseline
   // and above/below-water area fill read at a glance.
@@ -170,19 +187,66 @@ export function SpeculairTracker() {
     );
   };
 
-  // Shared data row (Apex + Beaten-Down): SYMBOL / ENTRY / LAST / P&L / gutter.
-  const Row = ({ p }: { p: Pick }) => {
+  // NAV stat card — one per book, the rail's hero element. Same shape for all three
+  // (chained paper NAV, base 100), so Apex / Value Lens / Recovery read on one ruler.
+  const NavCard = ({ label, trk, note }: { label: string; trk: any; note?: string }) => {
+    const n: number | null = trk?.nav ?? null;
+    if (n == null) return null;
+    const since = n - 100;
+    const c = since > 0 ? "var(--green)" : since < 0 ? "var(--red)" : "var(--text-light)";
+    const rotated: any[] = trk?.closed || [];
+    // The value book's chain is embedded in speculair_value_apex.json and carries no
+    // last_date of its own — fall back to the last NAV point so its card shows the
+    // same "· Nd" age as the apex instead of silently dropping it.
+    const hist: any[] = trk?.history || [];
+    const lastDate = trk?.last_date || hist[hist.length - 1]?.date || null;
+    const days = trk?.inception_date && lastDate
+      ? Math.max(0, Math.round((new Date(lastDate + "T00:00:00").getTime() - new Date(trk.inception_date + "T00:00:00").getTime()) / 86400000))
+      : null;
+    return (
+      <div style={{ margin: "8px 12px", padding: "8px 10px", background: "var(--bg)", border: "1px solid var(--border-subtle)", borderRadius: 6, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
+        <div style={{ minWidth: 0 }}>
+          <div style={{ fontSize: 9, fontFamily: "var(--font-mono)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-light)" }}>
+            {label} · since {fmtDay(trk.inception_date)}{days != null ? ` · ${days}d` : ""}
+          </div>
+          <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "var(--font-mono)", letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums", color: c }}>
+            {since > 0 ? "+" : ""}{since.toFixed(1)}%
+          </div>
+          <div style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginTop: 2 }}>
+            NAV {n.toFixed(1)}{rotated.length ? ` · ${rotated.length} rotated` : ""}{note ? ` · ${note}` : ""}
+          </div>
+        </div>
+        <Sparkline navs={hist.map((h: any) => h.nav)} color={c} />
+      </div>
+    );
+  };
+
+  // Column sub-header — repeated per book so the four numeric columns are labelled
+  // wherever the eye lands in a three-book rail.
+  const ColHeader = () => (
+    <div style={{ display: "grid", gridTemplateColumns: GRID, gap: 6, height: 20, alignItems: "center", padding: "0 12px", background: "var(--bg)", fontSize: 9, fontWeight: 600, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.08em", borderBottom: "1px solid var(--border-subtle)", fontFamily: "var(--font-mono)" }}>
+      <div>Symbol</div>
+      <div style={{ textAlign: "right" }}>Entry</div>
+      <div style={{ textAlign: "right" }}>Last</div>
+      <div style={{ textAlign: "right" }}>P&amp;L</div>
+      <div></div>
+    </div>
+  );
+
+  // Shared data row (all three books): SYMBOL / ENTRY / LAST / P&L / gutter.
+  const Row = ({ p, entryOf, score, scale = "pct" }: { p: Pick; entryOf: (p: Pick) => number; score: (p: Pick) => number | null; scale?: "pct" | "five" }) => {
     const q = quotes[p.symbol];
     const last = q?.price;
-    const entry = p.entry_price || 0;
-    const perf = livePnl(p);
+    const entry = entryOf(p);
+    const perf = livePnl(p, entryOf);
+    const sc = score(p);
     const color = perf == null ? "var(--text-light)" : perf > 0 ? "var(--green)" : perf < 0 ? "var(--red)" : "var(--text-light)";
     return (
       <div style={{ display: "grid", gridTemplateColumns: GRID, gap: 6, height: 28, alignItems: "center", padding: "0 12px", borderBottom: "1px solid var(--border-subtle)", fontSize: 11, fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums", transition: "background 0.1s" }}
            onMouseEnter={(e) => (e.currentTarget.style.background = "var(--bg-hover)")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
         <div style={{ display: "flex", alignItems: "center", gap: 5, minWidth: 0 }}>
           <Link href={`/stock/${p.symbol}`} style={{ textDecoration: "none", color: "var(--text)", fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.symbol}</Link>
-          <span style={convStyle(p.conviction)}>{p.conviction}</span>
+          {sc != null && <span style={convStyle(sc, scale)}>{scale === "five" ? `${sc}/5` : sc}</span>}
           {/* Payback-speed badge (debt-cycle layer): C = cash_now (FCF yield ≥4%),
               P = payback 2-3y, S = story (no FCF yet — capped hardest in DISCIPLINE/FORCING).
               Ring turns red + ✂ when the phase duration cap trimmed this seat. */}
@@ -236,7 +300,7 @@ export function SpeculairTracker() {
         <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-secondary)" }}>
           Specul<span style={{ color: "var(--lavender)" }}>AI</span>r
         </span>
-        <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-light)" }}>{apex.length + cap.length}</span>
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-light)" }}>{apex.length + value.length + recovery.length}</span>
         <button onClick={fetchQuotes} title="Refresh"
           style={{ marginLeft: "auto", width: 20, height: 20, display: "flex", alignItems: "center", justifyContent: "center", background: "none", border: "none", cursor: "pointer", borderRadius: 4, color: "var(--text-light)" }}
           onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; e.currentTarget.style.color = "var(--text)"; }}
@@ -245,72 +309,37 @@ export function SpeculairTracker() {
         </button>
       </div>
 
-      {/* Apex NAV — the rail's one hero element, framed as an inset stat card */}
-      {tracking && sinceInception != null && (
-        <div style={{ margin: "8px 12px", padding: "8px 10px", background: "var(--bg)", border: "1px solid var(--border-subtle)", borderRadius: 6, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
-          <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: 9, fontFamily: "var(--font-mono)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-light)" }}>
-              Apex · since {fmtDay(tracking.inception_date)}{daysSince != null ? ` · ${daysSince}d` : ""}
-            </div>
-            <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "var(--font-mono)", letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums", color: perfColor }}>
-              {sinceInception > 0 ? "+" : ""}{sinceInception.toFixed(1)}%
-            </div>
-            <div style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginTop: 2 }}>
-              NAV {(nav ?? 0).toFixed(1)}{closed.length ? ` · ${closed.length} rotated` : ""}
-            </div>
-          </div>
-          <Sparkline navs={navHist.map((h) => h.nav)} color={perfColor} />
-        </div>
-      )}
-
-      {/* Column sub-header — covers both live sections below */}
-      <div style={{ display: "grid", gridTemplateColumns: GRID, gap: 6, height: 20, alignItems: "center", padding: "0 12px", background: "var(--bg)", fontSize: 9, fontWeight: 600, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.08em", borderBottom: "1px solid var(--border-subtle)", fontFamily: "var(--font-mono)" }}>
-        <div>Symbol</div>
-        <div style={{ textAlign: "right" }}>Entry</div>
-        <div style={{ textAlign: "right" }}>Last</div>
-        <div style={{ textAlign: "right" }}>P&amp;L</div>
-        <div></div>
-      </div>
-
-      {/* Apex Basket */}
-      <SectionHeader open={openApex} onClick={() => setOpenApex(!openApex)} title="Apex Basket" count={apex.length} accent="var(--green)" agg={meanPnl(apex)} />
+      {/* ── APEX — the flagship book ── */}
+      <NavCard label="Apex" trk={tracking} />
+      <ColHeader />
+      <SectionHeader open={openApex} onClick={() => setOpenApex(!openApex)} title="Apex Basket" count={apex.length} accent="var(--green)" agg={meanPnl(apex, apexEntry)} />
       {openApex && (apex.length > 0
-        ? apex.map((p) => <Row key={p.symbol} p={p} />)
+        ? apex.map((p) => <Row key={p.symbol} p={p} entryOf={apexEntry} score={(x) => x.conviction ?? null} />)
         : <div style={{ padding: "14px 12px", fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>No Apex positions.</div>)}
 
-      {/* Beaten-Down (capitulation) watchlist — adjacent to Apex so the shared sub-header covers both */}
-      <SectionHeader open={openCap} onClick={() => setOpenCap(!openCap)} title="Beaten-Down" count={cap.length} accent="var(--amber)" agg={meanPnl(cap)} />
-      {openCap && (cap.length > 0
-        ? cap.map((p) => <Row key={p.symbol} p={p} />)
-        : <div style={{ padding: "14px 12px", fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>No Capitulation setups.</div>)}
+      {/* ── VALUE LENS — the same research re-scored on price and balance sheet alone.
+             Its chip is the value score (0-100), not the regime book's conviction. ── */}
+      <NavCard label="Value Lens" trk={valueTracking} />
+      <ColHeader />
+      <SectionHeader open={openValue} onClick={() => setOpenValue(!openValue)} title="Value Lens" count={value.length} accent="var(--blue)" agg={meanPnl(value, apexEntry)} />
+      {openValue && (value.length > 0
+        ? value.map((p) => <Row key={p.symbol} p={p} entryOf={apexEntry} score={(x) => x.value_score ?? null} />)
+        : <div style={{ padding: "14px 12px", fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>No Value Lens seats.</div>)}
 
-      {/* Rotated out — realized returns logged when a name leaves the basket */}
-      {tracking && (
-        <>
-          <SectionHeader open={openClosed} onClick={() => setOpenClosed(!openClosed)} title="Rotated out" count={closed.length} accent="var(--text-light)" agg={rotAgg} />
-          {openClosed && (closed.length > 0
-            ? [...closed].reverse().map((c, i) => {
-                const ret = typeof c.return_pct === "number" ? c.return_pct : null;
-                const rc = ret == null ? "var(--text-light)" : ret > 0 ? "var(--green)" : ret < 0 ? "var(--red)" : "var(--text-light)";
-                return (
-                  <div key={`${c.symbol}-${c.exit_date}-${i}`} style={{ display: "grid", gridTemplateColumns: GRID, gap: 6, height: 28, alignItems: "center", padding: "0 12px", borderBottom: "1px solid var(--border-subtle)", fontSize: 11, fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums", transition: "background 0.1s" }}
-                       onMouseEnter={(e) => (e.currentTarget.style.background = "var(--bg-hover)")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
-                    <div style={{ gridColumn: "1 / span 3", display: "flex", alignItems: "center", gap: 5, minWidth: 0 }}>
-                      <Link href={`/stock/${c.symbol}`} style={{ textDecoration: "none", color: "var(--text)", fontWeight: 700 }}>{c.symbol}</Link>
-                      <span style={{ fontSize: 9, color: "var(--text-light)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{fmtDay(c.entry_date)}→{fmtDay(c.exit_date)}</span>
-                    </div>
-                    <div style={{ textAlign: "right", color: rc, fontWeight: 700 }}>{ret == null ? PENDING : fmtPct(ret)}</div>
-                    <span />
-                  </div>
-                );
-              })
-            : <div style={{ padding: "14px 12px", fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>No rotations yet — realized returns appear here as picks leave the basket.</div>)}
-        </>
-      )}
+      {/* ── RECOVERY SLEEVE — paper only, racing a frozen benchmark for a quarter to
+             earn a real allocation. Labelled "paper" on the card so its NAV is never
+             mistaken for one of the two live books above. ── */}
+      <NavCard label="Recovery" trk={recTracking} note="paper" />
+      <ColHeader />
+      <SectionHeader open={openRecovery} onClick={() => setOpenRecovery(!openRecovery)} title="Recovery Sleeve" count={recovery.length} accent="var(--lavender)" agg={meanPnl(recovery, recEntry)} />
+      {openRecovery && (recovery.length > 0
+        ? recovery.map((p) => <Row key={p.symbol} p={p} entryOf={recEntry} score={(x) => x.conviction ?? null} scale="five" />)
+        : <div style={{ padding: "14px 12px", fontSize: 11, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>No Recovery seats.</div>)}
 
-      {/* Footer */}
+      {/* Footer — the weighting note applies to the apex chain (the value book runs the
+          same promotion rule independently; the recovery sleeve is always equal-weight). */}
       <div style={{ padding: "6px 12px 8px", fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
-        {trackingIsWeighted ? "Director-weighted" : "Equal-weight"} NAV chain · 30s quotes{baskets.generated_at ? ` · gen ${new Date(baskets.generated_at).toLocaleDateString()}` : ""}
+        Apex {trackingIsWeighted ? "Director-weighted" : "equal-weight"} NAV chain · 30s quotes{baskets.generated_at ? ` · gen ${new Date(baskets.generated_at).toLocaleDateString()}` : ""}
       </div>
     </div>
   );

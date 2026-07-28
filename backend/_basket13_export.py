@@ -14,6 +14,7 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(BASE)
 TRK = os.path.join(BASE, "_basket13_tracker.json")
 OUTJ = os.path.join(BASE, "_basket13_out.json")
+DIRJ = os.path.join(BASE, "_opus_debate", "_catalyst_director.json")
 TS = os.path.join(ROOT, "frontend", "app", "data", "basket13.ts")
 
 # mirror of the inject cap dials, displayed as "n / cap" in the UI
@@ -61,8 +62,37 @@ def main():
     invested = round(sum(e["weight_pct"] or 0 for e in opene), 2)
     pending_w = round(sum(e["weight_pct"] or 0 for e in pend), 2)
 
+    # HONEST DATES (2026-07-28): "generated" is the LAST RUN'S date from the tracker ledger, not
+    # export time — a re-export must never claim a new run happened. exported_at records the
+    # export itself; marked_through says how fresh the NAV series is.
+    runs = t.get("runs") or []
+    marks_all = t.get("marks") or []
+    last_run_date = (runs[-1].get("run_date") if runs else None) or datetime.date.today().isoformat()
+
+    # latest Director read (the weekly debate output) — SEPARATE from the tracker's bi-weekly
+    # run ledger, so the page can show this week's memo/decisions without a tracker stamp
+    # (appending to runs[] would reset the 13-day re-debate self-gate — never do that here).
+    latest_debate = None
+    if os.path.exists(DIRJ):
+        try:
+            dj = json.load(open(DIRJ, encoding="utf-8"))
+            latest_debate = {
+                "asof": dj.get("asof"), "regime": dj.get("regime"), "risk_stance": dj.get("risk_stance"),
+                "memo": dj.get("memo", ""), "ranking": dj.get("ranking", []),
+                "assessments": [{k: a.get(k) for k in
+                                 ("symbol", "cluster", "conviction", "would_seat", "posture",
+                                  "expected_return_pct", "catalyst_status", "binding_reason",
+                                  "cro_verdict", "cro_conviction")}
+                                for a in dj.get("assessments", [])],
+            }
+        except Exception as e:
+            print(f"  WARN latest debate unreadable ({e}) — page falls back to the run-ledger memo")
+
     payload = {
-        "generated": datetime.date.today().isoformat(),
+        "generated": last_run_date,
+        "exported_at": datetime.date.today().isoformat(),
+        "marked_through": marks_all[-1].get("date") if marks_all else None,
+        "latest_debate": latest_debate,
         "invested_pct": invested,
         "pending_pct": pending_w,
         "cash_pct": round(100 - invested - pending_w, 2),
