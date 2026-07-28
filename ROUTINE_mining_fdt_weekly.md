@@ -2,12 +2,12 @@
 
 > **This file is the source of truth for a NEW Claude Routines-UI entry** — separate from the
 > existing "Speculair opus weekly" entry (`ROUTINE_speculair_weekly.md`), so the two books can run
-> independently and neither risks the other's schedule. Suggested cadence: a day/time that doesn't
-> collide with the Monday ~12:00 Apex/Value run — e.g. **Wednesdays ~09:00** — but the exact
-> day/time is Bruno's call in the Routines UI; nothing below depends on it. When this routine
-> changes, change it HERE first and paste the body between the markers into the Routines UI — the
-> routine store is invisible to repo sessions (this is what caused the 2026-07-03 disruptor-
-> retirement detour on the OTHER routine; don't repeat it on this one).
+> independently and neither risks the other's schedule. **Cadence: Tuesdays ~15:00** (Bruno's
+> choice) — set that day/time in the Routines UI when pasting this in; nothing below depends on the
+> exact time. When this routine changes, change it HERE first and paste the body between the
+> markers into the Routines UI — the routine store is invisible to repo sessions (this is what
+> caused the 2026-07-03 disruptor-retirement detour on the OTHER routine; don't repeat it on this
+> one).
 >
 > Created 2026-07-27 (FUTURE_RESOURCES_SPLIT_SPEC.md): the Future Resources book split into two
 > independent books — **MINING** (uranium fuel cycle, copper mining, precious metals, rare earths &
