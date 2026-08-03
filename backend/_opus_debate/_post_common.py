@@ -26,12 +26,48 @@ from datetime import datetime as _dt
 from pathlib import Path
 
 
-def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str = "value_conviction_cap"):
+# STEP-3a entry-discount floor, mirrored from the Director prompt (weekly_opus_refresh STEP 3a,
+# 2026-07-24): the bar a NEW seat's computed expected return must clear, scaled by the quadrant.
+# Used here only by the numbers-scope repricing branch below — keep the two in sync.
+_ENTRY_FLOOR_PCT = {"GOLDILOCKS": 20.0, "REFLATION": 20.0, "STAGFLATION": 25.0, "RISK_OFF": 30.0}
+
+
+def _record_live_px(records_dir, sym):
+    """Live price from the debate record (valuation block preferred) — the pipeline's own number,
+    never the skeptic's, so a fabricated quote can't game the repricing branch."""
+    try:
+        rec = json.load(open(Path(records_dir) / f"{sym}.json", encoding="utf-8"))
+        px = (rec.get("valuation") or {}).get("live_price") or rec.get("live_price")
+        return float(px) if isinstance(px, (int, float)) and px > 0 else None
+    except Exception:
+        return None
+
+
+def _persist_revision(records_dir, sym, fv, er_pct):
+    """Write the skeptic's re-derived fair value INTO the debate record (additive key) so the next
+    cycle's carry/skeptic/Director anchor on the corrected number instead of the refuted one —
+    the WKL.AS failure mode: the EUR 82 re-derivation lived only in kill_fact prose and the record
+    still said EUR 92 the following week."""
+    try:
+        fp = Path(records_dir) / f"{sym}.json"
+        rec = json.load(open(fp, encoding="utf-8"))
+        rec["skeptic_revision"] = {"fv_px": float(fv), "er_pct": round(er_pct, 1),
+                                   "kill_scope": "numbers", "at": _dt.now().strftime("%Y-%m-%d")}
+        fp.write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
+    except Exception as e:
+        print(f"WARN skeptic: could not persist revised FV for {sym} ({e})")
+
+
+def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str = "value_conviction_cap",
+                    records_dir: Path = None):
     """Merge skep_dir/<SYM>.json shards -> sidecar <skep_dir>_results.json and apply the verdicts.
     REFUTED demotes the apex member to the front of runner_ups; CONFIRMED_WITH_CORRECTIONS stamps the
-    correction + conviction cap. Idempotent: re-running re-applies the same verdicts to the same members."""
+    correction + conviction cap. Idempotent: re-running re-applies the same verdicts to the same members.
+    records_dir: where the debate records live (default <apex dir>/results_regime) — used by the
+    numbers-scope repricing branch for the live price + revised-FV write-back."""
     skep_dir = Path(skep_dir)
     apex_file = Path(apex_file)
+    records_dir = Path(records_dir) if records_dir else (apex_file.parent / "results_regime")
     if not skep_dir.is_dir():
         return apx
     # ANCHOR (2026-07-24): freshness is measured against the DIRECTOR's write, not the file's mtime.
@@ -128,6 +164,42 @@ def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str 
         if isinstance(v.get(conviction_field), (int, float)):   # legacy shards only (pre-X1)
             p[conviction_field] = v[conviction_field]
         if (v.get("verdict") or "").upper() == "REFUTED":
+            # REPRICING BRANCH (2026-08-03, the WKL.AS case). kill_scope "numbers" + a typed
+            # revised_fv_px means the skeptic RE-DERIVED the fair value rather than falsifying the
+            # thesis — the record's SoP was wrong by an amount, not wrong in kind. Before this
+            # branch, a name repriced EUR 92 -> EUR 82 (still cheap, just less cheap) was demoted
+            # byte-identically to one whose thesis was false, and the EUR 82 evaporated into
+            # kill_fact prose. Now: re-grade the seat on the skeptic's own number against the
+            # STEP-3a entry floor. Clears it -> the seat SURVIVES at the material 0.75u haircut
+            # (moat_per_name_cap). Fails it -> demoted as before, but for the stated numeric
+            # reason. Either way the revised FV persists (pick + record) as next cycle's anchor.
+            # thesis/moat/catalyst kills, and a numbers kill WITHOUT the typed number, demote
+            # exactly as before — fail-safe, never fail-open.
+            rev = v.get("revised_fv_px")
+            live = (_record_live_px(records_dir, p["symbol"])
+                    if v.get("kill_scope") == "numbers" and isinstance(rev, (int, float)) and rev > 0
+                    else None)
+            if live:
+                rev_er = (float(rev) / live - 1.0) * 100.0
+                floor = _ENTRY_FLOOR_PCT.get(str(apx.get("regime_quadrant") or "").upper(), 20.0)
+                p["skeptic_revised_fv"] = float(rev)
+                p["skeptic_revised_er_pct"] = round(rev_er, 1)
+                _persist_revision(records_dir, p["symbol"], rev, rev_er)
+                if rev_er >= floor:
+                    p["skeptic_repriced"] = True
+                    p["correction_severity"] = "material"   # bounded 0.75u haircut, never a ceiling
+                    keep.append(p)
+                    print(f"WARN skeptic: {p['symbol']} REFUTED/numbers -> REPRICED, seat kept | "
+                          f"revised fv {rev} vs live {live} = ER {rev_er:+.1f}% clears the "
+                          f"{floor:.0f}% floor | material haircut applies | "
+                          f"kill_fact: {str(v.get('kill_fact', ''))[:120]}")
+                    continue
+                p["skeptic_refuted"] = True
+                demoted.append(p)
+                print(f"WARN skeptic: {p['symbol']} REFUTED/numbers -> DEMOTED | revised fv {rev} "
+                      f"vs live {live} = ER {rev_er:+.1f}% under the {floor:.0f}% floor | "
+                      f"kill_fact: {str(v.get('kill_fact', ''))[:120]}")
+                continue
             p["skeptic_refuted"] = True
             demoted.append(p)
             print(f"WARN skeptic: {p['symbol']} REFUTED -> DEMOTED to runner_ups | kill_fact: {str(v.get('kill_fact', ''))[:160]}")
