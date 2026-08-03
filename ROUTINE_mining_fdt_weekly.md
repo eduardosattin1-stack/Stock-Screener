@@ -48,12 +48,22 @@ already configured.
   two books are independently breakable by design; one's failure never blocks the other, and neither
   blocks the existing Apex/Value/B13 routine.
 
-STEP 0 — REPO SYNC (~30 s; same pattern as the other routine). Run `git rev-parse --abbrev-ref HEAD`
-and `git status --porcelain`. ONLY if the branch is `main` AND the tree is clean, run
-`git pull --ff-only origin main` and report the old→new commit in the final summary. In ANY other
-state — wrong branch, dirty tree, diverged history, a permission prompt — print
-`REPO SYNC SKIPPED: <reason> — running with the local copy` and CONTINUE; NEVER stash, reset,
-force-pull, or switch branches unattended. A skipped sync is never a failure.
+STEP 0 — REPO SYNC (ux-revamp-aware, ~60 s). This box lives on a permanently-dirty `ux-revamp`, so
+a "pull only on clean main" rule NEVER fires here — that exact gap is why the 2026-08-03 maiden
+Mining/FDT check found a box with none of the code (it had been on `main` for a week). Run
+`git rev-parse --abbrev-ref HEAD` and `git fetch origin`. If
+`git merge-base --is-ancestor origin/main HEAD` succeeds, print
+`REPO SYNC: already contains origin/main` and continue. Otherwise attempt
+`git merge --no-edit origin/main` even on a dirty tree — git itself refuses safely (touching
+nothing) if uncommitted local changes would be overwritten. Outcomes:
+- Clean merge → report `REPO SYNC: merged origin/main (<old>→<new>)` in the final summary. Do NOT
+  push — pushing stays a human/deploy decision.
+- Merge stops on CONFLICTS, or refuses because of local changes → run `git merge --abort` if a
+  merge is in progress, print `REPO SYNC SKIPPED: <reason> — running with the local copy; MERGE
+  MAIN MANUALLY SOON`, and CONTINUE with the local code.
+- NEVER stash, reset, force-pull, resolve conflicts, or switch branches unattended. A skipped sync
+  is never a failure — but say it LOUDLY in the report every time, because repeated skips mean this
+  box is drifting away from the code being merged on `main`.
 
 ## MINING
 
