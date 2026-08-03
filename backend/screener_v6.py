@@ -6912,9 +6912,22 @@ def _mark_speculair_nav():
          "speculair_value_tracking.json", "value_tracking"),
         # Future Resources Lane A (FUTURE_RESOURCES_SPEC.md §7): self-no-ops until the first
         # fr-publish lands the payload in GCS — until then the missing-book skip below fires.
+        # KEPT DELIBERATELY after the Mining/FDT split (FUTURE_RESOURCES_SPLIT_SPEC §B): the FR
+        # freeze renames the payload's picks array `apex_basket` -> `final_holdings`, so this tuple
+        # then finds no constituents and self-no-ops forever. Removing it would be a third,
+        # unsanctioned edit to this file AND would silently stop marking the book before the freeze.
         ("future_resources", "scans/speculair_future_resources.json",
          "scans/speculair_future_resources_tracking.json",
          "speculair_future_resources_tracking.json", "fr_tracking"),
+        # The two books the Future Resources split produces (FUTURE_RESOURCES_SPLIT_SPEC §B — these
+        # two additions are the ONLY sanctioned edit to this file for the whole split). Both
+        # self-no-op until their maiden mining-publish / fdt-publish lands the payload in GCS.
+        ("mining", "scans/speculair_mining.json",
+         "scans/speculair_mining_tracking.json",
+         "speculair_mining_tracking.json", "mining_tracking"),
+        ("fdt", "scans/speculair_fdt.json",
+         "scans/speculair_fdt_tracking.json",
+         "speculair_fdt_tracking.json", "fdt_tracking"),
     ]:
         try:
             book = gcs_download(src)

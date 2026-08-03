@@ -157,12 +157,21 @@ def _gm_trajectory(sym, offline):
     return {"direction": direction, "gm_recent_to_old": list(reversed(gms)), "delta_3y": delta}
 
 
-def compute(members, offline=False):
+def compute(members, offline=False, taxonomy=None, cache_path=None):
     """members: list of dicts each with symbol, chains(list), commodity_revenue_share(float|None),
     business_model(str), gates(dict incl. ttm_revenue/ttm_ebitda/ttm_fcf/rev_yoy/net_funded_debt_ebitda).
     Returns {symbol: metrics_dict}. Deterministic + offline-tolerant (a chart fetch that fails leaves
-    commodity_beta_2y=None, never a fabricated value)."""
-    chains = _chain_by_id()
+    commodity_beta_2y=None, never a fabricated value).
+
+    taxonomy: optional path to a chains file (SPLIT_SPEC §2 — the mining/fdt books pass their OWN
+    v2.0 taxonomy so their chain ids resolve; default stays the frozen FR file for the retiring
+    fr-* callers). cache_path: optional per-book chart cache so the two books and the FR chain
+    never share/clobber one cache file (defaults to the FR location, unchanged behavior)."""
+    if taxonomy is not None:
+        tax = json.load(open(taxonomy, encoding="utf-8"))
+        chains = {c["id"]: c for c in tax.get("chains", [])}
+    else:
+        chains = _chain_by_id()
     prim = {}                                           # symbol -> primary chain id (chains[0])
     bench = set()
     quote_syms = []
@@ -180,7 +189,7 @@ def compute(members, offline=False):
                 bench.add(bs)
     corr_syms = sorted(set(quote_syms) | bench)         # member charts + benchmark charts for the regression
     # quotes are unused here (metrics are fundamentals-based) — pass [] to skip the batch-quote call.
-    _q, weekly, asof = _pc.get_market([], corr_syms, offline, CACHE_F,
+    _q, weekly, asof = _pc.get_market([], corr_syms, offline, Path(cache_path) if cache_path else CACHE_F,
                                       quotes_fn=lambda ss: {}, chart_fn=lambda s: get_chart(s, days=760))
     # per-chain cohort of EBITDA margins (torque chains only) for the band percentile
     cohort = {}

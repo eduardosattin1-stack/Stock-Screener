@@ -1,0 +1,287 @@
+{
+ "version": "2.0",
+ "updated": "2026-07-27",
+ "basket": "fdt",
+ "lineage": {
+  "supersedes": "future_resources_chains.json v1.3 (frozen, never edited)",
+  "chain_moves": {
+   "copper_electrification": "split: equipment/utility side -> fdt:electrification_grid; producer/royalty side -> mining:copper_mining",
+   "power_for_ai": "kept (id unchanged so regime/ledger keys survive); grid-equipment layer -> electrification_grid, SMR-developer layer -> nuclear_smr",
+   "uranium_fuel_cycle": "moved to mining",
+   "rare_earth_strategic": "moved to mining"
+  }
+ },
+ "exchanges": [
+  "NYSE",
+  "NASDAQ",
+  "AMEX"
+ ],
+ "floors": {
+  "lane_a": {
+   "market_cap_usd": 500000000,
+   "adv_usd": 5000000,
+   "price_min": 2
+  },
+  "lane_b": {
+   "market_cap_usd": 150000000,
+   "adv_usd": 2000000,
+   "price_min": 1
+  }
+ },
+ "chains": [
+  {
+   "id": "electrification_grid",
+   "name": "Electrification & grid equipment",
+   "thesis": "Grid build-out, datacenters, EVs and reshored manufacturing collide with transformer and switchgear lead times measured in years. The equipment makers price the scarcity through backlog and margin — copper is an input COST to them, not a revenue driver, which is exactly why they belong in a different book from the miners.",
+   "value_chain_layers": [
+    "transformers & switchgear",
+    "power management & connectors",
+    "electrical infrastructure services",
+    "grid EPC & interconnection",
+    "protective & specialty coatings/enclosures"
+   ],
+   "fmp_sectors": [
+    "Industrials"
+   ],
+   "fmp_industries": [
+    "Electrical Equipment & Parts",
+    "Industrial - Machinery",
+    "Engineering & Construction",
+    "Industrial - Specialties"
+   ],
+   "fmp_industries_verify": [],
+   "keyword_hints": [
+    "transformer",
+    "switchgear",
+    "backlog",
+    "lead time",
+    "book-to-bill",
+    "interconnection",
+    "substation",
+    "electrification",
+    "power management",
+    "data center electrical"
+   ],
+   "anchor_examples": [
+    "ETN",
+    "HUBB",
+    "NVT",
+    "POWL",
+    "AZZ"
+   ],
+   "torque_metrics": false,
+   "commodity": {
+    "fmp_symbol": null,
+    "proxy_etf": "GRID",
+    "monetary_metal": false,
+    "spot_source": "no commodity — the regime read is the backlog/book-to-bill cycle and transformer lead times. Copper (HGUSD) is an INPUT COST here: rising copper is a margin headwind, never a revenue tailwind. proxy_etf GRID feed-verified 2026-07-27"
+   },
+   "notes": "The EQUIPMENT half of v1.3's copper_electrification, assembled with power_for_ai's grid-equipment layer. All four industry strings PROVEN live 2026-07-27: Electrical Equipment & Parts (ETN/HUBB/NVT/POWL), Industrial - Specialties (AZZ), Engineering & Construction (PWR), Industrial - Machinery (v1.3). SPLIT RULE: a producer or royalty_streamer mapping here is a mapping error — printed and dropped. PWR screens here but its primary chain is power_for_ai (EPC/interconnection is power delivery); 2-chain within this book is legal."
+  },
+  {
+   "id": "nuclear_smr",
+   "name": "Nuclear — SMRs & reactor services",
+   "thesis": "Datacenter load growth made firm, carbon-free baseload a procurement problem, and SMRs are the only new supply that fits behind a meter this decade. Value accrues on DATED regulatory and construction milestones — NRC design approval, COL, first concrete, first criticality — years before revenue, so the component and fuel-service incumbents monetize the ramp long before the developers do.",
+   "value_chain_layers": [
+    "reactor components & naval/defense nuclear",
+    "SMR & advanced-reactor developers",
+    "fuel services & HALEU",
+    "EPC & construction",
+    "nuclear-levered IPPs"
+   ],
+   "fmp_sectors": [
+    "Industrials",
+    "Utilities",
+    "Energy"
+   ],
+   "fmp_industries": [
+    "Aerospace & Defense",
+    "Independent Power Producers",
+    "Renewable Utilities",
+    "Electrical Equipment & Parts",
+    "Industrial - Machinery"
+   ],
+   "fmp_industries_verify": [],
+   "keyword_hints": [
+    "SMR",
+    "small modular reactor",
+    "NRC",
+    "COL",
+    "design approval",
+    "HALEU",
+    "first concrete",
+    "advanced reactor",
+    "microreactor",
+    "behind-the-meter nuclear",
+    "TRISO",
+    "fuel fabrication"
+   ],
+   "anchor_examples": [
+    "BWXT",
+    "SMR",
+    "OKLO",
+    "NNE"
+   ],
+   "torque_metrics": false,
+   "commodity": {
+    "fmp_symbol": null,
+    "proxy_etf": "NLR",
+    "monetary_metal": false,
+    "spot_source": "no spot — the regime read is the NRC/COL dateline track plus datacenter-PPA flow. Uranium is MINING's business, not this chain's: an SMR developer is not a uranium play. proxy_etf NLR feed-verified 2026-07-27"
+   },
+   "notes": "Industry strings PROVEN live 2026-07-27 and DELIBERATELY BROAD because FMP files this cohort inconsistently: BWXT=Aerospace & Defense, SMR=Renewable Utilities, OKLO=Independent Power Producers, NNE=Electrical Equipment & Parts. (The spec's proposed 'Regulated Electric' is WRONG — OKLO does not carry it and it would drag in DUK/SO-class regulated utilities as pure noise.) The breadth is deliberate: the chain map's physical-anchor rule does the precision work, and this chain overlaps power_for_ai and electrification_grid by construction — 2-chain within the book is legal, the map assigns the primary. LANE-B-HEAVY BY DESIGN: SMR developers are pre-FCF and enter on dated NRC/COL/first-concrete milestones under the unchanged lane-B runway gate. A thin Lane A (BWXT-class only) is the EXPECTED outcome, not a failure — the v1.3 quantum precedent verbatim."
+  },
+  {
+   "id": "power_for_ai",
+   "name": "Power for AI",
+   "thesis": "Datacenter load growth outruns grid interconnection; whoever can deliver firm electrons or the equipment to make them — turbines, transformers, switchgear, nuclear-levered IPPs, grid EPC — sells into a queue measured in years.",
+   "value_chain_layers": [
+    "turbines & generation equipment",
+    "nuclear-levered IPPs & PPAs",
+    "grid EPC & interconnection",
+    "capacity & ancillary markets"
+   ],
+   "fmp_sectors": [
+    "Industrials",
+    "Utilities"
+   ],
+   "fmp_industries": [
+    "Independent Power Producers",
+    "Renewable Utilities",
+    "Industrial - Machinery",
+    "Engineering & Construction"
+   ],
+   "keyword_hints": [
+    "datacenter PPA",
+    "interconnection queue",
+    "gas turbine",
+    "transformer lead time",
+    "switchgear",
+    "behind-the-meter",
+    "SMR",
+    "NRC COL",
+    "capacity auction"
+   ],
+   "anchor_examples": [
+    "GEV",
+    "CEG",
+    "VST",
+    "TLN",
+    "PWR"
+   ],
+   "commodity": {
+    "fmp_symbol": "NGUSD",
+    "proxy_etf": null,
+    "spot_source": "FMP commodities (Henry Hub front month) — the fuel-cost driver for IPP spark spreads, not a revenue driver",
+    "monetary_metal": false
+   },
+   "notes": "Carried from v1.3 with the id UNCHANGED so regime_state and ledger keys survive the split. Two layers left: grid equipment -> electrification_grid (so 'Electrical Equipment & Parts' is dropped from this screen — that is chain 1's net now), SMR developers -> nuclear_smr. Strings re-verified live 2026-07-27: GEV=Renewable Utilities; CEG/VST/TLN=Independent Power Producers; PWR=Engineering & Construction. business_model=utility (v2.0 enum addition) is the honest label for the IPP cohort that v1.3 filed awkwardly as equipment_services. Torque is margin-vs-power-prices with Henry Hub as the fuel-cost leg, never a revenue driver.",
+   "fmp_industries_verify": []
+  },
+  {
+   "id": "robotics_automation",
+   "name": "Robotics & physical AI",
+   "thesis": "Labor scarcity + reshoring push factories, warehouses and surgery toward robots, and the humanoid ramp adds a new demand curve on top; the motion-control, vision, actuator and surgical-platform toll-takers monetize every deployment wave — and every robot is magnets, motors and copper windings (the demand side of this basket's metal chains).",
+   "value_chain_layers": [
+    "factory automation",
+    "warehouse robotics",
+    "machine vision & sensing",
+    "motion control & actuators",
+    "surgical robotics",
+    "humanoid developers"
+   ],
+   "fmp_sectors": [
+    "Industrials",
+    "Technology",
+    "Healthcare"
+   ],
+   "fmp_industries": [
+    "Industrial - Machinery",
+    "Electrical Equipment & Parts",
+    "Hardware, Equipment & Parts",
+    "Software - Application",
+    "Medical - Instruments & Supplies",
+    "Medical - Devices"
+   ],
+   "keyword_hints": [
+    "automation",
+    "robotic",
+    "machine vision",
+    "motion control",
+    "actuator",
+    "AMR",
+    "cobot",
+    "humanoid",
+    "digital twin"
+   ],
+   "anchor_examples": [
+    "ISRG",
+    "TER",
+    "ROK",
+    "CGNX",
+    "SYM"
+   ],
+   "torque_metrics": false,
+   "commodity": {
+    "fmp_symbol": null,
+    "proxy_etf": "BOTZ",
+    "spot_source": "no commodity — the regime read is the industrial-capex cycle + humanoid program datelines; deterministic metrics use the non-commodity set (gm_trajectory/backlog), never torque",
+    "monetary_metal": false
+   },
+   "notes": "MIGRATED from the retired Disruptor Lens taxonomy (industry strings proven in its live runs). Industrial names here are demand-cycle cyclicals — the chain map must separate secular penetration from a capex bounce. Pre-FCF humanoid/robotics developers are lane_b via dated milestones (named production contracts, first customer deployments), never lane_a.",
+   "fmp_industries_verify": []
+  },
+  {
+   "id": "quantum",
+   "name": "Quantum computing & sensing",
+   "thesis": "Government programs and early enterprise contracts fund the quantum stack years before commercial breakeven; awards, named contracts and error-correction milestones are dated, idiosyncratic events that reprice names regardless of when quantum advantage actually arrives — and the cryo/photonics/control toll-takers get paid on every lab and testbed build-out either way.",
+   "value_chain_layers": [
+    "qubit hardware platforms",
+    "cryogenics & control electronics",
+    "photonics & lasers",
+    "quantum networking & sensing",
+    "error-correction / software stack"
+   ],
+   "fmp_sectors": [
+    "Technology"
+   ],
+   "fmp_industries": [
+    "Computer Hardware",
+    "Semiconductors",
+    "Hardware, Equipment & Parts",
+    "Software - Infrastructure"
+   ],
+   "keyword_hints": [
+    "quantum",
+    "qubit",
+    "error correction",
+    "logical qubit",
+    "cryogenic",
+    "ion trap",
+    "superconducting",
+    "photonic",
+    "QKD",
+    "post-quantum"
+   ],
+   "anchor_examples": [
+    "IONQ",
+    "RGTI",
+    "QBTS",
+    "FORM",
+    "COHR"
+   ],
+   "torque_metrics": false,
+   "commodity": {
+    "fmp_symbol": null,
+    "proxy_etf": "QTUM",
+    "spot_source": "no commodity — the regime read is the government funding cycle (NQI reauthorization, DARPA/DOE programs, sovereign initiatives) + the error-correction milestone track; non-commodity metric set applies",
+    "monetary_metal": false
+   },
+   "notes": "The broadest industry filters in the taxonomy — this chain leans hardest on keyword hints + the chain map's physical-anchor rule; expect a high drop rate (generic hardware/semis names map low-confidence and are dropped WITH printed symbols). Pure-play platforms (IONQ/RGTI/QBTS-class) are pre-FCF -> lane_b via dated milestones (signed government awards, named enterprise/defense contracts, dated error-correction demos); an honestly tiny lane_a (FORM/COHR-class toll-takers) is the expected outcome, not a failure.",
+   "fmp_industries_verify": []
+  }
+ ],
+ "vocab_note": "fmp_industries are EXACT strings from FMP /stable/available-industries — verified live 2026-07-27 against real company profiles, not guessed. Any string listed in a chain's fmp_industries_verify is NOT yet proven to return members: 0 rows there prints a WARN and the build continues; 0 rows on a PROVEN string STOPs (the anti-shrink guard). Once a live run confirms a string, delete it from fmp_industries_verify — config edit only, never code.",
+ "torque_note": "torque_metrics=false chains (equipment/tech/service cohorts) get the non-commodity metric set — gm_trajectory / rev_yoy / fcf_margin / ndebt_ebitda — and NEVER fcf_torque_10pct: there is no spot price for their output to be levered to, so a torque number would be fabricated precision. Commodity chains without an FMP spot symbol still get commodity_beta_2y against their proxy_etf.",
+ "split_note": "SPLIT RULE (FUTURE_RESOURCES_SPLIT_SPEC §3): business_model equipment_services|utility -> this book; producer|royalty_streamer -> mining (and is a mapping error if mapped here — printed and dropped); developer -> the book owning the physical asset being developed (an SMR developer here, a copper-mine developer in mining). royalty_streamer is NEVER legal in this book. Cross-book dual membership is FORBIDDEN — basket-dedup resolves straddlers (ties go to Mining) and the publish-time backstop STOPs on any intersection with the mining payload."
+}

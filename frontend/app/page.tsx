@@ -2068,9 +2068,9 @@ export default function Dashboard(){
   const [expandedApex, setExpandedApex] = useState<Set<string>>(new Set());
   const [valueApex, setValueApex] = useState<any>({});
   const [expandedValue, setExpandedValue] = useState<Set<string>>(new Set());
-  const [frApex, setFrApex] = useState<any>({});
-  const [expandedFr, setExpandedFr] = useState<Set<string>>(new Set());
-  const [frPrices, setFrPrices] = useState<Record<string, number>>({});
+  const [fdtApex, setFdtApex] = useState<any>({});
+  const [expandedFdt, setExpandedFdt] = useState<Set<string>>(new Set());
+  const [fdtPrices, setFdtPrices] = useState<Record<string, number>>({});
 
   // pitLoaded is a re-render trigger: the PIT fetch mutates METHODOLOGIES_CONFIG
   // in place (cheaper than threading enriched copies through 10+ render sites),
@@ -2102,20 +2102,23 @@ export default function Dashboard(){
   }, []);
 
   useEffect(() => {
-    fetch("/api/gcs/scans/speculair_future_resources.json")
-      .then((r) => { if (r.ok) return r.json(); throw new Error("GCS future-resources fetch failed"); })
-      .then((d) => { if (d) setFrApex(d); })
+    // DUAL-MODE during the split migration: prefer the FDT payload, fall back to the still-live
+    // Future Resources payload until the maiden fdt-publish lands. Once FR is frozen its record
+    // renders as its own retired card and this fallback can be deleted.
+    fetch("/api/gcs/scans/speculair_fdt.json")
+      .then((r) => { if (r.ok) return r.json(); throw new Error("GCS fdt fetch failed"); })
+      .then((d) => { if (d) setFdtApex(d); })
       .catch(() => {
-        fetch("/speculair_future_resources.json")
+        fetch("/api/gcs/scans/speculair_future_resources.json")
           .then((r) => (r.ok ? r.json() : null))
-          .then((d) => { if (d) setFrApex(d); })
-          .catch((e) => console.error("Error loading future resources apex:", e));
+          .then((d) => { if (d) setFdtApex(d); })
+          .catch((e) => console.error("Error loading FDT apex:", e));
       });
   }, []);
 
   // Future Resources members are commodity/AMEX names usually NOT in the loaded scan — batch-quote them.
   useEffect(() => {
-    const syms = (frApex.apex_basket || []).map((p: any) => p && p.symbol).filter(Boolean) as string[];
+    const syms = (fdtApex.apex_basket || []).map((p: any) => p && p.symbol).filter(Boolean) as string[];
     if (!syms.length) return;
     let cancelled = false;
     const chunks: string[][] = [];
@@ -2126,10 +2129,10 @@ export default function Dashboard(){
       if (cancelled) return;
       const m: Record<string, number> = {};
       (results.flat() as any[]).forEach((q: any) => { if (q && q.symbol && typeof q.price === "number") m[String(q.symbol).toUpperCase()] = q.price; });
-      setFrPrices(m);
+      setFdtPrices(m);
     });
     return () => { cancelled = true; };
-  }, [frApex]);
+  }, [fdtApex]);
 
   useEffect(() => {
 
@@ -4942,28 +4945,44 @@ export default function Dashboard(){
                     </details>
                   )}
 
-                  {/* Speculair Future Resources — Lane A producers/royalties across six physical value chains (replaces the retired Disruptor Lens; FUTURE_RESOURCES_SPEC.md). Reads GCS live; renders an awaiting state until the first fr-publish --gcs lands. */}
+                  {/* Speculair Future Disruptive Tech — the machine/equipment half of the Future Resources split (FUTURE_RESOURCES_SPLIT_SPEC.md); the mining half lives on /commodities. Reads GCS live, falling back to the still-live FR payload until the maiden fdt-publish --gcs lands. */}
+                  {(() => {
+                    // Detect the migration fallback: no NATIVE fdt tracking/engine present means the
+                    // card is rendering the still-live Future Resources payload under the new title.
+                    // That data carries the OLD v1.3 six-chain taxonomy (uranium_fuel_cycle,
+                    // copper_electrification, etc.) which no longer exists in fdt_chains.json, plus
+                    // the old XME+URA benchmark and "FR"-prefixed thesis text — all correct for what
+                    // it is, but silently confusing under an "FDT" label without saying so. Honest
+                    // banner (house convention) rather than letting stale-taxonomy data pass as native.
+                    const isLegacyFallback = !fdtApex.fdt_tracking && !fdtApex.fdt_tracking_weighted
+                      && !!(fdtApex.fr_tracking || fdtApex.fr_tracking_weighted || (fdtApex.apex_basket || []).length);
+                    return (
                   <div style={{ background: "var(--bg-surface)", border: "1px solid var(--amber)", borderRadius: 12, padding: "20px 24px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                       <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)" }}>
-                        Speculair Future Resources
+                        Speculair Future Disruptive Tech
                       </h3>
                       <span style={{ fontSize: 10, color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
-                        {(frApex.apex_basket || []).length} names · Lane A producers/royalties · physical-anchor rule
+                        {(fdtApex.apex_basket || []).length} names · grid · SMR · power-for-AI · robotics · quantum
                       </span>
                     </div>
                     <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 14, lineHeight: 1.5 }}>
-                      The physical build-out of the future: profitable producers, royalty/streamers and equipment toll-takers across six value chains — uranium fuel cycle, copper/electrification, rare earths &amp; strategic metals, power-for-AI, robotics, quantum. Cost-curve position and symmetric commodity torque drive the score; valuation is a guard, never the driver. Every seat names the physical thing it makes, moves, powers or instruments (the anti-Visa rule). Own NAV chain — never blended with the Apex or Value books; Lane B developers are a separate event tracker, not part of this NAV.
+                      The machines that build the future: grid &amp; electrification equipment, SMR and reactor services, power-for-AI, robotics, and quantum. Backlog durability, gross-margin trajectory and capital discipline drive the score; valuation is a guard, never the driver. Every seat still names the physical thing it makes, moves, powers or instruments (the anti-Visa rule). The mining half of this book — uranium, copper, precious metals, rare earths, diversified miners — now has its own page at /commodities with the Dalio/Costa macro layer. Own NAV chain, never blended with any other book; Lane B developers are a separate event tracker, not part of this NAV.
                     </div>
-                    {(frApex.apex_basket || []).length === 0 && (
-                      <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)", padding: "10px 12px", borderRadius: 6, background: "var(--bg)", border: "1px dashed var(--border)" }}>
-                        Awaiting the first Lane A publish. The chain runs locally on the operator box (fr-universe → chain map → debates → Director → fr-publish --gcs); this card lights up the moment the payload lands on GCS.
+                    {isLegacyFallback && (
+                      <div style={{ fontSize: 9.5, color: "var(--amber)", fontFamily: "var(--font-mono)", lineHeight: 1.5, marginBottom: 14, padding: "8px 12px", borderRadius: 6, background: "var(--amber-light)", border: "1px solid var(--amber)" }}>
+                        ⚠ Showing the still-live Future Resources holdings (old six-chain taxonomy, "FR"-prefixed thesis, 50/50 XME+URA benchmark) as an interim placeholder — the maiden fdt-publish hasn&apos;t landed yet. This is NOT the Future Disruptive Tech book; it will replace this record automatically once fdt-publish --gcs runs.
                       </div>
                     )}
-                    {(frApex.fr_tracking_weighted || frApex.fr_tracking) && (() => {
-                      const _ftw = frApex.fr_tracking_weighted;
+                    {(fdtApex.apex_basket || []).length === 0 && (
+                      <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono)", padding: "10px 12px", borderRadius: 6, background: "var(--bg)", border: "1px dashed var(--border)" }}>
+                        Awaiting the maiden publish. The chain runs locally on the operator box (fdt-universe → chain map → debates → Director → fdt-publish --gcs); this card lights up the moment the payload lands on GCS.
+                      </div>
+                    )}
+                    {((fdtApex.fdt_tracking_weighted || fdtApex.fr_tracking_weighted) || (fdtApex.fdt_tracking || fdtApex.fr_tracking)) && (() => {
+                      const _ftw = (fdtApex.fdt_tracking_weighted || fdtApex.fr_tracking_weighted);
                       const weighted = !!(_ftw && (_ftw.history || []).length >= 4);  // promote once the weighted chain has genuine live-forward history
-                      const ft = weighted ? _ftw : frApex.fr_tracking;
+                      const ft = weighted ? _ftw : (fdtApex.fdt_tracking || fdtApex.fr_tracking);
                       return (
                       <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "10px 14px", marginBottom: 14, borderRadius: 8, background: "var(--bg)", border: "1px solid var(--border)" }}>
                         <div>
@@ -4987,35 +5006,35 @@ export default function Dashboard(){
                       </div>
                       );
                     })()}
-                    {frApex.benchmark && frApex.benchmark.benchmark_return_pct != null && (
+                    {fdtApex.benchmark && fdtApex.benchmark.benchmark_return_pct != null && (
                       <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 6, lineHeight: 1.5 }}>
-                        Benchmark: {frApex.benchmark.blend || "50/50 XME+URA"} <span style={{ fontWeight: 600, color: (frApex.benchmark.benchmark_return_pct || 0) >= 0 ? "var(--green)" : "var(--red)" }}>{(frApex.benchmark.benchmark_return_pct || 0) >= 0 ? "+" : ""}{frApex.benchmark.benchmark_return_pct}%</span> since {frApex.benchmark.measured_from}{frApex.benchmark.active_return_pct != null ? <> · active <span style={{ fontWeight: 700, color: frApex.benchmark.active_return_pct >= 0 ? "var(--green)" : "var(--red)" }}>{frApex.benchmark.active_return_pct >= 0 ? "+" : ""}{frApex.benchmark.active_return_pct}%</span></> : ""} <span style={{ color: "var(--text-light)" }}>(the null hypothesis: a closet metals/uranium ETF basket)</span>
+                        Benchmark: {fdtApex.benchmark.blend || "50/50 GRID+QQQ"} <span style={{ fontWeight: 600, color: (fdtApex.benchmark.benchmark_return_pct || 0) >= 0 ? "var(--green)" : "var(--red)" }}>{(fdtApex.benchmark.benchmark_return_pct || 0) >= 0 ? "+" : ""}{fdtApex.benchmark.benchmark_return_pct}%</span> since {fdtApex.benchmark.measured_from}{fdtApex.benchmark.active_return_pct != null ? <> · active <span style={{ fontWeight: 700, color: fdtApex.benchmark.active_return_pct >= 0 ? "var(--green)" : "var(--red)" }}>{fdtApex.benchmark.active_return_pct >= 0 ? "+" : ""}{fdtApex.benchmark.active_return_pct}%</span></> : ""} <span style={{ color: "var(--text-light)" }}>(the null hypothesis: a closet grid/tech ETF basket)</span>
                       </div>
                     )}
-                    {frApex.stress_test && (
+                    {fdtApex.stress_test && (
                       <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: 6, lineHeight: 1.5 }}>
-                        Stress: <span style={{ color: "var(--red)", fontWeight: 600 }}>{frApex.stress_test.published_downside_pct}%</span> recession · {frApex.stress_test.basket_to_52w_lows_pct}% to 52-wk lows{frApex.correlation ? ` · avg pairwise corr ${frApex.correlation.avg_pairwise} (${frApex.correlation.correlation_breach ? "BREACH" : "no breach"})` : ""}
+                        Stress: <span style={{ color: "var(--red)", fontWeight: 600 }}>{fdtApex.stress_test.published_downside_pct}%</span> recession · {fdtApex.stress_test.basket_to_52w_lows_pct}% to 52-wk lows{fdtApex.correlation ? ` · avg pairwise corr ${fdtApex.correlation.avg_pairwise} (${fdtApex.correlation.correlation_breach ? "BREACH" : "no breach"})` : ""}
                       </div>
                     )}
-                    {frApex.chain_exposure && Object.keys(frApex.chain_exposure).length > 0 && (
+                    {fdtApex.chain_exposure && Object.keys(fdtApex.chain_exposure).length > 0 && (
                       <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginBottom: 8 }}>
-                        {Object.entries(frApex.chain_exposure).sort((a: any, b: any) => (b[1] || 0) - (a[1] || 0)).map(([ch, pct]: [string, any]) => (
+                        {Object.entries(fdtApex.chain_exposure).sort((a: any, b: any) => (b[1] || 0) - (a[1] || 0)).map(([ch, pct]: [string, any]) => (
                           <span key={ch} style={{ fontSize: 8.5, padding: "2px 6px", borderRadius: 4, fontFamily: "var(--font-mono)", fontWeight: 600, background: (pct || 0) > 25 ? "var(--amber-light)" : "rgba(148,163,184,0.12)", color: (pct || 0) > 25 ? "var(--amber)" : "var(--text-muted)" }}>
                             {String(ch).replace(/_/g, " ")} {pct}%
                           </span>
                         ))}
                       </div>
                     )}
-                    {frApex.pool_stats && frApex.pool_stats.banner && (
+                    {fdtApex.pool_stats && fdtApex.pool_stats.banner && (
                       <div style={{ fontSize: 9, color: "var(--text-light)", fontFamily: "var(--font-mono)", fontStyle: "italic", marginBottom: 14, lineHeight: 1.5 }}>
-                        {frApex.pool_stats.banner}
+                        {fdtApex.pool_stats.banner}
                       </div>
                     )}
-                    {rotationLog(frApex.fr_tracking || frApex.fr_tracking_weighted)}
+                    {rotationLog((fdtApex.fdt_tracking || fdtApex.fr_tracking) || (fdtApex.fdt_tracking_weighted || fdtApex.fr_tracking_weighted))}
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: 14 }}>
-                      {(frApex.apex_basket || []).map((pick: any) => {
+                      {(fdtApex.apex_basket || []).map((pick: any) => {
                         const stock = findStock(pick.symbol);
-                        const currPrice = stock ? stock.price : (frPrices[String(pick.symbol).toUpperCase()] || 0);
+                        const currPrice = stock ? stock.price : (fdtPrices[String(pick.symbol).toUpperCase()] || 0);
                         const solv = String(pick.funded_solvency || "");
                         const solvColor = solv === "weak" ? "var(--red)" : solv === "moderate" ? "#eab308" : "var(--green)";
                         const mos = pick.sop_mos_pct;
@@ -5092,7 +5111,7 @@ export default function Dashboard(){
                             </div>
                             {pick.thesis && (() => {
                               const _txt = String(pick.thesis);
-                              const _exp = expandedFr.has(pick.symbol);
+                              const _exp = expandedFdt.has(pick.symbol);
                               return (
                                 <div style={{ marginTop: 8 }}>
                                   <div style={{ fontSize: 9.5, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5,
@@ -5107,7 +5126,7 @@ export default function Dashboard(){
                                     </div>
                                   )}
                                   {_txt.length > 200 && (
-                                    <span onClick={(e) => { e.stopPropagation(); setExpandedFr(prev => { const n = new Set(prev); n.has(pick.symbol) ? n.delete(pick.symbol) : n.add(pick.symbol); return n; }); }}
+                                    <span onClick={(e) => { e.stopPropagation(); setExpandedFdt(prev => { const n = new Set(prev); n.has(pick.symbol) ? n.delete(pick.symbol) : n.add(pick.symbol); return n; }); }}
                                           style={{ display: "inline-block", marginTop: 3, fontSize: 9, color: "var(--amber)", cursor: "pointer", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
                                       {_exp ? "▴ less" : "▾ more"}
                                     </span>
@@ -5119,23 +5138,24 @@ export default function Dashboard(){
                         );
                       })}
                     </div>
-                    {(frApex.runner_ups || []).length > 0 && (
+                    {(fdtApex.runner_ups || []).length > 0 && (
                       <div style={{ marginTop: 12, fontSize: 9.5, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>
                         <span style={{ color: "var(--text-muted)" }}>Runner-ups: </span>
-                        {(frApex.runner_ups || []).map((r: any) => (typeof r === "string" ? r : r && r.symbol)).filter(Boolean).join(" · ")}
+                        {(fdtApex.runner_ups || []).map((r: any) => (typeof r === "string" ? r : r && r.symbol)).filter(Boolean).join(" · ")}
                       </div>
                     )}
                   </div>
+                    ); })()}
 
                   {/* FR Director Memo — the Future Resources Director's reasoning (gates, chain-concentration stress, rotation, sizing) */}
-                  {frApex.fr_memo && (
+                  {(fdtApex.fdt_memo || fdtApex.fr_memo) && (
                     <details style={{ background: "var(--bg-surface)", border: "1px solid var(--amber)", borderRadius: 12, padding: "20px 24px" }}>
                       <summary style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text)", fontFamily: "var(--font-sans)", cursor: "pointer", outline: "none" }}>Future Resources Director Memo</summary>
-                      {typeof frApex.fr_memo === "string" ? (
-                        <pre style={{ whiteSpace: "pre-wrap", fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginTop: 16, lineHeight: 1.6 }}>{frApex.fr_memo}</pre>
+                      {typeof (fdtApex.fdt_memo || fdtApex.fr_memo) === "string" ? (
+                        <pre style={{ whiteSpace: "pre-wrap", fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginTop: 16, lineHeight: 1.6 }}>{(fdtApex.fdt_memo || fdtApex.fr_memo)}</pre>
                       ) : (
                         <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 12 }}>
-                          {Object.entries(frApex.fr_memo).map(([k, v]: [string, any]) => (
+                          {Object.entries((fdtApex.fdt_memo || fdtApex.fr_memo)).map(([k, v]: [string, any]) => (
                             <div key={k}>
                               <div style={{ fontSize: 10, color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 4 }}>{k.replace(/_/g, " ")}</div>
                               {typeof v === "string" ? (
