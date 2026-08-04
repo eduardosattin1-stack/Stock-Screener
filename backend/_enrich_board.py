@@ -29,6 +29,8 @@ TS_OUT   = os.path.join(ROOT, "frontend/app/data/catalystBoardEnriched.ts")
 TIER_RANK = {"ACTIVE": 0, "CONTINGENT": 1, "WATCH": 2, "NONE": 9}
 SRC_RANK  = {"manual": 0, "widen": 1, "sweep": 2}
 
+SWEEP_F = os.path.join(BASE, "_sweep_board.json")   # --from-sweep-board input (the bridge)
+
 VAL_F = os.path.join(BASE, "_valuation.json")   # optional sidecar: {SYMBOL: {valuation schema}}
 # scalar valuation fields merged into the flat df so process() can compute R:R
 VAL_SCALARS = ["valuation_method", "fair_value_target", "downside_floor", "reference_price",
@@ -44,17 +46,89 @@ ENRICH_FIELDS = ["lane_canon", "lane_priority", "edge_grade", "verify_status",
                  "valuation_method", "fair_value_target", "downside_floor",
                  "valuation_basis", "reference_price", "reference_rr"]
 
+def _from_sweep_board():
+    """THE BRIDGE (2026-08-04): synthesize (nested, df) directly from _sweep_board.json.
+
+    Why: commit e2f7c769 (2026-07-28) deleted the /api/catalysts/{candidates,scan} routes
+    that _export_candidates.py scraped to build _catalyst_raw.{json,csv} — so the old
+    raw-merge input can no longer be produced, and without THIS mode the bi-weekly sweep
+    never reaches catalyst_candidates_231.json (which _basket13_candidates.py reads; the
+    Tuesday re-debate would silently trade the previous board forever).
+
+    The sweep board rows already carry everything _post_board.COLS needs (that adapter
+    was written for exactly this repointing — see its header comment). Options fields are
+    deliberately absent: options enrichment retired per Bruno, 2026-08-04.
+
+    dated_milestone handling: the sweep's milestone prose is prepended into
+    analysis_summary as "[MILESTONE] ..." so the consumer's prose-date fallback
+    (_basket13_candidates._prose_milestone) can parse keyword-bearing dates (PDUFA /
+    action date / outside date / readout...). Deal-close dates whose segment lacks a
+    catalyst keyword stay structured-only (valuation.expected_close_date, when built) —
+    those names surface in the consumer's "undated/excluded" report, never silently drop.
+    """
+    board = json.load(open(SWEEP_F, encoding="utf-8"))
+    nested, rows = [], []
+    for r in board:
+        sym = str(r.get("symbol", "")).upper()
+        if not sym:
+            continue
+        analysis  = r.get("analysis") or r.get("catalyst") or ""
+        milestone = r.get("dated_milestone") or ""
+        summary = (f"[MILESTONE] {milestone} | " if milestone else "") + analysis
+        nested.append({
+            "symbol": sym, "company_name": r.get("company_name") or sym,
+            "price": None, "market_cap": None,
+            "catalyst_density_score": r.get("score"),
+            "adjusted_loeb_score": r.get("score"), "final_adjusted_loeb": r.get("score"),
+            "tier": r.get("tier"), "lane": r.get("lane"),
+            "instrument": r.get("instrument") or "",
+            "verify_verdict": r.get("verdict") or "(sweep)",
+            "analysis_summary": summary,
+            "bloom_catalysts": {
+                "catalyst_1": {"title": "Catalyst", "detected": True,
+                               "description": r.get("catalyst") or "",
+                               "evidence": r.get("primary_source") or ""},
+                "catalyst_2": {"title": "Milestone", "detected": bool(milestone),
+                               "description": milestone, "evidence": ""},
+                "catalyst_3": {"title": "Verify",
+                               "detected": (r.get("verdict") or "").startswith("CONFIRMED"),
+                               "description": r.get("verdict") or "",
+                               "evidence": r.get("kill_fact") or ""},
+            },
+            "_source": "sweep",
+        })
+        rows.append({
+            COLS["symbol"]:   sym,
+            COLS["score"]:    r.get("score"),
+            COLS["tier"]:     r.get("tier"),
+            COLS["lane"]:     r.get("lane"),
+            COLS["edge"]:     r.get("edge") or "",
+            COLS["thesis"]:   analysis,
+            COLS["verdict"]:  r.get("verdict") or "",
+            COLS["rr"]:       None,
+            COLS["rr_prose"]: "",
+        })
+    return nested, pd.DataFrame(rows)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("raw", nargs="?", default=RAW_JSON)
     ap.add_argument("--tilt", type=float, default=TILT_DEFAULT)
+    ap.add_argument("--from-sweep-board", action="store_true",
+                    help="build directly from backend/_sweep_board.json (no raw merge, "
+                         "no dev server, no options, no .ts emission)")
     args = ap.parse_args()
     try: sys.stdout.reconfigure(encoding="utf-8")
     except Exception: pass
 
     # nested reports (frontend shape) + flat df (process() shape)
-    nested = json.load(open(args.raw, encoding="utf-8"))["candidates"]
-    df = pd.read_csv(RAW_CSV)
+    if args.from_sweep_board:
+        nested, df = _from_sweep_board()
+        print(f"BRIDGE: {len(nested)} names synthesized from {os.path.relpath(SWEEP_F, ROOT)}")
+    else:
+        nested = json.load(open(args.raw, encoding="utf-8"))["candidates"]
+        df = pd.read_csv(RAW_CSV)
 
     # merge the optional valuation sidecar so process() can compute the lane-aware R:R
     val = {}
@@ -106,6 +180,14 @@ def main():
     df.to_csv(DELIV_CSV, index=False, encoding="utf-8-sig")
 
     # ---- generate the single-source frontend module ----
+    # Skipped in bridge mode: the /catalysts rebuild (e2f7c769) removed every importer of
+    # catalystBoardEnriched.ts — emitting it would re-add ~5MB of dead bundle.
+    if args.from_sweep_board:
+        n_none = sum(1 for r in nested if r.get("tier") == "NONE")
+        print(f"ENRICHED {len(nested)} reports | NONE={n_none} | corrections={len(deltas)} | "
+              f"wrote catalyst_candidates_231.json/.csv (bridge mode: no .ts)")
+        return
+
     board = {rep["symbol"]: rep for rep in nested}
     def sort_key(rep):
         return (TIER_RANK.get(rep.get("tier"), 3),

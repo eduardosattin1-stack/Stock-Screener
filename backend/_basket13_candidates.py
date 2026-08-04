@@ -68,8 +68,19 @@ _MONTHS = {m.lower(): i for i, m in enumerate(
 _CATALYST_KW = re.compile(
     r"PDUFA|AdCom|advisory committee|action date|readout|topline|CHMP|outside date|"
     r"decision date|approval decision|target action", re.I)
-_DATE_MDY = re.compile(r"\b([A-Za-z]{3,9})\.?\s+(\d{1,2}),?\s+(20\d\d)\b")   # "August 22, 2026"
+_DATE_MDY = re.compile(r"\b([A-Za-z]{3,9})\.?[\s-](\d{1,2})[,\s-]+(20\d\d)\b")  # "August 22, 2026" / "Nov-22-2026"
 _DATE_ISO = re.compile(r"\b(20\d\d)-(\d{2})-(\d{2})\b")                       # "2026-08-22"
+
+def _month_no(name):
+    """Full-name lookup, then unambiguous-prefix fallback (nov→november, sept→september).
+    Fixes the 2026-08-04 SVRA case: 'PDUFA reset to Nov-22-2026' — a HARD date — was
+    bucketed 'undated' because _MONTHS only held full names. Quarter/month-only prose
+    ('Q4-2026', 'January 2027') still never parses: that exclusion is policy, not a bug."""
+    s = (name or "").lower().rstrip(".")
+    if s in _MONTHS:
+        return _MONTHS[s]
+    hits = [v for k, v in _MONTHS.items() if len(s) >= 3 and k.startswith(s)]
+    return hits[0] if len(hits) == 1 else None
 
 def _prose_milestone(r, today):
     """Earliest FUTURE catalyst date parsed from board prose, used ONLY when the structured
@@ -89,7 +100,7 @@ def _prose_milestone(r, today):
             if not _CATALYST_KW.search(seg):
                 continue
             for m in _DATE_MDY.finditer(seg):
-                mon = _MONTHS.get(m.group(1).lower())
+                mon = _month_no(m.group(1))
                 if not mon:
                     continue
                 try:
