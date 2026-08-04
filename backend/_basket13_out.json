@@ -1,112 +1,123 @@
 {
+ "promotion": true,
  "generated_for": 1,
  "dossiers": [
   {
-   "symbol": "CAPR",
+   "symbol": "PVLA",
    "catalyst_live": true,
-   "catalyst_status": "PENDING_HARD",
-   "thesis_summary": "Event-driven long into a mispriced FDA binary. Deramiocel (cell therapy for DMD cardiomyopathy) has positive pivotal HOPE-3 Ph3 data; the Jul-2025 CRL was lifted 3/10/2026, the Class 2 resubmission was accepted with \"no potential review issues identified,\" a CTGTAC advisory panel votes 7/29 and the PDUFA approval decision lands 8/22. At the $52 (approve) / $7 (reject) goalposts and price ~$19.5, the tape implies only ~28% approval odds vs ~60% underwritten -- the edge is the gap. Approve -> ~$52 (Street-high); reject -> ~$7 (near net cash).",
+   "catalyst_status": "PENDING_SOFT",
+   "thesis_summary": "Palvella Therapeutics (Wayne PA, 14.34M shares, $2.02B cap) has one asset that matters: QTORIN 3.9% rapamycin anhydrous gel for microcystic lymphatic malformations (mLM), a rare vascular malformation with ~30,000 diagnosed US patients and ZERO FDA-approved therapies. The pivotal event already fired: Phase 3 SELVA read out positive 2026-02-24 (n=49 ITT, mean +2.13 on the mLM-IGA at Week 24, p<0.001; key secondary and all four additional secondaries also p<0.001), and the stock is up ~620% off the $36 low. What is STILL unfired is the regulatory conversion: FDA granted rolling review 2026-06-22, Palvella submitted the first NDA module 2026-06-29, and guides to COMPLETING the 505(b)(2) NDA in 2H 2026 with potential US approval and launch in 1H 2027. Breakthrough Therapy and Fast Track are in hand; $261.9M cash at 3/31/26 after the upsized $230M February raise fully funds submission, launch build-out, and the 2H26 Phase 3 start in cutaneous venous malformations (75,000 US patients) plus the Phase 2 LOTU angiokeratoma readout (2H 2027). The remaining edge is therefore regulatory/commercial conversion of an already-de-risked efficacy package, not a data event - and the milestone is a guided half-year window, not a binding date.",
    "resolution_driver": "FDA_approval_decision",
-   "staging": false,
-   "dated_milestone": "2026-08-22",
+   "staging": true,
+   "dated_milestone": null,
    "valuation_method": "binary_prob",
-   "win_prob": 0.6,
-   "fair_value_target": 52,
-   "downside_floor": 7,
-   "kill_risk": "The FDA convened the 7/29 CTGTAC panel precisely because effectiveness is contested: the pivotal HOPE-3 primary was PUL v2.0 (a skeletal/upper-limb endpoint) underpinning a *cardiomyopathy* indication, and the asset already drew one CRL. A No panel vote or a second CRL drops the stock to the ~$5-7 floor (about -65%); even an approval is capped below the $52 Street high by the active NS Pharma / Nippon Shinyaku commercialization litigation (Capricor is suing its own distributor and pivoting to self-commercialization). The market's ~28% implied approval prob is not obviously wrong, so the 0.60 underwrite is the single most refutable assumption in the thesis.",
+   "win_prob": 0.8,
+   "fair_value_target": 195,
+   "downside_floor": 55,
+   "kill_risk": "SELVA is a SINGLE-ARM, BASELINE-CONTROLLED Phase 3 whose primary endpoint is an unblinded clinician-rated global assessment (mLM-IGA). There is no vehicle arm, so neither placebo/attention effect nor natural fluctuation of a chronic lesional disease is quantified, and the assessor was not blinded to treatment. That is exactly the package FDA can meet with a CRL demanding a controlled confirmatory trial - which would reset the timeline 2-3 years and take the equity to roughly the downside floor. Compounding it: the 2043-protected IP and $100-200k/yr pricing frame collide with compounded topical sirolimus, already used off-label at vascular-anomaly centers, so payer step-edits could cap real uptake well below the \">$1B US peak\" bull frame even on approval. Secondary residual: the near-term event is only NDA COMPLETION inside an undated 2H26 window - a slip into 2027 is a de-rating (roughly the $109 200-day / pre-June levels) without any thesis break, so the position can bleed on timing alone with no falsifying news.",
    "discrepancies": [
-    "dated_milestone: board 2026-07-29 -> live 2026-08-22 -- 7/29 is the CTGTAC (Cellular/Tissue/Gene Therapies) advisory-committee vote, NOT the approval decision; the PDUFA target action date (the true resolving event for the binary, matching resolution_driver=FDA_approval_decision) is 2026-08-22. Board conflated the AdCom with the PDUFA. Not a slip -- both events remain scheduled/unfired.",
-    "win_prob: board 0.70 -> live 0.60 -- prices in the newly-scheduled 7/29 CTGTAC AdCom binary risk + the contested effectiveness basis (PUL v2.0 skeletal primary for a cardiomyopathy label) + the prior-CRL history; still well above the ~0.28 implied by the tape at the $52/$7 goalposts.",
-    "valuation_asof: board 2026-06-08 -> live 2026-07-21 -- refreshed; live_price re-confirmed ~$19.5 (7/20 close, board $19.44 essentially unchanged, 57.9M sh, ~$1.13B cap, ~$279M cash ~= $4.8/sh). fair_value_target $52 and downside_floor $7 re-validated and retained."
+    "live_price: board 118.84 (asof 2026-06-23) -> live 140.78 (2026-08-03 close, FMP quote) - board mark is 6 weeks stale and predates the 06-22 rolling-review grant and 06-29 first-module submission; +18.5% of the move is already spent",
+    "company_name: board null -> Palvella Therapeutics, Inc. (Nasdaq Global Market, uplisted 2026-05-13) - board record had no issuer identity",
+    "catalyst_status: board null -> PENDING_SOFT - the resolving event is real and unfired (NDA completion -> FDA decision) but company guidance is a half-year window ('2H 2026' submission, '1H 2027' approval), not a binding date; nothing here is FIRED or BROKEN",
+    "dated_milestone: board null -> remains null (genuinely undated) - no PDUFA date can exist until the rolling NDA is completed and accepted; the only dated item on the tape is the Q2 call TODAY 2026-08-04 08:30 ET, which is a guidance-firming event, not a resolving one",
+    "staging: board false -> live true - forced by the undated/soft milestone; a guided calendar half is not a hard event",
+    "resolution_driver: board null -> FDA_approval_decision - explicitly NOT FDA_clinical_readout, which fired 2026-02-24 with SELVA topline; the value-resolving step is now regulatory",
+    "valuation_method: board null -> binary_prob - approve/CRL is the resolving fork; spread and sop/recovery do not apply",
+    "win_prob: board null -> 0.80 - positive pivotal in hand, 505(b)(2) of a well-characterized molecule, BTD + Fast Track + rolling review granted, but discounted from the ~90% post-positive-pivotal base rate for the single-arm design risk described in kill_risk",
+    "fair_value_target: board null -> 195 (win leg, approval + launch) - bottom-up 3-4x EV/peak on risk-adjusted mLM sales plus partial cVM credit plus net cash gives a $149-239 band, midpoint ~$194; independently corroborated by the 12-analyst mean PT of $197 (range $133-270). Arithmetic in dossier_note",
+    "downside_floor: board null -> 55 (lose leg, CRL requiring a controlled confirmatory trial) - NOT the $36 52-week low, which is stale-low: it predates both the positive Phase 3 and the $230M February raise. Arithmetic in dossier_note",
+    "catalyst_live: board field absent -> true - consistent with PENDING_SOFT"
    ],
-   "dossier_note": "CATALYST -- two distinct hard events, not one (board's core error). (1) 7/29/2026 CTGTAC advisory-committee vote (non-binding recommendation, 8 days out) -- the dominant NEAR-TERM re-rating/vol event where most variance resolves. (2) 8/22/2026 PDUFA -- the statutory approve/reject decision that actually resolves the binary (~32 days out; used as dated_milestone). Deramiocel BLA for DMD cardiomyopathy; FDA lifted the Jul-2025 CRL on 3/10/2026, accepted the Class 2 resubmission, stated \"no potential review issues identified.\" Supported by positive HOPE-3 Ph3 (primary PUL v2.0 p=0.029; LVEF cardiac secondary; Type-I-error-controlled secondaries) + HOPE-2/HOPE-2-OLE. Forward-dated, unfired, idiosyncratic. PRV eligibility on approval.\n\nVALUATION (binary_prob) -- price ~$19.5. WIN $52 = Street approval-case (12-mo consensus ~$53.6, range $43-63; note a bear cohort -- H.C. Wainwright $24, Cantor $22, Roth $38 -- embeds rejection/commercial risk). The NS Pharma/Nippon Shinyaku litigation (Capricor suing its distributor, transitioning to self-commercialization) is a real overhang that argues a more conservative approval value of ~$40-45; $52 kept as the approval ceiling, not base case. LOSE $7 = supported by ~$4.8/sh net cash (~$279M / 57.9M sh) + exosome/StealthX pipeline + ex-US value; the $4.30 52-wk low was the first-CRL trough. R:R to goalposts = (52-19.5)/(19.5-7) = 2.6x. Market-implied approval prob = (19.5-7)/(52-7) = ~0.28 vs 0.60 underwritten. EV@0.60 = 0.6*52 + 0.4*7 = ~$34 (+74% to price).\n\nTAKEOUT LENS (bio) -- DMD cardiomyopathy has NO approved therapy = genuine strategic scarcity with pivotal data in hand; plausible acquirer = Nippon Shinyaku (existing ex-US/Japan partner, though the active litigation muddies it) or a rare-disease consolidator. Treated as UNDATED optionality on top of the dated FDA event only -- no comp-provenance lift applied, target NOT raised.\n\nREGIME -- XBI near 5-yr highs: the $4.30 first-CRL panic low is likely stale-low; with $279M cash a second rejection more plausibly floors ~$6-7 than ~$4, so the $7 downside_floor is fair (not conservative-stale). Conversely the richer tape means the ~28% market-implied win prob already reflects real, unresolved AdCom/effectiveness risk -- do not read the price purely as complacency."
+   "dossier_note": "FACTS RE-UNDERWRITTEN (all from live record). Timeline: SELVA Ph3 topline positive 2026-02-24 (n=49 ITT, +2.13 mLM-IGA at Wk24, p<0.001; 95% [41/43] >=1-point improvement; 86% [37/43] Much/Very Much Improved). Pre-NDA meeting completed 2026-06-03. FDA granted ROLLING REVIEW 2026-06-22. First NDA module submitted 2026-06-29. Guidance unchanged across Q1 (05-07), 06-03 and 06-29 releases: complete 505(b)(2) NDA 2H 2026, potential US approval/launch 1H 2027. No slip detected - status is PENDING_SOFT, not SLIPPED. Q2 results release + call is TODAY 2026-08-04 pre-open; the Q2 8-K was filed but not yet indexed by the feeds at time of writing, so if it narrows \"2H 2026\" to a month or reports NDA completion, the CRO should re-read this field - that single disclosure is what converts PENDING_SOFT -> PENDING_HARD and staging true -> false. IDIOSYNCRATIC: yes; resolves on FDA action on one dossier, beta -0.165.\n\nSHARE COUNT / CASH: 14,342,800 shares out (10-Q cover, 3/31/26), float 9.58M (66.8%) - thin. Cash+ST investments $261.9M at 3/31/26 after the $230.0M Feb-2026 raise; assuming ~$30M quarterly burn, ~$232M at 6/30/26 = ~$16/sh. EV at $140.78 = $2.019B - $0.232B = ~$1.79B.\n\nWIN LEG ARITHMETIC (fair_value_target $195): 30,000 diagnosed US mLM patients x 15-20% steady-state treated penetration = 4,500-6,000 patients x ~$120k net = $540-720M risk-adjusted US peak (company/street bull frame is \">$1B\" at $100-200k pricing; the conservative published frame is \">$200M\" - I use the middle and do NOT underwrite the $1B). At 3-4x EV/peak for a de-risked, first-in-disease orphan launch with IP into 2043: $1.6-2.9B. Add ~$0.4B partial credit for cutaneous VM (75,000 US patients, Ph3 starting 2H26, TOIVA Ph2 bleeding endpoint +2.5 pts p=0.003) and token value for angiokeratoma/QTORIN pitavastatin. Total EV $2.0-3.3B + $0.23B net cash = $2.13-3.43B equity / 14.343M sh = $149-239/sh, midpoint ~$194. Round to $195, which also sits on the 12-analyst mean PT of $197.08 (high $270, low $133).\n\nLOSE LEG ARITHMETIC (downside_floor $55): CRL demanding a randomized controlled confirmatory trial. $55 x 14.343M = $789M equity - $232M cash = ~$557M residual EV for a program with demonstrated (if uncontrolled) efficacy, three follow-on indications and funded runway. Explicitly NOT the $36 52-week low: that print is pre-Phase-3 and pre-$230M raise, and with XBI at multi-year highs old max-fear floors on de-risked rare-disease names are stale-low. A mere TIMING slip (NDA into 2027) is a shallower ~$100-110 outcome, not the floor.\n\nRESULTING GEOMETRY: EV = 0.80 x 195 + 0.20 x 55 = $167 vs $140.78 spot = +18.6%. R:R = (195 - 140.78)/(140.78 - 55) = 54.22/85.78 = 0.63:1. Positive EV but sub-1 reward/risk - the 620% run has already banked most of the de-risking, which is the honest read the Director should size against.\n\nTAKEOUT LENS (bio/pharma, applied and DECLINED as a lift). Profile fits the 2026 regime precisely: late-stage, commercially ready, first-in-disease, US-only build, single-platform, ~$2B cap, no approved competitor. Plausible acquirers: Incyte (rare/inflammatory derm buyer, actively deploying) and a derm pure-play such as Galderma or Sun Pharma. COMP WITH PROVENANCE: Incyte / Vega Therapeutics (Star Therapeutics subsidiary), announced June 2026, $1.25B upfront and up to $2.0B with milestones, for VGA039 - a PHASE 3 rare bleeding-disorder asset with Breakthrough Therapy and rare-pediatric-disease designations. PVLA is regulatorily LATER than that comp, but its $2.02B market cap ALREADY exceeds the comp's $1.25B upfront and equals its full $2.0B biodollar value. So the best available recent comp does not support lifting the win leg above $195; a takeout at a typical 40-60% premium ($197-225) lands inside the existing win-leg band. Takeout is therefore undated optionality consistent with - not additive to - the target, and no milestone is created from it.\n\nDECK-MARK GATE: not applicable (no commodity/feasibility-study price deck in this thesis)."
   }
  ],
  "cro": [
   {
-   "symbol": "CAPR",
+   "symbol": "PVLA",
    "verdict": "TRADE_WITH_CONDITIONS",
-   "live_price": 19.21,
-   "live_edge_check": "Edge INTACT / marginally improved vs dossier. Live IBKR snapshot: last $19.21, bid 19.05 / ask 19.50, prior close 19.50 (essentially unchanged from dossier's $19.44/$19.5 built at valuation_asof 2026-07-21). Recomputed R:R to goalposts = (52 - 19.21)/(19.21 - 7) = 2.69x (dossier 2.6x). Market-implied approval prob = (19.21 - 7)/(52 - 7) = 27.1% vs 60% underwritten. The gap the thesis monetizes is fully intact; no edge compression. catalyst_status = PENDING_HARD (not FIRED/BROKEN), edge is live.",
-   "tradeability_note": "Equity is the clean expression and highly liquid: avg 90d USD volume ~$24.1M, avg underlying option vol ~1863 call / 3345 put; any realistic sleeve position fills with negligible impact, no short leg/borrow. Listed monthly options exist; Sep 18 '26 $50 call OI ~3665 (approval lottery), Sep $20 (ATM) call OI only ~192, Sep $10 put OI ~0. Live two-sided option bid/ask were unavailable at this check (post-close, option prints marked is_close), so option spread QUALITY is unconfirmed; equity remains the reliable expression pending an open-hours spread check.",
-   "window_note": "Two distinct hard events. Resolving binary = PDUFA 8/22/26 (~32d). Dominant near-term vol event = 7/29 CTGTAC AdCom (~8d). WINDOW TRAP: nearest monthly Aug 21 '26 expires the day BEFORE the 8/22 PDUFA and does NOT clear the binary (captures the AdCom but dies before the decision). First clearing monthly = Sep 18 '26 (+1 monthly past milestone, correct minimum); Dec 18 '26 for more margin. No PDUFA slip on record; CRL lifted 3/10/26, Class 2 resubmission accepted 'no potential review issues,' date firm.",
-   "driver_confirmed": "FDA_approval_decision confirmed (statutory PDUFA approve/reject 8/22 is the resolving event; 7/29 AdCom is advisory/non-binding). Sole name in batch; no same-driver cluster to flag.",
+   "live_price": 140.78,
+   "live_edge_check": "Live $140.78 (FMP quote endpoint, 2026-08-03 NASDAQ close, ts 1785787201; corroborated by IBKR last $140.80 at 04:31 ET 2026-08-04 pre-open, 204 sh). Board mark $118.84 (valuation_asof 2026-06-23) is 6 weeks stale and 18.5% below live - it predates the 06-22 rolling-review grant and the 06-29 first-module submission, so that leg of the de-risking is already paid for. Recomputed at live: EV = 0.80 x 195 + 0.20 x 55 = $167.00 vs $140.78 = +18.6%. R:R = (195 - 140.78) / (140.78 - 55) = 54.22 / 85.78 = 0.63:1. No compression versus the dossier (the dossier already marked at $140.78), so the half-R:R kill test is not tripped - the mechanical half-R:R line (0.315:1) sits at ~$161.4, essentially the 52-wk high of $161.38. But the ABSOLUTE geometry is sub-1: risking 61% of capital to make 38%, carried entirely by the 0.80 win_prob. Context on the entry: +8.6% over the 50d ($129.62), +28.6% over the 200d ($109.50), -12.8% from the 52w high; the dossier's own timing-slip (non-falsifying) outcome is ~$109-110, i.e. -22% with no thesis break. Positive EV, thin cushion, zero room to pay up.",
+   "tradeability_note": "EQUITY: clean, and the only viable expression. IBKR avg-90d USD volume $37,589,376/day; FMP averageVolume 265,848 sh (144,157 on 08-03). Float 9.58M of 14.34M shares out - thin float, but a B13 sleeve seat is a small fraction of one session and fills without impact. Do not read the pre-open indicative 100.00 x 225.24 (IBKR) or 135 x 150 (FMP aftermarket, 0 volume) as a real spread - both are stale-book pre-open artifacts, not the tradeable market. OPTIONS: NOT tradeable, do not attempt. Only four expirations list (2026-08-21, 09-18, 11-20, 2027-02-19). On the furthest (Feb-19-27) chain, strikes exist at 5-pt intervals straight through both thesis levels (130-200 covers fair_value_target 195), but open interest is 0 contracts at the 145 call and 1 contract at the 150 call, zero volume, zero trades, and no two-sided quote returns at all - the midpoint-IV field comes back isValid:false. Underlying annual IV is 64.7%, so even if a market appeared it would be paid-for. A correct thesis in a chain with 0-1 OI is not a trade; this seat is equity or nothing.",
+   "window_note": "STAGING / UNDATED - flagged as such, and the flag is correct. dated_milestone is null and no dated milestone CAN exist yet: a PDUFA date is only created once the rolling NDA is completed and accepted. Guidance is a calendar half on both legs (complete 505(b)(2) NDA 2H 2026; potential approval/launch 1H 2027). SLIP HISTORY: none - guidance held verbatim across the 05-07 Q1 release, the 06-03 pre-NDA-meeting completion, and the 06-29 first-module submission, and the 06-22 rolling-review grant is affirmative progress, not delay. WINDOW vs EXPRESSION: no listed option can hold this. The furthest expiry, 2027-02-19, sits at the very front edge of the guided 1H-2027 approval window and provides zero monthly-expiry margin past it, let alone the required +1 - and it carries 0-1 OI regardless. So the window forces the equity expression, which has no expiry to clear. The cost of that is the absence of a forcing date: the position can bleed to ~$109-110 (-22%) on a pure timing slip into 2027 with no falsifying news and nothing to mark the loss against. LIVE GAP AT ADJUDICATION: Q2 results were released before the open TODAY 2026-08-04 with a 08:30 ET call (confirmed by the 07-28 scheduling PR), and the release is NOT yet in the feed - FMP press-releases for 2026-08-03/04 returns empty, last indexed item is 07-30. That is precisely the disclosure the dossier identified as the PENDING_SOFT -> PENDING_HARD converter, and it is unread. It gates the entry.",
+   "driver_confirmed": "FDA_approval_decision - CONFIRMED as corrected by the dossier, and the correction matters. This is explicitly NOT FDA_clinical_readout: SELVA Phase 3 topline fired 2026-02-24 (n=49 ITT, +2.13 mLM-IGA at Wk24, p<0.001) and is spent. The unfired, value-resolving step is regulatory - completion of the rolling 505(b)(2) NDA and subsequent FDA action on one dossier. Idiosyncratic (beta -0.165), resolves on an agency decision, not on the tape. No same-driver collision to flag WITHIN this batch (single name). DIRECTOR FLAG: FDA_approval_decision is a high-frequency B13 driver - check this seat against already-seated and concurrently-nominated names outside this batch before the cap is applied; I only see one name.",
    "conditions": [
-    "Options expression MUST use the Sep 18 '26 expiry or later; the Aug 21 '26 monthly expires 1 day BEFORE the 8/22 PDUFA and does NOT clear the catalyst, turning a correct thesis into a guaranteed miss.",
-    "Entry limit <= $21 to preserve >=2.5x R:R (edge erodes toward EV ~$34 as price rises; do not chase).",
-    "If expressing via options, confirm the Sep 18 '26 bid/ask spread and OI are acceptable at market open (live two-sided quotes were unavailable post-close at this check); otherwise default to the liquid equity, which clears all four surfaces cleanly."
+    "EQUITY ONLY - no option expression under any structure. Feb-19-27 is the furthest listed expiry, carries 0-1 contracts of OI with no two-sided quote, and does not clear the guided 1H-2027 approval by the required +1 monthly expiry.",
+    "RE-READ THE 2026-08-04 Q2 RELEASE AND 08:30 ET CALL BEFORE STAMPING THE ENTRY. It was published pre-open today and is not yet indexed. If it slips NDA completion out of 2H 2026, this becomes NO_TRADE at any price. If it narrows 2H 2026 to a month or reports NDA completion, staging flips to false, the milestone becomes datable, and the seat should be re-graded upward.",
+    "LIMIT <= $141.00, no chase. At $140.78 R:R is already only 0.63:1; at $150 it degrades to 0.47:1 and EV to +11.3%. Do not fill above $141 on a post-earnings gap - a gap-up is the market paying for the same de-risking this thesis is underwriting.",
+    "HARD KILL AT $161 - at $161.40 the R:R halves to 0.315:1, which is the mechanical NO_TRADE line. Note that is within 0.4% of the 52-week high ($161.38), so a breakout to new highs mechanically kills the entry.",
+    "SIZE AS A STAGING HALF-SEAT, not a full catalyst seat: undated milestone, no forcing date, sub-1 R:R, and a downside leg that is 61% of capital. Full-seat sizing is only appropriate once the milestone is dated (see condition 2)."
    ]
   }
  ],
  "survivors": [
-  "CAPR"
+  "PVLA"
  ],
  "director": {
-  "picks": [
-   {
-    "symbol": "CAPR",
-    "weight_pct": 2,
-    "expression": {
-     "type": "debit_spread",
-     "expiry": "2026-09-18",
-     "strikes": "Sep 18 '26 $20/$50 call debit spread — long ~ATM $20, short $50 at the approval goalpost; clears the 8/22 PDUFA (the Aug 21 monthly expires one day early = window trap). Premium-at-risk capped at 2% NAV."
-    },
-    "entry_rationale": "Mispriced FDA binary: deramiocel's CRL was lifted 3/10/26, the Class-2 resubmission accepted 'no review issues,' and the 8/22/26 PDUFA is 8 days out, yet at ~$19.4 the tape implies only ~27% approval vs ~60% underwritten ($52 approve / $7 reject goalposts) — CRO confirms edge intact, no compression. Seated defined-risk (Sep 18 '26 debit call spread) so the ~-65% reject/second-CRL gap-to-floor is bounded at premium.",
-    "resolution_driver": "FDA_approval_decision",
-    "super_cluster": "FDA/biotech",
-    "expected_ev": 0.98,
-    "expected_rr": null,
-    "invalidation": "A 'No' vote at the 7/29 CTGTAC AdCom or a second CRL at the 8/22 PDUFA drops the stock to the ~$7 net-cash floor (~-65%); entry above $21 erodes R:R below ~2.5x — do not chase.",
-    "review_trigger": "7/29/2026 CTGTAC advisory-committee vote (dominant near-term vol event), then the resolving 8/22/2026 PDUFA decision.",
-    "resolution_driver_note": null,
-    "stance_change_rationale": null
-   }
-  ],
+  "picks": [],
   "watchlist": [
    {
     "symbol": "EYPT",
-    "blocked_by": "No fresh CRO survivor trade this promotion run (only CAPR cleared the CRO). No combined cap blocks it — FDA_clinical_readout is uncapped and FDA/biotech has room (16/40).",
-    "would_enter_if": "CRO surfaces a defined-risk options expression (as with CAPR) clearing the Aug-Oct 2026 LUGANO topline window; must be seated defined-risk given no balance-sheet floor.",
-    "intended_weight_pct": 2,
-    "note": "Fresh web-verified dossier corrects the floor to ~$2.75 (not the $5.50 the board carried) and reframes EYPT as a positive-EV (~+49%) but NO-FLOOR coin flip; catalyst is a guided window (Aug-Oct 2026), mechanically forced, within the 2026 fast-return horizon. Strongest live bio readout on the deck.",
-    "stance_change_rationale": "View refined, not cooled: kept active on-deck, but the fresh dossier lowered the floor to ~$2.75 and downgraded the prior 89.6% expectation to a ~+49% EV coin flip, so any seat must be defined-risk (options) rather than equity."
+    "blocked_by": "No combined cap blocks it — FDA_clinical_readout and FDA/biotech are both uncapped, there is no seat cap, and Idiosyncratic sits at 5 of 40 weight points. What holds it is the absence of a fresh CRO survivor dossier and live-price check; this was a single-name promotion run and EYPT was not re-underwritten.",
+    "would_enter_if": "A fresh CRO dossier with a live-price check and a dated milestone inside 2026 clears it; no cap needs to free.",
+    "intended_weight_pct": null,
+    "note": "Carried unchanged from the prior on-deck book (entry 2026-06-13, expected +89.6%). Highest expected return on the queue and first in line for the next full re-debate.",
+    "stance_change_rationale": null
    },
    {
-    "symbol": "PVLA",
-    "blocked_by": "No fresh CRO survivor trade / dossier this promotion run; the prior 12-seat blocker no longer binds (11/20 seats used).",
-    "would_enter_if": "CRO surfaces a fresh, horizon-compliant PVLA trade; the stale ~59.1%-expected entry should be re-underwritten first.",
-    "intended_weight_pct": 3,
-    "note": "Carried forward on the prior ~59.1% expected; no fresh dossier this run to re-underwrite. Tracked to resolution.",
+    "symbol": "BBIO",
+    "blocked_by": "No combined cap blocks it. The 12-seat head-count cap that was cited against it was abolished 2026-07-28 and dilution replaced it as the only cost; its driver and cluster are uncapped. It waits on a fresh CRO dossier, not on headroom.",
+    "would_enter_if": "A fresh CRO survivor dossier at today's price with a resolution path inside the 2026 fast-return horizon.",
+    "intended_weight_pct": null,
+    "note": "Carried unchanged (entry 2026-06-13, expected +46.6%). Not re-underwritten this run — promotion mode, single survivor.",
+    "stance_change_rationale": null
+   },
+   {
+    "symbol": "DBVT",
+    "blocked_by": "No combined cap blocks it — same as BBIO, the head-count cap that de-prioritized it was removed 2026-07-28 and FDA_clinical_readout / FDA-biotech carry no cap. It waits on a fresh CRO dossier.",
+    "would_enter_if": "A fresh CRO survivor dossier with a dated 2026 milestone and an entry that survives the live-price check.",
+    "intended_weight_pct": null,
+    "note": "Carried unchanged (entry 2026-06-23, expected +43.6%).",
+    "stance_change_rationale": null
+   },
+   {
+    "symbol": "GERN",
+    "blocked_by": "No combined cap blocks it. The head-count cap cited against it was abolished 2026-07-28; its driver and cluster are uncapped. It waits on a fresh CRO dossier.",
+    "would_enter_if": "A fresh CRO survivor dossier confirming the catalyst is unfired and the entry edge has not compressed.",
+    "intended_weight_pct": null,
+    "note": "Carried unchanged (entry 2026-07-02, expected +45.7%).",
+    "stance_change_rationale": null
+   },
+   {
+    "symbol": "PVLA_PLACEHOLDER_REMOVED",
+    "blocked_by": "n/a",
+    "would_enter_if": "n/a",
+    "intended_weight_pct": null,
+    "note": "IGNORE — see passed[] for PVLA; this row is not a nomination.",
+    "stance_change_rationale": null
+   },
+   {
+    "symbol": "CLVT",
+    "blocked_by": "The Forced_divest_flow driver constraint was what de-prioritized it; that cap is now RELIEVED (FIG is the sole held Forced_divest_flow seat, 1 of 2), so strictly nothing caps it today. It remains held only by the absence of a fresh CRO dossier — no re-underwrite this run.",
+    "would_enter_if": "A fresh CRO survivor dossier re-establishing the divestiture timetable inside 2026; the driver slot itself is already open.",
+    "intended_weight_pct": null,
+    "note": "Carried de-prioritized, stance unchanged this run — I was given no fresh dossier, so I have no basis to re-champion it. Flagging only that its stated cap blocker no longer binds, which is a fact about the cap table, not a change of view.",
     "stance_change_rationale": null
    },
    {
     "symbol": "MGNI",
-    "blocked_by": "No fresh CRO survivor trade this run; the prior Forced_divest_flow cap (2/2) is now RELIEVED — FIG is the sole held Forced_divest_flow name (1/2) after CLVT's demotion.",
-    "would_enter_if": "CRO surfaces a fresh MGNI trade — a Forced_divest_flow slot is now open; re-underwrite given the thin prior ~8% edge.",
+    "blocked_by": "No combined cap blocks it — the Forced_divest_flow cap that held it is relieved (FIG alone, 1 of 2). It is held by the absence of a fresh CRO survivor trade this run.",
+    "would_enter_if": "A fresh CRO survivor dossier with a dated 2026 milestone; the expected return on the carried record (+8%) is thin and would itself need to improve to clear the median held seat.",
     "intended_weight_pct": null,
-    "note": "Prior edge was thin (~8% expected). No fresh dossier; carried pending refresh. Its original blocker (a second Forced_divest_flow name filling the driver) has cleared.",
+    "note": "Carried de-prioritized, stance unchanged (entry 2026-06-23).",
     "stance_change_rationale": null
    }
   ],
   "passed": [
    {
-    "symbol": "BBIO",
-    "passed_because": "Load-bearing catalyst already FIRED — PROPEL 3 (infigratinib) published July 2026 and the stock took its ~+17% pop to an all-time high (~$80-90). The only remaining dated event, the BBP-418 PDUFA on 11/27/26, serves ~7,000 patients and moves a ~$15.7B company just ~+7% (approve) / ~-10% (reject), is ~80-85% priced, has no floor, and fair value (~$82) sits on top of the live price and consensus. No edge for a catalyst seat — own the franchise on a wash-out, not here. Removed from on-deck on merit."
-   },
-   {
-    "symbol": "DBVT",
-    "passed_because": "No application even filed — the VIASKIN BLA is only GUIDED to Q3 2026 (the 5th timing reset in 8 years), so any FDA approval decision lands Q3-Q4 2027, beyond the 2026 fast-return horizon (validator hard-rejects >2026 milestones). Catalyst undated/serially-slipping on the same manufacturing axis that broke it twice; no verified floor (~$5 vs $14.86, net cash only ~$2.95/sh and burning); forced dilutive raise before resolution; Palforzia read-through caps the win. Interrogator verdict C / conviction 2 / 'No capital.' Removed on merit."
-   },
-   {
-    "symbol": "GERN",
-    "passed_because": "The board's driver (FDA approval) already fired in 2024 (RYTELO US/EU). The genuinely live catalyst — the IMpactMF interim OS analysis — is soft and undated (death-count-triggered, already slipped 4x), and management's own modal case is a 'keep going' NON-EVENT that defers the real answer to the 2H-2028 final analysis, beyond the 2026 fast-return horizon. Real floor (~$1.00) but no dated forcing function; a seat is only justified on an efficacy stop or near ~$1.05. Removed on merit."
-   },
-   {
-    "symbol": "CLVT",
-    "passed_because": "Catalyst FIRED on both legs — the Russell 2000 migration (6/27/26) absorbed any index flow and the $600M Altaris Life Sciences divestiture was announced 7/6/26 with the ~+16% pop already taken. The sale is leverage-DILUTIVE in turns (~4.08x→~4.19x), there was no forcing agent (management chose to sell), and no floor sits behind $4.08B net debt / $1.57B goodwill. Residual thesis is a multi-year deleveraging value play, not a live catalyst — belongs in a value book. Demotion also frees the Forced_divest_flow driver (FIG now sole holder). Removed on merit."
+    "symbol": "PVLA",
+    "passed_because": "No admissible expression exists, and the resolving event is outside the sleeve's horizon. (1) valuation_method=binary_prob mandates DEFINED-RISK ONLY (debit_spread or defined_risk_option, hard validator gate), but the CRO's live check shows the chain is untradeable — only four expirations list, the furthest (2027-02-19) carries 0-1 contracts of open interest, zero volume and no two-sided quote (isValid:false) — and staging=true independently forbids options on an undated catalyst. Equity, the one structure the CRO will accept, is exactly what the binary gate prohibits, so every available expression breaches a hard rule. (2) The resolution_driver is FDA_approval_decision and the guided approval/launch is 1H 2027; only NDA COMPLETION falls inside 2026, and that is a re-rating step, not the value-resolving fork — a 2027 resolution path is a pass on merit under the fast-return horizon. (3) The CRO's own remedy was 'size as a staging half-seat, not a full catalyst seat', and under equal weight that lever no longer exists: seating it forces a full 50/9 seat on an undated name with 0.63:1 reward/risk, a downside leg worth 61% of capital, and a non-falsifying timing-slip outcome at ~$109-110 (-22%). (4) The board mark ($118.84, asof 2026-06-23) is 6 weeks stale and 18.5% below live $140.78 — the rolling-review grant and first-module submission are already paid for, and the CRO caps entry at $141.00 with a mechanical kill at $161, i.e. zero room to pay up. Accountability: I nominated PVLA on 2026-06-23 at +59.1% expected and I am withdrawing it on this fresh look, not on headroom — nothing caps it. It earns a re-nomination the moment the NDA completes and a dated milestone with a liquid defined-risk chain exists, or the price resets toward the $109-119 area and restores reward/risk above 1:1."
    }
   ],
-  "memo": "Thin slate: the CRO passed only one survivor (CAPR), so the basket adds a single new seat and stays deliberately ~35% invested (33% held + 2% CAPR) rather than force-filling toward 100 — no seat is manufactured to hit a weight target. CAPR is a textbook mispriced FDA binary: deramiocel's CRL lifted 3/10/26, resubmission accepted 'no review issues,' PDUFA 8 days out (8/22/26), tape implying ~27% approval vs ~60% underwritten, edge CRO-confirmed intact. Because it is binary_prob with only a ~$7 net-cash floor (~-65% on a reject/second-CRL), it is seated DEFINED-RISK only — a Sep 18 '26 debit call spread (the Aug 21 monthly expires one day before the PDUFA, a window trap) with premium-at-risk capped at 2% NAV, sized off EV not payoff. Caps re-checked and clear: FDA_approval_decision uncapped (2026-07-20 bio-gate lift), FDA/biotech cluster 14→16 of 40, seats 10→11 of 20, all clusters under 40. On the carried on-deck book I demoted four names on merit: CLVT (catalyst fired both legs, leverage-dilutive, no floor, value-book story), BBIO (load-bearing PROPEL 3 readout already fired and popped; residual 11/27 PDUFA too small and fully priced, no margin), DBVT (no BLA filed, decision slips to 2027+ beyond horizon, no floor), and GERN (live IMpactMF readout soft/undated with a modal keep-going non-event resolving only in 2028). Kept on-deck (watchlist, tracked to resolution): EYPT — the strongest live bio readout (Aug-Oct 2026) but re-underwritten as a no-floor coin flip needing defined-risk expression — plus carried PVLA and MGNI pending fresh dossiers (MGNI's old Forced_divest_flow cap has cleared, FIG now sole holder). Cluster mix stays FDA/biotech-heavy by construction, which the lifted bio gate and the hot 2026 biotech-M&A regime both tolerate; CAPR's takeout optionality (DMD cardiomyopathy, no approved therapy) is noted but NOT sized into the target. Entry discipline held throughout — defined-risk, entry <=$21, no chase."
- },
- "promotion": true
+  "memo": "PROMOTION DECLINED — no new seat. The book stays at 8 held seats (7 FDA/biotech + 1 Idiosyncratic), 50/8 = 6.25% each, 50% cash. Every combined cap re-checked and unchanged: Forced_divest_flow 1/2, FDA_approval_decision / FDA_clinical_readout / FDA_pathway_feedback uncapped, Idiosyncratic 5 of 40 weight points, FDA/biotech uncapped, no head-count cap. Nothing was breached because nothing was added.\n\nThe single survivor, PVLA, was my own prior nomination and I am withdrawing it on merit — headroom was never the issue. The disqualifier is structural, not a judgement call: it is a binary_prob name, which the validator says must be defined-risk only, while staging=true forbids options and the chain is genuinely untradeable (0-1 contracts of open interest on the furthest expiry, no two-sided quote). There is no legal way to express it. Layered on top: the resolving event is the FDA approval decision guided to 1H 2027, outside the within-2026 horizon; the board mark was 6 weeks and 18.5% stale, so the rolling-review and first-module de-risking is already in the price; reward/risk at the live $140.78 is 0.63:1 with a 61%-of-capital downside leg; and today's unread Q2 release still gates the entry. Under conviction-proportional sizing the CRO's 'staging half-seat' would have been the right answer. Under equal weight that answer does not exist — the choice is a full seat that dilutes all eight held names or nothing, and this one is not as good as the median seat I already hold.\n\nDebt-cycle judgement (DISCIPLINE, advisory — this did not gate anything, the expression rule and the horizon did): the catalyst families getting paid in this phase are the ones that convert to cash soon — approvals with launch revenue landing inside the window, closing deals, forced sellers. PVLA's cash is a 1H-2027 launch at the earliest; it is a distant terminal-value re-rate fighting a rising real 30y, and the guided-half-year window means it can bleed on timing alone with no falsifying news. That reinforces a decision I would have made anyway on the expression gate. The record biotech M&A tape does not rescue it either — the CRO applied the takeout lens and declined it explicitly, because the $2.02B cap already exceeds the best-provenance comp's $1.25B upfront, so a 40-60% premium lands inside the existing $195 win leg rather than above it. That is the warm-tape trap the regime block warns about, and it is the correct read.\n\nCarried book: EYPT, BBIO, DBVT and GERN are re-nominated unchanged with stance_change_rationale null — this was a single-name promotion run and I was given no fresh dossiers on them, so I have no basis to move their stances. CLVT and MGNI stay carried and still de-prioritized for the same reason; I note only the factual point that the Forced_divest_flow cap that held them is now relieved (FIG alone, 1 of 2), which is a change in the cap table, not in my view of the names. Regime block is dated 2026-07 and today is 2026-08-04 — inside its stated shelf life, used as written."
+ }
 }
