@@ -49,7 +49,17 @@
       "live_price": 3.58,
       "target_px": 4.4,
       "downside_floor": 2.3,
-      "binding_reason": "An undated, eleven-month-stale sale process that the company has now stepped back from -- on the May 11, 2026 call the interim chief executive said AlTi is \"evaluating opportunities that come as opposed to a strategic review process in place at the moment\" -- deadlocked on a reported $600 million-plus valuation gap because roughly $352 million of preferred compounding at 9.75% consumes whatever a real wealth-manager multiple would pay. Upside to a generous strategic take-out is about +23% against about -35% to a low retest, with no verified floor and the clock running against the common."
+      "binding_reason": "An undated, eleven-month-stale sale process that the company has now stepped back from -- on the May 11, 2026 call the interim chief executive said AlTi is \"evaluating opportunities that come as opposed to a strategic review process in place at the moment\" -- deadlocked on a reported $600 million-plus valuation gap because roughly $352 million of preferred compounding at 9.75% consumes whatever a real wealth-manager multiple would pay. Upside to a generous strategic take-out is about +23% against about -35% to a low retest, with no verified floor and the clock running against the common.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "thesis",
+        "at": "2026-08-04",
+        "record_target_px": 4.4,
+        "record_floor_px": 2.3,
+        "implied_prob_at_record": 0.6095,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on thesis — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {

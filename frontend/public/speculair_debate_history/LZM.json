@@ -49,7 +49,17 @@
       "live_price": 3.31,
       "target_px": 7.0,
       "downside_floor": 2.0,
-      "binding_reason": "Sale of a stake in, or all of, the Kabanga nickel project through the Standard Chartered process -- multiple offers at term sheet, described as concluding shortly on 30 April 2026, still unannounced eighty-nine days later, with the guided mid-2026 build decision lapsed and no replacement date; $3.31 today against a $7.00 event-win and a roughly $2.00 verified floor, so the arithmetic is attractive but the clock is not ours."
+      "binding_reason": "Sale of a stake in, or all of, the Kabanga nickel project through the Standard Chartered process -- multiple offers at term sheet, described as concluding shortly on 30 April 2026, still unannounced eighty-nine days later, with the guided mid-2026 build decision lapsed and no replacement date; $3.31 today against a $7.00 event-win and a roughly $2.00 verified floor, so the arithmetic is attractive but the clock is not ours.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "thesis",
+        "at": "2026-08-04",
+        "record_target_px": 7.0,
+        "record_floor_px": 2.0,
+        "implied_prob_at_record": 0.262,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on thesis — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {

@@ -49,7 +49,17 @@
       "live_price": 18.23,
       "target_px": 23.5,
       "downside_floor": 13.0,
-      "binding_reason": "The event did not slip, it TERMINATED: the arrangement agreement ended 29 Jul 2026 with both parties concluding there was no reasonable likelihood of fulfilment 'within any reasonable time' and agreeing not to extend, no termination fee payable to Allied, shares -18.3%. The spread did not narrow, it ceased to exist. The replacement numbers fail too: the US$13 'floor' is ~29% a mine that has never poured an ounce, and it writes Mali to zero while assuming Kurmuk survives intact - though the file's own valley-of-death lists both as CONCURRENT hazards over the same window; joint realisation leaves ~US$9.20. The base-case cross-check is circular: per the filing, Zijin's C$32.55 is the 30-day VWAP to 27 Jul, struck while the shares still carried deal hope - a mechanical backward-looking formula, not a valuation opinion. And first gold is gated on an Ethiopian state utility energizing a power line."
+      "binding_reason": "The event did not slip, it TERMINATED: the arrangement agreement ended 29 Jul 2026 with both parties concluding there was no reasonable likelihood of fulfilment 'within any reasonable time' and agreeing not to extend, no termination fee payable to Allied, shares -18.3%. The spread did not narrow, it ceased to exist. The replacement numbers fail too: the US$13 'floor' is ~29% a mine that has never poured an ounce, and it writes Mali to zero while assuming Kurmuk survives intact - though the file's own valley-of-death lists both as CONCURRENT hazards over the same window; joint realisation leaves ~US$9.20. The base-case cross-check is circular: per the filing, Zijin's C$32.55 is the 30-day VWAP to 27 Jul, struck while the shares still carried deal hope - a mechanical backward-looking formula, not a valuation opinion. And first gold is gated on an Ethiopian state utility energizing a power line.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 23.5,
+        "record_floor_px": 13.0,
+        "implied_prob_at_record": 0.4981,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {

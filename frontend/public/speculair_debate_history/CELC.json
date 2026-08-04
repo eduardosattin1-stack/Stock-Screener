@@ -49,7 +49,17 @@
       "live_price": 82.27,
       "target_px": 153.0,
       "downside_floor": 55.0,
-      "binding_reason": "The FDA approved REVTORPYK on 14 July 2026, three days ahead of the 17 July deadline - the catalyst has fired favourably and the stock fell 17.6% the next day on a launch pushed to late third quarter; from $82.27 the residual asymmetry is about +86% to a $153 target against roughly -33% to a $55 adverse value that is modelled rather than backstopped."
+      "binding_reason": "The FDA approved REVTORPYK on 14 July 2026, three days ahead of the 17 July deadline - the catalyst has fired favourably and the stock fell 17.6% the next day on a launch pushed to late third quarter; from $82.27 the residual asymmetry is about +86% to a $153 target against roughly -33% to a $55 adverse value that is modelled rather than backstopped.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 153.0,
+        "record_floor_px": 55.0,
+        "implied_prob_at_record": 0.2783,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {

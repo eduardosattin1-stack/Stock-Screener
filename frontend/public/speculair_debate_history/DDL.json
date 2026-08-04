@@ -49,7 +49,16 @@
       "live_price": 2.57,
       "target_px": 3.25,
       "downside_floor": 1.9,
-      "binding_reason": "A binding, shareholder-approved Meituan SPA worth up to US$4.60/sh gross against $2.57, every deal term verified verbatim from primary filings and genuinely unfired. But the skeptic's unabsorbed material correction changes what the position IS: the 27 Mar 2026 resolution is EMPOWERING, not binding - the board may act 'at such time, in such manner as the Board, in its absolute discretion, deems appropriate' - so this is a governance bet on a founder-controlled Cayman board with super-voting shares, not an arb with an approved distribution attached. Hold clearance odds at 68% but assume the board returns only half and fair value is ~$2.41, BELOW spot. Entry has decayed from $1.94 (4.28:1) to ~1:1. The free dated read is whether the US$280m draw reaches the parent by 31 Aug 2026 - that repairs the floor and restores 2:1 at the same price."
+      "binding_reason": "A binding, shareholder-approved Meituan SPA worth up to US$4.60/sh gross against $2.57, every deal term verified verbatim from primary filings and genuinely unfired. But the skeptic's unabsorbed material correction changes what the position IS: the 27 Mar 2026 resolution is EMPOWERING, not binding - the board may act 'at such time, in such manner as the Board, in its absolute discretion, deems appropriate' - so this is a governance bet on a founder-controlled Cayman board with super-voting shares, not an arb with an approved distribution attached. Hold clearance odds at 68% but assume the board returns only half and fair value is ~$2.41, BELOW spot. Entry has decayed from $1.94 (4.28:1) to ~1:1. The free dated read is whether the US$280m draw reaches the parent by 31 Aug 2026 - that repairs the floor and restores 2:1 at the same price.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_scope": "thesis",
+        "at": "2026-08-04",
+        "record_target_px": 3.25,
+        "record_floor_px": 1.9,
+        "implied_prob_at_record": 0.4963,
+        "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+      }
     }
   },
   {

@@ -49,7 +49,17 @@
       "live_price": 21.94,
       "target_px": 27,
       "downside_floor": 18,
-      "binding_reason": "The most imminent hard regulatory date in the funnel - 25 Aug 2026, 22 days out, PDUFA and the $250.0m approval milestone both confirmed verbatim in an SEC-filed exhibit - but the $18 floor that makes it 'defined risk' counts the same assets twice, twice over. The cash pile IS the Royalty Pharma borrowing: Q1 operations USED $45.7m and the entire $203.1m cash increase came from $245.6m of net loan proceeds secured on 30% of all future Ziihera royalties - yet the royalty stream is simultaneously booked as 'untouched'. The identical double-count repeats on the $350m OMERS note, non-recourse but secured solely by the very YUPELRI profit share the floor books as free cash flow to equity. Stripped, stockholders' equity is $163.6m ($2.24/sh) against a claimed $1.32bn floor - and the funded-runway claim is circular, conditioned on $440m of milestones of which $250m is the thing being decided."
+      "binding_reason": "The most imminent hard regulatory date in the funnel - 25 Aug 2026, 22 days out, PDUFA and the $250.0m approval milestone both confirmed verbatim in an SEC-filed exhibit - but the $18 floor that makes it 'defined risk' counts the same assets twice, twice over. The cash pile IS the Royalty Pharma borrowing: Q1 operations USED $45.7m and the entire $203.1m cash increase came from $245.6m of net loan proceeds secured on 30% of all future Ziihera royalties - yet the royalty stream is simultaneously booked as 'untouched'. The identical double-count repeats on the $350m OMERS note, non-recourse but secured solely by the very YUPELRI profit share the floor books as free cash flow to equity. Stripped, stockholders' equity is $163.6m ($2.24/sh) against a claimed $1.32bn floor - and the funded-runway claim is circular, conditioned on $440m of milestones of which $250m is the thing being decided.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "numbers",
+        "at": "2026-08-04",
+        "record_target_px": 27.0,
+        "record_floor_px": 18.0,
+        "implied_prob_at_record": 0.4378,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on numbers — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {

@@ -49,7 +49,17 @@
       "live_price": 1.42,
       "target_px": 3.75,
       "downside_floor": 1.0,
-      "binding_reason": "The Phase 3 IMpactMF interim survival readout, guided to the second half of 2026 but triggered by a death count rather than a date and already four times late: an early stop for efficacy takes the stock to roughly $3.75 from $1.42 against a cash-and-revenue-backed floor near $1.00, but management's own base case is that the committee simply says keep going and the real answer waits until 2028."
+      "binding_reason": "The Phase 3 IMpactMF interim survival readout, guided to the second half of 2026 but triggered by a death count rather than a date and already four times late: an early stop for efficacy takes the stock to roughly $3.75 from $1.42 against a cash-and-revenue-backed floor near $1.00, but management's own base case is that the committee simply says keep going and the real answer waits until 2028.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 3.75,
+        "record_floor_px": 1.0,
+        "implied_prob_at_record": 0.1527,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {

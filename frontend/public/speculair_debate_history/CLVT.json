@@ -49,7 +49,16 @@
       "live_price": 2.13,
       "target_px": 6.17,
       "downside_floor": 1.42,
-      "binding_reason": "Management-led sale of the Life Sciences & Healthcare unit plus a deleveraging Value Creation Plan — confirmed in 'active discussions' since Feb 24, 2026 with Morgan Stanley but undated and non-binding ('no assurance'); a real but soft catalyst, with ~+190% upside to a $6.17 sum-of-the-parts target against a ~$1.42 soft floor."
+      "binding_reason": "Management-led sale of the Life Sciences & Healthcare unit plus a deleveraging Value Creation Plan — confirmed in 'active discussions' since Feb 24, 2026 with Morgan Stanley but undated and non-binding ('no assurance'); a real but soft catalyst, with ~+190% upside to a $6.17 sum-of-the-parts target against a ~$1.42 soft floor.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_scope": "",
+        "at": "2026-08-04",
+        "record_target_px": 6.17,
+        "record_floor_px": 1.42,
+        "implied_prob_at_record": 0.1495,
+        "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+      }
     }
   },
   {

@@ -49,7 +49,16 @@
       "live_price": 47.295,
       "target_px": 62.0,
       "downside_floor": 30.0,
-      "binding_reason": "Hard 30 Sep 2026 PDUFA at ~78-80% odds, but two material corrections invert the moderator's own arithmetic. Share count is 127,277,144 - basic AND diluted, and the identity of the two is the tell that the ~8.2m gap is economically live pre-funded warrants - not the ~120m the sum-of-the-parts divides by, cutting the event-win to ~$58 from $62. And net cash at the decision is ~$63m / $0.50 a share, not $170m / $1.40, because the thesis netted the $100m Q1 increment instead of the $205.7m of debt actually outstanding. Raw legs fall to 0.62:1 and EV to ~+9% over 58 days against a 37% drawdown. Compounding it, the evidence chain still omits FDA Warning Letter 320-26-20 to Catalent Indiana (20 Nov 2025) - a published enforcement action, unresolved, against a site still named in the accepted BLA."
+      "binding_reason": "Hard 30 Sep 2026 PDUFA at ~78-80% odds, but two material corrections invert the moderator's own arithmetic. Share count is 127,277,144 - basic AND diluted, and the identity of the two is the tell that the ~8.2m gap is economically live pre-funded warrants - not the ~120m the sum-of-the-parts divides by, cutting the event-win to ~$58 from $62. And net cash at the decision is ~$63m / $0.50 a share, not $170m / $1.40, because the thesis netted the $100m Q1 increment instead of the $205.7m of debt actually outstanding. Raw legs fall to 0.62:1 and EV to ~+9% over 58 days against a 37% drawdown. Compounding it, the evidence chain still omits FDA Warning Letter 320-26-20 to Catalent Indiana (20 Nov 2025) - a published enforcement action, unresolved, against a site still named in the accepted BLA.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_scope": "numbers",
+        "at": "2026-08-04",
+        "record_target_px": 62.0,
+        "record_floor_px": 30.0,
+        "implied_prob_at_record": 0.5405,
+        "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+      }
     }
   },
   {

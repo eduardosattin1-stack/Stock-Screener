@@ -49,7 +49,17 @@
       "live_price": 387.41,
       "target_px": 440.0,
       "downside_floor": 291.0,
-      "binding_reason": "Knicks/Rangers separation: the board approved exploring it in February 2026 and a confidential Form 10 was filed May 18, 2026 - but there is still no record or effective date, final board approval is explicitly outstanding, and the discount to appraised franchise value has already collapsed from 47% to 24% over the past year, leaving roughly 14% of upside against 25% of unfloored downside."
+      "binding_reason": "Knicks/Rangers separation: the board approved exploring it in February 2026 and a confidential Form 10 was filed May 18, 2026 - but there is still no record or effective date, final board approval is explicitly outstanding, and the discount to appraised franchise value has already collapsed from 47% to 24% over the past year, leaving roughly 14% of upside against 25% of unfloored downside.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 440.0,
+        "record_floor_px": 291.0,
+        "implied_prob_at_record": 0.647,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {

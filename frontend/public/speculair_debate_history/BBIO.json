@@ -49,7 +49,16 @@
       "live_price": 66.8,
       "target_px": 105.0,
       "downside_floor": 58.0,
-      "binding_reason": "First-ever limb-girdle muscular dystrophy therapy (BBP-418) faces a firm FDA decision on November 27, 2026, with positive Phase 3 data and no advisory committee in the way; ~+57% to a $105 approval target versus ~-13% to a verified $58 franchise-and-cash floor."
+      "binding_reason": "First-ever limb-girdle muscular dystrophy therapy (BBP-418) faces a firm FDA decision on November 27, 2026, with positive Phase 3 data and no advisory committee in the way; ~+57% to a $105 approval target versus ~-13% to a verified $58 franchise-and-cash floor.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_scope": "",
+        "at": "2026-08-04",
+        "record_target_px": 105.0,
+        "record_floor_px": 58.0,
+        "implied_prob_at_record": 0.1872,
+        "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+      }
     }
   },
   {

@@ -49,7 +49,17 @@
       "live_price": 19.7,
       "target_px": 30.0,
       "downside_floor": 8.5,
-      "binding_reason": "The catalyst has already fired: the FDA approved Lumvoa (veligrotug-vvze) for thyroid eye disease on 26 June 2026, four days ahead of its 30 June target date and with a broader label than expected - and the stock is at $19.70 a month later, so the re-rating we were waiting to be paid for has been spent without paying, leaving roughly 52% upside to a $30 good-launch value against 57% downside to an $8.50 cash-based floor."
+      "binding_reason": "The catalyst has already fired: the FDA approved Lumvoa (veligrotug-vvze) for thyroid eye disease on 26 June 2026, four days ahead of its 30 June target date and with a broader label than expected - and the stock is at $19.70 a month later, so the re-rating we were waiting to be paid for has been spent without paying, leaving roughly 52% upside to a $30 good-launch value against 57% downside to an $8.50 cash-based floor.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 30.0,
+        "record_floor_px": 8.5,
+        "implied_prob_at_record": 0.5209,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {

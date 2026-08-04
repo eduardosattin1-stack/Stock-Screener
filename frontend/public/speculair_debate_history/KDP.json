@@ -49,7 +49,17 @@
       "live_price": 31.12,
       "target_px": 36.0,
       "downside_floor": 26.0,
-      "binding_reason": "The event does not legally exist yet: a universe-wide sweep of every Form 10-12B accepted by the SEC between 1 Apr and 3 Aug 2026 returns the other live 2026 spin-offs and NO Global Coffee Co. registrant of any kind. 'Targeted for early 2027' was already pushed from end-2026, and it was announced in the very release that disclosed the designated coffee CEO's departure - that seat has now emptied twice in nine months, and companies do not set distribution dates for businesses without CEOs. No record date, no counterparty, no break fee, no contractual payout. The floor is the 200-day moving average to within twelve cents, over a 52-week low of $24.88 already printed. The driver tag is inverted - index flow lands on the DISTRIBUTED entity after the split, not the parent before it - and the upside is strike-capped by the $4.5bn preferred converting at $37.25, between the $36 base case and the $37 street median."
+      "binding_reason": "The event does not legally exist yet: a universe-wide sweep of every Form 10-12B accepted by the SEC between 1 Apr and 3 Aug 2026 returns the other live 2026 spin-offs and NO Global Coffee Co. registrant of any kind. 'Targeted for early 2027' was already pushed from end-2026, and it was announced in the very release that disclosed the designated coffee CEO's departure - that seat has now emptied twice in nine months, and companies do not set distribution dates for businesses without CEOs. No record date, no counterparty, no break fee, no contractual payout. The floor is the 200-day moving average to within twelve cents, over a 52-week low of $24.88 already printed. The driver tag is inverted - index flow lands on the DISTRIBUTED entity after the split, not the parent before it - and the upside is strike-capped by the $4.5bn preferred converting at $37.25, between the $36 base case and the $37 street median.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 36.0,
+        "record_floor_px": 26.0,
+        "implied_prob_at_record": 0.512,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {

@@ -49,7 +49,17 @@
       "live_price": 3.73,
       "target_px": 8.75,
       "downside_floor": 1.5,
-      "binding_reason": "A real, binding, dated event attached to the wrong side of the capital structure. The $1.512bn Long Ridge sale to MARA carries no financing condition and a 30 Nov 2026 outside date, and the FERC application is docketed - but FIP is the SELLER: its own shares carry no offer price, no spread and no bid, which is exactly why the stock fell five sessions running into a fully on-track deal and closed $3.73 on a new 52-week low, roughly 4% THROUGH the $3.90 level it was scored against as a floor. Beneath it sits negative $303.1m of book equity, $37.9m of unrestricted cash, going-concern language leaning on this very sale, and ~$3.8bn of debt plus a RailCo preferred whose PIK dividends compound ahead of the common and cannot be redeemed before 2032. Both sides also omit the Series B preferred entirely (+21,818,025 shares, +18.5%), which makes the $8.75 target an 18x outcome presented as a 17x one."
+      "binding_reason": "A real, binding, dated event attached to the wrong side of the capital structure. The $1.512bn Long Ridge sale to MARA carries no financing condition and a 30 Nov 2026 outside date, and the FERC application is docketed - but FIP is the SELLER: its own shares carry no offer price, no spread and no bid, which is exactly why the stock fell five sessions running into a fully on-track deal and closed $3.73 on a new 52-week low, roughly 4% THROUGH the $3.90 level it was scored against as a floor. Beneath it sits negative $303.1m of book equity, $37.9m of unrestricted cash, going-concern language leaning on this very sale, and ~$3.8bn of debt plus a RailCo preferred whose PIK dividends compound ahead of the common and cannot be redeemed before 2032. Both sides also omit the Series B preferred entirely (+21,818,025 shares, +18.5%), which makes the $8.75 target an 18x outcome presented as a 17x one.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "thesis",
+        "at": "2026-08-04",
+        "record_target_px": 8.75,
+        "record_floor_px": 1.5,
+        "implied_prob_at_record": 0.3076,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on thesis — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {

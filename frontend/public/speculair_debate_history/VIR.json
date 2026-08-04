@@ -49,7 +49,17 @@
       "live_price": 8.66,
       "target_px": 19,
       "downside_floor": 4.5,
-      "binding_reason": "REFUTED on the company's own filed cash-flow statement: real Q1 operating cash use was $132.4m against an assumed $95-100m, because the non-cash stock-comp add-back was overstated ~2.5x ($12.1m actual vs $25-30m assumed), and $52.6m of claims ahead of equity (contingent consideration, other long-term liabilities) were silently dropped. Floor is ~$3.5, not $4.5, so downside is -60% not -48%, R/R falls from 2.5:1 to ~2.0:1 and breakeven odds rise from 29% to 33%. The empirical kill is sharper still: VIR printed a 52-week low at ~0.74x GROSS cash - a negative enterprise value - WITH ECLIPSE 1 alive and enrolling, so the 0.8-1.0x-NET-cash floor multiple is refuted by the stock's own tape. Even corrected this is the best residual asymmetry among the refuted biotech binaries, but Q4 guidance against a 31 Dec primary completion leaves no slack for a slip."
+      "binding_reason": "REFUTED on the company's own filed cash-flow statement: real Q1 operating cash use was $132.4m against an assumed $95-100m, because the non-cash stock-comp add-back was overstated ~2.5x ($12.1m actual vs $25-30m assumed), and $52.6m of claims ahead of equity (contingent consideration, other long-term liabilities) were silently dropped. Floor is ~$3.5, not $4.5, so downside is -60% not -48%, R/R falls from 2.5:1 to ~2.0:1 and breakeven odds rise from 29% to 33%. The empirical kill is sharper still: VIR printed a 52-week low at ~0.74x GROSS cash - a negative enterprise value - WITH ECLIPSE 1 alive and enrolling, so the 0.8-1.0x-NET-cash floor multiple is refuted by the stock's own tape. Even corrected this is the best residual asymmetry among the refuted biotech binaries, but Q4 guidance against a 31 Dec primary completion leaves no slack for a slip.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "numbers",
+        "at": "2026-08-04",
+        "record_target_px": 19.0,
+        "record_floor_px": 4.5,
+        "implied_prob_at_record": 0.2869,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on numbers — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {

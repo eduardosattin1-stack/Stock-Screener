@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-04T17:47:11.294380",
+  "generated_at": "2026-08-04T18:44:03.855105",
   "theme": "Basket-13 catalyst funnel — event-driven special situations (diagnostic)",
   "n_names": 36,
   "regime": "NEUTRAL / GOLDILOCKS quadrant (macro_regime.json 2026-08-03, score 0.5975, VIX 16.03) over a DISCIPLINE debt-cycle phase (4 weeks in, high confidence; positive real long rates imposed and holding, duration punished, cash flow rewarded, expected horizon 18mo). Catalyst-Watch v4 (2026-07-20) carries the first tripwire BREACH in the doc's life - oil/Hormuz, Brent ~$89, with VIX and HY 271bp conspicuously refusing to reprice - ranks spins + forced-sellers the FATTEST lane and holds hard-binary / biotech PDUFA the THINNEST, most efficiently-priced lane for a THIRD consecutive run.",
@@ -68,6 +68,16 @@
       "downside_floor": 13.0,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 23.5,
+        "record_floor_px": 13.0,
+        "implied_prob_at_record": 0.4981,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "AAUC",
         "verdict": "REFUTED",
@@ -108,7 +118,17 @@
         "live_price": 18.23,
         "target_px": 23.5,
         "downside_floor": 13.0,
-        "binding_reason": "The event did not slip, it TERMINATED: the arrangement agreement ended 29 Jul 2026 with both parties concluding there was no reasonable likelihood of fulfilment 'within any reasonable time' and agreeing not to extend, no termination fee payable to Allied, shares -18.3%. The spread did not narrow, it ceased to exist. The replacement numbers fail too: the US$13 'floor' is ~29% a mine that has never poured an ounce, and it writes Mali to zero while assuming Kurmuk survives intact - though the file's own valley-of-death lists both as CONCURRENT hazards over the same window; joint realisation leaves ~US$9.20. The base-case cross-check is circular: per the filing, Zijin's C$32.55 is the 30-day VWAP to 27 Jul, struck while the shares still carried deal hope - a mechanical backward-looking formula, not a valuation opinion. And first gold is gated on an Ethiopian state utility energizing a power line."
+        "binding_reason": "The event did not slip, it TERMINATED: the arrangement agreement ended 29 Jul 2026 with both parties concluding there was no reasonable likelihood of fulfilment 'within any reasonable time' and agreeing not to extend, no termination fee payable to Allied, shares -18.3%. The spread did not narrow, it ceased to exist. The replacement numbers fail too: the US$13 'floor' is ~29% a mine that has never poured an ounce, and it writes Mali to zero while assuming Kurmuk survives intact - though the file's own valley-of-death lists both as CONCURRENT hazards over the same window; joint realisation leaves ~US$9.20. The base-case cross-check is circular: per the filing, Zijin's C$32.55 is the 30-day VWAP to 27 Jul, struck while the shares still carried deal hope - a mechanical backward-looking formula, not a valuation opinion. And first gold is gated on an Ethiopian state utility energizing a power line.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "catalyst",
+          "at": "2026-08-04",
+          "record_target_px": 23.5,
+          "record_floor_px": 13.0,
+          "implied_prob_at_record": 0.4981,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "ALTI": {
@@ -146,6 +166,16 @@
       "downside_floor": 2.3,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "thesis",
+        "at": "2026-08-04",
+        "record_target_px": 4.4,
+        "record_floor_px": 2.3,
+        "implied_prob_at_record": 0.6095,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on thesis — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "ALTI",
         "verdict": "REFUTED",
@@ -174,7 +204,17 @@
         "live_price": 3.58,
         "target_px": 4.4,
         "downside_floor": 2.3,
-        "binding_reason": "An undated, eleven-month-stale sale process that the company has now stepped back from -- on the May 11, 2026 call the interim chief executive said AlTi is \"evaluating opportunities that come as opposed to a strategic review process in place at the moment\" -- deadlocked on a reported $600 million-plus valuation gap because roughly $352 million of preferred compounding at 9.75% consumes whatever a real wealth-manager multiple would pay. Upside to a generous strategic take-out is about +23% against about -35% to a low retest, with no verified floor and the clock running against the common."
+        "binding_reason": "An undated, eleven-month-stale sale process that the company has now stepped back from -- on the May 11, 2026 call the interim chief executive said AlTi is \"evaluating opportunities that come as opposed to a strategic review process in place at the moment\" -- deadlocked on a reported $600 million-plus valuation gap because roughly $352 million of preferred compounding at 9.75% consumes whatever a real wealth-manager multiple would pay. Upside to a generous strategic take-out is about +23% against about -35% to a low retest, with no verified floor and the clock running against the common.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "thesis",
+          "at": "2026-08-04",
+          "record_target_px": 4.4,
+          "record_floor_px": 2.3,
+          "implied_prob_at_record": 0.6095,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on thesis — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "AMLX": {
@@ -212,6 +252,16 @@
       "downside_floor": 6.0,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "numbers",
+        "at": "2026-08-04",
+        "record_target_px": 28.0,
+        "record_floor_px": 6.0,
+        "implied_prob_at_record": 0.6505,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on numbers — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "AMLX",
         "verdict": "REFUTED",
@@ -240,7 +290,17 @@
         "live_price": 20.31,
         "target_px": 28.0,
         "downside_floor": 6.0,
-        "binding_reason": "The event leg is excellent and independently verified - LUCIDITY reads ACTIVE_NOT_RECRUITING with an FDA-agreed objective endpoint, last-patient-in ~March 2026 against a Week-16 primary, so the print is mechanically due within weeks. The price is the disqualifier and the floor is falsified by the sponsor's own tape: this same management team's AMX0035 closed $18.97 on 7 Mar 2024, gapped to $3.36 the next session (-82.3%) and rested at $1.62 - and that shell held MORE cash per share (~$5.38) than AMLX will hold at the LUCIDITY print. A residual-pipeline haircut did not clear anywhere near $6 when it was actually tested; the honest 90-day failure mark is $2.00-2.50, i.e. -88% to -90%. After a ~170% run into the readout the shape is ~0.5:1 against, and the market already discounts ~65% odds of success. The asymmetry existed near $8, not at $20.31."
+        "binding_reason": "The event leg is excellent and independently verified - LUCIDITY reads ACTIVE_NOT_RECRUITING with an FDA-agreed objective endpoint, last-patient-in ~March 2026 against a Week-16 primary, so the print is mechanically due within weeks. The price is the disqualifier and the floor is falsified by the sponsor's own tape: this same management team's AMX0035 closed $18.97 on 7 Mar 2024, gapped to $3.36 the next session (-82.3%) and rested at $1.62 - and that shell held MORE cash per share (~$5.38) than AMLX will hold at the LUCIDITY print. A residual-pipeline haircut did not clear anywhere near $6 when it was actually tested; the honest 90-day failure mark is $2.00-2.50, i.e. -88% to -90%. After a ~170% run into the readout the shape is ~0.5:1 against, and the market already discounts ~65% odds of success. The asymmetry existed near $8, not at $20.31.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "numbers",
+          "at": "2026-08-04",
+          "record_target_px": 28.0,
+          "record_floor_px": 6.0,
+          "implied_prob_at_record": 0.6505,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on numbers — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "ANNX": {
@@ -278,6 +338,16 @@
       "downside_floor": 2.0,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 11.5,
+        "record_floor_px": 2.0,
+        "implied_prob_at_record": 0.4095,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "ANNX",
         "verdict": "REFUTED",
@@ -306,7 +376,17 @@
         "live_price": 5.89,
         "target_px": 11.5,
         "downside_floor": 2.0,
-        "binding_reason": "Phase 3 ARCHER II topline in geographic atrophy, guided to the fourth quarter of 2026 and reaffirmed as recently as 14 July 2026 - live, unfired, funded and mechanically forced (enrollment closed July 2025, so the 12-month primary has already read) - but at $5.89 the market already implies roughly 41% odds of success against our 35-40% read, so the asymmetry is largely spent (+95% to $11.50 versus -66% to a soft $2.00 floor)."
+        "binding_reason": "Phase 3 ARCHER II topline in geographic atrophy, guided to the fourth quarter of 2026 and reaffirmed as recently as 14 July 2026 - live, unfired, funded and mechanically forced (enrollment closed July 2025, so the 12-month primary has already read) - but at $5.89 the market already implies roughly 41% odds of success against our 35-40% read, so the asymmetry is largely spent (+95% to $11.50 versus -66% to a soft $2.00 floor).",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "catalyst",
+          "at": "2026-08-04",
+          "record_target_px": 11.5,
+          "record_floor_px": 2.0,
+          "implied_prob_at_record": 0.4095,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "AQST": {
@@ -344,6 +424,15 @@
       "downside_floor": 1.75,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_scope": "numbers",
+        "at": "2026-08-04",
+        "record_target_px": 8.5,
+        "record_floor_px": 1.75,
+        "implied_prob_at_record": 0.2881,
+        "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+      },
       "skeptic": {
         "symbol": "AQST",
         "verdict": "CONFIRMED_WITH_CORRECTIONS",
@@ -372,7 +461,16 @@
         "live_price": 3.695,
         "target_px": 8.5,
         "downside_floor": 1.75,
-        "binding_reason": "The catalyst survived the kill attempt only because the file had already conceded it: the FDA decision this was bought for fired against the position on 30 Jan 2026, and the replacement is a self-imposed Q3 re-filing promise with no regulator's date on any calendar - no 8-K since 10 Jun 2026, roughly eight weeks left in the guided quarter, and no real decision before H1 2027. By the bands, no live date is a sub-50 name regardless of the skeptic. The material correction actually favours the equity: funded recourse debt is $38.8m against $110.7m of cash - net cash ~$72m, not the net-debt-with-a-secured-lender-ahead framing the valley-of-death asserts; the other ~$90m is royalty and sold-revenue claims on the very revenue being capitalised, not a maturity that can force the company. Wait for the FDA acceptance letter - the first moment a date exists since January."
+        "binding_reason": "The catalyst survived the kill attempt only because the file had already conceded it: the FDA decision this was bought for fired against the position on 30 Jan 2026, and the replacement is a self-imposed Q3 re-filing promise with no regulator's date on any calendar - no 8-K since 10 Jun 2026, roughly eight weeks left in the guided quarter, and no real decision before H1 2027. By the bands, no live date is a sub-50 name regardless of the skeptic. The material correction actually favours the equity: funded recourse debt is $38.8m against $110.7m of cash - net cash ~$72m, not the net-debt-with-a-secured-lender-ahead framing the valley-of-death asserts; the other ~$90m is royalty and sold-revenue claims on the very revenue being capitalised, not a maturity that can force the company. Wait for the FDA acceptance letter - the first moment a date exists since January.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+          "kill_scope": "numbers",
+          "at": "2026-08-04",
+          "record_target_px": 8.5,
+          "record_floor_px": 1.75,
+          "implied_prob_at_record": 0.2881,
+          "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+        }
       }
     },
     "AVIR": {
@@ -410,6 +508,16 @@
       "downside_floor": 2.4,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 7.5,
+        "record_floor_px": 2.4,
+        "implied_prob_at_record": 0.451,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "AVIR",
         "verdict": "REFUTED",
@@ -438,7 +546,17 @@
         "live_price": 4.7,
         "target_px": 7.5,
         "downside_floor": 2.4,
-        "binding_reason": "The rarest and most instructive outcome in the funnel: the binary fired YES and the equity was marked DOWN. C-BEYOND met both endpoints on 28 Jul 2026 - 93.9% vs 94.8% SVR against Epclusa across 905 patients, no drug-related serious adverse events - and the shares fell 6.63% that day on 1.39m shares against a 180-380k baseline, sitting ~2.5% BELOW the pre-result close four sessions later. When a catalyst fires favourably and the stock falls, the market is saying the clinical result was never where the value was, and any position after it is a wager that a deep, attentive register misjudged the result it had waited eighteen months for. Nothing dated remains: no NDA date, no partner, no launch plan, and the only remaining trigger (C-FORWARD) is confirmatory and slipped a quarter to early 2027 in the same breath as the good news."
+        "binding_reason": "The rarest and most instructive outcome in the funnel: the binary fired YES and the equity was marked DOWN. C-BEYOND met both endpoints on 28 Jul 2026 - 93.9% vs 94.8% SVR against Epclusa across 905 patients, no drug-related serious adverse events - and the shares fell 6.63% that day on 1.39m shares against a 180-380k baseline, sitting ~2.5% BELOW the pre-result close four sessions later. When a catalyst fires favourably and the stock falls, the market is saying the clinical result was never where the value was, and any position after it is a wager that a deep, attentive register misjudged the result it had waited eighteen months for. Nothing dated remains: no NDA date, no partner, no launch plan, and the only remaining trigger (C-FORWARD) is confirmatory and slipped a quarter to early 2027 in the same breath as the good news.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "catalyst",
+          "at": "2026-08-04",
+          "record_target_px": 7.5,
+          "record_floor_px": 2.4,
+          "implied_prob_at_record": 0.451,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "AXTA": {
@@ -476,6 +594,16 @@
       "downside_floor": 28.18,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "numbers",
+        "at": "2026-08-04",
+        "record_target_px": 36.34,
+        "record_floor_px": 28.18,
+        "implied_prob_at_record": 0.935,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on numbers — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "AXTA",
         "verdict": "REFUTED",
@@ -504,7 +632,17 @@
         "live_price": 35.81,
         "target_px": 36.34,
         "downside_floor": 28.18,
-        "binding_reason": "The spread is gone and on matched marks it is negative - the '1.5%' pairs a live AkzoNobel quote against a stale Friday AXTA close; on properly matched 31 July closes the terms were worth ~$35.4 against $35.81, i.e. the stock traded ~1.2% THROUGH them. Worse, the $28.18 'verified floor' is not a floor: with the merger already signed, announced and live, AXTA closed $25.44 on 20 Mar 2026 simply because AkzoNobel fell, and a round-trip to AkzoNobel's own 52-week low marks the consideration at ~$24.4 - about 32% below spot - WITH THE MERGER COMPLETING EXACTLY ON ITS SIGNED TERMS. All-stock, no collar, no cash element, no CVR, no termination payment to Axalta holders; and this book cannot short the acquirer, so it is an unhedged long of 0.6539 AkzoNobel plus unhedged EUR/USD to 18 May 2027, extendable to 18 Nov 2027."
+        "binding_reason": "The spread is gone and on matched marks it is negative - the '1.5%' pairs a live AkzoNobel quote against a stale Friday AXTA close; on properly matched 31 July closes the terms were worth ~$35.4 against $35.81, i.e. the stock traded ~1.2% THROUGH them. Worse, the $28.18 'verified floor' is not a floor: with the merger already signed, announced and live, AXTA closed $25.44 on 20 Mar 2026 simply because AkzoNobel fell, and a round-trip to AkzoNobel's own 52-week low marks the consideration at ~$24.4 - about 32% below spot - WITH THE MERGER COMPLETING EXACTLY ON ITS SIGNED TERMS. All-stock, no collar, no cash element, no CVR, no termination payment to Axalta holders; and this book cannot short the acquirer, so it is an unhedged long of 0.6539 AkzoNobel plus unhedged EUR/USD to 18 May 2027, extendable to 18 Nov 2027.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "numbers",
+          "at": "2026-08-04",
+          "record_target_px": 36.34,
+          "record_floor_px": 28.18,
+          "implied_prob_at_record": 0.935,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on numbers — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "BBIO": {
@@ -542,6 +680,15 @@
       "downside_floor": 58.0,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_scope": "",
+        "at": "2026-08-04",
+        "record_target_px": 105.0,
+        "record_floor_px": 58.0,
+        "implied_prob_at_record": 0.1872,
+        "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+      },
       "skeptic": {
         "symbol": "BBIO",
         "verdict": "CONFIRMED_WITH_CORRECTIONS",
@@ -569,7 +716,16 @@
         "live_price": 66.8,
         "target_px": 105.0,
         "downside_floor": 58.0,
-        "binding_reason": "First-ever limb-girdle muscular dystrophy therapy (BBP-418) faces a firm FDA decision on November 27, 2026, with positive Phase 3 data and no advisory committee in the way; ~+57% to a $105 approval target versus ~-13% to a verified $58 franchise-and-cash floor."
+        "binding_reason": "First-ever limb-girdle muscular dystrophy therapy (BBP-418) faces a firm FDA decision on November 27, 2026, with positive Phase 3 data and no advisory committee in the way; ~+57% to a $105 approval target versus ~-13% to a verified $58 franchise-and-cash floor.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+          "kill_scope": "",
+          "at": "2026-08-04",
+          "record_target_px": 105.0,
+          "record_floor_px": 58.0,
+          "implied_prob_at_record": 0.1872,
+          "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+        }
       }
     },
     "BLCO": {
@@ -607,6 +763,16 @@
       "downside_floor": 11.8,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 26.97,
+        "record_floor_px": 11.8,
+        "implied_prob_at_record": 0.3368,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "BLCO",
         "verdict": "REFUTED",
@@ -635,7 +801,17 @@
         "live_price": 16.91,
         "target_px": 26.97,
         "downside_floor": 11.8,
-        "binding_reason": "Six years, three abandoned routes, and the gate is now RECEDING rather than closing. The file's only date is misattributed: end-2028 is Bausch + Lomb's OWN investor-day leverage plan, not the parent's gating ratio - BHC has published neither a ratio nor a date - so stripped of the misattribution there is no date at all. The kill the dossier never mentions is Xifaxan: carried at $808m with 18 months of remaining useful life (loss of exclusivity ~Jan 2028) and CMS-negotiated prices effective 2027, against an H1-2026 parent net loss of $1,165m and total equity flipped to an $(802)m deficit. A parent whose largest product is repriced then genericized does not de-lever INTO the gate - its ratio rises mechanically as EBITDA falls. And that same fact breaks the entry mechanic: a parent needing CASH does a discounted secondary of the 310m-share block, the worst structure for a minority holder and the one assigned no weight."
+        "binding_reason": "Six years, three abandoned routes, and the gate is now RECEDING rather than closing. The file's only date is misattributed: end-2028 is Bausch + Lomb's OWN investor-day leverage plan, not the parent's gating ratio - BHC has published neither a ratio nor a date - so stripped of the misattribution there is no date at all. The kill the dossier never mentions is Xifaxan: carried at $808m with 18 months of remaining useful life (loss of exclusivity ~Jan 2028) and CMS-negotiated prices effective 2027, against an H1-2026 parent net loss of $1,165m and total equity flipped to an $(802)m deficit. A parent whose largest product is repriced then genericized does not de-lever INTO the gate - its ratio rises mechanically as EBITDA falls. And that same fact breaks the entry mechanic: a parent needing CASH does a discounted secondary of the 310m-share block, the worst structure for a minority holder and the one assigned no weight.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "catalyst",
+          "at": "2026-08-04",
+          "record_target_px": 26.97,
+          "record_floor_px": 11.8,
+          "implied_prob_at_record": 0.3368,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "CAPR": {
@@ -673,6 +849,16 @@
       "downside_floor": 2.75,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 4.75,
+        "record_floor_px": 2.75,
+        "implied_prob_at_record": 0.55,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "CAPR",
         "verdict": "REFUTED",
@@ -701,7 +887,17 @@
         "live_price": 3.85,
         "target_px": 4.75,
         "downside_floor": 2.75,
-        "binding_reason": "The lane's clearest lesson, and it belongs in the ledger. The adcomm fired on the exact boarded date, 29 Jul 2026, voting 3 for / 9 against; the shares went $19.44 to $3.85 and broke the underwritten $7.00 floor by 45%. That floor was never real - the only genuine backstop was always net cash, and the price now sits AT it, not below it. The skeptic then removes even that: the file's green flag that no ATM is disclosed is FALSE, and roughly $75m of live, non-baby-shelf-constrained ATM capacity sits over a $223m market cap - about 19m shares, +33% on the count, issuable at $3.85 without a shareholder vote or a press release. A net-cash floor the issuer can print into, held by a team that spent $23.4m of capex in one quarter expanding a plant for an already-rejected drug, is a melting backstop with a tap on it."
+        "binding_reason": "The lane's clearest lesson, and it belongs in the ledger. The adcomm fired on the exact boarded date, 29 Jul 2026, voting 3 for / 9 against; the shares went $19.44 to $3.85 and broke the underwritten $7.00 floor by 45%. That floor was never real - the only genuine backstop was always net cash, and the price now sits AT it, not below it. The skeptic then removes even that: the file's green flag that no ATM is disclosed is FALSE, and roughly $75m of live, non-baby-shelf-constrained ATM capacity sits over a $223m market cap - about 19m shares, +33% on the count, issuable at $3.85 without a shareholder vote or a press release. A net-cash floor the issuer can print into, held by a team that spent $23.4m of capex in one quarter expanding a plant for an already-rejected drug, is a melting backstop with a tap on it.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "catalyst",
+          "at": "2026-08-04",
+          "record_target_px": 4.75,
+          "record_floor_px": 2.75,
+          "implied_prob_at_record": 0.55,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "CELC": {
@@ -739,6 +935,16 @@
       "downside_floor": 55.0,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 153.0,
+        "record_floor_px": 55.0,
+        "implied_prob_at_record": 0.2783,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "CELC",
         "verdict": "REFUTED",
@@ -767,7 +973,17 @@
         "live_price": 82.27,
         "target_px": 153.0,
         "downside_floor": 55.0,
-        "binding_reason": "The FDA approved REVTORPYK on 14 July 2026, three days ahead of the 17 July deadline - the catalyst has fired favourably and the stock fell 17.6% the next day on a launch pushed to late third quarter; from $82.27 the residual asymmetry is about +86% to a $153 target against roughly -33% to a $55 adverse value that is modelled rather than backstopped."
+        "binding_reason": "The FDA approved REVTORPYK on 14 July 2026, three days ahead of the 17 July deadline - the catalyst has fired favourably and the stock fell 17.6% the next day on a launch pushed to late third quarter; from $82.27 the residual asymmetry is about +86% to a $153 target against roughly -33% to a $55 adverse value that is modelled rather than backstopped.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "catalyst",
+          "at": "2026-08-04",
+          "record_target_px": 153.0,
+          "record_floor_px": 55.0,
+          "implied_prob_at_record": 0.2783,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "CLVT": {
@@ -805,6 +1021,15 @@
       "downside_floor": 1.42,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_scope": "",
+        "at": "2026-08-04",
+        "record_target_px": 6.17,
+        "record_floor_px": 1.42,
+        "implied_prob_at_record": 0.1495,
+        "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+      },
       "skeptic": {
         "symbol": "CLVT",
         "verdict": "CONFIRMED_WITH_CORRECTIONS",
@@ -832,7 +1057,16 @@
         "live_price": 2.13,
         "target_px": 6.17,
         "downside_floor": 1.42,
-        "binding_reason": "Management-led sale of the Life Sciences & Healthcare unit plus a deleveraging Value Creation Plan — confirmed in 'active discussions' since Feb 24, 2026 with Morgan Stanley but undated and non-binding ('no assurance'); a real but soft catalyst, with ~+190% upside to a $6.17 sum-of-the-parts target against a ~$1.42 soft floor."
+        "binding_reason": "Management-led sale of the Life Sciences & Healthcare unit plus a deleveraging Value Creation Plan — confirmed in 'active discussions' since Feb 24, 2026 with Morgan Stanley but undated and non-binding ('no assurance'); a real but soft catalyst, with ~+190% upside to a $6.17 sum-of-the-parts target against a ~$1.42 soft floor.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+          "kill_scope": "",
+          "at": "2026-08-04",
+          "record_target_px": 6.17,
+          "record_floor_px": 1.42,
+          "implied_prob_at_record": 0.1495,
+          "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+        }
       }
     },
     "DBVT": {
@@ -870,6 +1104,16 @@
       "downside_floor": 6.0,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 34.0,
+        "record_floor_px": 6.0,
+        "implied_prob_at_record": 0.2679,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "DBVT",
         "verdict": "REFUTED",
@@ -898,7 +1142,17 @@
         "live_price": 13.5,
         "target_px": 34.0,
         "downside_floor": 6.0,
-        "binding_reason": "The board driver is FDA_approval_decision and no FDA decision date can exist, because no marketing application is on file - submission guidance has moved from 1H 2026 to end-Q2 to Q3 2026, and the earliest decision is mid-2027 on a priority review that has been REQUESTED, not granted. Verified cash is ~$3.53 per ADS against $13.50, so ~74% of the price is an unapproved patch with no counterparty, no CVR and no salable hard asset. The bull's strongest argument is refuted outright: RA Capital's purchase was an AT-THE-MARKET sale through the company's own program via Citizens JMP, so a 0.15% gap to the prior close is a mechanical property of the instrument, not a vote of confidence - and 5.82% is the disclosed DILUTION to existing holders, not RA's resulting stake. Remaining discretionary ATM headroom is ~$100m, not $70m. Read correctly, 30 July is evidence FOR the dilution thesis."
+        "binding_reason": "The board driver is FDA_approval_decision and no FDA decision date can exist, because no marketing application is on file - submission guidance has moved from 1H 2026 to end-Q2 to Q3 2026, and the earliest decision is mid-2027 on a priority review that has been REQUESTED, not granted. Verified cash is ~$3.53 per ADS against $13.50, so ~74% of the price is an unapproved patch with no counterparty, no CVR and no salable hard asset. The bull's strongest argument is refuted outright: RA Capital's purchase was an AT-THE-MARKET sale through the company's own program via Citizens JMP, so a 0.15% gap to the prior close is a mechanical property of the instrument, not a vote of confidence - and 5.82% is the disclosed DILUTION to existing holders, not RA's resulting stake. Remaining discretionary ATM headroom is ~$100m, not $70m. Read correctly, 30 July is evidence FOR the dilution thesis.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "catalyst",
+          "at": "2026-08-04",
+          "record_target_px": 34.0,
+          "record_floor_px": 6.0,
+          "implied_prob_at_record": 0.2679,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "DDL": {
@@ -936,6 +1190,15 @@
       "downside_floor": 1.9,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_scope": "thesis",
+        "at": "2026-08-04",
+        "record_target_px": 3.25,
+        "record_floor_px": 1.9,
+        "implied_prob_at_record": 0.4963,
+        "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+      },
       "skeptic": {
         "symbol": "DDL",
         "verdict": "CONFIRMED_WITH_CORRECTIONS",
@@ -964,7 +1227,16 @@
         "live_price": 2.57,
         "target_px": 3.25,
         "downside_floor": 1.9,
-        "binding_reason": "A binding, shareholder-approved Meituan SPA worth up to US$4.60/sh gross against $2.57, every deal term verified verbatim from primary filings and genuinely unfired. But the skeptic's unabsorbed material correction changes what the position IS: the 27 Mar 2026 resolution is EMPOWERING, not binding - the board may act 'at such time, in such manner as the Board, in its absolute discretion, deems appropriate' - so this is a governance bet on a founder-controlled Cayman board with super-voting shares, not an arb with an approved distribution attached. Hold clearance odds at 68% but assume the board returns only half and fair value is ~$2.41, BELOW spot. Entry has decayed from $1.94 (4.28:1) to ~1:1. The free dated read is whether the US$280m draw reaches the parent by 31 Aug 2026 - that repairs the floor and restores 2:1 at the same price."
+        "binding_reason": "A binding, shareholder-approved Meituan SPA worth up to US$4.60/sh gross against $2.57, every deal term verified verbatim from primary filings and genuinely unfired. But the skeptic's unabsorbed material correction changes what the position IS: the 27 Mar 2026 resolution is EMPOWERING, not binding - the board may act 'at such time, in such manner as the Board, in its absolute discretion, deems appropriate' - so this is a governance bet on a founder-controlled Cayman board with super-voting shares, not an arb with an approved distribution attached. Hold clearance odds at 68% but assume the board returns only half and fair value is ~$2.41, BELOW spot. Entry has decayed from $1.94 (4.28:1) to ~1:1. The free dated read is whether the US$280m draw reaches the parent by 31 Aug 2026 - that repairs the floor and restores 2:1 at the same price.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+          "kill_scope": "thesis",
+          "at": "2026-08-04",
+          "record_target_px": 3.25,
+          "record_floor_px": 1.9,
+          "implied_prob_at_record": 0.4963,
+          "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+        }
       }
     },
     "EYPT": {
@@ -1002,6 +1274,16 @@
       "downside_floor": 4.75,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "numbers",
+        "at": "2026-08-04",
+        "record_target_px": 35.0,
+        "record_floor_px": 4.75,
+        "implied_prob_at_record": 0.2479,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on numbers — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "EYPT",
         "verdict": "REFUTED",
@@ -1030,7 +1312,17 @@
         "live_price": 12.25,
         "target_px": 35.0,
         "downside_floor": 4.75,
-        "binding_reason": "REFUTED, and the refutation is that BOTH ends of the advertised 3:1 are manufactured. The floor writes off the Durasert/Verisome platform in one sentence ('the same drug in the same insert facing the same durability question') and capitalises it at ~$290m in the next; on the file's own stated method the floor is ~$2.00, not $4.75, so downside is -84% not -61%. The target is contradicted by the one live comparable: Ocular Therapeutix ALREADY WON a wet-AMD Phase 3 (SOL-1, 17 Feb 2026) and carries ~$1.1bn EV, while EyePoint at $35 implies ~$2.8bn on a not-yet-won, second-to-file, non-inferiority label - about 2.5x the EV of the proven leader ahead of it. Corrected, the trade is ~1:1. The catalyst itself is the best-verified live event in the funnel - genuinely unfired, database complete, every patient past the primary timepoint - which is the only reason this tops the refuted set."
+        "binding_reason": "REFUTED, and the refutation is that BOTH ends of the advertised 3:1 are manufactured. The floor writes off the Durasert/Verisome platform in one sentence ('the same drug in the same insert facing the same durability question') and capitalises it at ~$290m in the next; on the file's own stated method the floor is ~$2.00, not $4.75, so downside is -84% not -61%. The target is contradicted by the one live comparable: Ocular Therapeutix ALREADY WON a wet-AMD Phase 3 (SOL-1, 17 Feb 2026) and carries ~$1.1bn EV, while EyePoint at $35 implies ~$2.8bn on a not-yet-won, second-to-file, non-inferiority label - about 2.5x the EV of the proven leader ahead of it. Corrected, the trade is ~1:1. The catalyst itself is the best-verified live event in the funnel - genuinely unfired, database complete, every patient past the primary timepoint - which is the only reason this tops the refuted set.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "numbers",
+          "at": "2026-08-04",
+          "record_target_px": 35.0,
+          "record_floor_px": 4.75,
+          "implied_prob_at_record": 0.2479,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on numbers — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "FIG": {
@@ -1068,6 +1360,16 @@
       "downside_floor": 16.6,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "thesis",
+        "at": "2026-08-04",
+        "record_target_px": 29.0,
+        "record_floor_px": 16.6,
+        "implied_prob_at_record": 0.6226,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on thesis — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "FIG",
         "verdict": "REFUTED",
@@ -1096,7 +1398,17 @@
         "live_price": 24.32,
         "target_px": 29.0,
         "downside_floor": 16.6,
-        "binding_reason": "The single hardest contractual date in the funnel - 7 Aug 2026, confirmed against the 30 Aug 2025 Extended Lock-Up Agreement - pointing the WRONG WAY. The driver is tagged Forced_divest_flow, a thesis that pays when a known seller is EXHAUSTED; what the lock-up delivers is the ARRIVAL of permission to sell ~77.7m Class A shares (~15% of shares outstanding, far more of what actually trades) to pre-listing venture funds that distribute in kind to LPs who then liquidate with no reference to price. Exhaustion is an empirical event following the contractual one by an unknown number of weeks - the $16.60 record low printed roughly six weeks AFTER the May tranche. No floor: net cash is $3.02/sh, 12.4% of price, and $16.60 is a level the market recently PAID, not one anything prevents it going through. After a ~46% rally into the supply the shape is 0.61:1, and the 5 Aug print stacks a second unhedgeable binary two days ahead of the release."
+        "binding_reason": "The single hardest contractual date in the funnel - 7 Aug 2026, confirmed against the 30 Aug 2025 Extended Lock-Up Agreement - pointing the WRONG WAY. The driver is tagged Forced_divest_flow, a thesis that pays when a known seller is EXHAUSTED; what the lock-up delivers is the ARRIVAL of permission to sell ~77.7m Class A shares (~15% of shares outstanding, far more of what actually trades) to pre-listing venture funds that distribute in kind to LPs who then liquidate with no reference to price. Exhaustion is an empirical event following the contractual one by an unknown number of weeks - the $16.60 record low printed roughly six weeks AFTER the May tranche. No floor: net cash is $3.02/sh, 12.4% of price, and $16.60 is a level the market recently PAID, not one anything prevents it going through. After a ~46% rally into the supply the shape is 0.61:1, and the 5 Aug print stacks a second unhedgeable binary two days ahead of the release.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "thesis",
+          "at": "2026-08-04",
+          "record_target_px": 29.0,
+          "record_floor_px": 16.6,
+          "implied_prob_at_record": 0.6226,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on thesis — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "FIP": {
@@ -1134,6 +1446,16 @@
       "downside_floor": 1.5,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "thesis",
+        "at": "2026-08-04",
+        "record_target_px": 8.75,
+        "record_floor_px": 1.5,
+        "implied_prob_at_record": 0.3076,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on thesis — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "FIP",
         "verdict": "REFUTED",
@@ -1163,7 +1485,17 @@
         "live_price": 3.73,
         "target_px": 8.75,
         "downside_floor": 1.5,
-        "binding_reason": "A real, binding, dated event attached to the wrong side of the capital structure. The $1.512bn Long Ridge sale to MARA carries no financing condition and a 30 Nov 2026 outside date, and the FERC application is docketed - but FIP is the SELLER: its own shares carry no offer price, no spread and no bid, which is exactly why the stock fell five sessions running into a fully on-track deal and closed $3.73 on a new 52-week low, roughly 4% THROUGH the $3.90 level it was scored against as a floor. Beneath it sits negative $303.1m of book equity, $37.9m of unrestricted cash, going-concern language leaning on this very sale, and ~$3.8bn of debt plus a RailCo preferred whose PIK dividends compound ahead of the common and cannot be redeemed before 2032. Both sides also omit the Series B preferred entirely (+21,818,025 shares, +18.5%), which makes the $8.75 target an 18x outcome presented as a 17x one."
+        "binding_reason": "A real, binding, dated event attached to the wrong side of the capital structure. The $1.512bn Long Ridge sale to MARA carries no financing condition and a 30 Nov 2026 outside date, and the FERC application is docketed - but FIP is the SELLER: its own shares carry no offer price, no spread and no bid, which is exactly why the stock fell five sessions running into a fully on-track deal and closed $3.73 on a new 52-week low, roughly 4% THROUGH the $3.90 level it was scored against as a floor. Beneath it sits negative $303.1m of book equity, $37.9m of unrestricted cash, going-concern language leaning on this very sale, and ~$3.8bn of debt plus a RailCo preferred whose PIK dividends compound ahead of the common and cannot be redeemed before 2032. Both sides also omit the Series B preferred entirely (+21,818,025 shares, +18.5%), which makes the $8.75 target an 18x outcome presented as a 17x one.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "thesis",
+          "at": "2026-08-04",
+          "record_target_px": 8.75,
+          "record_floor_px": 1.5,
+          "implied_prob_at_record": 0.3076,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on thesis — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "FUN": {
@@ -1201,6 +1533,16 @@
       "downside_floor": 11.0,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 30.0,
+        "record_floor_px": 11.0,
+        "implied_prob_at_record": 0.3468,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "FUN",
         "verdict": "REFUTED",
@@ -1229,7 +1571,17 @@
         "live_price": 17.59,
         "target_px": 30.0,
         "downside_floor": 11.0,
-        "binding_reason": "An undated, non-binding activist push by JANA Partners (about 9% economic interest, sale demand letter 17 March 2026) that the board has so far answered with governance changes and asset sales rather than a sale process; the 2026 proxy window closed at the 26 May 2026 annual meeting without a contested vote, and the claimed $16.50 downside floor was already broken at $12.51 within the past year, so the asymmetry is roughly +71% against -35% rather than the 6%-risk trade it was written up as."
+        "binding_reason": "An undated, non-binding activist push by JANA Partners (about 9% economic interest, sale demand letter 17 March 2026) that the board has so far answered with governance changes and asset sales rather than a sale process; the 2026 proxy window closed at the 26 May 2026 annual meeting without a contested vote, and the claimed $16.50 downside floor was already broken at $12.51 within the past year, so the asymmetry is roughly +71% against -35% rather than the 6%-risk trade it was written up as.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "catalyst",
+          "at": "2026-08-04",
+          "record_target_px": 30.0,
+          "record_floor_px": 11.0,
+          "implied_prob_at_record": 0.3468,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "GDOT": {
@@ -1267,6 +1619,16 @@
       "downside_floor": 11.0,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "numbers",
+        "at": "2026-08-04",
+        "record_target_px": 14.23,
+        "record_floor_px": 11.0,
+        "implied_prob_at_record": 0.6687,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on numbers — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "GDOT",
         "verdict": "REFUTED",
@@ -1295,7 +1657,17 @@
         "live_price": 13.16,
         "target_px": 14.23,
         "downside_floor": 11.0,
-        "binding_reason": "A signed, shareholder-approved break-up of Green Dot paying $8.11 in cash plus 0.2215 shares of a newly listed bank holding company, guided to close in the third quarter of 2026 with a hard contractual outside date of 23 November 2026 - but at $13.16 the shares already discount the close, offering about 8% to management's conservative $14.23 against a 16% fall to an $11.00 broken-deal floor, so the asymmetry now runs the wrong way."
+        "binding_reason": "A signed, shareholder-approved break-up of Green Dot paying $8.11 in cash plus 0.2215 shares of a newly listed bank holding company, guided to close in the third quarter of 2026 with a hard contractual outside date of 23 November 2026 - but at $13.16 the shares already discount the close, offering about 8% to management's conservative $14.23 against a 16% fall to an $11.00 broken-deal floor, so the asymmetry now runs the wrong way.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "numbers",
+          "at": "2026-08-04",
+          "record_target_px": 14.23,
+          "record_floor_px": 11.0,
+          "implied_prob_at_record": 0.6687,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on numbers — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "GERN": {
@@ -1333,6 +1705,16 @@
       "downside_floor": 1.0,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 3.75,
+        "record_floor_px": 1.0,
+        "implied_prob_at_record": 0.1527,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "GERN",
         "verdict": "REFUTED",
@@ -1361,7 +1743,17 @@
         "live_price": 1.42,
         "target_px": 3.75,
         "downside_floor": 1.0,
-        "binding_reason": "The Phase 3 IMpactMF interim survival readout, guided to the second half of 2026 but triggered by a death count rather than a date and already four times late: an early stop for efficacy takes the stock to roughly $3.75 from $1.42 against a cash-and-revenue-backed floor near $1.00, but management's own base case is that the committee simply says keep going and the real answer waits until 2028."
+        "binding_reason": "The Phase 3 IMpactMF interim survival readout, guided to the second half of 2026 but triggered by a death count rather than a date and already four times late: an early stop for efficacy takes the stock to roughly $3.75 from $1.42 against a cash-and-revenue-backed floor near $1.00, but management's own base case is that the committee simply says keep going and the real answer waits until 2028.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "catalyst",
+          "at": "2026-08-04",
+          "record_target_px": 3.75,
+          "record_floor_px": 1.0,
+          "implied_prob_at_record": 0.1527,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "KBR": {
@@ -1399,6 +1791,15 @@
       "downside_floor": 33.2,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_scope": "",
+        "at": "2026-08-04",
+        "record_target_px": 53.0,
+        "record_floor_px": 33.2,
+        "implied_prob_at_record": 0.0086,
+        "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+      },
       "skeptic": {
         "symbol": "KBR",
         "verdict": "CONFIRMED_WITH_CORRECTIONS",
@@ -1426,7 +1827,16 @@
         "live_price": 33.37,
         "target_px": 53.0,
         "downside_floor": 33.2,
-        "binding_reason": "Tax-free spin-off of Mission Technology Solutions into a separate public company, effective January 4, 2027 - live price ~$33 sits well below the ~$53 parts target with a real floor at the standalone-bundle price (~$33), a wide, defined-risk asymmetry."
+        "binding_reason": "Tax-free spin-off of Mission Technology Solutions into a separate public company, effective January 4, 2027 - live price ~$33 sits well below the ~$53 parts target with a real floor at the standalone-bundle price (~$33), a wide, defined-risk asymmetry.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+          "kill_scope": "",
+          "at": "2026-08-04",
+          "record_target_px": 53.0,
+          "record_floor_px": 33.2,
+          "implied_prob_at_record": 0.0086,
+          "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+        }
       }
     },
     "KDP": {
@@ -1464,6 +1874,16 @@
       "downside_floor": 26.0,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 36.0,
+        "record_floor_px": 26.0,
+        "implied_prob_at_record": 0.512,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "KDP",
         "verdict": "REFUTED",
@@ -1492,7 +1912,17 @@
         "live_price": 31.12,
         "target_px": 36.0,
         "downside_floor": 26.0,
-        "binding_reason": "The event does not legally exist yet: a universe-wide sweep of every Form 10-12B accepted by the SEC between 1 Apr and 3 Aug 2026 returns the other live 2026 spin-offs and NO Global Coffee Co. registrant of any kind. 'Targeted for early 2027' was already pushed from end-2026, and it was announced in the very release that disclosed the designated coffee CEO's departure - that seat has now emptied twice in nine months, and companies do not set distribution dates for businesses without CEOs. No record date, no counterparty, no break fee, no contractual payout. The floor is the 200-day moving average to within twelve cents, over a 52-week low of $24.88 already printed. The driver tag is inverted - index flow lands on the DISTRIBUTED entity after the split, not the parent before it - and the upside is strike-capped by the $4.5bn preferred converting at $37.25, between the $36 base case and the $37 street median."
+        "binding_reason": "The event does not legally exist yet: a universe-wide sweep of every Form 10-12B accepted by the SEC between 1 Apr and 3 Aug 2026 returns the other live 2026 spin-offs and NO Global Coffee Co. registrant of any kind. 'Targeted for early 2027' was already pushed from end-2026, and it was announced in the very release that disclosed the designated coffee CEO's departure - that seat has now emptied twice in nine months, and companies do not set distribution dates for businesses without CEOs. No record date, no counterparty, no break fee, no contractual payout. The floor is the 200-day moving average to within twelve cents, over a 52-week low of $24.88 already printed. The driver tag is inverted - index flow lands on the DISTRIBUTED entity after the split, not the parent before it - and the upside is strike-capped by the $4.5bn preferred converting at $37.25, between the $36 base case and the $37 street median.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "catalyst",
+          "at": "2026-08-04",
+          "record_target_px": 36.0,
+          "record_floor_px": 26.0,
+          "implied_prob_at_record": 0.512,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "LBTYK": {
@@ -1530,6 +1960,15 @@
       "downside_floor": 8.0,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_scope": "numbers",
+        "at": "2026-08-04",
+        "record_target_px": 18.0,
+        "record_floor_px": 8.0,
+        "implied_prob_at_record": 0.159,
+        "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+      },
       "skeptic": {
         "symbol": "LBTYK",
         "verdict": "CONFIRMED_WITH_CORRECTIONS",
@@ -1558,7 +1997,16 @@
         "live_price": 9.59,
         "target_px": 18.0,
         "downside_floor": 8.0,
-        "binding_reason": "Ziggo Group, the combined Dutch and Belgian business, is set to be spun off and listed in Amsterdam “as early as mid-2027” - no record date, no filing, about eleven months out - offering roughly +88% to an $18 event-resolved value against about -17% to a verified $8.00 asset floor, with the stock at a 52-week low of $9.59 after the 24 July 2026 results."
+        "binding_reason": "Ziggo Group, the combined Dutch and Belgian business, is set to be spun off and listed in Amsterdam “as early as mid-2027” - no record date, no filing, about eleven months out - offering roughly +88% to an $18 event-resolved value against about -17% to a verified $8.00 asset floor, with the stock at a 52-week low of $9.59 after the 24 July 2026 results.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+          "kill_scope": "numbers",
+          "at": "2026-08-04",
+          "record_target_px": 18.0,
+          "record_floor_px": 8.0,
+          "implied_prob_at_record": 0.159,
+          "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+        }
       }
     },
     "LZM": {
@@ -1596,6 +2044,16 @@
       "downside_floor": 2.0,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "thesis",
+        "at": "2026-08-04",
+        "record_target_px": 7.0,
+        "record_floor_px": 2.0,
+        "implied_prob_at_record": 0.262,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on thesis — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "LZM",
         "verdict": "REFUTED",
@@ -1624,7 +2082,17 @@
         "live_price": 3.31,
         "target_px": 7.0,
         "downside_floor": 2.0,
-        "binding_reason": "Sale of a stake in, or all of, the Kabanga nickel project through the Standard Chartered process -- multiple offers at term sheet, described as concluding shortly on 30 April 2026, still unannounced eighty-nine days later, with the guided mid-2026 build decision lapsed and no replacement date; $3.31 today against a $7.00 event-win and a roughly $2.00 verified floor, so the arithmetic is attractive but the clock is not ours."
+        "binding_reason": "Sale of a stake in, or all of, the Kabanga nickel project through the Standard Chartered process -- multiple offers at term sheet, described as concluding shortly on 30 April 2026, still unannounced eighty-nine days later, with the guided mid-2026 build decision lapsed and no replacement date; $3.31 today against a $7.00 event-win and a roughly $2.00 verified floor, so the arithmetic is attractive but the clock is not ours.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "thesis",
+          "at": "2026-08-04",
+          "record_target_px": 7.0,
+          "record_floor_px": 2.0,
+          "implied_prob_at_record": 0.262,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on thesis — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "MLYS": {
@@ -1662,6 +2130,15 @@
       "downside_floor": 13.0,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_scope": "numbers",
+        "at": "2026-08-04",
+        "record_target_px": 38.0,
+        "record_floor_px": 13.0,
+        "implied_prob_at_record": 0.5008,
+        "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+      },
       "skeptic": {
         "symbol": "MLYS",
         "verdict": "CONFIRMED_WITH_CORRECTIONS",
@@ -1691,7 +2168,16 @@
         "live_price": 25.52,
         "target_px": 38.0,
         "downside_floor": 13.0,
-        "binding_reason": "The only file in the funnel where the skeptic's own verdict is that 'nothing found refutes the event, the timing or the floor as drawn' - a statutory 22 Dec 2026 PDUFA that has not moved since March, no advisory committee called, into a mechanism the FDA already validated by approving baxdrostat on 18 May 2026; every load-bearing balance-sheet number reconciles exactly to primary filings. The material correction is confined to the street anchor ($43 median, not the ~$49 the file leaned on five times), which removes external corroboration but touches nothing structural. Held out of the 70s because the payoff is 1:1 raw (+49% / -49%) carried entirely by the odds, the $13 floor is an estimate with no contractual backstop, and net cash of $6.20/sh (24% of price) ranks behind a first-priority secured lender."
+        "binding_reason": "The only file in the funnel where the skeptic's own verdict is that 'nothing found refutes the event, the timing or the floor as drawn' - a statutory 22 Dec 2026 PDUFA that has not moved since March, no advisory committee called, into a mechanism the FDA already validated by approving baxdrostat on 18 May 2026; every load-bearing balance-sheet number reconciles exactly to primary filings. The material correction is confined to the street anchor ($43 median, not the ~$49 the file leaned on five times), which removes external corroboration but touches nothing structural. Held out of the 70s because the payoff is 1:1 raw (+49% / -49%) carried entirely by the odds, the $13 floor is an estimate with no contractual backstop, and net cash of $6.20/sh (24% of price) ranks behind a first-priority secured lender.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+          "kill_scope": "numbers",
+          "at": "2026-08-04",
+          "record_target_px": 38.0,
+          "record_floor_px": 13.0,
+          "implied_prob_at_record": 0.5008,
+          "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+        }
       }
     },
     "MP": {
@@ -1729,6 +2215,16 @@
       "downside_floor": 29.0,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 78.0,
+        "record_floor_px": 29.0,
+        "implied_prob_at_record": 0.2524,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "MP",
         "verdict": "REFUTED",
@@ -1757,7 +2253,17 @@
         "live_price": 41.37,
         "target_px": 78.0,
         "downside_floor": 29.0,
-        "binding_reason": "Everything binding fired in July 2025 - the $400m preferred at $30.03, the warrant, the ten-year $110/kg NdPr price floor, the 10X offtake with its $140m EBITDA minimum - and the 10-Q's own words are weaker than the file's: the 10X facility is 'expected to BEGIN COMMISSIONING in 2028'. The only in-window date is China's 10 Nov 2026 export-control expiry, a third-party geopolitical binary whose consensus outcome is the unfavourable one, so this is not even independent of the tape. No asset floor: $11.07 of book, $3.70 of net cash, and the $400m preferred sits in temporary equity ranking AHEAD of the common in a deemed liquidation, a claim the floor arithmetic never deducts. Hidden disqualifier: 66,864,834 antidilutive shares (39.7m from deep-in-the-money 2030 converts) put fully diluted near 244.5m against the ~199m the sum-of-the-parts divides by."
+        "binding_reason": "Everything binding fired in July 2025 - the $400m preferred at $30.03, the warrant, the ten-year $110/kg NdPr price floor, the 10X offtake with its $140m EBITDA minimum - and the 10-Q's own words are weaker than the file's: the 10X facility is 'expected to BEGIN COMMISSIONING in 2028'. The only in-window date is China's 10 Nov 2026 export-control expiry, a third-party geopolitical binary whose consensus outcome is the unfavourable one, so this is not even independent of the tape. No asset floor: $11.07 of book, $3.70 of net cash, and the $400m preferred sits in temporary equity ranking AHEAD of the common in a deemed liquidation, a claim the floor arithmetic never deducts. Hidden disqualifier: 66,864,834 antidilutive shares (39.7m from deep-in-the-money 2030 converts) put fully diluted near 244.5m against the ~199m the sum-of-the-parts divides by.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "catalyst",
+          "at": "2026-08-04",
+          "record_target_px": 78.0,
+          "record_floor_px": 29.0,
+          "implied_prob_at_record": 0.2524,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "MSGS": {
@@ -1795,6 +2301,16 @@
       "downside_floor": 291.0,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 440.0,
+        "record_floor_px": 291.0,
+        "implied_prob_at_record": 0.647,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "MSGS",
         "verdict": "REFUTED",
@@ -1825,7 +2341,17 @@
         "live_price": 387.41,
         "target_px": 440.0,
         "downside_floor": 291.0,
-        "binding_reason": "Knicks/Rangers separation: the board approved exploring it in February 2026 and a confidential Form 10 was filed May 18, 2026 - but there is still no record or effective date, final board approval is explicitly outstanding, and the discount to appraised franchise value has already collapsed from 47% to 24% over the past year, leaving roughly 14% of upside against 25% of unfloored downside."
+        "binding_reason": "Knicks/Rangers separation: the board approved exploring it in February 2026 and a confidential Form 10 was filed May 18, 2026 - but there is still no record or effective date, final board approval is explicitly outstanding, and the discount to appraised franchise value has already collapsed from 47% to 24% over the past year, leaving roughly 14% of upside against 25% of unfloored downside.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "catalyst",
+          "at": "2026-08-04",
+          "record_target_px": 440.0,
+          "record_floor_px": 291.0,
+          "implied_prob_at_record": 0.647,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "OLMA": {
@@ -1865,6 +2391,16 @@
       "downside_floor": 3.9,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 24.0,
+        "record_floor_px": 3.9,
+        "implied_prob_at_record": 0.3756,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "OLMA",
         "verdict": "REFUTED",
@@ -1893,7 +2429,17 @@
         "live_price": 11.45,
         "target_px": 24.0,
         "downside_floor": 3.9,
-        "binding_reason": "The spread is gone by the file's own arithmetic - probability-weighted $11.50 against a $11.45 close is +0.4%, inside the noise and nowhere near the 25-30% margin this book requires - and the share-count correction that makes the file right (13,594,149 pre-funded warrants excluded from the 87,347,471 cover-page count, exercisable at $0.0001) is precisely what removed the edge. PENDING_HARD is not supportable either: no regulatory clock, no counterparty, no third party obliged to act, the only written company timing is 'this fall', and the registry today still reads RECRUITING with enrolment ESTIMATED, last updated 13 Mar 2026 - there is no primary-source confirmation OPERA-01 has even closed enrolment. Plus a factual break carried over unabsorbed: the SVB loan agreement, up to $100m with $3.0m drawn, is secured by substantially all assets, so 'nothing structurally ahead of the shareholder' is false."
+        "binding_reason": "The spread is gone by the file's own arithmetic - probability-weighted $11.50 against a $11.45 close is +0.4%, inside the noise and nowhere near the 25-30% margin this book requires - and the share-count correction that makes the file right (13,594,149 pre-funded warrants excluded from the 87,347,471 cover-page count, exercisable at $0.0001) is precisely what removed the edge. PENDING_HARD is not supportable either: no regulatory clock, no counterparty, no third party obliged to act, the only written company timing is 'this fall', and the registry today still reads RECRUITING with enrolment ESTIMATED, last updated 13 Mar 2026 - there is no primary-source confirmation OPERA-01 has even closed enrolment. Plus a factual break carried over unabsorbed: the SVB loan agreement, up to $100m with $3.0m drawn, is secured by substantially all assets, so 'nothing structurally ahead of the shareholder' is false.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "catalyst",
+          "at": "2026-08-04",
+          "record_target_px": 24.0,
+          "record_floor_px": 3.9,
+          "implied_prob_at_record": 0.3756,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "PRX.AS": {
@@ -1933,6 +2479,16 @@
       "downside_floor": 34.5,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 46.0,
+        "record_floor_px": 34.5,
+        "implied_prob_at_record": 0.59,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "PRX.AS",
         "verdict": "REFUTED",
@@ -1962,7 +2518,17 @@
         "live_price": 41.285,
         "target_px": 46.0,
         "downside_floor": 34.5,
-        "binding_reason": "The forced selling was in Delivery Hero shares, not Prosus shares, so there was never a supply overhang on PRX.AS to clear - the re-rating went to Delivery Hero's own holders, whose stock went from under EUR 15 to EUR 37.35. What reaches us is EUR 0.100 per Prosus share of unearned spread, 0.24% of the price, settling in H2 2027 and not riskless: BaFin has not approved the offer document, and Prosus's own release warns there is no certainty the offer is implemented. The recorded 37.365 floor is not stale but BROKEN - the shares printed 36.17. What sets the price is Tencent, 75% of a USD 158.1bn NAV: PRX +3.22% in lockstep with Tencent +3.20%, the discount barely moving. Uncapped Chinese-internet beta wearing a special-situation label. The 37% NAV discount is real and belongs in the value book, sized for China risk."
+        "binding_reason": "The forced selling was in Delivery Hero shares, not Prosus shares, so there was never a supply overhang on PRX.AS to clear - the re-rating went to Delivery Hero's own holders, whose stock went from under EUR 15 to EUR 37.35. What reaches us is EUR 0.100 per Prosus share of unearned spread, 0.24% of the price, settling in H2 2027 and not riskless: BaFin has not approved the offer document, and Prosus's own release warns there is no certainty the offer is implemented. The recorded 37.365 floor is not stale but BROKEN - the shares printed 36.17. What sets the price is Tencent, 75% of a USD 158.1bn NAV: PRX +3.22% in lockstep with Tencent +3.20%, the discount barely moving. Uncapped Chinese-internet beta wearing a special-situation label. The 37% NAV discount is real and belongs in the value book, sized for China risk.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "catalyst",
+          "at": "2026-08-04",
+          "record_target_px": 46.0,
+          "record_floor_px": 34.5,
+          "implied_prob_at_record": 0.59,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "SRRK": {
@@ -2000,6 +2566,15 @@
       "downside_floor": 30.0,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_scope": "numbers",
+        "at": "2026-08-04",
+        "record_target_px": 62.0,
+        "record_floor_px": 30.0,
+        "implied_prob_at_record": 0.5405,
+        "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+      },
       "skeptic": {
         "symbol": "SRRK",
         "verdict": "CONFIRMED_WITH_CORRECTIONS",
@@ -2028,7 +2603,16 @@
         "live_price": 47.295,
         "target_px": 62.0,
         "downside_floor": 30.0,
-        "binding_reason": "Hard 30 Sep 2026 PDUFA at ~78-80% odds, but two material corrections invert the moderator's own arithmetic. Share count is 127,277,144 - basic AND diluted, and the identity of the two is the tell that the ~8.2m gap is economically live pre-funded warrants - not the ~120m the sum-of-the-parts divides by, cutting the event-win to ~$58 from $62. And net cash at the decision is ~$63m / $0.50 a share, not $170m / $1.40, because the thesis netted the $100m Q1 increment instead of the $205.7m of debt actually outstanding. Raw legs fall to 0.62:1 and EV to ~+9% over 58 days against a 37% drawdown. Compounding it, the evidence chain still omits FDA Warning Letter 320-26-20 to Catalent Indiana (20 Nov 2025) - a published enforcement action, unresolved, against a site still named in the accepted BLA."
+        "binding_reason": "Hard 30 Sep 2026 PDUFA at ~78-80% odds, but two material corrections invert the moderator's own arithmetic. Share count is 127,277,144 - basic AND diluted, and the identity of the two is the tell that the ~8.2m gap is economically live pre-funded warrants - not the ~120m the sum-of-the-parts divides by, cutting the event-win to ~$58 from $62. And net cash at the decision is ~$63m / $0.50 a share, not $170m / $1.40, because the thesis netted the $100m Q1 increment instead of the $205.7m of debt actually outstanding. Raw legs fall to 0.62:1 and EV to ~+9% over 58 days against a 37% drawdown. Compounding it, the evidence chain still omits FDA Warning Letter 320-26-20 to Catalent Indiana (20 Nov 2025) - a published enforcement action, unresolved, against a site still named in the accepted BLA.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+          "kill_scope": "numbers",
+          "at": "2026-08-04",
+          "record_target_px": 62.0,
+          "record_floor_px": 30.0,
+          "implied_prob_at_record": 0.5405,
+          "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+        }
       }
     },
     "THRM": {
@@ -2066,6 +2650,16 @@
       "downside_floor": 30.0,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 43.0,
+        "record_floor_px": 30.0,
+        "implied_prob_at_record": 0.9285,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "THRM",
         "verdict": "REFUTED",
@@ -2095,7 +2689,17 @@
         "live_price": 42.07,
         "target_px": 43.0,
         "downside_floor": 30.0,
-        "binding_reason": "The United States antitrust clearance this position was built on already happened, on 26 March 2026, and the stock has since risen roughly 25% to $42.07 against a $44 target and a $30 floor, leaving about 5% of upside against about 29% of downside."
+        "binding_reason": "The United States antitrust clearance this position was built on already happened, on 26 March 2026, and the stock has since risen roughly 25% to $42.07 against a $44 target and a $30 floor, leaving about 5% of upside against about 29% of downside.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "catalyst",
+          "at": "2026-08-04",
+          "record_target_px": 43.0,
+          "record_floor_px": 30.0,
+          "implied_prob_at_record": 0.9285,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "UNF": {
@@ -2133,6 +2737,16 @@
       "downside_floor": 215.0,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "thesis",
+        "at": "2026-08-04",
+        "record_target_px": 317.88,
+        "record_floor_px": 215.0,
+        "implied_prob_at_record": 0.8015,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on thesis — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "UNF",
         "verdict": "REFUTED",
@@ -2161,7 +2775,17 @@
         "live_price": 297.46,
         "target_px": 317.88,
         "downside_floor": 215.0,
-        "binding_reason": "Cintas is buying UniFirst for $155 in cash plus 0.7720 Cintas shares (worth $317.88 at the last close); shareholders approved on June 11, 2026, the Federal Trade Commission issued a second request the same day, and the buyer reaffirmed a second-half-2026 close on July 15 -- but at $297.46 the 6.9% upside against a 28% fall to a verified $215 break floor needs roughly 80% closing odds, which is more than the evidence supports."
+        "binding_reason": "Cintas is buying UniFirst for $155 in cash plus 0.7720 Cintas shares (worth $317.88 at the last close); shareholders approved on June 11, 2026, the Federal Trade Commission issued a second request the same day, and the buyer reaffirmed a second-half-2026 close on July 15 -- but at $297.46 the 6.9% upside against a 28% fall to a verified $215 break floor needs roughly 80% closing odds, which is more than the evidence supports.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "thesis",
+          "at": "2026-08-04",
+          "record_target_px": 317.88,
+          "record_floor_px": 215.0,
+          "implied_prob_at_record": 0.8015,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on thesis — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "VIR": {
@@ -2199,6 +2823,16 @@
       "downside_floor": 4.5,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "numbers",
+        "at": "2026-08-04",
+        "record_target_px": 19.0,
+        "record_floor_px": 4.5,
+        "implied_prob_at_record": 0.2869,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on numbers — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "VIR",
         "verdict": "REFUTED",
@@ -2227,7 +2861,17 @@
         "live_price": 8.66,
         "target_px": 19,
         "downside_floor": 4.5,
-        "binding_reason": "REFUTED on the company's own filed cash-flow statement: real Q1 operating cash use was $132.4m against an assumed $95-100m, because the non-cash stock-comp add-back was overstated ~2.5x ($12.1m actual vs $25-30m assumed), and $52.6m of claims ahead of equity (contingent consideration, other long-term liabilities) were silently dropped. Floor is ~$3.5, not $4.5, so downside is -60% not -48%, R/R falls from 2.5:1 to ~2.0:1 and breakeven odds rise from 29% to 33%. The empirical kill is sharper still: VIR printed a 52-week low at ~0.74x GROSS cash - a negative enterprise value - WITH ECLIPSE 1 alive and enrolling, so the 0.8-1.0x-NET-cash floor multiple is refuted by the stock's own tape. Even corrected this is the best residual asymmetry among the refuted biotech binaries, but Q4 guidance against a 31 Dec primary completion leaves no slack for a slip."
+        "binding_reason": "REFUTED on the company's own filed cash-flow statement: real Q1 operating cash use was $132.4m against an assumed $95-100m, because the non-cash stock-comp add-back was overstated ~2.5x ($12.1m actual vs $25-30m assumed), and $52.6m of claims ahead of equity (contingent consideration, other long-term liabilities) were silently dropped. Floor is ~$3.5, not $4.5, so downside is -60% not -48%, R/R falls from 2.5:1 to ~2.0:1 and breakeven odds rise from 29% to 33%. The empirical kill is sharper still: VIR printed a 52-week low at ~0.74x GROSS cash - a negative enterprise value - WITH ECLIPSE 1 alive and enrolling, so the 0.8-1.0x-NET-cash floor multiple is refuted by the stock's own tape. Even corrected this is the best residual asymmetry among the refuted biotech binaries, but Q4 guidance against a 31 Dec primary completion leaves no slack for a slip.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "numbers",
+          "at": "2026-08-04",
+          "record_target_px": 19.0,
+          "record_floor_px": 4.5,
+          "implied_prob_at_record": 0.2869,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on numbers — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "VRDN": {
@@ -2265,6 +2909,16 @@
       "downside_floor": 8.5,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 30.0,
+        "record_floor_px": 8.5,
+        "implied_prob_at_record": 0.5209,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "VRDN",
         "verdict": "REFUTED",
@@ -2293,7 +2947,17 @@
         "live_price": 19.7,
         "target_px": 30.0,
         "downside_floor": 8.5,
-        "binding_reason": "The catalyst has already fired: the FDA approved Lumvoa (veligrotug-vvze) for thyroid eye disease on 26 June 2026, four days ahead of its 30 June target date and with a broader label than expected - and the stock is at $19.70 a month later, so the re-rating we were waiting to be paid for has been spent without paying, leaving roughly 52% upside to a $30 good-launch value against 57% downside to an $8.50 cash-based floor."
+        "binding_reason": "The catalyst has already fired: the FDA approved Lumvoa (veligrotug-vvze) for thyroid eye disease on 26 June 2026, four days ahead of its 30 June target date and with a broader label than expected - and the stock is at $19.70 a month later, so the re-rating we were waiting to be paid for has been spent without paying, leaving roughly 52% upside to a $30 good-launch value against 57% downside to an $8.50 cash-based floor.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "catalyst",
+          "at": "2026-08-04",
+          "record_target_px": 30.0,
+          "record_floor_px": 8.5,
+          "implied_prob_at_record": 0.5209,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "WVE": {
@@ -2331,6 +2995,16 @@
       "downside_floor": 3.3,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 10.37,
+        "record_floor_px": 3.3,
+        "implied_prob_at_record": 0.3126,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "WVE",
         "verdict": "REFUTED",
@@ -2359,7 +3033,17 @@
         "live_price": 5.51,
         "target_px": 10.37,
         "downside_floor": 3.3,
-        "binding_reason": "The load-bearing catalyst has ALREADY SLIPPED a full quarter and neither side of the file noticed: the 18 May 2026 release guided regulatory feedback to mid-2026; by 30 July that had become a meeting merely SCHEDULED for 'end of summer', with minutes customarily ~30 days later, pushing actual feedback to roughly Oct-Nov 2026 and into the same autumn investor-day fog the file names as its worst disclosure case. A season, not a date, and non-binding - it produces guidance and meeting minutes, not a decision or a payout. The efficacy anchor is misattributed in the bull's favour: 70.5% is the REDUCTION of toxic Z-AAT, while corrected wild-type M-AAT on the monthly regimen the whole convenience thesis rests on is 58.7%, barely inside the bottom of the carrier reference range. And the machine-readable floor field (3.30) overstates verified cash support ($2.31-$2.54) by ~43%."
+        "binding_reason": "The load-bearing catalyst has ALREADY SLIPPED a full quarter and neither side of the file noticed: the 18 May 2026 release guided regulatory feedback to mid-2026; by 30 July that had become a meeting merely SCHEDULED for 'end of summer', with minutes customarily ~30 days later, pushing actual feedback to roughly Oct-Nov 2026 and into the same autumn investor-day fog the file names as its worst disclosure case. A season, not a date, and non-binding - it produces guidance and meeting minutes, not a decision or a payout. The efficacy anchor is misattributed in the bull's favour: 70.5% is the REDUCTION of toxic Z-AAT, while corrected wild-type M-AAT on the monthly regimen the whole convenience thesis rests on is 58.7%, barely inside the bottom of the carrier reference range. And the machine-readable floor field (3.30) overstates verified cash support ($2.31-$2.54) by ~43%.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "catalyst",
+          "at": "2026-08-04",
+          "record_target_px": 10.37,
+          "record_floor_px": 3.3,
+          "implied_prob_at_record": 0.3126,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     },
     "ZYME": {
@@ -2397,6 +3081,16 @@
       "downside_floor": 18,
       "source": "opus_catalyst_online",
       "transcript_source": "web",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "numbers",
+        "at": "2026-08-04",
+        "record_target_px": 27.0,
+        "record_floor_px": 18.0,
+        "implied_prob_at_record": 0.4378,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on numbers — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      },
       "skeptic": {
         "symbol": "ZYME",
         "verdict": "REFUTED",
@@ -2425,7 +3119,17 @@
         "live_price": 21.94,
         "target_px": 27,
         "downside_floor": 18,
-        "binding_reason": "The most imminent hard regulatory date in the funnel - 25 Aug 2026, 22 days out, PDUFA and the $250.0m approval milestone both confirmed verbatim in an SEC-filed exhibit - but the $18 floor that makes it 'defined risk' counts the same assets twice, twice over. The cash pile IS the Royalty Pharma borrowing: Q1 operations USED $45.7m and the entire $203.1m cash increase came from $245.6m of net loan proceeds secured on 30% of all future Ziihera royalties - yet the royalty stream is simultaneously booked as 'untouched'. The identical double-count repeats on the $350m OMERS note, non-recourse but secured solely by the very YUPELRI profit share the floor books as free cash flow to equity. Stripped, stockholders' equity is $163.6m ($2.24/sh) against a claimed $1.32bn floor - and the funded-runway claim is circular, conditioned on $440m of milestones of which $250m is the thing being decided."
+        "binding_reason": "The most imminent hard regulatory date in the funnel - 25 Aug 2026, 22 days out, PDUFA and the $250.0m approval milestone both confirmed verbatim in an SEC-filed exhibit - but the $18 floor that makes it 'defined risk' counts the same assets twice, twice over. The cash pile IS the Royalty Pharma borrowing: Q1 operations USED $45.7m and the entire $203.1m cash increase came from $245.6m of net loan proceeds secured on 30% of all future Ziihera royalties - yet the royalty stream is simultaneously booked as 'untouched'. The identical double-count repeats on the $350m OMERS note, non-recourse but secured solely by the very YUPELRI profit share the floor books as free cash flow to equity. Stripped, stockholders' equity is $163.6m ($2.24/sh) against a claimed $1.32bn floor - and the funded-runway claim is circular, conditioned on $440m of milestones of which $250m is the thing being decided.",
+        "skeptic_enforcement": {
+          "skeptic_verdict": "REFUTED",
+          "kill_scope": "numbers",
+          "at": "2026-08-04",
+          "record_target_px": 27.0,
+          "record_floor_px": 18.0,
+          "implied_prob_at_record": 0.4378,
+          "skeptic_enforced": "REFUTED_HARD",
+          "enforcement_note": "REFUTED on numbers — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+        }
       }
     }
   }

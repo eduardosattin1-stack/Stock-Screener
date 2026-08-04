@@ -49,7 +49,17 @@
       "live_price": 3.85,
       "target_px": 4.75,
       "downside_floor": 2.75,
-      "binding_reason": "The lane's clearest lesson, and it belongs in the ledger. The adcomm fired on the exact boarded date, 29 Jul 2026, voting 3 for / 9 against; the shares went $19.44 to $3.85 and broke the underwritten $7.00 floor by 45%. That floor was never real - the only genuine backstop was always net cash, and the price now sits AT it, not below it. The skeptic then removes even that: the file's green flag that no ATM is disclosed is FALSE, and roughly $75m of live, non-baby-shelf-constrained ATM capacity sits over a $223m market cap - about 19m shares, +33% on the count, issuable at $3.85 without a shareholder vote or a press release. A net-cash floor the issuer can print into, held by a team that spent $23.4m of capex in one quarter expanding a plant for an already-rejected drug, is a melting backstop with a tap on it."
+      "binding_reason": "The lane's clearest lesson, and it belongs in the ledger. The adcomm fired on the exact boarded date, 29 Jul 2026, voting 3 for / 9 against; the shares went $19.44 to $3.85 and broke the underwritten $7.00 floor by 45%. That floor was never real - the only genuine backstop was always net cash, and the price now sits AT it, not below it. The skeptic then removes even that: the file's green flag that no ATM is disclosed is FALSE, and roughly $75m of live, non-baby-shelf-constrained ATM capacity sits over a $223m market cap - about 19m shares, +33% on the count, issuable at $3.85 without a shareholder vote or a press release. A net-cash floor the issuer can print into, held by a team that spent $23.4m of capex in one quarter expanding a plant for an already-rejected drug, is a melting backstop with a tap on it.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 4.75,
+        "record_floor_px": 2.75,
+        "implied_prob_at_record": 0.55,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {

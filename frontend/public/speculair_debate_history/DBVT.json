@@ -49,7 +49,17 @@
       "live_price": 13.5,
       "target_px": 34.0,
       "downside_floor": 6.0,
-      "binding_reason": "The board driver is FDA_approval_decision and no FDA decision date can exist, because no marketing application is on file - submission guidance has moved from 1H 2026 to end-Q2 to Q3 2026, and the earliest decision is mid-2027 on a priority review that has been REQUESTED, not granted. Verified cash is ~$3.53 per ADS against $13.50, so ~74% of the price is an unapproved patch with no counterparty, no CVR and no salable hard asset. The bull's strongest argument is refuted outright: RA Capital's purchase was an AT-THE-MARKET sale through the company's own program via Citizens JMP, so a 0.15% gap to the prior close is a mechanical property of the instrument, not a vote of confidence - and 5.82% is the disclosed DILUTION to existing holders, not RA's resulting stake. Remaining discretionary ATM headroom is ~$100m, not $70m. Read correctly, 30 July is evidence FOR the dilution thesis."
+      "binding_reason": "The board driver is FDA_approval_decision and no FDA decision date can exist, because no marketing application is on file - submission guidance has moved from 1H 2026 to end-Q2 to Q3 2026, and the earliest decision is mid-2027 on a priority review that has been REQUESTED, not granted. Verified cash is ~$3.53 per ADS against $13.50, so ~74% of the price is an unapproved patch with no counterparty, no CVR and no salable hard asset. The bull's strongest argument is refuted outright: RA Capital's purchase was an AT-THE-MARKET sale through the company's own program via Citizens JMP, so a 0.15% gap to the prior close is a mechanical property of the instrument, not a vote of confidence - and 5.82% is the disclosed DILUTION to existing holders, not RA's resulting stake. Remaining discretionary ATM headroom is ~$100m, not $70m. Read correctly, 30 July is evidence FOR the dilution thesis.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 34.0,
+        "record_floor_px": 6.0,
+        "implied_prob_at_record": 0.2679,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {

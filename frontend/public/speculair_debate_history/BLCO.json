@@ -49,7 +49,17 @@
       "live_price": 16.91,
       "target_px": 26.97,
       "downside_floor": 11.8,
-      "binding_reason": "Six years, three abandoned routes, and the gate is now RECEDING rather than closing. The file's only date is misattributed: end-2028 is Bausch + Lomb's OWN investor-day leverage plan, not the parent's gating ratio - BHC has published neither a ratio nor a date - so stripped of the misattribution there is no date at all. The kill the dossier never mentions is Xifaxan: carried at $808m with 18 months of remaining useful life (loss of exclusivity ~Jan 2028) and CMS-negotiated prices effective 2027, against an H1-2026 parent net loss of $1,165m and total equity flipped to an $(802)m deficit. A parent whose largest product is repriced then genericized does not de-lever INTO the gate - its ratio rises mechanically as EBITDA falls. And that same fact breaks the entry mechanic: a parent needing CASH does a discounted secondary of the 310m-share block, the worst structure for a minority holder and the one assigned no weight."
+      "binding_reason": "Six years, three abandoned routes, and the gate is now RECEDING rather than closing. The file's only date is misattributed: end-2028 is Bausch + Lomb's OWN investor-day leverage plan, not the parent's gating ratio - BHC has published neither a ratio nor a date - so stripped of the misattribution there is no date at all. The kill the dossier never mentions is Xifaxan: carried at $808m with 18 months of remaining useful life (loss of exclusivity ~Jan 2028) and CMS-negotiated prices effective 2027, against an H1-2026 parent net loss of $1,165m and total equity flipped to an $(802)m deficit. A parent whose largest product is repriced then genericized does not de-lever INTO the gate - its ratio rises mechanically as EBITDA falls. And that same fact breaks the entry mechanic: a parent needing CASH does a discounted secondary of the 310m-share block, the worst structure for a minority holder and the one assigned no weight.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 26.97,
+        "record_floor_px": 11.8,
+        "implied_prob_at_record": 0.3368,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {

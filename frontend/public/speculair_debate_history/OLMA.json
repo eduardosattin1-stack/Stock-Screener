@@ -49,7 +49,17 @@
       "live_price": 11.45,
       "target_px": 24.0,
       "downside_floor": 3.9,
-      "binding_reason": "The spread is gone by the file's own arithmetic - probability-weighted $11.50 against a $11.45 close is +0.4%, inside the noise and nowhere near the 25-30% margin this book requires - and the share-count correction that makes the file right (13,594,149 pre-funded warrants excluded from the 87,347,471 cover-page count, exercisable at $0.0001) is precisely what removed the edge. PENDING_HARD is not supportable either: no regulatory clock, no counterparty, no third party obliged to act, the only written company timing is 'this fall', and the registry today still reads RECRUITING with enrolment ESTIMATED, last updated 13 Mar 2026 - there is no primary-source confirmation OPERA-01 has even closed enrolment. Plus a factual break carried over unabsorbed: the SVB loan agreement, up to $100m with $3.0m drawn, is secured by substantially all assets, so 'nothing structurally ahead of the shareholder' is false."
+      "binding_reason": "The spread is gone by the file's own arithmetic - probability-weighted $11.50 against a $11.45 close is +0.4%, inside the noise and nowhere near the 25-30% margin this book requires - and the share-count correction that makes the file right (13,594,149 pre-funded warrants excluded from the 87,347,471 cover-page count, exercisable at $0.0001) is precisely what removed the edge. PENDING_HARD is not supportable either: no regulatory clock, no counterparty, no third party obliged to act, the only written company timing is 'this fall', and the registry today still reads RECRUITING with enrolment ESTIMATED, last updated 13 Mar 2026 - there is no primary-source confirmation OPERA-01 has even closed enrolment. Plus a factual break carried over unabsorbed: the SVB loan agreement, up to $100m with $3.0m drawn, is secured by substantially all assets, so 'nothing structurally ahead of the shareholder' is false.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 24.0,
+        "record_floor_px": 3.9,
+        "implied_prob_at_record": 0.3756,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {

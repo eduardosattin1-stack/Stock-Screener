@@ -49,7 +49,17 @@
       "live_price": 297.46,
       "target_px": 317.88,
       "downside_floor": 215.0,
-      "binding_reason": "Cintas is buying UniFirst for $155 in cash plus 0.7720 Cintas shares (worth $317.88 at the last close); shareholders approved on June 11, 2026, the Federal Trade Commission issued a second request the same day, and the buyer reaffirmed a second-half-2026 close on July 15 -- but at $297.46 the 6.9% upside against a 28% fall to a verified $215 break floor needs roughly 80% closing odds, which is more than the evidence supports."
+      "binding_reason": "Cintas is buying UniFirst for $155 in cash plus 0.7720 Cintas shares (worth $317.88 at the last close); shareholders approved on June 11, 2026, the Federal Trade Commission issued a second request the same day, and the buyer reaffirmed a second-half-2026 close on July 15 -- but at $297.46 the 6.9% upside against a 28% fall to a verified $215 break floor needs roughly 80% closing odds, which is more than the evidence supports.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "thesis",
+        "at": "2026-08-04",
+        "record_target_px": 317.88,
+        "record_floor_px": 215.0,
+        "implied_prob_at_record": 0.8015,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on thesis — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {

@@ -71,6 +71,13 @@ def main():
             "target_px": r.get("target_px"),
             "downside_floor": r.get("downside_floor"),
             "binding_reason": a.get("binding_reason") or r.get("catalyst_summary"),
+            # POST-SKEPTIC ENFORCEMENT (2026-08-04). Stamped by _catalyst_post.py. Before this,
+            # the ONLY treatment of a skeptic verdict in this lane was the display badge two
+            # lines up — a REFUTED anchor was published verbatim alongside the CRO's conviction,
+            # with nothing carrying the skeptic's own re-derived number or the probability each
+            # anchor implies. Run _catalyst_post.py BEFORE this script or the block is absent
+            # (absent is honest — it means unenforced, not enforced-clean).
+            "skeptic_enforcement": r.get("skeptic_enforcement"),
         }
 
         entry = {"date": TODAY, "source": r.get("source", "opus_catalyst_online")}

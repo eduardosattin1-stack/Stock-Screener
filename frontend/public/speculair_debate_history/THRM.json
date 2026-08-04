@@ -49,7 +49,17 @@
       "live_price": 42.07,
       "target_px": 43.0,
       "downside_floor": 30.0,
-      "binding_reason": "The United States antitrust clearance this position was built on already happened, on 26 March 2026, and the stock has since risen roughly 25% to $42.07 against a $44 target and a $30 floor, leaving about 5% of upside against about 29% of downside."
+      "binding_reason": "The United States antitrust clearance this position was built on already happened, on 26 March 2026, and the stock has since risen roughly 25% to $42.07 against a $44 target and a $30 floor, leaving about 5% of upside against about 29% of downside.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 43.0,
+        "record_floor_px": 30.0,
+        "implied_prob_at_record": 0.9285,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {

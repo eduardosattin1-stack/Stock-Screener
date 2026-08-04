@@ -49,7 +49,17 @@
       "live_price": 5.89,
       "target_px": 11.5,
       "downside_floor": 2.0,
-      "binding_reason": "Phase 3 ARCHER II topline in geographic atrophy, guided to the fourth quarter of 2026 and reaffirmed as recently as 14 July 2026 - live, unfired, funded and mechanically forced (enrollment closed July 2025, so the 12-month primary has already read) - but at $5.89 the market already implies roughly 41% odds of success against our 35-40% read, so the asymmetry is largely spent (+95% to $11.50 versus -66% to a soft $2.00 floor)."
+      "binding_reason": "Phase 3 ARCHER II topline in geographic atrophy, guided to the fourth quarter of 2026 and reaffirmed as recently as 14 July 2026 - live, unfired, funded and mechanically forced (enrollment closed July 2025, so the 12-month primary has already read) - but at $5.89 the market already implies roughly 41% odds of success against our 35-40% read, so the asymmetry is largely spent (+95% to $11.50 versus -66% to a soft $2.00 floor).",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 11.5,
+        "record_floor_px": 2.0,
+        "implied_prob_at_record": 0.4095,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {

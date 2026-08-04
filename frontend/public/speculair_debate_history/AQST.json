@@ -49,7 +49,16 @@
       "live_price": 3.695,
       "target_px": 8.5,
       "downside_floor": 1.75,
-      "binding_reason": "The catalyst survived the kill attempt only because the file had already conceded it: the FDA decision this was bought for fired against the position on 30 Jan 2026, and the replacement is a self-imposed Q3 re-filing promise with no regulator's date on any calendar - no 8-K since 10 Jun 2026, roughly eight weeks left in the guided quarter, and no real decision before H1 2027. By the bands, no live date is a sub-50 name regardless of the skeptic. The material correction actually favours the equity: funded recourse debt is $38.8m against $110.7m of cash - net cash ~$72m, not the net-debt-with-a-secured-lender-ahead framing the valley-of-death asserts; the other ~$90m is royalty and sold-revenue claims on the very revenue being capitalised, not a maturity that can force the company. Wait for the FDA acceptance letter - the first moment a date exists since January."
+      "binding_reason": "The catalyst survived the kill attempt only because the file had already conceded it: the FDA decision this was bought for fired against the position on 30 Jan 2026, and the replacement is a self-imposed Q3 re-filing promise with no regulator's date on any calendar - no 8-K since 10 Jun 2026, roughly eight weeks left in the guided quarter, and no real decision before H1 2027. By the bands, no live date is a sub-50 name regardless of the skeptic. The material correction actually favours the equity: funded recourse debt is $38.8m against $110.7m of cash - net cash ~$72m, not the net-debt-with-a-secured-lender-ahead framing the valley-of-death asserts; the other ~$90m is royalty and sold-revenue claims on the very revenue being capitalised, not a maturity that can force the company. Wait for the FDA acceptance letter - the first moment a date exists since January.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_scope": "numbers",
+        "at": "2026-08-04",
+        "record_target_px": 8.5,
+        "record_floor_px": 1.75,
+        "implied_prob_at_record": 0.2881,
+        "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+      }
     }
   },
   {

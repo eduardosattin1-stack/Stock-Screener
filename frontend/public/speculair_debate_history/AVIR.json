@@ -49,7 +49,17 @@
       "live_price": 4.7,
       "target_px": 7.5,
       "downside_floor": 2.4,
-      "binding_reason": "The rarest and most instructive outcome in the funnel: the binary fired YES and the equity was marked DOWN. C-BEYOND met both endpoints on 28 Jul 2026 - 93.9% vs 94.8% SVR against Epclusa across 905 patients, no drug-related serious adverse events - and the shares fell 6.63% that day on 1.39m shares against a 180-380k baseline, sitting ~2.5% BELOW the pre-result close four sessions later. When a catalyst fires favourably and the stock falls, the market is saying the clinical result was never where the value was, and any position after it is a wager that a deep, attentive register misjudged the result it had waited eighteen months for. Nothing dated remains: no NDA date, no partner, no launch plan, and the only remaining trigger (C-FORWARD) is confirmatory and slipped a quarter to early 2027 in the same breath as the good news."
+      "binding_reason": "The rarest and most instructive outcome in the funnel: the binary fired YES and the equity was marked DOWN. C-BEYOND met both endpoints on 28 Jul 2026 - 93.9% vs 94.8% SVR against Epclusa across 905 patients, no drug-related serious adverse events - and the shares fell 6.63% that day on 1.39m shares against a 180-380k baseline, sitting ~2.5% BELOW the pre-result close four sessions later. When a catalyst fires favourably and the stock falls, the market is saying the clinical result was never where the value was, and any position after it is a wager that a deep, attentive register misjudged the result it had waited eighteen months for. Nothing dated remains: no NDA date, no partner, no launch plan, and the only remaining trigger (C-FORWARD) is confirmatory and slipped a quarter to early 2027 in the same breath as the good news.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 7.5,
+        "record_floor_px": 2.4,
+        "implied_prob_at_record": 0.451,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {

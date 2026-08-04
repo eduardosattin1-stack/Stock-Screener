@@ -49,7 +49,17 @@
       "live_price": 17.59,
       "target_px": 30.0,
       "downside_floor": 11.0,
-      "binding_reason": "An undated, non-binding activist push by JANA Partners (about 9% economic interest, sale demand letter 17 March 2026) that the board has so far answered with governance changes and asset sales rather than a sale process; the 2026 proxy window closed at the 26 May 2026 annual meeting without a contested vote, and the claimed $16.50 downside floor was already broken at $12.51 within the past year, so the asymmetry is roughly +71% against -35% rather than the 6%-risk trade it was written up as."
+      "binding_reason": "An undated, non-binding activist push by JANA Partners (about 9% economic interest, sale demand letter 17 March 2026) that the board has so far answered with governance changes and asset sales rather than a sale process; the 2026 proxy window closed at the 26 May 2026 annual meeting without a contested vote, and the claimed $16.50 downside floor was already broken at $12.51 within the past year, so the asymmetry is roughly +71% against -35% rather than the 6%-risk trade it was written up as.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 30.0,
+        "record_floor_px": 11.0,
+        "implied_prob_at_record": 0.3468,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {

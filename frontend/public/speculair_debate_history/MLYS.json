@@ -49,7 +49,16 @@
       "live_price": 25.52,
       "target_px": 38.0,
       "downside_floor": 13.0,
-      "binding_reason": "The only file in the funnel where the skeptic's own verdict is that 'nothing found refutes the event, the timing or the floor as drawn' - a statutory 22 Dec 2026 PDUFA that has not moved since March, no advisory committee called, into a mechanism the FDA already validated by approving baxdrostat on 18 May 2026; every load-bearing balance-sheet number reconciles exactly to primary filings. The material correction is confined to the street anchor ($43 median, not the ~$49 the file leaned on five times), which removes external corroboration but touches nothing structural. Held out of the 70s because the payoff is 1:1 raw (+49% / -49%) carried entirely by the odds, the $13 floor is an estimate with no contractual backstop, and net cash of $6.20/sh (24% of price) ranks behind a first-priority secured lender."
+      "binding_reason": "The only file in the funnel where the skeptic's own verdict is that 'nothing found refutes the event, the timing or the floor as drawn' - a statutory 22 Dec 2026 PDUFA that has not moved since March, no advisory committee called, into a mechanism the FDA already validated by approving baxdrostat on 18 May 2026; every load-bearing balance-sheet number reconciles exactly to primary filings. The material correction is confined to the street anchor ($43 median, not the ~$49 the file leaned on five times), which removes external corroboration but touches nothing structural. Held out of the 70s because the payoff is 1:1 raw (+49% / -49%) carried entirely by the odds, the $13 floor is an estimate with no contractual backstop, and net cash of $6.20/sh (24% of price) ranks behind a first-priority secured lender.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+        "kill_scope": "numbers",
+        "at": "2026-08-04",
+        "record_target_px": 38.0,
+        "record_floor_px": 13.0,
+        "implied_prob_at_record": 0.5008,
+        "skeptic_enforced": "CONFIRMED_WITH_CORRECTIONS"
+      }
     }
   },
   {

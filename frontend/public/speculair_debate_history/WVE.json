@@ -49,7 +49,17 @@
       "live_price": 5.51,
       "target_px": 10.37,
       "downside_floor": 3.3,
-      "binding_reason": "The load-bearing catalyst has ALREADY SLIPPED a full quarter and neither side of the file noticed: the 18 May 2026 release guided regulatory feedback to mid-2026; by 30 July that had become a meeting merely SCHEDULED for 'end of summer', with minutes customarily ~30 days later, pushing actual feedback to roughly Oct-Nov 2026 and into the same autumn investor-day fog the file names as its worst disclosure case. A season, not a date, and non-binding - it produces guidance and meeting minutes, not a decision or a payout. The efficacy anchor is misattributed in the bull's favour: 70.5% is the REDUCTION of toxic Z-AAT, while corrected wild-type M-AAT on the monthly regimen the whole convenience thesis rests on is 58.7%, barely inside the bottom of the carrier reference range. And the machine-readable floor field (3.30) overstates verified cash support ($2.31-$2.54) by ~43%."
+      "binding_reason": "The load-bearing catalyst has ALREADY SLIPPED a full quarter and neither side of the file noticed: the 18 May 2026 release guided regulatory feedback to mid-2026; by 30 July that had become a meeting merely SCHEDULED for 'end of summer', with minutes customarily ~30 days later, pushing actual feedback to roughly Oct-Nov 2026 and into the same autumn investor-day fog the file names as its worst disclosure case. A season, not a date, and non-binding - it produces guidance and meeting minutes, not a decision or a payout. The efficacy anchor is misattributed in the bull's favour: 70.5% is the REDUCTION of toxic Z-AAT, while corrected wild-type M-AAT on the monthly regimen the whole convenience thesis rests on is 58.7%, barely inside the bottom of the carrier reference range. And the machine-readable floor field (3.30) overstates verified cash support ($2.31-$2.54) by ~43%.",
+      "skeptic_enforcement": {
+        "skeptic_verdict": "REFUTED",
+        "kill_scope": "catalyst",
+        "at": "2026-08-04",
+        "record_target_px": 10.37,
+        "record_floor_px": 3.3,
+        "implied_prob_at_record": 0.3126,
+        "skeptic_enforced": "REFUTED_HARD",
+        "enforcement_note": "REFUTED on catalyst — no typed revised_fv_px, so the record anchor is NOT repriced and the line is a hard kill (fail-safe)."
+      }
     }
   },
   {
