@@ -3,187 +3,231 @@
  "scanned": 150,
  "scan_distribution": {
   "active": 4,
-  "watch": 6,
-  "none": 140
+  "watch": 7,
+  "none": 139
  },
  "survivors_flagged": [
   {
-   "symbol": "TECK",
-   "score": 7,
-   "tier": "ACTIVE",
-   "lane": "merger-arb",
-   "one_line": "Anglo American merger-of-equals: shareholders approved, ICA clearance in hand, final regulatory approvals guided Sept-2026 to Mar-2027 close - live dated arb into Anglo Teck."
-  },
-  {
-   "symbol": "TEVA",
+   "symbol": "TDS",
    "score": 5,
    "tier": "WATCH",
-   "lane": "dated-binary",
-   "one_line": "Olanzapine LAI (TEV-'749) PDUFA in late 2026 after Feb-2026 NDA acceptance; real dated binary but small relative to a diversified $20B pharma, asymmetry not obviously mispriced."
+   "lane": "capital_return",
+   "one_line": "Post-UScellular holdco: TDS's 82% pro-rata share of ~$2.2B of announced Array spectrum sales to AT&T/Verizon/T-Mobile still closes across 2026, feeding further special distributions against a persistent holdco discount — real and dated, though Kerrisdale's Jan-2026 writeup means it is no longer uncovered."
   },
   {
-   "symbol": "TE",
+   "symbol": "TECH",
    "score": 5,
    "tier": "WATCH",
-   "lane": "distressed-financing",
-   "one_line": "~$225M debt-led financing package for G2_Austin phase 1 targeted mid-2026 with first cell production Q4-2026; binary funding milestone, but equity already ran +55% on the setup."
+   "lane": "merger_arb",
+   "one_line": "Live all-cash $73/share Merck KGaA deal signed 2026-06-25 closing late-2026/early-2027, but at $72.14 the gross spread is only ~1.2% (~3% annualized) — a real dated arb with essentially no mispriced asymmetry left."
   },
   {
    "symbol": "TFX",
-   "score": 7,
+   "score": 6,
    "tier": "ACTIVE",
    "lane": "spin-off",
-   "one_line": "Tax-free separation into RemainCo (vascular/interventional/surgical) and NewCo (urology/acute/OEM) targeted for completion mid-2026, plus Biotronik vascular bolt-on; stock at multi-year lows into the split."
+   "one_line": "Tax-free spin of Urology/Acute Care/OEM into NewCo ($1.4B rev) from RemainCo ($2.1B rev post-Biotronik); Form 10 still pending and the mid-2026 target has slipped into 2H26, so the separation is genuinely forward - but the stock has already recovered from $100 to $139.70 (52wk high $144.19), so this is mid-arc, not fresh."
+  },
+  {
+   "symbol": "TIPT",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "post-asset-sale cash box / capital allocation",
+   "one_line": "Post-Fortegra-sale ($1.65B, closed 29 May 2026) balance sheet is $946M cash, zero debt, $907M equity against a $664M market cap (0.73x book); USIG specialty P&C acquisition announced 29 Jul 2026 with a dated close, activist Veradace already engaged on the sale price - and the stock is flat at $17.67 vs 50d/200d ~$17.6, i.e. early arc with no re-rate yet."
   },
   {
    "symbol": "TLX",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "binary_catalyst",
-   "one_line": "Pixclara (TLX101-Px) PDUFA set for Sept 11 2026 after prior CRL; real dated binary but modest revenue vs commercial Illuccix base, so asymmetry is limited."
-  },
-  {
-   "symbol": "TSAT",
    "score": 5,
    "tier": "WATCH",
-   "lane": "deleveraging",
-   "one_line": "Lightspeed fully funded (CAD 2.54B) with first two satellites slated to launch December 2026 \u2014 a dated make-or-break milestone against a deep NAV/debt-discount structure, but execution slippage risk is high."
+   "lane": "dated_binary",
+   "one_line": "Zircaix (TLX250-CDx) BLA resubmission pending after the Aug-2025 CMC CRL plus a reported TLX101-CDx PDUFA goal around 11-Sep-2026 - a real forward FDA binary at mid-range price ($10 vs 6.28-14.27), but Telix is already ~$1B revenue so the diagnostic approval is incremental, not transformational; PDUFA date needs confirmation."
   },
   {
-   "symbol": "TWO",
+   "symbol": "TMC",
    "score": 6,
+   "tier": "WATCH",
+   "lane": "regulatory_binary",
+   "one_line": "NOAA found the consolidated DSHMRA application in full compliance (1-May-2026) and a commercial-recovery permit decision is guided before end-Q1-2027, with ITLOS provisional measures (20-Jul) removing ISA interference - EARLY-ARC: stock sits at $3.67 near the 52w low, -68% from high, so the permit optionality is not priced; offset by pre-revenue status and serial dilution."
+  },
+  {
+   "symbol": "TRIP",
+   "score": 7,
    "tier": "ACTIVE",
-   "lane": "merger_arb",
-   "one_line": "$12.00 cash CrossCountry merger approved Jul 2, 2026, UWM bid defeated, close expected Aug 2026 - live but thin residual spread plus stub dividend."
+   "lane": "activist_structural",
+   "one_line": "Starboard (9%) won board seats in a March cooperation agreement and forced the $700M cash sale of TheFork to AmEx, signed June 2026 and dated to close before year-end - leaving a cash-rich Viator stub with an unresolved whole-company sale review, at $14.50 versus a $20 52-week high."
+  },
+  {
+   "symbol": "TTI",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "structural",
+   "one_line": "Board approved the Arkansas Evergreen bromine FID on 28-May-2026 CONDITIONAL on finalizing project financing, with Phase 2 mechanical completion targeted end-2026 - the financing close is a real, forward, near-term hard milestone on a thinly covered supply-shortage asset that the market has not underwritten separately from the oilfield-services parent."
   },
   {
    "symbol": "TXNM",
-   "score": 7,
+   "score": 6,
    "tier": "ACTIVE",
    "lane": "merger_arb",
-   "one_line": "Blackstone Infrastructure $61.25 cash deal; PUCT/FERC/FCC/HSR cleared, only NMPRC and NRC left, outside date extended to May 31 2027 - classic regulated-utility arb with a datable NMPRC docket."
+   "one_line": "Live $61.25 cash Blackstone Infrastructure take-private at $57.60 (6.3% gross); HSR/FERC/FCC/PUCT all cleared, only NMPRC + NRC left; merger agreement extended 7/17/26 after PRC forced unwind of Blackstone's unapproved $400M stock buy, pushing close into 2027 - spread re-widened on the extension, so the arc is fresh rather than run, but the annualized return is thin and NMPRC is a genuinely hostile single point of failure."
+  },
+  {
+   "symbol": "UBS",
+   "score": 6,
+   "tier": "ACTIVE",
+   "lane": "overhang_clearing",
+   "one_line": "Swiss too-big-to-fail capital bill is the whole overhang: Federal Council's April draft demands ~$20bn extra CET1 to fully back foreign subs, upper-house committee resumes debate in August with a chamber vote expected ~September and possible adoption in December; parliament is trending toward a watered-down 70-80% backing, and UBS has explicitly stalled its 2026 buyback pending the outcome - dated, firm-specific, and the resolution unlocks capital return."
   }
  ],
  "verified": [
   {
-   "symbol": "TECK",
-   "score": 5,
-   "tier": "ACTIVE",
-   "lane": "merger-arb",
-   "catalyst": "China SAMR is the sole remaining regulatory condition to the Anglo American / Teck merger of equals (1.3301 Anglo shares per Teck share, court-approved plan of arrangement), with clearance and close guided Sept-2026 to Mar-2027.",
-   "dated_milestone": "SAMR Phase 3 in-depth decision pending (review opened Jun-2026); Teck mailed Letter of Transmittal/election form 2026-06-30; company-guided final approval window Sept-2026 through Mar-2027 \u2014 next hard date is the SAMR ruling, plausibly Q3-2026.",
-   "instrument": "Long TECK common; pure-spread expression is long TECK vs. short 1.3301 AAL.L per share",
-   "bloom_gates": "G1 (named counterparty: Anglo American plc) + G2 (concrete commitment: signed, shareholder-approved, court-sanctioned plan of arrangement at a fixed 1.3301 ratio, settlement documents already mailed). G3 NOT met \u2014 I did not verify a specific currently-unpriced figure (no measured TECK/AAL spread in this pass).",
-   "edge": "M \u2014 the deal is public, approved by both shareholder bases, ICA-cleared and South Korea-cleared, so the residual is a single binary (SAMR) that the arb community already prices; edge exists only if the market over-discounts China risk, which I could not confirm without a spread measurement.",
-   "primary_source": "Teck news release \"Teck Announces the Mailing of a Letter of Transmittal in Connection with the Merger of Equals with Anglo American,\" teck.com/merger, 2026-06-30; corroborated by MLex \"Anglo American-Teck deal gets South Korea approval, only China remains\" (2026) and Capitol Forum reporting that SAMR opened a Phase 3 in-depth review (Jun-2026); timeline from Anglo American guidance via MINING.COM (Mar-2026).",
-   "verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "kill_fact": "Primary/near-primary sources confirm the load-bearing facts: Teck's own 2026-06-30 release (teck.com + GlobeNewswire) states the Letter of Transmittal and election form were mailed to registered Class A/Class B holders under a court-approved plan of arrangement, each Teck Share exchanging for 1.3301 Anglo ordinary shares (or 1.3301 Anglo Teck Exchangeco exchangeable shares for electing eligible Canadians); MLex confirms South Korea cleared and \"only China remains\"; Anglo/Teck management still guide close Sept-2026 to Mar-2027 (12-18 months from the Sept-2025 announcement). So the line is not FIRED and is not fabricated. CORRECTIONS: (1) The Capitol Forum reported (2026-06-11) SAMR escalated to an in-depth Phase 3 review with market surveys still running \u2014 Phase 3 plus the standard pull-and-refile mechanic pushes the realistic clearance mass toward the LATE end of the range, so calling the guidance unchanged understates that the distribution has shifted right; the \"catalyst\" is a ~6-month window, not a dated event, which is weak for ACTIVE tier. (2) The claimed Investment Canada Act clearance date of 2025-12-15 was not independently verified in this pass. (3) G3 remains unmet and is the decisive gap: with no measurement of the TECK vs. 1.3301x AAL.L spread, there is no evidence the SAMR binary is mispriced \u2014 this is one of the most widely followed mining arbs in the market, and an unmeasured spread on a well-telegraphed deal is a priced-in story, not an edge. Score cut 6 to 5 for the Phase 3 right-shift plus the range-not-date catalyst on top of the unproven edge.",
-   "analysis": "The triage claim checks out on the facts: both shareholder bases approved in Dec-2025, Investment Canada Act clearance landed 2025-12-15, South Korea has since cleared, and Teck mailed the Letter of Transmittal and election form on 2026-06-30 at a fixed 1.3301 Anglo-share ratio \u2014 so this is a live, dated, forward, non-macro arb with a named counterparty and a hard contractual commitment. The one open condition is China's SAMR, which escalated to an in-depth Phase 3 review in Jun-2026; management has not moved off its Sept-2026-to-Mar-2027 close guidance, meaning the catalyst is unfired but its date is a range, not a fixed day. I am scoring 6 rather than 7 because G3 is unmet in this pass: I did not measure the TECK vs. 1.3301x AAL spread, so I cannot assert the SAMR risk is mispriced \u2014 that spread reading is the gap to close before sizing, and it is also the difference between a genuine edge and simply owning a well-telegraphed deal into a Chinese regulatory binary."
-  },
-  {
-   "symbol": "TEVA",
+   "symbol": "TDS",
    "score": 3,
    "tier": "NONE",
-   "lane": "dated-binary",
-   "catalyst": "FDA decision on olanzapine extended-release injectable (TEV-'749) for once-monthly schizophrenia treatment, PDUFA anticipated late 2026 following the Feb-20-2026 NDA acceptance (standard 10-month review).",
-   "dated_milestone": "PDUFA action late 2026 (exact date not publicly disclosed; ~Oct-Dec 2026 implied by Feb-20-2026 acceptance + standard review). Nearest hard date: Q2 earnings Wed 2026-07-29 BMO. EU MAA under EMA review in parallel.",
-   "instrument": "Common equity (NYSE: TEVA ADR); listed options exist but the binary is too small relative to cap to justify a dated-expiry structure.",
-   "bloom_gates": "G2 only (concrete commitment: FDA-accepted NDA with a defined statutory review clock). G1 fails (regulator is not a commercial counterparty). G3 fails - no specific currently-unpriced figure; Teva itself guides the combined Uzedy + olanzapine LAI franchise to $1.5-2.0B peak sales, which is public, consensus-embedded, and ~9-12% of a ~$16B revenue base.",
+   "lane": "capital_return",
+   "catalyst": "The flagged catalyst is FIRED: all ~$2.19B of announced Array spectrum sales closed (AT&T $1.018B Jan 13 2026, T-Mobile $168M May 2026, Verizon $1.0B Jun 1 2026) and both resulting specials were declared and PAID ($10.25 Feb 2 2026, $11.00 Jun 25 2026), with Array's board signaling no further 2026 dividends.",
+   "dated_milestone": "Aug 7, 2026 — TDS/Array joint Q2 results and call (9:00am CT); the only live forward item is the Array special committee's undecided review of TDS's May 8, 2026 all-stock proposal (0.86 TDS per AD share, assuming a $10.40/sh ~$900M pre-close Array dividend). Unannounced C-band sale has no counterparty, price, or date.",
+   "instrument": "none for TDS common — if any leg exists it is AD, not TDS (0.86 x $34.41 + $10.40 = $39.99 implied vs AD $35.00, ~14% spread); TDS is the stock-issuing acquirer and captures no ratio upside",
+   "bloom_gates": "FAILS all three on a forward basis. G1: the named counterparties (AT&T/Verizon/T-Mobile) are spent — those deals are closed and distributed; the remaining C-band sale has NO named buyer. G2: no concrete remaining commitment — the merger is an unagreed proposal under special-committee review, not a signed agreement. G3: no specific currently-unpriced figure survives the preferred deduction (see valuation_basis).",
    "edge": "L",
-   "primary_source": "Teva IR press release, \"FDA Accepts Teva's NDA for Olanzapine Extended-Release Injectable Suspension (TEV-'749),\" 2026-02-20 (GlobeNewswire release 3242114); supplemented by Teva NDA submission release 2025-12-09 and market data as of 2026-07-05 (price ~$34.64, 52w $14.99-$37.35, mkt cap ~$38.7-40.3B).",
+   "primary_source": "TDS/Array 8-K and PR Newswire releases: \"Array completes sale of select spectrum assets to AT&T for $1.018 billion\" (Jan 13, 2026), \"Array completes sale of select spectrum assets to Verizon for $1.0 billion\" (Jun 1, 2026) with $11.00/sh special declared for Jun 11 record / Jun 25 pay; \"Telephone and Data Systems Announces Proposal to Acquire Public Shares of Array Digital Infrastructure\" (tdsinc.com / PR Newswire, May 8, 2026); TDS Form 10-Q Q1 2026 (period 2026-03-31, filed 2026-05-08) for the preferred/debt waterfall; \"TDS and Array to Release Second Quarter Operating Results\" (call Aug 7, 2026). Prices FMP as of 2026-08-03: TDS $34.41, AD $35.00.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The milestone is real, dated and forward - FDA accepted the TEV-'749 NDA on 2026-02-20 with a standard 10-month clock implying a late-2026 PDUFA, and the EMA accepted the parallel MAA - but it fails the strict gate on materiality and pricing. Peak sales of $1.5-2.0B are for the whole long-acting schizophrenia franchise including already-marketed Uzedy (~$190-200M FY2025, +82% y/y), so the incremental unpriced value on a ~$39B market cap / ~$16B revenue diversified pharma is small, and the stock trading near 52-week highs after more than doubling means the Pivot-to-Growth re-rating has largely occurred. Gap: Teva has not disclosed the exact PDUFA date, so the milestone is a quarter-level rather than day-level marker, which further weakens tradability; no G3 unpriced figure could be established within the lookup budget."
+   "analysis": "The triage thesis is stale on its central factual claim: the ~$2.2B of Array spectrum sales does not \"still close across 2026\" — all three tranches closed by June 1, 2026, and both special distributions were declared and paid, with Array's board signaling no further 2026 dividends. What is left is an unannounced C-band sale with no buyer, price, or date, which clears none of the Bloom gates. The mandatory numerator re-derivation then kills the residual case independently: deducting the $1.074B of perpetual preferred sitting ahead of the common leaves a mechanical SoP of roughly $23.50-$28.00 per share against a $34.41 price, so the alleged holdco discount inverts to a premium unless Array is marked well above its own traded quote. The one genuinely live, dated item — the Array special committee's review of TDS's 0.86-share proposal, with a read-through at the August 7 Q2 call — is the wrong side of the trade for this symbol: TDS is the acquirer issuing ~13% dilution, and the ~14% spread (implied $39.99 vs AD's $35.00, a gap that itself signals doubt the ratio survives) belongs to AD holders, not TDS holders. Fired event, negative remaining capture, unsupported waterfall: NONE."
   },
   {
-   "symbol": "TE",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "distressed-financing",
-   "catalyst": "T1 Energy must announce a debt-led financing commitment covering the ~$225M remaining Phase 1 capex for the 2.1 GW G2_Austin solar-cell fab, which is targeted to start cell production in Q4-2026.",
-   "dated_milestone": "Company guided to announcing a commitment in Q2-2026 (Q1 call, 2026-05-12); no announcement found as of 2026-07-20, so the target has slipped. Next dated venue: Q2-2026 results call, expected mid-August 2026; hard backstop = Q4-2026 first cell production at G2_Austin.",
-   "instrument": "equity (long-dated calls if a levered expression is wanted; the 4.00% converts due 2031 are the credit-linked alternative)",
-   "bloom_gates": "G2 only \u2014 a concrete, company-committed funding milestone with a stated size ($225M) and a stated deadline. G1 fails: the counterparty is described only as \"a potential financing counterparty\" in diligence, never named. G3 fails: the $225M gap and the Q4-2026 production date are both disclosed and widely covered, so no specific currently-unpriced figure.",
-   "edge": "L-M \u2014 the gap size, the debt-vs-equity preference and the production date are all in the public Q1 release and heavily syndicated; the equity has already run ~+55% on the setup, so the \"financing gets done\" leg is substantially re-rated. Residual edge is only in the terms (cost/quantum/dilution) and in the fact that the guided Q2 deadline has already been missed without disclosure, which the tape does not appear to be discounting.",
-   "primary_source": "T1 Energy Q1 2026 results / \"T1 Energy Advances G2_Austin Development with Capital Formation Progress\", ir.t1energy.com, 2026-05-12 (~$225M Phase 1 requirement, Q2-2026 commitment target, $174.7M convert proceeds); corroborated by ir.t1energy.com bankability release 2026-06-17 (Q4-2026 G2_Austin production) and stocktitan.net/news/TE news feed checked 2026-07-20 (no financing announcement).",
+   "symbol": "TECH",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "merger_arb",
+   "catalyst": "Signed all-cash $73.00/share acquisition of Bio-Techne by Merck KGaA (Darmstadt), announced 2026-06-25, pending shareholder vote and regulatory clearance with closing guided to late-2026/early-2027.",
+   "dated_milestone": "Merger agreement executed 2026-06-25; merger proxy solicitation underway (DEFA14A filed 2026-07-09); next hard date = the special shareholder meeting (record/meeting date not yet located in public filings as of 2026-08-03), then close guided late-2026/early-2027.",
+   "instrument": "common equity (options unusable — 1.2% gross upside cannot clear any premium)",
+   "bloom_gates": "G1 PASS (named counterparty: Merck KGaA, Darmstadt, Germany / EMD Holdings merger sub). G2 PASS (definitive Agreement and Plan of Merger, $73.00 cash, $230.455M target break fee / $576.14M reverse fee). G3 FAIL — no specific currently-unpriced figure: the $73 consideration is 98.8% embedded in the $72.14 tape.",
+   "edge": "L — the event is real, contractual and dated but ~95% harvested. Run-up: pre-catalyst base ~$53.7 (the 1-month VWAP the 36% premium was struck against; day-before close ~$60) to $72.14 today = +34% from VWAP base / +20% from the pre-announcement close, all of it captured by holders before this screen. Remaining capture to the provenance-checked favorable-resolution value ($73.00 contractual, not an analyst target): +1.19% gross, ~2-3% annualized over the ~5-8 month guided close. Payoff is negatively skewed — +1.19% vs roughly -20% to -25% on a break back toward the ~$54-60 standalone — a ~0.05:1 reference R/R.",
+   "primary_source": "Bio-Techne 8-K / joint press release, 2026-06-25 (investors.bio-techne.com/news/detail/535; SEC Archives CIK 0000842023 accession 0001999371-26-013429) plus DEFA14A 2026-07-09; live price from FMP quote 2026-08-03 ($72.14, 50d avg $62.34, 200d avg $59.63, 52w low $43.20).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "Verified real and specific: after April's upsized $160M 4.00% convertible (net $174.7M), T1 disclosed a residual ~$225M Phase 1 financing requirement for G2_Austin and guided to announcing a debt-heavy commitment in Q2-2026, with first cell production still targeted Q4-2026 (reaffirmed in the 2026-06-17 Intertek CEA bankability release). The catalyst is unfired \u2014 no commitment announcement appears in the IR/StockTitan feed through 2026-07-20 \u2014 but the guided Q2 window has lapsed, which converts this from a clean binary into a slippage watch, and the +55% move plus a mid-2026 KORE Power acquisition ($32M EV, 2026-06-03) means the funding-success case is largely priced. Not a macro bet; company-specific and financeable, but it stays WATCH rather than ACTIVE because no counterparty is named, no term sheet is public, and the asymmetry has been compressed by the run."
+   "analysis": "Verified: Merck KGaA agreed on 2026-06-25 to acquire Bio-Techne for $73.00/share all cash, ~$11.3B EV, board-approved both sides, funded from cash plus new debt, closing guided late-2026/early-2027 subject to the Bio-Techne shareholder vote and regulatory approvals. Numerator provenance is exempt here — a cash deal price is contractual, and $73.00 comes straight off the merger agreement, not from an inherited target — so the FIP failure mode does not apply; the failure mode that DOES apply is VISN-style residual exhaustion: at $72.14 the market has already paid for the receipt, leaving 1.19% gross against a full-fat break loss. Gate result: G1 and G2 pass, G3 fails outright, and the catalyst is re-rated (fired), so under the strict residual-capture rule this caps at 4 and I mark it one lower — the only path that would make it interesting again is a spread-widening antitrust or financing scare, which is a reason to re-screen on news, not to seat it now. Gap noted: I could not pin the special-meeting date from public sources within the lookup budget."
   },
   {
    "symbol": "TFX",
-   "score": 5,
+   "score": 4,
    "tier": "WATCH",
-   "lane": "spin-off",
-   "catalyst": "Closing of Teleflex's $2.03bn cash sale of Acute Care + Interventional Urology (to Intersurgical Ltd) and OEM (to Montagu/Kohlberg), yielding ~$1.8bn net after-tax proceeds to fund ~$800m debt paydown and a $1bn buyback against a depressed equity.",
-   "dated_milestone": "Definitive agreements signed 2025-12-09; transactions expected to close in 2H 2026 (regulatory approvals pending). Next dated checkpoint: Q2 2026 results, late July 2026 (Q1 reported 2026-05-07), which should update close timing and buyback pace.",
-   "instrument": "common equity",
-   "bloom_gates": "G1 (named counterparties: Intersurgical Ltd; Montagu and Kohlberg) + G2 (definitive agreements, $2.03bn cash, ~$1.8bn net); G3 partially \u2014 the $1.8bn/$1bn-buyback figures are disclosed and largely public, so not a currently-unpriced number.",
-   "edge": "L-M \u2014 the transaction is publicly disclosed with named buyers and fixed consideration since 2025-12-09; residual edge is only in de-risking of regulatory close and the pace/price of the $1bn repurchase into a depressed tape, not in information asymmetry.",
-   "primary_source": "Teleflex press release \"Teleflex Announces Sale of Acute Care, Interventional Urology, and OEM Businesses for $2.03 Billion\" (2025-12-09, investors.teleflex.com / GlobeNewswire; SEC 8-K Ex-99.1, accession 0001193125-25-312941), corroborated by Teleflex Q1 2026 results release (2026-05-07) stating close expected 2H 2026.",
+   "lane": "asset-sale / capital-return (NOT spin-off — triage premise is stale)",
+   "catalyst": "Definitive cash sales of Acute Care + Interventional Urology (Intersurgical, $530M) and OEM (Montagu + Kohlberg, $1.5B) for $2.03B combined, ~$1.8B after tax, earmarked for a $1.0B buyback and $800M debt paydown, closing in 2H26.",
+   "dated_milestone": "Both sales \"on track to close in the second half of 2026\" per the 2026-03-27 8-K; next hard checkpoint is the Q2-2026 10-Q/earnings call in early Aug 2026, then the closing 8-K and buyback launch.",
+   "instrument": "common equity (NYSE: TFX)",
+   "bloom_gates": "G1 PASS (Intersurgical Ltd; Montagu + Kohlberg, definitive agreements 2025-12-09). G2 PASS ($2.03B cash, ~$1.8B after tax, committed $1.0B repurchase + $800M debt paydown). G3 FAIL — no specific currently-unpriced figure; the buyback and proceeds have been public since 2025-12-09 and re-confirmed 2026-03-27, and the stock printed a new 52wk high today.",
+   "edge": "L — RESIDUAL CAPTURE: run-up +39.4% from the $100.18 52wk low to $139.70, with a fresh 52wk high ($144.19) printed today and the 200d avg at $121; the deal has been publicly knowable for ~8 months. Remaining capture to the re-derived pro-forma value is NEGATIVE to flat: −25% to −4% ($105-134/share at 10-12x RemainCo EBITDA), and only above ~12.5x EV/EBITDA does the mechanical waterfall clear spot. The event is real and unfired but the equity is already paid for it.",
+   "primary_source": "Teleflex press release \"Teleflex Announces Sale of Acute Care, Interventional Urology, and OEM Businesses for $2.03 Billion\", 2025-12-09 (investors.teleflex.com / GlobeNewswire); Teleflex 8-K 2026-03-27 (proceeds ~$1.8B after tax, $1.0B buyback + $800M debt paydown, \"on track to close in the second half of 2026\"); Teleflex Q1-2026 10-Q filed 2026-05-07 (capital structure); FMP quote 2026-08-03 ($139.70, 52wk $100.18-$144.19).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The triage thesis is materially stale in structure: Teleflex abandoned the tax-free RemainCo/NewCo spin framing and on 2025-12-09 signed definitive agreements to SELL Acute Care + Interventional Urology to Intersurgical Ltd (~$530m) and OEM to Montagu/Kohlberg (~$1.5bn), $2.03bn total cash, ~$1.8bn net after tax, closing 2H 2026 \u2014 a cash-sale/deleveraging story, not a spin-off arb. The Biotronik vascular acquisition has already closed (Q1 2026 carried $7.8m inventory step-up and $7.8m integration charges), and the divested units were reclassified to discontinued operations in Q4 2025, so the announcement leg has fired and been re-rated; the $1bn buyback was pulled forward and began in Q2 2026. What remains forward is regulatory clearance and proceeds deployment under new CEO Jason Weidman (effective 2026-06-08), plus a real margin overhang (Q1 2026 adj. gross margin -470bp on tariffs and quality remediation) that argues against ACTIVE. Gap: I could not verify a specific announced close date, buyer-side antitrust filing status, or current market cap/price within the lookup budget."
+   "analysis": "The triage thesis is materially out of date: Teleflex ABANDONED the tax-free spin/Form 10 structure in December 2025 and instead signed definitive agreements to SELL Acute Care + Interventional Urology to Intersurgical ($530M) and OEM to Montagu/Kohlberg ($1.5B) for $2.03B cash — so \"Form 10 still pending\" is not a live catalyst and the lane is asset-sale/capital-return, not spin-off. The event itself passes G1 and G2 cleanly (named counterparties, signed contracts, committed use of proceeds, close still ahead pending regulatory approvals), and the waterfall is unusually clean — no preferred, no external manager, proceeds contractually directed to a $1.0B buyback and $800M debt paydown. But it fails on residual capture: the stock is +39% off its low, made a new 52wk high the same day it was flagged, and my re-derived pro-forma equity ($105-134 at 10-12x RemainCo EBITDA) sits at or below the $139.70 spot, meaning the market is already paying ~12.5x for a ~6% grower — you would be buying the receipt, not the gain. GAPS: I did not confirm whether either sale actually closed during July 2026 (a closing 8-K would flip fired=true, and 2H26 has begun), and I could not retrieve the 2025-12-08 pre-announcement close to compute the exact announcement-day base, so the run-up is measured off the 52wk low. A live Irenic Capital activist campaign (the subject of the 2026-03-27 8-K) is a separate, unquantified angle not underwritten here."
+  },
+  {
+   "symbol": "TIPT",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "post-asset-sale cash box / capital allocation",
+   "catalyst": "Post-Fortegra Tiptree is a zero-debt, zero-preferred cash box ($946.9M cash vs $663M market cap) whose only dated forward corporate action is the announced $100M all-cash acquisition of Universal Shield Insurance Group, closing Q1 2027.",
+   "dated_milestone": "USIG acquisition close, expected Q1 2027 (definitive agreement signed 29 Jul 2026, regulatory approvals pending); intermediate checkpoint = Q3 2026 results, early Nov 2026, and the 24 Aug 2026 $0.06 dividend payment.",
+   "instrument": "common equity",
+   "bloom_gates": "G1 PASS (named counterparty: Universal Shield Insurance Group, definitive agreement 29 Jul 2026). G2 PARTIAL (concrete commitment exists but it is a $100M outlay = only ~11% of the cash pile; the capital-RETURN commitment is trivial - $20M repurchase authorization, $10.3M actually bought in H1-26 at $16.80 avg, $0.06/qtr dividend, no special dividend or dated return of the $947M). G3 PASS ($17.67 vs $23.86 diluted book / $25.25 net cash per share is a specific, currently-unpriced figure).",
+   "edge": "M - RESIDUAL CAPTURE: (a) run-up from the pre-catalyst base is NEGATIVE. The base is $24.74 on 23 Sep 2025, immediately before the 26 Sep 2025 Fortegra sale announcement; the stock fell to $20.18 on 25 Sep and $19.05 on 26 Sep and has drifted to $17.67, i.e. -29% from base. Nothing has been harvested - the market DE-rated the sale, consistent with the view that $1.65B undersold Fortegra vs its prior IPO marks. (b) Remaining to the provenance-checked value: +35% to $23.86 diluted book, +43% to $25.25 net cash per share. This is the opposite of the VISN/SLS failure mode - the receipt is not priced. Edge is M rather than H because the discount is a governance/redeployment discount with no forcing mechanism: 14 months of unpriced cash, a controlled holdco, an affiliated investment manager earning fees on the pile, and the one dated action (USIG) converts liquid cash into exactly the kind of insurance operation the market just discounted.",
+   "primary_source": "Tiptree Q2 2026 results and USIG acquisition press release, 29 Jul 2026 (SEC 8-K Ex-99.1, CIK 1393726, accession 0001393726-26-000047): BVPS $24.34 / $23.86 diluted, equity $907.1M, cash $946.9M, zero debt, no preferred, 37.5M diluted shares, USIG $100M cash closing Q1 2027. Fortegra close confirmed by the 29 May 2026 8-K ($1.65B EV, ~$1.08B proceeds). Prices from FMP EOD: $17.67 on 3 Aug 2026 vs $24.74 on 23 Sep 2025.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The balance sheet verifies cleanly and the numerator survives provenance: $907.1M equity, $946.9M cash, zero short- and long-term debt, no preferred outstanding, 37.5M diluted shares - so unlike FIP there is no pref stack to eat the common, and $23.86/share is mechanically available, not inherited from a target. The problem is the event, not the equity: the Fortegra sale is FIRED (closed 29 May 2026) and was a de-rating, while the only unfired dated milestone is a $100M bolt-on closing Q1 2027 that deploys ~11% of the cash and cannot by itself close a ~$260M discount to book; the actual capital-return commitment is a $20M authorization, $10.3M of H1 buybacks and a $0.06 quarterly dividend, which is not a dated commitment to return the cash. Verification gap: the flagged Veradace activist engagement on the sale price returned nothing in my searches and is UNVERIFIED - if a 13D/campaign with a dated demand or board deadline is confirmed, that would be the missing forcing mechanism and would justify moving this to ACTIVE at 7."
   },
   {
    "symbol": "TLX",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "binary_catalyst",
-   "catalyst": "FDA PDUFA decision on Telix's resubmitted NDA for TLX101-Px (Pixclara), an F-18 FET PET imaging agent for recurrent/progressive glioma, following a prior Complete Response Letter.",
-   "dated_milestone": "PDUFA goal date 2026-09-11 (NDA resubmitted 2026-03-13, accepted/announced 2026-04-10); next date = Sept 11, 2026",
-   "instrument": "common equity (NasdaqGS TLX ADR / ASX:TLX); listed US options exist on the ADR but are thin \u2014 equity is the clean expression",
-   "bloom_gates": "G1 (named counterparty: FDA, formal NDA acceptance letter) + G2 (concrete commitment: FDA-assigned PDUFA goal date of Sept 11 2026). G3 FAILS \u2014 no specific currently-unpriced figure of consequence; company discloses only a ~24,000 new US glioma cases/yr epidemiology base and gives no revenue quantification.",
-   "edge": "L \u2014 the catalyst is public, well-telegraphed since the April 10 2026 acceptance release, and sell-side already carries the date; the only mild informational edge is that Telix explicitly excludes ALL Pixclara revenue from FY26 guidance, so approval is technically un-modeled in the current year, but the amount at stake is too small to create asymmetry.",
-   "primary_source": "Telix Pharmaceuticals press release \"FDA Accepts NDA for TLX101-Px (Pixclara)\", telixpharma.com, 2026-04-10 (also filed as SEC Form 6-K, accession a20260410pixclarandaacce.htm); corroborated by PRNewswire 2026-04-10 and stockanalysis.com quote data 2026-07-15.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The catalyst is real, specific, dated and genuinely forward \u2014 the FDA accepted the Pixclara resubmission on April 10, 2026 and set a hard PDUFA goal date of September 11, 2026, roughly 52 days out, and it has not fired or been re-rated. It is also not a macro bet. What it fails on is magnitude: Telix is now a ~$3.8B commercial-stage company guiding to $950-970M of FY26 revenue off the Illuccix PSMA-PET franchise, while Pixclara addresses only ~24,000 new US glioma cases per year, an opportunity plausibly worth low-to-mid tens of millions at peak \u2014 a few percent of the business either way. The one honest positive is that management confirms no Pixclara revenue sits in FY26 guidance, so the upside is un-modeled, but that does not rescue an event whose maximum swing is small relative to the equity, and the prior CRL means the downside tail (second CRL, further delay) is live without being large. WATCH rather than ACTIVE: hold the date, but the payoff geometry does not justify sizing."
-  },
-  {
-   "symbol": "TSAT",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "deleveraging",
-   "catalyst": "Telesat launches its first two Lightspeed pathfinder satellites on SpaceX Falcon 9 in December 2026, the first hardware proof-point for a fully funded CAD 2.54B LEO constellation that the equity currently discounts heavily against net debt.",
-   "dated_milestone": "First two Lightspeed pathfinder satellites launch \u2014 December 2026 (company-guided); intermediate checkpoint = Q2 2026 results (Aug 2026) reconfirming date; serial SpaceX launches 2-4 months after pathfinders.",
-   "instrument": "Common equity (TSAT, Nasdaq); long-dated calls if available given binary, high-vol payoff \u2014 position small, event is 5 months out and slippage-prone",
-   "bloom_gates": "G1 (SpaceX / MDA Space / Government of Canada named), G2 (CAD 2.54B funding agreements closed, 14-launch SpaceX contract), G3 partial (C$1.1B Lightspeed backlog vs discounted equity stub)",
-   "edge": "L/M \u2014 the December 2026 date, the CAD 2.54B funding close, and the 14-launch SpaceX contract are all publicly announced and widely reported (SpaceNews, StockTitan, SpaceQ), so the milestone itself is priced; the only genuine edge is the gap between ~C$2.7B invested to date plus C$1.1B Lightspeed backlog and a deeply discounted equity stub, which is a valuation view rather than an information edge.",
-   "primary_source": "SpaceNews, \"Telesat eyes December 2026 for Lightspeed pathfinder debut\" (2026); corroborated by Telesat Q1 2026 results release, GlobeNewswire 2026-05-05 (C$1.1B Lightspeed backlog, C$2.7B invested, Q1 2028 service date) and Telesat press release on completion of CAD 2.54B funding agreements.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The catalyst is real, dated, forward and not macro: G1 named counterparties (SpaceX Falcon 9 14-launch agreement, MDA Space as prime, Government of Canada/Quebec funding), G2 a concrete commitment (CAD 2.54B funding agreements completed, ~C$2.7B already invested, C$1.0-1.2B 2026 capex guided), and a partial G3 in the C$1.1B Lightspeed backlog disclosed at Q1 2026. What keeps this at WATCH rather than ACTIVE is that a pathfinder launch is a technical demonstration, not a cash-flow or re-rating event \u2014 global commercial service already slipped ~3 months to Q1 2028 on ASIC readiness, and revenue is ~18+ months beyond the December date while legacy GEO revenue fell 25% y/y in Q1 2026. Slippage risk is high and the schedule has already moved once, so the December date is best treated as a monitorable checkpoint (reconfirm at Q2 2026 results in August) rather than a fired trigger."
-  },
-  {
-   "symbol": "TWO",
    "score": 4,
    "tier": "WATCH",
-   "lane": "merger_arb",
-   "catalyst": "Closing of the $12.00/share all-cash CrossCountry Mortgage acquisition of Two Harbors plus a pro-rated stub dividend, pending the last handful of state regulatory approvals.",
-   "dated_milestone": "Stockholder approval fired 2026-07-02; next date = remaining 5 state regulatory approvals and expected close during August 2026 (federal antitrust cleared May 2026; 48 of 53 state approvals in hand).",
-   "instrument": "common equity (NYSE: TWO)",
-   "bloom_gates": "G1 (named counterparty: CrossCountry Mortgage) and G2 (concrete commitment: signed merger agreement, $12.00 cash + pro-rated stub dividend, stockholder approval obtained 2026-07-02). G3 FAILS - no specific currently-unpriced figure; the stub dividend is disclosed and the tape already reflects it.",
-   "edge": "L - stock last 12.09 (bid 12.09 / ask 12.11) against $12.00 cash plus an estimated ~$0.17-0.20 Q3 stub (Q2 dividend was $0.34), i.e. roughly 0.5-0.9% gross to a ~1-month close. Fully re-rated after the vote; the bidding-war optionality is dead.",
-   "primary_source": "Two Harbors 8-K / press release on stockholder approval, SEC EDGAR CIK 0001465740, filed 2026-07-02; corroborated by Bloomberg 2026-07-02 and HousingWire; live quote from IBKR snapshot 2026-07-20 (last 12.09).",
+   "lane": "dated_binary",
+   "catalyst": "FDA PDUFA goal date of 11-Sep-2026 on Telix's resubmitted NDA for TLX101-Px (Pixclara), a PET imaging agent for recurrent/progressive glioma.",
+   "dated_milestone": "PDUFA action date 11-Sep-2026 (Pixclara/TLX101-Px NDA, resubmitted 13-Mar-2026, accepted ~10-Apr-2026). Zircaix/TLX250-CDx has NO dated milestone: post-CRL (28-Aug-2025, CMC + Ph3-to-commercial comparability) the company only disclosed a Type A alignment and a January-2026 FDA meeting, resubmission timing still open as of the 21-Dec-2025 update.",
+   "instrument": "Common equity, NASDAQ ADR TLX ($10.02, mkt cap $3.39B); options chain thin — express via small equity position, not premium.",
+   "bloom_gates": "G1 pass (named counterparty = FDA) and G2 pass (concrete commitment = statutory PDUFA action date 11-Sep-2026). G3 FAIL — no specific currently-unpriced figure: Telix has never sized Pixclara's revenue contribution, and the flagged $10 \"mid-range\" price was inherited from the trading range, not derived from an approval-case value.",
+   "edge": "L",
+   "primary_source": "Telix Pharmaceuticals PR, \"FDA Accepts NDA for TLX101-Px (Pixclara)\", ~10-Apr-2026 (PDUFA 11-Sep-2026; resubmitted 13-Mar-2026) — telixpharma.com/news-views/fda-accepts-nda-for-tlx101-px-pixclara/; corroborated by StockTitan \"FDA Accepts Pixclara NDA, Sets Sept. 11 Date\". Zircaix status from Telix PR \"Precision Medicine Portfolio Update\", 21-Dec-2025. Price/range from FMP quote 03-Aug-2026 ($10.02; 52wk 6.28-14.27).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The event is real, named and dated: TWO holders approved CrossCountry's $12.00 all-cash merger on 2026-07-02, defeating UWM's $12.50 cash/stock bid, with close guided to August 2026 pending five remaining state licence approvals. But the catalyst has substantially fired - shares closed at 12.09, above the headline cash price, so the market is already paying for the stub dividend, leaving perhaps 50-90bp of gross residual against a broken-deal downside of several dollars (asymmetry roughly 1:20). Gap in verification: the exact stub amount is date-dependent and not yet declared, and I did not independently confirm which five states remain, so the estimate is derived from the $0.34 Q2 dividend and a mid-August close assumption."
+   "analysis": "The triage note had the wrong asset: the confirmed, dated, forward FDA binary is Pixclara (TLX101-Px, glioma PET), NDA resubmitted 13-Mar-2026 and accepted with a PDUFA goal date of 11-Sep-2026 — that part checks out exactly. Zircaix (TLX250-CDx), the larger ccRCC-imaging prize the note leads with, has NO dated milestone at all: after the 28-Aug-2025 CMC complete-response letter Telix has disclosed only a Type A alignment and a January-2026 comparability meeting, so it is a hope, not a catalyst. What kills the score is residual capture plus magnitude: the stock has run from $7.85 at resubmission to $10.02 (+27.6%), popped 7.6% on acceptance day, and Pixclara is an orphan diagnostic worth single-digit percent to a company already at ~$1B revenue and $3.4B cap — remaining capture to a plausible approval value is roughly 10-17% against a 10-14% downside to the pre-acceptance base, so reward/risk is under 1x. Additional overhang: an active securities class action (Hagens Berman) over prostate-asset and supply-chain misstatements, and a management track record of CMC-driven FDA rejections that argues against underwriting approval as near-certain. Gap in verification: I could not confirm within budget whether a Zircaix BLA resubmission has since been filed or accepted (one search returned a Urology Times \"BLA resubmitted\" headline of undetermined date) — if a Zircaix PDUFA has been assigned, that is a materially larger event and this name warrants a re-verify."
+  },
+  {
+   "symbol": "TMC",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "regulatory_binary",
+   "catalyst": "NOAA found TMC USA's consolidated DSHMRA exploration-licence + commercial-recovery application in full compliance (announced 1-May-2026, determination 30-Apr-2026) over a ~65,000 km2 CCZ area, with the company guiding to an actual commercial-recovery permit before end-Q1-2027.",
+   "dated_milestone": "Q2-2026 corporate update 14-Aug-2026 (cash/burn check, not a catalyst); NOAA commercial-recovery permit decision guided \"before end of Q1 2027\" — company guidance, NOT a statutory NOAA deadline; ITLOS Cases 34/35 merits still pending after the 18/20-Jul-2026 provisional-measures orders.",
+   "instrument": "Long-dated calls (Mar-2027 or later expiry) or a starter equity stub sized for total loss; full-size common is the wrong expression given open-ended at-the-market issuance into the wait.",
+   "bloom_gates": "G2 PARTIAL — NOAA's 30-Apr-2026 full-compliance determination is a concrete, dated, verifiable regulatory act, but the end-Q1-2027 permit date is company guidance with no statutory clock behind it. G1 FAIL — NOAA is the regulator, not a counterparty; no named commercial counterparty, offtake, or funding partner attaches to the permit. G3 FAIL — no specific currently-unpriced figure exists: there is no contracted price, no NPV the market is demonstrably ignoring, only a re-rate hope.",
+   "edge": "M — Run-up: +104% from the $1.80 pre-catalyst base (mid-Mar-2025, before the 27-Mar/24-Apr-2025 US-pathway news; the 24-Apr-2025 executive order spiked it $2.55 to $3.69 on 65.6M shares). The move peaked at +530% ($11.35) and ~80% of that has been given back, so the permit optionality is genuinely NOT harvested at $3.67 — this is a de-rating, not a receipt. Remaining: unquantifiable by provenance. A favorable permit implies roughly +105% to a $7.50 dilution-haircut re-rate and +200% to the old $11.35 high, but both are sentiment anchors, not derived values — there is no contract, no offtake price, no revenue date, and every quarter of the wait is financed by equity (shares +22.5% y/y to ~433M). The gap between \"unharvested\" and \"underwritable\" is what caps this.",
+   "primary_source": "TMC/GlobeNewswire + SEC 8-K EX-99.1, \"NOAA Determines TMC USA's Consolidated Deep-Seabed Mining Application is in Full Compliance,\" 1-May-2026 (determination 30-Apr-2026, ~65,000 km2, permit expected before end-Q1-2027); TMC/GlobeNewswire, ITLOS Seabed Disputes Chamber unanimous provisional-measures Orders, 18-Jul-2026 (announced 20-Jul-2026), Cases 34/35; TMC Form 10-Q for the quarter ended 31-Mar-2026 (liquidity $164M) and Q1-2026 corporate update, 14-May-2026; FMP quote 3-Aug-2026 ($3.67, 52w $3.40-$11.35) and EOD chart Mar-May 2025 for the pre-catalyst base.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The two dated facts in the flag check out — NOAA's full-compliance determination (30-Apr-2026) and the ITLOS orders (18/20-Jul-2026) are real and correctly dated — but the flag overstates the second: the Chamber expressly did not rule on the merits and did not order a contract extension, it only required the ISA to observe due process, so \"removing ISA interference\" is not what happened. The forward leg is real and unfired (no permit yet, and the stock has given back ~80% of its 2025-26 permit run while still sitting +104% above the $1.80 pre-catalyst base, so this is not a harvested event), but it fails the strict gates on the part that matters: there is no named counterparty, no binding commitment (end-Q1-2027 is company guidance, not a statutory deadline), and no derivable unpriced figure — the upside can only be expressed as a re-rate toward a price the market already paid and abandoned. Underwriting that against a pre-revenue balance sheet with ~$164M of liquidity, 22.5% annual share-count growth, and years of capex between a permit and a dollar of cash flow means scoring the equity rather than the event: WATCH at 4, revisit if a named offtake/financing counterparty or a hard NOAA decision date attaches to the permit."
+  },
+  {
+   "symbol": "TRIP",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "activist_structural",
+   "catalyst": "Signed $700M all-cash sale of TheFork to American Express (put-option agreement, 2026-06-15) closing before year-end 2026, leaving a net-cash Viator/Brand stub under a Starboard-reconstituted board that is publicly demanding a whole-company sale.",
+   "dated_milestone": "TheFork/AmEx close contractually expected before 2026-12-31 (works-council/antitrust conditions); next hard dates = Q2-26 earnings capital-return update (early Aug 2026) and the 2026 Annual Meeting, at which two additional Starboard-recommended directors stand for election (board fixed at 10 per the 2026-03-23 cooperation agreement).",
+   "instrument": "common equity (TRIP); no options overlay — resolution timing is open-ended past the deal close",
+   "bloom_gates": "G1 PASS (named counterparties: American Express as buyer, Starboard Value as 9% activist with signed cooperation agreement). G2 PASS (signed $700M all-cash put-option agreement dated to close before YE-2026; cooperation agreement seats 4 directors, board 8→10, standstill). G3 FAIL — the $700M is a public, contractual, already-priced figure; the residual whole-company/Viator SoP is my own derivation, not a disclosed or committed number, and no company-run whole-company sale process has actually been announced (that is Starboard's 2026-02-17 letter demand, not a board process).",
+   "edge": "M — run-up already harvested: from the pre-catalyst base of $9.35 (2026-03-20 close, day before the Starboard cooperation agreement) to $14.50 today is +55.1%; from the pre-deal base of $12.41 (2026-06-12) to $14.50 is +16.8%. Remaining to the provenance-checked favorable resolution: +35% to a $19.50 base case, +52% to a $22 whole-company-sale case; only +17% to a no-sale ~$17 stub re-rate. Roughly 55-60% of the event value is already in the tape, and the un-harvested half depends on a sale process that has not been commenced.",
+   "primary_source": "Tripadvisor IR press release \"Tripadvisor Enters into Agreement to Sell TheFork to American Express for $700 Million\" (2026-06-15); Tripadvisor/Starboard cooperation agreement PR + 8-K Ex-99.1 (2026-03-23); Starboard Value letter to the TRIP board demanding a full-company sale process (2026-02-17); Tripadvisor Q1-2026 10-Q balance sheet (filed 2026-05-07); FMP quote 2026-08-03 ($14.50, 52wk $9.01-$20.16, 50d $12.89).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "Both flagged facts verify exactly as stated and the capital structure is clean — zero preferred, no proceeds sweep, no external manager — so unlike FIP the mechanical waterfall genuinely supports a $19.50-$22 favorable-resolution value against $14.50, with ~$4.90/sh of pro-forma net cash and a ~3.9x EBITDA stub. What fails the gate is freshness and framing: the stock has already run +55% off its $9.35 pre-cooperation-agreement base and +17% off the pre-deal base, so the named, contractual, certain part of the event is largely re-rated, and the flag's \"unresolved whole-company sale review\" is materially overstated — that is Starboard's February letter demand, not a board-commenced process, which is why G3 fails. Residual is real but is roughly half the story and rests on a discretionary next step; per the mostly-harvested rule this caps at 4 and belongs on the watch list, re-scored if the board actually announces a formal whole-company or Viator sale process or commits the proceeds to a sized buyback. Gap: FMP returned no usable FY2025 segment split, so the ~$285M RemainCo EBITDA denominator is an estimate rather than an audited figure — the multiple, not the net cash, is the soft part of the derivation."
+  },
+  {
+   "symbol": "TTI",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "structural",
+   "catalyst": "The flagged milestone — the financing condition attached to TETRA's 28-May-2026 conditional FID on the Evergreen bromine facility — has already been satisfied and is no longer forward.",
+   "dated_milestone": "FIRED: financing condition cleared via the June 2026 follow-on (12.4M shares at $9.25, $108.2M net), confirmed satisfied in the Q2-2026 release of 03-Aug-2026. Only residual dated markers are Phase 2 mechanical completion targeted end-2026, facility operational end-2027, first production early 2028.",
+   "instrument": "common equity (NYSE: TTI)",
+   "bloom_gates": "None pass. G1 fails — no named counterparty (no bromine offtake, no project-finance partner; the raise was an anonymous public equity offering). G2 fails — no third-party concrete commitment; the remaining spend is self-funded from cash and the revolver. G3 fails on strictness — the only specific figure is the company's own $607M bromine NPV at a 10% discount, published 28-May-2026 and public for two months, i.e. a management DCF on 2028-start cash flows, not an unpriced third-party number.",
+   "edge": "L. Run-up from the pre-catalyst base is NEGATIVE: $10.39 close 27-May-2026 (day before the FID release) to $7.81 on 03-Aug-2026 = -24.8%. Remaining capture to a mechanically derived SoP of ~$8.85 is only ~+13%, and the stock also sits 16% below the $9.25 offering price. So this is the inverse of the VISN/SLS failure mode — nothing was harvested — but the reason is that the event fired dilutively and the market declined to underwrite the NPV, which is a valuation argument, not a catalyst. Against a base-business-only floor near $4.70 the reference R:R is ~0.33.",
+   "primary_source": "TETRA Technologies Q2-2026 earnings release, PR Newswire, 03-Aug-2026 (capital structure, $108.2M net offering proceeds, timeline); FID press release / 8-K, 28-May-2026 (conditional FID, $607M NPV, ~$220M remaining capex, Phase 2 mechanical completion end-2026); FMP EOD price series 01-May-2026 to 03-Aug-2026 (pre-catalyst base $10.39 on 27-May-2026, $7.81 on 03-Aug-2026).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The triage premise is factually stale: the FID's financing condition was the forward hook, and it was resolved in June 2026 by a $100M/12.4M-share public equity offering at $9.25, with the Q2 release of 03-Aug-2026 confirming $108.2M net proceeds and a nearly debt-free balance sheet (net debt $28.7M). What remains is not a catalyst but a two-year construction schedule — Phase 2 mechanical completion end-2026, first production early 2028 — with no offtake counterparty, no third-party commitment, and an upside figure that is management's own DCF rather than a contract. Provenance work does clear TTI of the FIP trap (no pref stack, no manager fees, proceeds not contractually diverted), and residual capture is genuinely unharvested at -24.8% versus the pre-event base, but mechanically re-derived SoP leaves only ~+13% to ~$8.85 against a ~$4.70 base-business floor, so the honest read is a cheap-ish equity with a long-dated build, not a dated forward event. Gap to note: I could not identify a specific news cause for the 27-28 July -7.4% drop (no company release found; likely OFS/crude-tape derating), so the possibility of an undisclosed negative on the base business is unverified."
   },
   {
    "symbol": "TXNM",
-   "score": 6,
-   "tier": "ACTIVE",
+   "score": 4,
+   "tier": "WATCH",
    "lane": "merger_arb",
-   "catalyst": "Blackstone Infrastructure's signed $61.25/share all-cash acquisition of TXNM Energy needs only NMPRC and NRC sign-off, and the NMPRC docket restarts once the joint applicants file the PIPE-unwind compliance report due before end-July 2026.",
-   "dated_milestone": "NMPRC compliance report filing before 2026-07-31 (next hard date), then re-set of the NMPRC procedural schedule; outside date extended to 2027-05-31; company-guided close 1H 2027.",
-   "instrument": "Common equity, long (merger-arb spread capture; listed options too thin/low-IV to add edge)",
-   "bloom_gates": "G1 (named counterparty: Blackstone Infrastructure Partners) + G2 (concrete commitment: executed merger agreement, $61.25 cash/share, termination date amended to May 31 2027, four of six approvals already granted - PUCT, FERC, FCC, HSR)",
-   "edge": "M - the deal itself is fully public and the ~6.7% gross spread is visible, but the market is pricing the July 2 NMPRC PIPE-void order as open-ended deal risk when the remedy is already funded and mechanical ($400M term loan drawn, equity issuance to repay); the mispricing is in the probability of NMPRC denial, not in the existence of the catalyst.",
-   "primary_source": "TXNM Energy / Blackstone Infrastructure joint press release, \"TXNM Energy and Blackstone Infrastructure Extend Merger Agreement,\" 2026-07-17 (PRNewswire, filed as 8-K Ex-99.1); NMPRC PIPE-void order 2026-07-02; price from stockanalysis.com close 2026-07-17.",
-   "verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "kill_fact": "All load-bearing facts verify against primary/company sources: $61.25/share all-cash Blackstone Infrastructure deal; NMPRC's July 2, 2026 final order voided the 2025 $400M PIPE, imposed $300K aggregate penalties ($100K each on TXNM/Parent/Purchaser) and paused the procedural schedule; a compliance report is due within 45 days with joint applicants intending to file before end-July 2026; TXNM drew a $400M term loan to unwind it; PUCT, FERC (Feb 2026), FCC, HSR and 99.6% shareholder approval are all in hand, leaving only NMPRC and NRC; close $57.41 on 2026-07-17 vs $61.25 = 6.69% gross, dividend $1.69 (2.94% yield) confirmed. CORRECTIONS that cut the score from 7: (1) TIMELINE \u2014 on July 17, 2026 (three days before this line was written, and unmentioned in it) the parties extended the outside date to May 31, 2027 and now guide close to H1 2027, so the \"~10-month\" framing is the optimistic tail of a range the counterparties themselves just widened; ~9% total return over 10-12 months is only ~8-9% annualized against ~13%+ downside to the ~$50 standalone zone, i.e. roughly 1:1.5 risk/reward, not the asymmetry the width implies. (2) EVENT MECHANICS \u2014 the compliance filing is a datable filing, not a datable restart: the NMPRC must accept it and re-establish a schedule, and the same commission that voided the PIPE and levied penalties controls that discretion, so the \"restarts the docket\" claim overstates a one-sided act as a bilateral one. (3) OMITTED OVERHANG \u2014 TXNM plans to issue common stock to repay the $400M term loan, a dilution/supply overhang not disclosed in the thesis. Not FIRED (catalyst is forward, end-July 2026), tradeable ($6.4B cap, NYSE common), no hidden disqualifier found. Thesis edge is real but is compensation for genuine New Mexico regulatory hostility rather than mispricing.",
-   "analysis": "At $57.41 (close 2026-07-17) versus $61.25 cash, the gross spread is 6.7%, roughly 9% including the $1.69 annual dividend over a ~10-month close - unusually wide for a regulated-utility LBO that already holds PUCT, FERC, FCC and HSR clearance. The width is entirely the NMPRC's July 2 order voiding the June 2025 $400M/8M-share Blackstone PIPE at $50.00 and pausing the procedural schedule; TXNM has since drawn a $400M term loan to unwind it and will file a compliance report before end-July, which is the specific, datable event that restarts the docket. Risk is real and asymmetric downside (standalone utility re-rate toward the ~$50 pre-deal zone if NMPRC denies, plus the PIPE episode signals a hostile New Mexico commission), so this is a sized arb rather than a conviction position; NRC transfer approval is the low-risk residual."
+   "catalyst": "Blackstone Infrastructure's $61.25/sh all-cash take-private of TXNM Energy needs only NMPRC (and NRC) sign-off, with the New Mexico docket restarting after the July 2, 2026 order voiding the $400M PIPE and the July 17, 2026 extension of the outside date to May 31, 2027.",
+   "dated_milestone": "Compliance report demonstrating the PIPE unwind due to NMPRC within 45 days of the 7/2/2026 final order (~mid-Aug 2026; joint applicants said they would file before end of July 2026); NMPRC then re-establishes the paused procedural schedule — next hard date is the 5/31/2027 outside date, close guided to H1 2027.",
+   "instrument": "common equity (long, deal-spread)",
+   "bloom_gates": "G1 (named counterparty: Blackstone Infrastructure, signed merger agreement) + G2 (concrete contractual commitment: $61.25/sh cash, shareholder-approved Aug 2025, HSR/FERC/FCC/PUCT cleared, termination date extended 7/17/2026). G3 fails — there is no unpriced figure; the entire remaining upside IS the quoted spread.",
+   "edge": "L — run-up: pre-catalyst base $52.88 (5/16/2025 close, last before the 5/19/2025 announcement) to $57.60 today = +8.9%, i.e. 56% of the $8.37 announcement-to-deal-price spread is already harvested. Remaining: $57.60 -> $61.25 = +6.34% gross, plus ~$1.65-2.20 of regular dividends through an H1-2027 close (~+3-4%), so ~9-10% total over ~10-16 months = high-single-digit annualized. Against that sits a ~-10% break to a standalone value degraded by the new $400M term loan that TXNM intends to repay by issuing common stock. Asymmetry is roughly 0.65:1.",
+   "primary_source": "TXNM Energy/Blackstone Infrastructure press release \"TXNM Energy and Blackstone Infrastructure Extend Merger Agreement,\" 7/17/2026 (PRNewswire, and 8-K exhibit 99.1 filed 7/17/2026); NMPRC final order voiding the PIPE, 7/2/2026 (TXNM 8-K filed 7/6/2026, case 25-00060-UT); price $57.60 as of 8/3/2026 (FMP quote).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The event is real, contractual and genuinely forward — nothing has fired, and the 7/17/2026 extension to a 5/31/2027 outside date re-widened the spread rather than compressing it, so the arc is fresh. But the NMPRC is a hostile single point of failure with precedent: the same commission killed the Avangrid/Iberdrola-PNM merger outright in 2021, and on 7/2/2026 it declared Blackstone's $400M PIPE void as an unauthorized transaction undertaken for the purpose of the merger, then paused the procedural schedule entirely — there is currently no hearing date, only a compliance-report review. Numerator provenance is satisfied by exemption (a fixed cash deal price is contractual, not derived); the capital-structure check still matters on the downside, where the $400M unwind loan and the equity issuance planned to repay it lower the break-case value. Residual capture is the binding constraint: over half the announcement spread is already taken, what remains annualizes thin for an indefinite-timeline regulatory binary, so this is a hold-your-nose WATCH rather than an ACTIVE seat."
+  },
+  {
+   "symbol": "UBS",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "overhang_clearing",
+   "catalyst": "Swiss parliament's upper-house economic affairs committee (WAK-S) resumes the too-big-to-fail capital bill on 10/11 and 31 August 2026 and is weighing cutting the Federal Council's 100% CET1 backing of UBS's foreign subsidiaries to 70-80% (or 50%), which would shrink the ~$22bn incremental CET1 UBS says the bill demands and cut the extra buffer from roughly $12bn toward zero.",
+   "dated_milestone": "WAK-S committee sessions 2026-08-10/11 and 2026-08-31; Council of States (upper house) chamber vote expected September 2026; possible final adoption December 2026, with UBS and press both saying the legislative process runs into 2027.",
+   "instrument": "Common equity (UBS, NYSE ADR; UBSG.SW Zurich line)",
+   "bloom_gates": "G3 partial only — the ~$22bn CET1 add / ~$12bn buffer swing is a specific, firm-specific, dated figure, but it fails the \"currently unpriced\" half of the test. No G1 (parliament is not a named counterparty to a transaction) and no G2 (no concrete company commitment contingent on the vote — the opposite: UBS committed to capital return ahead of it).",
+   "edge": "L — run-up from the pre-catalyst base is ~+22% (the \"easing track\" became publicly knowable at the 4 May 2026 committee hearing / 20 May coverage; UBS was ~$43.4 then vs $52.75 now, +21.7% on 3M, +13.9% YTD, +41% 1Y, only 4.5% below the $55.15 52-week high and 20% above the $44.02 200-day). Remaining capture to a fully favorable 70-80% outcome is ~+8-14% ($57-60), against a ~-14% give-back to the 200-day area if the committee holds 100% or adds the payout-blocking trigger ratio it is also considering — reference R:R ~0.7, i.e. mostly harvested with genuine two-sided legislative risk.",
+   "primary_source": "SWI swissinfo.ch, \"UBS Starts $3 Billion Buyback as It Counters Swiss Capital Push\", 2026-07-29 (buyback not stalled; ~$22bn CET1 estimate); SWI swissinfo.ch, \"UBS Capital Debate in Parliament Puts Bill on Easing Track\", 2026-05-20 (100% vs 75/80% options, ~$20bn CET1, 10-11 August reconvene); Global Banking & Finance / Reuters coverage, 2026-07 (committee meetings 10, 11 and 31 August, September upper-house vote, possible end-2026 passage, 70/80/50% options, payout-trigger ratio under consideration); FMP quote 2026-08-03 ($52.75, +21.66% 3M, +13.91% YTD, 52wk high $55.15, 200d $44.02).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The legislative event is real, firm-specific, dated and unfired — committee sessions 10/11 and 31 August, chamber vote ~September, adoption possibly December — but the flagged transmission mechanism is factually wrong: UBS has NOT stalled its 2026 buyback pending the outcome. It completed a $3bn programme in July and announced a further $3bn on 29 July 2026 running through Q2 2027 with at least $1bn in the next three months, unconditional on the capital rules, and Ermotti has said FINMA confirmed UBS would have time to build capital without compromising shareholder remuneration. So the \"resolution unlocks capital return\" premise is already substantially defused, and the residual is a valuation re-rate on an $173bn mega-cap that has already run +22% into the easing consensus — an event that is 100% forward but roughly two-thirds harvested, which caps this at 4 under the residual-capture rule. Numerator note: this is a capital_return lane with no derived SoP/pref-waterfall to re-underwrite (UBS files 20-F, and AT1 is a regulatory instrument, not a FIP-style common-waterfall claim); I did not inherit an analyst target — the $57-60 favorable case is my own framing of the CET1 relief against current book, and it is soft."
   }
  ]
 }

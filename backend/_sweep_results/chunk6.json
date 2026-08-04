@@ -3,165 +3,143 @@
  "scanned": 150,
  "scan_distribution": {
   "active": 2,
-  "watch": 7,
-  "none": 141
+  "watch": 9,
+  "none": 139
  },
  "survivors_flagged": [
   {
-   "symbol": "DBRG",
+   "symbol": "DDL",
    "score": 8,
    "tier": "ACTIVE",
-   "lane": "merger_arb",
-   "one_line": "Pending SoftBank take-private at $16.00/sh with real FTC + CFIUS complexity, plus a signed $1.05B ArcLight combination - live complicated arb, not yet closed."
+   "lane": "deal_completion_asset_sale",
+   "one_line": "Signed, shareholder-approved SPA sells the China opco to Meituan for up to ~$997M (~$4.60/sh gross) vs a $2.47 stock; $150M reverse break fee, no financing condition, only Chinese regulatory clearance left and the price has not re-rated at all."
   },
   {
    "symbol": "DBVT",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "dated_binary_regulatory",
+   "one_line": "Phase 3 VITESSE already hit (46.6% vs 14.8%), FDA has requested no further data, and the Viaskin Peanut BLA is guided for Q3 2026 filing with a priority-review request - efficacy risk spent, the forward event is a filing-then-review clock, and the June 29 timing slip left the stock unmoved."
+  },
+  {
+   "symbol": "DMAC",
    "score": 5,
    "tier": "WATCH",
-   "lane": "binary_regulatory",
-   "one_line": "Viaskin Peanut BLA filing guided to Q3 2026 with FDA requesting no new data - dated but it is a filing, PDUFA not yet set."
-  },
-  {
-   "symbol": "DFTX",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "dated_binary",
-   "one_line": "Phase 3 MDD readout already fired (+55% on 22-Jun-26); the GAD pivotal readout is still forward and dated early fiscal Q3 2026, plus DT402 Ph2a \u2014 real binary, but post-spike asymmetry is much thinner."
-  },
-  {
-   "symbol": "DOC",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "spin-off",
-   "one_line": "Janus Living senior-housing REIT spin/IPO announced Feb 2026 to unlock a mis-valued portfolio, plus ~$1B capital recycling; stock already +21% on the announcement so much of the re-rate is banked, but the actual IPO separation is still forward."
-  },
-  {
-   "symbol": "DNUT",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "deleveraging/restructuring",
-   "one_line": "Turnaround via refranchising: WKS Western-US JV stake sale closed Mar 2026 and a Japan refranchising agreement, proceeds earmarked for debt paydown - a real dated deleveraging path but execution-heavy and not a hard event."
+   "lane": "binary_asymmetry",
+   "one_line": "ReMEDy2 pivotal Ph2/3 stroke trial hit 75% of the 200-patient interim-analysis threshold (2026-05-20) - early-arc, unmoved microcap where the pre-specified interim is the binary and enrollment completion is the next knowable step."
   },
   {
    "symbol": "DSX",
-   "score": 6,
+   "score": 5,
    "tier": "WATCH",
-   "lane": "merger-arb",
-   "one_line": "Acquirer side of a live hostile $27.34 tender for Genco extended to July 24, 2026 \u2014 dated, but the asymmetry sits on the target."
+   "lane": "activist_ma",
+   "one_line": "Diana is the live hostile bidder for Genco at $27.34/sh with fully underwritten financing extended and the tender pulled Jul 24 to force board engagement against a poison pill - a real dated structural fight, but the mispriced underlying is arguably GNK, not the acquirer."
   },
   {
-   "symbol": "EA",
-   "score": 8,
-   "tier": "ACTIVE",
-   "lane": "merger-arb",
-   "one_line": "Live $210/share all-cash $55B LBO by PIF/Silver Lake/Affinity stalled at CFIUS with a hard Sept 28, 2026 outside date \u2014 dated, unresolved, and the spread prices real regulatory risk."
+   "symbol": "DYN",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "pdufa_binary",
+   "one_line": "Hard dated PDUFA of Jan 21 2027 for z-rostudirsen in exon-51 DMD under Priority Review, but the stock has already run from $9.89 to $25 on the BLA acceptance and just raised $375M at $20.50 - late-arc and the accelerated-approval path leaves thin asymmetry."
+  },
+  {
+   "symbol": "ELE",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_operational_milestone",
+   "one_line": "Karlawinda expansion commissioning on track for Q3-2026 steps up an uncapped 2% NSR, and ELE at 15.77 is near its 12.58 low with no re-rate — early-arc and unmoved, though this is an operating ramp rather than a true special situation."
   }
  ],
  "verified": [
   {
-   "symbol": "DBRG",
+   "symbol": "DDL",
    "score": 4,
    "tier": "WATCH",
-   "lane": "merger_arb",
-   "catalyst": "Closing of SoftBank's $16.00/sh all-cash take-private of DigitalBridge (signed 2025-12-29, shareholder-approved 2026-04-23), pending CFIUS/FERC/FCC/HSR, EU FSR, MAS, UK FCA and an 85%-of-revenue client-consent condition.",
-   "dated_milestone": "Company-guided close in H2 2026; outside date 2027-03-29 (extendable 90 days to 2027-06-27). Next hard checkpoint: remaining regulatory clearances (CFIUS/FERC/FCC), none publicly confirmed cleared as of 2026-07-20.",
-   "instrument": "common",
-   "bloom_gates": "G1 (named counterparty: SoftBank Group Corp., signed definitive merger agreement) + G2 (concrete commitment: $16.00/sh cash, ~$4.0B EV, shareholder vote passed). G3 fails \u2014 the $16.00 figure is fully priced; no specific currently-unpriced number identified.",
-   "edge": "L \u2014 the entire arb is priced. $15.80 vs $16.00 = 1.27% gross, ~3-4% annualized on an H2-2026 close, with an outside date that can slip to mid-2027 (annualized falls under 2% in the slip case). The ArcLight deal, which triage cited as a second catalyst, is expressly conditioned on the SoftBank close and cannot accrue to common holders capped at $16.00 \u2014 it is a SoftBank-side asset, not DBRG upside. No stub, no CVR, no bump chatter found.",
-   "primary_source": "DBRG 8-K / DEFM14A merger agreement (filed 2025-12-29; DEFM14A 2026-03) and DigitalBridge press release \"DigitalBridge Stockholders Approve Acquisition by SoftBank Group Corp.\" (2026-04-23); ArcLight combination press release (2026-05-27); price $15.80 via FMP quote 2026-07-20.",
+   "lane": "deal_completion_asset_sale",
+   "catalyst": "Dingdong signed a definitive SPA (2026-02-05) selling Dingdong Fresh Holding Limited — substantially all China operations — to Two Hearts Investments Limited, a wholly-owned Meituan (HKEX:3690) subsidiary, for a US$717M base price, with SAMR anti-monopoly clearance the gating condition and a stated intention to return a substantial majority of proceeds via buybacks/dividends.",
+   "dated_milestone": "SPA signed 2026-02-05; proceeds-return intention announced 2026-02-10; shareholder resolutions adopted at the 2026-03-27 AGM; China ops reclassified held-for-sale in the Q1 2026 6-K (2026-05-22). Open item = SAMR clearance + overseas carve-out + PRC non-resident indirect-transfer tax filings. SPA terminable if closing has not occurred within 12 months → outside date ~2027-02-05. Next scheduled disclosure: Q2 2026 results, ~late Aug 2026.",
+   "instrument": "common ADS (NYSE: DDL); listed calls exist but are thin",
+   "bloom_gates": "G1 PASS (named counterparty: Two Hearts Investments Ltd / Meituan HKEX:3690); G2 PASS (signed definitive SPA with reverse termination fees, 90/10 payment split, shareholder approval obtained); G3 PARTIAL (a specific unpriced figure exists — US$717M base vs US$534M market cap — but the flagged US$997M / $4.60 per ADS is NOT the contractual number)",
+   "edge": "M — Run-up: NEGATIVE. Pre-catalyst base (2026-01-30 close, before the 2026-02-02/04 leak move) $2.86; announcement-day $2.74 on 26M shares; today $2.465 = -14% vs the pre-leak base and -23% vs the 2026-02-04 pre-announcement close of $3.20. The market sold the news and has kept selling — this is the opposite of the VISN \"buying the receipt\" case, nothing is harvested. Remaining: from $2.465 to a re-derived $3.20 = +30% (to the $3.31/ADS gross contractual figure = +34%; to the flagged $4.60 = +87%, but that numerator does not survive provenance). Downside if SAMR blocks: $75M regulatory break fee (~$0.35/ADS) on a broken loss-making China grocer with a new CEO → ~$1.90 (52wk low $1.65). R/R ≈ 1.3 — real but thin for the binary being taken.",
+   "primary_source": "Dingdong (Cayman) Ltd 6-K, \"Dingdong Announces Entry into Definitive Agreement to Sell its China Business to Meituan,\" filed/released 2026-02-05 (SEC CIK 0001854545, accession 0001193125-26-038494); 6-K on proceeds usage 2026-02-10 (0001193125-26-043759); AGM results 6-K 2026-03-27 (0001193125-26-127836); Q1 2026 results 6-K 2026-05-22 (0001193125-26-235450) for the held-for-sale balance sheet; FMP quote 2026-08-03 ($2.465) and EOD chart 2026-01-15→2026-02-20 for the run-up measurement.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The catalyst is real, dated, forward, and idiosyncratic \u2014 a signed, shareholder-approved $16.00/sh cash take-private by SoftBank with a genuinely long regulatory tail (CFIUS on a Japanese buyer of US power/digital infra, FERC, FCC, EU FSR, plus an 85% client-consent condition). But the market has already collapsed the spread to 1.27%, so the setup is a classic negatively-skewed deal-break trade: ~$0.20 of upside against a break floor around $10-11 (pre-announcement/52-wk-low zone $8.94), i.e. reference R/R ~0.03. The triage framing of \"live complicated arb\" is directionally right on complexity but wrong on compensation, and it double-counts ArcLight, which is a downstream condition of the same close rather than an independent unpriced catalyst. Gap: I could not confirm the current status of individual clearances (no 8-K announcing CFIUS/FERC/FCC completion found), so the residual timing risk is estimated, not verified."
+   "analysis": "The event is real, contractual, dated and genuinely un-harvested — a signed SPA with a named strategic buyer, shareholder approval already obtained, no financing condition, and a stock trading 14% BELOW its pre-leak base and 23% below its pre-announcement close, so none of the deal value has been captured. But the triage numerator does not survive re-derivation: the contract says US$717M base (~$3.31/ADS gross, ~$3.10-3.40 net of the PRC indirect-transfer tax that the 10% holdback exists to fund), not ~$997M / $4.60 — that figure includes up to $280M of cash conveyed inside the target rather than incremental to the seller, so the flagged upside is overstated by roughly 40%. Two further corrections: the $150M reverse fee applies only to a buyer failure-to-close with conditions satisfied, whereas the live risk — SAMR refusing to let a dominant platform absorb a grocery competitor — carries only a $75M fee (~$0.35/ADS); and \"only Chinese regulatory clearance left\" omits the overseas carve-out, the tax filings and the MAE condition. Per the provenance mandate the unsupported flagged numerator caps this at 4: the re-derived +30% to $3.20 against a ~-23% break floor (R/R 1.3) on a binary SAMR decision with no fixed date, plus proceeds that are an announced intention rather than a contractual distribution in a founder-supervoting Cayman shell, is a WATCH — track SAMR docket and any move from \"intention\" to a declared special dividend or authorized buyback, which is the trigger that would earn ACTIVE."
   },
   {
    "symbol": "DBVT",
+   "score": 5.5,
+   "tier": "ACTIVE",
+   "lane": "dated_binary_regulatory",
+   "catalyst": "DBV Technologies is guided to submit the VIASKIN Peanut Patch BLA (children 4-7) to FDA in Q3 2026 after the Agency confirmed it had requested no additional data, setting up a filing-acceptance/priority-review clock in Q4 2026.",
+   "dated_milestone": "BLA submission by Sept 30, 2026 (Q3 2026 guidance reaffirmed in the July 16, 2026 Q2 release); then FDA 60-day filing-acceptance and priority-review decision ~Nov-Dec 2026; PDUFA mid-to-late 2027.",
+   "instrument": "common equity (Nasdaq ADS, 1 ADS = 5 ordinary shares)",
+   "bloom_gates": "G2 (dated company commitment: BLA submission in Q3 2026, reaffirmed 2026-07-16, with FDA stating no further data required 2026-06-29) and G3 (specific unpriced figure: ~$120M enterprise value - $320.6M market cap less ~$200M pro-forma cash - for a Phase-3-positive, filing-ready pediatric peanut franchise). G1 partial only: RA Capital Management is a named counterparty but as a $50M ATM buyer (2026-07-30), not a commercial/deal counterparty.",
+   "edge": "M. Residual capture is essentially untouched and arguably negative: from the pre-catalyst base of $16.01 (June 26, 2026 close, before the June 29 BLA-timing update) the stock has run -16.3% to $13.40, and the full VITESSE efficacy re-rate has round-tripped (-48.8% from the $26.19 52-week high, vs 50d avg $16.18 / 200d avg $18.24). Remaining from $13.40: +49% to a $20 filing/priority-review-grant re-rate and +94% to a $26 probability-weighted favorable-resolution value. Nothing is harvested - the drift is dilution mechanics (July 17 $150M ATM shelf, July 30 $50M sale) not deteriorating science - which is the source of the edge; it is only M because DBV's own RTF/CRL history on this exact product is a legitimate reason for the discount, not an inefficiency.",
+   "primary_source": "DBV Technologies Q2/H1 2026 results and business update, GlobeNewswire, 2026-07-16 (BLA submission anticipated Q3 2026; cash $174.9M at 2026-06-30 funding into Q3 2027); corroborated by the 2026-06-29 GlobeNewswire BLA submission update (\"The Agency has not requested additional data\") and the 2026-07-30 GlobeNewswire ~$50M ATM sale to RA Capital Management. Price/market-cap from FMP quote 2026-08-01 ($13.40, $320.6M mcap, 52wk 8.665-26.185).",
+   "verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "kill_fact": "All load-bearing facts confirmed against primary company releases: the June 29, 2026 PR states verbatim that \"The Agency has not requested additional data\" and guides BLA submission to Q3 2026; the July 16, 2026 Q2 release confirms $174.9M cash at June 30, 2026 funding into Q3 2027; July 17, 2026 confirms the $150M ATM shelf and July 30, 2026 confirms the ~$50M ADS sale to RA Capital via Citizens JMP, leaving ~$100M capacity. Capital structure is clean (French SA, ordinary shares in 5:1 ADS, no preferred, no PIK, no external manager), and the already-harvested test passes hard in the line's favor: at $13.37 the stock is 49% below the $26.185 52-week high, 17% below the $16.18 50dma and 27% below the $18.24 200dma, with market cap $319.8M against ~$200M pro-forma cash, i.e. ~$120M EV — the payoff has been given back, not captured. Two corrections. (1) \"Efficacy risk is spent\" overstates the de-risking: VITESSE efficacy is indeed behind, but DBV's history of FDA failure on Viaskin is CMC/patch-adhesion and application-quality, not efficacy, and that risk is entirely un-spent — the June 29 language (\"take additional time to incorporate the FDA feedback\") is precisely a quality-of-dossier signal, and it slipped guidance rather than confirming it. (2) The \"clean waterfall / ~$8.40 net-cash floor\" argument understates the actual leak to the common: DBV executed $50M into weakness at ~$13-14 rather than defending the tape, and the remaining ~$100M open ATM is roughly a third of the current market cap — issuance at these levels is the waterfall dilution, so the net-cash-per-ADS floor erodes on every draw rather than holding. The dated forward event is an administrative submission, not the value event (a mid-2027 PDUFA that will very likely require another raise); acceptance/priority-review determination in Q4 2026 is the only clock that pays inside the window. Score trimmed 6 to 5.5 on the un-spent CMC risk plus the mechanical ATM supply cap through the catalyst.",
+   "analysis": "The triage thesis holds on the facts: efficacy risk is spent, the June 29, 2026 update explicitly says the FDA \"has not requested additional data,\" and the forward event is a filing-then-review clock guided to Q3 2026 with $174.9M cash at June 30, 2026 funding into Q3 2027 - so the company can reach filing acceptance without a forced raise. The triage claim that the June 29 slip \"left the stock unmoved\" is right on the day ($16.01 to $16.00, then $16.40) but wrong over the following five weeks: the stock has bled to $13.40 on the July 17 $150M ATM shelf and the July 30 $50M ADS sale to RA Capital, leaving ~$100M of ATM capacity as a live overhang into the filing. Numerator check on the capital structure: DBV is a French SA with ordinary shares only - no preferred stack, no PIK accrual, no external manager - so the waterfall is clean and the ~$200M pro-forma cash sits behind the common as a genuine ~$8.40/ADS floor (the 52-week low of $8.665 is roughly net cash); the flagged upside is therefore not an inherited analyst target but a probability-weighted approval EV against a ~$120M enterprise value. Score capped at 6 rather than higher because the dated milestone is a submission, not an approval - the value event is a mid-2027 PDUFA that will likely require another raise - the Q3 guidance has already slipped once, and the open ATM will keep supply on the tape through the catalyst window."
+  },
+  {
+   "symbol": "DMAC",
    "score": 5,
    "tier": "WATCH",
-   "lane": "binary_regulatory",
-   "catalyst": "DBV submits the VIASKIN Peanut Patch BLA (children 4-7 years) to FDA in Q3 2026, with FDA having requested no additional clinical data, which then sets up a 60-day filing-acceptance decision and first-ever PDUFA date for the franchise.",
-   "dated_milestone": "BLA submission by 2026-09-30 (reaffirmed 2026-07-17); FDA acceptance/refuse-to-file decision ~60 days later (Q4 2026) which assigns the PDUFA date",
-   "instrument": "equity (common, NASDAQ: DBVT @ $14.70); long-dated Q4-2026/Q1-2027 calls for the acceptance/PDUFA leg",
-   "bloom_gates": "G2 only \u2014 concrete company commitment to a Q3 2026 BLA submission with FDA confirming no new data required. Not G1 (no named counterparty/partner). Not G3 (no specific unpriced financial figure disclosed; no PDUFA date, no approval economics quantified).",
-   "edge": "L-to-M \u2014 DBVT is a widely-followed, heavily-covered binary biotech; the Q3 2026 filing guide is public and was already re-rated downward on the 2026-06-29 delay disclosure (stock $14.70 vs 200d $18.23, 52w high $26.19). Residual edge is only in the acceptance/PDUFA-date leg, not the filing itself.",
-   "primary_source": "DBV Technologies Q2/H1 2026 results press release, 2026-07-17 (GlobeNewswire), reaffirming Q3 2026 BLA submission, $174.9M cash at 6/30/26, runway into Q3 2027; plus DBV 8-K/press release 2026-06-29 \"BLA Submission Update ... Children Aged 4 through 7 Years\" (FDA requested no additional data)",
+   "lane": "binary_asymmetry",
+   "catalyst": "Pre-specified interim analysis of the pivotal Phase 2/3 ReMEDy2 trial of DM199 in acute ischemic stroke, triggered once 200 patients are enrolled — 75% of that threshold was reached as of 2026-05-20 and the trial has not read out.",
+   "dated_milestone": "2026-05-20 confirmed 75% of the 200-patient interim threshold (Business Wire); next knowable step is completion of the 200-patient interim cohort, guided by the company but with no verbatim date I could confirm — nearest scheduled disclosure is the Q2-2026 results call (~2026-08-05, by the Q1 cadence of 2026-05-06), which should re-date enrollment completion.",
+   "instrument": "common equity (NASDAQ: DMAC), $343M cap, ~53.9M shares",
+   "bloom_gates": "G2 only. G2 PASS — a protocol-defined interim at a stated, countable 200-patient threshold with a company-reiterated guidance is a concrete commitment, and the 75%-of-200 progress print is dated and specific. G1 FAIL — no named counterparty (no partner, no acquirer, no licensee; the DSMB is internal machinery, not a counterparty). G3 FAIL — no specific currently-unpriced figure exists: there is no contractual or derivable number, only a probability-weighted clinical outcome, and I did not find (and refuse to inherit) an analyst target to stand in for one.",
+   "edge": "M. RESIDUAL CAPTURE: run-up from the pre-catalyst base = +14.3% ($5.57 close 2026-05-19, the session before the 05-20 milestone PR, to $6.365 on 2026-08-03); the news day itself moved +2.7% ($5.57 to $5.72). The event is essentially unharvested — the stock still sits below its 50d ($6.50) and 200d ($7.19) averages and 39% below the 52-week high ($10.42), i.e. it has de-rated through the milestone, not re-rated on it. REMAINING: cannot be honestly quantified as a %, because favorable-resolution value here is a probability-weighted clinical outcome, not a contractual price, and I will not inherit a sell-side target as the numerator; qualitatively the remaining share of any success case is close to all of it. That combination (forward, dated, unharvested) is the bull half. The bear half caps this at M: the interim is most plausibly a sample-size re-estimation / futility look rather than a definitive efficacy readout — I could not verify its decision rule — so \"the pre-specified interim is the binary\" is likely overstated in the triage flag; acute-ischemic-stroke adjunct trials carry a poor historical prior; and enrollment of just 200 patients has been slow enough that timing slippage is the base case.",
+   "primary_source": "Business Wire, 2026-05-20, \"DiaMedica Therapeutics Announces 75% Enrollment Milestone in ReMEDy2 Phase 2/3 Acute Ischemic Stroke Trial\"; corroborated by DMAC Q1-2026 balance sheet (10-Q filed 2026-05-06, CIK 0001401040) and FMP EOD prices 2026-05-12 to 2026-08-03.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The catalyst is real, dated and forward: DBV reaffirmed on 2026-07-17 (Q2/H1 2026 results) that the VIASKIN Peanut Patch BLA for ages 4-7 will be submitted in Q3 2026, after 2026-06-29 disclosure that FDA requested no additional data and gave only CMC/biostatistical formatting and data-mapping feedback. But the filing itself is a low-information administrative event, not the value-inflecting event \u2014 the tradeable binary is FDA acceptance (~60 days post-submission, Q4 2026) and the PDUFA date it assigns, neither of which exists yet. Slippage is the core risk and has already occurred once this year (guidance pushed into Q3 after the June FDA feedback), and with $174.9M cash and runway only into Q3 2027 against a $98.0M H1 net loss, a further delay likely pulls forward a dilutive raise; that combination caps this at WATCH rather than ACTIVE."
-  },
-  {
-   "symbol": "DFTX",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "dated_binary",
-   "catalyst": "Topline from the pivotal Phase 3 Voyage study of DT120 ODT in generalized anxiety disorder, guided to early Q3 2026, with a second pivotal GAD trial (Panorama, n=200) reading out late Q3 2026.",
-   "dated_milestone": "Voyage GAD Ph3 topline: early Q3 2026 (imminent, Jul-Aug 2026); Panorama GAD Ph3 topline: late Q3 2026; DT402 ASD Ph2a signal: 2026 (no quarter given)",
-   "instrument": "common equity (NASDAQ: DFTX, Mind Medicine/Definium Therapeutics)",
-   "bloom_gates": "G2 (concrete, company-committed pivotal readout with full enrollment achieved Apr-2026 and a named 12-week double-blind endpoint); partial G3 (two GAD pivotals are a separate indication from the already-fired MDD readout); G1 not met (no named counterparty/partner)",
-   "edge": "L-M \u2014 the event is real, dated and unfired, but it is heavily covered (multiple sell-side pieces, Breakthrough designation, \"high-stakes readout\" press) and the tape has already re-rated ~3x, so there is no informational edge, only event exposure.",
-   "primary_source": "SEC Form 8-K/EX-99.1 corporate presentation filed 19-May-2026 (GAD \"early 3Q 2026\" / Panorama \"late 3Q 2026\" guidance); Businesswire, \"Definium Therapeutics Announces Positive Topline Results from Phase 3 Emerge Study of DT120 ODT in MDD,\" 22-Jun-2026; FMP quote 20-Jul-2026 ($44.29, $4.83B cap, 50dma $14.26)",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The GAD pivotal readouts are genuine, dated, forward binaries \u2014 Voyage fully enrolled April 2026 with topline guided to early Q3 2026 and Panorama to late Q3 2026 \u2014 so the catalyst clears the dated/forward test and is not a macro bet. However the triage skeptic is right on asymmetry: after the positive Emerge MDD Phase 3 on 22-Jun-26, the stock trades at $44.29 versus a $14.26 50-day average and carries a $4.83B market cap, meaning a large share of platform success is already capitalized while a GAD miss would re-open the whole DT120 label thesis. With $411.6M cash there is no financing overhang, but paying a post-spike price into a coin-flip readout with no differentiated view is a spectator setup, not an ACTIVE one. Gap: I did not independently verify the powering/effect-size assumptions of Voyage versus the failed prior psychedelic-adjacent GAD attempts, which is where the real edge would have to come from."
-  },
-  {
-   "symbol": "DOC",
-   "score": 2,
-   "tier": "NONE",
-   "lane": "spin-off",
-   "catalyst": "Healthpeak's carve-out of its senior-housing portfolio into Janus Living (JAN) \u2014 announced 2026-01-07 and completed via IPO on 2026-03-20/23 \u2014 has already happened, leaving no dated forward separation step.",
-   "dated_milestone": "None forward and spin-specific; next scheduled event is only routine Q2 2026 earnings (early Aug 2026). The IPO milestone was 2026-03-20 (priced) / 2026-03-23 (closed) \u2014 already past.",
-   "instrument": "common equity (no actionable structure \u2014 catalyst fired)",
-   "bloom_gates": "None pass forward. G1/G2 were satisfied historically (named counterparty JAN/Janus Living, concrete commitment = completed IPO, $966M gross / ~$880M net proceeds), but all are backward-looking. G3 fails: no specific currently-unpriced figure \u2014 the retained 81.6% stake is marked to a live public quote (~$6.9B market cap as of 2026-05-04), so the sum-of-parts is now observable rather than hidden.",
-   "edge": "L \u2014 the triage premise (\"actual IPO separation is still forward\") is factually wrong; the IPO closed four months ago, the announcement re-rate is banked, and the residual stake is publicly priced daily, so there is no informational gap left to arbitrage.",
-   "primary_source": "Janus Living Form 424B4 and Form 10-Q (period ended 2026-03-31), SEC EDGAR CIK 0002100805; Healthpeak 8-K raising 2026 FFOA guidance post-IPO (May 2026); Senior Housing News, 2026-01-07 (formation announcement).",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "Healthpeak announced Janus Living on 2026-01-07 and completed the IPO on 2026-03-20/23, issuing 48.3M Class A-1 shares for $966M gross ($880M net), retaining ~81.6% of a 40-community / 11,252-unit RIDEA senior-housing REIT. DOC has since raised 2026 FFOA guidance, done $267M of recaps/dispositions, formed a Blackstone JV at a 6.1% cash cap, and bought back 5.9M shares \u2014 meaning the \"$1B capital recycling\" leg is largely executed, not pending. Gap: I could not find any announced lock-up expiry date or committed timetable for distributing/monetizing the retained Janus stake, which is the only plausible remaining spin catalyst; absent a dated commitment it is a discretionary, undated event and does not clear the gate."
-  },
-  {
-   "symbol": "DNUT",
-   "score": 3,
-   "tier": "NONE",
-   "lane": "deleveraging/restructuring",
-   "catalyst": "The flagged deleveraging events (WKS Western-US JV stake sale, Japan sale to Unison) have already closed and been reported; what remains is soft guidance for \"2-3 international refranchising transactions in 2026\" with no named counterparty or date.",
-   "dated_milestone": "Q2 FY26 earnings 2026-08-06 (progress update only, not a discrete catalyst); management's \u22645.5x net-leverage target framed at YE2026",
-   "instrument": "equity",
-   "bloom_gates": "none pass forward \u2014 G1 fails (no named counterparty for any pending deal), G2 fails (only a count-of-deals aspiration, no signed commitment), G3 fails (no specific currently-unpriced figure; the ~$120M proceeds and 6.7x\u21925.5x leverage move are already disclosed and in the tape)",
-   "edge": "L - both proceeds events closed Mar 2026 and were disclosed/re-rated at the Mar 24 announcement and Q1 print (May 7); remaining pipeline is unnamed, undated, execution-heavy franchise-sale work with no informational edge available.",
-   "primary_source": "Business Wire / Krispy Kreme, \"Krispy Kreme Advances Turnaround to Drive Capital-Light Growth Through Refranchising,\" 2026-03-24 (8-K); corroborated by Restaurant Business Online, 2026-03-24, and TipRanks earnings calendar (next report 2026-08-06)",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "Verification confirms the triage facts but shows both legs are fired, not forward: the Japan sale to Unison Capital closed 2026-03-02 (~$65-70M cash to debt) and the WKS transaction closed 2026-03-23, taking WKS from 45% to 80% of the Western-US JV for ~$90M total consideration incl. ~$50M cash at close plus a note, with net leverage already moving 6.7x to 5.5x. The only forward item is management's stated intent to do 2-3 further international refranchising deals during 2026 plus 3-4 new-country entries \u2014 no counterparty, no signed agreement, no date, so it fails every Bloom gate and is closer to a multi-quarter execution story than an event. Gap noted: I did not confirm whether any specific pending international deal has been signed since the May 7 Q1 call; if a named buyer/definitive agreement surfaces at the Aug 6 print, this could be re-triaged."
+   "analysis": "The event is real, dated, forward and un-fired: enrollment hit 75% of the 200-patient interim trigger on 2026-05-20 and neither the cohort completion nor the interim has occurred, and the market has not paid for it (+14.3% off the pre-milestone base, still under both moving averages). NUMERATOR PROVENANCE is clean but also not the binding issue: the Q1-2026 balance sheet (filed 2026-05-06) shows zero preferred stock, $0.2M total debt (capital leases only), $51.3M cash and short-term investments and no external manager, so there is no FIP-style pref stack or fee waterfall standing between a good outcome and the common — the entire equity value accrues to holders, and against a ~$10M quarterly burn the cash funds the interim without a forced raise (runway into roughly mid-2027), though a raise into positive data is the likely dilution path. What holds this at WATCH/5 rather than ACTIVE is gate quality and event quality, not harvest: only G2 clears, I could not confirm the verbatim readout guidance or whether the interim is an efficacy look versus a futility/sample-size re-estimation look (the FMP press-release text truncates mid-sentence at \"reiterates its guida...\" and the Business Wire fetch timed out, and my web-search budget was exhausted before I could resolve it), management attention has visibly broadened to preeclampsia and FGR since May, and the downside on an unfavorable interim is roughly net cash of about $1.20/share versus $6.37 today — an 80% drawdown against an upside I cannot provenance-check."
   },
   {
    "symbol": "DSX",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "merger-arb",
-   "catalyst": "Diana Shipping's hostile all-shares tender for Genco at $27.34 ($24.80 cash + 1 DSX share) expires 5:00pm NY on July 24, 2026, with only 29.7% of non-Diana shares tendered and Genco's board unanimously recommending against it.",
-   "dated_milestone": "Tender expiration 2026-07-24 17:00 ET (already extended twice; further extension or lapse is the binary)",
-   "instrument": "DSX common (wrong side); the tradeable asymmetry is GNK common at $24.12 vs $27.34 offer = ~13.3% gross spread",
-   "bloom_gates": "G1 (named counterparty: Genco Shipping & Trading, NYSE:GNK) and G2 (concrete commitment: $1.412bn committed financing from six international banks, no financing condition, per DSX 6-K dated 2026-07-13). G3 not met on the DSX side \u2014 no specific currently-unpriced figure accrues to the acquirer.",
-   "edge": "L \u2014 the event is real and dated, but DSX is the acquirer and the asymmetry is on the target. DSX carries a $253M market cap against a $1.05bn target funded with $1.412bn of committed debt; that is a >5x-market-cap levered bid, and the tape is already de-rating it (2.05 vs 2.36 50dma, 2.92 52wk high). Deal success is a leverage event for DSX, not a re-rating; deal failure removes an overhang. Neither leg is a clean long.",
-   "primary_source": "DSX 6-K / GlobeNewswire, \"Diana Shipping Inc. Announces Extension of Tender Offer for All Outstanding Shares of Genco Shipping & Trading,\" 2026-07-13; Genco press release \"Comments on Extension of $24.80 Per Share Tender Offer by Diana Shipping,\" 2026-07-13; Genco board unanimous rejection release, investors.gencoshipping.com, July 2026. Prices FMP batch-quote 2026-07-20.",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "activist_ma",
+   "catalyst": "Diana Shipping (DSX) is the hostile bidder for Genco at $27.34/sh ($24.80 cash + 1 DSX share) with underwritten financing from DNB Carnegie/Nordea, but the payoff from that event accrues to GNK holders, not to DSX common, which is the party writing the ~$930M cheque.",
+   "dated_milestone": "Genco Q2 results Aug 5, 2026 (call Aug 6); Diana's non-binding $27.34 proposal remains outstanding with no expiry date after the tender lapsed Jul 24, 2026 — no dated decision point on the DSX side.",
+   "instrument": "common equity (DSX); the flagged event's actual instrument is GNK common",
+   "bloom_gates": "G1 PASS (named counterparties: Genco Shipping & Trading, underwriters DNB Carnegie and Nordea). G2 PASS (fully underwritten financing commitment extended Jun 30, 2026; $27.34/sh proposal formally on the table since Jun 17, 2026). G3 FAIL — there is no specific currently-unpriced figure accruing to DSX common; $27.34 is what DSX pays out, not receives.",
+   "edge": "L. Run-up: DSX ~$2.20-2.26 (50d avg $2.26, 200d $2.185) into today's $2.45 = roughly +8-12%, and that move tracks the dry-bulk charter tape (Philadelphia recharter $21,500 to $35,500/day, Atalandi $10,100 to $16,500/day, Medusa $13,000 to $16,850/day) plus the Jul 30 Q2 beat, not the bid — i.e. a macro/rate re-rate, which is an excluded driver. Remaining: undefined for DSX because no favorable-resolution value can be derived — a win means adding roughly $928M of underwritten debt (24.80 x ~37.4M non-Diana shares) and ~37M new shares onto a $303M market cap, so the pro-forma common is a levered stub, not a claim. On the correct instrument, GNK, the residual is already gone: base ~$21.65 (200d) to $26.37 = +21.8% run-up, and only +3.7% remains to the $27.34 headline (52wk high $27.25 already touched) - mostly harvested, which caps at 4 on its own.",
+   "primary_source": "Diana Shipping Inc. press release \"Urges Genco Shipping & Trading to Stop Misleading Investors and Engage in Good Faith Negotiations\", GlobeNewswire, Jul 27, 2026 (tender expired Jul 24, 2026 5:00pm; $27.34 proposal remains on the table); corroborated by Diana \"Announces Extension of Financing...\" Jun 30, 2026 (DNB Carnegie/Nordea underwritten commitment), Genco statement Jul 27, 2026, and Diana Q2 2026 results, Jul 30, 2026. Prices FMP batch-quote Aug 3, 2026: DSX $2.45 (mcap $303M, 50d $2.26 / 200d $2.185, 52wk $1.46-$2.92); GNK $26.37 (mcap $1.15B, 200d $21.65, 52wk high $27.25).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The triage note is factually correct and the catalyst survives the strict gate: it is real, specific, dated to 2026-07-24, forward, and not macro. But it fails the instrument test \u2014 DSX is the bidder, and the note itself concedes the asymmetry sits on the target. The structure is unusually adverse for the acquirer: a $253M-cap company bidding for a $1.05bn target on $1.412bn of committed bank debt, with the equity stub of the consideration marked to DSX's own falling shares, so DSX weakness mechanically cheapens its own bid while raising pro-forma leverage risk. With only 29.7% tendered against a unanimous board rejection and a separate non-binding stock-and-cash proposal still under Genco board review, the most likely July 24 outcome is a third extension rather than a clean resolution \u2014 meaning the \"dated\" milestone is soft. Downgrading from the triage score of 6 to 4 and holding WATCH: worth tracking the July 24 print, but the correct expression, if any, is GNK, not DSX."
+   "analysis": "The underlying fight is real, specific and well documented — Diana raised to $27.34/sh on Jun 17, 2026, extended fully underwritten financing on Jun 30, saw 11.1M shares (29.7% of non-Diana stock) tendered by Jul 10, and terminated the tender on Jul 24 to strip Genco's stated excuse for non-engagement — but the flagged instrument is wrong: DSX is the payer, and a successful hostile deal converts DSX common into a highly levered stub (roughly $928M new debt plus ~30% share issuance against a $303M cap), which is a risk, not a quantified unpriced upside. The forcing device has also weakened rather than tightened: Genco's full board was re-elected overwhelmingly on Jun 18, the poison pill stays in place, the tender is withdrawn, and what remains is a non-binding indicative proposal with no expiry and no dated board deadline. On residual capture the case fails twice over — DSX's own +8-12% move off its 50/200d base is the dry-bulk charter re-rate (a macro bet, excluded), and the correctly-specified instrument GNK has only +3.7% left from $26.37 to the $27.34 headline after a ~+22% run from base. Score the equity, not the event."
   },
   {
-   "symbol": "EA",
+   "symbol": "DYN",
    "score": 4,
    "tier": "WATCH",
-   "lane": "merger-arb",
-   "catalyst": "CFIUS national-security clearance of the PIF/Silver Lake/Affinity $210/share all-cash $55B take-private, with a contractual outside date of Sept 28, 2026 after the June 30 deadline was extended.",
-   "dated_milestone": "EU merger decision provisional deadline Jul 22, 2026 (FSR review running into late July); CFIUS outside date Sept 28, 2026",
-   "instrument": "common equity (merger-arb long); no options edge at this spread",
-   "bloom_gates": "G1 (named counterparties: PIF, Silver Lake, Affinity Partners, $210/share cash) + G2 (binding merger agreement, shareholder-approved Dec 2025, $1B reciprocal break fee). G3 FAILS \u2014 no currently-unpriced figure remains.",
-   "edge": "L \u2014 the spread has collapsed since the triage note was written; EA last $208.90 vs $210 deal price = $1.10 gross (0.53%), roughly 2.5% annualized to the Sept 28 outside date, against an estimated ~$168 unaffected/break price. That is ~0.03x reward-to-risk; the market now prices CFIUS approval as near-certain, so the mispricing the flag described no longer exists.",
-   "primary_source": "EA Form 8-K / merger agreement terms as summarized by Wikipedia \"Proposed leveraged buyout of Electronic Arts\" (deal terms, $1B break fee) + TechTimes, \"EA Buyout Clears EU Subsidy Gate as US National Security Review Runs to Late September,\" Jul 17, 2026; live price via FMP quote, Jul 20, 2026 ($208.90)",
+   "lane": "pdufa_binary",
+   "catalyst": "FDA PDUFA target action date of Jan 21, 2027 on Dyne's BLA for z-rostudirsen (DYNE-251) in exon-51-amenable Duchenne muscular dystrophy, accepted under Priority Review on Jul 20, 2026 via Accelerated Approval on dystrophin as surrogate.",
+   "dated_milestone": "PDUFA action date 2027-01-21 (BLA accepted 2026-07-20, Priority Review); launch guided Q1 2027; DM1 z-basivarsen ACHIEVE REC topline also Q1 2027 (enrollment completed 2026-06-03, 71 participants)",
+   "instrument": "Common equity (NASDAQ: DYN, $24.98, mkt cap $4.66B, ~186.7M sh). Cleaner expression would be a Jan/Feb-2027 call spread struck above the $20.50 secondary print, but IV into a high-probability accelerated-approval decision is unlikely to pay for the tail.",
+   "bloom_gates": "G1 PASS (named counterparty = FDA, statutory review clock). G2 PASS (concrete dated commitment: PDUFA target action date Jan 21, 2027, Priority Review granted, per company PR 2026-07-20). G3 FAIL (no specific currently-unpriced figure: the approval path was pre-announced from the May 26 BLA submission, and management sold 21.045M shares at $20.50 on Jul 21-23 — an informed price ~18% BELOW today's spot, which is the opposite of an unpriced upside figure).",
+   "edge": "L. Run-up: +153% from the $9.89 52wk low, +37.6% from the $18.15 close on the May 26 BLA-submission day, and only +5.2% from the $23.74 pre-acceptance close of Jul 17 — the BLA-acceptance day itself traded DOWN ($23.74 to $23.45), proving the event was fully anticipated. Remaining: ~+32% from $24.98 to a re-derived approved-case ~$33, against ~-40% to ~$15 on a CRL/delay, i.e. reference R:R ~0.8:1. The dominant re-rating is harvested; what is left is the last leg of a consensus-expected approval.",
+   "primary_source": "Dyne Therapeutics PR, \"U.S. FDA Acceptance of BLA for Z-Rostudirsen in Exon 51 DMD\" (GlobeNewswire, 2026-07-20); Q2 2026 results PR (2026-07-29, cash $898.5M, runway into Q2 2028); offering pricing/closing PRs (2026-07-21 / 2026-07-23, 21,045,000 sh at $20.50); FMP quote and EOD price history through 2026-07-31.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The deal is real, dated and unresolved: shareholders approved in Dec 2025, antitrust is cleared, the EU merger decision carries a provisional Jul 22, 2026 date with a parallel Foreign Subsidies Regulation review, and only CFIUS remains outstanding against a Sept 28, 2026 outside date. But the triage thesis rests on a stale price: it cites a $7-9 discount seen in early July, whereas EA closed at $208.90 on Jul 20 \u2014 a 0.53% gross spread, i.e. the regulatory risk has already been re-rated out. Downside on a CFIUS block is roughly $40/share to the ~$168 unaffected level versus $1.10 of upside, so the asymmetry is now strongly negative and the name is a monitor-only, not an ACTIVE position; the residual gap I could not close in this pass is a primary-source confirmation of whether the EU decision actually landed on Jul 22."
+   "analysis": "The catalyst is fully verified and clears the reality test: FDA accepted the z-rostudirsen BLA on 2026-07-20 with Priority Review and a hard PDUFA action date of 2027-01-21, it is forward, un-fired, company-specific and not a macro bet. It fails on capture, not on truth. Exon-51 skipping is the most precedented Accelerated Approval path in neuromuscular disease (four Sarepta PMOs approved on the dystrophin surrogate), and Dyne's DELIVER registrational expansion cohort added statistically significant dystrophin plus functional improvement across multiple endpoints - so the market is correctly handicapping approval at a high probability, which is exactly why the stock rose 0% on acceptance day and why the company chose that moment to sell $375M of equity at $20.50, 18% below spot. The residual is ~+32% to a self-derived approved-case $33 against ~-40% to ~$15 on a CRL, an unattractive ~0.8:1 into a 5.5-month hold; worse, the higher-variance event (DM1 z-basivarsen topline, guided Q1 2027) lands in the same window, so a PDUFA-anchored position carries an unpaid-for second binary. Gaps: the exact Hercules drawn balance is not in the Q2 PR (I assumed ~$175-225M), and I could not verify sell-side exon-51 peak-sales consensus - the rNPV above is my own derivation, and web search budget was exhausted before I could cross-check current FDA posture on dystrophin-surrogate Accelerated Approvals, which is the one factor that could push CRL risk materially above the historical base rate."
+  },
+  {
+   "symbol": "ELE",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "dated_operational_milestone",
+   "catalyst": "Capricorn Metals (ASX: CMM) commissions the Karlawinda 6.5Mtpa plant expansion in Q3-2026, stepping production to ~150koz/yr and lifting Elemental's uncapped 2% NSR revenue from that asset.",
+   "dated_milestone": "Q3-2026 (Sept quarter) commissioning and transition to full operations, per Capricorn via Elemental PR 2026-07-29; next hard date = Capricorn's Sept-2026 quarterly activities report (late Oct 2026) confirming first expanded-plant throughput.",
+   "instrument": "common equity (NASDAQ: ELE / TSX: ELE), USD listing",
+   "bloom_gates": "G1 PASS (named third-party counterparty: Capricorn Metals, ASX: CMM, operator of Karlawinda). G2 PARTIAL (dated operator schedule \"commissioning and transition to full operations expected during Q3 2026\" — operator guidance, not a binding commitment; slippable). G3 FAIL (the figures are public and immaterial: the 32% reserve increase to 1.57Moz and the 150koz/yr rate were announced 2026-07-29 and Elemental itself press-released them; the derived revenue step-up is ~3-4% of consolidated revenue).",
+   "edge": "L — run-up ~+1% (ELE was ~$15.65 on 2026-07-29, the day the reserve/commissioning update was published; $15.80 today, so essentially nothing has been paid for the event; +25.6% off the $12.58 52w low but −41% from the $26.96 high, i.e. the tape is de-rating the whole portfolio, not pricing this). Remaining to my derived favorable-resolution value ~+5-6% ($15.80 to ~$16.70). The gap is small not because the event is harvested but because the event is too small to matter: Karlawinda paid Elemental US$8.9M of zero-cost revenue in 2025; a ~120koz to ~150koz step is ~+25% on that asset = ~+$2-4M/yr against a Q1-2026 run-rate of US$24.3M/quarter (~US$97M/yr) post the EMX merger — roughly 3-4% of revenue on a US$1.02B market cap. R/R ~0.28 to the $12.58 low.",
+   "primary_source": "Elemental Royalty Corporation press release via Newsfile, 2026-07-29: \"Elemental Royalty Notes 32% Increase in Reserves at Karlawinda with Expansion Commissioning on Track for Q3 2026\" (newsfilecorp.com/release/307166) — quotes \"commissioning and transition to full operations expected during the third quarter of 2026\", \"approximately 6.5 million tonnes per annum\", \"approximately 150,000 ounces\", reserves \"76.4 million tonnes at 0.6 g/t gold, containing 1.57 million ounces\", and \"US$8.9 million in zero-cost revenue in 2025\". Prices from FMP quote 2026-08-02/03 (NASDAQ ELE $15.80, 52w $12.58-$26.96, mkt cap US$1.017B; TSX ELE C$21.84). GAP: WebSearch budget for this session was exhausted, so I could not open Capricorn Metals' own June-2026 quarterly to independently confirm the commissioning date or the pre-expansion production rate (~120koz is my estimate, not a cited figure) — the date rests on Elemental's restatement of Capricorn's guidance.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The flagged fact checks out exactly as stated — Elemental holds an uncapped 2% NSR on Karlawinda, Capricorn's expansion is guided to commission in Q3-2026, reserves rose 32% to 1.57Moz supporting a ~10-year life, and the stock at $15.80 sits near its $12.58 low with no re-rate. But the verification kills it on magnitude and character: Karlawinda generated US$8.9M in 2025 against a post-EMX-merger revenue run-rate of ~US$97M, so a 120koz-to-150koz ramp is worth ~3-4% of revenue and ~5% of the equity — this is an operating ramp inside a diversified royalty book, not a special situation, and the residual left on the table is small because the event is small, not because it is harvested. The \"no re-rate\" the triage read as opportunity is really a portfolio-wide de-rate (−41% from the 52w high) driven by gold price and merger/acquisition digestion, which makes a position here a gold-beta bet wearing a milestone costume; G3 fails outright since every figure was self-published by Elemental on 2026-07-29 and is trivially modelable."
   }
  ]
 }

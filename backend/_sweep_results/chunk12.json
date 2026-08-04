@@ -2,9 +2,9 @@
  "chunk": "12 (MBVI-NBIX)",
  "scanned": 150,
  "scan_distribution": {
-  "active": 2,
+  "active": 7,
   "watch": 10,
-  "none": 138
+  "none": 133
  },
  "survivors_flagged": [
   {
@@ -12,156 +12,153 @@
    "score": 6,
    "tier": "WATCH",
    "lane": "spinoff",
-   "one_line": "MiniMed diabetes IPO is priced and the split-off exchange offer completing the separation is targeted by end of CY2026 - a dated structural step-out, though mega-cap scale caps the asymmetry."
+   "one_line": "MiniMed (MMED) IPO'd Mar-2026 but Medtronic still holds ~88.7%; guided tax-free split-off exchange offer to complete by end CY2026 - a dated, un-executed discount-capture event, though mega-cap liquidity caps the mispricing."
   },
   {
-   "symbol": "MESO",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "dated_binary",
-   "one_line": "Revascor BLA filed with FDA (LVAD/ischemic HF); acceptance sets a PDUFA action date, real binary but timing not yet hard-dated."
+   "symbol": "MGM",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "ma_arb",
+   "one_line": "Live all-cash $48.30 proposal from Barry Diller's People Inc (already 26.1% holder) valuing MGM at ~$18B; the board formed an independent special committee on 2026-07-31 - a dated hardening trigger three days old - and at $44.52 the stock still sits 8.5% below the bid with Macau/Osaka asset-sale optionality on top, so the arb is unfired and the entry arc is early."
   },
   {
    "symbol": "MIRM",
-   "score": 6,
+   "score": 5,
    "tier": "WATCH",
-   "lane": "dated_binary",
-   "one_line": "Hard PDUFA date Sept 26, 2026 for zilurgisertib in FOP under priority review - real forward binary, though a commercial-stage base business dilutes the asymmetry."
+   "lane": "binary",
+   "one_line": "Zilurgisertib FOP NDA under Priority Review with a hard PDUFA of 2026-09-26 plus a 2H NDA submission for volixibat, but the pivotal PROGRESS data already printed positive in June (stock +15.5% on it), so approval is high-probability and the asymmetry is largely spent - dated and forward, but mid-to-late arc."
   },
   {
-   "symbol": "MLTX",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "dated_binary",
-   "one_line": "Single-asset sonelokimab: HS BLA filing targeted by end-Sept 2026 plus IZAR Ph3 PsA readouts \u2014 real forward dated binaries, though the HS path is largely de-risked/priced."
+   "symbol": "MKC",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "merger_overhang",
+   "one_line": "$65B combination with Unilever's Foods business closing mid-2027 (LSE secondary listing, NL intl HQ confirmed 7/23); MKC at $51.5 vs $58.6 200dma and $72.6 year-high — the suppressed acquirer side, with a large forced-seller overhang from Unilever holders yet to clear. Early-arc, unmoved, structural."
   },
   {
    "symbol": "MLYS",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "binary_pdufa",
+   "one_line": "Hard PDUFA 2026-12-22 for lorundrostat in uncontrolled hypertension, ~4.5mo out; stock $25.6 sits BELOW 50/200dma and half its $47.65 high, so the NDA-acceptance re-rate has fully bled off — dated binary with the price not paying for it."
+  },
+  {
+   "symbol": "MNSO",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "spin_off",
+   "one_line": "TOP TOY carve-out has filed its HKEX prospectus (UBS/JPM/CLSA, ~$300M raise, $1.3B Series A mark) while parent trades $12.83 near its $11.12 low with a HK$2B buyback running — sum-of-parts crystallization pending, listing date not yet fixed."
+  },
+  {
+   "symbol": "MLTX",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary_readout",
+   "one_line": "HS BLA filing aligned with FDA for Sept 2026 plus IZAR-2 PsA topline in 2H26; post-VELA wreckage at $17.5 vs $62.8 high means nothing is priced, but a BLA submission is a low-delta event and Goldman openly questions approval odds."
+  },
+  {
+   "symbol": "MOD",
    "score": 7,
    "tier": "ACTIVE",
-   "lane": "dated_binary",
-   "one_line": "Lorundrostat NDA accepted with hard PDUFA date 2026-12-22 in resistant hypertension, $646M cash into 2028 \u2014 clean unfired binary with asymmetry."
+   "lane": "spinoff",
+   "one_line": "Reverse Morris Trust: spins Performance Technologies into Gentherm (~$1B; $210M cash to MOD, ~$790M Gentherm stock to holders = 40% of NewCo), tax-free, targeted to close by end-CY2026 with a 31-Mar-2027 outside date; crucially the stock has DE-RATED ~37% from its 323 high to 202 (below the 200d) since the 29-Jan-2026 announcement, so the structural separation is un-priced rather than run-into - a clean early/mid-arc RMT where the remaining stub becomes a pure Data Centers + Commercial HVAC thermal name."
   },
   {
    "symbol": "MPT",
    "score": 5,
    "tier": "WATCH",
-   "lane": "distressed-restructuring",
-   "one_line": "Real dated milestones \u2014 Prospect California leases ramping to $45M annual rent in Dec 2026 and the $1B pro-forma cash-rent target by YE26 \u2014 but the Steward/Prospect recovery is well telegraphed and partly priced."
+   "lane": "distressed_restructuring",
+   "one_line": "Post-Steward restructuring with real dated milestones - EUR500M notes due Oct-2026, $1B pro-forma annualized cash rent target by YE-2026, and the Prospect California 15-year lease stabilizing at $45M annual rent in Dec-2026 - with the stock at $4.58 near 52w lows and ~40% below book, so nothing is discounted; docked for soft/target-style (not hard-dated) milestones and a two-year-old, heavily-covered story."
+  },
+  {
+   "symbol": "MSGS",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "spinoff",
+   "one_line": "Rangers-from-Knicks tax-free spin is real and progressing (board approval 02-18-26, Form 10 filed 05-18-26) but the stock is +108% off its low near 52wk highs and the holdco discount has largely vanished - late arc, priced."
+  },
+  {
+   "symbol": "MTX",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "distressed_restructuring",
+   "one_line": "BMI OldCo talc Chapter 11: parent filed a $450M trust plan with a 524(g) channeling injunction on 06-29-26, with the SDTX District Court still to rule on the threshold asbestos-content issue before confirmation - a decade-old liability overhang with a dated legal path to being severed, and the stock was just knocked down on the $290M reserve charge rather than re-rated on the resolution."
+  },
+  {
+   "symbol": "NAMS",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "dated_binary",
+   "one_line": "Two hard forward binaries into a de-rated tape: PREVAIL CVOT interim analysis dated Q4-2026 (readout Q1-2027) plus an EMA approval decision guided 2H-2026, with the stock at 27 versus a 42 high and below its 200-day, so the event is not yet in the price."
   },
   {
    "symbol": "NATL",
-   "score": 7,
+   "score": 6,
    "tier": "ACTIVE",
    "lane": "merger_arb",
-   "one_line": "Live cash+stock arb: Brink's $6.6B acquisition, shareholder vote approved 6/30/26, regulatory close pending \u2014 stock-component hedge makes it a complicated arb, not a clean spread."
+   "one_line": "Live definitive merger: Brink's acquiring NCR Atleos for $6.6B in cash-plus-stock, both shareholder votes cleared 30-Jun, close guided Q1-2027 with only regulatory approvals outstanding; a real dated arb, though late-arc with the announcement pop already banked and a BCO stock stub to hedge."
   }
  ],
  "verified": [
   {
    "symbol": "MDT",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "spinoff",
-   "catalyst": "Medtronic's remaining ~90% stake in MiniMed (MMED) is slated to be separated via a split-off exchange offer targeted for completion by end of calendar 2026, retiring MDT shares at the customary discount.",
-   "dated_milestone": "Split-off exchange offer launch/completion targeted by end of CY2026; next hard checkpoint is MDT's FQ1 FY27 earnings (~late Aug 2026), where management updates separation timing; IPO 180-day lockup/underwriter-research window expired ~Sep 2026 is the practical earliest launch.",
-   "instrument": "MDT common equity (optional participation in the exchange offer itself when launched); MMED common is the paired leg",
-   "bloom_gates": "G2 only - a concrete, board-committed corporate action with a completed first step (IPO closed 2026-03-09, MDT retains 90.03%) and a stated end-CY2026 completion target. G1 fails (no external counterparty; this is an internal separation). G3 fails - the value of the retained stake is fully observable via MMED's public quote ($16.93, below the $20 IPO price), so there is no unpriced figure.",
-   "edge": "L - the separation has been public since 2025, the IPO already priced and re-rated the diabetes asset, MMED trades openly so the stub math is transparent, and at ~$106B market cap the diabetes unit is too small a fraction of MDT for even a fully accretive split-off to move the equity materially. The only real alpha is the mechanical 7-8% exchange-offer discount, which is a short-duration trade for holders, not a re-rating thesis.",
-   "primary_source": "Medtronic plc FY2026 Form 10-K (filed ~June 2026, sec.gov/Archives/edgar/data/0001613103/000162828026044354/mdt-20260424.htm) confirming 90.03% retained ownership post-IPO and split-off as preferred path; MiniMed Group 8-K IPO closing 2026-03-09; MedTech Dive, \"Medtronic lowers earnings forecast after MiniMed IPO\" (2026) on end-CY2026 completion target. Prices as of 2026-07-20.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The catalyst is genuinely real, dated, and forward: MiniMed's IPO closed 2026-03-09 at $20/share leaving Medtronic with 90.03%, and management has stated the preferred path to finish the separation is a split-off exchange offer targeted for completion by end of CY2026 (reaffirmed alongside the FY27 high-single-digit non-GAAP EPS growth outlook). But the structural step-out fails the asymmetry test: MMED is already publicly quoted at $16.93 (15% below its IPO price), so the retained stake is marked to market daily and nothing about the stub is hidden - and MDT's FY26 EPS cut for MiniMed dilution has already been absorbed. Gap noted: the exchange offer's terms, ratio, and formal launch date have not been filed, so the discount capture is a possibility rather than a datable trade; without that S-4/Schedule TO this stays a monitor, not a position."
-  },
-  {
-   "symbol": "MESO",
    "score": 3,
    "tier": "NONE",
-   "lane": "dated_binary",
-   "catalyst": "Mesoblast has opened a rolling/modular BLA for rexlemestrocel-L (Revascor) in end-stage HF patients with LVADs, but the submission is not complete and no FDA acceptance or PDUFA date exists.",
-   "dated_milestone": "None hard-dated. Only anchor: BLA filing number received / modular review requested announced 2026-06-30; completion of rolling submission, 60-day filing decision and PDUFA all undated. Separate CLBP Phase 3 top-line guided only to \"mid-2027\".",
-   "instrument": "common equity (MESO ADR / MSB.AX) \u2014 no dated expiry to anchor options",
-   "bloom_gates": "None cleanly passed. G1 fail (no named counterparty; release cites unnamed Japan/Europe/China partners). G2 partial-fail (a filing number and modular-review request are procedural steps, not a dated commitment by FDA or a counterparty). G3 fail (no company-specific unpriced figure; only epidemiology \u2014 6.5M US HF patients, >100k end-stage HFrEF/yr \u2014 no revenue or opportunity quantification).",
-   "edge": "L \u2014 the June 30 announcement is ~3 weeks stale and already absorbed; a modular BLA with no acceptance date offers no time-boxed resolution to be early to, and the true binary (approval) is likely 2027+.",
-   "primary_source": "Mesoblast press release via GlobeNewswire, \"Mesoblast Receives BLA Filing Number and Requests Modular Review for Rexlemestrocel-L in Patients with End-Stage Heart Failure and LVADs,\" dated 2026-06-30/07-01 (https://www.globenewswire.com/news-release/2026/07/01/3320270/0/en/); corroborated by GlobeNewswire 2026-07-14 CLBP 300-patient release (mid-2027 top-line).",
+   "lane": "spinoff",
+   "catalyst": "Medtronic's guided tax-free split-off exchange offer for its ~88.7-90% retained MiniMed (MMED) stake, targeted for completion by end CY2026.",
+   "dated_milestone": "Split-off exchange offer to be launched and completed by end of calendar 2026 (reaffirmed on the Q3 FY26 call); next hard date is the FQ1 FY27 earnings call (~late Aug 2026), where the exchange-offer launch window should be set.",
+   "instrument": "None on MDT. The discount is only capturable by tendering MDT into the exchange offer once launched (or by owning MMED directly); MDT common is not the instrument.",
+   "bloom_gates": "G1 (named counterparty: Medtronic plc / MiniMed Group Inc., a live parent-sub separation) and G2 (concrete, company-guided commitment: IPO done Mar-2026, split-off to complete by end CY2026). G3 FAILS - there is no specific currently-unpriced figure; the re-derived event value is under 1% of MDT's market cap.",
+   "edge": "L - the event is real, dated and un-fired, but essentially nothing is left on the table for MDT common. Run-up from the pre-catalyst base: ~0% (separation announced May-2025 with MDT ~$85-88; MDT is $86.20 today, and -19% from its $106.33 52-wk high - so the stake is arguably not being paid for, but nothing has been harvested either). Remaining capture to favorable resolution: ~+0.3-0.5%, i.e. de-minimis. Not mostly-harvested; simply too small to matter.",
+   "primary_source": "Medtronic newsroom, \"MiniMed announces pricing of initial public offering\" (2026-03-05) plus Medtronic Q3 FY26 earnings call reaffirming split-off completion by end CY2026; live prices from FMP batch-quote 2026-08-03 (MDT $86.20 / $110.3B cap; MMED $18.97 / $5.33B cap).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "Verified: on 2026-06-30 Mesoblast said it received a BLA filing number and REQUESTED a modular (rolling) review for rexlemestrocel-L in prevention of life-threatening GI bleeding from RV dysfunction in end-stage HF/LVAD patients \u2014 not a completed, accepted BLA, and the triage note's \"ischemic HF\" framing conflates this with the earlier June 2025 FDA-alignment release. The primary release contains no completion date, no 60-day filing-decision date and no PDUFA; RMAT/orphan status only confers eligibility for priority/rolling review. Real event and genuinely forward, but it fails the DATED gate outright and clears no Bloom gate, so it belongs on passive watch rather than as a tradeable dated binary; re-triage if and when FDA accepts the completed BLA and assigns a PDUFA date. Gap: I could not source any post-July-1 company or FDA statement setting a submission-completion target."
+   "analysis": "Numerator re-derived from the capital structure rather than inherited: MMED's full market cap is $5.33B at $18.97 (FMP, 2026-08-03); Medtronic's retained ~88.7-90% is therefore worth ~$4.7-4.8B, or ~4.3% of MDT's $110.3B market cap at $86.20. A split-off exchange offer creates value only by retiring MDT shares at the customary ~7-8% (IRS/market-convention ~10% cap) discount to MMED value - so the mechanical accretion to remaining MDT holders is roughly 4.3% x 8% = ~0.35% of market cap, and the per-share arbitrage for a tendering holder is crushed by proration when a $4.7B offer is spread across a $110B holder base. The IPO cash (~$644-784M, largely intercompany debt settlement) was already banked in March 2026. Per the FIP rule, the waterfall cannot support a catalyst-sized upside, so the score reflects the equity - and the MDT equity case is a mega-cap medtech growth/margin recovery story, not a dated event. Gap: I did not pull the split-off S-4/Form 10 to confirm the exact retained-share count or an announced exchange ratio (the offer has not been launched), but no plausible ratio changes a sub-1% denominator conclusion; the tradable expression of this separation, if any, is MMED itself."
+  },
+  {
+   "symbol": "MGM",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "ma_arb",
+   "catalyst": "People Inc (Barry Diller, already 26.1% holder) has a live non-binding all-cash proposal at $48.30/share for the 73.9% of MGM it does not own (~$12.4B equity, ~$18B EV), and MGM's independent special committee is still evaluating it with outside advisers.",
+   "dated_milestone": "Proposal delivered 2026-06-01; independent special committee formed and disclosed ~2026-07-12/14 (WSJ); CEO Hornbuckle reaffirmed on the Q2 call 2026-07-29 that the committee \"continues to evaluate\" with no timeline. Next date: special-committee recommendation / definitive-agreement-or-rejection announcement, no scheduled date disclosed; next hard calendar item is Q3 earnings (~late Oct 2026).",
+   "instrument": "common equity (long MGM); merger-arb spread capture",
+   "bloom_gates": "G1 (named counterparty: People Inc / Barry Diller, existing 26.1% holder, specific $48.30 cash price) and G3 (specific unpriced figure: the 8.5% residual spread to the stated bid). G2 fails - the proposal is explicitly non-binding, no financing sources disclosed, no definitive agreement, no committee recommendation.",
+   "edge": "M-to-L. RESIDUAL CAPTURE: pre-catalyst base = $38.92 (the 30-day VWAP ending 2026-05-29 implied by the stated 24.1% premium; last clean close before the 5/27 leak was $38.45). Run-up to today's $44.52 = +14.4%, i.e. ~60% of the total $38.92-to-$48.30 move is already harvested. Remaining to the contractual cash price = +8.49%. The skew is the problem: 8.5% up vs roughly -13.5% back to the unaffected price on a break, so the RR is ~0.63x and requires >62% deal probability just to break even. Worse, the spread has widened monotonically for two months - MGM closed $50.69 ABOVE the bid on 2026-06-01 (market pricing a bump), then $47.81 (6/30), $46.88 (7/10), $44.57 (7/31). Two months of the market progressively marking down deal odds is information, not mispricing.",
+   "primary_source": "MGM Resorts press release / 8-K on special-committee formation (disclosed ~2026-07-12/14, WSJ; re-reported 2026-07-30/31 by SBC Americas and News3LV) plus the People Inc proposal letter of 2026-06-01 filed on EDGAR (EX-99.1). Price data: FMP quote MGM $44.52 and EOD series 2026-05-20 to 2026-07-31, pulled 2026-08-03.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The event is real, idiosyncratic and genuinely unresolved - a named strategic counterparty with a 26.1% toehold, a specific cash price, and a live independent special committee - so it clears G1/G3 and is not a macro bet. But two things cut the flag down. First, the triage's dated trigger is misdated: the special committee was formed and disclosed around 2026-07-12/14, not 2026-07-31; the 7/29-7/31 items are a CEO reiteration on the Q2 call that the committee \"continues to evaluate,\" which carried no new information and on which the stock actually fell from $45.83 to $44.57. There is no three-day-old hardening trigger. Second, on residual capture the initiating event already fired hard (+30% intraday on 2026-06-01, 27.7M shares) and ~60% of the move to the bid is harvested; the remaining 8.5% sits against a ~13.5% break downside with a non-binding proposal, undisclosed financing, multi-jurisdiction gaming-licence transfer risk, and no announced decision timeline. Macau/Osaka asset optionality is a reason the committee may reject $48.30 as inadequate, not a reason the arb pays. WATCH rather than ACTIVE: the re-entry trigger is a signed definitive agreement (spread should collapse toward 2-4%) or a raised bid above $48.30 - either converts this from a 0.63x-RR proposal into a real arb."
   },
   {
    "symbol": "MIRM",
-   "score": 5,
+   "score": 4,
    "tier": "WATCH",
-   "lane": "dated_binary",
-   "catalyst": "FDA priority-review PDUFA decision on zilurgisertib (ALK2 inhibitor, licensed from Incyte) for fibrodysplasia ossificans progressiva in patients 12+, with a hard action date of September 26, 2026.",
-   "dated_milestone": "PDUFA action date 2026-09-26 (next hard date); launch targeted year-end 2026 if approved",
-   "instrument": "Common equity; the clean expression would be Oct-2026 calls straddling the PDUFA, but sizing should be minimal given the payoff is immaterial to a $6.0B cap",
-   "bloom_gates": "G1 (named counterparty: FDA, with Incyte as licensor) + G2 (concrete commitment: accepted NDA under Priority Review with a statutory action date). G3 FAILS \u2014 the only specific figure management has given is \">$200M global peak sales,\" which is ~3% of market cap and already in sell-side models, so it is not an unpriced number.",
-   "edge": "L \u2014 dated and forward, but the informational asymmetry is gone and the economic asymmetry never existed",
-   "primary_source": "Mirum/Incyte press release + Q1 2026 business update, ir.mirumpharma.com and businesswire 2026-05-06 (PDUFA 2026-09-26, guidance raise); ENDO 2026 late-breaker announcement, businesswire 2026-06-04; price/market cap via FMP profile 2026-07-20",
+   "lane": "binary",
+   "catalyst": "FDA action on the zilurgisertib (ALK2 inhibitor, in-licensed worldwide from Incyte) NDA in fibrodysplasia ossificans progressiva under Priority Review, with a statutory PDUFA goal date of 2026-09-26.",
+   "dated_milestone": "PDUFA action date 2026-09-26 (54 days out); secondary dated leg = volixibat PSC pre-NDA meeting summer 2026 -> NDA submission 2H 2026; VANTAGE PBC topline pushed to Q1 2027.",
+   "instrument": "Common equity only. Do not buy pre-PDUFA option premium: approval is the ~90%+ base case with pivotal data already public, so event IV is priced against the buyer.",
+   "bloom_gates": "G1 PASS (named counterparty: FDA as decision-maker, Incyte as named licensor of the asset). G2 PASS (concrete commitment: NDA accepted under Priority Review with a hard statutory goal date). G3 FAIL (no specific currently-unpriced figure — the 81% new-HO-lesion reduction and 99.9% new-HO-volume reduction printed at ENDO 2026 and were re-rated on the spot).",
+   "edge": "M — RESIDUAL CAPTURE: pre-catalyst base 2026-06-03/04 closes $91.84/$92.49 (the ENDO late-breaker acceptance PR is 2026-06-04); today $104.65 = run-up of +13.8% still held. But the tape peaked $128.57 on 2026-07-08 and has since bled -18.6%, so roughly two-thirds of the ENDO pop has already been handed back — this is NOT a fully-harvested VISN-shape. Remaining to a re-derived favorable-resolution value of ~$125 is +19%; to the top sell-side print ($150 Morgan Stanley, $146 Citizens, both post-data) is +43%. The problem is not that the event is harvested in price, it is that the upside does not live in the dated event: the Sept-26 decision is a high-probability approval whose payoff is negatively skewed, and the analyst-target gap is carried by volixibat and Livmarli, which are undated.",
+   "primary_source": "Mirum/Incyte press releases: pivotal Phase 2 PROGRESS results in FOP presented as an ENDO 2026 late-breaker with FDA Priority Review and PDUFA 2026-09-26 (businesswire/ir.mirumpharma.com, 2026-06-04 acceptance PR, data late June 2026); VISTAS PSC primary endpoint met (2026-05-04); Q1 2026 results and Incyte worldwide license 8-K (2026-05-06, SEC CIK 0001759425); $600M 0.00% convertible senior notes pricing (2026-05-12). Price history and quote via FMP EOD/quote, 2026-08-01 close $104.65.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The catalyst is genuinely real, dated, forward and unfired: FDA accepted the zilurgisertib NDA in FOP under Priority Review with a September 26, 2026 PDUFA, and it is not a macro bet. But it fails on asymmetry twice over. First, the de-risking event already fired \u2014 positive pivotal Phase 2 PROGRESS data (Cohort 1 primary endpoint, new HO lesions at Week 24 by whole-body CT) read out positive and were presented at ENDO 2026 in June; MIRM jumped ~15% on the data and now trades at $118.86 against a 52-week range of $50.25-$130, i.e. near the high after a ~135% re-rate, so approval is broadly consensus and the PDUFA is a low-payoff confirmation rather than a coin-flip. Second, the triage note's own objection is decisive: management guides zilurgisertib to only >$200M global peak sales against a $6.0B market cap and $660-680M of 2026 product-sales guidance (Q1 2026 net product sales $159.9M, LIVMARLI $113.8M, +55% y/y), so even a clean approval moves NAV a few percent while a CRL is the larger tail \u2014 negative skew. The bigger value driver by management's and sell-side framing is volixibat in PSC/PBC (~$1.7B unadjusted peak), which is a different, undated lane. Gap: I did not verify the exact NDA-acceptance date or the undisclosed Incyte royalty/milestone economics, which would only further dilute Mirum's share of the FOP payoff, not improve it."
+   "analysis": "The event survives the gate on form: it is real, specific, hard-dated (2026-09-26), forward and unfired, and in no way a macro bet — and unusually for this screen there is a second dated leg behind it (volixibat PSC NDA submission in 2H26 off a summer pre-NDA meeting). It fails on asymmetry. The pivotal PROGRESS readout already printed on 2026-06-26 with 81%/99.9% HO reduction, which makes September approval the ~90%+ base case; you are underwriting a decision whose good outcome is already the consensus and whose bad outcome (CRL) unwinds the ENDO move plus a confidence de-rate, giving roughly +19% against -18% on a re-derived $125 fair value versus an $86 floor. The numerator check is what caps this: FOP's ~400 US patients, with royalties flowing back to Incyte on an in-licensed asset, cannot independently support the ~35% gap to the $140-150 post-data targets — that gap belongs to volixibat and the Livmarli base, neither of which resolves on 2026-09-26. Mitigating the triage note, the stock is NOT mostly-harvested in price terms (it holds only +13.8% over the $92 pre-data base after a -18.6% retrace from the July peak), so this is a legitimate WATCH into the PDUFA rather than a discard — but the dated event is the wrong thing to own, and the re-rate worth having would be a volixibat NDA acceptance in 2H26, which is not yet a date."
   },
   {
-   "symbol": "MLTX",
-   "score": 6.5,
-   "tier": "ACTIVE",
-   "lane": "dated_binary",
-   "catalyst": "Sonelokimab's Phase 3 IZAR-1 psoriatic-arthritis primary-endpoint topline (guided \"mid-2026\", not yet reported as of 18-Jul-2026), followed by the FDA-aligned HS BLA submission in late September 2026 and PDUFA-date allocation by late November 2026.",
-   "dated_milestone": "IZAR-1 PsA Week-16 ACR50 topline: guided mid-2026 (imminent, unfired); HS BLA submission late-Sept 2026; PDUFA date notification late-Nov 2026; IZAR-2 PsA topline H2 2026.",
-   "instrument": "Common equity (NASDAQ: MLTX, ~$19.68 / ~$1.6B cap on 18-Jul-2026); listed options make an Aug/Sep-expiry long-call or call-spread the cleaner expression of the IZAR-1 binary.",
-   "bloom_gates": "G1 (named counterparty: FDA \u2014 positive final pre-BLA meeting announced 10-May-2026 with alignment on adult + adolescent 12+ label) and G2 (concrete dated commitment: BLA submission late-Sept 2026, PDUFA allocation late-Nov 2026, IZAR-1/IZAR-2 topline mid-/H2-2026). G3 not met \u2014 no specific unpriced revenue/valuation figure verified.",
-   "edge": "M \u2014 the HS leg is largely de-risked and priced (VELA-1/2 Week-52 HiSCR75 67.2% reported 21-Jun-2026, FDA alignment done, and a filing is not an approval), so the genuine unpriced binary is IZAR-1/IZAR-2 in PsA, a far larger indication carried at a ~$1.6B cap after the stock's de-rating and a $200M raise at $20 on 23-Jun-2026; offset is that IZAR-1 timing is guided as \"mid-2026\" rather than a hard date, and one secondary source pushes PsA topline to Q1-2027, so the clock is soft.",
-   "primary_source": "MoonLake Immunotherapeutics press releases via ir.moonlaketx.com / StockTitan: Week-52 VELA Phase 3 HS results with milestone table (21-Jun-2026, IZAR-1 \"Mid 2026\", IZAR-2 \"H2 2026\", BLA \"Late Sep. 2026\", PDUFA allocation \"Late Nov. 2026\"); positive final pre-BLA FDA meeting (10-May-2026); $200M offering priced at $20.00 (23-Jun-2026); price/cap as of 18-Jul-2026.",
-   "verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "kill_fact": "Kill attempts failed on the load-bearing facts: as of 20-Jul-2026 the MLTX news feed shows no IZAR-1 topline (latest releases: 21-Jun Week-52 VELA HS, 22/23-Jun $200M upsized offering pricing, 10-May positive final pre-BLA outcome) \u2014 so the event is genuinely FORWARD and unfired; company primary guidance confirms IZAR-1 Wk-16 ACR50 primary readout \"mid-2026\" (enrollment completed Feb-2026, ~750 biologic-naive pts, NCT06641076), HS BLA submission by end-Sept 2026 with Priority Review request and PDUFA-date/filing letter allocation expected ~Nov-2026, IZAR-2 in H2-2026. Price/size verified live: $19.68, $1.626B cap. CORRECTIONS: (1) the headline binary has NO pinned date \u2014 \"mid-2026\" is already effectively lapsed as of 20-Jul with no readout, so slippage into H2 is the base case, which directly undermines the proposed Aug/Sep-expiry long-call expression (theta burn on an undated event); use longer-dated or wait for a date announcement. (2) The Sept/Nov HS items are administrative/telegraphed milestones (FDA already publicly aligned, no gaps), not repriceable surprises \u2014 the only real edge is the PsA efficacy binary. (3) The 23-Jun $200M raise removes financing risk but was equity issued into a stock ~69% below its $62.75 52-wk high, i.e. dilution already taken; single-asset concentration means an IZAR-1 miss is a step-function down, not a drawdown.",
-   "analysis": "Verified via company IR/StockTitan: MoonLake is a single-asset sonelokimab story with three genuinely forward, unfired dated events \u2014 IZAR-1 PsA Week-16 topline (mid-2026), the HS BLA submission (late-Sept 2026) and PDUFA-date allocation (late-Nov 2026), with IZAR-2 in H2 2026. The triage note is right that HS is largely de-risked and re-rated (Week-52 data and FDA pre-BLA alignment already public), but the PsA readouts are hard efficacy binaries \u2014 IZAR-2 uniquely carries a risankizumab active reference arm \u2014 and at a ~$1.6B market cap post-de-rating the PsA optionality does not look fully paid for, while the June $200M raise removes near-term financing risk into the events. Gap: I could not pin an exact IZAR-1 date (company says only \"mid 2026\") and found a conflicting third-party source implying Q1-2027, so timing precision is the weakest link; not a macro bet."
-  },
-  {
-   "symbol": "MLYS",
-   "score": 5.5,
-   "tier": "ACTIVE",
-   "lane": "dated_binary",
-   "catalyst": "FDA PDUFA action date of 2026-12-22 on lorundrostat's NDA for adults with uncontrolled/resistant hypertension, funded by $646M cash into 2028.",
-   "dated_milestone": "PDUFA target action date 2026-12-22 (FDA approval/CRL decision); NDA accepted 2026-03-09, standard review, no AdCom announced",
-   "instrument": "common equity (long); Dec-2026/Jan-2027 expiry calls capture the binary if IV is tolerable",
-   "bloom_gates": "G1 (named counterparty: FDA, NDA accepted for filing) + G2 (concrete commitment: hard PDUFA action date 2026-12-22, standard review) + G3 (specific unpriced figure: EV ~$1.15B = $1.80B mcap less $646.1M cash at 3/31/26, for an approvable first-in-class aldosterone synthase inhibitor in a multi-million-patient US resistant-HTN market)",
-   "edge": "H - fixed forward date, de-rated tape, EV ~$1.15B net of cash",
-   "primary_source": "Mineralys Therapeutics IR press release, \"FDA Acceptance of NDA for Lorundrostat... and Topline Explore-OSA Trial Results,\" 2026-03-09 (ir.mineralystx.com/news-events/press-releases/detail/93); corroborated by Q1 2026 results release 2026-05-06 ($646.1M cash, runway into 2028) and FMP quote 2026-07-20 ($27.09, mcap $1.796B)",
-   "verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "kill_fact": "Catalyst survives: FDA accepted the lorundrostat NDA on 2026-03-09 with PDUFA target action date 2026-12-22 (Mineralys IR release detail/93, reconfirmed in the 2026-05-06 Q1 release and 8-K), and Q1 cash/investments of $646.1M funds operations into 2028 - forward, unfired, not financing-contingent. Two load-bearing errors: (1) \"first-in-class aldosterone synthase inhibitor\" is FALSE - AstraZeneca's baxdrostat is 6-7 months ahead and sets ASI class pricing/access; lorundrostat is second-in-class, which is precisely the drawdown driver the line cites yet then contradicts. (2) The valuation math is understated by ~50%: market cap is $2.39B at $27.09 (2026-07-17), so EV = ~$1.75B, NOT the claimed ~$1.15B; and with ~88M shares outstanding, net cash is ~$7.32/share, NOT ~$9.75. The CRL floor is therefore materially lower and the \"cheap optionality\" framing weaker than stated. Also unresolved: no primary confirmation of adcomm status or review designation (priority vs standard) - the acceptance release is silent on both.",
-   "analysis": "Verified real, dated and forward: FDA accepted the lorundrostat NDA on 2026-03-09 with a PDUFA target action date of 2026-12-22 (company IR release; reconfirmed in the 2026-05-06 Q1 release), and Q1 cash/investments of $646.1M funds operations into 2028, so this is not a financing-contingent story. The event has not fired and has not been re-rated - shares sit at $27.09, 43% below the 52-week high and below the 200dma, with the drawdown attributable to AstraZeneca baxdrostat competition and the missed Explore-OSA AHI primary endpoint rather than to the regulatory path itself, leaving ~$1.15B EV against an approvable first-in-class aldosterone synthase inhibitor. Gap in verification: I did not independently confirm the absence of an advisory committee meeting or any post-Q1 (May-July 2026) FDA correspondence, mid-cycle communication or competitor label news, and the reference price is a single quote snapshot rather than a full ownership/short-interest workup; downside on a CRL is real but floored well above the ~$9.75/share net cash."
-  },
-  {
-   "symbol": "MPW",
-   "score": 5,
+   "symbol": "MKC",
+   "score": 4,
    "tier": "WATCH",
-   "lane": "distressed-restructuring",
-   "catalyst": "Post-Steward/Prospect cash-rent conversion: NOR Healthcare's six California hospitals (ex-Prospect) step from deferred to full $45M annualized rent through Dec 2026, feeding management's \"at least $1B annualized cash rent by YE26\" target.",
-   "dated_milestone": "Next date: Q2 2026 results ~2026-07-30 (first print with actual NOR California cash-rent collection, which management said begins Q2 2026); then HSA step to fully stabilized rent commencing October 2026; full $45M NOR run-rate after the 6-month full / 6-month 50% deferral, i.e. ~Dec 2026.",
-   "instrument": "Common equity, small sizing (levered REIT, ~$5.36 last quote); long-dated calls only for those explicitly sizing for the binary.",
-   "bloom_gates": "G1 pass (named counterparties: NOR Healthcare Systems Corp. / ex-Prospect Medical California hospitals, HSA, Quorum, Honor Health); G2 pass (signed master lease, $45M initial annualized rent, CPI escalators from 2026, MPT committed up to $60M seismic capex over four years, explicit deferral schedule); G3 fail \u2014 the $1B YE26 cash-rent figure is management-guided and heavily covered, not an unpriced number.",
-   "edge": "L-to-M \u2014 the recovery arc is well telegraphed (management has guided the $1B target repeatedly since 2025) and partly re-rated: shares ~$5.36 vs $3.95 52w low and $4.85 200dma. Residual edge is only in the pace of deferred-to-cash conversion, i.e. whether the Q2/Q3 prints beat the ramp schedule.",
-   "primary_source": "MPT press release \"Announces New Lease Agreement for Six California Facilities\" (2025-08-28, s206.q4cdn.com/146646187/files/doc_news/) for the $45M/deferral/$60M seismic terms; MPT Q1 2026 8-K/earnings call coverage (Seeking Alpha / Investing.com, May 2026) for the \"at least $1B annualized cash rent by end of 2026\" and \"NOR cash rent begins Q2 2026\" statements.",
+   "lane": "merger_overhang",
+   "catalyst": "McCormick combines with Unilever's Foods business (Knorr/Hellmann's) in a Reverse Morris Trust announced 2026-03-31 — $15.7B cash to Unilever plus 65% of the combined equity to Unilever holders, ~$20B revenue / $4.7B pro-forma EBITDA, closing mid-2027, with the 2026-07-23 release fixing an LSE secondary listing and a Netherlands international HQ.",
+   "dated_milestone": "2026-07-23 operating-model/secondary-listing release already out; next hard dates are the S-4/Form 10 effectiveness and the MKC + Unilever shareholder votes (not yet calendared), MKC fiscal Q3-2026 earnings ~2026-10-01, and close by mid-2027 when the LSE listing goes effective and the Unilever-holder distribution actually hits the tape.",
+   "instrument": "common equity — no position now; the dateable dislocation is the forced-selling window at close (mid-2027), where you want to be the buyer of the overhang, not the holder through it",
+   "bloom_gates": "G1 PASS (named counterparty: Unilever plc, board-approved definitive agreement, 2026-03-31). G2 PASS (concrete commitments: ~$600M annual run-rate cost synergies, two-thirds by end of year 2; net leverage <=4.0x at close falling to 3.0x within two years; dividend held at ~60% payout; close by mid-2027). G3 FAIL — no specific currently-unpriced figure. Every number above has been public for four months and the stock's -17% de-rating IS the market's priced verdict on them; the forced-seller flow is >=11 months away and its named mitigant (LSE secondary listing) was announced 7/23 and moved nothing.",
+   "edge": "L. RESIDUAL CAPTURE: (a) run-up from the pre-catalyst base is NEGATIVE — MKC traded roughly $60-63 before 2026-03-31 (inferred from the $58.58 200dma against four months in the low $50s) and sits at $51.53, so ~-17%; nothing is harvested, but that is because the market judged the deal value-destructive to the acquirer side, not because it was ignored. (b) Remaining to the provenance-checked $61 is +18%; to the 14x advocacy case $72 is +40%; but the downside to a 10x peer multiple is -15% and to the 52wk low $44.82 is -13%, giving only ~1.26 R:R. The reason this is L and not M: at today's price the combined entity already trades at ~12.4x pre-synergy / ~11x synergized EV/EBITDA versus packaged-food peers at 8-10x — MKC is not suppressed, it is mid-band. The triage's implicit anchors ($58.6 200dma, $72.6 year high) are pre-deal, pre-leverage standalone-McCormick flavor multiples that a 4.0x-levered $20B-revenue packaged-food roll-up structurally cannot re-earn until the $600M synergies land in 2029-2030.",
+   "primary_source": "McCormick IR press release \"McCormick to Combine with Unilever's Foods Business, Creating a Preeminent Global Flavor-Focused Company\" (ir.mccormick.com, 2026-03-31) and Unilever plc press release same date; PRNewswire \"McCormick Announces Operating Model, Executive Team, and Secondary Listing Location for Combined Company\" (2026-07-23); synergy/leverage/dividend figures from Unilever plc Form 425 business-combination communications filed with the SEC (2026-03-31/04); price and moving averages from FMP quote, 2026-08-03 ($51.53, 50dma $49.57, 200dma $58.58, 52wk $44.82-$72.58, mkt cap $13.85B).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The milestones are real, dated and forward: the NOR master lease on six ex-Prospect California facilities carries $45M initial annualized rent with all rent deferred six months and 50% deferred for a further six, so full cash rent only lands around Dec 2026, and MPT reiterated at Q1 2026 that NOR cash collections begin in Q2 2026 with HSA stepping to fully stabilized rent commencing October. This is company-specific and not a macro bet, but it fails the strictest unpriced test \u2014 the target is guided, widely syndicated, and the stock has already run ~36% off its 52-week low, so the market owns the base case. Gap in verification: I could not open the July 2026 8-K exhibit (SEC returned 403), so the Q2 2026 print's actual NOR collection figure is unconfirmed; the quote returned carries a stale Feb-2026 timestamp, so the \"partly re-rated\" read may understate further move."
-  },
-  {
-   "symbol": "NATL",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "merger_arb",
-   "catalyst": "Definitive Brink's (BCO) acquisition of NCR Atleos at $30.00 cash + 0.1574 BCO shares per NATL share, both shareholder votes passed 6/30/26 and HSR cleared, with closing targeted by end of Q1 2027 pending remaining non-US regulatory approvals.",
-   "dated_milestone": "Expected deal close by end of Q1 2027 (next: remaining foreign regulatory clearances / quarterly deal-status updates; votes already done 6/30/26)",
-   "instrument": "Long NATL common, hedged by shorting 0.1574 BCO per NATL share (stock component is fixed-ratio, so it is hedgeable \u2014 not an unhedgeable \"complicated\" arb as the triage note framed it)",
-   "bloom_gates": "G1 (named counterparty: The Brink's Company, definitive agreement announced 2026-02-26) and G2 (concrete commitment: fixed $30.00 cash + 0.1574 BCO exchange ratio, $4.5B Morgan Stanley bridge committed, both shareholder votes approved). G3 fails \u2014 the spread is fully visible and priced; no unpriced specific figure.",
-   "edge": "L \u2014 deal terms are public and the residual spread is thin; the only real variance is timing of foreign regulatory clearance, which is not differentiated information.",
-   "primary_source": "NCR Atleos press release \"Brink's to Acquire NCR Atleos for $6.6 Billion\" (2026-02-26, investor.ncratleos.com) and \"Shareholders Overwhelmingly Vote to Approve\" 8-K coverage (vote 2026-06-30; HSR cleared, close guided by end of Q1 2027)",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The catalyst is real, dated, forward and deal-specific: a signed cash-and-stock merger with fixed consideration ($30.00 + 0.1574 BCO), both shareholder votes cleared 6/30/26, HSR done, close guided to end of Q1 2027 on remaining regulatory approvals. But the triage framing is wrong twice over \u2014 a fixed exchange ratio is straightforwardly hedgeable by shorting 0.1574 BCO, so this is a clean spread, and the spread is only ~3.1% gross (~4.5-5% annualized), i.e. already tightly priced with no G3 unpriced figure and downside to roughly $40 on a break (~5:1 against). Score 7 / ACTIVE is not supportable on that risk-reward; downgraded to WATCH pending a spread widening on a regulatory scare, which would be the actual entry."
+   "analysis": "The event is real and correctly identified, but the triage's core framing — \"early-arc, unmoved\" — is factually wrong: the combination was announced 2026-03-31, four months ago, and MKC has already re-rated about -17% on it (and -29% from the $72.58 year high). The catalyst has fired; what remains are process milestones (S-4/Form 10, shareholder votes, antitrust) on an already-priced deal, and the \"suppressed acquirer\" thesis reduces to a bet that the packaged-food multiple compression overshot — a sector-multiple mean-reversion call, not a discrete event. Per numerator provenance I re-derived the payoff from the capital structure rather than inheriting a target: MKC holders get no cash premium at all, only 35% of an entity carrying ~$18.8B of net debt (4.0x) against $4.7B EBITDA, which pencils to ~$61 at 12.5x synergized versus $51.53 today — real but thin, with a symmetric -15% at peer multiples. The one genuinely mechanical, still-unpriced element is the forced distribution of a NYSE-primary US foods company to FTSE/AEX-indexed Unilever holders, but that lands at close in mid-2027, the company has already named its mitigant (LSE secondary listing, NL HQ, 7/23) and the stock did not respond — so the correct posture is to date a re-look into the close window and be the buyer of that dislocation, not to pre-position eleven months early and pay the carry. Score capped at 4 on derived-not-contractual upside plus fired status."
   }
  ]
 }

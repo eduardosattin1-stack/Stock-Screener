@@ -1,0 +1,167 @@
+{
+ "chunk": "gapfill-gap12 (16 names)",
+ "scanned": 16,
+ "scan_distribution": {
+  "active": 1,
+  "watch": 8,
+  "none": 7
+ },
+ "survivors_flagged": [
+  {
+   "symbol": "MLYS",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "dated_binary",
+   "one_line": "Hard FDA PDUFA 12/22/2026 for lorundrostat (5 positive trials, NDA accepted Mar-26) while the stock sits $25.78 vs $47.65 52wk high and below its 200dma - dated binary the tape has de-rated rather than front-run; textbook early-arc, ~4.5 months out."
+  },
+  {
+   "symbol": "NATL",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "one_line": "Live Brink's cash+stock deal ($30 + 0.1574 BCO = ~$48.20 vs $46.61, ~3.4% gross to a Q1-2027 close); both shareholder votes passed 6/30/26 and CCI cleared in July, so it is a clean late-stage arb with residual spread, not a fresh idea."
+  },
+  {
+   "symbol": "NSC",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "one_line": "UP-NS transcontinental merger: STB accepted the revised application 5/28/26, statutory 12-month evidentiary clock puts a decision ~mid-2027; genuinely wide spread on real regulatory risk, but a year-plus duration and heavily-covered - the announcement re-rate already happened."
+  },
+  {
+   "symbol": "OLMA",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "one_line": "Pivotal Phase 3 OPERA-01 palazestrant monotherapy topline guided to fall 2026 with the stock at $11.28 vs a $36 52wk high and a $985M cap - unmoved, months out, real two-sided asymmetry; window not a hard date, so it stays WATCH."
+  },
+  {
+   "symbol": "OGN",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "one_line": "Sun Pharma all-cash $14.00/share with DEFM14A filed and a vote scheduled; deal is real and forward but $13.56 leaves only ~3.2% gross and the stock already ran from a $5.69 low - the mispricing is spent, only the arb stub remains."
+  },
+  {
+   "symbol": "NAMS",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "one_line": "EMA/UK/Swiss decisions on obicetrapib expected 2H-2026 (Menarini-filed) with the stock at $27.49, well under its $42 high and 200dma - one real dated regulatory decision, but approval is the base case and the CVOT that actually matters (PREVAIL) is a 2027 event."
+  },
+  {
+   "symbol": "NPAC",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "spac_arb",
+   "one_line": "Definitive de-SPAC with Abra Financial ($750M pre-money, S-4 + vote pending, $40M min-cash condition) trading $10.42 against a ~$10.4 trust - downside is the redemption floor and the upside is a free option, but the target is a crypto wealth platform of unproven quality."
+  }
+ ],
+ "verified": [
+  {
+   "symbol": "MLYS",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "catalyst": "FDA PDUFA action date of 2026-12-22 on the lorundrostat NDA for uncontrolled/resistant hypertension, accepted 2026-03-09 on a package of five-to-six positive late-stage trials including the Phase 3 Launch-HTN and Phase 2 Advance-HTN registrational studies.",
+   "dated_milestone": "PDUFA target action date 2026-12-22 (~4.6 months out); next interim marker is Q2-2026 results (early Aug 2026) and AstraZeneca's earlier baxdrostat FDA action, which lands before MLYS's date.",
+   "instrument": "Common equity only, small size. Long-dated calls spanning 12/22 (Jan-2027) are unattractive: event IV is priced against a high-probability, low-payoff approval, so premium is the wrong side of this trade.",
+   "bloom_gates": "G1 PASS (FDA is a named counterparty under a statutory PDUFA goal date). G2 PASS (accepted NDA with a concrete dated commitment to act by 2026-12-22). G3 FAIL - no specific currently-unpriced figure. Approval is the consensus expectation on five positive trials and a class already de-risked by baxdrostat's earlier action; the disputed variable is post-approval commercial share, which carries no dated milestone.",
+   "edge": "M/L. Residual capture: run-up from the pre-catalyst base is NEGATIVE - $26.59 close on 2026-03-06 (day before NDA acceptance) vs $25.78 today = -3.0%, so zero front-running after five months of a public PDUFA date, and -41% from the $47.65 52wk high. Genuinely unharvested. But remaining capture to a provenance-checked favorable-resolution value is only ~+30-40% (see valuation_basis) against ~-55% on a CRL, i.e. reference R:R ~0.74 - poor, because high approval odds are already in the price. The de-rate is not the catalyst repricing; it is the market marking down post-approval commercial value, which 12/22 does not answer.",
+   "primary_source": "Mineralys IR press release \"FDA Acceptance of NDA for Lorundrostat and Topline Explore-OSA Trial Results\" (2026-03-09) and Q1-2026 results (2026-05-06, cash $646.1M, funding into 2028), both at ir.mineralystx.com; SEC Form 8-K CIK 0001933414; price/history via FMP quote and EOD chart as of 2026-08-03 close ($25.78; 2026-03-06 close $26.59).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The catalyst clears the hard gates: real, specific, hard-dated 2026-12-22, forward, unfired, non-macro, with a clean balance sheet that removes the dilution trap which usually ruins PDUFA plays (cash into 2028). The residual-capture test also passes on the run-up axis - the stock is 3% BELOW its pre-acceptance base, so nothing has been front-run. What caps this at WATCH is that the event's own payoff is compressed while the thing the market actually de-rated on survives the catalyst: with five-plus positive trials and the aldosterone-synthase class already regulatorily de-risked by AstraZeneca's earlier baxdrostat action, approval is the consensus case, so 12/22 mostly confirms what is priced, and the open question - whether an undifferentiated second entrant takes meaningful share against AZ's commercial reach, compounded by the Explore-OSA primary-endpoint miss - resolves in 2027 launch metrics, not on the PDUFA date. That asymmetry (roughly +35% up, -55% down, reference R:R 0.74) is why I mark this down from the triage's ACTIVE/7. G3 fails outright - I could not identify a specific currently-unpriced figure. Gap to note: Q2-2026 results were not yet available at verification time, so cash and runway are carried from the 3/31/26 balance sheet."
+  },
+  {
+   "symbol": "NATL",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "catalyst": "Closing of the signed Brink's (BCO) acquisition of NCR Atleos at a contractual $30.00 cash + 0.1574 BCO shares per NATL share, with both shareholder votes and HSR already cleared and only foreign clearances / money-transmitter licenses outstanding.",
+   "dated_milestone": "Merger agreement signed 2026-02-26; both special meetings approved 2026-06-30; HSR cleared July 2026; NEXT DATE = closing guided \"by end of Q1 2027\" (i.e. on/before 2027-03-31), gated on remaining non-US regulatory approvals and state/foreign money-transmitter license transfers.",
+   "instrument": "Common equity (long NATL). Note: the economically correct expression is a hedged pair — long 1 NATL / short 0.1574 BCO — because 38% of consideration floats with BCO. An unhedged paper long is not the arb; it is a long-BCO-beta position with a 3.4% coupon.",
+   "bloom_gates": "G1 PASS (named counterparty: The Brink's Company, NYSE:BCO, definitive merger agreement). G2 PASS (concrete commitment: fixed $30.00 cash + 0.1574 exchange ratio; both shareholder votes carried 2026-06-30; HSR clearance obtained). G3 FAIL (no currently-unpriced specific figure — the entire remaining figure IS the visible 3.4% spread, which is the market's own quoted discount, not a number the tape has missed).",
+   "edge": "L — Run-up already harvested: pre-catalyst base $41.87 (2026-02-26 close, the session before the 2026-02-27 announcement, when volume went 0.4M to 8.2M); today $46.61 = +11.3% captured before we would own it. Remaining capture to the provenance-checked contract value of $48.20 (= $30.00 cash + 0.1574 x BCO $115.61) is +3.41% gross, i.e. ~77% of the total event move is already in the price. Over ~7.9 months to a Q1-2027 close that is ~5.2% annualized UNHEDGED, against a break-price floor around the $41.87 pre-deal base (-10.2%), for a reference R:R of ~0.34. And the \"spread\" is not stable: the implied value was $50.40 at announcement (BCO ~$130) and is $48.20 today purely because BCO fell — an unhedged holder loses more to BCO drift than the spread pays.",
+   "primary_source": "NCR Atleos / Brink's joint press release \"Shareholders Overwhelmingly Vote to Approve Brink's Acquisition of NCR Atleos\" (2026-06-30, investors.brinks.com and investor.ncratleos.com) plus NATL Form 425 disclosing HSR clearance and the Q1-2027 close guidance (July 2026) and the original 2026-02-26 merger announcement / DEFM14A ($30.00 cash + 0.1574 BCO). Prices: FMP batch-quote 2026-08-03 close (NATL $46.61, BCO $115.61) and FMP EOD light chart 2026-02-18 to 2026-03-05 for the $41.87 pre-catalyst base.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The event is real, dated, forward and non-macro — a signed cash-and-stock merger with both votes passed (2026-06-30) and HSR cleared, leaving only foreign clearances and money-transmitter license transfers before a guided end-of-Q1-2027 close — so it is a clean late-stage arb rather than a fresh idea, exactly as triaged. But it fails the residual-capture test: the stock has already run +11.3% off its $41.87 pre-announcement base and only +3.41% of contractual value remains, meaning we would be buying the receipt for ~5% annualized while carrying the full downside to a break and, unhedged, the BCO beta embedded in 38% of the consideration (that same beta already cut implied value from $50.40 to $48.20). Numerator provenance is satisfied without a waterfall re-derivation because the consideration is contractual, not derived — but re-marking it at today's BCO price rather than the headline $50.40 is what exposes the thinness. Mostly-harvested, sub-1.0 R:R, no unpriced figure: cap at 4, WATCH only, and if it were ever taken it should be as the hedged pair, not as a long."
+  },
+  {
+   "symbol": "NSC",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "catalyst": "Union Pacific's binding acquisition of Norfolk Southern (1.0 UNP share + $88.82 cash per NSC share) awaiting STB approval; both shareholder votes passed, revised application accepted 2026-05-28, supplemental responses completed 2026-07-27.",
+   "dated_milestone": "2026-07-27: applicants completed the STB-ordered supplemental filing (9 areas), closing out the condition that kept the case in abeyance. NEXT DATE: an STB decision lifting abeyance and setting the merits/environmental procedural schedule — no date has been noticed by the Board; applicants guide to close mid-2027, but the statutory evidentiary clock has NOT started, so a 2H-2027/2028 close is live.",
+   "instrument": "common_equity — but note NSC unhedged is a levered UNP proxy (1.0x stock leg); isolating the spread requires a 1.0x UNP short, which is what the 12.9% gross number below actually refers to.",
+   "bloom_gates": "G1 only — named counterparty (Union Pacific Corporation), executed merger agreement, contractual consideration, both shareholder approvals obtained. G2 fails as an independent gate (the \"commitments\" filed 7/27/26 are concessions to the regulator, not incremental value to NSC holders). G3 fails: the $43.40/sh spread is fully public, quoted daily, and the single most-covered arb situation in the US market — there is no unpriced specific figure.",
+   "edge": "L — RESIDUAL CAPTURE: (a) run-up from the pre-catalyst base (NSC unaffected ~$256 at UNP's 2025-07-16 unaffected close, the reference the deal's $320 implied value was struck against) to $336.65 = +31.5%, i.e. ~65% of the total $256→$380.05 move to deal value is already harvested; (b) remaining to the provenance-checked resolution value = +12.9% gross ($336.65 → $380.05). Against a break-price estimate of ~$270 (standalone NSC re-rated with the rail group but well below the deal), reference R/R = +$43.40 / −$66.65 = 0.65:1 — below 1:1 — earned over 12+ months with no STB clock even started. Zero informational edge on a $75.6B name with wall-to-wall sell-side and dedicated-arb coverage.",
+   "primary_source": "STB Press Release PR-26-13, \"STB Accepts UP-NS Merger Application for Consideration; Requires Supplemental Information and Holds Proceedings in Abeyance,\" 2026-05-28 (stb.gov/news-communications/latest-news/pr-26-13/); corroborated by Fed. Reg. 2026-10751 (2026-05-29) and UP/NS joint release + FreightWaves coverage of the 2026-07-27 supplemental filing; deal terms from the NS/UP announcement release 2025-07-29 and UP Form S-4 (2025); prices FMP batch-quote 2026-08-03.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The event is real, contractual and genuinely unfired — but the triage note's framing is wrong on the one fact that matters most: there is no running 12-month statutory clock. The STB accepted the revised application on 2026-05-28 while simultaneously holding the proceeding (including environmental review) in ABEYANCE, finding nine areas \"unclear or underdeveloped,\" and has still not issued the decision that would set a merits procedural schedule; the applicants only finished supplementing on 2026-07-27. So \"decision ~mid-2027\" is company guidance, not a docketed date, and duration risk skews later, not earlier. On residual capture the triage instinct was right: ~65% of the unaffected-to-deal-value move is already in the price, leaving +12.9% gross against a ~20% break-gap — a sub-1:1 reference R/R for 12-18+ months of genuine regulatory risk in the most heavily arbed situation on the tape. Caps at 4 on the residual-capture rule (mostly harvested, no unpriced figure, G1 only); WATCH rather than NONE because the catalyst itself is dated, forward and contractual — the thing that would upgrade it is a wide-spread dislocation on adverse STB procedural news, not the current price."
+  },
+  {
+   "symbol": "OLMA",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "catalyst": "Topline PFS data from the pivotal Phase 3 OPERA-01 trial of palazestrant monotherapy vs standard-of-care endocrine therapy in 2L/3L ER+/HER2- metastatic breast cancer, company-guided to fall 2026.",
+   "dated_milestone": "Fall 2026 OPERA-01 topline (window, not a fixed date; guidance reaffirmed in the Q1-2026 release 2026-05-12). Next hard checkpoint: Q2-2026 results PR (~mid-Aug 2026), where a narrowing of the window would be the actionable trigger.",
+   "instrument": "Common equity, half-size only (pure science binary). Jan-2027 calls are the cleaner expression but only if IV compresses; pre-readout IV on a de-rated binary is punitive.",
+   "bloom_gates": "G2 only - a concrete, publicly reaffirmed company commitment to report pivotal topline in fall 2026. G1 fails (the Novartis and Bayer collaborations are named counterparties but attach to OPERA-02 and OP-3136, not to this readout). G3 fails - there is no specific currently-unpriced figure; the outcome is genuinely unknowable and both tails are being handicapped by the whole street.",
+   "edge": "L/M. RESIDUAL CAPTURE: run-up from the pre-catalyst base is NEGATIVE, not harvested - the stock is -69% from the $36.26 52wk high and -35% vs the $17.45 200dma after Roche's persevERA giredestrant failure took OLMA -41% in a session (Mar 2026), so the market has de-rated the event rather than pre-paid it. Remaining capture to provenance-checked favorable resolution: ~+130% ($11.28 to ~$26). Downside to the cash floor ~-62% ($11.28 to ~$4.30; empirical analog is the $4.47 52wk low). R:R ~2.1:1 on roughly coin-flip odds - positive but thin, and there is no informational edge: this is the single most-watched readout in the name, the class read-through cuts against us, and we hold no differentiated scientific view.",
+   "primary_source": "Olema Oncology Q1-2026 financial and operating results press release, 2026-05-12 (ir.olema.com; \"Top-line data from the pivotal Phase 3 OPERA-01 trial of palazestrant monotherapy are expected in fall 2026\"; $505.3M cash and securities, $53.1M net loss) - corroborated by the Q1-2026 10-Q balance sheet (filed 2026-05-12, no preferred, $0.96M debt) and the OPERA-01 trial-design abstract, J Clin Oncol ASCO 2025 TPS1131 (dual primary PFS by BICR in ESR1-mutant and all-comer populations vs SOC ET). Quote 2026-08-03: $11.28, cap $985M, 52wk $4.47-$36.26.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The catalyst survives the strict gate on the dimensions that matter - it is real, forward, entirely unfired, unhedged by any prior partial disclosure, not a macro bet, and the equity waterfall is as clean as it gets (zero preferred, zero meaningful debt, cash funds the company well past the readout), so the flagged upside is mechanically available to the common rather than being absorbed ahead of it. It also passes the residual test decisively in the rare good direction: the run-up is negative, since March's Roche giredestrant Phase 3 failure re-priced the whole oral-SERD class downward and left OLMA trading near cash with roughly +130% still on the table to a favorable resolution - this is the opposite of the VISN/SLS harvested-receipt pattern. What holds it at WATCH and a 5 is the two things the gate cannot fix: the milestone is a season-wide window driven by event accrual, not a hard date, so it can slip a quarter without any news; and it is a pure science coin flip on which we have no differentiated view, with the class read-through and the dual-primary design (a partial ESR1-mutant-only win is the modal good outcome) both compressing the realistic upside toward the $22 advocacy case rather than the $26 clean case. Promote to ACTIVE only if the Q2 release narrows the window to a specific month/conference or an interim/DSMB event de-risks one tail; sizing should never exceed half a seat regardless."
+  },
+  {
+   "symbol": "OGN",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "merger_arb",
+   "catalyst": "Sun Pharmaceutical's all-cash $14.00/share acquisition of Organon (definitive agreement 2026-04-26, EV $11.75B) awaiting remaining ex-US antitrust/FDI clearances before closing.",
+   "dated_milestone": "Shareholder vote ALREADY PASSED 2026-07-23 (192.8M for, 74.51% of 262.6M shares present); US HSR filed 2026-05-21, waiting period expired 2026-06-22; remaining EU/India antitrust + foreign-investment clearances pending; merger-agreement OUTSIDE DATE 2027-01-26, company guides close \"early 2027\". No further confirmed dated milestone between now and then.",
+   "instrument": "Common equity — deal-spread stub only; no asymmetric expression available (options priced off a pinned $13.5x tape)",
+   "bloom_gates": "G1 PASS (named counterparty: Sun Pharmaceutical Holdings USA / Sun Pharma America merger sub, signed definitive agreement). G2 PASS (concrete contractual commitment: $14.00 cash per share, all-cash, $11.75B EV, outside date 2027-01-26). G3 FAIL (no currently-unpriced figure — the entire contractual consideration is 96.5% priced in; the only unpriced quantity is a 3.2% spread).",
+   "edge": "L — RUN-UP: unaffected close 2026-04-09 was ~$6.90 (the $14.00 was struck at a stated 103% premium); at $13.56 the name has captured +96.5% of the pre-catalyst-to-deal-price move (+138% off the $5.69 52wk low, and $13.56 sits 0.3% under the $13.60 52wk high). REMAINING: $14.00/$13.56 = +3.25% gross to contractual resolution, ~5-6 months to an early-2027 close = ~6.5-7.5% annualized before any permitted dividend. Downside on a break is to roughly the unaffected $6.90, i.e. -49%; reference R/R ~0.07x, implying the market already assigns break odds well under 6%. The mispricing is spent; what is left is a financing-desk spread, not a Speculair edge.",
+   "primary_source": "Organon & Co. Form DEFM14A, SEC EDGAR (sec.gov/Archives/edgar/data/1821825/000119312526273323/d15298ddefm14a.htm), filed June 2026, special meeting set 2026-07-23; Organon Form 8-K vote results filed 2026-07-23; Sun Pharma/Organon definitive-agreement press release 2026-04-26 (organon.com); MLex 2026 HSR filing 2026-05-21 / expiry 2026-06-22; FMP quote OGN $13.56 as of 2026-08-03 close (52wk 5.69-13.60).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The event is verified real, contractual and technically still forward — DEFM14A filed, shareholders approved 2026-07-23, US HSR waiting period expired 2026-06-22, and only ex-US antitrust/foreign-investment clearances plus the 2027-01-26 outside date stand between here and $14.00 cash. Numerator provenance is not at issue: a fixed all-cash merger price is contractual, not derived, so there is no capital-structure waterfall to re-derive (the FIP failure mode does not apply). It fails on RESIDUAL CAPTURE: with 96.5% of the deal move already harvested and 3.25% left against ~49% break-downside, the position is buying the receipt rather than the gain — and the last de-risking step that could have re-rated it (the vote) has already fired. Triage's WATCH/5 overstates it; the residual-capture cap applies and the correct call is a pass, revisitable only if a regulatory scare re-widens the spread materially (a break to sub-$11 would be a different, genuinely mispriced trade)."
+  },
+  {
+   "symbol": "NAMS",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "catalyst": "European Commission formal adoption of marketing authorization for Ubeslo (obicetrapib) and Evlarco (obicetrapib+ezetimibe FDC) in 2H-2026, following the CHMP positive opinion of 2026-07-24, with Menarini leading EU commercialization.",
+   "dated_milestone": "EC decision expected 2H-2026 (standard ~67 days post-CHMP, i.e. ~late Sept/Oct 2026); RUBENS topline year-end 2026; PREVAIL CVOT interim analysis Q4-2026 with results 1Q-2027; Investor Day 2026-08-05",
+   "instrument": "common equity (NASDAQ: NAMS, $3.21B mkt cap)",
+   "bloom_gates": "G1 PASS (named counterparties: Menarini Group as EU licensee, EMA/CHMP/EC as decision-maker). G2 PARTIAL (contractual commitment exists - tiered double-digit royalties low-double to mid-twenties plus up to EUR 833M in clinical/regulatory/commercial milestones - but the tranche attributable to EU approval is not disclosed). G3 FAIL (no specific currently-unpriced figure; EU economics are royalty-only and the disclosed milestone package is aggregate and unallocated).",
+   "edge": "L - run-up from the pre-catalyst base is NEGATIVE: shares traded ~$31-32 into the 2026-07-24 CHMP opinion and are $27.49 today (-13% through the positive opinion, -35% from the $42.21 52wk high, below both the $32.29 50dma and $33.85 200dma). Remaining capture on the flagged event is ~0-5%: CHMP positive opinion is the substantive EMA decision and the EC follows it essentially always, so the \"2H-2026 decision\" is an administrative rubber stamp on an outcome the tape has already refused to pay for. The unfired upside (~+64% to a ~$45 PREVAIL-win value) is not this catalyst - it is a 2027 CVOT science binary.",
+   "primary_source": "NewAmsterdam Pharma / Menarini press release, \"Receive Positive CHMP Opinion Recommending Marketing Authorization for Ubeslo and Evlarco,\" 2026-07-24 (GlobeNewswire/StockTitan); NAMS Q1-2026 results 2026-05-07 ($707.3M cash; PREVAIL interim 4Q26, results 1Q27; RUBENS topline YE-2026); FMP quote 2026-08-03 close $27.49.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The triage framing is stale: the EMA leg already fired on 2026-07-24 when CHMP issued a positive opinion for both Ubeslo and Evlarco, leaving only the formal EC adoption, which historically tracks CHMP ~100% of the time - a receipt, not a gain. The market's reaction confirms it: the stock did not rally on the opinion and sits 35% below its 52wk high and below both moving averages, i.e. approval was fully the base case as the triage itself suspected. Equity math does not rescue it: ~$3.2B cap less ~$707M cash (Q1-2026) implies ~$2.5B for an asset whose EU value is a royalty stream Menarini controls, while the decisive value driver - PREVAIL CVOT, first-ever CETP outcomes win - reads out at a low-probability Q4-2026 interim and does not complete until 2027; RR to a ~$45 win case against a ~$12 cash-plus-royalty floor is roughly 1.1:1. Real, dated and partly forward, so not NONE, but mostly-harvested event + no G3 figure caps this at 4/WATCH; revisit if PREVAIL interim stops for efficacy or if a US FDA submission with a dated PDUFA appears (no FDA NDA filing was found in any 2026 release)."
+  },
+  {
+   "symbol": "NPAC",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "spac_arb",
+   "catalyst": "Definitive 2026-03-16 business combination agreement between New Providence Acquisition Corp. III and Abra Financial Holdings ($750M pre-money, all-stock, Nasdaq \"ABRX\"), pending an effective Form S-4, a shareholder vote and a $40M net-cash condition.",
+   "dated_milestone": "S-4 filing/effectiveness then SPAC shareholder vote; management guided to a listing \"sometime this summer\" (2026) but as of the latest visible 425s (April 2026) the S-4 had still not been filed — next hard date is the S-4 effectiveness/record date, currently unscheduled; SPAC deadline/extension vote is the backstop event.",
+   "instrument": "common (NPAC) bought at/below trust, held with the redemption election retained",
+   "bloom_gates": "G1 (named counterparty: Abra Financial Holdings, Inc., signed BCA 2026-03-16) and G2 (concrete commitment: definitive agreement, $750M merger consideration, $40M minimum net-cash closing condition, Nasdaq ticker reserved). G3 FAILS — there is no specific currently-unpriced figure; the only contractual number is the trust, and the stock trades at it.",
+   "edge": "L — run-up from the pre-catalyst base is ~+1-2% ($10.33 redemption value at 12/31/25 / 52wk low $10.07 vs $10.42 today), i.e. the announcement itself put essentially no premium on the shares; but the remaining capture to the provenance-checked favorable value is also ~+1.3% ($10.42 vs a trust that was $312.7M / $10.42 per share at 3/31/26 and accretes ~4%/yr to roughly $10.55-10.60 by a Q4 vote), plus ~0.35%/month carry. The event is 100% forward and almost 0% harvested, yet the quantifiable prize is a low-single-digit percentage.",
+   "primary_source": "SEC Form 8-K/425 (New Providence Acquisition Corp. III, CIK 0002048948) announcing the Abra BCA, 2026-03-16, plus the Q1-2026 10-Q trust disclosure ($312,721,919 / ~$10.42 per redeemable share at 2026-03-31) and the 425 dated 2026-04-02 stating the S-4 was still only intended to be filed; price $10.42 (FMP quote, 2026-08-03 close).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The event passes the reality test — a signed definitive agreement with a named counterparty, a stated $40M minimum-cash condition, and a vote that has not happened — but it fails the size test. The stock sits exactly at its own trust value, so the entire provenance-checkable payoff is ~1.3% to redemption plus trust carry; everything the triage note calls \"upside\" is an unpriced, unquantifiable option on a crypto wealth platform that the market is conspicuously declining to pay a cent for, and the March-to-August absence of a filed S-4 against a \"this summer\" listing guide is a timing slip, not a tightening spread. Residual capture is therefore low not because the move was harvested but because the contractual prize was always small; the Q1 going-concern flag and extension/redemption mechanics add drag without adding return. Gap to note: I could not confirm from public sources whether the S-4 has been filed or declared effective since April 2026, nor any record/vote date — re-check EDGAR before this converts to anything higher than a cash-parking trade."
+  }
+ ]
+}

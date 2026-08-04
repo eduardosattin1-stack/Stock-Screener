@@ -1,123 +1,277 @@
 {
  "chunk": "3 (AZO-BSY)",
- "scanned": 150,
+ "scanned": 151,
  "scan_distribution": {
-  "active": 2,
-  "watch": 13,
-  "none": 135
+  "active": 1,
+  "watch": 16,
+  "none": 134
  },
  "survivors_flagged": [
   {
-   "symbol": "BBIO",
+   "symbol": "BBCQ",
    "score": 6,
    "tier": "WATCH",
-   "lane": "dated-binary",
-   "one_line": "BBP-418 PDUFA Nov 27 2026 (LGMD2I/R9) plus encaleret/achondroplasia Ph3 readouts imminent; real dated pipeline binaries but large-cap and largely priced."
+   "lane": "de_spac_merger_arb",
+   "one_line": "Blank-check vehicle with a pending combination into Pasqal (neutral-atom quantum) yet trading at $10.21 on 31k shares - trust-redemption floor at par, zero deal premium, thin coverage: the only early-arc structural setup in this batch, though I could not verify the vote/close date and the exact terms need a deep-dive."
   },
   {
-   "symbol": "BCAR",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "de-SPAC-arb",
-   "one_line": "Signed merger with Exascale Labs (AI GPU-cloud); S-4/A filed, close expected Q2 2026 \u2014 de-SPAC arb with trust redemption floor vs AI-compute upside."
-  },
-  {
-   "symbol": "BGS",
+   "symbol": "BCO",
    "score": 5,
    "tier": "WATCH",
-   "lane": "restructuring",
-   "one_line": "Deleveraging via divestitures; Green Giant Canada sale to Nortera closing Q2 2026, targeting 6.0x leverage mid-2026 \u2014 own the turn."
+   "lane": "merger_arb",
+   "one_line": "Both shareholder bases approved the NCR Atleos acquisition on 2026-06-30, so the forward event is a dated regulatory close plus the integration/deleveraging arc; acquirer-side though, not a target arb, and BCO at $116 sits mid-range with no discount to pay you for the risk."
   },
   {
    "symbol": "BHF",
    "score": 7,
    "tier": "ACTIVE",
-   "lane": "merger-arb",
-   "one_line": "Live all-cash buyout: Aquarian $70/sh, shareholders approved Feb 12 2026, closing 2026 pending insurance regulatory approvals \u2014 clean arb spread."
+   "lane": "merger_arb",
+   "one_line": "Signed $70/sh all-cash Aquarian buyout, holders approved 12-Feb-2026, still trades $62.57 = ~12% gross spread on state insurance approvals (AM Best kept ratings under review 29-Jul); wide-spread arb where the market is pricing real break risk, not a fired re-rate."
+  },
+  {
+   "symbol": "BEAM",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary_catalyst",
+   "one_line": "Hard-dated late-breaking BEAM-302 AATD Phase 1/2 update at ERS Congress 5-9 Sep 2026, but 14 covering analysts and a recovered tape mean the asymmetry is thin - real date, weak mispricing."
+  },
+  {
+   "symbol": "BIP",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "structural_simplification",
+   "one_line": "Announced intention to collapse the BIP/BIPC dual-security structure on 2026-07-21 (~2 weeks old, definitive terms + vote still ahead) - genuine forward corporate action, but the BIPC-vs-BIP spread already moved sharply, so the easy leg is gone; BIP has run +11% vs its 200d."
+  },
+  {
+   "symbol": "BIPC",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "structural_simplification",
+   "one_line": "Other leg of the same 2026-07-21 simplification; the historic BIPC premium has collapsed from ~18% (200d avgs) to ~1.6% ($41.45 vs $40.81) - the re-rate is largely behind us, leaving thin residual convergence into an undated close."
+  },
+  {
+   "symbol": "BKH",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "one_line": "All-stock merger of equals with NorthWestern Energy (agreed 2025-08-18, both shareholder votes passed 2026-04-02) closing H2 2026 pending FERC/HSR + MT/NE/SD approvals; price flat vs 200d so unmoved, but an all-stock MOE offers no cash spread - you just own a utility through a regulatory calendar."
+  },
+  {
+   "symbol": "BKH",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "one_line": "DUPLICATE-GUARD: see primary BKH entry above."
   },
   {
    "symbol": "BLTE",
    "score": 6,
    "tier": "WATCH",
-   "lane": "binary-regulatory",
-   "one_line": "Tinlarebant NDA (Stargardt) fully submitted Jun-2026 under Breakthrough; forward FDA acceptance/PDUFA binary pending, though Phase 3 data already positive limits surprise."
+   "lane": "binary",
+   "one_line": "Rolling NDA for tinlarebant (Stargardt) completed 2026-06-12, so FDA filing-acceptance and a priority-review/PDUFA date land next; the Phase 3 DRAGON win already fired, leaving approval-path timing as the forward leg with ~$799M cash behind it."
+  },
+  {
+   "symbol": "BNTX",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "binary",
+   "one_line": "Trades near net cash with a 17-program oncology pipeline valued at roughly zero into a September European patent ruling plus a trastuzumab pamirtecan BLA filing; unmoved price is the attraction, though the September date rests on a single secondary source and needs confirming at DEEP tier."
+  },
+  {
+   "symbol": "BOBS",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "overhang",
+   "one_line": "IPO lockup on the 02-05 float (19.45M shares at $17) expires 2026-08-04, a hard-dated sponsor supply event - but it lands tomorrow, so a bi-weekly pipeline can only play the post-expiry clearing, not the setup."
+  },
+  {
+   "symbol": "BP",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "breakup / forced divestiture",
+   "one_line": "Live multi-leg breakup under new CEO O'Neill: formal UK North Sea sale process launched 31-Jul-26 (3 days old, early-arc), Lightsource solar sale in advanced talks with Kuwait-backed consortium, Egypt West Nile Delta bids in-week, Castrol divestiture cutting net debt ~$2.9bn - real and dated, but a mega-cap whose price is dominated by $90-100 crude, so the equity is half a macro bet and already ran."
   }
  ],
  "verified": [
   {
-   "symbol": "BBIO",
+   "symbol": "BBCQ",
    "score": 4,
    "tier": "WATCH",
-   "lane": "dated-binary",
-   "catalyst": "FDA decision on BBP-418 (oral) for LGMD2I/R9, the first-ever therapy for any limb-girdle muscular dystrophy, at a Priority-Review PDUFA date of Nov 27, 2026.",
-   "dated_milestone": "BBP-418 PDUFA target action date Nov 27, 2026 (FDA approval decision on LGMD2I/R9 NDA)",
-   "instrument": "Regulatory approval binary (PDUFA); underlying equity BBIO",
-   "bloom_gates": "G2 partial \u2014 a concrete, calendar-dated regulatory commitment (accepted NDA, Priority Review, fixed PDUFA date). No G1 named counterparty and no G3 specific currently-unpriced figure; LGMD2I/R9 is ultra-rare with a small addressable market.",
-   "edge": "L \u2014 Phase 3 FORTIFY already met all primary/secondary endpoints, so the Nov-27 approval is high-probability and largely de-risked/priced; ultra-rare indication is a small value driver for a ~$20B+ company whose thesis is the acoramidis (Attruby) ATTR-CM commercial ramp. The two other \"imminent\" Ph3 readouts cited in triage (encaleret ADH1, infigratinib achondroplasia) have already read out positive (Oct 2025 and Feb 2026) and are fired.",
-   "primary_source": "BridgeBio press release / GlobeNewswire, \"FDA Acceptance and Priority Review of NDA for BBP-418\" (May 27, 2026; PDUFA Nov 27, 2026); infigratinib PROPEL 3 topline (Feb 12, 2026); encaleret ADH1 Phase 3 topline (Oct 29, 2025)",
+   "lane": "de_spac_merger_arb",
+   "catalyst": "SEC effectiveness of the Form F-4 (filed 2026-05-26) followed by the BBCQ shareholder vote on the business combination with Pasqal Holding SAS at a $2.0B pre-money equity value, targeted to close in 2H 2026.",
+   "dated_milestone": "F-4 filed 2026-05-26, NOT yet declared effective as of the last verified disclosure; sequence = SEC effectiveness -> BBCQ shareholder vote/redemption election -> close, company-guided \"second half of 2026\". No vote date has been set or announced as of 2026-08-03 (last BBCQ-tagged release 2026-07-28 was an investor-conference notice, not a proxy-mailing or vote announcement).",
+   "instrument": "Common shares (BBCQ, Nasdaq) — the redemption right attaches to the public share and is the entire structural case; the public warrants would be the leveraged expression but their strike/terms were not verified.",
+   "bloom_gates": "G1 PASS — named counterparty, Pasqal Holding SAS, definitive business combination announced 2026-03-04. G2 PASS — concrete commitment: joint Form F-4 registration statement publicly filed 2026-05-26, $2.0B pre-money equity value, ~$500M gross proceeds to Pasqal assuming no redemptions. G3 FAIL — no specific currently-unpriced figure survives provenance: the contractual per-share consideration in a de-SPAC is $10.00, which is BELOW today's $10.21 tape, so the event delivers no re-derivable gain.",
+   "edge": "L. Run-up: pre-catalyst base was the trust itself (~$10.05-10.15 estimated at the 2026-03-04 announcement) to $10.21 today = roughly +1%; the tape confirms zero deal premium, and the price is actually BELOW its 50d average ($10.41), so the market has faded rather than harvested it. Remaining capture to a provenance-checked favorable-resolution value: approximately -2% to 0% — deal consideration is $10.00/sh and the redemption floor is only ~$10.25 (estimated), i.e. the contractual spread is negative and the mechanical floor is already the price. Everything above trust is an unpriceable post-close re-rating bet on neutral-atom quantum sentiment, not a spread — which is a theme bet, the category the gate excludes.",
+   "primary_source": "GlobeNewswire, \"Pasqal and Bleichroeder Acquisition Corp. II Announce Filing of Registration Statement on Form F-4 in Connection with Proposed Business Combination\", 2026-05-26 (deal originally announced 2026-03-04); corroborated by GlobeNewswire 2026-06-29 CFO appointment release referencing the \"previously-announced business combination with Bleichroeder Acquisition Corp. II (Nasdaq: BBCQ)\". Price/market cap: FMP quote 2026-08-03, $10.21, 31.4k shares, $391.4M cap, 50d avg $10.41.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "BBIO has one genuine dated, forward binary remaining: the BBP-418 PDUFA on Nov 27, 2026, which would be the first approved therapy for any limb-girdle muscular dystrophy. However, positive Phase 3 data already de-risks the approval, the LGMD2I/R9 market is ultra-rare, and BBIO's valuation is dominated by the acoramidis commercial story rather than this asset \u2014 so edge is low and the catalyst is largely priced. The triage's other cited catalysts (encaleret, infigratinib) are stale: both Phase 3 readouts already fired positive months ago, leaving only planned NDA submissions/launches ahead, not readouts."
+   "analysis": "The event is real, specific, dated and genuinely forward — a named counterparty (Pasqal Holding SAS), a definitive combination announced 2026-03-04, and a joint F-4 on file since 2026-05-26 that has not yet been declared effective, with no vote scheduled and close guided to 2H 2026. But the numerator does not survive re-derivation: in a de-SPAC the contractual consideration is $10.00/share and the only mechanically enforceable value is the trust redemption right at an estimated ~$10.25, so at $10.21 the provenance-checked spread is roughly zero-to-negative and the entire thesis above trust is a bet on where a pre-scale quantum pure-play re-rates post-close — sentiment, not a claim on the capital structure. The structural asymmetry the triage saw is real (clean waterfall, redemption senior to the sponsor promote, no preferred ahead of the common, and a floor essentially at the current price), which is why this stays on WATCH rather than dropping to NONE, but it is an option premium priced at fair, not a captured event edge. Verification gaps to note: SEC.gov returned 403 and FMP carries no filings or balance sheet for BBCQ, so the exact trust-per-share and share count are backed into from market cap rather than read off a 10-Q, and the WebSearch budget was exhausted before the F-4 effectiveness status and any vote date could be confirmed — if a definitive proxy with a vote date lands and the price is still at or below trust, this warrants a re-look as a pure free-option, not as a spread."
   },
   {
-   "symbol": "BCAR",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "de-SPAC-arb",
-   "catalyst": "BCAR shareholder vote July 29, 2026 to approve the $500M Exascale Labs (AI GPU-cloud) de-SPAC merger; S-4 effective, close shortly after.",
-   "dated_milestone": "Extraordinary General Meeting July 29, 2026 (record date July 6); business combination close expected shortly thereafter (Q2/Q3 2026)",
-   "instrument": "common (BCAR Class A shares)",
-   "bloom_gates": "G1 (named counterparty Exascale Labs) + G2 (signed merger agreement, S-4 effective June 24, dated vote scheduled); G3 weak \u2014 the $500M/$632M EV valuation is negotiated/promotional, not a concrete currently-unpriced figure",
-   "edge": "L \u2014 de-SPAC arb offers only ~3.6% premium to the ~$10 trust floor; downside protection (redeem) and AI-compute upside (hold XLAB) are mutually exclusive, and the hold leg is a speculative promotional AI-infra story with flagged going-concern risk and typical post-de-SPAC de-rating",
-   "primary_source": "GlobeNewswire, \"Exascale Labs and D. Boral ARC Acquisition I Corp. Schedule Extraordinary General Meeting\" (2026-07-07); S-4 effectiveness release (2026-06-29); FMP quote (2026-07-20)",
+   "symbol": "BCO",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "merger_arb",
+   "catalyst": "Brink's is the ACQUIRER of NCR Atleos ($30.00 cash + 0.1574 BCO per NATL share); both shareholder bases approved 2026-06-30 and the deal awaits remaining regulatory clearance, targeted to close by end of Q1 2027.",
+   "dated_milestone": "Q2-2026 earnings 2026-08-05 (deal-progress update); regulatory close targeted \"by the end of the first quarter of 2027\" (i.e. by ~2027-03-31), reaffirmed in the 2026-05-06 Q1 release.",
+   "instrument": "common equity (the only clean event expression is the arb leg long NATL / short 0.1574 BCO, which is not this book's instrument)",
+   "bloom_gates": "G1 PASS (named counterparty NCR Atleos, signed merger agreement, both votes carried 2026-06-30). G2 PARTIAL (concrete commitment exists but the commitment is BCO paying out, not receiving). G3 FAIL — no specific currently-unpriced figure accrues to BCO: the $48.25 deal value vs NATL's $46.66 leaves a ~3.4% gross spread (~5.8% ann. to a Q1-2027 close) that belongs to NATL holders, not to Brink's.",
+   "edge": "L — Run-up: BCO is DOWN 14.2% from its pre-announcement base of $135.58 (2026-02-26, before the 2026-02-27 gap to $116.77 on 3.4M shares), so the event was a de-rating, not a run-up; but the recovery leg is largely harvested — +26.3% from the 2026-06-29 trough of $92.16 to $116.37 in five weeks, right through the shareholder vote. Remaining: only ~+16.5% to reclaim the pre-deal $135.58, and that number is a chart level, not a provenance-checked value; on the deal spread itself the remaining capture to BCO is ~0%. Mostly-harvested plus no discount at $116 = capped edge.",
+   "primary_source": "GlobeNewswire, \"Shareholders Overwhelmingly Vote to Approve Brink's Acquisition of NCR Atleos,\" 2026-06-30 (globenewswire.com/news-release/2026/06/30/3319931/35146/en/); terms per BusinessWire 2026-06-09 KSF investor alert ($30.00 cash + 0.1574 BCO per NATL share); close timing per GlobeNewswire Brink's Q1-2026 release 2026-05-06 (\"on track to close by the end of the first quarter of 2027\"); prices and balance sheet via FMP quote/EOD chart/Q1-2026 (2026-03-31) balance sheet, pulled 2026-08-03.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "Catalyst is fully verified and cleanly dated: a signed Jan 2026 merger with named counterparty Exascale Labs (AI GaaS/GPU-cloud), S-4 declared effective June 24, 2026, and a scheduled EGM vote July 29, 2026 with close expected shortly after \u2014 real, forward, not-yet-fired, not a macro bet. It clears G1/G2 strongly but G3 is soft: the $500M pre-money / $632M EV figure is a negotiated SPAC valuation, not a concrete unpriced datapoint. Edge is Low: BCAR trades $10.36, just ~3.6% over the ~$10 trust floor, and the floor (redeem) and the AI-compute upside (hold XLAB) are mutually exclusive, with the hold leg being a promotional AI-infra reseller carrying flagged going-concern risk \u2014 so WATCH, score 6, on catalyst quality rather than trade quality."
-  },
-  {
-   "symbol": "BGS",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "restructuring",
-   "catalyst": "B&G Foods' pending sale of the Green Giant/Le Sieur Canada lines to Nortera Foods (~$60M) is expected to close in fiscal Q2 2026, taking net leverage from 6.07x toward the ~6.0x mid-2026 target.",
-   "dated_milestone": "Green Giant Canada close expected fiscal Q2 2026 (quarter ended ~July 4, 2026, subject to Canadian regulatory approval); ~6.0x net-leverage target by mid-2026. Next confirming date: Q2 FY2026 earnings, ~early Aug 2026.",
-   "instrument": "equity",
-   "bloom_gates": "G1 (named counterparty Nortera Foods, signed agreement Oct 24 2025) + G3 (concrete unpriced figure: 6.07x -> 6.0x net leverage by mid-2026)",
-   "edge": "L \u2014 deal telegraphed since Oct-2025, small (~$60M) and EBITDA-neutral by management's own words, only ~quarter-turn of leverage; the 6.0x target is widely-disseminated Q1 guidance, not an unpriced surprise. Materially undercut by June-2026 securities-fraud investigations (Pomerantz/Schall) and an 11.00% senior-notes refi (June 10 2026) signaling credit stress, contradicting the clean \"own the turn\" thesis.",
-   "primary_source": "B&G Foods Q1 FY2026 earnings call / 10-Q (period ended Apr 4 2026): net leverage ~6.07x, 6.0x target by mid-year post-close; Businesswire deal announcement Oct 27 2025; FMP press-release feed through July 20 2026 shows no closing PR (deal still pending).",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "Catalyst is real, specific and dated: a signed ~$60M divestiture to a named counterparty (Nortera) plus a concrete 6.0x net-leverage target for mid-2026, and it is technically still forward (no closing PR found through July 20, 2026, though the Q2 window has essentially elapsed). But the edge is low: the deal has been telegraphed since Oct-2025, is management-described as roughly EBITDA-neutral, and moves leverage only ~a quarter turn on a still-6x balance sheet, so it is largely priced. It is further contradicted by fresh distress signals \u2014 June-2026 securities-fraud investigations and an 11.00% senior-notes refinancing \u2014 so this is a marginal WATCH, not an actionable turn."
+   "analysis": "The event is real, dated, and forward — the merger agreement is signed, both shareholder bases approved on 2026-06-30, and management reaffirmed a close by end of Q1 2027 — but BCO is the acquirer, so the contractual payment ($30.00 cash + 0.1574 BCO) flows OUT of Brink's to NATL holders; the ~3.4% gross spread (NATL $46.66 vs $48.25 deal value at today's BCO) is the target-side trade, not this one. On the acquirer side the remaining \"catalyst\" is a closing date that pays holders nothing on the date, followed by a multi-year integration and deleveraging arc — a fundamental story, not a discrete re-rating, and the capital-structure re-derivation makes that arc harder, not easier: ~28% dilution and roughly $9-10B pro-forma debt against $262M of book equity and a $4.8B market cap. Residual capture seals it: the stock already round-tripped +26.3% from its 2026-06-29 low of $92.16 into today's $116.37 as vote-and-close risk drained out, leaving only a ~16.5% un-derived reach back to the pre-deal $135.58 against a $92 demonstrated floor (R:R 0.83, worse than 1:1). Gap to flag: the session's WebSearch budget was exhausted before I could confirm exactly which antitrust/regulatory clearances remain outstanding or whether any second-request or foreign-clearance timeline has slipped — that would only widen the risk side, not the reward. Both the mostly-harvested rule and the derived-numerator rule cap this at 4; I score 3 and drop it below WATCH."
   },
   {
    "symbol": "BHF",
-   "score": 7,
-   "tier": "ACTIVE",
-   "lane": "merger-arb",
-   "catalyst": "Aquarian Capital's signed, stockholder-approved $70.00/share all-cash buyout of Brighthouse closes in 2026 once insurance regulators (DE/MA/NY) and FINRA clear the change of control.",
-   "dated_milestone": "Insurance regulatory approvals (DE/MA/NY) + FINRA change-of-control clearance; closing expected 2026 (no fixed date published). Stockholder vote already passed Feb 12 2026.",
-   "instrument": "BHF common (long, arb spread to $70 cash)",
-   "bloom_gates": "G1 (named counterparty Aquarian Capital) + G2 (concrete commitment: signed definitive merger agreement, $70.00 all-cash, stockholder-approved)",
-   "edge": "M \u2014 ~6.7% gross spread ($65.61 vs $70), roughly 15%+ annualized on a ~2H-2026 close; wide-for-an-approved-deal spread reflects genuine change-of-control regulatory risk on a large variable-annuity book across three state DOIs, and no hard close date is published.",
-   "primary_source": "BusinessWire \"Brighthouse Financial Stockholders Approve Merger with Aquarian Capital\" (2026-02-12) + SEC DEFM14A merger proxy; deal announced BusinessWire 2025-11-06",
-   "verdict": "CONFIRMED",
-   "kill_fact": "Aquarian's $70.00/share all-cash merger (~$4.1B) signed Nov 6 2025 and stockholder-approved Feb 12 2026 (99.7% of votes cast, 69.7% of shares present); only insurance-regulatory approvals remain before a 2026 close. Live/forward, not fired. BHF trades $65.61 vs $70 (~6.7% gross spread) off a ~$51 unaffected level (37% premium) \u2014 real capped-upside merger arb whose payoff rests on approval odds.",
-   "analysis": "This is a clean, live all-cash merger arb: Aquarian's $70/share definitive agreement is signed and stockholder-approved (Feb 12 2026), leaving only insurance-regulatory (DE/MA/NY) and FINRA change-of-control approvals before a 2026 close \u2014 a real, forward, named-counterparty catalyst, not yet fired. At $65.61 the ~6.7% gross spread (~15%+ annualized) is the payoff; the ~$51 unaffected pre-deal level implies asymmetric break-risk (R:R ~0.3), so this is a high-probability, capped-upside arb whose edge rests on approval odds. The main gap is the absence of a published hard close date and the meaningful regulatory scrutiny that VA-insurer change-of-control transactions attract, which is exactly why the spread stays wide."
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "catalyst": "Closing of Aquarian Capital's signed $70.00/share all-cash acquisition of Brighthouse (~$4.1B), now gated solely on outstanding state insurance-department approvals.",
+   "dated_milestone": "AM Best maintained \"under review with negative implications\" on 29-Jul-2026 (unresolved = deal not yet approved); next hard date is Q2-2026 results/10-Q in the week of 6-Aug-2026, which carries the merger-status and outside-date disclosure. Definitive agreement 06-Nov-2025; holder approval 12-Feb-2026.",
+   "instrument": "common equity (BHF, Nasdaq)",
+   "bloom_gates": "G1 + G2 + G3. G1 named counterparty: Aquarian Capital LLC / Aquarian Holdings VI L.P. G2 concrete commitment: executed definitive merger agreement 06-Nov-2025, $70.00 cash/share, ~$4.1B, common holders adopted it 12-Feb-2026. G3 specific figure: $70.00 vs $62.615 (03-Aug-2026) = 11.79% gross spread still on the table.",
+   "edge": "M — Run-up: +38.4% from the pre-rumor base of $45.26 (18-Sep-2025 close, day before the 19-Sep Aquarian-rumor gap on 10.4M shares) to $62.615 today; in deal-move terms ($45.26 to $70.00) roughly 70% is already harvested. Remaining: +11.79% to the contractual $70.00. What keeps this from being a pure receipt is that the spread has WIDENED, not tightened — BHF closed $65.70 the day the deal was signed (6.5% spread) and $66.80 at the 52w high, versus 11.8% now, so the market has actively re-priced approval/break risk over nine months. But the asymmetry is adverse (+11.8% vs ~-23% to a standalone break) and I have no differentiated read on the state insurance gate, which is precisely where the arb community's doubt sits.",
+   "primary_source": "Business Wire, \"Brighthouse Financial Stockholders Approve Merger with Aquarian Capital\", 12-Feb-2026; Business Wire, \"Aquarian Capital to Acquire Brighthouse Financial\", 06-Nov-2025; Business Wire/AM Best, \"AM Best Maintains Under Review With Negative Implications Status for Brighthouse Financial, Inc. and Its Subsidiaries\", 29-Jul-2026; FMP quote 03-Aug-2026 ($62.615); FMP EOD tape 25-Aug-2025 to 12-Nov-2025 for the run-up base.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The event is real, specific, dated and genuinely unfired: a signed all-cash $70.00 merger with a named buyer, holder-approved 12-Feb-2026, with the only remaining gate being state insurance-department approval of a PE-style acquirer taking on a large variable-annuity book — and AM Best's 29-Jul-2026 maintenance of \"under review with negative implications\" confirms the resolution is still open, not consummated. It fails ACTIVE on two counts. First, residual capture: ~70% of the $45.26-to-$70.00 move is already in the price (+38.4% run-up vs +11.8% remaining), and the reward/risk is inverted at roughly 0.5x (+11.8% to the deal price against ~-23% to a standalone break near the pre-rumor tape, implying the market already assigns ~one-third weight to break-or-long-delay). Second, a verification gap: I could not confirm which specific state approvals remain outstanding, the merger agreement's outside date/extension mechanics, or the reverse-termination fee — the AM Best release timed out twice on Business Wire and the session's web-search budget was exhausted, so the single most load-bearing variable (the approval calendar) is unverified. Score on the widened-spread residual, not on deal quality: WATCH, and the 6-Aug-2026 Q2 10-Q merger note is the cheap next read that would move this to ACTIVE or NONE."
+  },
+  {
+   "symbol": "BEAM",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary_catalyst",
+   "catalyst": "Beam presents updated BEAM-302 Phase 1/2 data in alpha-1 antitrypsin deficiency in a company-confirmed late-breaking oral presentation at the ERS Congress in Barcelona, 5-9 Sep 2026.",
+   "dated_milestone": "2026-09-05 to 2026-09-09 (ERS Congress 2026, Barcelona; late-breaking oral). Secondary dated items: global pivotal cohort initiation guided 2H 2026; risto-cel US BLA submission guided as early as YE 2026.",
+   "instrument": "Equity; a defined-risk Oct-2026 call spread is the cleaner expression across the 5-9 Sep window given single-event gap risk.",
+   "bloom_gates": "G2 (concrete, company-committed action on a hard date: accepted late-breaking oral at a named congress, confirmed in Beam's own 2026-07-23 release). G1 partial (named counterparty = European Respiratory Society Congress, a venue rather than an economic counterparty). G3 FAILS - no specific currently-unpriced figure is disclosed or derivable; the deliverable is \"updated clinical data\", magnitude unspecified.",
+   "edge": "L/M",
+   "primary_source": "Beam Therapeutics press release via GlobeNewsWire, 2026-07-23: \"Beam Therapeutics to Present Updated Data from Phase 1/2 Trial of BEAM-302 in Alpha-1 Antitrypsin Deficiency (AATD) in Late-Breaking Oral Presentation at the European Respiratory Society (ERS) Congress 2026\" (congress 5-9 Sep 2026, Barcelona). Corroborating: Beam Q1 2026 results, 2026-07 (sic 2026-05-07) - 60mg selected as optimal biological dose, global pivotal cohort 2H 2026, 1.2B cash, runway into mid-2029. Price data: FMP quote and EOD series retrieved 2026-08-03 (last 26.185).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The event survives the strict gate on three of four axes: it is real and specific (Beam's own 2026-07-23 release confirms an accepted late-breaking oral), hard-dated (5-9 Sep 2026), forward and unfired, and it is idiosyncratic clinical risk rather than a macro bet - but it clears only G2, not G3, because no unpriced figure is quantified anywhere. NUMERATOR PROVENANCE is not the binding constraint here: the lane is clinical, not derived, and the capital structure is clean - roughly 102.9M shares, 1.2B cash and securities with runway guided into mid-2029, no preferred stack ahead of the common, implying about 1.5B enterprise value for risto-cel (BLA as early as YE 2026), BEAM-302, BEAM-301, BEAM-304 and the Lilly/Pfizer collaborations. The disqualifying weakness is event magnitude, not pricing: the market already holds the single-dose BEAM-302 package, so September delivers a durability and higher-dose increment into a well-covered name, which is a re-rate-sized event at best rather than a binary. Verification gap: the web-search budget was exhausted session-wide before I could pull the ERS late-breaker abstract listing or sell-side positioning into the print, so the specific cohorts and endpoints to be presented are unconfirmed beyond the company's own wording; if the abstract turns out to specify multi-dose data at the 60mg optimal biological dose, this warrants a re-score toward ACTIVE."
+  },
+  {
+   "symbol": "BIP",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "structural_simplification",
+   "catalyst": "Brookfield Infrastructure's board-approved plan to collapse the BIP LP / BIPC dual-security structure into a single C-corp (BIP Inc.) on a strict one-for-one exchange, with unitholder votes 2026-10-14 and completion targeted Q4 2026.",
+   "dated_milestone": "Announced 2026-07-21 (17:30 ET, after close). Voting record date 2026-08-21; BIP unitholder + BIPC shareholder special meetings and court plan-of-arrangement vote 2026-10-14; expected completion Q4 2026. Next date: 2026-08-21 (record date / definitive circular).",
+   "instrument": "common equity; the only mechanically defensible expression is a long-BIP / short-BIPC pair into the Q4 exchange, not an outright BIP long",
+   "bloom_gates": "G2 only, and partially. G2 met: a dated, board-approved plan of arrangement with a fixed 1-for-1 ratio, a record date (2026-08-21), a vote date (2026-10-14) and a Q4-2026 close. G1 fails: this is an internal related-party reorganization with no external counterparty - Brookfield controls the GP and the Class B multiple-voting shares, so approval is near-assured and there is no adversarial deal spread. G3 fails outright: the release states no dollar figure. The asserted benefits (K-1 elimination, \"increased demand from current indices and potential additional index inclusion\") are never quantified, and a 1-for-1 exchange at no premium transfers zero mechanical value to BIP common.",
+   "edge": "L. (a) Run-up: the last unaffected BIP price was the 2026-07-21 close of $39.57 (announcement 17:30 ET, after the bell); BIP is $40.81 today = +3.1% event run-up, having peaked at $42.62 on 2026-07-29 (+7.7%) and given it all back over the last three sessions. The triage note's \"+11% vs 200d\" is a six-month trend off the $29.63 52w low, not event capture - it materially overstates what this catalyst moved. (b) Remaining: the sole quantifiable leg left is the residual BIPC-over-BIP premium, $41.41 vs $40.81 = 1.47%, harvestable via long BIP / short BIPC into a Q4 1-for-1 exchange (~4 months, ~4-5% annualized gross before borrow). Everything beyond that 1.5% is an unquantified multiple-rerating hope. Note also the triage premise is wrong on direction: the BIPC premium was already down to 3.6% on the announcement date - the 18% premium implied by the 200d averages (BIP $36.69 vs BIPC $43.47) eroded through H1-2026 BEFORE the news, so the announcement compressed only ~2.1pp of it.",
+   "primary_source": "Brookfield Infrastructure, \"Brookfield Infrastructure Announces Intention to Simplify Corporate Structure,\" GlobeNewswire, 2026-07-21 17:30 ET (1-for-1 ratio; prefs excluded; record date 2026-08-21; special meetings 2026-10-14; expected completion Q4 2026; intention/board-approved, not yet definitive). Prices: FMP EOD/quote through 2026-08-03 (BIP $40.81, 50d $38.62, 200d $36.69; BIPC $41.41, 200d $43.47; BIP 2026-07-21 close $39.57, BIPC $40.99). Corroborating: Seeking Alpha, \"Brookfield Infrastructure: Two Tickers, One Story, One Catalyst,\" 2026-07-24; Q2-2026 results 2026-07-30.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The corporate action is real, dated, board-approved and genuinely unconsummated (record date 2026-08-21, votes 2026-10-14, close Q4-2026), but it is not a tradeable catalyst for BIP common: the exchange is strictly one-for-one with no premium and no cash, so there is no mechanical numerator to re-derive - the entire residual case is an unquantified index-inclusion/K-1-removal re-rating, which is exactly the derived-upside pattern this gate exists to reject. Not fired, but re-rated: BIP has already taken +3.1% off the $39.57 last-unaffected close (and +7.7% at the 07-29 peak before giving it back), while the only leg still mechanically on the table is the 1.47% BIPC-over-BIP premium worth ~1.5% over four months in a pair trade. Two triage premises also fail on the tape - the \"+11% vs 200d\" is a six-month recovery off the 52w low rather than event capture, and the BIPC premium had already collapsed from ~18% to 3.6% BEFORE the 07-21 announcement, so the \"sharp move\" the note flags is a ~2.1pp residual, not the main compression. A $19Bn large-cap infrastructure vehicle changing its wrapper while the external-manager fee and IDR economics ride through is a quality/flow story, not a catalyst position."
+  },
+  {
+   "symbol": "BIPC",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "structural_simplification",
+   "catalyst": "Brookfield Infrastructure announced (2026-07-21) a court-approved plan of arrangement collapsing BIP L.P. and BIPC into a single corporation, Brookfield Infrastructure Partners Inc., with BOTH BIP units and BIPC class A exchangeable shares converting one-for-one into the new shares.",
+   "dated_milestone": "Record date 2026-08-21; BIP and BIPC special meetings 2026-10-14; expected closing Q4 2026 (next hard date: 2026-10-14 vote).",
+   "instrument": "None recommended. Long BIPC common is the wrong side of this event; the only positive-expectancy expression is short BIPC / long BIP, which a long-only paper sleeve cannot hold.",
+   "bloom_gates": "G1 + G2 pass. G1: named counterparty is explicit and internal — BIP L.P. / the new Brookfield Infrastructure Partners Inc. G2: concrete commitment — a court-approved plan of arrangement at a fixed 1:1 ratio, dated meetings (2026-10-14), record date (2026-08-21), stated Q4 2026 close, represented as tax-deferred for US and Canadian holders. G3 FAILS: there is no currently-unpriced specific figure — the 1:1 ratio makes fair value mechanically equal to BIP's traded price, and the market has already closed the gap to 1.5%, with the residual sitting on the wrong side of a long.",
+   "edge": "L. RESIDUAL CAPTURE: pre-catalyst base is the 2026-07-21 close (release hit 17:30 ET after the bell) — BIPC $40.99 vs BIP $39.57, a 3.59% BIPC premium, NOT the ~18% implied by the 200d averages (BIPC 43.47 / BIP 36.69), which is a stale-average artifact; the premium had already eroded to ~3.6% BEFORE the announcement. (a) Run-up from pre-catalyst base: BIPC +1.02% (40.99 to 41.41) versus BIP +3.13% (39.57 to 40.81) — the SPREAD compressed from 3.59% to 1.47%, so ~59% of an already-thin gap harvested in 8 sessions. (b) Remaining % from today to provenance-checked favorable-resolution value: NEGATIVE 1.45%. At a contractual 1:1 exchange BIPC's terminal value IS BIP's price ($40.81); BIPC at $41.41 trades 1.47% ABOVE deal parity, so a long BIPC holder gives back ~1.5% into the close. The event is real, dated and forward, but the flagged instrument is inverted: the tradeable spread is short BIPC / long BIP for ~1.45% gross over ~3 months, before borrow, dividend equalization and break risk — sub-hurdle even for a spread book.",
+   "primary_source": "Brookfield Infrastructure, \"Brookfield Infrastructure Announces Intention to Simplify Corporate Structure,\" GlobeNewswire press release, 2026-07-21 17:30 ET (globenewswire.com/news-release/2026/07/21/3331012). Corroborated by Q2 2026 results release 2026-07-30 and FMP quotes/EOD prices as of 2026-08-03 (BIPC $41.41, BIP $40.81; 2026-07-21 closes BIPC $40.99, BIP $39.57).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The event is genuine, specific and dated — a 2026-07-21 court-approved plan of arrangement merging BIP and BIPC into one corporation at a fixed one-for-one ratio, with an 2026-08-21 record date, 2026-10-14 special meetings and a Q4 2026 close — so it clears the \"real dated forward catalyst\" bar on Bloom G1 and G2. What it does not clear is residual capture: the 1:1 ratio pins BIPC's terminal value to BIP's price, and BIPC at $41.41 already sits 1.47% ABOVE BIP at $40.81, meaning the remaining convergence is negative for a long. The triage note's ~18% historic premium is a 200-day-average artifact — on the pre-announcement close the premium was only 3.59%, of which ~59% has since been arbitraged away, so the trade was never the size the flag implied and what is left points the wrong way. Two corrections to the flag: the close is no longer undated (Oct 14 vote, Q4 2026 close), and one residual risk is asymmetric against BIPC — BIP's completion is explicitly not conditional on BIPC shareholder approval, so a BIPC \"no\" vote costs BIPC holders tax deferral without offering compensation. Score capped as a harvested-and-inverted spread rather than a fault in the event."
+  },
+  {
+   "symbol": "BKH",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "merger_arb",
+   "catalyst": "All-stock merger of equals with NorthWestern Energy closing H2 2026 pending FERC and MT/NE/SD approvals, with BKH as the share-issuing surviving parent.",
+   "dated_milestone": "FERC merger order — company guided \"a decision expected by mid-2026\" (initial comment period closed 2026-01-20); no order announced in the BKH press-release stream as of 2026-08-03, so it has slipped. Next hard date: Q2-2026 earnings release after the close Wed 2026-08-05, call Thu 2026-08-06 11:00 EDT, which should refresh the merger and Cheyenne timelines. Target close: H2 2026.",
+   "instrument": "Common equity (BKH). The only mechanically capturable expression of this event is the OTHER leg: long NWE / short ~0.98 BKH. BKH common alone is not a merger-arb instrument here.",
+   "bloom_gates": "G1 PASS (named counterparty: NorthWestern Energy Group, executed definitive merger agreement 2025-08-19). G2 PASS (concrete commitments: both shareholder votes passed 2026-04-02; HSR cleared 2026-04-20; full settlement in Nebraska, partial-intervenor settlements in Montana and South Dakota). G3 FAIL — no specific currently-unpriced figure accrues to BKH common; the deal delivers BKH holders no consideration, only a diluted stake in the combined entity. The Cheyenne $201M refundable CIAC is a real dated figure but the hyperscaler counterparty is undisclosed and refundable CIAC is not earnings.",
+   "edge": "L — the informational edge is nil and the mechanical edge is on the wrong ticker. Everything price-relevant has already fired publicly (votes 04-02, HSR 04-20, state settlements), leaving only a regulatory calendar. Residual capture on BKH is ~0% deal-specific: the entire remaining spread in the structure sits on the NWE leg at roughly +1.5% gross (0.98 x $71.78 = $70.34 vs NWE $69.315), i.e. ~5% annualized to an H2-2026 close, before any borrow cost — and that belongs to an NWE holder, not a BKH holder. RUN-UP: BKH closed $61.62 on 2025-08-15, the last session before the 2025-08-18/19 announcement, vs $71.78 today = +16.5%; notably the announcement itself moved BKH essentially nothing ($60.35 on 08-18, $60.87 on 08-19), so that +16.5% is twelve months of utility/data-center re-rating, not deal premium. REMAINING to favorable resolution: ~0% from the merger; any upside from here is standalone utility rate-base and the Cheyenne load, which is a different thesis wearing this catalyst's clothes.",
+   "primary_source": "Black Hills Corp. Q1-2026 press release, GlobeNewswire 2026-05-06 (HSR cleared 2026-04-20; FERC decision expected mid-2026; NE full settlement, MT/SD partial-intervenor settlements; close H2 2026; Cheyenne $201M refundable CIAC received, procurement agreement 2026-04-22); Black Hills/NorthWestern shareholder-approval release, GlobeNewswire 2026-04-02; FMP batch quotes 2026-08-03 (BKH $71.78, 200d $71.79; NWE $69.315) and FMP EOD history 2025-08-11 to 2025-08-22 (BKH $61.62 on 2025-08-15, pre-announcement).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The triage note was right and the verification only sharpens it: this is a real, dated, forward event that pays a BKH holder nothing. In an all-stock MOE where BKH is the issuer and surviving parent, there is no cash consideration and therefore no spread to capture on this ticker — the ~1.5% gross that does exist in the structure sits on the NWE leg, which is a different position in a different account. Everything that could re-rate the deal has already fired: both shareholder votes on 2026-04-02, HSR clearance on 2026-04-20, and settlements in Nebraska, Montana and South Dakota, leaving only a FERC order that has already slipped past its guided mid-2026 window and a set of state sign-offs. Meanwhile BKH is +16.5% from its $61.62 pre-announcement close but sits exactly on its 200d ($71.78 vs $71.79), and the announcement itself moved the stock roughly zero — confirming that the run-up is standalone utility and Cheyenne data-center re-rating, not deal premium, and that there is no un-harvested deal beta left to buy. Owning BKH for this catalyst is owning a regulated utility through a regulatory calendar and calling it an event; the genuinely interesting forward item on the tape is the unnamed hyperscaler's 1.8 GW Cheyenne contract ($201M refundable CIAC banked, definitive agreements still pending), which fails G1 on the undisclosed counterparty and belongs to a growth lane, not merger_arb. Gap to note: the 0.98 exchange ratio could not be re-verified this session because the WebSearch budget was already spent, though the core conclusion does not depend on it."
+  },
+  {
+   "symbol": "BKH",
+   "score": 2,
+   "tier": "NONE",
+   "lane": "merger_arb",
+   "catalyst": "Pending all-stock merger of equals with NorthWestern Energy (NWE) to form \"Bright Horizon Energy,\" awaiting FERC and Montana/Nebraska/South Dakota commission approvals, targeted to close 2H 2026.",
+   "dated_milestone": "Announced 2025-08-19; both shareholder bases approved 2026-04-02; next dated checkpoint = Q2 earnings/merger update on 2026-08-05 (call 2026-08-06), with state/FERC orders and close guided to 2H 2026.",
+   "instrument": "Common equity only. There is NO arb leg on BKH: it is the share issuer in an all-stock MoE, so BKH common receives no merger consideration. The only tradable spread sits on the NWE leg (NWE 69.32 vs BKH 71.78, cross-ratio 0.966), and it is ~1-2% gross for a multi-quarter regulatory wait — inside financing cost.",
+   "bloom_gates": "G1 only, and weakly: named counterparty (NorthWestern Energy) with a signed, shareholder-approved agreement. G2 fails — no concrete commitment that pays BKH common a defined sum. G3 fails outright — no specific currently-unpriced figure; the deal has been public and priced for 11+ months and the vote is already behind us. The separate 1.8GW Cheyenne data-center project (2026-06-10 update) does NOT rescue G1: the hyperscaler is still unnamed and there is no announced contract.",
+   "edge": "L — RESIDUAL CAPTURE: (a) run-up from pre-catalyst base ~$58-60 (pre-2025-08-19) to $71.78 = roughly +20-24% already harvested, and the shareholder vote (the last binary the market cared about) cleared four months ago; (b) remaining % to favorable resolution from today ≈ 0% on the event itself, because favorable resolution for BKH holders is simply \"shares get issued and the ticker changes name\" — there is no consideration to collect. Any residual is synergy/re-rating, which is a multi-year utility DCF argument, not an event. Price is mid-range (52wk 57.89-78.69) and below the 50dma 73.54, i.e. no dislocation to exploit either.",
+   "primary_source": "FMP batch-quote 2026-08-03 (BKH 71.78, NWE 69.315); BKH press releases via FMP 2026-06-10 through 2026-07-28 (Q2 release scheduled 2026-08-05); StockTitan BKH news summary retrieved 2026-08-03 (merger announced 2025-08-19, dual shareholder approval 2026-04-02, close guided 2H 2026 subject to HSR/FERC/MT/NE/SD).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The flagged item is a duplicate-guard artifact (\"see primary BKH entry above\") and the underlying does not survive strict gating on its own merits: the BKH/NWE combination is real, dated and technically unfired, but it is an all-stock merger of equals in which BKH is the issuing side, so no cash or defined consideration ever reaches BKH common — the entire deal spread lives on the NWE leg and is ~1-2% gross for a 2H-2026 close still awaiting FERC plus Montana, Nebraska and South Dakota orders. Applying the residual-capture rule kills it regardless of deal quality: ~+20-24% has already been run up from the pre-announcement base, the shareholder vote cleared 2026-04-02, and the remaining event-driven capture from $71.78 is effectively nil, which is the VISN pattern of buying the receipt rather than the gain. Coverage gap to note: this session's WebSearch budget was exhausted, so the current MT/NE/SD/FERC docket status was taken from a secondary news aggregator plus FMP press releases (no merger-progress release from BKH itself between 2026-05-15 and 2026-08-03) rather than from the dockets or the latest 10-Q — but no plausible docket outcome converts a zero-consideration acquirer leg into an ACTIVE catalyst."
   },
   {
    "symbol": "BLTE",
-   "score": 5,
+   "score": 4,
    "tier": "WATCH",
-   "lane": "binary-regulatory",
-   "catalyst": "FDA to render its filing/acceptance decision on Belite's completed tinlarebant NDA for Stargardt disease type 1, then assign a PDUFA action date (likely priority review).",
-   "dated_milestone": "FDA acceptance/filing decision expected ~mid-August 2026 (60-day review window from the 2026-06-12 rolling-submission completion); PDUFA target date assigned only upon acceptance",
-   "instrument": "equity",
-   "bloom_gates": "G1 (FDA = named counterparty) + partial G2 (60-day statutory filing-review commitment already accepted via rolling NDA)",
-   "edge": "L-M: acceptance is near-certain and low-surprise given the rolling NDA the FDA already agreed to + Breakthrough Therapy Designation + positive/priced Phase 3 DRAGON data (36% lesion-growth reduction, p=0.0033); the genuinely tradeable value binary is the eventual approval/PDUFA, which is not yet dated until acceptance lands",
-   "primary_source": "Belite Bio press release / GlobeNewswire \"Completes Rolling Submission of NDA... for Tinlarebant for STGD1\" (2026-06-13); SEC Form 6-K same date",
+   "lane": "binary",
+   "catalyst": "FDA filing decision on the tinlarebant NDA for Stargardt disease type 1 (rolling submission completed 2026-06-12) — acceptance plus the priority-review determination and assigned PDUFA date, the last procedural leg before an approval decision.",
+   "dated_milestone": "FDA 60-day filing decision due ~2026-08-11 (Day-74 letter with review-designation/PDUFA date by late Aug 2026); Q2-2026 results webcast expected mid/late Aug 2026. As of 2026-08-03 no acceptance PR has been issued (latest company release 2026-07-20).",
+   "instrument": "Common equity only, and only as a small starter. Options are unattractive here: a filing-acceptance/PDUFA-assignment print is a low-magnitude, high-base-rate procedural event, while single-asset biotech IV into a regulatory window is expensive — you would pay approval-sized premium for an administrative headline.",
+   "bloom_gates": "G1 PASS (named counterparty: U.S. FDA, with a completed NDA on file since 2026-06-12 and Breakthrough Therapy / Fast Track / Rare Pediatric Disease designations already granted). G2 PASS (concrete commitment: the submission is complete, not planned — the statutory 60-day filing clock is running). G3 FAIL (no specific currently-unpriced figure; there is no contractual number, and the $6.2B market cap already embeds approval and commercial success).",
+   "edge": "L. Run-up: from the pre-catalyst base of $138.16 (close 2026-06-12, the day the NDA-completion PR crossed at 21:30 ET) to $154.96 on 2026-08-03 = +12.2% already banked on this leg; on the wider story the stock is +158% off the 52-week low of $60 and the Phase 3 DRAGON win is fully fired. Remaining: roughly +10% to a $170 fair value and +19% to a $185 advocacy case (retest of the Feb-2026 $200-area high on priority review plus approval visibility) — and note the tape is de-rating, not re-rating, on regulatory progress: BLTE is -22.5% from the $200 52-week high and below its 2026-01-02 close of $159.27 despite a Phase 3 win and a completed NDA in between. The event is genuinely unfired but the magnitude left in it is thin.",
+   "primary_source": "Belite Bio press release, \"Belite Bio Completes Rolling Submission of New Drug Application to U.S. FDA for Tinlarebant,\" GlobeNewswire, 2026-06-12; corroborated by \"Belite Bio Reports Unaudited First Quarter 2026 Financial Results,\" GlobeNewswire, 2026-05-20 (cash $798.6M, 40.09M shares, Breakthrough/Fast Track/Rare Pediatric designations) and FMP quote/EOD chart pulled 2026-08-03 ($154.96, $6.21B cap, 52wk $60-$200).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "Belite completed its rolling NDA submission for oral tinlarebant in STGD1 on 2026-06-12 (announced 06-13) under Breakthrough Therapy Designation; the submission itself is done/re-rated, so the live forward event is the FDA's ~60-day filing decision (~mid-Aug 2026) and subsequent PDUFA-date assignment. This is a real, dated, forward regulatory binary with a named counterparty (FDA), but the near-term acceptance step is low-surprise because the FDA pre-agreed to the rolling submission and the pivotal Phase 3 data already read out positive and is priced. Keep at WATCH: the market-moving binary (first-ever Stargardt approval into a ~53,000-patient US market with no approved therapy) is real but undated until acceptance, so there is no imminent unpriced figure to trade yet."
+   "analysis": "The triage description checks out on the facts: the rolling NDA was completed 2026-06-12, no acceptance has been announced through 2026-08-03, so the 60-day filing decision (~2026-08-11) and the priority-review/PDUFA assignment are genuinely forward, dated, company-specific and non-macro — G1 and G2 pass on a named counterparty (FDA) with a live application. What fails is residual capture. The transformative binary (does tinlarebant work) already fired with DRAGON; the stock is +158% off its 52-week low, +12.2% since the NDA-completion base of $138.16, and yet -22.5% from the February high and below its January level — the tape is compressing the valuation as regulatory milestones land, which is the signature of an already-priced approval path. Re-deriving the numerator rather than inheriting it: 40.09M shares and $798.6M cash with no preferred or debt ahead of the common means a clean waterfall but a ~$5.41B enterprise value on a pre-revenue orphan asset serving ~53,000 US patients, so a filing acceptance — a ~90%-base-rate administrative step — buys a receipt, not a re-rating. WATCH at 4: the real trade is the approval decision itself in 2027, and it should be underwritten on valuation at that point, not entered now for an acceptance headline. Gap to flag: the session's WebSearch budget was exhausted before I could independently confirm via non-company sources whether an FDA acceptance/priority-review letter has been issued since 2026-07-20 or whether the Rare Pediatric Disease priority-review-voucher program is still live for a 2027 approval (a PRV would be worth roughly $150M, only ~2% of market cap, so it does not change the conclusion); the company press-release feed shows no acceptance announcement through 2026-08-03."
+  },
+  {
+   "symbol": "BNTX",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "binary_prob",
+   "catalyst": "A claimed September 2026 binary EPO patent ruling plus a trastuzumab pamirtecan (BNT323/DB-1303) BLA filing, on a stock said to trade at net cash with its 17-program oncology pipeline free.",
+   "dated_milestone": "Only confirmable dated event is Q2 2026 results on 2026-08-04 (company PR 2026-07-21). The September EPO ruling has NO confirmable date, docket, or counterparty; the BLA is guided only as \"in 2026, subject to regulatory feedback\" (Q1 release 2026-05-05).",
+   "instrument": "common equity (BNTX ADS)",
+   "bloom_gates": "NONE PASS. G1 fails: no named counterparty or patent number for the \"European patent ruling\" — the sole source is a Seeking Alpha piece (2026-07-31) referring vaguely to \"a binary EPO patent event in September\"; BioNTech's own Q1 2026 release contains zero IP-litigation disclosure and no company PR mentions it. G2 fails: the BLA is a conditional plan (\"subject to regulatory feedback\"), no submission date. G3 fails: the \"pipeline priced at zero\" figure is arithmetically wrong (see analysis), so there is no verified currently-unpriced number.",
+   "edge": "L — residual capture is genuinely high but the numerator is missing. Run-up from pre-catalyst base: ~0%. The stock is $93.74 vs a 50d avg of $91.34 and 200d avg of $98.22, i.e. flat-to-down; today's +3.49% is the CEO-succession PR (Guido Oelkers named, 2026-08-03), not the patent. So essentially nothing is harvested. Remaining %: UNQUANTIFIABLE — I cannot derive a provenance-checked favorable-resolution value because the event itself is unidentified (no patent, no counterparty, no claimed damages/royalty figure). An unharvested event with no derivable payoff is not investable; it is an unpriced rumor, not an unpriced gain.",
+   "primary_source": "BioNTech Q1 2026 Financial Results and Corporate Update, globenewswire.com, 2026-05-05 (EUR 16,763.3M cash+securities; BLA \"in 2026, subject to regulatory feedback\"; no IP-litigation disclosure); FMP Q1 2026 balance sheet, filed 2026-05-05 (preferredStock 0, totalDebt EUR 303.1M); FMP quote 2026-08-03 ($93.74, 50d $91.34, 200d $98.22, mcap $23.71B); BioNTech CEO succession PR 2026-08-03; Q2 date PR 2026-07-21. UNVERIFIED claim traced to Seeking Alpha, 2026-07-31, \"BioNTech: The Market Is Offering A 17-Program Oncology Pipeline For Almost Free.\"",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The flagged September European patent ruling could not be confirmed at DEEP tier and traces back to exactly one secondary source — a Seeking Alpha article of 2026-07-31 whose own summary bullet is the origin of both the \"17-program pipeline for almost free\" phrasing and the \"binary EPO patent event in September.\" Neither BioNTech's Q1 2026 results release nor any company press release from April through August 2026 mentions patent litigation, an EPO opposition, or a scheduled ruling; there is no named counterparty, patent number, or docket to verify against. (Verification gap: this session's web-search budget was exhausted before I could hunt EPO/UPC registers directly, so I resolved on primary-source absence rather than positive disconfirmation.) Separately, the numerator claim fails on arithmetic I re-derived myself: net cash is ~$75.5/share against a $93.74 price, so the pipeline is priced at ~$4.6B of EV, not zero, and that cash floor erodes ~EUR 2B/yr against EUR 2.0-2.3B of guided revenue — a melting-ice floor, not a hard one. What is real is the trastuzumab pamirtecan BLA (Phase 2 HER2+ endometrial data 2026-04-11, positive) and pumitamig Phase 3 progress with BMS, but the BLA is guided only as \"2026, subject to regulatory feedback\" with no date, and a founder-CEO succession announced 2026-08-03 (Sahin -> Oelkers, effective by Feb 2027) adds governance uncertainty over the same window. Net: an unmoved price with real optionality, but no verified dated forward binary and no derivable payoff — per the gate this is NONE, and it is closer to a cheapness/re-rating thesis than an event."
+  },
+  {
+   "symbol": "BOBS",
+   "score": 2,
+   "tier": "NONE",
+   "lane": "overhang",
+   "catalyst": "The 180-day IPO lock-up on Bob's Discount Furniture expires Tuesday 2026-08-04, freeing roughly 111M sponsor/insider shares against a 19.45M-share IPO float — a supply event with no upside numerator attached.",
+   "dated_milestone": "2026-08-04 lock-up expiry (next dated event after: Q2 FY26 results before the open 2026-08-06 with 08:00 ET call)",
+   "instrument": "none — no clean expression; common is the only liquid leg and a \"post-expiry clearing\" bounce is inseparable from the Q2 print two days later",
+   "bloom_gates": "NONE pass. G1 fail: no named counterparty is committed to anything — an unlock only removes a restriction. G2 fail: zero concrete commitment; Bain/insiders have announced no secondary, no size, no price. G3 fail: the figure is the opposite of unpriced — the 2026-08-04 date and the ~111M unlocking share count have been in the S-1 since 2026-02-05 and are the single most pre-disclosed data point a six-month-old IPO has.",
+   "edge": "L — direction is negative (supply), the date has been public for six months, and the event carries no favorable-resolution value to underwrite. RESIDUAL CAPTURE: run-up = +19.2% from the pre-event base ($14.52 50d avg; +77.7% off the $9.74 52w low) to today's $17.31, with the stock closing the full round trip back to the $17.00 IPO price and +3.8% on 08-03 alone; remaining = 0% — the best case for an unlock is \"nothing happens,\" which pays nothing, while the tail is a Bain-led secondary at a discount. Buying the receipt on a non-event.",
+   "primary_source": "FMP/Defense World, \"Bob's Discount Furniture, Inc.'s Lock-Up Period Will End on August 4th (NYSE:BOBS)\", 2026-07-28 (IPO 19,450,000 sh @ $17.00 on 2026-02-05, $330.65M); Business Wire 2026-07-23 (Q2 2026 results 2026-08-06 pre-open); FMP quote 2026-08-03 ($17.31, 50d $14.52, 200d $14.50, 52w $9.74-$23.49, mkt cap $2.26B); FMP shares-float 2026-08-03 filing bobs-20260329 (130,627,486 shares outstanding).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The flagged fact checks out exactly as stated — 19.45M shares at $17.00 on 2026-02-05, $330.65M raised, lock-up ending 2026-08-04 — but it is an overhang, not a catalyst: ~111M of 130.6M shares outstanding come free against a 19.45M IPO float (5.7x the float), and the only \"favorable resolution\" is the absence of selling, which has no numerator to capture. NUMERATOR PROVENANCE: not applicable in the derived sense because there is no derived upside to re-derive — no SoP, no proceeds waterfall, no contractual price; I deliberately did not spend a lookup on the 10-Q capital structure because no equity-waterfall arithmetic can manufacture upside from a restriction lapsing. The triage note's own framing (\"a bi-weekly pipeline can only play the post-expiry clearing\") concedes the setup is unplayable, and any post-08-04 price action is confounded by Q2 earnings on 08-06, making this an earnings bet wearing an event costume; gate fails on all three Bloom conditions and on direction."
+  },
+  {
+   "symbol": "BP",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "breakup / forced divestiture",
+   "catalyst": "New CEO Meg O'Neill's multi-leg portfolio breakup — formal UK North Sea sale process launched 31-Jul-26, Lightsource solar in advanced talks with a Kuwait-SWF-backed consortium (24-Jul-26), West Nile Delta Egypt bids in-week (Energean/Carlyle/Dragon Oil/Artemis, 29-Jul-26), Castrol signed for ~$2.87bn of net-debt reduction.",
+   "dated_milestone": "Q2 2026 results 04-Aug-2026 (next hard date, likely divestiture-progress update); WND Egypt bids were due w/c 29-Jul-26; North Sea process launched 31-Jul-26 with no stated timetable, buyer or price.",
+   "instrument": "common equity (NYSE ADR) — no catalyst-sleeve instrument warranted",
+   "bloom_gates": "G2 met (Castrol signed, ~$2.87bn net-debt reduction; Gelsenkirchen completed 03-Aug-26, ~$1bn opex cut). G1 partial only — Kuwait-backed consortium is unnamed, WND names are bidders not counterparties, North Sea has no buyer at all. G3 FAILED — no specific currently-unpriced figure exists; the only number on offer is UBS's 675p PT / $24.5bn shale mark (22-Jul-26), an inherited analyst target, not a derived divestiture spread.",
+   "edge": "L — Run-up: +15.3% from the pre-catalyst base of $38.55 (09-Jul-26, the day O'Neill publicly committed to \"simplify the portfolio, cut costs, tighten capex\"), +39% off the 52wk low of $31.98, now 11.8% above the 200dma and only 7.9% below the 52wk high. Remaining to a provenance-checked favorable resolution: ~3-5%, not the 29% an analyst PT implies. The whole divestiture package (North Sea + Lightsource + WND + Castrol + Gelsenkirchen) is plausibly $6-10bn gross against a ~$140bn EV, and only the spread between sale price and the market's already-embedded valuation accrues to the common — low single digits of a $116.6bn cap. Most of the July move was crude, not the breakup.",
+   "primary_source": "Reuters, \"BP puts North Sea business up for sale as CEO pushes overhaul\", 31-Jul-2026 (corroborated by WSJ 31-Jul-26 and Forbes 31-Jul-26); Reuters \"BP nears deal to sell solar business to Kuwait-backed consortium, FT reports\", 24-Jul-26; Reuters \"Energean, Carlyle among bidders for BP gas assets off Egypt\", 29-Jul-26; Reuters \"BP completes sale of Gelsenkirchen refinery\", 03-Aug-26; FMP quote 03-Aug-26 ($44.455, 52wk 31.98-48.27, 200dma 39.76) and FMP earnings calendar (Q2 on 04-Aug-26).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "Every leg of the flagged breakup checks out on the dates, and G2 is comfortably met, but the thesis fails the two gates that matter: G3 (no specific currently-unpriced figure — the only quantified upside available is UBS's inherited 675p target, which I am barred from adopting and which is a whole-company re-rating call rather than a divestiture spread) and the NOT-A-MACRO-BET gate. When I re-derive the numerator from the capital structure, the entire divestiture package is worth ~2-3% of a $116.6bn market cap in genuine equity accretion, while a $10/bbl Brent move is worth ~$3.4bn/yr pretax — the crude beta is roughly an order of magnitude larger than the event, so this is a $90-100 oil position wearing a breakup costume. Residual capture is thin on top of that: the stock has already run +15.3% from the 09-Jul-26 pre-catalyst base ($38.55) and +39% off the 52wk low, sits 11.8% above its 200dma and 7.9% below the 52wk high, with only ~3-5% left to any figure I can actually derive. Real event, mostly harvested, wrong instrument for a catalyst sleeve — score the equity, not the event."
   }
  ]
 }
