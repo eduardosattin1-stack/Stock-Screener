@@ -77,6 +77,8 @@ def consume_skeptic(apx):
     shard get skeptic_verdict=MISSING (+ half-size via moat_per_name_cap), and a STALE REFUTED shard
     on a still-held member (the HRMY case) is stamped skeptic_stale_refuted instead of silently
     ignored. Fork (b) preserved: a fresh REFUTED member is DEMOTED to the front of runner_ups."""
+    _pc.apply_skeptic_corrections(ROOT / "_skeptic", RES_DIR,   # Tier-1 write-back (2026-08-05):
+                                  quadrant=apx.get("regime_quadrant"))    # typed corrections -> records
     return _pc.consume_skeptic(apx, APEX_F, ROOT / "_skeptic")
 
 

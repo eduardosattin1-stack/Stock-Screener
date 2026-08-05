@@ -2,7 +2,7 @@
 """Shared post-processing primitives for BOTH the value apex (_value_post.py) and the regime/apex
 book (_regime_post.py): the skeptic kill-tier, the weight builder (with the moat-erosion + combined
 caps), and the deterministic secular-theme concentration cap. Factored out so the two books run ONE
-implementation — a skeptic that demotes and a cap loop that sizes, identical across surfaces.
+implementation - a skeptic that demotes and a cap loop that sizes, identical across surfaces.
 
 Design notes carried over from _value_post.py:
   - consume_skeptic is fork (b): a REFUTED apex member is physically DEMOTED to the front of
@@ -16,7 +16,7 @@ Design notes carried over from _value_post.py:
     + --offline reuse), stress_block (weighted downside to 52w lows / recession / caller-supplied bear
     px), corr_block (pairwise 2y weekly Pearson + beta vs a caller-supplied benchmark), exits_block
     (thesis-break sanity). All are pure functions parameterized on the book specifics (quotes/charts
-    providers, cache path, bear-px getter, benchmark symbol) — this module stays free of import side
+    providers, cache path, bear-px getter, benchmark symbol) - this module stays free of import side
     effects (no FMP/screener_v6 import; the caller injects its fetchers).
 """
 import json
@@ -28,12 +28,12 @@ from pathlib import Path
 
 # STEP-3a entry-discount floor, mirrored from the Director prompt (weekly_opus_refresh STEP 3a,
 # 2026-07-24): the bar a NEW seat's computed expected return must clear, scaled by the quadrant.
-# Used here only by the numbers-scope repricing branch below — keep the two in sync.
+# Used here only by the numbers-scope repricing branch below - keep the two in sync.
 _ENTRY_FLOOR_PCT = {"GOLDILOCKS": 20.0, "REFLATION": 20.0, "STAGFLATION": 25.0, "RISK_OFF": 30.0}
 
 
 def _record_live_px(records_dir, sym):
-    """Live price from the debate record (valuation block preferred) — the pipeline's own number,
+    """Live price from the debate record (valuation block preferred) - the pipeline's own number,
     never the skeptic's, so a fabricated quote can't game the repricing branch."""
     try:
         rec = json.load(open(Path(records_dir) / f"{sym}.json", encoding="utf-8"))
@@ -45,7 +45,7 @@ def _record_live_px(records_dir, sym):
 
 def _persist_revision(records_dir, sym, fv, er_pct):
     """Write the skeptic's re-derived fair value INTO the debate record (additive key) so the next
-    cycle's carry/skeptic/Director anchor on the corrected number instead of the refuted one —
+    cycle's carry/skeptic/Director anchor on the corrected number instead of the refuted one -
     the WKL.AS failure mode: the EUR 82 re-derivation lived only in kill_fact prose and the record
     still said EUR 92 the following week."""
     try:
@@ -58,12 +58,135 @@ def _persist_revision(records_dir, sym, fv, er_pct):
         print(f"WARN skeptic: could not persist revised FV for {sym} ({e})")
 
 
+# Valuation levels the skeptic may correct via corrections_typed. Deliberately ONLY the typed
+# levels the agents own - inputs (net debt, shares, EBITDA anchors) live in prose, so a correction
+# to an input must be carried through to the level by the skeptic ("state the LEVEL, the pipeline
+# computes every ratio"). live_price is the pipeline's and is never correctable.
+_CORRECTABLE_FIELDS = ("bear_px", "base_fv_px", "bull_px", "downside_floor_px")
+
+
+def _crossed(pre, post, threshold):
+    """True when a value moved across a threshold in either direction (verdict-relevant flip)."""
+    if not isinstance(pre, (int, float)) or not isinstance(post, (int, float)):
+        return False
+    return (pre >= threshold) != (post >= threshold)
+
+
+def apply_skeptic_corrections(shards_dir, records_dir, quadrant=None, revise_cap=8):
+    """Tier-1 write-back (2026-08-05, Bruno: 'the skeptic note is useless if nothing feeds back -
+    what I need is a reliable debate whose conclusion reads trustworthy numbers'). Apply each
+    shard's typed corrections to the record's valuation block (originals preserved as <field>_orig,
+    audit trail in skeptic_corrections_applied), then re-run the SAME deterministic machinery as
+    `numeric-gate --enforce` over the corrected levels: computed{} (rr/ER/floor-distance) is
+    recomputed and diverging prose R:R is rewritten with _orig kept. The Director, the gates and
+    the stock page then all read ONE internally consistent set of numbers - the skeptic note
+    becomes an audit line instead of a contradiction (the GPOR case: bear_px 130 -> 120, so the
+    published rr 1.23 was arithmetically dead on the record's own bear math).
+
+    Returns (applied_syms, revise_needed): revise_needed is the Tier-2 trigger list - material
+    CONFIRMED_WITH_CORRECTIONS shards whose corrected arithmetic flips a verdict-relevant
+    threshold (rr across 1.0, ER across the quadrant entry floor). REFUTED names are NEVER on it:
+    a kill is a judgement, not an arithmetic slip (2026-07-27 repair taxonomy) - their records
+    still get the level corrections, but the prose/grade is not revised.
+
+    Idempotent: an already-applied correction (valuation[field] == to) is skipped; a prior-week
+    stale shard never rewrites a fresh record; legacy records without a typed valuation block are
+    left alone (low-confidence prose-mining must never masquerade as typed)."""
+    shards_dir, records_dir = Path(shards_dir), Path(records_dir)
+    applied, revise = [], []
+    if not shards_dir.is_dir() or not records_dir.is_dir():
+        return applied, revise
+    try:
+        import _numeric_gate as _ng
+    except Exception:
+        try:
+            import sys as _sys
+            _sys.path.insert(0, str(Path(__file__).resolve().parent))
+            import _numeric_gate as _ng
+        except Exception:
+            _ng = None
+    floor = _ENTRY_FLOOR_PCT.get(str(quadrant or "").upper(), 20.0)
+    for sf in sorted(shards_dir.glob("*.json")):
+        try:
+            sh = json.load(open(sf, encoding="utf-8"))
+        except Exception:
+            continue
+        sym, cts = sh.get("symbol"), sh.get("corrections_typed")
+        if not sym or not isinstance(cts, list) or not cts:
+            continue
+        rf = records_dir / f"{sym}.json"
+        if not rf.exists():
+            continue
+        if sf.stat().st_mtime < rf.stat().st_mtime - 86400:
+            continue   # prior-week shard vs a fresh record: never apply stale corrections
+        try:
+            rec = json.load(open(rf, encoding="utf-8"))
+        except Exception:
+            continue
+        val = rec.get("valuation")
+        if not isinstance(val, dict):
+            continue   # legacy record: no typed block to correct
+        audit = rec.get("skeptic_corrections_applied") or []
+        pre = dict(rec.get("computed") or {})
+        changed = False
+        for c in cts:
+            if not isinstance(c, dict):
+                continue
+            fld, to = c.get("field"), c.get("to")
+            if fld not in _CORRECTABLE_FIELDS or not isinstance(to, (int, float)) or to <= 0:
+                continue
+            cur = val.get(fld)
+            if cur == to:
+                continue   # idempotent re-run
+            if f"{fld}_orig" not in val and cur is not None:
+                val[f"{fld}_orig"] = cur   # never clobber the true original on re-apply
+            val[fld] = float(to)
+            audit.append({"field": fld, "from": cur, "to": float(to),
+                          "basis": str(c.get("basis") or "")[:300],
+                          "at": _dt.now().strftime("%Y-%m-%d")})
+            changed = True
+        if not changed:
+            continue
+        rec["skeptic_corrections_applied"] = audit
+        if _ng is not None:
+            try:
+                res = _ng.check_record(rec)
+                rec["numeric_gate"] = res["gate"]
+                rec["numeric_gate_reasons"] = list(res["reasons"])
+                rec["computed"] = {k: v for k, v in res["computed"].items()
+                                   if k in _ng.COMPUTED_STAMP_KEYS and v is not None}
+                if any(r.startswith("PROSE_RR_KILLED") for r in res["reasons"]) and not rec.get("carried"):
+                    if "risk_reward_prose_orig" not in rec:
+                        rec["risk_reward_prose_orig"] = rec.get("risk_reward")
+                    rec["risk_reward"] = _ng._rr_display(rec.get("valuation") or {},
+                                                         res["computed"], res["reasons"])
+            except Exception as e:
+                print(f"WARN skeptic-apply: recompute failed for {sym} ({e}) - levels applied, "
+                      f"computed{{}} left as-was")
+        rf.write_text(json.dumps(rec, ensure_ascii=False, indent=2), encoding="utf-8")
+        applied.append(sym)
+        post = rec.get("computed") or {}
+        flips = (_crossed(pre.get("rr_ratio"), post.get("rr_ratio"), 1.0)
+                 or _crossed(pre.get("expected_return_pct"), post.get("expected_return_pct"), floor))
+        if (str(sh.get("verdict") or "").upper() == "CONFIRMED_WITH_CORRECTIONS"
+                and sh.get("correction_severity") == "material" and flips):
+            revise.append(sym)
+        print(f"skeptic-apply: {sym} - {len([a for a in audit if a.get('at') == _dt.now().strftime('%Y-%m-%d')])} "
+              f"correction(s) applied | rr {pre.get('rr_ratio')} -> {post.get('rr_ratio')} | "
+              f"ER {pre.get('expected_return_pct')} -> {post.get('expected_return_pct')}"
+              + (" | REVISE (verdict-relevant flip)" if sym in revise else ""))
+    if len(revise) > revise_cap:
+        print(f"skeptic-apply: revise list capped at {revise_cap} (dropped: {revise[revise_cap:]})")
+        revise = revise[:revise_cap]
+    return applied, revise
+
+
 def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str = "value_conviction_cap",
                     records_dir: Path = None):
     """Merge skep_dir/<SYM>.json shards -> sidecar <skep_dir>_results.json and apply the verdicts.
     REFUTED demotes the apex member to the front of runner_ups; CONFIRMED_WITH_CORRECTIONS stamps the
     correction + conviction cap. Idempotent: re-running re-applies the same verdicts to the same members.
-    records_dir: where the debate records live (default <apex dir>/results_regime) — used by the
+    records_dir: where the debate records live (default <apex dir>/results_regime) - used by the
     numbers-scope repricing branch for the live price + revised-FV write-back."""
     skep_dir = Path(skep_dir)
     apex_file = Path(apex_file)
@@ -72,7 +195,7 @@ def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str 
         return apx
     # ANCHOR (2026-07-24): freshness is measured against the DIRECTOR's write, not the file's mtime.
     # The post layer rewrites this same file, so using mtime meant every re-run pushed the anchor
-    # forward and re-aged its own inputs — run the post layer twice and same-day shards flipped to
+    # forward and re-aged its own inputs - run the post layer twice and same-day shards flipped to
     # "stale". post_anchor_ts is stamped once, on the first post-processing after a Director write
     # (a fresh Director file has no stamp, so a genuinely new run re-anchors correctly).
     apex_mtime = apex_file.stat().st_mtime if apex_file.exists() else 0
@@ -92,7 +215,7 @@ def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str 
             d = json.load(open(f, encoding="utf-8"))
             if f.stat().st_mtime < apex_mtime - SKEPTIC_FRESH_WINDOW_S:
                 stale.append(f.stem)
-                if d.get("symbol"):                      # remember stale verdicts — a stale REFUTED
+                if d.get("symbol"):                      # remember stale verdicts - a stale REFUTED
                     stale_verdicts[d["symbol"]] = d       # on a still-held name must not vanish (HRMY)
                 continue
             if d.get("symbol"):
@@ -104,11 +227,11 @@ def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str 
     if merged:
         (skep_dir.parent / (skep_dir.name + "_results.json")).write_text(
             json.dumps(merged, ensure_ascii=False, indent=1), encoding="utf-8")
-    # COVERAGE — fail LOUD, not open (the 06-30 apex + EEFT/HRMY value book shipped with zero fresh
+    # COVERAGE - fail LOUD, not open (the 06-30 apex + EEFT/HRMY value book shipped with zero fresh
     # shards and this function returned silently). Every apex member without a FRESH shard is stamped
     # skeptic_verdict=MISSING (+ skeptic_missing=True -> half-sized by moat_per_name_cap); a STALE
     # REFUTED on a still-held member is stamped skeptic_stale_refuted (half-size + re-run flag), never
-    # silently ignored. Publish stays possible (partial runs are the ops norm) — visible and priced.
+    # silently ignored. Publish stays possible (partial runs are the ops norm) - visible and priced.
     missing, stale_ref = [], []
     for p in apx.get("apex_basket", []):
         sym = p.get("symbol")
@@ -125,7 +248,7 @@ def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str 
             p["skeptic_missing"] = True
             missing.append(sym)
     # STICKY-FLAG FIX (2026-07-24): the loop above only ever SETS skeptic_missing, and the post layer
-    # re-reads the apex JSON it previously stamped — so a name flagged by an early run stayed
+    # re-reads the apex JSON it previously stamped - so a name flagged by an early run stayed
     # half-sized forever, even after the skeptic ran and CONFIRMED it. Observed live: all 9 apex seats
     # carried skeptic_missing=True from the first regime-post, collapsing the Director's 0.4-1.1
     # sizing spread to a flat 0.5. Clear the flag for every name that now HAS a fresh verdict.
@@ -154,7 +277,7 @@ def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str 
             p["skeptic_corrections"] = v["corrections"]
         # Unified skeptic (X1): CATEGORICAL severity replaces the numeric cap. A "material"
         # correction (a load-bearing number/date/anchor moved) takes a bounded sizing haircut in
-        # moat_per_name_cap — a haircut, never a hard ceiling (the proven numeric-cap bug class).
+        # moat_per_name_cap - a haircut, never a hard ceiling (the proven numeric-cap bug class).
         if v.get("correction_severity"):
             p["correction_severity"] = v["correction_severity"]
         if v.get("kill_scope"):
@@ -166,7 +289,7 @@ def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str 
         if (v.get("verdict") or "").upper() == "REFUTED":
             # REPRICING BRANCH (2026-08-03, the WKL.AS case). kill_scope "numbers" + a typed
             # revised_fv_px means the skeptic RE-DERIVED the fair value rather than falsifying the
-            # thesis — the record's SoP was wrong by an amount, not wrong in kind. Before this
+            # thesis - the record's SoP was wrong by an amount, not wrong in kind. Before this
             # branch, a name repriced EUR 92 -> EUR 82 (still cheap, just less cheap) was demoted
             # byte-identically to one whose thesis was false, and the EUR 82 evaporated into
             # kill_fact prose. Now: re-grade the seat on the skeptic's own number against the
@@ -174,7 +297,7 @@ def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str 
             # (moat_per_name_cap). Fails it -> demoted as before, but for the stated numeric
             # reason. Either way the revised FV persists (pick + record) as next cycle's anchor.
             # thesis/moat/catalyst kills, and a numbers kill WITHOUT the typed number, demote
-            # exactly as before — fail-safe, never fail-open.
+            # exactly as before - fail-safe, never fail-open.
             rev = v.get("revised_fv_px")
             live = (_record_live_px(records_dir, p["symbol"])
                     if v.get("kill_scope") == "numbers" and isinstance(rev, (int, float)) and rev > 0
@@ -233,7 +356,7 @@ def build_weights(apx, picks, extra_caps=None, memo_units=None, per_name_cap=Non
     per_name_cap(p, u) -> u' applies the teeth (cro_only / stale_anchor / moat_erosion). extra_caps and
     apx['combined_caps'] share the schema {names:[...], max_units: float, axis: str}.
     With EQUAL_WEIGHT_BOOKS the caps still run (size_units_effective is stamped as before) but the
-    PUBLISHED weight_pct is 1/n — see the note above."""
+    PUBLISHED weight_pct is 1/n - see the note above."""
     memo_units = memo_units or {}
     units = {}
     for p in picks:
@@ -291,20 +414,20 @@ def secular_theme_caps(picks, max_units=1.5):
 def moat_per_name_cap(p, u, extra_flags=()):
     """Half-size teeth: cro_only / stale_anchor (existing) + moat_erosion=='CAP' + skeptic-coverage
     (MISSING / stale-REFUTED). extra_flags lets a caller add book-specific boolean keys to the OR."""
-    # Skeptic-coverage teeth apply to EVERY seat, lanes included — an un-vetted seat is half-sized.
+    # Skeptic-coverage teeth apply to EVERY seat, lanes included - an un-vetted seat is half-sized.
     if p.get("skeptic_missing") or p.get("skeptic_stale_refuted"):
         return min(u, 0.5)
     # Unified-skeptic MATERIAL correction (a load-bearing number/date/anchor moved): a BOUNDED
-    # 3/4 haircut — consequences without the numeric-cap-as-ceiling bug class (X1/VB-P5).
+    # 3/4 haircut - consequences without the numeric-cap-as-ceiling bug class (X1/VB-P5).
     if p.get("correction_severity") == "material":
         u = min(u, 0.75)
-    # LANE CONTRACT: an equity special-sit seat is EVENT-driven — the Director's STEP-3b exempted it
+    # LANE CONTRACT: an equity special-sit seat is EVENT-driven - the Director's STEP-3b exempted it
     # from the compounder moat/erosion teeth, and the publish layer already floor-sizes it harder
     # (1.5% risk-to-floor). Applying the moat half-cap here would contradict that contract.
     if p.get("lane") == "equity_special_sit":
         return u
     # 2026-07-21 #4: the value post stamps washout_moat_exception (deep drawdown + NARROW/WIDE moat
-    # + non-eroding trend) — it relaxes ONLY the moat CAP half-size to 0.75; cro_only/stale_anchor
+    # + non-eroding trend) - it relaxes ONLY the moat CAP half-size to 0.75; cro_only/stale_anchor
     # and extra_flags still force 0.5. Books that never stamp the flag (regime) are unchanged.
     _moat_cap = p.get("moat_erosion") == "CAP" and not p.get("washout_moat_exception")
     if p.get("cro_only") or p.get("stale_anchor") or _moat_cap \
@@ -318,7 +441,7 @@ def moat_per_name_cap(p, u, extra_flags=()):
 def banded_units(conv):
     """Director conviction (0-100) -> coarse size-unit BANDS (2026-07-11, Weeks 3-4 anchoring).
     Replaces the continuous conviction/100 knob, where 3 points of weekly conviction wiggle moved
-    real weight — banded steps make small re-grades weight-invisible; only a band CROSSING (a
+    real weight - banded steps make small re-grades weight-invisible; only a band CROSSING (a
     genuine re-rating) resizes the seat. Shared by _regime_post (memo units) and
     publish_to_frontend._apex_weights (fallback) so the two sizing paths can never diverge."""
     try:
@@ -491,7 +614,7 @@ def corr_breach_caps(corr, max_units=1.5):
 
 # TRIM RULE (2026-07-24, Bruno). Both books had a FLOOR (thesis break) and no CEILING: a name could
 # grind from deeply discounted to fully valued and nothing ever fired, because the only exit test was
-# "is the thesis broken?" — it isn't, so it is held. Observed live: EEFT rode its cushion from ~44%
+# "is the thesis broken?" - it isn't, so it is held. Observed live: EEFT rode its cushion from ~44%
 # down to ~9% and was still KEEP. Trimming at a fraction of base fair value banks the win the
 # discount-closing thesis actually predicted, without needing the thesis to break first.
 TRIM_AT_FRAC = 0.85          # price >= 85% of base fair value -> TRIM (the discount has mostly closed)
@@ -508,16 +631,16 @@ def exits_block(picks, quotes, thesis_break, fair_value=None):
         tb = thesis_break(p)
         valid = isinstance(tb, (int, float)) and isinstance(px, (int, float)) and 0 < tb < px
         fv = fair_value(p) if fair_value else None
-        # fair value must be a positive number in the SAME ballpark as the quote — this is the guard
+        # fair value must be a positive number in the SAME ballpark as the quote - this is the guard
         # that catches unit/currency slips (a 21 "target" on a $291 stock, an 8 on a 7,310 yen name).
         fv_ok = (isinstance(fv, (int, float)) and fv > 0 and isinstance(px, (int, float)) and px > 0
                  and 0.2 < px / fv < 5)
         trim = round(fv * TRIM_AT_FRAC, 4) if fv_ok else None
         action = "HOLD"
         if valid and px <= tb:
-            action = "EXIT_REVIEW"                     # floor breached — the thesis is on the clock
+            action = "EXIT_REVIEW"                     # floor breached - the thesis is on the clock
         elif trim is not None and px >= trim:
-            action = "TRIM"                            # ceiling reached — bank part of the re-rate
+            action = "TRIM"                            # ceiling reached - bank part of the re-rate
         out[sym] = {"thesis_break_px": tb if valid else None, "valid": bool(valid),
                     "fair_value_px": fv if fv_ok else None, "trim_at_px": trim,
                     "pct_of_fair_value": round(px / fv, 3) if fv_ok else None,
@@ -528,7 +651,7 @@ def exits_block(picks, quotes, thesis_break, fair_value=None):
         if tb and not valid:
             print(f"WARN exits: {sym} thesis_break_px={tb} fails sanity vs px={px}")
         if fv is not None and not fv_ok:
-            print(f"WARN exits: {sym} fair_value={fv} implausible vs px={px} — no trim level set")
+            print(f"WARN exits: {sym} fair_value={fv} implausible vs px={px} - no trim level set")
     n_trim = sum(1 for v in out.values() if v["action"] == "TRIM")
     n_exit = sum(1 for v in out.values() if v["action"] == "EXIT_REVIEW")
     if n_trim or n_exit:

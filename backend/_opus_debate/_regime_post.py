@@ -395,6 +395,8 @@ def process(apx, uni, scan_by, market=None):
     secular-theme + Director combined caps (+ measured correlation caps when `market` is supplied),
     and build weights. Mutates + returns (apx, picks, extra). Pure when market=None — safe on an
     in-memory copy with no network (test_regime_post baseline unchanged)."""
+    _pc.apply_skeptic_corrections(SKEP_DIR, RES_DIR,          # Tier-1 write-back: typed corrections
+                                  quadrant=apx.get("regime_quadrant"))   # -> records, before verdicts
     apx = _pc.consume_skeptic(apx, REGIME_F, SKEP_DIR)        # REFUTED -> demote BEFORE weights
     apx = numeric_demote(apx)                                 # numeric-gate teeth (inert pre-enforce)
     picks = [p for p in apx.get("apex_basket", []) if p.get("symbol")]

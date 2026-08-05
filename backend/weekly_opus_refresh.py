@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""weekly_opus_refresh.py — driver for the weekly all-Opus Speculair refresh.
+"""weekly_opus_refresh.py - driver for the weekly all-Opus Speculair refresh.
 
 `prep`  : source the candidate universe from PRODUCTION GCS (all 11 per_methodology_baskets
           + current apex), build per-name input bundles (metrics) + fetch FMP transcripts,
@@ -20,8 +20,8 @@ The scheduled SKILL.md runs:
   -> python weekly_opus_refresh.py value-csv / baskets-csv
   -> python weekly_opus_refresh.py value-publish --gcs                (value book + both NAV trackers)
 Periodic verbs: control-sample (monthly funnel miss-rate), value-revalidate (stale-anchor pro-forma
-re-debate — pending fold into a delta-mode trigger, see the pipeline-v3 plan).
-FUTURE RESOURCES (FUTURE_RESOURCES_SPEC.md — separate two-lane commodity/power/machine book, NOT in
+re-debate - pending fold into a delta-mode trigger, see the pipeline-v3 plan).
+FUTURE RESOURCES (FUTURE_RESOURCES_SPEC.md - separate two-lane commodity/power/machine book, NOT in
 the weekly auto-run yet; monthly + Lane-A weekly, launched by hand until Bruno wires the cadence):
   fr-universe   (monthly Stage A/B two-lane screen -> future_resources/_candidates.json)
   fr-map        (Phase 2: emit the chunked Sonnet chain-map workflow -> future_resources/_fr_map.js)
@@ -30,11 +30,11 @@ the weekly auto-run yet; monthly + Lane-A weekly, launched by hand until Bruno w
   fr-prep / fr-input / [FR Director agent] / fr-post / fr-csv / fr-publish
                 (Phase 3: Lane A debate -> grade input -> Director -> deterministic post -> CSV/publish)
   torque metrics live in backend/_opus_debate/_resource_metrics.py (stamped by fr-input).
-(shadow-debate/shadow-diff and the Disruptor Lens Phases 1-5 were deleted 2026-07-10 — dead since the
+(shadow-debate/shadow-diff and the Disruptor Lens Phases 1-5 were deleted 2026-07-10 - dead since the
 2026-06-13 Fable retirement and the 2026-07-02 Disruptor retirement respectively; see git history.)
 
 Robust by construction: each name is a SINGLE-agent full Opus regime debate (Interrogator+
-Architect+Moderator in one pass, schema-less, inline regime brief) — the pattern that proved
+Architect+Moderator in one pass, schema-less, inline regime brief) - the pattern that proved
 reliable; no fragile inter-stage handoff, no StructuredOutput dependency.
 """
 import json
@@ -62,35 +62,35 @@ INP, TXT, RES = ROOT / "inputs", ROOT / "transcripts", ROOT / "results_regime"
 for d in (INP, TXT, RES, ROOT / "dossiers"):
     d.mkdir(parents=True, exist_ok=True)
 
-# ── Model seats (single source of truth; every workflow/agent pin reads these) ──
-# Fable RETIRED 2026-07-10 (pipeline-v3 plan, Week 1) — this is the second and, per Bruno's
+# -- Model seats (single source of truth; every workflow/agent pin reads these) --
+# Fable RETIRED 2026-07-10 (pipeline-v3 plan, Week 1) - this is the second and, per Bruno's
 # directive ("Fable needs to be retired from the multi-agent debate"), the durable retirement:
 # every reasoning seat in the weekly pipeline is now Opus/Sonnet/Haiku, no Fable seat anywhere.
 # (History: Fable was retired once already 2026-06-13, revived 2026-07-01, and is retired again
-# here — this time by explicit instruction, not an availability fallback, so it should stay put.)
-# Director + Skeptic seats are Opus (money moves through these decisions — highest-scrutiny model);
+# here - this time by explicit instruction, not an availability fallback, so it should stay put.)
+# Director + Skeptic seats are Opus (money moves through these decisions - highest-scrutiny model);
 # Radar stays Sonnet (cheap peer-comp sorting); the per-name Debate stays Opus.
 # NOTE: the two Director self-descriptions (VALUE_DIRECTOR_PROMPT + the weekly workflow
-# template) name the seat model in prose — keep them in sync when flipping these.
+# template) name the seat model in prose - keep them in sync when flipping these.
 RADAR_MODEL = "sonnet"
 DEBATE_MODEL = "opus"
-DIRECTOR_MODEL = "opus"    # Fable retired 2026-07-10 (pipeline-v3 Week 1) — was fable 07-01→07-10
-SKEPTIC_MODEL = "opus"     # Fable retired 2026-07-10 (pipeline-v3 Week 1) — was fable 07-01→07-10
+DIRECTOR_MODEL = "opus"    # Fable retired 2026-07-10 (pipeline-v3 Week 1) - was fable 07-01->07-10
+SKEPTIC_MODEL = "opus"     # Fable retired 2026-07-10 (pipeline-v3 Week 1) - was fable 07-01->07-10
 
-# ── Director rotation discipline: the prior-decision ledger (continuity + anti-whipsaw) ──
+# -- Director rotation discipline: the prior-decision ledger (continuity + anti-whipsaw) --
 # Each book persists every Director keep/drop/add for the YEAR in _decision_history.json so the
 # next Director is CONFRONTED BY ITS OWN PRIOR CALLS. write_director_ledger() renders the per-book
 # {year} ledger the Director reads BEFORE deciding; append_decision_history() records this run's
-# decisions AFTER the Director writes the basket. Both best-effort — they NEVER raise, so a ledger
+# decisions AFTER the Director writes the basket. Both best-effort - they NEVER raise, so a ledger
 # bug can never break the debate/publish pipeline (callers also wrap defensively).
 # 2026-07-10: DECISION_HISTORY/_book_apex/append_decision_history moved to the shared _ledger.py
-# (backend/_ledger.py) — publish_to_frontend.py used to carry an inline copy of this exact logic
+# (backend/_ledger.py) - publish_to_frontend.py used to carry an inline copy of this exact logic
 # solely to dodge this module's os.chdir() side-effect; _ledger.py has no side effects, so both
 # callers now share one implementation.
 from _ledger import DECISION_HISTORY, LEDGER_YEAR, _book_apex, load_decision_history as _load_decision_history, append_decision_history
 
 def write_director_ledger(book, prior_basket_path, tracking_path):
-    """Render _director_ledger_<book>.txt — the prior-decision ledger the Director must reconcile
+    """Render _director_ledger_<book>.txt - the prior-decision ledger the Director must reconcile
     its new basket against. Returns (path, n_held, n_dropped). Best-effort; never raises."""
     try:
         out = ROOT / f"_director_ledger_{book}.txt"
@@ -106,16 +106,16 @@ def write_director_ledger(book, prior_basket_path, tracking_path):
             track = {}
         positions = track.get("positions") or {}
         closed = [c for c in (track.get("closed") or []) if str(c.get("exit_date", "")).startswith(LEDGER_YEAR)]
-        L = [f"PRIOR-DECISION LEDGER — {book} book, {LEDGER_YEAR}. YOU authored these calls; you must justify",
+        L = [f"PRIOR-DECISION LEDGER - {book} book, {LEDGER_YEAR}. YOU authored these calls; you must justify",
              "every KEEP / DROP / ADD / RE-ADD in this run AGAINST them (see ROTATION DISCIPLINE in the rubric).",
-             f"\nHELD NOW ({len(prior)}) — drop one only on a BROKEN thesis or a strictly-better orthogonal name:"]
+             f"\nHELD NOW ({len(prior)}) - drop one only on a BROKEN thesis or a strictly-better orthogonal name:"]
         for s, p in prior.items():
             pos = positions.get(s, {})
             ed = pos.get("entry_date") or p.get("entry_date") or "?"
             conv = p.get("director_conviction") or p.get("value_score") or p.get("conviction") or "?"
             rat = (p.get("director_rationale") or p.get("thesis") or "").strip().replace("\n", " ")
             # 2026-07-11 (Weeks 3-4 Director anchoring): the ledger carries the NUMBERS, not just
-            # the verbs — prior conviction is the clamp anchor; size/ER/target expose drift.
+            # the verbs - prior conviction is the clamp anchor; size/ER/target expose drift.
             nums = []
             for key, lab in (("size_units", "units"), ("expected_return_pct", "ER%"),
                              ("target_px", "target"), ("entry_price", "entry")):
@@ -126,9 +126,9 @@ def write_director_ledger(book, prior_basket_path, tracking_path):
             if isinstance(comp.get("rr_ratio"), (int, float)):
                 nums.append(f"rr {comp['rr_ratio']:g}")
             L.append(f"  • {s}: HELD since {ed} (conv {conv}"
-                     + (", " + ", ".join(nums) if nums else "") + f") — {rat[:220]}")
+                     + (", " + ", ".join(nums) if nums else "") + f") - {rat[:220]}")
         if closed:
-            L.append(f"\nDROPPED in {LEDGER_YEAR} ({len(closed)}) — a RE-ADD requires a DOCUMENTED THESIS CHANGE since the drop:")
+            L.append(f"\nDROPPED in {LEDGER_YEAR} ({len(closed)}) - a RE-ADD requires a DOCUMENTED THESIS CHANGE since the drop:")
             for c in sorted(closed, key=lambda c: c.get("exit_date", ""))[-40:]:
                 L.append(f"  • {c.get('symbol')}: DROPPED {c.get('exit_date')} (held from {c.get('entry_date','?')}, realized {c.get('return_pct','?')}%)")
         if hist:
@@ -146,19 +146,19 @@ def write_director_ledger(book, prior_basket_path, tracking_path):
         print(f"WARN: write_director_ledger({book}) failed ({e})")
         return "", 0, 0
 
-# ── Return objective (Apex + Disruptor only; the Value Lens stays pure-value/patient) ──
+# -- Return objective (Apex + Disruptor only; the Value Lens stays pure-value/patient) --
 # The Apex + Disruptor Directors target this and set a macro-driven risk_stance (reach vs defend).
 RETURN_GOAL = {"low_pct": 30, "high_pct": 50, "horizon_months": 12}
 
 
 def _write_macro_regime():
-    """Fetch the live macro classifier (macro_regime.py — the V7 path: it is the only one
+    """Fetch the live macro classifier (macro_regime.py - the V7 path: it is the only one
     that emits regime_detail + the growth x inflation quadrant; _compute_regime_v8 emits
     neither, so switching this call to v8 as-is would silently strip the fields the Apex
     Director's quadrant playbook depends on) and write it where the Apex + Disruptor
     Directors read it, so their risk_stance is anchored to a structured macro read.
     Self-heals via fetch_macro_regime's GCS last-known-good cache; neutral fallback on
-    hard failure. Also carries the Dalio debt-cycle phase (backend/debt_cycle.py) — the
+    hard failure. Also carries the Dalio debt-cycle phase (backend/debt_cycle.py) - the
     ONLY call site that advances the phase state machine (advance=True)."""
     out = ROOT / "macro_regime.json"
     from datetime import datetime as _dt
@@ -168,7 +168,7 @@ def _write_macro_regime():
         r = macro_regime.fetch_macro_regime(fmp) or {}
         feat = r.get("features", {}) or {}
         # Whitelist-free copy with an existence check: the old hand-typed key list
-        # silently dropped 3 of 5 keys (macro_cpi vs macro_cpi_score etc. — the
+        # silently dropped 3 of 5 keys (macro_cpi vs macro_cpi_score etc. - the
         # checked-in snapshot proved it). Copy what v7 ACTUALLY emits, minus the
         # heavyweight blocks, and fail LOUD on any expected-but-missing key.
         _feat_expected = ("macro_vix", "macro_yield_spread", "macro_cpi_score", "macro_gdp_score")
@@ -180,7 +180,7 @@ def _write_macro_regime():
             "regime": r.get("regime", "NEUTRAL"),
             "score": r.get("score", 0.5),
             "regime_detail": r.get("regime_detail", {}),
-            # growth x inflation 2x2 (2026-07-16) — GOLDILOCKS|REFLATION|STAGFLATION|RISK_OFF;
+            # growth x inflation 2x2 (2026-07-16) - GOLDILOCKS|REFLATION|STAGFLATION|RISK_OFF;
             # the Director's quadrant playbook + the regime-read agent both key off this.
             "quadrant": r.get("quadrant", "UNKNOWN"),
             "quadrant_basis": r.get("quadrant_basis", ""),
@@ -189,23 +189,23 @@ def _write_macro_regime():
             "asof": _dt.now().strftime("%Y-%m-%d"),
         }
     except Exception as e:
-        print(f"WARN: macro_regime fetch failed ({e}) — writing NEUTRAL fallback")
+        print(f"WARN: macro_regime fetch failed ({e}) - writing NEUTRAL fallback")
         doc = {"regime": "NEUTRAL", "score": 0.5, "regime_detail": {}, "features": {},
                "quadrant": "UNKNOWN", "quadrant_basis": "",
                "asof": _dt.now().strftime("%Y-%m-%d"), "fallback": True}
-    # ── Dalio debt-cycle phase (third axis; 2026-07-27). advance=True here and ONLY
+    # -- Dalio debt-cycle phase (third axis; 2026-07-27). advance=True here and ONLY
     # here: the weekly publish is the state machine's clock tick. Fail-open: a hard
     # failure publishes UNKNOWN (loosest caps, no stance modifier) but the pipeline
-    # must SAY so — the smoke test (tests/test_debt_cycle.py) asserts non-UNKNOWN.
+    # must SAY so - the smoke test (tests/test_debt_cycle.py) asserts non-UNKNOWN.
     try:
         import debt_cycle as _dc
         from screener_v6 import fmp as _fmp
         cyc = _dc.fetch_debt_cycle(_fmp, advance=True)
     except Exception as e:
-        print(f"FAIL-LOUD WARN: debt_cycle classifier failed ({e}) — publishing UNKNOWN (fail-open caps)")
+        print(f"FAIL-LOUD WARN: debt_cycle classifier failed ({e}) - publishing UNKNOWN (fail-open caps)")
         cyc = {"debt_cycle_phase": "UNKNOWN", "fallback": True}
     if cyc.get("debt_cycle_phase") in (None, "UNKNOWN"):
-        print("FAIL-LOUD WARN: debt_cycle_phase is UNKNOWN in the published snapshot — "
+        print("FAIL-LOUD WARN: debt_cycle_phase is UNKNOWN in the published snapshot - "
               "no stance modifier + loosest duration caps will apply; investigate before the Director runs")
     doc["debt_cycle"] = cyc
     out.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -213,10 +213,10 @@ def _write_macro_regime():
           f"| cycle {cyc.get('debt_cycle_phase')} ({cyc.get('weeks_in_phase', '?')}w) -> {out.name}")
     return doc
 
-# LEGACY-9 method set — used ONLY for signal typing (deep_value vs catalyst), never for selection.
+# LEGACY-9 method set - used ONLY for signal typing (deep_value vs catalyst), never for selection.
 DEEP_VAL = {"epv", "graham_revised", "iv15_deep_value", "acquirers_multiple",
             "earnings_yield_gap", "owner_earnings", "dcf_fcff", "rd_capitalized_dcf", "ev_gross_profit"}
-# 8e: convergence (multi-model agreement — the purest value signal in the system) and the true
+# 8e: convergence (multi-model agreement - the purest value signal in the system) and the true
 # EV/GP basket are VALUE signals too; without this they were branded "catalyst" and routed down
 # the Moderator's catalyst lens.
 VALUE_SIGNAL_METHS = DEEP_VAL | {"convergence", "ev_gp", "value_drawdown", "neglect_orphan",
@@ -275,7 +275,7 @@ def _ttm_cash_block(sym):
     if not parts:
         return ""
     asof = (cf[0].get("date") if isinstance(cf[0], dict) else "") or ""
-    return ("=== TTM / LATEST QUARTER (FMP, as of " + asof + " — USE THESE OVER THE FISCAL-YEAR-ANNUAL "
+    return ("=== TTM / LATEST QUARTER (FMP, as of " + asof + " - USE THESE OVER THE FISCAL-YEAR-ANNUAL "
             "FCF/EPS ABOVE WHEN THEY DIFFER) ===\n" + " | ".join(parts))
 
 
@@ -308,10 +308,10 @@ def _fmp_segments(sym):
     segs.sort(key=lambda kv: -abs(kv[1]))
     total = sum(abs(v) for _, v in segs) or 1.0
     # COVERAGE GATE (2026-07-08, KBR incident): FMP's annual segmentation row can be an aggregation
-    # of INCOMPLETE quarters — for KBR FY2025 it returned MTS $1.34B vs its true $5.58B (segments
+    # of INCOMPLETE quarters - for KBR FY2025 it returned MTS $1.34B vs its true $5.58B (segments
     # summed to only 45% of revenue), silently INVERTING the mix and the whole SoP the debate built
     # on it. If the segment sum doesn't cover ~80% of the company's annual revenue, the block is
-    # actively misleading — drop it (the debate falls back to whole-company intrinsic per its step 4).
+    # actively misleading - drop it (the debate falls back to whole-company intrinsic per its step 4).
     try:
         inc = requests.get("https://financialmodelingprep.com/stable/income-statement",
                            params={"symbol": sym, "period": "annual", "limit": 1, "apikey": key},
@@ -320,7 +320,7 @@ def _fmp_segments(sym):
     except Exception:
         rev = 0.0
     if rev > 0 and total < 0.8 * rev:
-        print(f"  segments[{sym}]: DROPPED — cover only {total / rev * 100:.0f}% of revenue "
+        print(f"  segments[{sym}]: DROPPED - cover only {total / rev * 100:.0f}% of revenue "
               f"({total / 1e9:.2f}B of {rev / 1e9:.2f}B): incomplete FMP segmentation would invert the mix")
         return ""
 
@@ -329,31 +329,31 @@ def _fmp_segments(sym):
         return f"{v/1e9:.2f}B" if a >= 1e9 else (f"{v/1e6:.0f}M" if a >= 1e6 else f"{v:.0f}")
     body = " | ".join(f"{k}: {_a(v)} ({v/total*100:.0f}%)" for k, v in segs[:8])
     asof = latest.get("date") or latest.get("fiscalYear") or ""
-    return ("\n\n=== SEGMENT REVENUE (FMP, " + str(asof) + " — build a TRUE segment Sum-of-Parts: "
+    return ("\n\n=== SEGMENT REVENUE (FMP, " + str(asof) + " - build a TRUE segment Sum-of-Parts: "
             "value each segment by its peer multiple, then sum) ===\n" + body)
 
 
 _RADAR_FIELDS = ("p_fcf", "dcf_fcff_mos", "epv_mos", "graham_revised_mos", "owner_earnings_mos",
                  "iv15_deep_value_mos", "revenue_yoy", "revenue_cagr_3y", "eps_yoy", "gross_margin",
                  "net_margin", "roic_avg", "altman_z", "sma200", "proximity_52wk", "sector_momentum",
-                 # 2026-07-28: year_high/year_low were MISSING, so value_input's pct_off_52w_high —
-                 # which reads this universe, not the scan — evaluated to None on all 176 rows and the
+                 # 2026-07-28: year_high/year_low were MISSING, so value_input's pct_off_52w_high -
+                 # which reads this universe, not the scan - evaluated to None on all 176 rows and the
                  # narrow washout exception (shipped 2026-07-21) could never fire on any name. The lows
                  # also feed the gate's 52-week floor anchor when it reads through this path.
                  "year_high", "year_low")
 
 
-# ── Peer-identity / live-multiple overrides (Radar mis-map backstop) ──────────
+# -- Peer-identity / live-multiple overrides (Radar mis-map backstop) ----------
 # The Sonnet Radar invents an identity for tickers it does not recognize (observed:
 # PLX.PA mapped to "Plastic Omnium / TIC services" AND to "IT-services" on different
-# runs — it is actually PLUXEE, the Sodexo employee-benefits/voucher spin-off). The
+# runs - it is actually PLUXEE, the Sodexo employee-benefits/voucher spin-off). The
 # debate agents then correct the identity by hand but supply the peer MULTIPLE from
-# stale training memory (Edenred "20-25x FCF" — its PRE-shock multiple). Nothing in the
+# stale training memory (Edenred "20-25x FCF" - its PRE-shock multiple). Nothing in the
 # pipeline injects a LIVE peer multiple, so the anchor silently goes stale and inflates
 # the apparent idiosyncratic discount. This override forces the TRUE identity + peers,
 # stamps a CURRENT peer multiple (live FMP when a key is present; else the curated,
 # sourced figure below), and tags whether the discount is idiosyncratic (name-specific
-# alpha) or sector_regulatory (shared-factor BETA — both names move on the same
+# alpha) or sector_regulatory (shared-factor BETA - both names move on the same
 # unresolved driver, so a correlation-stressed apex basket must DISCOUNT it, not credit
 # it as edge). Applied deterministically at the end of merge_radar() every Radar phase.
 PEER_OVERRIDES = {
@@ -370,14 +370,14 @@ PEER_OVERRIDES = {
         "anchor_multiple": {"pe_fwd": 10.3, "ev_ebitda_fwd": 4.1, "asof": "2026-06",
                             "source": "Oddo BHF / sell-side 2026e (de-rated post-Brazil PAT + Italy reform)"},
         "note": ("Pluxee (PLX.PA) and Edenred (EDEN.PA) are the employee-benefits/voucher "
-                 "near-duopoly and BOTH de-rated on the SAME regulatory shock — the Brazil "
+                 "near-duopoly and BOTH de-rated on the SAME regulatory shock - the Brazil "
                  "PAT reform + Italy voucher cap (Kepler cut PLX EUR28->EUR18 and EDEN "
                  "EUR40->EUR28 on the same event). Edenred now trades ~10x fwd P/E / ~4x "
                  "EV/2026e EBITDA, NOT its pre-shock 20-25x. Pluxee at ~5x P/FCF vs a ~10x "
                  "Edenred is a MODEST discount, largely justified by Pluxee's heavier Brazil "
                  "concentration (guided ~50% Brazil revenue drop; Edenred took an 8-12% group "
                  "EBITDA hit on the same reforms). The convergence is SECTOR-REGULATORY BETA "
-                 "on a shared, unresolved factor — NOT idiosyncratic single-name alpha — which "
+                 "on a shared, unresolved factor - NOT idiosyncratic single-name alpha - which "
                  "is exactly what a correlation-stressed apex basket is built to discount."),
     },
 }
@@ -386,7 +386,7 @@ PEER_OVERRIDES = {
 def _live_peer_multiple(ticker):
     """Best-effort LIVE current multiple for a peer ticker via FMP stable (returns None if
     no key / endpoint unavailable). Trailing-TTM, used as a live sanity anchor ALONGSIDE the
-    curated forward figure — both are 'current', which is the whole point: never a remembered
+    curated forward figure - both are 'current', which is the whole point: never a remembered
     pre-shock multiple."""
     try:
         import datetime
@@ -438,8 +438,8 @@ def _apply_peer_overrides(out, pgd):
         if anchor.get("pe_ttm_live"):
             mult_txt += f" (live TTM P/E ~{anchor['pe_ttm_live']}x)"
         e["relative_comps"] = (
-            f"[PEER ANCHOR CORRECTED — Radar mis-mapped {sym} as "
-            f"'{(e.get('_radar_relative_comps_raw') or '')[:48].strip()}…'] {ov['name']} ({sym}): "
+            f"[PEER ANCHOR CORRECTED - Radar mis-mapped {sym} as "
+            f"'{(e.get('_radar_relative_comps_raw') or '')[:48].strip()}...'] {ov['name']} ({sym}): "
             f"anchor peer {ap} now trades {mult_txt} ({anchor.get('source')}), NOT the pre-shock "
             f"20-25x cited from memory in older dossiers. {ov['note']}")
         e["verdict"] = "modest_discount_sector_beta" if ov["convergence"] == "sector_regulatory" else e.get("verdict", "")
@@ -457,7 +457,7 @@ def _apply_peer_overrides(out, pgd):
 def merge_radar():
     """Merge the chunked Radar shards (_opus_debate/_pg_*.json) into peer_groups.json,
     deterministically. The Radar runs as N parallel Sonnet agents (one per sector chunk); merging by
-    an LLM would force it to re-emit all ~160 entries in one response, which TRUNCATES — so it is a
+    an LLM would force it to re-emit all ~160 entries in one response, which TRUNCATES - so it is a
     plain dict-update here. Invoked as the final step of the Radar phase via this allowlisted CLI."""
     import glob
     out, shards = {}, sorted(glob.glob(str(ROOT / "_pg_*.json")))
@@ -487,13 +487,13 @@ def merge_radar():
 
 
 def peer_overrides_restamp(push_frontend=False):
-    """Deterministic re-stamp of PEER_OVERRIDES onto the EXISTING peer_groups (no Radar re-run) —
+    """Deterministic re-stamp of PEER_OVERRIDES onto the EXISTING peer_groups (no Radar re-run) -
     so a corrected anchor lands now, ahead of the next weekly debate. Optionally syncs the frontend
     copy the stock-page peer-comps section reads."""
     import shutil
     pgf = ROOT / "peer_groups.json"
     if not pgf.exists():
-        print("no peer_groups.json — nothing to re-stamp"); return 0
+        print("no peer_groups.json - nothing to re-stamp"); return 0
     out = json.load(open(pgf, encoding="utf-8"))
     pgd = ROOT / "peer_groups"; pgd.mkdir(exist_ok=True)
     n = _apply_peer_overrides(out, pgd)
@@ -537,7 +537,7 @@ def _val_money(s):
 def _funded_leverage(symbols):
     """Net-funded-debt/EBITDA + interest coverage (TTM, FMP /stable/) per symbol, cached to
     funded_leverage.json. Funded debt = interest-bearing only, so settlement/payroll float and
-    policyholder reserves are structurally excluded — a cleaner solvency test than Altman-Z (which
+    policyholder reserves are structurally excluded - a cleaner solvency test than Altman-Z (which
     uses total liabilities and over-penalizes float/reserve businesses)."""
     import concurrent.futures
     cache_p = ROOT / "funded_leverage.json"
@@ -590,63 +590,63 @@ def _funded_solvency(sector, ndE, icov):
     return "weak"
 
 
-# Moat durability / terminal-erosion classifier — extracted to backend/_moat.py so the regime
+# Moat durability / terminal-erosion classifier - extracted to backend/_moat.py so the regime
 # post-processor (_opus_debate/_regime_post.py) reuses the SAME implementation without importing this
 # (API-keyed) module. A SECOND family of teeth, ADDITIVE to the cyclical-peak/stale-anchor gates.
 from _moat import moat_features as _moat_features  # noqa: E402
 
 
-VALUE_DIRECTOR_PROMPT = AGENT_VOICE + """You are the SPECULAIR VALUE DIRECTOR (Claude Opus 5), allocating REAL capital on a PURE VALUE rubric with the CATALYST_WATCH_REGIME overlay FULLY REMOVED (a live catalyst is neither a plus nor a requirement). Read backend/_opus_debate/value_grade_input.json — one row per debated name, every field pre-computed.
+VALUE_DIRECTOR_PROMPT = AGENT_VOICE + """You are the SPECULAIR VALUE DIRECTOR (Claude Opus 5), allocating REAL capital on a PURE VALUE rubric with the CATALYST_WATCH_REGIME overlay FULLY REMOVED (a live catalyst is neither a plus nor a requirement). Read backend/_opus_debate/value_grade_input.json - one row per debated name, every field pre-computed.
 
-SYSTEM OF RECORD (decisive — read FIRST). The multi-agent DEBATE already ran on each name. When the debate conflicts with the raw scan factors, THE DEBATE WINS:
-  - `sop_mos_pct` (the CRO's reconciled sop_fair_value expressed as MoS vs price) is the SYSTEM-OF-RECORD margin of safety, NOT the 5-method `mos_spread` (that is the RAW scan MoS and can be built on stale/peak inputs). Where sop_mos_pct sits FAR BELOW the raw scan MoS (see `scan_headline_mos_pct`), the raw MoS is an ARTIFACT — trust sop_mos_pct.
-  - `forensic_gate`: "EXCLUDE" => INELIGIBLE for the apex (interrogator credibility<=2 — a forensic red flag the factors miss). "CAP" => value_score capped at ~50 (DETERIORATING trajectory: credible but worsening). These are regime-INDEPENDENT forensics; a factor-cheap name NEVER overrides them.
-  - `debate_verdict` letter: set partly under the (now-removed) catalyst regime, so it is NOT a blanket cap. BUT a verdict-C name is eligible ONLY if its CRO-normalized `sop_mos_pct` is genuinely positive AND it clears the forensic gate AND it is not a peak/stale artifact — otherwise the C is just confirming the raw MoS is fake. Name in the value_memo every verdict-C name you keep and justify it on pure-value grounds.
-  - `value_conviction` (1-5, when present): the CRO's CATALYST-BLIND value score — judged on valuation + forensics with the regime overlay explicitly ignored. PREFER it over `debate_conviction` everywhere in this rubric (debate_conviction is regime-tilted and collapses to a constant in catalyst-light pools). Where value_conviction is null (older results), fall back to debate_conviction but say so.
+SYSTEM OF RECORD (decisive - read FIRST). The multi-agent DEBATE already ran on each name. When the debate conflicts with the raw scan factors, THE DEBATE WINS:
+  - `sop_mos_pct` (the CRO's reconciled sop_fair_value expressed as MoS vs price) is the SYSTEM-OF-RECORD margin of safety, NOT the 5-method `mos_spread` (that is the RAW scan MoS and can be built on stale/peak inputs). Where sop_mos_pct sits FAR BELOW the raw scan MoS (see `scan_headline_mos_pct`), the raw MoS is an ARTIFACT - trust sop_mos_pct.
+  - `forensic_gate`: "EXCLUDE" => INELIGIBLE for the apex (interrogator credibility<=2 - a forensic red flag the factors miss). "CAP" => value_score capped at ~50 (DETERIORATING trajectory: credible but worsening). These are regime-INDEPENDENT forensics; a factor-cheap name NEVER overrides them.
+  - `debate_verdict` letter: set partly under the (now-removed) catalyst regime, so it is NOT a blanket cap. BUT a verdict-C name is eligible ONLY if its CRO-normalized `sop_mos_pct` is genuinely positive AND it clears the forensic gate AND it is not a peak/stale artifact - otherwise the C is just confirming the raw MoS is fake. Name in the value_memo every verdict-C name you keep and justify it on pure-value grounds.
+  - `value_conviction` (1-5, when present): the CRO's CATALYST-BLIND value score - judged on valuation + forensics with the regime overlay explicitly ignored. PREFER it over `debate_conviction` everywhere in this rubric (debate_conviction is regime-tilted and collapses to a constant in catalyst-light pools). Where value_conviction is null (older results), fall back to debate_conviction but say so.
 
-RUBRIC — four pillars ~25 pts each, applied ONLY to names that clear the gate:
-1. MARGIN OF SAFETY — primary = sop_mos_pct (CRO-normalized). Cross-check `mos_spread` AGREEMENT (4-5/5 models positive = high-confidence cheap) but DISCOUNT any model MoS on a name flagged peak/stale below. CRO-ONLY LEG: a name with <=2/5 positive model MoS AND a scan MoS below ~+10% (`scan_headline_mos_pct`) means your SoP is the SOLE evidence of cheapness — you may seat it, but you MUST set its `size_units` <= 0.5, tag it by name in the memo, and state in one sentence why your SoP beats five dissenting models.
-2. CYCLICAL-PEAK vs DURABLE-GROWTH — apply BEFORE crediting any cheapness. `peak_flag`=true (eps_peak_ratio>=1.4 OR fcf_cagr_3y>=60%) means the latest earnings sit far above the multi-year base — you MUST distinguish two cases, because the flag fires on BOTH:
+RUBRIC - four pillars ~25 pts each, applied ONLY to names that clear the gate:
+1. MARGIN OF SAFETY - primary = sop_mos_pct (CRO-normalized). Cross-check `mos_spread` AGREEMENT (4-5/5 models positive = high-confidence cheap) but DISCOUNT any model MoS on a name flagged peak/stale below. CRO-ONLY LEG: a name with <=2/5 positive model MoS AND a scan MoS below ~+10% (`scan_headline_mos_pct`) means your SoP is the SOLE evidence of cheapness - you may seat it, but you MUST set its `size_units` <= 0.5, tag it by name in the memo, and state in one sentence why your SoP beats five dissenting models.
+2. CYCLICAL-PEAK vs DURABLE-GROWTH - apply BEFORE crediting any cheapness. `peak_flag`=true (eps_peak_ratio>=1.4 OR fcf_cagr_3y>=60%) means the latest earnings sit far above the multi-year base - you MUST distinguish two cases, because the flag fires on BOTH:
    (a) CYCLICAL PEAK / recovery artifact = peak_flag AND (`freshness_stale`=true [FY numerator > live TTM, or latest_q_eps_yoy<=-15%] OR weak/negative `revenue_cagr_3y` OR a commodity/cyclical end-market). Earnings are at a cycle high and ALREADY ROLLING OVER. NORMALIZE to mid-cycle (use `eps_normalized`, not `fy_eps`) and treat the headline multiple as FAKE-cheap. These are the BRBR/CALM artifacts (CALM eps_peak_ratio ~9 on the egg windfall; both rolling over). A low multiple on peak earnings is NOT value.
-   (b) DURABLE GROWTH = peak_flag BUT `freshness_stale`=false (still growing, positive latest-Q YoY) AND durable positive `revenue_cagr_3y` AND healthy ROIC. The high ratio reflects a secular re-rate or a real turnaround (a brand compounding), NOT a cycle peak — do NOT normalize it away; credit it, but sanity-check the multiple vs true peers.
+   (b) DURABLE GROWTH = peak_flag BUT `freshness_stale`=false (still growing, positive latest-Q YoY) AND durable positive `revenue_cagr_3y` AND healthy ROIC. The high ratio reflects a secular re-rate or a real turnaround (a brand compounding), NOT a cycle peak - do NOT normalize it away; credit it, but sanity-check the multiple vs true peers.
    In BOTH cases `sop_mos_pct` (the CRO's already-normalized fair value) is the ANCHOR: if the CRO normalized the name and STILL shows a positive MoS, the cheapness is real; if the CRO's MoS collapsed far below `scan_headline_mos_pct`, it was a peak artifact.
-   (c) STALE ANCHOR: `freshness_stale`=true AND `eps_peak_ratio` >= ~1.8 AND the load-bearing catalyst already FIRED means the CRO fair value itself may be built on PRE-EVENT segments (pre-spin/pre-divestiture share count + EBITDA) — treat `sop_mos_pct` as PROVISIONAL, set `size_units` <= 0.5, and say so in the thesis (e.g. CMCSA post-Versant).
-3. FUNDED-LEVERAGE SOLVENCY (this REPLACES raw Altman-Z, which uses total liabilities and over-penalizes float/reserve businesses). Judge solvency on FUNDED debt only — `net_funded_debt_ebitda` (net interest-bearing debt / EBITDA, so settlement/payroll float and policyholder reserves are structurally excluded) + `interest_coverage`; the `funded_solvency` field pre-buckets it. IGNORE raw `altman_z`.
-   - `is_financial`=true (banks/insurers) OR `funded_solvency` in {exempt_financial, strong}: solvency is FINE — do NOT penalize. This clears EEFT/TNET (~0.8-1.6x funded, strong coverage), SCR.PA and the bank/insurer set on the RIGHT basis (their low Altman-Z was a float/reserve artifact), and any net-cash name.
-   - REAL-funded-debt names (`funded_solvency` = moderate or weak): drop the Z number and near-VETO ONLY when the metrics are JOINTLY weak — high funded leverage (net_funded_debt_ebitda > ~3.5x) AND thin coverage (interest_coverage < ~3x) AND a near-term MATURITY WALL (check the name's dossier at backend/_opus_debate/dossiers/<SYM>.md for refinancing/maturity risk). ONE weak metric alone is NOT a veto: a 2-3x-levered name with healthy coverage and no wall is acceptable value — just note the leverage in the thesis. (Worked example: SAX.DE ~3.0x / 3.7x coverage = the book's most-levered name → keep only if the dossier shows no near maturity wall.)
-   - `net_debt_exceeds_mktcap`=true remains a thin-equity flag — NEVER credit net debt as "net cash."
-4. MULTIPLES vs TRUE PEERS (`peer_verdict`/`peer_relative_comps`) + GROWTH DURABILITY/QUALITY (durable positive revenue/EPS growth + ROIC>~8-10% SUPPORT value; negative 3yr revenue CAGR + sub-WACC ROIC + thin/eroding margins = a value trap even when optically cheap). When the peer entry carries `peer_override`/`anchor_multiple`, that is a LIVE, current peer multiple — use it, NEVER a remembered one (peer multiples de-rate). When `convergence`="sector_regulatory" (e.g. PLX.PA/Pluxee vs a now-~10x Edenred, both hit by the same Brazil PAT + Italy voucher reform), the discount-to-peer is SHARED-FACTOR SECTOR BETA, not idiosyncratic alpha: count it as a hidden-factor cluster in the correlation stress below, do NOT credit the gap as single-name edge, and prefer it as a sized/watch leg rather than a full-conviction apex seat.
+   (c) STALE ANCHOR: `freshness_stale`=true AND `eps_peak_ratio` >= ~1.8 AND the load-bearing catalyst already FIRED means the CRO fair value itself may be built on PRE-EVENT segments (pre-spin/pre-divestiture share count + EBITDA) - treat `sop_mos_pct` as PROVISIONAL, set `size_units` <= 0.5, and say so in the thesis (e.g. CMCSA post-Versant).
+3. FUNDED-LEVERAGE SOLVENCY (this REPLACES raw Altman-Z, which uses total liabilities and over-penalizes float/reserve businesses). Judge solvency on FUNDED debt only - `net_funded_debt_ebitda` (net interest-bearing debt / EBITDA, so settlement/payroll float and policyholder reserves are structurally excluded) + `interest_coverage`; the `funded_solvency` field pre-buckets it. IGNORE raw `altman_z`.
+   - `is_financial`=true (banks/insurers) OR `funded_solvency` in {exempt_financial, strong}: solvency is FINE - do NOT penalize. This clears EEFT/TNET (~0.8-1.6x funded, strong coverage), SCR.PA and the bank/insurer set on the RIGHT basis (their low Altman-Z was a float/reserve artifact), and any net-cash name.
+   - REAL-funded-debt names (`funded_solvency` = moderate or weak): drop the Z number and near-VETO ONLY when the metrics are JOINTLY weak - high funded leverage (net_funded_debt_ebitda > ~3.5x) AND thin coverage (interest_coverage < ~3x) AND a near-term MATURITY WALL (check the name's dossier at backend/_opus_debate/dossiers/<SYM>.md for refinancing/maturity risk). ONE weak metric alone is NOT a veto: a 2-3x-levered name with healthy coverage and no wall is acceptable value - just note the leverage in the thesis. (Worked example: SAX.DE ~3.0x / 3.7x coverage = the book's most-levered name -> keep only if the dossier shows no near maturity wall.)
+   - `net_debt_exceeds_mktcap`=true remains a thin-equity flag - NEVER credit net debt as "net cash."
+4. MULTIPLES vs TRUE PEERS (`peer_verdict`/`peer_relative_comps`) + GROWTH DURABILITY/QUALITY (durable positive revenue/EPS growth + ROIC>~8-10% SUPPORT value; negative 3yr revenue CAGR + sub-WACC ROIC + thin/eroding margins = a value trap even when optically cheap). When the peer entry carries `peer_override`/`anchor_multiple`, that is a LIVE, current peer multiple - use it, NEVER a remembered one (peer multiples de-rate). When `convergence`="sector_regulatory" (e.g. PLX.PA/Pluxee vs a now-~10x Edenred, both hit by the same Brazil PAT + Italy voucher reform), the discount-to-peer is SHARED-FACTOR SECTOR BETA, not idiosyncratic alpha: count it as a hidden-factor cluster in the correlation stress below, do NOT credit the gap as single-name edge, and prefer it as a sized/watch leg rather than a full-conviction apex seat.
 
-ROTATION DISCIPLINE (continuity — you are ACCOUNTABLE TO YOUR OWN PRIOR CALLS): FIRST read backend/_opus_debate/_director_ledger_value.txt — it lists your currently-HELD names (entry date + why you picked each) and EVERY name you DROPPED in 2026. Treat this run as a ROTATION of last week's book, NOT a blank re-pick: (1) KEEP each held name UNLESS its thesis is BROKEN (price through thesis_break_px, a forensic/solvency flip, or confirmed moat terminal-erosion) OR you have a STRICTLY-BETTER orthogonal name for that seat — and say which. Re-grading a hair lower is NOT a reason to drop a held compounder. (2) You MAY RE-ADD a name you previously dropped, but ONLY by citing a DOCUMENTED THESIS CHANGE since the drop date (new filing/guidance, a materially lower price, a resolved overhang) — a merely-better grade is NOT a thesis change. You may override this, but you must OWN it in writing in whats_changed (do not exit a name only to re-add it days later with no new fact). (3) SECULAR-LOAD: this is a deep-value book, so it skews to structurally-challenged names — compute book_secular_load_pct = % of your apex carrying material/terminal secular_threat OR an ERODING moat; if it exceeds ~60% you MUST defend the whole-book decline beta in the memo (theme diversification does NOT remove the shared junk/flight-to-quality factor). Seat >=2 CLEAN ANCHORS (WIDE/NARROW moat + non-eroding trend + manageable/none threat, NTES-type) as ballast; if you cannot, justify it.
+ROTATION DISCIPLINE (continuity - you are ACCOUNTABLE TO YOUR OWN PRIOR CALLS): FIRST read backend/_opus_debate/_director_ledger_value.txt - it lists your currently-HELD names (entry date + why you picked each) and EVERY name you DROPPED in 2026. Treat this run as a ROTATION of last week's book, NOT a blank re-pick: (1) KEEP each held name UNLESS its thesis is BROKEN (price through thesis_break_px, a forensic/solvency flip, or confirmed moat terminal-erosion) OR you have a STRICTLY-BETTER orthogonal name for that seat - and say which. Re-grading a hair lower is NOT a reason to drop a held compounder. (2) You MAY RE-ADD a name you previously dropped, but ONLY by citing a DOCUMENTED THESIS CHANGE since the drop date (new filing/guidance, a materially lower price, a resolved overhang) - a merely-better grade is NOT a thesis change. You may override this, but you must OWN it in writing in whats_changed (do not exit a name only to re-add it days later with no new fact). (3) SECULAR-LOAD: this is a deep-value book, so it skews to structurally-challenged names - compute book_secular_load_pct = % of your apex carrying material/terminal secular_threat OR an ERODING moat; if it exceeds ~60% you MUST defend the whole-book decline beta in the memo (theme diversification does NOT remove the shared junk/flight-to-quality factor). Seat >=2 CLEAN ANCHORS (WIDE/NARROW moat + non-eroding trend + manageable/none threat, NTES-type) as ballast; if you cannot, justify it.
 
-BOOK SIZE IS NOT FIXED (2026-07-24, Bruno): there is no seat target. Seat EVERY name that clears the constraints below and survives the correlation stress — if that is 6, seat 6; if it is 18 and each genuinely earns its place, seat 18. Do NOT pad to a round number and do NOT stop early on one. THE DISCIPLINE THAT REPLACES A SEAT CAP IS DILUTION: the book is EQUAL-WEIGHTED, so each seat you add shrinks every other seat — add a name ONLY if it is at least as good as your CURRENT MEDIAN seat on value_score and margin of safety. State the final count in the memo with one line on why the book is that size this week.
+BOOK SIZE IS NOT FIXED (2026-07-24, Bruno): there is no seat target. Seat EVERY name that clears the constraints below and survives the correlation stress - if that is 6, seat 6; if it is 18 and each genuinely earns its place, seat 18. Do NOT pad to a round number and do NOT stop early on one. THE DISCIPLINE THAT REPLACES A SEAT CAP IS DILUTION: the book is EQUAL-WEIGHTED, so each seat you add shrinks every other seat - add a name ONLY if it is at least as good as your CURRENT MEDIAN seat on value_score and margin of safety. State the final count in the memo with one line on why the book is that size this week.
 
-HARD CONSTRAINTS: <=3 names per sector. Every apex name must (a) clear forensic_gate, (b) survive cyclical-peak normalization with a STILL-POSITIVE normalized MoS, (c) be cheap on TRUE peers, (d) not be a value trap, (e) MATCH the moat terminal-erosion teeth in size: a `moat_erosion`="CAP" name (falling returns OR eroding margins + decelerating revenue) MUST carry `size_units` <= 0.5 (the deterministic post already half-caps it; your number must agree) — NARROW WASHOUT EXCEPTION (2026-07-21): if that CAP name is ALSO a deep-drawdown entry (`pct_off_52w_high` >= 0.35) with `moat` WIDE/NARROW and `moat_trend` STABLE/WIDENING (never ERODING), the cap relaxes to `size_units` <= 0.75 (the post applies the same 0.75; a cyclical returns-dip during the very drawdown that creates the entry is not terminal erosion), and an `erosion_severity`="value-destroying" name (sub-cost-of-capital AND eroding — `roic_below_hurdle`=true) is apex-INELIGIBLE unless the skeptic CONFIRMS a durable moat. Use `moat`/`moat_trend`/`moat_score` as the moat read: a low multiple on a structurally-shrinking base (high-but-FALLING ROIC, eroding gross margin) is a value trap, NOT value — this is SEPARATE from the cyclical-peak gate (an earnings cycle high), which still applies.
+HARD CONSTRAINTS: <=3 names per sector. Every apex name must (a) clear forensic_gate, (b) survive cyclical-peak normalization with a STILL-POSITIVE normalized MoS, (c) be cheap on TRUE peers, (d) not be a value trap, (e) MATCH the moat terminal-erosion teeth in size: a `moat_erosion`="CAP" name (falling returns OR eroding margins + decelerating revenue) MUST carry `size_units` <= 0.5 (the deterministic post already half-caps it; your number must agree) - NARROW WASHOUT EXCEPTION (2026-07-21): if that CAP name is ALSO a deep-drawdown entry (`pct_off_52w_high` >= 0.35) with `moat` WIDE/NARROW and `moat_trend` STABLE/WIDENING (never ERODING), the cap relaxes to `size_units` <= 0.75 (the post applies the same 0.75; a cyclical returns-dip during the very drawdown that creates the entry is not terminal erosion), and an `erosion_severity`="value-destroying" name (sub-cost-of-capital AND eroding - `roic_below_hurdle`=true) is apex-INELIGIBLE unless the skeptic CONFIRMS a durable moat. Use `moat`/`moat_trend`/`moat_score` as the moat read: a low multiple on a structurally-shrinking base (high-but-FALLING ROIC, eroding gross margin) is a value trap, NOT value - this is SEPARATE from the cyclical-peak gate (an earnings cycle high), which still applies.
 
-HIDDEN-FACTOR CORRELATION STRESS (run over the final book BEFORE sizing — the <=3/sector cap is NOT a correlation control; GICS sectors miss shared real-world factors). Decompose the book on HIDDEN factors: (a) END-MARKET DEMAND CYCLE (consumer-discretionary / travel / housing), (b) REGULATORY or REIMBURSEMENT REGIME (e.g. US hospital Medicaid Directed-Payment-Program / a 2028 reimbursement ruling), (c) ADVERTISING CYCLE (cable & theme-park ad spend, out-of-home advertising), (d) RATE / CREDIT sensitivity, (e) a SINGLE shared macro (one commodity, one FX, one policy), (f) SECULAR-DISRUPTION THEME (each name carries a `secular_theme`: ai-displacement / payments-disintermediation / linear-media-decline / autonomous-mobility / labor-arbitrage-deflation / reimbursement-compression / retail-channel-shift / energy-transition-loser). NO secular_theme may carry >2 names — the live clusters to check are ai-displacement across ADBE/IT/GLOB and payments-disintermediation across EEFT/PLX.PA; "cheap vs peers" inside a cohort that is melting TOGETHER is sector beta, not alpha. A WIDE & non-eroding moat (e.g. ADBE: rising ROIC, expanding margin) counts at HALF toward the theme budget (a durable anchor that merely carries the narrative is not the tail risk), so a theme may seat one durable anchor + at most one eroding leg. FLAG every hidden factor carrying >=2 names. Known live clusters to check EXPLICITLY: THC+UHS (both ride the 2028 Medicaid-DPP / US hospital-reimbursement outcome); CMCSA+SAX.DE (both advertising-cycle — cable ads + theme-park spend, and out-of-home advertising); and any name whose peer entry is tagged `convergence`="sector_regulatory" (e.g. PLX.PA/Pluxee — its cheapness vs Edenred is shared Brazil-PAT/Italy-voucher REGULATORY beta, both names de-rated on the same factor, so it is sector beta NOT name-specific alpha and must be discounted here, not credited as edge). For each >=2 cluster, EITHER (i) DIVERSIFY: swap the lower-value leg for the best orthogonal eligible name / runner-up that does NOT re-cluster (note ARDT re-clusters with hospitals, SREN.SW with SCR.PA reinsurance), OR (ii) keep both ONLY with an explicit combined-size cap + written justification — no hidden factor may quietly carry two full-size legs. A single reimbursement ruling or an ad-recession must not hit two legs at once. Every keep-with-combined-size-cap resolution MUST appear in the output `combined_caps` as NUMBERS (not prose): combined_caps:[{names:[...], max_units(float), axis(str)}] — prose-only caps are a spec violation.
+HIDDEN-FACTOR CORRELATION STRESS (run over the final book BEFORE sizing - the <=3/sector cap is NOT a correlation control; GICS sectors miss shared real-world factors). Decompose the book on HIDDEN factors: (a) END-MARKET DEMAND CYCLE (consumer-discretionary / travel / housing), (b) REGULATORY or REIMBURSEMENT REGIME (e.g. US hospital Medicaid Directed-Payment-Program / a 2028 reimbursement ruling), (c) ADVERTISING CYCLE (cable & theme-park ad spend, out-of-home advertising), (d) RATE / CREDIT sensitivity, (e) a SINGLE shared macro (one commodity, one FX, one policy), (f) SECULAR-DISRUPTION THEME (each name carries a `secular_theme`: ai-displacement / payments-disintermediation / linear-media-decline / autonomous-mobility / labor-arbitrage-deflation / reimbursement-compression / retail-channel-shift / energy-transition-loser). NO secular_theme may carry >2 names - the live clusters to check are ai-displacement across ADBE/IT/GLOB and payments-disintermediation across EEFT/PLX.PA; "cheap vs peers" inside a cohort that is melting TOGETHER is sector beta, not alpha. A WIDE & non-eroding moat (e.g. ADBE: rising ROIC, expanding margin) counts at HALF toward the theme budget (a durable anchor that merely carries the narrative is not the tail risk), so a theme may seat one durable anchor + at most one eroding leg. FLAG every hidden factor carrying >=2 names. Known live clusters to check EXPLICITLY: THC+UHS (both ride the 2028 Medicaid-DPP / US hospital-reimbursement outcome); CMCSA+SAX.DE (both advertising-cycle - cable ads + theme-park spend, and out-of-home advertising); and any name whose peer entry is tagged `convergence`="sector_regulatory" (e.g. PLX.PA/Pluxee - its cheapness vs Edenred is shared Brazil-PAT/Italy-voucher REGULATORY beta, both names de-rated on the same factor, so it is sector beta NOT name-specific alpha and must be discounted here, not credited as edge). For each >=2 cluster, EITHER (i) DIVERSIFY: swap the lower-value leg for the best orthogonal eligible name / runner-up that does NOT re-cluster (note ARDT re-clusters with hospitals, SREN.SW with SCR.PA reinsurance), OR (ii) keep both ONLY with an explicit combined-size cap + written justification - no hidden factor may quietly carry two full-size legs. A single reimbursement ruling or an ad-recession must not hit two legs at once. Every keep-with-combined-size-cap resolution MUST appear in the output `combined_caps` as NUMBERS (not prose): combined_caps:[{names:[...], max_units(float), axis(str)}] - prose-only caps are a spec violation.
 
-OUTPUT — Write VALID JSON to backend/_opus_debate/apex_basket_value.json = {apex_basket:[{symbol, sector, value_score(0-100), thesis(one sentence), mos_agreement(e.g. "4/5"), sop_mos_pct, net_funded_debt_ebitda, interest_coverage, funded_solvency, peer_verdict, growth_durability, peak_normalized(bool: did you have to discount peak/stale earnings), exposure_axes(list of the hidden factors this name carries, e.g. ["hospital-reimbursement","advertising-cycle"]), secular_theme(the name dominant secular-decline theme id from secular_themes.json or "" — used for the concentration cap), moat(WIDE|NARROW|ERODING|NONE), moat_score(int 0-100, from the input), size_units(float 0.1-1.5: 1.0=full unit, 0.5=half — the SAME sizing you justified in the memo; every CRO-only leg, stale anchor, moat_erosion="CAP" leg, and combined-cap member MUST carry its number here), thesis_break_px(number: the price at which the thesis is BROKEN, from your downside-to-break — below it the name exits at the next review), bear_fv_px(number: your adverse-SoP per-share value, used for the market stress test), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <event>" | "wait_for_weakness" — WHEN a buyer steps in: a carry-paying compounder you enter now while the slow MoS re-rate plays out = enter_now_carry; a standard tranche-in = scale_in; a knife near the 52w low or a name to add only into a flush = wait_for_weakness; gated on a dated event = on_confirmation with that event), wheel (where a wheel SUITS this seat — a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your downside-to-break = thesis_break_px), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait for the re-rate)}; else {suits:false}), forensic_gate, trap_flag, decision('KEEP'|'ADD'|'RE-ADD' — vs the ledger), decision_rationale(one sentence reconciling this seat to the ledger), whats_changed(REQUIRED non-empty ONLY for RE-ADD: what materially changed since the drop; else "")}], runner_ups:[...~6], combined_caps:[{names:[...], max_units(float), axis(str)}], value_memo}. The value_memo MUST: (a) state the rubric weighting; (b) LIST the names EXCLUDED or CAPPED by the forensic gate and those down-rated as cyclical-peak/stale artifacts — call out BRBR and CALM EXPLICITLY with their CRO-normalized fair value vs the raw scan MoS; (c) give the name-by-name RISE/FALL vs the prior value apex (the caller specifies the prior apex in the run instruction; if none is given, read the existing backend/_opus_debate/apex_basket_value.json for the prior slate BEFORE you overwrite it); (d) a correlation_stress section naming EACH hidden-factor cluster of >=2 (INCLUDING the THC/UHS reimbursement and CMCSA/SAX.DE advertising pairs) AND each SECULAR-THEME cluster of >=2 (e.g. ai-displacement ADBE/IT/GLOB, payments-disintermediation EEFT/PLX.PA) and EXACTLY how you resolved it (diversified -> which swap and why; or kept-with-sizing -> the combined_caps entry with axis="secular-theme:<id>" and the justification, durable anchors counted at half); (e) a BEAR REBUTTAL subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing — if you cannot articulate the bear in one sentence, you do not understand the position; (f) a ROTATION subsection reconciling to backend/_opus_debate/_director_ledger_value.txt — one line per KEEP/ADD/RE-ADD, the broken-thesis reason for every held name you DROPPED, and (for any RE-ADD) the documented thesis change; (g) a SECULAR-LOAD line: book_secular_load_pct + clean_anchor_count, with a defense if load>60% or anchors<2. ALSO emit, at top level alongside apex_basket, book_secular_load_pct(number) and clean_anchor_count(int). Reply exactly: DONE"""
+OUTPUT - Write VALID JSON to backend/_opus_debate/apex_basket_value.json = {apex_basket:[{symbol, sector, value_score(0-100), thesis(one sentence), mos_agreement(e.g. "4/5"), sop_mos_pct, net_funded_debt_ebitda, interest_coverage, funded_solvency, peer_verdict, growth_durability, peak_normalized(bool: did you have to discount peak/stale earnings), exposure_axes(list of the hidden factors this name carries, e.g. ["hospital-reimbursement","advertising-cycle"]), secular_theme(the name dominant secular-decline theme id from secular_themes.json or "" - used for the concentration cap), moat(WIDE|NARROW|ERODING|NONE), moat_score(int 0-100, from the input), size_units(float 0.1-1.5: 1.0=full unit, 0.5=half - the SAME sizing you justified in the memo; every CRO-only leg, stale anchor, moat_erosion="CAP" leg, and combined-cap member MUST carry its number here), thesis_break_px(number: the price at which the thesis is BROKEN, from your downside-to-break - below it the name exits at the next review), bear_fv_px(number: your adverse-SoP per-share value, used for the market stress test), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <event>" | "wait_for_weakness" - WHEN a buyer steps in: a carry-paying compounder you enter now while the slow MoS re-rate plays out = enter_now_carry; a standard tranche-in = scale_in; a knife near the 52w low or a name to add only into a flush = wait_for_weakness; gated on a dated event = on_confirmation with that event), wheel (where a wheel SUITS this seat - a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your downside-to-break = thesis_break_px), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait for the re-rate)}; else {suits:false}), forensic_gate, trap_flag, decision('KEEP'|'ADD'|'RE-ADD' - vs the ledger), decision_rationale(one sentence reconciling this seat to the ledger), whats_changed(REQUIRED non-empty ONLY for RE-ADD: what materially changed since the drop; else "")}], runner_ups:[...~6], combined_caps:[{names:[...], max_units(float), axis(str)}], value_memo}. The value_memo MUST: (a) state the rubric weighting; (b) LIST the names EXCLUDED or CAPPED by the forensic gate and those down-rated as cyclical-peak/stale artifacts - call out BRBR and CALM EXPLICITLY with their CRO-normalized fair value vs the raw scan MoS; (c) give the name-by-name RISE/FALL vs the prior value apex (the caller specifies the prior apex in the run instruction; if none is given, read the existing backend/_opus_debate/apex_basket_value.json for the prior slate BEFORE you overwrite it); (d) a correlation_stress section naming EACH hidden-factor cluster of >=2 (INCLUDING the THC/UHS reimbursement and CMCSA/SAX.DE advertising pairs) AND each SECULAR-THEME cluster of >=2 (e.g. ai-displacement ADBE/IT/GLOB, payments-disintermediation EEFT/PLX.PA) and EXACTLY how you resolved it (diversified -> which swap and why; or kept-with-sizing -> the combined_caps entry with axis="secular-theme:<id>" and the justification, durable anchors counted at half); (e) a BEAR REBUTTAL subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing - if you cannot articulate the bear in one sentence, you do not understand the position; (f) a ROTATION subsection reconciling to backend/_opus_debate/_director_ledger_value.txt - one line per KEEP/ADD/RE-ADD, the broken-thesis reason for every held name you DROPPED, and (for any RE-ADD) the documented thesis change; (g) a SECULAR-LOAD line: book_secular_load_pct + clean_anchor_count, with a defense if load>60% or anchors<2. ALSO emit, at top level alongside apex_basket, book_secular_load_pct(number) and clean_anchor_count(int). Reply exactly: DONE"""
 
 
-# ── FUTURE RESOURCES Director rubric (spec §5, Phase 3) — Opus seat, AGENT_VOICE-prefixed like the
+# -- FUTURE RESOURCES Director rubric (spec Sec.5, Phase 3) - Opus seat, AGENT_VOICE-prefixed like the
 #    value/disruptor Directors. Valuation is a GUARD (CRO sop_mos_pct veto/cap, never the driver);
-#    torque is SYMMETRIC (Do-NOT #7); the commodity-factor stress replaces the AI-capex stress. ──
-FR_DIRECTOR_PROMPT = AGENT_VOICE + """You are the FUTURE RESOURCES DIRECTOR (Claude Opus 5), allocating REAL capital to LANE A of the Future Resources book — profitable producers, royalty/streamers and equipment toll-takers across six physical value chains (uranium fuel cycle, copper/electrification, rare earths & strategic metals, power-for-AI, robotics & physical AI, quantum) — with the catalyst regime overlay FULLY REMOVED (a live catalyst is neither a plus nor a requirement; Lane B owns catalysts) and with VALUATION AS A GUARD, NOT THE SCORE DRIVER. Read backend/_opus_debate/future_resources/fr_grade_input.json — one row per debated name, every field pre-computed. ALSO read FUTURE_RESOURCES_REGIME.md (repo root) — the per-chain cycle read; each row's `chain_regime` carries the machine-readable verdict per chain it rides.
+#    torque is SYMMETRIC (Do-NOT #7); the commodity-factor stress replaces the AI-capex stress. --
+FR_DIRECTOR_PROMPT = AGENT_VOICE + """You are the FUTURE RESOURCES DIRECTOR (Claude Opus 5), allocating REAL capital to LANE A of the Future Resources book - profitable producers, royalty/streamers and equipment toll-takers across six physical value chains (uranium fuel cycle, copper/electrification, rare earths & strategic metals, power-for-AI, robotics & physical AI, quantum) - with the catalyst regime overlay FULLY REMOVED (a live catalyst is neither a plus nor a requirement; Lane B owns catalysts) and with VALUATION AS A GUARD, NOT THE SCORE DRIVER. Read backend/_opus_debate/future_resources/fr_grade_input.json - one row per debated name, every field pre-computed. ALSO read FUTURE_RESOURCES_REGIME.md (repo root) - the per-chain cycle read; each row's `chain_regime` carries the machine-readable verdict per chain it rides.
 
-SYSTEM OF RECORD (decisive — read FIRST). The multi-agent DEBATE already ran on each name. When the debate conflicts with the raw screen factors, THE DEBATE WINS:
-  - `forensic_gate`: "EXCLUDE" => INELIGIBLE (interrogator credibility<=2 — mining is where promoters live; this gate is worth more here than in any other book). "CAP" => fr_score capped at ~50 (DETERIORATING trajectory: credible but worsening). A great cost-curve story NEVER overrides the forensic gate.
-  - `sop_mos_pct` (the CRO's reconciled fair value vs price) is a GUARD input (pillar 4), not a ranking input: a deeply negative sop_mos_pct is a SIZE-CAP or VETO signal; a positive one is NOT extra score. Abnormal cheapness on a producer usually means the market is pricing the cost curve or the commodity leg against it — investigate, never bank it.
-  - `physical_anchor` (from the chain map): every pick must have one — a name whose anchor line is empty or hand-wavy is a mapping error, not a seat (the anti-Visa rule, Do-NOT #11).
+SYSTEM OF RECORD (decisive - read FIRST). The multi-agent DEBATE already ran on each name. When the debate conflicts with the raw screen factors, THE DEBATE WINS:
+  - `forensic_gate`: "EXCLUDE" => INELIGIBLE (interrogator credibility<=2 - mining is where promoters live; this gate is worth more here than in any other book). "CAP" => fr_score capped at ~50 (DETERIORATING trajectory: credible but worsening). A great cost-curve story NEVER overrides the forensic gate.
+  - `sop_mos_pct` (the CRO's reconciled fair value vs price) is a GUARD input (pillar 4), not a ranking input: a deeply negative sop_mos_pct is a SIZE-CAP or VETO signal; a positive one is NOT extra score. Abnormal cheapness on a producer usually means the market is pricing the cost curve or the commodity leg against it - investigate, never bank it.
+  - `physical_anchor` (from the chain map): every pick must have one - a name whose anchor line is empty or hand-wavy is a mapping error, not a seat (the anti-Visa rule, Do-NOT #11).
 
-TORQUE IS SYMMETRIC (Do-NOT #7, enforced): `fcf_torque_10pct` is the % EBITDA swing per +/-10% commodity move — it cuts BOTH ways. Every seat whose thesis cites torque MUST carry the DOWNSIDE number in the same line (in `cost_curve` and in the memo's per-seat downside-torque list). A memo citing upside torque without the downside number is NON-CONFORMING: the run is rejected and re-run.
+TORQUE IS SYMMETRIC (Do-NOT #7, enforced): `fcf_torque_10pct` is the % EBITDA swing per +/-10% commodity move - it cuts BOTH ways. Every seat whose thesis cites torque MUST carry the DOWNSIDE number in the same line (in `cost_curve` and in the memo's per-seat downside-torque list). A memo citing upside torque without the downside number is NON-CONFORMING: the run is rejected and re-run.
 
-RUBRIC — four pillars ~25 pts each, applied ONLY to names that clear the gates:
-1. COST-CURVE POSITION & TORQUE QUALITY — `ebitda_margin_ttm` + `ebitda_margin_band` (percentile within the chain cohort = the cost-curve-position proxy: highest margin at the same commodity price ~ lowest cost quartile), `fcf_torque_10pct` (SYMMETRIC — score torque QUALITY: torque from a low-cost position is compounding leverage, torque from a marginal high-cost position is a coin flip), `commodity_beta_2y` (the empirical cross-check: a "producer" with beta ~ 0 is hedged or mislabeled — reconcile before crediting torque; `beta_is_proxy`=true means an ETF regression, read it softer). The metrics are HONEST PROXIES (no AISC endpoint exists) — where the debate web-verified company-reported AISC/cost guidance and it DISAGREES with the proxy, the debate said so: trust the primary source and note it. Non-commodity chains (robotics_automation, quantum) score this pillar on `gm_trajectory` (the pricing-power lie detector: expanding GM on growing revenue = pricing power; compressing = commoditization), `rev_yoy`, `fcf_margin` — never on a pretended torque.
-2. CONTRACTING CYCLE & RESERVE LIFE — from the debate: the contract book vs spot exposure (contracted volumes, realized-price mechanics), reserve/resource life with numbers, offtake counterparties (named, signed — an MoU is not a contract). Cross-read `chain_regime`: uranium term-contracting is the canonical cycle tell; a producer selling spot into a HEADWIND chain owns the downside torque with no cushion.
-3. CAPITAL DISCIPLINE & BALANCE SHEET — the sector's besetting sin: capex history through the LAST cycle (did they build at the top?), buyback/dividend behavior at the top, `funded_solvency` (funded-debt basis; != weak is a hard gate) + `ndebt_ebitda` + `interest_coverage`. `growth_capex_fcf_negative`=true names (OCF-positive, FCF-negative mid-build) required the debate to verify the sustaining-vs-growth capex split — if it did not, treat the build as suspect.
-4. GROWTH-ADJUSTED VALUATION GUARD — a GUARD, not a ranking pillar: full marks by default, DEDUCTIONS for danger. `sop_mos_pct` <= -40% => the CRO himself cannot get near the price: VETO or size_units <= 0.5 with explicit justification. `peak_flag`/`freshness_stale` on a commodity producer = the earnings sit on a price spike: normalize before crediting ANY cheapness (a low multiple on peak commodity earnings is the classic resources value trap). The guard can VETO or CAP; it must NEVER be the reason a name ranks above another that passed clean.
+RUBRIC - four pillars ~25 pts each, applied ONLY to names that clear the gates:
+1. COST-CURVE POSITION & TORQUE QUALITY - `ebitda_margin_ttm` + `ebitda_margin_band` (percentile within the chain cohort = the cost-curve-position proxy: highest margin at the same commodity price ~ lowest cost quartile), `fcf_torque_10pct` (SYMMETRIC - score torque QUALITY: torque from a low-cost position is compounding leverage, torque from a marginal high-cost position is a coin flip), `commodity_beta_2y` (the empirical cross-check: a "producer" with beta ~ 0 is hedged or mislabeled - reconcile before crediting torque; `beta_is_proxy`=true means an ETF regression, read it softer). The metrics are HONEST PROXIES (no AISC endpoint exists) - where the debate web-verified company-reported AISC/cost guidance and it DISAGREES with the proxy, the debate said so: trust the primary source and note it. Non-commodity chains (robotics_automation, quantum) score this pillar on `gm_trajectory` (the pricing-power lie detector: expanding GM on growing revenue = pricing power; compressing = commoditization), `rev_yoy`, `fcf_margin` - never on a pretended torque.
+2. CONTRACTING CYCLE & RESERVE LIFE - from the debate: the contract book vs spot exposure (contracted volumes, realized-price mechanics), reserve/resource life with numbers, offtake counterparties (named, signed - an MoU is not a contract). Cross-read `chain_regime`: uranium term-contracting is the canonical cycle tell; a producer selling spot into a HEADWIND chain owns the downside torque with no cushion.
+3. CAPITAL DISCIPLINE & BALANCE SHEET - the sector's besetting sin: capex history through the LAST cycle (did they build at the top?), buyback/dividend behavior at the top, `funded_solvency` (funded-debt basis; != weak is a hard gate) + `ndebt_ebitda` + `interest_coverage`. `growth_capex_fcf_negative`=true names (OCF-positive, FCF-negative mid-build) required the debate to verify the sustaining-vs-growth capex split - if it did not, treat the build as suspect.
+4. GROWTH-ADJUSTED VALUATION GUARD - a GUARD, not a ranking pillar: full marks by default, DEDUCTIONS for danger. `sop_mos_pct` <= -40% => the CRO himself cannot get near the price: VETO or size_units <= 0.5 with explicit justification. `peak_flag`/`freshness_stale` on a commodity producer = the earnings sit on a price spike: normalize before crediting ANY cheapness (a low multiple on peak commodity earnings is the classic resources value trap). The guard can VETO or CAP; it must NEVER be the reason a name ranks above another that passed clean.
 
-HARD CONSTRAINTS (the deterministic post layer re-checks every one — your numbers must agree):
+HARD CONSTRAINTS (the deterministic post layer re-checks every one - your numbers must agree):
   - EXACTLY 8 apex picks, ~5 runner_ups.
   - CHAIN CAPS: <=3 names per chain AND <=30% of basket weight per chain (by size_units share). A 2-chain name (UUUU-class) counts toward BOTH chains. State per-chain weights in chain_exposure.
   - `growth_capex_fcf_negative` => size_units <= 0.75 (the post clamps it deterministically).
@@ -654,17 +654,17 @@ HARD CONSTRAINTS (the deterministic post layer re-checks every one — your numb
   - TORQUE x LEVERAGE QUADRANT: `fcf_torque_10pct` >= 0.5 AND `ndebt_ebitda` >= 2.5 is the blow-up quadrant => mandatory size_units <= 0.75, and if >=2 quadrant names sit in the basket, a combined_caps entry covering them (axis "torque-x-leverage").
   - Every pick clears forensic_gate, funded_solvency != weak, and carries a physical anchor.
 
-COMMODITY-FACTOR STRESS (replaces the AI-capex stress; run over the final 8 BEFORE sizing): decompose EVERY run on the shared GLOBAL GROWTH + CHINA DEMAND axis — all four commodity/power chains ride it; a China demand shock or a global-growth downgrade hits copper, rare earths, power AND the industrial legs at once — then the chain-specific axes: uranium = ONE utility contracting cycle; power_for_ai = ONE hyperscaler PPA appetite; robotics = the industrial capex cycle; quantum + robotics TOGETHER = the long-duration-growth-multiple axis (rate-sensitive multiples compressing in sync — the axis the machine chains import into an otherwise commodity book). FLAG every axis carrying >=2 names. For each: EITHER (i) DIVERSIFY — swap the lower-scoring leg for the best orthogonal eligible runner-up that does NOT re-cluster, OR (ii) keep both ONLY with an explicit combined-size cap + written justification. Every keep-with-cap MUST appear in `combined_caps` as NUMBERS (not prose): combined_caps:[{names:[...], max_units(float), axis(str)}].
+COMMODITY-FACTOR STRESS (replaces the AI-capex stress; run over the final 8 BEFORE sizing): decompose EVERY run on the shared GLOBAL GROWTH + CHINA DEMAND axis - all four commodity/power chains ride it; a China demand shock or a global-growth downgrade hits copper, rare earths, power AND the industrial legs at once - then the chain-specific axes: uranium = ONE utility contracting cycle; power_for_ai = ONE hyperscaler PPA appetite; robotics = the industrial capex cycle; quantum + robotics TOGETHER = the long-duration-growth-multiple axis (rate-sensitive multiples compressing in sync - the axis the machine chains import into an otherwise commodity book). FLAG every axis carrying >=2 names. For each: EITHER (i) DIVERSIFY - swap the lower-scoring leg for the best orthogonal eligible runner-up that does NOT re-cluster, OR (ii) keep both ONLY with an explicit combined-size cap + written justification. Every keep-with-cap MUST appear in `combined_caps` as NUMBERS (not prose): combined_caps:[{names:[...], max_units(float), axis(str)}].
 
-ROTATION DISCIPLINE: FIRST read backend/_opus_debate/_director_ledger_fr.txt (your currently-HELD names + every name you DROPPED this year; EMPTY on the maiden run — then every pick is an ADD and you say so). KEEP a held name UNLESS its thesis is BROKEN (price through thesis_break_px, a forensic/solvency flip, a cost-curve position lost, a chain tripwire breached) OR you have a STRICTLY-BETTER orthogonal name for that seat — say which. RE-ADD only on a DOCUMENTED THESIS CHANGE since the drop.
+ROTATION DISCIPLINE: FIRST read backend/_opus_debate/_director_ledger_fr.txt (your currently-HELD names + every name you DROPPED this year; EMPTY on the maiden run - then every pick is an ADD and you say so). KEEP a held name UNLESS its thesis is BROKEN (price through thesis_break_px, a forensic/solvency flip, a cost-curve position lost, a chain tripwire breached) OR you have a STRICTLY-BETTER orthogonal name for that seat - say which. RE-ADD only on a DOCUMENTED THESIS CHANGE since the drop.
 
-OUTPUT — Write VALID JSON to backend/_opus_debate/future_resources/apex_basket_fr.json = {apex_basket:[{symbol, sector, chains(all taxonomy ids), business_model, value_chain_position, physical_anchor(one line, from the chain map), fr_score(0-100), thesis(one sentence), cost_curve(one line WITH numbers: margin/band + the SYMMETRIC torque read including the downside number), contracting_reserve(one line: contract book + reserve life), capital_discipline(one line: last-cycle capex behavior + balance sheet), valuation_guard(one line, e.g. "sop_mos +18% — guard passes" or "sop_mos -45% — capped 0.5"), ebitda_margin_ttm, fcf_torque_10pct, commodity_beta_2y, ndebt_ebitda, interest_coverage, funded_solvency, sop_mos_pct, chain_regime(the sidecar verdict(s) this name rides, e.g. {"uranium_fuel_cycle":"TAILWIND"}), headwind_justification("" unless a HEADWIND-chain seat is sized > 0.5 — then the written name-specific insulation), growth_capex_fcf_negative(bool), torque_leverage_quadrant(bool), exposure_axes(list of the shared axes this name carries — include "global-growth-china-demand" wherever carried), size_units(float 0.1-1.5: 1.0=full unit; every capped name carries its clamped number HERE), thesis_break_px(number: the price at which the thesis is BROKEN — below it the name exits at the next review), bear_fv_px(number: your adverse-case per-share value assuming the chain regime turns against it — used for the market stress test), entry_posture(one of "enter_now_carry" | "scale_in" | "on_confirmation: <event>" | "wait_for_weakness"), wheel({suits:true, csp_strike(=thesis_break_px), cc_strike(the fair-value target), tenor_days(~30-45), rationale(one sentence)} | {suits:false} — usually false for a torque name whose upside you do not want to cap), forensic_gate, decision("KEEP"|"ADD"|"RE-ADD" vs the ledger), decision_rationale(one sentence), whats_changed(REQUIRED non-empty ONLY for RE-ADD; else "")}], runner_ups:[...~5], combined_caps:[{names:[...], max_units(float), axis(str)}], chain_exposure:{<chain_id>: weight_pct}, fr_memo}.
-The fr_memo MUST: (a) state the rubric weighting and that valuation acted only as a guard; (b) LIST the names EXCLUDED or CAPPED by the forensic gate, the solvency gate, the valuation guard, and the HEADWIND rule — one-line reason each; (c) a PER-SEAT DOWNSIDE TORQUE list: one line per seat citing torque, with the DOWNSIDE number (a memo missing this list is non-conforming — reject and re-run, Do-NOT #7); (d) a commodity_factor_stress section naming EACH >=2-name axis (ALWAYS including the global-growth + China-demand decomposition, even if it carries <=1 name — say so) and EXACTLY how each was resolved (diversified -> which swap; or kept-with-cap -> the combined_caps numbers); (e) the name-by-name RISE/FALL vs the prior FR apex (read the existing backend/_opus_debate/future_resources/apex_basket_fr.json for the prior slate BEFORE you overwrite it; on the maiden run state that there is no prior); (f) a ROTATION subsection reconciling to backend/_opus_debate/_director_ledger_fr.txt — one line per KEEP/ADD/RE-ADD; (g) a BEAR REBUTTAL subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing. Reply exactly: DONE"""
+OUTPUT - Write VALID JSON to backend/_opus_debate/future_resources/apex_basket_fr.json = {apex_basket:[{symbol, sector, chains(all taxonomy ids), business_model, value_chain_position, physical_anchor(one line, from the chain map), fr_score(0-100), thesis(one sentence), cost_curve(one line WITH numbers: margin/band + the SYMMETRIC torque read including the downside number), contracting_reserve(one line: contract book + reserve life), capital_discipline(one line: last-cycle capex behavior + balance sheet), valuation_guard(one line, e.g. "sop_mos +18% - guard passes" or "sop_mos -45% - capped 0.5"), ebitda_margin_ttm, fcf_torque_10pct, commodity_beta_2y, ndebt_ebitda, interest_coverage, funded_solvency, sop_mos_pct, chain_regime(the sidecar verdict(s) this name rides, e.g. {"uranium_fuel_cycle":"TAILWIND"}), headwind_justification("" unless a HEADWIND-chain seat is sized > 0.5 - then the written name-specific insulation), growth_capex_fcf_negative(bool), torque_leverage_quadrant(bool), exposure_axes(list of the shared axes this name carries - include "global-growth-china-demand" wherever carried), size_units(float 0.1-1.5: 1.0=full unit; every capped name carries its clamped number HERE), thesis_break_px(number: the price at which the thesis is BROKEN - below it the name exits at the next review), bear_fv_px(number: your adverse-case per-share value assuming the chain regime turns against it - used for the market stress test), entry_posture(one of "enter_now_carry" | "scale_in" | "on_confirmation: <event>" | "wait_for_weakness"), wheel({suits:true, csp_strike(=thesis_break_px), cc_strike(the fair-value target), tenor_days(~30-45), rationale(one sentence)} | {suits:false} - usually false for a torque name whose upside you do not want to cap), forensic_gate, decision("KEEP"|"ADD"|"RE-ADD" vs the ledger), decision_rationale(one sentence), whats_changed(REQUIRED non-empty ONLY for RE-ADD; else "")}], runner_ups:[...~5], combined_caps:[{names:[...], max_units(float), axis(str)}], chain_exposure:{<chain_id>: weight_pct}, fr_memo}.
+The fr_memo MUST: (a) state the rubric weighting and that valuation acted only as a guard; (b) LIST the names EXCLUDED or CAPPED by the forensic gate, the solvency gate, the valuation guard, and the HEADWIND rule - one-line reason each; (c) a PER-SEAT DOWNSIDE TORQUE list: one line per seat citing torque, with the DOWNSIDE number (a memo missing this list is non-conforming - reject and re-run, Do-NOT #7); (d) a commodity_factor_stress section naming EACH >=2-name axis (ALWAYS including the global-growth + China-demand decomposition, even if it carries <=1 name - say so) and EXACTLY how each was resolved (diversified -> which swap; or kept-with-cap -> the combined_caps numbers); (e) the name-by-name RISE/FALL vs the prior FR apex (read the existing backend/_opus_debate/future_resources/apex_basket_fr.json for the prior slate BEFORE you overwrite it; on the maiden run state that there is no prior); (f) a ROTATION subsection reconciling to backend/_opus_debate/_director_ledger_fr.txt - one line per KEEP/ADD/RE-ADD; (g) a BEAR REBUTTAL subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing. Reply exactly: DONE"""
 
 
 def value_input():
     """Build value_grade_input.json: per DEBATED name, the VALUE-rubric metrics PLUS the four
-    robustness signal families the raw-MoS pillar was missing — (1) cyclical-peak/extrapolation
+    robustness signal families the raw-MoS pillar was missing - (1) cyclical-peak/extrapolation
     (EPS-history peak ratio + FCF 3yr CAGR), (2) TTM-vs-FY freshness (stale numerator), (3) the
     forensic gate (interrogator credibility/trajectory + verdict), (4) the CRO sop_fair_value as the
     system-of-record MoS that overrides the raw scan MoS. Also writes value_director_prompt.txt so the
@@ -760,9 +760,9 @@ def value_input():
         # (the A/B/C was set partly under the now-stripped catalyst regime). The verdict is surfaced
         # for the system-of-record reconciliation but is not a blanket cap.
         if isinstance(iscore, (int, float)) and iscore <= 2:
-            gate = "EXCLUDE"            # credibility veto — a forensic red flag the factors miss
+            gate = "EXCLUDE"            # credibility veto - a forensic red flag the factors miss
         elif iscore is None:
-            # 8f: a malformed/missing CREDIBILITY_SCORE must NOT fail open as neutral —
+            # 8f: a malformed/missing CREDIBILITY_SCORE must NOT fail open as neutral -
             # cap it (fail toward caution) and say so, without nuking the name on a transient.
             gate = "CAP"
             print(f"WARN: {sym} interrogator_score missing/unparseable -> gate=CAP (fail-closed)")
@@ -814,16 +814,16 @@ def value_input():
             "is_financial": is_fin, "funded_solvency": funded_solv,
             # leverage (BRBR net-debt-not-net-cash)
             "net_debt": net_debt, "market_cap": mktcap, "net_debt_exceeds_mktcap": net_debt_gt_mktcap,
-            # moat durability / terminal-erosion (deterministic, ADDITIVE to peak/stale gates) —
+            # moat durability / terminal-erosion (deterministic, ADDITIVE to peak/stale gates) -
             # moat_erosion="CAP" => 0.5 size cap in post; erosion_severity drives the skeptic kill-tier
             "moat_score": mf["moat_score"], "moat_erosion": mf["moat_erosion"],
             "erosion_severity": mf["erosion_severity"], "roic_below_hurdle": mf["roic_below_hurdle"],
             "returns_trend": mf["returns_trend"], "net_margin_trend": mf["net_margin_trend"],
             "gross_margin_trend": mf["gross_margin_trend"], "revenue_trend": mf["revenue_trend"],
             "revenue_decelerating": mf["revenue_decelerating"],
-            # agent-judged moat read (from the debate dossier/CRO) — cross-checks the deterministic gate
+            # agent-judged moat read (from the debate dossier/CRO) - cross-checks the deterministic gate
             "moat": r.get("moat", ""), "moat_trend": r.get("moat_trend", ""),
-            # X5 carry-awareness: the value re-grade must SEE a carried (not re-debated) record —
+            # X5 carry-awareness: the value re-grade must SEE a carried (not re-debated) record -
             # its numbers date from carried_from, restamped only for price/as_of.
             "carried": bool(r.get("carried")), "carried_from": r.get("carried_from", ""),
             "secular_threat": r.get("secular_threat", ""), "secular_theme": r.get("secular_theme", ""),
@@ -835,12 +835,12 @@ def value_input():
         x["as_of"] = _asof
     (ROOT / "value_grade_input.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     # Director rotation discipline: render the prior-decision ledger (held names + 2026 drops) that
-    # this Director must reconcile its new basket against. Best-effort — never blocks the run.
+    # this Director must reconcile its new basket against. Best-effort - never blocks the run.
     try:
         write_director_ledger("value", ROOT / "apex_basket_value.json", E.FRONTEND_DIR / "public" / "speculair_value_tracking.json")
     except Exception as _e:
         print(f"WARN: value ledger build failed ({_e})")
-    prompt_txt = f"AS OF {_asof} — every metric row in value_grade_input.json carries this date.\n\n" + VALUE_DIRECTOR_PROMPT
+    prompt_txt = f"AS OF {_asof} - every metric row in value_grade_input.json carries this date.\n\n" + VALUE_DIRECTOR_PROMPT
     pa = ROOT / "apex_basket_value.json"                # Fix 4 feed-forward: prior MEASURED correlations
     if pa.exists():
         try:
@@ -863,9 +863,9 @@ def value_input():
     print(f"value_grade_input.json: {len(out)} names | peak_flag={npeak} forensic_gate={ngate} freshness_stale={nstale}")
     print(f"  funded_solvency: {dict(fs)}")
 
-    # ── 11a — weekly FUNNEL-QUALITY stats: is the scan's headline MoS a ranking signal or only a
+    # -- 11a - weekly FUNNEL-QUALITY stats: is the scan's headline MoS a ranking signal or only a
     # membership filter? (Measured 2026-06-10: Spearman 0.41 overall but 0.15 in the scan top
-    # quintile; 61% of scan-positive names cut >50% by the CRO — magnitude carries no in-funnel
+    # quintile; 61% of scan-positive names cut >50% by the CRO - magnitude carries no in-funnel
     # ranking signal. These make that measurable EVERY week.) Pure-python Spearman, no scipy.
     def _spearman(pairs):
         if len(pairs) < 10:
@@ -911,8 +911,8 @@ def value_input():
     print(f"  funnel: spearman={sp_all} (top-quintile {sp_topq}) collapse>50%={funnel_stats['collapse_rate_50']} "
           f"artifact={funnel_stats['artifact_rate']} rescues={len(rescues)} {sorted(rescues)}")
 
-    # ── 11c — FORENSIC LEDGER: persist EXCLUDE gates so prep() can route unexpired ones to a short
-    # re-check instead of a full debate. A ledger_recheck re-affirmation does NOT extend the clock —
+    # -- 11c - FORENSIC LEDGER: persist EXCLUDE gates so prep() can route unexpired ones to a short
+    # re-check instead of a full debate. A ledger_recheck re-affirmation does NOT extend the clock -
     # only a FULL debate that again scores <=2 restarts the 8-week TTL.
     from datetime import datetime as _dtt, timedelta as _td
     led_p = ROOT / "forensic_ledger.json"
@@ -948,8 +948,8 @@ def value_input():
 
 
 def value_csv():
-    """CSV of the VALUE apex (apex_basket_value.json) with the FULL output of every agent per name —
-    Radar / Interrogator / Architect / Catalyst / CRO + the value-Director's per-name grade — plus the
+    """CSV of the VALUE apex (apex_basket_value.json) with the FULL output of every agent per name -
+    Radar / Interrogator / Architect / Catalyst / CRO + the value-Director's per-name grade - plus the
     value_memo companion. Rows ordered by value_score desc; in_regime_apex flags cross-lens overlap."""
     import csv
     apex = json.load(open(ROOT / "apex_basket_value.json", encoding="utf-8"))
@@ -1045,7 +1045,7 @@ def value_csv():
 
 def baskets_csv():
     """One CSV joining BASKET MEMBERSHIP (regime apex/runner, value apex/runner, and the 11
-    per-methodology baskets) with the FULL debate output (every agent) for ALL debated names —
+    per-methodology baskets) with the FULL debate output (every agent) for ALL debated names -
     'all baskets + all debates' in a single file. Companion to the apex-specific CSVs."""
     import csv
     res_dir, doss_dir, pg_dir = ROOT / "results_regime", ROOT / "dossiers", ROOT / "peer_groups"
@@ -1153,7 +1153,7 @@ def baskets_csv():
 
 def value_publish(push_gcs=False):
     """Stage the public Value Lens payload (frontend/public/speculair_value_apex.json) AND maintain a
-    live-forward NAV track record for the value book — a separate chained-NAV state file
+    live-forward NAV track record for the value book - a separate chained-NAV state file
     (speculair_value_tracking.json) from the apex, via the same _update_apex_tracking engine."""
     import datetime as _dt
     PUB = E.FRONTEND_DIR / "public"
@@ -1161,7 +1161,7 @@ def value_publish(push_gcs=False):
     # PUBLISH GATE (mirror of publish_to_frontend's): the 06-30 value book shipped with its largest
     # seat un-vetted + a stale-REFUTED name seated because publish ran without the post layer.
     if not apx.get("value_post_applied") and "--force" not in sys.argv:
-        print("GUARD value publish gate: apex_basket_value.json has NO value_post_applied stamp — run "
+        print("GUARD value publish gate: apex_basket_value.json has NO value_post_applied stamp - run "
               "`value-skeptic` (Workflow) then `value-post` first. Aborting (override: --force).")
         sys.exit(1)
     picks = [p for p in apx.get("apex_basket", []) if isinstance(p, dict) and p.get("symbol")]
@@ -1210,7 +1210,7 @@ def value_publish(push_gcs=False):
             apex_verdicts = {(gin_by.get(p["symbol"]) or {}).get("debate_verdict") for p in picks}
             pool_stats = {"n_pool": len(gin), "verdict_counts": dict(vc), "n_verdict_a": na,
                           "apex_all_verdict_b": apex_verdicts == {"B"},
-                          "banner": (f"Best-of-B basket: {na} verdict-A names in a {len(gin)}-name pool — "
+                          "banner": (f"Best-of-B basket: {na} verdict-A names in a {len(gin)}-name pool - "
                                      f"every apex pick is a verdict-B value name. Expect SLOW gap-closure: "
                                      f"margin-of-safety re-rating, no hard catalysts by design.")}
             fst = ROOT / "_funnel_stats.json"
@@ -1299,10 +1299,10 @@ return 'DONE'
 """
 
 # Gate-failure taxonomy (2026-07-27, Bruno: "could the pipeline fix the record instead of just dropping a
-# good pick?"). Only DATA and FLOOR defects are repairable, and only by re-deriving from evidence — the
+# good pick?"). Only DATA and FLOOR defects are repairable, and only by re-deriving from evidence - the
 # repair agent is never told the threshold, never told which direction to move, and an unchanged number is
 # an accepted outcome. THESIS failures (skeptic REFUTED / forensic EXCLUDE) are NEVER repaired: a kill is a
-# judgement, not an arithmetic slip. CLOSED failures are not defects at all — the price passed the target.
+# judgement, not an arithmetic slip. CLOSED failures are not defects at all - the price passed the target.
 _REPAIR_DATA_CODES = ("G0_NO_CURRENCY", "G1B_CURRENCY_MISMATCH", "G1B_CURRENCY_UNSTATED",
                       "G1A_PRICE_MISMATCH", "G1A_PRICE_DRIFT")
 _REPAIR_FLOOR_CODES = ("THIN_FLOOR", "TINY_FLOOR")
@@ -1316,9 +1316,9 @@ def _classify_gate_failure(rec):
     codes = [str(c) for c in (rec.get("numeric_gate_reasons") or [])]
     val = rec.get("valuation") or {}
     live, base, bear = rec.get("live_price"), val.get("base_fv_px"), val.get("bear_px")
-    # CLOSED: the quote has caught or passed the base case — nothing to repair, the opportunity is gone.
+    # CLOSED: the quote has caught or passed the base case - nothing to repair, the opportunity is gone.
     if isinstance(live, (int, float)) and isinstance(base, (int, float)) and base > 0 and live >= base * 0.98:
-        return "closed", f"live {live} has reached the base case {base} — no upside left to underwrite"
+        return "closed", f"live {live} has reached the base case {base} - no upside left to underwrite"
     if any(c.startswith(_REPAIR_DATA_CODES) for c in codes):
         return "data", ("the record's stated price/currency does not reconcile with the live quote "
                         f"({'; '.join(c for c in codes if c.startswith(_REPAIR_DATA_CODES))}). "
@@ -1328,7 +1328,7 @@ def _classify_gate_failure(rec):
                          "record's risk/reward is being produced by the size of that gap rather than by "
                          "the business. Re-derive the adverse case from evidence.")
     if bear is None or base is None:
-        return "data", "the record carries no typed valuation numbers at all — derive bear/base/bull."
+        return "data", "the record carries no typed valuation numbers at all - derive bear/base/bull."
     return "thesis", "; ".join(codes)
 
 
@@ -1399,13 +1399,13 @@ def gate_repair_merge():
             rec["live_price"] = rp["live_price"]
         if not changed:
             n_same += 1
-            print(f"  {sym}: UNCHANGED — {str(rp.get('unchanged_reason') or rp.get('basis'))[:120]}")
+            print(f"  {sym}: UNCHANGED - {str(rp.get('unchanged_reason') or rp.get('basis'))[:120]}")
             rec.setdefault("gate_repair", {}).update({"at": datetime.now().strftime("%Y-%m-%d"),
                                                       "outcome": "unchanged",
                                                       "basis": str(rp.get("basis") or "")[:600]})
         else:
             n_applied += 1
-            print(f"  {sym}: REPAIRED {list(changed)} — " + "; ".join(
+            print(f"  {sym}: REPAIRED {list(changed)} - " + "; ".join(
                 f"{k} {c['from']}->{c['to']}" for k, c in changed.items()))
             rec["valuation"] = val
             rec["gate_repair"] = {"at": datetime.now().strftime("%Y-%m-%d"), "outcome": "repaired",
@@ -1419,13 +1419,13 @@ def gate_repair_merge():
 def recovery_sleeve(push_gcs=False):
     """PAPER recovery sleeve (2026-07-21 apex-reassessment #3, Bruno's decision): FIRED as an ENTRY
     signal, not a down-rate. The 2026-07 study: the top basket winners (DAVE +55%, SEZL +45%, ...)
-    were cheap-on-cash-earnings franchises whose catalyst had ALREADY fired — the debate's old
+    were cheap-on-cash-earnings franchises whose catalyst had ALREADY fired - the debate's old
     FIRED-penalty threw every one back. This sleeve seats that exact profile deterministically:
       catalyst FIRED + clean forensic (interrogator >= 3) + a winning cash-earnings screen family
       + moat WIDE/NARROW with a non-ERODING trend + skeptic not REFUTED + numeric gate not REJECT/
-      EXCLUDE. Cap 10, EW, ranked by computed expected return. PAPER ONLY — separate chained-NAV
+      EXCLUDE. Cap 10, EW, ranked by computed expected return. PAPER ONLY - separate chained-NAV
       state (speculair_recovery_tracking.json); success metric (one quarter): beats the retired
-      fundamental_momentum basket AND positive absolute. Not event-driven — the event is already
+      fundamental_momentum basket AND positive absolute. Not event-driven - the event is already
       OVER at entry, so B13 separation is untouched."""
     import datetime as _dt
     E.load_api_keys()                                  # benchmark anchor needs the FMP key
@@ -1491,10 +1491,10 @@ def recovery_sleeve(push_gcs=False):
         print(f"WARN: recovery tracking failed ({e})")
         rt = {}
     # PINNED BENCHMARK (2026-07-21 review): the sleeve's original yardstick was the momentum basket,
-    # which the same review retired — a moving/expiring benchmark can't settle a bet. Anchor it ONCE,
+    # which the same review retired - a moving/expiring benchmark can't settle a bet. Anchor it ONCE,
     # at inception, to two FIXED comparators and never re-stamp them (mirrors future_resources'
     # _benchmark_anchors.json discipline): (a) the frozen momentum book's own 20 names marked forward
-    # from retirement — the honest "what that screen would have done" counterfactual; (b) SPY.
+    # from retirement - the honest "what that screen would have done" counterfactual; (b) SPY.
     bench_p = PUB / "speculair_recovery_benchmark.json"
     if bench_p.exists():
         bench = json.load(open(bench_p, encoding="utf-8"))
@@ -1577,12 +1577,12 @@ def value_revalidate():
     apx = json.load(open(ROOT / "apex_basket_value.json", encoding="utf-8"))
     stale = [p["symbol"] for p in apx.get("apex_basket", []) if isinstance(p, dict) and p.get("stale_anchor")]
     if not stale:
-        print("value_revalidate: no stale_anchor names stamped — nothing to revalidate (run value-post first).")
+        print("value_revalidate: no stale_anchor names stamped - nothing to revalidate (run value-post first).")
         return 0
     js = (ROOT / "_weekly_debate.js").read_text(encoding="utf-8")
     js = re.sub(r"const SYMS = \[[^\]]*\]", "const SYMS = []", js)                       # force all online
     js = re.sub(r"const ONLINE_SYMS = \[[^\]]*\]", "const ONLINE_SYMS = " + json.dumps(stale), js)
-    instr = ("REVALIDATION RUN: this name's load-bearing STRUCTURAL EVENT has already FIRED — WebSearch the "
+    instr = ("REVALIDATION RUN: this name's load-bearing STRUCTURAL EVENT has already FIRED - WebSearch the "
              "POST-EVENT PRO-FORMA financials (post-spin/post-divestiture share count + segment EBITDA + net "
              "debt from the most recent filing AFTER the event date) and rebuild the Sum-of-Parts on THOSE; do "
              "NOT reuse pre-event segment data. State the event date and the pro-forma basis explicitly. ")
@@ -1627,10 +1627,10 @@ def _moat_hints(finalists):
     return hints
 
 
-# ── UNIFIED SKEPTIC (2026-07-01, methodology review X1) ──────────────────────────────────────
-# ONE generator for all three books (value / regime / disruptor — the highest-vol book never had a
+# -- UNIFIED SKEPTIC (2026-07-01, methodology review X1) --------------------------------------
+# ONE generator for all three books (value / regime / disruptor - the highest-vol book never had a
 # kill-tier at all). Per-LANE attack rubric (a compounder, an event-driven special-sit and a theme
-# growth name fail in different ways); output is VERDICT-BASED ONLY — categorical
+# growth name fail in different ways); output is VERDICT-BASED ONLY - categorical
 # correction_severity (minor|material) + kill_scope REPLACE the numeric value_conviction_cap
 # (the numeric-cap-as-ceiling pattern is the proven bug class from the scale-out re-grade).
 # Cross-book DEDUPE: the value book skips finalists already kill-checked fresh by the regime pass
@@ -1643,11 +1643,11 @@ _SKEPTIC_BOOKS = {
     "disruptor": {"apex": "disruptor/apex_basket_disruptor.json", "shards": "_skeptic_disruptor",
                   "wf": "_disruptor_skeptic_workflow.js", "env_line": "DISRUPTOR_SKEPTIC_WORKFLOW"},
     # mining/fdt (2026-07-27 split): the FR Lane A chain these books were cloned from shipped with
-    # NO skeptic tier by design (spec §5 — physical/commodity names leaned on the Interrogator gate +
+    # NO skeptic tier by design (spec Sec.5 - physical/commodity names leaned on the Interrogator gate +
     # numeric gate + deterministic caps instead). _mining_post.py/_fdt_post.py were built WITH
     # consume_skeptic wired in from day one ("the disruptor got its skeptic late, precisely because
-    # the highest-vol book lacked one — do not repeat that gap" is this project's own repeated
-    # lesson) — but nothing produced the shards until this entry: consume_skeptic no-ops silently
+    # the highest-vol book lacked one - do not repeat that gap" is this project's own repeated
+    # lesson) - but nothing produced the shards until this entry: consume_skeptic no-ops silently
     # when the shard dir doesn't exist, so the post layer's skeptic teeth were dead code without it.
     "mining": {"apex": "mining/apex_basket_mining.json", "shards": "_skeptic_mining",
                "wf": "_mining_skeptic_workflow.js", "env_line": "MINING_SKEPTIC_WORKFLOW"},
@@ -1665,7 +1665,7 @@ _SKEPTIC_ATTACKS = {
     # fresh-crash lane (2026-07-17): the name reached the debate BECAUSE it just broke hard -
     # so the strongest bear case is that the market is right and the knife keeps falling.
     "fresh_crash": "(a) THE CRASH IS DESERVED - this name is here because it broke 20%+ in weeks; find WHAT broke it (the specific print, guide-down, loss, ruling) from primary sources and attack the debate's framing of it as temporary: is the cause actually STRUCTURAL (demand reset, share loss, pricing regime change) dressed as a one-quarter miss? (b) TRAILING-METRIC ILLUSION - every quality metric in the bundle (ROIC, margins, Piotroski) is PRE-crash trailing data; rebuild the forward picture from the newest guidance/estimates - does the quality survive the event, or is the screen crediting a business that no longer exists? (c) FALLING-KNIFE MECHANICS - estimate-revision momentum, insider/institutional selling since the break, index/fund forced supply still overhanging; a fresh break with revisions still falling has no washout. (d) HIDDEN DISQUALIFIER - covenant proximity at the new run-rate, guidance withdrawn, auditor/CFO changes around the event.",
-    # mining lane (2026-07-27 split): the resource sector's promoter-density attacks — cost-curve
+    # mining lane (2026-07-27 split): the resource sector's promoter-density attacks - cost-curve
     # and reserve claims are the load-bearing numbers a physical producer can most easily dress up.
     "mining": "(a) COST-CURVE TRUTH - does the debate's cost-curve/AISC or unit-cost claim verify against the company's own PRIMARY cost guidance (10-K/technical report/investor day), not just the deterministic ebitda_margin_band proxy? (b) RESERVE/CONTRACT TRUTH - does the reserve life or contract-cover figure verify against the latest technical report/10-K, or is it stale, aggregated misleadingly, or narrative without a filed number? (c) CYCLICAL-PEAK CHEAPNESS - is the valuation guard passing because the name is genuinely cheap, or because peak-cycle commodity earnings make ANY producer look cheap right now (cross-check the chain's regime state - a TAILWIND-regime chain near its cycle tripwires with a passing valuation guard is the classic trap)? (d) HIDDEN DISQUALIFIER - an undisclosed reserve downgrade, a permit/license risk, serial equity dilution funding a capex overrun, a 'royalty' or 'streaming' claim that is actually a disguised loan with a debt-like repayment structure.",
     # fdt lane (2026-07-27 split): equipment/tech names live or die on backlog and margin trajectory,
@@ -1752,8 +1752,8 @@ def skeptic_gen(book):
         "    ((MOAT_HINTS[sym] || {}).refute_candidate && LANES[sym].lane === 'value' ? 'MOAT ALERT (deterministic screen): ' + sym + ' is a TERMINAL-EROSION candidate - erosion=' + (MOAT_HINTS[sym] || {}).erosion + ', severity=' + (MOAT_HINTS[sym] || {}).severity + ', earns_below_cost_of_capital=' + (MOAT_HINTS[sym] || {}).roic_below + ', returns ' + (MOAT_HINTS[sym] || {}).returns_trend + ', gross-margin ' + (MOAT_HINTS[sym] || {}).gross_margin_trend + '. The moat is ERODING by default: you must find PRIMARY-SOURCE proof of durable pricing power / rising returns to CONFIRM, else REFUTED with the moat erosion as the kill_fact.\\n' : '') +\n"
         "    '1. Read ' + DIR + '/' + LANES[sym].res + ' but USE ONLY: bear_thesis, sop_bear, risk_reward, catalyst_status (+ downside_floor/target_px for an event lane). Read the forensic dossier ' + DIR + '/' + LANES[sym].doss + ' if it exists.\\n' +\n"
         "    '2. Verify the CURRENT facts. FIRST reach for the paid FMP MCP tools via ToolSearch (keyword search e.g. \"FMP earnings transcript\", \"FMP statements\", \"FMP news\", \"FMP quote\") for the latest transcript / quarterly numbers / news / price - it is structured, licensed and reliable; fall back to WebSearch/WebFetch only for what FMP lacks, and do NOT scrape press-release PDFs by shell. Attack: ' + LANES[sym].attack + '\\n' +\n"
-        "    '3. Verdict: CONFIRMED (bear attacked, thesis survives) | CONFIRMED_WITH_CORRECTIONS (survives but a load-bearing number/claim needed fixing - state it) | REFUTED (a kill_fact breaks the thesis). ALSO correction_severity: \"minor\" (footnote-level, thesis arithmetic intact) or \"material\" (a load-bearing number/date/anchor moved - the post layer haircuts sizing on material). AND kill_scope: which layer your strongest finding hits - \"thesis\" | \"numbers\" | \"catalyst\" | \"moat\". If kill_scope is \"numbers\" you MUST ALSO emit revised_fv_px: your re-derived base fair value per share (a point NUMBER in the same currency as the record) after applying your correction to the records own schedule - state the LEVEL, the pipeline computes every ratio; the post layer re-grades the seat on that number instead of treating a repricing as a thesis kill, so a numbers-REFUTED without revised_fv_px is treated as a hard kill. revised_fv_px is null for every other scope. Do NOT emit any numeric conviction cap - verdicts and severity only.\\n' +\n"
-        "    '4. Write (Write tool) VALID JSON to ' + DIR + '/__SHARDS__/' + sym + '.json = {symbol:\"' + sym + '\", verdict, kill_fact, corrections, correction_severity, kill_scope, revised_fv_px, evidence:[2-4 dated primary-source cites]}. Never fabricate. Reply exactly: DONE',\n"
+        "    '3. Verdict: CONFIRMED (bear attacked, thesis survives) | CONFIRMED_WITH_CORRECTIONS (survives but a load-bearing number/claim needed fixing - state it) | REFUTED (a kill_fact breaks the thesis). ALSO correction_severity: \"minor\" (footnote-level, thesis arithmetic intact) or \"material\" (a load-bearing number/date/anchor moved - the post layer haircuts sizing on material). AND kill_scope: which layer your strongest finding hits - \"thesis\" | \"numbers\" | \"catalyst\" | \"moat\". If kill_scope is \"numbers\" you MUST ALSO emit revised_fv_px: your re-derived base fair value per share (a point NUMBER in the same currency as the record) after applying your correction to the records own schedule - state the LEVEL, the pipeline computes every ratio; the post layer re-grades the seat on that number instead of treating a repricing as a thesis kill, so a numbers-REFUTED without revised_fv_px is treated as a hard kill. revised_fv_px is null for every other scope. TYPED CORRECTIONS (2026-08-05 - a prose-only numeric correction changes NOTHING downstream): EVERY correction that moves a number must ALSO appear in corrections_typed: [{field: one of \"bear_px\" | \"base_fv_px\" | \"bull_px\" | \"downside_floor_px\", from: <the records current number>, to: <your corrected number>, basis: \"<one line with a dated primary-source basis>\"}] - correct the LEVELS on the records own valuation fields; if your finding hits an INPUT (net debt, share count, an EBITDA anchor), carry it through to the affected level(s) yourself and cite the arithmetic in basis. The pipeline APPLIES corrections_typed to the record (originals preserved) and recomputes every ratio deterministically, so the Director reads your corrected numbers instead of a note contradicting them. corrections_typed is [] when nothing numeric moved. Do NOT emit any numeric conviction cap - verdicts and severity only.\\n' +\n"
+        "    '4. Write (Write tool) VALID JSON to ' + DIR + '/__SHARDS__/' + sym + '.json = {symbol:\"' + sym + '\", verdict, kill_fact, corrections, correction_severity, kill_scope, revised_fv_px, corrections_typed, evidence:[2-4 dated primary-source cites]}. Never fabricate. Reply exactly: DONE',\n"
         "    { label: '__BOOK__-skeptic:' + sym, phase: 'Skeptic', agentType: 'general-purpose', model: '__SKEPTIC_MODEL__' })))\n"
         "}\n"
         "return 'DONE'\n"
@@ -1767,7 +1767,7 @@ def skeptic_gen(book):
     out = ROOT / cfg["wf"]
     out.write_text(js, encoding="utf-8", newline="\n")
     n_ref = sum(1 for h in hints.values() if h.get("refute_candidate"))
-    # derived from the lanes actually assigned this run, not a hardcoded tuple — a hardcoded
+    # derived from the lanes actually assigned this run, not a hardcoded tuple - a hardcoded
     # ("value","event","disruptor") silently reported {value:0,event:0,disruptor:0} for the
     # mining/fdt lanes (real assignments, just invisible in the summary line).
     n_lanes = {}
@@ -1805,8 +1805,8 @@ def fdt_skeptic():
 
 
 def control_sample():
-    """11b — monthly FALSE-NEGATIVE estimate: debate N=8 random names from the scan that sit in NO
-    methodology basket; report how many clear the forensic gate with CRO MoS >= 30% — the funnel's
+    """11b - monthly FALSE-NEGATIVE estimate: debate N=8 random names from the scan that sit in NO
+    methodology basket; report how many clear the forensic gate with CRO MoS >= 30% - the funnel's
     miss-rate on its own success metric. Tagged control=true; results land in results_control/ and
     NEVER feed baskets."""
     import random
@@ -1859,7 +1859,7 @@ def control_sample():
 
 
 FR_DIR = ROOT / "future_resources"
-# Lane A debate subtree (Phase 3, clone of the disruptor D_* layout) — isolated so the FR chain never
+# Lane A debate subtree (Phase 3, clone of the disruptor D_* layout) - isolated so the FR chain never
 # touches results_regime / the value or B13 surfaces (Do-NOT: never mutate other books' surfaces).
 FR_INP = FR_DIR / "inputs"
 FR_TXT = FR_DIR / "transcripts"
@@ -1869,10 +1869,10 @@ FR_ARCH = FR_DIR / "_archive_prev"
 
 
 def fr_universe():
-    """FUTURE RESOURCES Stage A+B (FUTURE_RESOURCES_SPEC.md §1, monthly): deterministic FMP screen
+    """FUTURE RESOURCES Stage A+B (FUTURE_RESOURCES_SPEC.md Sec.1, monthly): deterministic FMP screen
     per chain -> two-lane gates. Lane A (producers/royalties): TTM FCF>0 OR TTM OCF>0 (tagged
     growth_capex_fcf_negative when OCF-only), TTM EBITDA>0, funded solvency != weak, mcap>=$500M,
-    ADV>=$5M. Lane B (developers): mcap>=$150M, ADV>=$2M, NO profitability gate — cash-runway fields
+    ADV>=$5M. Lane B (developers): mcap>=$150M, ADV>=$2M, NO profitability gate - cash-runway fields
     stamped here; the funded-through-milestone gate is asserted at Lane B candidate extraction.
     Anti-shrink (disruptor_universe lessons): re-screens FMP from scratch every run; never reads a
     prior universe/candidates file; STOPs loudly on thin screens. Gates cached by symbol+month."""
@@ -1882,14 +1882,14 @@ def fr_universe():
     tax = json.load(open(ROOT / "future_resources_chains.json", encoding="utf-8"))
     key = E.get_key("FMP_API_KEY")
     if not key:
-        print("GUARD: no FMP_API_KEY — STOP")
+        print("GUARD: no FMP_API_KEY - STOP")
         raise SystemExit(1)
     FR_DIR.mkdir(exist_ok=True)
     (FR_DIR / "chain_map").mkdir(exist_ok=True)
     base = "https://financialmodelingprep.com/stable"
     fa, fb = tax["floors"]["lane_a"], tax["floors"]["lane_b"]
 
-    # ── Stage A — screen once at the WIDER lane-B floors; lane assignment happens after Stage B ──
+    # -- Stage A - screen once at the WIDER lane-B floors; lane assignment happens after Stage B --
     seen, hints, raw_total = {}, {}, 0
     for ch in tax["chains"]:
         ch_syms = set()
@@ -1922,27 +1922,27 @@ def fr_universe():
                     if ch["id"] not in hints[sym]:
                         hints[sym].append(ch["id"])
             if ind_rows == 0:
-                print(f"  WARN [{ch['id']}] industry '{ind}' returned 0 rows — "
-                      f"misspelled/unverified industry string? (see spec §1.1 (verify) list)")
+                print(f"  WARN [{ch['id']}] industry '{ind}' returned 0 rows - "
+                      f"misspelled/unverified industry string? (see spec Sec.1.1 (verify) list)")
         print(f"  Stage A [{ch['id']}]: {len(ch_syms)} unique candidates")
     print(f"Stage A: {len(seen)} unique candidates from {raw_total} raw rows")
     if raw_total < 100:
-        print("GUARD: FMP screen returned <100 raw rows (key/quota failure?) — STOP, not a silent small universe")
+        print("GUARD: FMP screen returned <100 raw rows (key/quota failure?) - STOP, not a silent small universe")
         raise SystemExit(1)
     n_uranium = sum(1 for s, hs in hints.items() if "uranium_fuel_cycle" in hs)
     if n_uranium == 0:
-        print("GUARD: uranium_fuel_cycle mapped 0 candidates — the AMEX canary "
-              "(NYSE-American cohort missing?) — STOP")
+        print("GUARD: uranium_fuel_cycle mapped 0 candidates - the AMEX canary "
+              "(NYSE-American cohort missing?) - STOP")
         raise SystemExit(1)
 
-    # ── per-lane liquidity floors (free — from the screener rows) ──
+    # -- per-lane liquidity floors (free - from the screener rows) --
     def _adv(c):
         p, v = c.get("price"), c.get("volume")
         return p * v if isinstance(p, (int, float)) and isinstance(v, (int, float)) else 0.0
     liquid = {s: c for s, c in seen.items() if _adv(c) >= fb["adv_usd"]}
     print(f"liquidity gate (lane-B ADV >= ${fb['adv_usd']/1e6:.0f}M): {len(liquid)} pass")
 
-    # ── Stage B — financial gates, cached by symbol+month ──
+    # -- Stage B - financial gates, cached by symbol+month --
     cache_p = FR_DIR / "_gates_cache.json"
     cache = {}
     if cache_p.exists():
@@ -2033,13 +2033,13 @@ def fr_universe():
                 print(f"  ...{done}/{len(syms)}")
     cache_p.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
 
-    # ── lane assignment ──
+    # -- lane assignment --
     def _n(v):
         return v if isinstance(v, (int, float)) else 0
     lane_a_pre = [s for s, c in liquid.items()
                   if _n(c.get("mcap")) >= fa["market_cap_usd"] and _n(c.get("price")) >= fa["price_min"]
                   and _adv(c) >= fa["adv_usd"] and c["gates"]["pass_cash"] and c["gates"]["pass_profit"]]
-    fl = _funded_leverage(lane_a_pre)                           # batch, shared cache — lane A only
+    fl = _funded_leverage(lane_a_pre)                           # batch, shared cache - lane A only
     lane_a, lane_b = [], []
     for s, c in sorted(liquid.items()):
         g = c["gates"]
@@ -2078,22 +2078,22 @@ def fr_universe():
 
 
 def fr_map():
-    """FUTURE RESOURCES Stage C — emit the chunked Sonnet CHAIN-MAP workflow (spec §2, monthly, Phase 2).
+    """FUTURE RESOURCES Stage C - emit the chunked Sonnet CHAIN-MAP workflow (spec Sec.2, monthly, Phase 2).
     Clone of the disruptor theme-map emitter (_dt_map.js): chunk _candidates.json <=20/agent into
     future_resources/_map_chunk_<i>.json and render future_resources/_fr_map.js (Sonnet seat). Two NEW
-    required fields per symbol vs the disruptor pass — business_model (drives the royalty gate bypass +
+    required fields per symbol vs the disruptor pass - business_model (drives the royalty gate bypass +
     the developer-in-lane-A sanity check) and commodity_revenue_share (0-1, an LLM estimate feeding the
     deterministic fcf_torque formula). The PHYSICAL-ANCHOR rule is enforced HERE: each agent must state
     in one line the physical thing the company makes/moves/powers/instruments for its chain; no answer =>
     chain_fit_confidence=low regardless of industry (the anti-Visa gate). Run the Workflow, then fr-map-merge."""
     cand_f = FR_DIR / "_candidates.json"
     if not cand_f.exists():
-        print("GUARD: no future_resources/_candidates.json — run fr-universe first. STOP")
+        print("GUARD: no future_resources/_candidates.json - run fr-universe first. STOP")
         raise SystemExit(1)
     cd = json.load(open(cand_f, encoding="utf-8"))
     cands = [c for c in cd.get("candidates", []) if c.get("symbol")]
     if not cands:
-        print("GUARD: _candidates.json has 0 candidates — STOP")
+        print("GUARD: _candidates.json has 0 candidates - STOP")
         raise SystemExit(1)
     FR_DIR.mkdir(exist_ok=True)
     (FR_DIR / "chain_map").mkdir(exist_ok=True)
@@ -2117,12 +2117,12 @@ phase('ChainMap')
 await parallel(Array.from({ length: N }, (_, i) => () => agent(
   'You are the FUTURE RESOURCES CHAIN RADAR (chain-mapping + physical-anchor pass). Read backend/_opus_debate/future_resources_chains.json (the versioned chain taxonomy: ids, theses, value-chain layers, notes) and backend/_opus_debate/future_resources/_map_chunk_' + i + '.json (your candidate chunk: symbol/name/sector/industry/mcap + lane + Stage-B gates). For EACH symbol decide, skeptically:\\n' +
   '- physical_anchor: ONE line naming the PHYSICAL thing this company makes, moves, powers, or directly instruments for its chain (quantum hardware counts; a payments network never does). If you CANNOT name one, set chain_fit_confidence=low REGARDLESS of the industry or keyword hints (the anti-Visa rule; it binds hardest on the broad quantum and robotics filters).\\n' +
-  '- chains: array of taxonomy ids this company GENUINELY rides (max 2; a name like UUUU legitimately carries uranium_fuel_cycle AND rare_earth_strategic; [] if none — an industry filter catches many non-chain names).\\n' +
+  '- chains: array of taxonomy ids this company GENUINELY rides (max 2; a name like UUUU legitimately carries uranium_fuel_cycle AND rare_earth_strategic; [] if none - an industry filter catches many non-chain names).\\n' +
   '- business_model: exactly one of producer | royalty_streamer | developer | equipment_services (royalty_streamer auto-passes the cash gates; a pre-FCF developer belongs in lane B, never lane A; equipment_services = the toll-taker selling into the chain).\\n' +
   '- commodity_revenue_share: a number 0-1 = the fraction of revenue exposed to the chain commodity (1.0 for a pure producer; a diversified miner like TECK gets your best estimate; an equipment/services or utility name is lower). This feeds a deterministic torque formula, so estimate it honestly.\\n' +
-  '- value_chain_position: one line — which value-chain layer it occupies and what it sells.\\n' +
-  '- true_competitors: 4-8 REAL competitor tickers (business-model comparables, in-universe or NOT — include foreign listings and private-adjacent public proxies).\\n' +
-  '- chain_fit_confidence: high | medium | low (low = the FMP industry filter caught a name that is NOT really in this chain — a chemical company in the rare-earth screen, a generic hardware or software name in quantum, a non-chain royalty company, a legacy industrial). LOW-confidence names are DROPPED at merge, printed, never silent.\\n' +
+  '- value_chain_position: one line - which value-chain layer it occupies and what it sells.\\n' +
+  '- true_competitors: 4-8 REAL competitor tickers (business-model comparables, in-universe or NOT - include foreign listings and private-adjacent public proxies).\\n' +
+  '- chain_fit_confidence: high | medium | low (low = the FMP industry filter caught a name that is NOT really in this chain - a chemical company in the rare-earth screen, a generic hardware or software name in quantum, a non-chain royalty company, a legacy industrial). LOW-confidence names are DROPPED at merge, printed, never silent.\\n' +
   'Write (Write tool) VALID JSON to backend/_opus_debate/future_resources/_fr_' + i + '.json as {\"<SYM>\": {physical_anchor, chains, business_model, commodity_revenue_share, value_chain_position, true_competitors, chain_fit_confidence}, ...} covering EVERY symbol in your chunk. Reply exactly: DONE',
   { label: 'frmap:' + i, phase: 'ChainMap', model: '__RADAR_MODEL__' })))
 return 'DONE'
@@ -2137,20 +2137,20 @@ return 'DONE'
 
 
 def fr_map_merge():
-    """FUTURE RESOURCES Stage C-merge (spec §2 + §1.3, monthly, Phase 2): merge the Sonnet chain-map
+    """FUTURE RESOURCES Stage C-merge (spec Sec.2 + Sec.1.3, monthly, Phase 2): merge the Sonnet chain-map
     shards, DROP chain_fit_confidence=low / chain-less / physical-anchor-less names (printed, never
     silent), explode per-symbol chain_map/<SYM>.json, apply the royalty_streamer Stage-B cash-gate
     bypass, and write future_resources/universe.json (built_at, taxonomy_version, funnel, by_chain x
     lane, members with gates blocks). GUARDS: a developer mapped into lane A is a printed mapping
     error; a chain with historically >=3 candidates that maps to 0 members STOPs (a systematic mapper
-    failure, spec §1.3). The pre-rank cut to the debated set happens LATER in fr-prep, never here
+    failure, spec Sec.1.3). The pre-rank cut to the debated set happens LATER in fr-prep, never here
     (deterministic code never picks members, Do-NOT #2)."""
     import glob as _g
     from datetime import datetime as _dt
     tax = json.load(open(ROOT / "future_resources_chains.json", encoding="utf-8"))
     cand_f = FR_DIR / "_candidates.json"
     if not cand_f.exists():
-        print("GUARD: no future_resources/_candidates.json — run fr-universe first. STOP")
+        print("GUARD: no future_resources/_candidates.json - run fr-universe first. STOP")
         raise SystemExit(1)
     cd = json.load(open(cand_f, encoding="utf-8"))
     cands = {c["symbol"]: c for c in cd.get("candidates", []) if c.get("symbol")}
@@ -2164,9 +2164,9 @@ def fr_map_merge():
         except Exception as e:
             print(f"WARN: shard {os.path.basename(f)} unreadable ({e})")
     if not mapped:
-        print("GUARD: no chain-map shards (_fr_*.json) — run the _fr_map.js workflow first. STOP")
+        print("GUARD: no chain-map shards (_fr_*.json) - run the _fr_map.js workflow first. STOP")
         raise SystemExit(1)
-    # DROP low-confidence / chain-less / physical-anchor-less (printed, never silent — spec §2)
+    # DROP low-confidence / chain-less / physical-anchor-less (printed, never silent - spec Sec.2)
     def _bad(m):
         conf = (m.get("chain_fit_confidence") or "").lower()
         chains = [c for c in (m.get("chains") or []) if c in valid_chain_ids]
@@ -2180,7 +2180,7 @@ def fr_map_merge():
         chains = [c for c in (m.get("chains") or []) if c in valid_chain_ids][:2]
         (FR_DIR / "chain_map" / f"{s}.json").write_text(
             json.dumps({"symbol": s, **m, "chains": chains}, ensure_ascii=False, indent=1), encoding="utf-8")
-    # ── build members: cand (lane/gates) + chain-map (chains/business_model/commodity_revenue_share/…) ──
+    # -- build members: cand (lane/gates) + chain-map (chains/business_model/commodity_revenue_share/...) --
     def _n(v):
         return v if isinstance(v, (int, float)) else 0
     members, mapping_errors, royalty_flips = [], [], []
@@ -2190,7 +2190,7 @@ def fr_map_merge():
         bm = (m.get("business_model") or "").strip().lower()
         lane = c.get("lane", "")
         chains = [ci for ci in (m.get("chains") or []) if ci in valid_chain_ids][:2]
-        # royalty_streamer bypass (spec §1.2): a streamer that fell to lane B on the FCF-light cash
+        # royalty_streamer bypass (spec Sec.1.2): a streamer that fell to lane B on the FCF-light cash
         # gate flips to lane A if it clears the lane-A floors (royalty cos are structurally clean).
         royalty_bypass = False
         if bm == "royalty_streamer" and lane == "b" \
@@ -2200,7 +2200,7 @@ def fr_map_merge():
             royalty_bypass = True
             royalty_flips.append(s)
         # GUARD: a developer mapped into lane A is a mapping error (a pre-FCF dev cannot be a producer);
-        # print it loudly + flag it — the deterministic gates set the lane, so we surface, never silently move.
+        # print it loudly + flag it - the deterministic gates set the lane, so we surface, never silently move.
         mapping_error = bool(bm == "developer" and lane == "a")
         if mapping_error:
             mapping_errors.append(s)
@@ -2223,9 +2223,9 @@ def fr_map_merge():
     if royalty_flips:
         print(f"royalty_streamer bypass: flipped lane B->A on cash-gate exempt streamers: {royalty_flips}")
     if mapping_errors:
-        print(f"!!! MAPPING ERROR: developer(s) mapped into lane A (a pre-FCF dev is not a producer) — "
+        print(f"!!! MAPPING ERROR: developer(s) mapped into lane A (a pre-FCF dev is not a producer) - "
               f"surfaced, review the chain map: {mapping_errors}")
-    # by_chain x lane counts + the zero-map STOP guard (spec §1.3)
+    # by_chain x lane counts + the zero-map STOP guard (spec Sec.1.3)
     by_chain = {ch["id"]: {"a": 0, "b": 0} for ch in tax["chains"]}
     for mm in members:
         for cid in mm["chains"]:
@@ -2249,11 +2249,11 @@ def fr_map_merge():
           f"(lane_a={n_a} lane_b={n_b})")
     print(f"by_chain x lane: {by_chain}")
     if zero_stops:
-        print(f"GUARD (spec §1.3): chain(s) with >=3 candidates mapped to 0 members {zero_stops} — a "
+        print(f"GUARD (spec Sec.1.3): chain(s) with >=3 candidates mapped to 0 members {zero_stops} - a "
               f"systematic mapper failure. universe.json NOT written. STOP (do not reuse a prior month).")
         raise SystemExit(1)
     if n_a < 8:
-        print(f"NOTE: only {n_a} lane-A members mapped — fr-prep will STOP if <25 mappable; a thin lane-A "
+        print(f"NOTE: only {n_a} lane-A members mapped - fr-prep will STOP if <25 mappable; a thin lane-A "
               f"is expected on the current small commodity cohorts, not a bug.")
     uni = {"built_at": _dt.now().isoformat(), "taxonomy_version": tax.get("version"),
            "funnel": funnel, "by_chain": by_chain, "members": members}
@@ -2263,14 +2263,14 @@ def fr_map_merge():
     return len(members)
 
 
-# ═══════════════ FUTURE RESOURCES Phase 3 — Lane A debate / Director / post (spec §5) ═══════════════
+# ═══════════════ FUTURE RESOURCES Phase 3 - Lane A debate / Director / post (spec Sec.5) ═══════════════
 # Clone lineage: the disruptor prep/input/csv/publish recipe (deleted 2026-07-10, recovered from
-# git history 48daee82^) with the FR deltas — isolated future_resources/ subtree, chain-map join,
-# §3 torque metrics in the bundle + grade input, the regime sidecar, and the typed valuation block
+# git history 48daee82^) with the FR deltas - isolated future_resources/ subtree, chain-map join,
+# Sec.3 torque metrics in the bundle + grade input, the regime sidecar, and the typed valuation block
 # (pipeline-v3 step 6b/7 schema) emitted from day one so _numeric_gate works on FR records.
 
 def _fr_redebate_triggers(members):
-    """Weekly re-debate triggers (disruptor §3.1 clone over the FR subtree). A member RE-DEBATES iff:
+    """Weekly re-debate triggers (disruptor Sec.3.1 clone over the FR subtree). A member RE-DEBATES iff:
     (a) no cached result; (b) cached result > 28d old; (c) earnings since (transcript newer than the
     result); (d) |price move| >= 15% vs the debate's stamped price; (e) close < published
     thesis_break_px; (f) new entrant. Everything else keeps its cached debate and is RE-GRADED by the
@@ -2336,12 +2336,12 @@ def _fr_redebate_triggers(members):
 
 
 def fr_prep():
-    """FUTURE RESOURCES Lane A prep/bundle (spec §5, weekly — disruptor-prep clone over the isolated
-    future_resources/ subtree). Steps: universe staleness self-gate (21d — how "monthly" fires) ->
+    """FUTURE RESOURCES Lane A prep/bundle (spec Sec.5, weekly - disruptor-prep clone over the isolated
+    future_resources/ subtree). Steps: universe staleness self-gate (21d - how "monthly" fires) ->
     Lane A member selection + PRE-RANK cut (<=8/chain then <=40 global, held names protected; STOP if
-    <25 mappable Lane A members — the pre-rank decides who gets DEBATED, never who gets PICKED,
-    Do-NOT #2) -> §3.1-style re-debate triggers -> selective self-clean -> per-member input bundles
-    (signal_type="future_resources", metrics via E._build_debate_metrics + _fmp_segments + the §3
+    <25 mappable Lane A members - the pre-rank decides who gets DEBATED, never who gets PICKED,
+    Do-NOT #2) -> Sec.3.1-style re-debate triggers -> selective self-clean -> per-member input bundles
+    (signal_type="future_resources", metrics via E._build_debate_metrics + _fmp_segments + the Sec.3
     torque metrics + the chain-map row + the regime sidecar) -> transcripts via E.resolve_transcripts
     (no FMP -> ONLINE_SYMS) -> dump engine system prompts -> render _FR_WORKFLOW_TEMPLATE ->
     future_resources/_fr_debate.js (BATCH=8, typed valuation block emitted from day one).
@@ -2353,10 +2353,10 @@ def fr_prep():
     for d in (FR_INP, FR_TXT, FR_RES, FR_DOSS):
         d.mkdir(parents=True, exist_ok=True)
 
-    # ── universe staleness self-gate (monthly rebuild fires through here) ──
+    # -- universe staleness self-gate (monthly rebuild fires through here) --
     uni_f = FR_DIR / "universe.json"
     if not uni_f.exists():
-        print("FR UNIVERSE STALE — run fr-universe, the _fr_map.js workflow, then fr-map-merge first. STOP")
+        print("FR UNIVERSE STALE - run fr-universe, the _fr_map.js workflow, then fr-map-merge first. STOP")
         sys.exit(1)
     uni = json.load(open(uni_f, encoding="utf-8"))
     try:
@@ -2365,10 +2365,10 @@ def fr_prep():
     except Exception:
         age = 999
     if age > 21:
-        print("FR UNIVERSE STALE (>21d) — run fr-universe / fr-map / fr-map-merge first. STOP")
+        print("FR UNIVERSE STALE (>21d) - run fr-universe / fr-map / fr-map-merge first. STOP")
         sys.exit(1)
 
-    # ── Lane A members + held-name union (the ONLY carry-over, Do-NOT #3) ──
+    # -- Lane A members + held-name union (the ONLY carry-over, Do-NOT #3) --
     lane_a = [m for m in uni.get("members", []) if m.get("symbol") and m.get("lane") == "a"]
     held = set()
     apx_f = E.FRONTEND_DIR / "public" / "speculair_future_resources.json"
@@ -2381,13 +2381,13 @@ def fr_prep():
     for m in lane_a:
         m["held"] = m["symbol"] in held
     if len(lane_a) < 25:
-        print(f"GUARD: only {len(lane_a)} mappable Lane A members (<25) — DEGRADED universe, STOP "
+        print(f"GUARD: only {len(lane_a)} mappable Lane A members (<25) - DEGRADED universe, STOP "
               f"(disruptor Stage-D precedent; do not debate a thin book, do not reuse a prior month)")
         sys.exit(1)
 
-    # ── PRE-RANK cut: deterministic quality/torque ordering for the DEBATE BUDGET only (never
+    # -- PRE-RANK cut: deterministic quality/torque ordering for the DEBATE BUDGET only (never
     #    membership): ebitda margin desc (cost-curve proxy), rev_yoy desc, funded leverage asc.
-    #    <=8 per PRIMARY chain, then <=40 global; held names are never cut. ──
+    #    <=8 per PRIMARY chain, then <=40 global; held names are never cut. --
     def _prerank(m):
         g = m.get("gates", {})
         rev, ebitda = g.get("ttm_revenue"), g.get("ttm_ebitda")
@@ -2412,11 +2412,11 @@ def fr_prep():
     print(f"fr-prep pre-rank: {len(lane_a)} Lane A mapped -> {len(members)} debated "
           f"(<=8/chain, <=40 global, held protected: {sorted(held & selected) or 'none'})")
 
-    # ── §3.1 re-debate triggers (BEFORE the selective self-clean) ──
+    # -- Sec.3.1 re-debate triggers (BEFORE the selective self-clean) --
     redebate, cached, why = _fr_redebate_triggers(members)
     redebate &= selected                                            # only budgeted names debate
 
-    # ── selective self-clean: archive ONLY re-debated results, keep fresh cached ones ──
+    # -- selective self-clean: archive ONLY re-debated results, keep fresh cached ones --
     if FR_ARCH.exists():
         shutil.rmtree(FR_ARCH, ignore_errors=True)
     FR_ARCH.mkdir(parents=True, exist_ok=True)
@@ -2433,17 +2433,17 @@ def fr_prep():
         fmp_syms, online_syms = [], sorted(redebate)
         print("DRY-LOGIC: bundle/transcript/torque-metric builds SKIPPED (all names emitted as online)")
     else:
-        # ── §3 torque metrics for the bundles (chain-map commodity_revenue_share already on members) ──
+        # -- Sec.3 torque metrics for the bundles (chain-map commodity_revenue_share already on members) --
         sys.path.insert(0, os.path.join(BK, "_opus_debate"))
         rm = {}
         try:
             import _resource_metrics as RM
             rm = RM.compute([m for m in members if m["symbol"] in redebate], offline=False)
         except Exception as _e:
-            print(f"WARN: _resource_metrics compute failed ({_e}) — bundles ship without torque metrics")
-        # ── bundles: per re-debated member, inputs/<SYM>.json. Scan firewall: scan_fin ONLY through
+            print(f"WARN: _resource_metrics compute failed ({_e}) - bundles ship without torque metrics")
+        # -- bundles: per re-debated member, inputs/<SYM>.json. Scan firewall: scan_fin ONLY through
         #    E._SCAN_FIN_FIELDS (hit_prob/factor_scores excluded by design); off-scan members build
-        #    scan_fin from the Stage-B gates (absent fields stay ABSENT, never zero-filled). ──
+        #    scan_fin from the Stage-B gates (absent fields stay ABSENT, never zero-filled). --
         scan = gcs_io.gcs_read_json("scans/latest_global.json") or json.load(
             open("../frontend/public/latest_global.json", encoding="utf-8"))
         scan_by_sym = {s.get("symbol"): s for s in scan.get("stocks", []) if s.get("symbol")}
@@ -2458,7 +2458,7 @@ def fr_prep():
         for m in sorted(members, key=lambda x: x["symbol"]):
             sym = m["symbol"]
             if sym not in redebate:
-                continue                                    # cached & fresh — Director re-grades as-is
+                continue                                    # cached & fresh - Director re-grades as-is
             sc = scan_by_sym.get(sym, {})
             g = m.get("gates", {})
             if sc:
@@ -2511,12 +2511,12 @@ def fr_prep():
             else:
                 online_syms.append(sym)
 
-    # ── dump the engine system prompts into future_resources/ (idempotent; standalone run) ──
+    # -- dump the engine system prompts into future_resources/ (idempotent; standalone run) --
     (FR_DIR / "interrogator_system.txt").write_text(E.INTERROGATOR_SYSTEM_PROMPT, encoding="utf-8")
     (FR_DIR / "architect_system.txt").write_text(E.ARCHITECT_SYSTEM_PROMPT, encoding="utf-8")
     (FR_DIR / "moderator_system.txt").write_text(E.MODERATOR_SYSTEM_PROMPT, encoding="utf-8")
 
-    # ── render the workflow with __SYMS__/__ONLINE_SYMS__ baked in (the args-delivery workaround) ──
+    # -- render the workflow with __SYMS__/__ONLINE_SYMS__ baked in (the args-delivery workaround) --
     js = (_FR_WORKFLOW_TEMPLATE
           .replace("__SYMS__", json.dumps(fmp_syms))
           .replace("__ONLINE_SYMS__", json.dumps(online_syms))
@@ -2535,9 +2535,9 @@ def fr_prep():
 
 
 def fr_input():
-    """FUTURE RESOURCES grade-input builder (spec §5/§3.2, mirrors value_input()/disruptor_input()).
+    """FUTURE RESOURCES grade-input builder (spec Sec.5/Sec.3.2, mirrors value_input()/disruptor_input()).
     One row per future_resources/results/<SYM>.json: universe/chain-map join (chains, business_model,
-    physical_anchor, commodity_revenue_share) + the §3 torque metrics (_resource_metrics, stamped
+    physical_anchor, commodity_revenue_share) + the Sec.3 torque metrics (_resource_metrics, stamped
     deterministically) + chain_regime from the regime sidecar + gate tags (growth_capex_fcf_negative,
     funded_solvency, balance_sheet_stale) + the CRO sop_mos_pct + the forensic gate REUSED VERBATIM
     (iscore<=2 -> EXCLUDE; missing -> CAP fail-closed; DETERIORAT -> CAP). Writes fr_grade_input.json
@@ -2554,9 +2554,9 @@ def fr_input():
             regime_state = {}
     res_files = sorted(glob.glob(str(FR_RES / "*.json")))
     if not res_files:
-        print("GUARD: no future_resources/results/ records — run fr-prep + the debate Workflow first. STOP")
+        print("GUARD: no future_resources/results/ records - run fr-prep + the debate Workflow first. STOP")
         sys.exit(1)
-    # §3 torque metrics over the debated members (chain-map commodity_revenue_share already joined)
+    # Sec.3 torque metrics over the debated members (chain-map commodity_revenue_share already joined)
     sys.path.insert(0, os.path.join(BK, "_opus_debate"))
     deb_syms = [os.path.basename(f)[:-5] for f in res_files]
     rm = {}
@@ -2564,7 +2564,7 @@ def fr_input():
         import _resource_metrics as RM
         rm = RM.compute([uni[s] for s in deb_syms if s in uni], offline=("--offline" in sys.argv))
     except Exception as _e:
-        print(f"WARN: _resource_metrics compute failed ({_e}) — grade input ships without torque metrics")
+        print(f"WARN: _resource_metrics compute failed ({_e}) - grade input ships without torque metrics")
     fl = _funded_leverage(deb_syms)
     out = []
     n_gate = n_gcf = n_stale = 0
@@ -2579,7 +2579,7 @@ def fr_input():
         mt = rm.get(sym) or {}
         val = r.get("valuation") or {}
         price = r.get("live_price") or val.get("live_price") or u.get("price")
-        # TYPED FIRST (2026-07-28) — same inversion as value_input carried: the prose parse was tried
+        # TYPED FIRST (2026-07-28) - same inversion as value_input carried: the prose parse was tried
         # BEFORE the arithmetic-gated typed number, so a mis-parsed sentence beat a correct field.
         sop_num = (val.get("base_fv_px") if isinstance(val.get("base_fv_px"), (int, float)) and val.get("base_fv_px") > 0
                    else _val_money(r.get("sop_fair_value")))
@@ -2619,7 +2619,7 @@ def fr_input():
             "true_competitors": u.get("true_competitors") or [],
             "commodity_revenue_share": u.get("commodity_revenue_share"),
             "royalty_bypass": bool(u.get("royalty_bypass")), "mapping_error": bool(u.get("mapping_error")),
-            # §3 deterministic metrics (torque set or non-commodity set, per taxonomy)
+            # Sec.3 deterministic metrics (torque set or non-commodity set, per taxonomy)
             "torque_metrics": mt.get("torque_metrics"),
             "ebitda_margin_ttm": mt.get("ebitda_margin_ttm"), "ebitda_margin_band": mt.get("ebitda_margin_band"),
             "fcf_torque_10pct": mt.get("fcf_torque_10pct"),
@@ -2652,13 +2652,13 @@ def fr_input():
     for x in out:
         x["as_of"] = _asof
     (FR_DIR / "fr_grade_input.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
-    # Director rotation ledger (best-effort; EMPTY on the maiden run — the prompt says so)
+    # Director rotation ledger (best-effort; EMPTY on the maiden run - the prompt says so)
     try:
         write_director_ledger("fr", FR_DIR / "apex_basket_fr.json",
                               E.FRONTEND_DIR / "public" / "speculair_future_resources_tracking.json")
     except Exception as _e:
         print(f"WARN: fr ledger build failed ({_e})")
-    prompt_txt = f"AS OF {_asof} — every metric row in fr_grade_input.json carries this date.\n\n" + FR_DIRECTOR_PROMPT
+    prompt_txt = f"AS OF {_asof} - every metric row in fr_grade_input.json carries this date.\n\n" + FR_DIRECTOR_PROMPT
     pa = FR_DIR / "apex_basket_fr.json"                # feed-forward: prior MEASURED correlations
     if pa.exists():
         try:
@@ -2684,9 +2684,9 @@ def fr_input():
 
 
 def fr_csv():
-    """CSV of the FUTURE RESOURCES Lane A apex (apex_basket_fr.json) + memo — clone of value_csv()/
+    """CSV of the FUTURE RESOURCES Lane A apex (apex_basket_fr.json) + memo - clone of value_csv()/
     disruptor_csv() over the future_resources/ subtree. Chain-flavored columns: chains/business_model/
-    physical_anchor/cost_curve/contracting_reserve/capital_discipline + the §3 metric fields +
+    physical_anchor/cost_curve/contracting_reserve/capital_discipline + the Sec.3 metric fields +
     chain_regime; drops the value-only mos_agreement*/cro_only columns."""
     import csv
     apex = json.load(open(FR_DIR / "apex_basket_fr.json", encoding="utf-8"))
@@ -2783,9 +2783,9 @@ def fr_csv():
     return len(rows)
 
 
-# ════════════════════ MINING — commodity-macro dials + winner scoreboard (SPLIT_SPEC §2) ════════════════════
+# ════════════════════ MINING - commodity-macro dials + winner scoreboard (SPLIT_SPEC Sec.2) ════════════════════
 def mining_macro_mode(push_gcs=False):
-    """Build _opus_debate/mining/commodity_macro.json — the Tavi-Costa dial set + the per-chain
+    """Build _opus_debate/mining/commodity_macro.json - the Tavi-Costa dial set + the per-chain
     winner scoreboard the /commodities page renders and the Mining Director cites.
 
     Runs BEFORE the Mining debates in the weekly routine so the Director cites fresh dials. The math
@@ -2797,10 +2797,10 @@ def mining_macro_mode(push_gcs=False):
 
     Fail-open by construction: a total FMP outage still writes a payload (every scoreboard leg pays
     its neutral midpoint, so scores compress symmetrically and no chain is singled out) and this
-    function still exits 0 — a degraded macro read must never block the Mining publish."""
+    function still exits 0 - a degraded macro read must never block the Mining publish."""
     import subprocess
     # KEY ORDER IS LOAD-BEARING: screener_v6 binds FMP_KEY at import (screener_v6.py:70), so keys
-    # must be in the environment BEFORE it is imported — the _fr_post.py precedent. And because
+    # must be in the environment BEFORE it is imported - the _fr_post.py precedent. And because
     # another mode in this process may already have imported it with an empty key, re-bind the
     # module attribute explicitly. Getting this wrong doesn't error, it silently produces a fully
     # degraded payload (every dial 'missing') that LOOKS like an FMP outage.
@@ -2809,7 +2809,7 @@ def mining_macro_mode(push_gcs=False):
     if not screener_v6.FMP_KEY:
         screener_v6.FMP_KEY = os.environ.get("FMP_API_KEY", "")
     if not screener_v6.FMP_KEY:
-        print("WARN mining-macro: no FMP_API_KEY — every dial will read 'missing' and the "
+        print("WARN mining-macro: no FMP_API_KEY - every dial will read 'missing' and the "
               "scoreboard will compress to neutral. This is fail-open, not a live read.")
     sys.path.insert(0, str(ROOT))
     import mining_macro as MM
@@ -2835,8 +2835,8 @@ def mining_macro_mode(push_gcs=False):
 
 def fr_publish(push_gcs=False):
     """Stage the public Future Resources Lane A payload (frontend/public/speculair_future_resources.json)
-    AND maintain the Lane A live-forward NAV (spec §7, mirrors value_publish/disruptor_publish).
-    CONTRACT: the picks array key is `apex_basket` and the embedded tracking key is `fr_tracking` —
+    AND maintain the Lane A live-forward NAV (spec Sec.7, mirrors value_publish/disruptor_publish).
+    CONTRACT: the picks array key is `apex_basket` and the embedded tracking key is `fr_tracking` -
     the pre-staged nightly _mark_speculair_nav() tuple reads exactly those. Lane A NAV state files
     (speculair_future_resources_tracking.json + _weighted) are NEVER blended with any other book or
     with Lane B (Do-NOT #1). Degraded-publish guards (Do-NOT #10): <6 picks, a chain-cap breach after
@@ -2846,19 +2846,19 @@ def fr_publish(push_gcs=False):
     apx = json.load(open(FR_DIR / "apex_basket_fr.json", encoding="utf-8"))
     # PUBLISH GATE (mirror of value_publish's): never publish an un-posted basket.
     if not apx.get("fr_post_applied") and "--force" not in sys.argv:
-        print("GUARD fr publish gate: apex_basket_fr.json has NO fr_post_applied stamp — run fr-post "
+        print("GUARD fr publish gate: apex_basket_fr.json has NO fr_post_applied stamp - run fr-post "
               "first. Aborting (override: --force).")
         sys.exit(1)
     picks = [p for p in apx.get("apex_basket", []) if isinstance(p, dict) and p.get("symbol")]
-    # Do-NOT #10: never publish degraded — a thin book is a report-and-stop, not a small payload.
+    # Do-NOT #10: never publish degraded - a thin book is a report-and-stop, not a small payload.
     if len(picks) < 6:
-        print(f"GUARD fr publish: only {len(picks)} Lane A picks (<6) — DEGRADED, report and stop "
+        print(f"GUARD fr publish: only {len(picks)} Lane A picks (<6) - DEGRADED, report and stop "
               f"(no payload written, no NAV chained, other books unaffected).")
         sys.exit(1)
     # Do-NOT #10: chain-cap breach after post = stop. Re-derive per-chain weight AND name count from
     # the FINAL weights (a 2-chain name counts toward both); weight tolerance 0.5pp for rounding.
     # The count cap (<=3/chain) cannot be fixed deterministically without changing membership (P1),
-    # so a count breach stops HERE — the Director slate must be fixed and re-posted.
+    # so a count breach stops HERE - the Director slate must be fixed and re-posted.
     weights = apx.get("weights") or {}
     chain_w, chain_n = {}, {}
     for p in picks:
@@ -2868,8 +2868,8 @@ def fr_publish(push_gcs=False):
     breaches = {cid: round(w, 2) for cid, w in chain_w.items() if w > 30.0 + 0.5}
     count_breaches = {cid: n for cid, n in chain_n.items() if n > 3}
     if breaches or count_breaches:
-        print(f"GUARD fr publish: chain cap breach AFTER post — weight {breaches} (>30%) / count "
-              f"{count_breaches} (>3 names) — report and stop; fix the Director slate / re-run fr-post "
+        print(f"GUARD fr publish: chain cap breach AFTER post - weight {breaches} (>30%) / count "
+              f"{count_breaches} (>3 names) - report and stop; fix the Director slate / re-run fr-post "
               f"before publishing.")
         sys.exit(1)
     try:                                              # capture this run's Director decisions into the year ledger
@@ -2909,7 +2909,7 @@ def fr_publish(push_gcs=False):
         if pp:
             p["entry_price"] = pp.get("entry_price")
             p["entry_date"] = pp.get("entry_date")
-    # honest pool-quality banner (spec §7 text — Lane A NAV steps weekly, Lane B is a tracker)
+    # honest pool-quality banner (spec Sec.7 text - Lane A NAV steps weekly, Lane B is a tracker)
     uni = {}
     if (FR_DIR / "universe.json").exists():
         try:
@@ -2931,16 +2931,16 @@ def fr_publish(push_gcs=False):
                 "n_pool": len(gin), "verdict_counts": dict(vc), "chain_regime_counts": dict(regs),
                 "taxonomy_version": taxonomy_version,
                 "banner": ("Commodity-cyclical sleeve. Lane A NAV steps weekly until the nightly mark ships. "
-                           "Lane B is an event tracker, not a NAV. US-listed names only — much developer "
+                           "Lane B is an event tracker, not a NAV. US-listed names only - much developer "
                            "alpha lists on TSX/ASX and is out of scope. Never blended with any other book.")}
         except Exception:
             pool_stats = {}
     # XME/URA BENCHMARK LINE (disruptor SMH/QQQ precedent, benchmarks swapped to the chain betas):
-    # anchors persist in a SIDECAR, measured from first-stamp forward — no back-fill. NOT the
+    # anchors persist in a SIDECAR, measured from first-stamp forward - no back-fill. NOT the
     # tracking file: _update_apex_tracking rebuilds that file from a fresh state dict earlier in
     # THIS function, so an anchor stored there is wiped and re-stamped at today's prices on every
     # publish (benchmark pinned at ~0% forever). The book return comes from the RETURNED tracking
-    # summary — the state file carries nav/positions/history but never since_inception_pct.
+    # summary - the state file carries nav/positions/history but never since_inception_pct.
     bench = {}
     try:
         anch_f = FR_DIR / "_benchmark_anchors.json"
@@ -3001,7 +3001,7 @@ def fr_publish(push_gcs=False):
             if not ok:
                 failed.append(key)
         if failed:
-            print(f"GUARD fr publish: GCS push FAILED after one retry for {failed} — report and stop "
+            print(f"GUARD fr publish: GCS push FAILED after one retry for {failed} - report and stop "
                   f"(the local payload is staged; other books unaffected).")
             sys.exit(1)
         # LIVE readback (the public URL can serve a stale cache right after a write)
@@ -3021,7 +3021,7 @@ def fr_publish(push_gcs=False):
 
 def fr_numeric_gate():
     """Run the shared numeric-integrity gate over the FR results subtree (the run() res_dir injection
-    point — _numeric_gate.py itself is NOT edited). FR records carry the typed valuation block from
+    point - _numeric_gate.py itself is NOT edited). FR records carry the typed valuation block from
     day one, so --legacy is unnecessary but accepted. Flags passthrough: --dry-run/--enforce/--final/
     --offline/--symbol <SYM>."""
     sys.path.insert(0, os.path.join(BK, "_opus_debate"))
@@ -3042,10 +3042,10 @@ def fr_numeric_gate():
            res_dir=FR_RES)
 
 
-# ── FR Lane A debate workflow template (disruptor-template clone; FR BRIEF; chain_map + §3 metrics
+# -- FR Lane A debate workflow template (disruptor-template clone; FR BRIEF; chain_map + Sec.3 metrics
 #    in the bundle; typed valuation block [pipeline-v3 step 6b/7] emitted from day one so
-#    _numeric_gate works on FR records; BATCH=8; NO in-workflow Director — fr-input builds the grade
-#    input AFTER the debates, then ONE Director agent grades it; NO skeptic tier for Lane A (§5)). ──
+#    _numeric_gate works on FR records; BATCH=8; NO in-workflow Director - fr-input builds the grade
+#    input AFTER the debates, then ONE Director agent grades it; NO skeptic tier for Lane A (Sec.5)). --
 _FR_WORKFLOW_TEMPLATE = r"""export const meta = {
   name: 'speculair-future-resources-weekly',
   description: 'Weekly Future Resources Lane A debate (producers/royalties/toll-takers; chain map already produced competitors). Director runs separately after fr-input.',
@@ -3054,26 +3054,26 @@ _FR_WORKFLOW_TEMPLATE = r"""export const meta = {
 const DIR = 'backend/_opus_debate/future_resources'
 const RES = DIR + '/results'
 const SYMS = __SYMS__               // have a bundled FMP transcript (read local file)
-const ONLINE_SYMS = __ONLINE_SYMS__ // no FMP transcript — agent fetches the latest one online
+const ONLINE_SYMS = __ONLINE_SYMS__ // no FMP transcript - agent fetches the latest one online
 
-// ── PHASE 1 — DEBATE: Interrogator -> Architect (bull/bear + Sum-of-Parts) -> web verification -> CRO. ──
+// -- PHASE 1 - DEBATE: Interrogator -> Architect (bull/bear + Sum-of-Parts) -> web verification -> CRO. --
 // No Radar phase: the monthly chain map already produced true competitors. All names run as
 // general-purpose agents so EVERY name (FMP + online) can web-verify its cost/contract facts.
 function debatePrompt(sym, online) {
-  const BRIEF = 'Read ' + DIR + '/chain_map/' + sym + '.json — this name has an assigned chain(s), business_model, physical anchor, value-chain position, commodity_revenue_share and true competitors. Its input bundle carries a resource_metrics block (deterministic cost-curve/torque proxies: ebitda_margin_ttm + cohort band, fcf_torque_10pct, commodity_beta_2y, ndebt_ebitda; or the non-commodity set gm_trajectory/rev_yoy/fcf_margin for robotics/quantum) and a chain_regime block (per-chain TAILWIND/NEUTRAL/HEADWIND from the regime sidecar). This is a RESOURCES LANE-A debate, not a catalyst debate: judge (1) COST-CURVE POSITION — the metrics are honest PROXIES; web-verify against company-reported AISC / unit-cost guidance where published, and SAY EXPLICITLY when the proxy and the company-reported figure disagree; (2) CONTRACTING and RESERVE LIFE — the contract book vs spot exposure, reserve/resource life with numbers, NAMED offtake counterparties (an MoU is not a contract); (3) CAPITAL DISCIPLINE — the sector besetting sin: capex history through the LAST cycle, buyback/dividend behavior at the top; (4) THE REGIME — read FUTURE_RESOURCES_REGIME.md (repo root) for this name chain section and apply the cycle read. A live catalyst is neither a plus nor a requirement (Lane B owns catalysts). TORQUE IS SYMMETRIC: the bear case MUST price the downside torque with the number (the same fcf_torque_10pct cuts both ways on a -10% move), not just assert commodity risk.'
+  const BRIEF = 'Read ' + DIR + '/chain_map/' + sym + '.json - this name has an assigned chain(s), business_model, physical anchor, value-chain position, commodity_revenue_share and true competitors. Its input bundle carries a resource_metrics block (deterministic cost-curve/torque proxies: ebitda_margin_ttm + cohort band, fcf_torque_10pct, commodity_beta_2y, ndebt_ebitda; or the non-commodity set gm_trajectory/rev_yoy/fcf_margin for robotics/quantum) and a chain_regime block (per-chain TAILWIND/NEUTRAL/HEADWIND from the regime sidecar). This is a RESOURCES LANE-A debate, not a catalyst debate: judge (1) COST-CURVE POSITION - the metrics are honest PROXIES; web-verify against company-reported AISC / unit-cost guidance where published, and SAY EXPLICITLY when the proxy and the company-reported figure disagree; (2) CONTRACTING and RESERVE LIFE - the contract book vs spot exposure, reserve/resource life with numbers, NAMED offtake counterparties (an MoU is not a contract); (3) CAPITAL DISCIPLINE - the sector besetting sin: capex history through the LAST cycle, buyback/dividend behavior at the top; (4) THE REGIME - read FUTURE_RESOURCES_REGIME.md (repo root) for this name chain section and apply the cycle read. A live catalyst is neither a plus nor a requirement (Lane B owns catalysts). TORQUE IS SYMMETRIC: the bear case MUST price the downside torque with the number (the same fcf_torque_10pct cuts both ways on a -10% move), not just assert commodity risk.'
   const step1 = online
-    ? '1. Read ' + DIR + '/inputs/' + sym + '.json (fields metrics_str/sector/signal_type/company + chains/business_model/physical_anchor/commodity_revenue_share/chain_regime/resource_metrics/gates; metrics may include a SEGMENT REVENUE block). NO FMP transcript is bundled. FIRST try the paid FMP MCP tools via ToolSearch (keyword search e.g. "FMP earnings transcript", "FMP statements", "FMP news") for ' + sym + ' and its MOST RECENT earnings-call transcript and quarterly numbers; if FMP has nothing for this ticker, THEN use WebSearch + WebFetch to find the latest transcript / quarterly results / earnings release / management commentary / investor presentation (IR site, Tikr, Seeking Alpha, Investing.com, MarketScreener, plus the latest regulatory filing) — do NOT scrape press-release PDFs by shell. If genuinely nothing is findable, say so and reason from the fundamentals — never fabricate quotes or figures.\n'
+    ? '1. Read ' + DIR + '/inputs/' + sym + '.json (fields metrics_str/sector/signal_type/company + chains/business_model/physical_anchor/commodity_revenue_share/chain_regime/resource_metrics/gates; metrics may include a SEGMENT REVENUE block). NO FMP transcript is bundled. FIRST try the paid FMP MCP tools via ToolSearch (keyword search e.g. "FMP earnings transcript", "FMP statements", "FMP news") for ' + sym + ' and its MOST RECENT earnings-call transcript and quarterly numbers; if FMP has nothing for this ticker, THEN use WebSearch + WebFetch to find the latest transcript / quarterly results / earnings release / management commentary / investor presentation (IR site, Tikr, Seeking Alpha, Investing.com, MarketScreener, plus the latest regulatory filing) - do NOT scrape press-release PDFs by shell. If genuinely nothing is findable, say so and reason from the fundamentals - never fabricate quotes or figures.\n'
     : '1. Read ' + DIR + '/inputs/' + sym + '.json (fields metrics_str/sector/signal_type + chains/business_model/physical_anchor/commodity_revenue_share/chain_regime/resource_metrics/gates; metrics may include a SEGMENT REVENUE block) and ' + DIR + '/transcripts/' + sym + '.txt.\n'
-  return 'You run the COMPLETE multi-agent debate for ' + sym + ' as Claude Opus 5 — Interrogator, Architect, then CRO/Moderator — allocating REAL capital to a FUTURE RESOURCES Lane A name (profitable producer / royalty / equipment toll-taker in a physical value chain). Be skeptical and current-facts-driven; mining is where promoters live.\n' +
+  return 'You run the COMPLETE multi-agent debate for ' + sym + ' as Claude Opus 5 - Interrogator, Architect, then CRO/Moderator - allocating REAL capital to a FUTURE RESOURCES Lane A name (profitable producer / royalty / equipment toll-taker in a physical value chain). Be skeptical and current-facts-driven; mining is where promoters live.\n' +
     step1 +
-    '1b. LIVE PRICE (MANDATORY, BEFORE any valuation reasoning): if the metrics block does not state a current price, you MUST fetch the live quote via the FMP MCP tools (ToolSearch, keyword "FMP quote") and state the price + currency you are using. NEVER assume or infer where the stock trades — a fabricated price inverts the entire risk/reward. For dual-listed names state WHICH listing/currency your numbers are in.\n' +
-    '2. INTERROGATOR: read ' + DIR + '/interrogator_system.txt; produce the full forensic dossier (8 sections + final "CREDIBILITY_SCORE: <1-5> | TRAJECTORY: <...>"); pay special attention to serial-diluter financing patterns, reserve-report inflation, and promoter language — the sector kill list. Write it to ' + DIR + '/dossiers/' + sym + '.md.\n' +
+    '1b. LIVE PRICE (MANDATORY, BEFORE any valuation reasoning): if the metrics block does not state a current price, you MUST fetch the live quote via the FMP MCP tools (ToolSearch, keyword "FMP quote") and state the price + currency you are using. NEVER assume or infer where the stock trades - a fabricated price inverts the entire risk/reward. For dual-listed names state WHICH listing/currency your numbers are in.\n' +
+    '2. INTERROGATOR: read ' + DIR + '/interrogator_system.txt; produce the full forensic dossier (8 sections + final "CREDIBILITY_SCORE: <1-5> | TRAJECTORY: <...>"); pay special attention to serial-diluter financing patterns, reserve-report inflation, and promoter language - the sector kill list. Write it to ' + DIR + '/dossiers/' + sym + '.md.\n' +
     '3. PEER COMPS: read ' + DIR + '/chain_map/' + sym + '.json (this name has assigned chain(s), value_chain_position and true_competitors) as the relative-value lever for the valuation below (skip if the file is absent).\n' +
-    '4. ARCHITECT: read ' + DIR + '/architect_system.txt; produce bull_thesis and bear_thesis, AND a SUM-OF-PARTS valuation — value the business by its PARTS (segment SoP from the SEGMENT REVENUE block x peer multiples where present; else whole-company intrinsic via peer multiple / NAV where reserves support one), then apply overlays (net cash, announced asset-sales, streaming/royalty portfolios valued separately). The bear case MUST price the DOWNSIDE TORQUE with the number (a -10% commodity move through fcf_torque_10pct), not just assert commodity risk. Output sop_bull (favorable parts) and sop_bear (adverse parts, ASSUMING THE CHAIN REGIME TURNS AGAINST IT), each a per-share value + the parts breakdown.\n' +
-    '5. COST/CONTRACT VERIFICATION (web, MANDATORY): identify the load-bearing cost-curve and contract facts (company-reported AISC or unit-cost guidance, contracted volumes and realized-price mechanics, reserve life, named offtakers) and verify their CURRENT status as of today — FIRST the paid FMP MCP tools via ToolSearch ("FMP statements", "FMP news", "FMP earnings transcript"), then WebSearch/WebFetch for what FMP lacks. Where the deterministic proxy metrics DISAGREE with company-reported figures, say so explicitly. Also emit catalyst_status = FIRED | ARB | PENDING_HARD | SOFT_EXTENDED | UNVERIFIABLE for the record (it must NOT drive the verdict — Lane B owns catalysts). Dated evidence; never fabricate — a spot price without a source does not appear.\n' +
+    '4. ARCHITECT: read ' + DIR + '/architect_system.txt; produce bull_thesis and bear_thesis, AND a SUM-OF-PARTS valuation - value the business by its PARTS (segment SoP from the SEGMENT REVENUE block x peer multiples where present; else whole-company intrinsic via peer multiple / NAV where reserves support one), then apply overlays (net cash, announced asset-sales, streaming/royalty portfolios valued separately). The bear case MUST price the DOWNSIDE TORQUE with the number (a -10% commodity move through fcf_torque_10pct), not just assert commodity risk. Output sop_bull (favorable parts) and sop_bear (adverse parts, ASSUMING THE CHAIN REGIME TURNS AGAINST IT), each a per-share value + the parts breakdown.\n' +
+    '5. COST/CONTRACT VERIFICATION (web, MANDATORY): identify the load-bearing cost-curve and contract facts (company-reported AISC or unit-cost guidance, contracted volumes and realized-price mechanics, reserve life, named offtakers) and verify their CURRENT status as of today - FIRST the paid FMP MCP tools via ToolSearch ("FMP statements", "FMP news", "FMP earnings transcript"), then WebSearch/WebFetch for what FMP lacks. Where the deterministic proxy metrics DISAGREE with company-reported figures, say so explicitly. Also emit catalyst_status = FIRED | ARB | PENDING_HARD | SOFT_EXTENDED | UNVERIFIABLE for the record (it must NOT drive the verdict - Lane B owns catalysts). Dated evidence; never fabricate - a spot price without a source does not appear.\n' +
     '6. CRO/MODERATOR: read ' + DIR + '/moderator_system.txt; ' + BRIEF + ' RECONCILE sop_bull/sop_bear into a base-case sop_fair_value (+ sop_breakdown) and risk_reward (downside-to-break vs upside-to-fair); judge the cost-curve position vs the verified figures; sanity-check the multiple against the chain_map true_competitors. Produce verdict (A/B/C), conviction (int 1-5), consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion. THEN, separately, value_conviction (int 1-5): the value case judged on valuation vs the SoP fair value + forensic quality ONLY. The two scores MUST be allowed to diverge.\n' +
-    '6b. TYPED VALUATION BLOCK (MANDATORY — the numbers the pipeline checks and sizes on): distill your reconciliation into POINT NUMBERS per share, in the quote currency: bear_px (your adverse case — ONE number; your ranges stay in the prose), base_fv_px (base case), bull_px (favorable case), downside_floor_px (ONLY a structural floor — deal terms, net cash/share, tender; else null — a chart low or a dividend yield is NOT a floor), valuation_method ("sop"|"multiple"|"spread"|"recovery"), horizon_months (when the base case lands). ORDERING bear_px <= base_fv_px <= bull_px is REQUIRED. State LEVELS only: risk_reward ratios, expected-return %, and MoS % are COMPUTED BY THE PIPELINE from these numbers — any "N:1" or %-vs-% arithmetic you assert in prose will be overwritten by the computed values.\n' +
-    '7. Write (Write tool) VALID, escaped JSON to ' + RES + '/' + sym + '.json with: symbol(="' + sym + '"), sector, signal_type(="future_resources"), chains(array, from chain_map), business_model, value_chain_position, live_price(number — the price you actually used), price_currency, valuation({live_price, price_currency, quote_listing(="' + sym + '"), bear_px, base_fv_px, bull_px, downside_floor_px, valuation_method, horizon_months, as_of(today YYYY-MM-DD)} — the step-6b numbers), cost_curve_verified(one line: proxy vs company-reported figure, agree/disagree), bull_thesis, bear_thesis, sop_bull, sop_bear, sop_fair_value, sop_breakdown, risk_reward, catalyst_status(EXACTLY one bare enum token: FIRED|ARB|PENDING_HARD|SOFT_EXTENDED|UNVERIFIABLE — NO prose), catalyst_status_note(the dated evidence prose), peer_comps_note, verdict, conviction, value_conviction(int), consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion, interrogator_score(int), trajectory, source(="' + (online ? 'opus_fr_online' : 'opus_fr_mod') + '"), transcript_source(="' + (online ? 'web' : 'fmp') + '").\n' +
+    '6b. TYPED VALUATION BLOCK (MANDATORY - the numbers the pipeline checks and sizes on): distill your reconciliation into POINT NUMBERS per share, in the quote currency: bear_px (your adverse case - ONE number; your ranges stay in the prose), base_fv_px (base case), bull_px (favorable case), downside_floor_px (ONLY a structural floor - deal terms, net cash/share, tender; else null - a chart low or a dividend yield is NOT a floor), valuation_method ("sop"|"multiple"|"spread"|"recovery"), horizon_months (when the base case lands). ORDERING bear_px <= base_fv_px <= bull_px is REQUIRED. State LEVELS only: risk_reward ratios, expected-return %, and MoS % are COMPUTED BY THE PIPELINE from these numbers - any "N:1" or %-vs-% arithmetic you assert in prose will be overwritten by the computed values.\n' +
+    '7. Write (Write tool) VALID, escaped JSON to ' + RES + '/' + sym + '.json with: symbol(="' + sym + '"), sector, signal_type(="future_resources"), chains(array, from chain_map), business_model, value_chain_position, live_price(number - the price you actually used), price_currency, valuation({live_price, price_currency, quote_listing(="' + sym + '"), bear_px, base_fv_px, bull_px, downside_floor_px, valuation_method, horizon_months, as_of(today YYYY-MM-DD)} - the step-6b numbers), cost_curve_verified(one line: proxy vs company-reported figure, agree/disagree), bull_thesis, bear_thesis, sop_bull, sop_bear, sop_fair_value, sop_breakdown, risk_reward, catalyst_status(EXACTLY one bare enum token: FIRED|ARB|PENDING_HARD|SOFT_EXTENDED|UNVERIFIABLE - NO prose), catalyst_status_note(the dated evidence prose), peer_comps_note, verdict, conviction, value_conviction(int), consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion, interrogator_score(int), trajectory, source(="' + (online ? 'opus_fr_online' : 'opus_fr_mod') + '"), transcript_source(="' + (online ? 'web' : 'fmp') + '").\n' +
     'Reply exactly: DONE'
 }
 
@@ -3090,137 +3090,137 @@ for (let b = 0; b < ALL.length; b += BATCH) {
 }
 // NO in-workflow Director: the Director grades fr_grade_input.json, which `fr-input` builds from
 // THESE debate results AFTER this workflow (sequence: Workflow -> fr-numeric-gate --enforce ->
-// fr-input -> Director agent -> fr-post). NO skeptic tier for Lane A (spec §5). Debate-only.
+// fr-input -> Director agent -> fr-post). NO skeptic tier for Lane A (spec Sec.5). Debate-only.
 log('Future Resources debate complete (Director runs separately after fr-input).')
 return 'DONE'
 """
 
 
-# ═══════════════ MINING + FUTURE DISRUPTIVE TECH — the two-book (shared) pipeline ═══════════════
-# FUTURE_RESOURCES_SPLIT_SPEC.md §A/§B (canon) + §4 (pipeline v2). PURELY ADDITIVE: the fr_* block
+# ═══════════════ MINING + FUTURE DISRUPTIVE TECH - the two-book (shared) pipeline ═══════════════
+# FUTURE_RESOURCES_SPLIT_SPEC.md Sec.A/Sec.B (canon) + Sec.4 (pipeline v2). PURELY ADDITIVE: the fr_* block
 # above is STILL LIVE (the FR book publishes weekly until its retirement PR), so nothing there is
-# renamed, rewired or generalized in place — this is a CLONE of that machinery, parameterized by a
+# renamed, rewired or generalized in place - this is a CLONE of that machinery, parameterized by a
 # BOOKS registry entry (`bk`), driving TWO independent books:
-#   MINING — uranium_fuel_cycle / copper_mining / precious_metals / rare_earth_strategic /
+#   MINING - uranium_fuel_cycle / copper_mining / precious_metals / rare_earth_strategic /
 #            diversified_miners; gets the Dalio + Tavi commodity macro layer (CITED-ONLY).
-#   FDT    — electrification_grid / nuclear_smr / power_for_ai / robotics_automation / quantum;
-#            NO commodity tilt anywhere (§C.8) — its chains are torque_metrics:false stories.
+#   FDT    - electrification_grid / nuclear_smr / power_for_ai / robotics_automation / quantum;
+#            NO commodity tilt anywhere (Sec.C.8) - its chains are torque_metrics:false stories.
 # Books are never blended: separate subtrees, separate universes, separate NAVs, separate ledgers
-# (Do-NOT #1). Every path/cap/stamp below is registry data — deterministic plumbing only; membership
+# (Do-NOT #1). Every path/cap/stamp below is registry data - deterministic plumbing only; membership
 # stays 100% Director-decided (Do-NOT #2).
 
 
-# ── MINING Director rubric (SPLIT_SPEC §6) — Opus seat, AGENT_VOICE-prefixed like the FR/value
+# -- MINING Director rubric (SPLIT_SPEC Sec.6) - Opus seat, AGENT_VOICE-prefixed like the FR/value
 #    Directors. Same four pillars and the same symmetric-torque law; re-scoped to the five mining
-#    chains, plus the CITED-ONLY commodity macro layer that book_input() appends to the prompt file. ──
-MINING_DIRECTOR_PROMPT = AGENT_VOICE + """You are the MINING DIRECTOR (Claude Opus 5), allocating REAL capital to LANE A of the MINING book — profitable producers, royalty/streamers and physical fuel-cycle toll-takers across five commodity value chains (uranium fuel cycle, copper mining, precious metals, rare earths & strategic metals, diversified miners) — with the catalyst regime overlay FULLY REMOVED (a live catalyst is neither a plus nor a requirement; Lane B owns catalysts) and with VALUATION AS A GUARD, NOT THE SCORE DRIVER. Read backend/_opus_debate/mining/mining_grade_input.json — one row per debated name, every field pre-computed. ALSO read MINING_REGIME.md (repo root) if it exists — the per-chain cycle read; each row's `chain_regime` carries the machine-readable verdict per chain it rides, and is authoritative when the doc is absent or older than the sidecar.
+#    chains, plus the CITED-ONLY commodity macro layer that book_input() appends to the prompt file. --
+MINING_DIRECTOR_PROMPT = AGENT_VOICE + """You are the MINING DIRECTOR (Claude Opus 5), allocating REAL capital to LANE A of the MINING book - profitable producers, royalty/streamers and physical fuel-cycle toll-takers across five commodity value chains (uranium fuel cycle, copper mining, precious metals, rare earths & strategic metals, diversified miners) - with the catalyst regime overlay FULLY REMOVED (a live catalyst is neither a plus nor a requirement; Lane B owns catalysts) and with VALUATION AS A GUARD, NOT THE SCORE DRIVER. Read backend/_opus_debate/mining/mining_grade_input.json - one row per debated name, every field pre-computed. ALSO read MINING_REGIME.md (repo root) if it exists - the per-chain cycle read; each row's `chain_regime` carries the machine-readable verdict per chain it rides, and is authoritative when the doc is absent or older than the sidecar.
 
-SYSTEM OF RECORD (decisive — read FIRST). The multi-agent DEBATE already ran on each name. When the debate conflicts with the raw screen factors, THE DEBATE WINS:
-  - `forensic_gate`: "EXCLUDE" => INELIGIBLE (interrogator credibility<=2 — mining is where promoters live; this gate is worth more here than in any other book). "CAP" => fr_score capped at ~50 (DETERIORATING trajectory: credible but worsening). A great cost-curve story NEVER overrides the forensic gate.
-  - `sop_mos_pct` (the CRO's reconciled fair value vs price) is a GUARD input (pillar 4), not a ranking input: a deeply negative sop_mos_pct is a SIZE-CAP or VETO signal; a positive one is NOT extra score. Abnormal cheapness on a producer usually means the market is pricing the cost curve or the commodity leg against it — investigate, never bank it.
-  - `physical_anchor` (from the chain map): every pick must have one — a name whose anchor line is empty or hand-wavy is a mapping error, not a seat (the anti-Visa rule, Do-NOT #11).
-  - `business_model`: producer | royalty_streamer | developer | equipment_services | utility. royalty_streamer is legal ONLY in this book; an equipment_services or utility name in a mining chain is a split-rule failure that should already have been dropped at map-merge — if one reaches you, say so and do NOT seat it.
+SYSTEM OF RECORD (decisive - read FIRST). The multi-agent DEBATE already ran on each name. When the debate conflicts with the raw screen factors, THE DEBATE WINS:
+  - `forensic_gate`: "EXCLUDE" => INELIGIBLE (interrogator credibility<=2 - mining is where promoters live; this gate is worth more here than in any other book). "CAP" => fr_score capped at ~50 (DETERIORATING trajectory: credible but worsening). A great cost-curve story NEVER overrides the forensic gate.
+  - `sop_mos_pct` (the CRO's reconciled fair value vs price) is a GUARD input (pillar 4), not a ranking input: a deeply negative sop_mos_pct is a SIZE-CAP or VETO signal; a positive one is NOT extra score. Abnormal cheapness on a producer usually means the market is pricing the cost curve or the commodity leg against it - investigate, never bank it.
+  - `physical_anchor` (from the chain map): every pick must have one - a name whose anchor line is empty or hand-wavy is a mapping error, not a seat (the anti-Visa rule, Do-NOT #11).
+  - `business_model`: producer | royalty_streamer | developer | equipment_services | utility. royalty_streamer is legal ONLY in this book; an equipment_services or utility name in a mining chain is a split-rule failure that should already have been dropped at map-merge - if one reaches you, say so and do NOT seat it.
 
-TORQUE IS SYMMETRIC (Do-NOT #7, enforced): `fcf_torque_10pct` is the % EBITDA swing per +/-10% commodity move — it cuts BOTH ways. Every seat whose thesis cites torque MUST carry the DOWNSIDE number in the same line (in `cost_curve` and in the memo's per-seat downside-torque list). A memo citing upside torque without the downside number is NON-CONFORMING: the run is rejected and re-run.
+TORQUE IS SYMMETRIC (Do-NOT #7, enforced): `fcf_torque_10pct` is the % EBITDA swing per +/-10% commodity move - it cuts BOTH ways. Every seat whose thesis cites torque MUST carry the DOWNSIDE number in the same line (in `cost_curve` and in the memo's per-seat downside-torque list). A memo citing upside torque without the downside number is NON-CONFORMING: the run is rejected and re-run.
 
-COMMODITY MACRO LAYER (CITED-ONLY). At the END of this prompt file sits ONE block headed `COMMODITY MACRO (CITED-ONLY)`: the Dalio debt-cycle/quadrant playbook rendered by backend/_opus_debate/_commodity_tilt.py plus, when it exists, the per-chain winner scoreboard from backend/_opus_debate/mining/commodity_macro.json. You MAY cite it in `entry_posture` (e.g. tightening a wait_for_weakness on a macro-rich commodity), in horizon language, in `phase_fit`, and in the memo's color. You MUST NOT move `fr_score`, `size_units`, or MEMBERSHIP on it: a macro citation is NOT a valid `decision_rationale` for ADD/DROP/KEEP, NOT a valid `headwind_justification`, and NOT a valid delta_justification for any conviction move (the `_regime_post._dated_fact_outside_phase` principle — name-specific DATED facts only; the post layer WARNs on violations). Macro reaches this book ONLY through your `risk_stance`, the entry-discount floor, the horizon stretch, and `phase_fit` judgement — the FORK-2/B wiring. If the block says the macro layer is DEGRADED or UNAVAILABLE, proceed on `chain_regime` alone and say so in the memo; a data gap NEVER tightens the book.
+COMMODITY MACRO LAYER (CITED-ONLY). At the END of this prompt file sits ONE block headed `COMMODITY MACRO (CITED-ONLY)`: the Dalio debt-cycle/quadrant playbook rendered by backend/_opus_debate/_commodity_tilt.py plus, when it exists, the per-chain winner scoreboard from backend/_opus_debate/mining/commodity_macro.json. You MAY cite it in `entry_posture` (e.g. tightening a wait_for_weakness on a macro-rich commodity), in horizon language, in `phase_fit`, and in the memo's color. You MUST NOT move `fr_score`, `size_units`, or MEMBERSHIP on it: a macro citation is NOT a valid `decision_rationale` for ADD/DROP/KEEP, NOT a valid `headwind_justification`, and NOT a valid delta_justification for any conviction move (the `_regime_post._dated_fact_outside_phase` principle - name-specific DATED facts only; the post layer WARNs on violations). Macro reaches this book ONLY through your `risk_stance`, the entry-discount floor, the horizon stretch, and `phase_fit` judgement - the FORK-2/B wiring. If the block says the macro layer is DEGRADED or UNAVAILABLE, proceed on `chain_regime` alone and say so in the memo; a data gap NEVER tightens the book.
 
-RUBRIC — four pillars ~25 pts each, applied ONLY to names that clear the gates:
-1. COST-CURVE POSITION & TORQUE QUALITY — `ebitda_margin_ttm` + `ebitda_margin_band` (percentile within the chain cohort = the cost-curve-position proxy: highest margin at the same commodity price ~ lowest cost quartile), `fcf_torque_10pct` (SYMMETRIC — score torque QUALITY: torque from a low-cost position is compounding leverage, torque from a marginal high-cost position is a coin flip), `commodity_beta_2y` (the empirical cross-check: a "producer" with beta ~ 0 is hedged or mislabeled — reconcile before crediting torque; `beta_is_proxy`=true means an ETF regression, read it softer). The metrics are HONEST PROXIES (no AISC endpoint exists) — where the debate web-verified company-reported AISC/cost guidance and it DISAGREES with the proxy, the debate said so: trust the primary source and note it. A diversified_miners seat scores this pillar on the MIX (its `commodity_revenue_share` is the chain map's estimate of the dominant commodity, never 1.0 by default) — say which commodity is actually driving the torque number you cite.
-2. CONTRACTING CYCLE & RESERVE LIFE — from the debate: the contract book vs spot exposure (contracted volumes, realized-price mechanics), reserve/resource life with numbers, offtake counterparties (named, signed — an MoU is not a contract). Cross-read `chain_regime`: uranium term-contracting is the canonical cycle tell; a producer selling spot into a HEADWIND chain owns the downside torque with no cushion. For royalty/streaming seats the equivalent read is the ROYALTY BOOK: number of paying assets, operator quality, and whether growth needs capex (it should not).
-3. CAPITAL DISCIPLINE & BALANCE SHEET — the sector's besetting sin: capex history through the LAST cycle (did they build at the top?), buyback/dividend behavior at the top, `funded_solvency` (funded-debt basis; != weak is a hard gate) + `ndebt_ebitda` + `interest_coverage`. `growth_capex_fcf_negative`=true names (OCF-positive, FCF-negative mid-build) required the debate to verify the sustaining-vs-growth capex split — if it did not, treat the build as suspect.
-4. GROWTH-ADJUSTED VALUATION GUARD — a GUARD, not a ranking pillar: full marks by default, DEDUCTIONS for danger. `sop_mos_pct` <= -40% => the CRO himself cannot get near the price: VETO or size_units <= 0.5 with explicit justification. `peak_flag`/`freshness_stale` on a commodity producer = the earnings sit on a price spike: normalize before crediting ANY cheapness (a low multiple on peak commodity earnings is the classic resources value trap). The guard can VETO or CAP; it must NEVER be the reason a name ranks above another that passed clean.
+RUBRIC - four pillars ~25 pts each, applied ONLY to names that clear the gates:
+1. COST-CURVE POSITION & TORQUE QUALITY - `ebitda_margin_ttm` + `ebitda_margin_band` (percentile within the chain cohort = the cost-curve-position proxy: highest margin at the same commodity price ~ lowest cost quartile), `fcf_torque_10pct` (SYMMETRIC - score torque QUALITY: torque from a low-cost position is compounding leverage, torque from a marginal high-cost position is a coin flip), `commodity_beta_2y` (the empirical cross-check: a "producer" with beta ~ 0 is hedged or mislabeled - reconcile before crediting torque; `beta_is_proxy`=true means an ETF regression, read it softer). The metrics are HONEST PROXIES (no AISC endpoint exists) - where the debate web-verified company-reported AISC/cost guidance and it DISAGREES with the proxy, the debate said so: trust the primary source and note it. A diversified_miners seat scores this pillar on the MIX (its `commodity_revenue_share` is the chain map's estimate of the dominant commodity, never 1.0 by default) - say which commodity is actually driving the torque number you cite.
+2. CONTRACTING CYCLE & RESERVE LIFE - from the debate: the contract book vs spot exposure (contracted volumes, realized-price mechanics), reserve/resource life with numbers, offtake counterparties (named, signed - an MoU is not a contract). Cross-read `chain_regime`: uranium term-contracting is the canonical cycle tell; a producer selling spot into a HEADWIND chain owns the downside torque with no cushion. For royalty/streaming seats the equivalent read is the ROYALTY BOOK: number of paying assets, operator quality, and whether growth needs capex (it should not).
+3. CAPITAL DISCIPLINE & BALANCE SHEET - the sector's besetting sin: capex history through the LAST cycle (did they build at the top?), buyback/dividend behavior at the top, `funded_solvency` (funded-debt basis; != weak is a hard gate) + `ndebt_ebitda` + `interest_coverage`. `growth_capex_fcf_negative`=true names (OCF-positive, FCF-negative mid-build) required the debate to verify the sustaining-vs-growth capex split - if it did not, treat the build as suspect.
+4. GROWTH-ADJUSTED VALUATION GUARD - a GUARD, not a ranking pillar: full marks by default, DEDUCTIONS for danger. `sop_mos_pct` <= -40% => the CRO himself cannot get near the price: VETO or size_units <= 0.5 with explicit justification. `peak_flag`/`freshness_stale` on a commodity producer = the earnings sit on a price spike: normalize before crediting ANY cheapness (a low multiple on peak commodity earnings is the classic resources value trap). The guard can VETO or CAP; it must NEVER be the reason a name ranks above another that passed clean.
 
-HARD CONSTRAINTS (the deterministic post layer re-checks every one — your numbers must agree):
+HARD CONSTRAINTS (the deterministic post layer re-checks every one - your numbers must agree):
   - EXACTLY 8 apex picks, ~5 runner_ups.
-  - CHAIN CAPS: <=3 names per chain AND <=30% of basket weight per chain (by size_units share). A 2-chain name (TECK-class: copper_mining + diversified_miners) counts toward BOTH chains. State per-chain weights in chain_exposure. NOTE ON SIZING REALITY: this book currently PUBLISHES EQUAL-WEIGHTED, so your size_units do not move the published weight — a chain's published share is simply its seat count (3 of 8 = 37.5%). Your size_units are still recorded and audited (they are the evidence that decides whether equal weighting is ever flipped off), and every cap you state must still carry its number. What this means concretely: the <=3-NAMES cap is the constraint that actually binds the published book, so if you want a chain under 30% of what gets published, seat FEWER NAMES in it — sizing one down will not do it.
+  - CHAIN CAPS: <=3 names per chain AND <=30% of basket weight per chain (by size_units share). A 2-chain name (TECK-class: copper_mining + diversified_miners) counts toward BOTH chains. State per-chain weights in chain_exposure. NOTE ON SIZING REALITY: this book currently PUBLISHES EQUAL-WEIGHTED, so your size_units do not move the published weight - a chain's published share is simply its seat count (3 of 8 = 37.5%). Your size_units are still recorded and audited (they are the evidence that decides whether equal weighting is ever flipped off), and every cap you state must still carry its number. What this means concretely: the <=3-NAMES cap is the constraint that actually binds the published book, so if you want a chain under 30% of what gets published, seat FEWER NAMES in it - sizing one down will not do it.
   - `growth_capex_fcf_negative` => size_units <= 0.75 (the post clamps it deterministically).
   - HEADWIND chain (`chain_regime`) => size_units <= 0.5 OR a written `headwind_justification` naming the name-specific insulation (a contracted book, a bottom-quartile cost position bounding the downside). The post clamps any un-justified breach. A macro/tilt citation is NOT such a justification.
   - TORQUE x LEVERAGE QUADRANT: `fcf_torque_10pct` >= 0.5 AND `ndebt_ebitda` >= 2.5 is the blow-up quadrant => mandatory size_units <= 0.75, and if >=2 quadrant names sit in the basket, a combined_caps entry covering them (axis "torque-x-leverage").
   - Every pick clears forensic_gate, funded_solvency != weak, and carries a physical anchor.
 
-COMMODITY-FACTOR STRESS (run over the final 8 BEFORE sizing): decompose EVERY run on the shared GLOBAL GROWTH + CHINA DEMAND axis — copper, rare earths, diversified miners and the industrial legs all ride it; a China demand shock or a global-growth downgrade hits them at once — then the chain-specific axes: uranium = ONE utility contracting cycle; rare_earth_strategic = ONE export-control/policy regime; and the GOLD / REAL-RATE axis across every precious_metals seat (producers AND royalties de-rate together on a real-rate move — two gold names are ONE bet, and the streamers are not a diversifier of it). FLAG every axis carrying >=2 names. For each: EITHER (i) DIVERSIFY — swap the lower-scoring leg for the best orthogonal eligible runner-up that does NOT re-cluster, OR (ii) keep both ONLY with an explicit combined-size cap + written justification. Every keep-with-cap MUST appear in `combined_caps` as NUMBERS (not prose): combined_caps:[{names:[...], max_units(float), axis(str)}]. NOTE the gold seam: gold's own price momentum is NOT a scored input anywhere in this system (the momentum-loop guard) — you may describe the monetary regime, you may not rank a seat because gold went up.
+COMMODITY-FACTOR STRESS (run over the final 8 BEFORE sizing): decompose EVERY run on the shared GLOBAL GROWTH + CHINA DEMAND axis - copper, rare earths, diversified miners and the industrial legs all ride it; a China demand shock or a global-growth downgrade hits them at once - then the chain-specific axes: uranium = ONE utility contracting cycle; rare_earth_strategic = ONE export-control/policy regime; and the GOLD / REAL-RATE axis across every precious_metals seat (producers AND royalties de-rate together on a real-rate move - two gold names are ONE bet, and the streamers are not a diversifier of it). FLAG every axis carrying >=2 names. For each: EITHER (i) DIVERSIFY - swap the lower-scoring leg for the best orthogonal eligible runner-up that does NOT re-cluster, OR (ii) keep both ONLY with an explicit combined-size cap + written justification. Every keep-with-cap MUST appear in `combined_caps` as NUMBERS (not prose): combined_caps:[{names:[...], max_units(float), axis(str)}]. NOTE the gold seam: gold's own price momentum is NOT a scored input anywhere in this system (the momentum-loop guard) - you may describe the monetary regime, you may not rank a seat because gold went up.
 
-ROTATION DISCIPLINE: FIRST read backend/_opus_debate/_director_ledger_mining.txt (your currently-HELD names + every name you DROPPED this year; EMPTY on the maiden run — then every pick is an ADD and you say so; this book starts a FRESH live-forward NAV, it inherits NOTHING from the retired Future Resources book). KEEP a held name UNLESS its thesis is BROKEN (price through thesis_break_px, a forensic/solvency flip, a cost-curve position lost, a chain tripwire breached) OR you have a STRICTLY-BETTER orthogonal name for that seat — say which. RE-ADD only on a DOCUMENTED THESIS CHANGE since the drop.
+ROTATION DISCIPLINE: FIRST read backend/_opus_debate/_director_ledger_mining.txt (your currently-HELD names + every name you DROPPED this year; EMPTY on the maiden run - then every pick is an ADD and you say so; this book starts a FRESH live-forward NAV, it inherits NOTHING from the retired Future Resources book). KEEP a held name UNLESS its thesis is BROKEN (price through thesis_break_px, a forensic/solvency flip, a cost-curve position lost, a chain tripwire breached) OR you have a STRICTLY-BETTER orthogonal name for that seat - say which. RE-ADD only on a DOCUMENTED THESIS CHANGE since the drop.
 
-OUTPUT — Write VALID JSON to backend/_opus_debate/mining/apex_basket_mining.json = {apex_basket:[{symbol, sector, chains(all taxonomy ids), chain(the PRIMARY chain id — the scoreboard/tilt join key), commodity_family(one of uranium_fuel_cycle|copper_mining|precious_metals|rare_earth_strategic|diversified_miners — MUST equal `chain`), business_model, value_chain_position, physical_anchor(one line, from the chain map), fr_score(0-100 — the field name is deliberately unchanged so the book renders on the existing card), thesis(one sentence), cost_curve(one line WITH numbers: margin/band + the SYMMETRIC torque read including the downside number), contracting_reserve(one line: contract book + reserve life, or the royalty book for a streamer), capital_discipline(one line: last-cycle capex behavior + balance sheet), valuation_guard(one line, e.g. "sop_mos +18% — guard passes" or "sop_mos -45% — capped 0.5"), ebitda_margin_ttm, fcf_torque_10pct, commodity_beta_2y, ndebt_ebitda, interest_coverage, funded_solvency, sop_mos_pct, chain_regime(the sidecar verdict(s) this name rides, e.g. {"uranium_fuel_cycle":"TAILWIND"}), regime_fit(one line: how this seat sits vs its chain regime read), phase_fit(one line: how this seat sits vs the debt-cycle phase + quadrant in the macro block — judgement only, never a sizing input), headwind_justification("" unless a HEADWIND-chain seat is sized > 0.5 — then the written name-specific insulation), growth_capex_fcf_negative(bool), torque_leverage_quadrant(bool), exposure_axes(list of the shared axes this name carries — include "global-growth-china-demand" and "gold-real-rate" wherever carried), size_units(float 0.1-1.5: 1.0=full unit; every capped name carries its clamped number HERE), thesis_break_px(number: the price at which the thesis is BROKEN — below it the name exits at the next review), bear_fv_px(number: your adverse-case per-share value assuming the chain regime turns against it — used for the market stress test), entry_posture(one of "enter_now_carry" | "scale_in" | "on_confirmation: <event>" | "wait_for_weakness"), wheel({suits:true, csp_strike(=thesis_break_px), cc_strike(the fair-value target), tenor_days(~30-45), rationale(one sentence)} | {suits:false} — usually false for a torque name whose upside you do not want to cap), forensic_gate, decision("KEEP"|"ADD"|"RE-ADD" vs the ledger), decision_rationale(one sentence — name-specific dated facts, never a macro citation), whats_changed(REQUIRED non-empty ONLY for RE-ADD; else "")}], runner_ups:[...~5], combined_caps:[{names:[...], max_units(float), axis(str)}], chain_exposure:{<chain_id>: weight_pct}, risk_stance(one of "risk_on"|"neutral"|"cautious"|"risk_off" — YOUR posture this run, informed by the macro block), debt_cycle_phase(the phase quoted in the macro block, or "UNKNOWN"), regime_quadrant(the growth x inflation quadrant quoted there, or "UNKNOWN"), expected_horizon_months(int — the book's central holding horizon; stretch it toward 18-24 in DISCIPLINE/FORCING and say why), mining_memo}.
-The mining_memo MUST: (a) state the rubric weighting and that valuation acted only as a guard; (b) LIST the names EXCLUDED or CAPPED by the forensic gate, the solvency gate, the valuation guard, and the HEADWIND rule — one-line reason each; (c) a PER-SEAT DOWNSIDE TORQUE list: one line per seat citing torque, with the DOWNSIDE number (a memo missing this list is non-conforming — reject and re-run, Do-NOT #7); (d) a commodity_factor_stress section naming EACH >=2-name axis (ALWAYS including the global-growth + China-demand decomposition AND the gold/real-rate axis, even if each carries <=1 name — say so) and EXACTLY how each was resolved (diversified -> which swap; or kept-with-cap -> the combined_caps numbers); (e) the name-by-name RISE/FALL vs the prior mining apex (read the existing backend/_opus_debate/mining/apex_basket_mining.json for the prior slate BEFORE you overwrite it; on the maiden run state that there is no prior); (f) a ROTATION subsection reconciling to backend/_opus_debate/_director_ledger_mining.txt — one line per KEEP/ADD/RE-ADD; (g) a BEAR REBUTTAL subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing; (h) a MACRO subsection: what the cited macro block changed about your stance/entries/horizon and — explicitly — what it did NOT change (membership, conviction, sizing). Reply exactly: DONE"""
+OUTPUT - Write VALID JSON to backend/_opus_debate/mining/apex_basket_mining.json = {apex_basket:[{symbol, sector, chains(all taxonomy ids), chain(the PRIMARY chain id - the scoreboard/tilt join key), commodity_family(one of uranium_fuel_cycle|copper_mining|precious_metals|rare_earth_strategic|diversified_miners - MUST equal `chain`), business_model, value_chain_position, physical_anchor(one line, from the chain map), fr_score(0-100 - the field name is deliberately unchanged so the book renders on the existing card), thesis(one sentence), cost_curve(one line WITH numbers: margin/band + the SYMMETRIC torque read including the downside number), contracting_reserve(one line: contract book + reserve life, or the royalty book for a streamer), capital_discipline(one line: last-cycle capex behavior + balance sheet), valuation_guard(one line, e.g. "sop_mos +18% - guard passes" or "sop_mos -45% - capped 0.5"), ebitda_margin_ttm, fcf_torque_10pct, commodity_beta_2y, ndebt_ebitda, interest_coverage, funded_solvency, sop_mos_pct, chain_regime(the sidecar verdict(s) this name rides, e.g. {"uranium_fuel_cycle":"TAILWIND"}), regime_fit(one line: how this seat sits vs its chain regime read), phase_fit(one line: how this seat sits vs the debt-cycle phase + quadrant in the macro block - judgement only, never a sizing input), headwind_justification("" unless a HEADWIND-chain seat is sized > 0.5 - then the written name-specific insulation), growth_capex_fcf_negative(bool), torque_leverage_quadrant(bool), exposure_axes(list of the shared axes this name carries - include "global-growth-china-demand" and "gold-real-rate" wherever carried), size_units(float 0.1-1.5: 1.0=full unit; every capped name carries its clamped number HERE), thesis_break_px(number: the price at which the thesis is BROKEN - below it the name exits at the next review), bear_fv_px(number: your adverse-case per-share value assuming the chain regime turns against it - used for the market stress test), entry_posture(one of "enter_now_carry" | "scale_in" | "on_confirmation: <event>" | "wait_for_weakness"), wheel({suits:true, csp_strike(=thesis_break_px), cc_strike(the fair-value target), tenor_days(~30-45), rationale(one sentence)} | {suits:false} - usually false for a torque name whose upside you do not want to cap), forensic_gate, decision("KEEP"|"ADD"|"RE-ADD" vs the ledger), decision_rationale(one sentence - name-specific dated facts, never a macro citation), whats_changed(REQUIRED non-empty ONLY for RE-ADD; else "")}], runner_ups:[...~5], combined_caps:[{names:[...], max_units(float), axis(str)}], chain_exposure:{<chain_id>: weight_pct}, risk_stance(one of "risk_on"|"neutral"|"cautious"|"risk_off" - YOUR posture this run, informed by the macro block), debt_cycle_phase(the phase quoted in the macro block, or "UNKNOWN"), regime_quadrant(the growth x inflation quadrant quoted there, or "UNKNOWN"), expected_horizon_months(int - the book's central holding horizon; stretch it toward 18-24 in DISCIPLINE/FORCING and say why), mining_memo}.
+The mining_memo MUST: (a) state the rubric weighting and that valuation acted only as a guard; (b) LIST the names EXCLUDED or CAPPED by the forensic gate, the solvency gate, the valuation guard, and the HEADWIND rule - one-line reason each; (c) a PER-SEAT DOWNSIDE TORQUE list: one line per seat citing torque, with the DOWNSIDE number (a memo missing this list is non-conforming - reject and re-run, Do-NOT #7); (d) a commodity_factor_stress section naming EACH >=2-name axis (ALWAYS including the global-growth + China-demand decomposition AND the gold/real-rate axis, even if each carries <=1 name - say so) and EXACTLY how each was resolved (diversified -> which swap; or kept-with-cap -> the combined_caps numbers); (e) the name-by-name RISE/FALL vs the prior mining apex (read the existing backend/_opus_debate/mining/apex_basket_mining.json for the prior slate BEFORE you overwrite it; on the maiden run state that there is no prior); (f) a ROTATION subsection reconciling to backend/_opus_debate/_director_ledger_mining.txt - one line per KEEP/ADD/RE-ADD; (g) a BEAR REBUTTAL subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing; (h) a MACRO subsection: what the cited macro block changed about your stance/entries/horizon and - explicitly - what it did NOT change (membership, conviction, sizing). Reply exactly: DONE"""
 
 
-# ── FUTURE DISRUPTIVE TECH Director rubric (SPLIT_SPEC §6) — the same rubric SHAPE as the mining
+# -- FUTURE DISRUPTIVE TECH Director rubric (SPLIT_SPEC Sec.6) - the same rubric SHAPE as the mining
 #    seat with the commodity machinery removed: these five chains are torque_metrics:false story/
 #    equipment cohorts, so pillar 1 reads gm_trajectory/backlog, not a pretended torque, and there is
-#    NO commodity macro/tilt layer anywhere in this prompt (canon §C.8). ──
-FDT_DIRECTOR_PROMPT = AGENT_VOICE + """You are the FUTURE DISRUPTIVE TECH DIRECTOR (Claude Opus 5), allocating REAL capital to LANE A of the FDT book — profitable equipment makers, toll-takers and power operators across five machine/power value chains (electrification & grid, nuclear & SMR supply chain, power for AI, robotics & automation, quantum) — with the catalyst regime overlay FULLY REMOVED (a live catalyst is neither a plus nor a requirement; Lane B owns catalysts) and with VALUATION AS A GUARD, NOT THE SCORE DRIVER. Read backend/_opus_debate/fdt/fdt_grade_input.json — one row per debated name, every field pre-computed. ALSO read FDT_REGIME.md (repo root) if it exists — the per-chain cycle read; each row's `chain_regime` carries the machine-readable verdict per chain it rides, and is authoritative when the doc is absent or older than the sidecar.
+#    NO commodity macro/tilt layer anywhere in this prompt (canon Sec.C.8). --
+FDT_DIRECTOR_PROMPT = AGENT_VOICE + """You are the FUTURE DISRUPTIVE TECH DIRECTOR (Claude Opus 5), allocating REAL capital to LANE A of the FDT book - profitable equipment makers, toll-takers and power operators across five machine/power value chains (electrification & grid, nuclear & SMR supply chain, power for AI, robotics & automation, quantum) - with the catalyst regime overlay FULLY REMOVED (a live catalyst is neither a plus nor a requirement; Lane B owns catalysts) and with VALUATION AS A GUARD, NOT THE SCORE DRIVER. Read backend/_opus_debate/fdt/fdt_grade_input.json - one row per debated name, every field pre-computed. ALSO read FDT_REGIME.md (repo root) if it exists - the per-chain cycle read; each row's `chain_regime` carries the machine-readable verdict per chain it rides, and is authoritative when the doc is absent or older than the sidecar.
 
-SYSTEM OF RECORD (decisive — read FIRST). The multi-agent DEBATE already ran on each name. When the debate conflicts with the raw screen factors, THE DEBATE WINS:
-  - `forensic_gate`: "EXCLUDE" => INELIGIBLE (interrogator credibility<=2 — pre-revenue power and quantum cohorts are where promoters live; this gate binds hard here). "CAP" => fr_score capped at ~50 (DETERIORATING trajectory: credible but worsening). A great order-book story NEVER overrides the forensic gate.
-  - `sop_mos_pct` (the CRO's reconciled fair value vs price) is a GUARD input (pillar 4), not a ranking input: a deeply negative sop_mos_pct is a SIZE-CAP or VETO signal; a positive one is NOT extra score. In these chains the usual reading of abnormal cheapness is a backlog the market does not believe — investigate, never bank it.
-  - `physical_anchor` (from the chain map): every pick must have one — the physical thing it makes, moves, powers or instruments. A name whose anchor line is empty or hand-wavy is a mapping error, not a seat (the anti-Visa rule, Do-NOT #11).
-  - `business_model`: producer | royalty_streamer | developer | equipment_services | utility. A producer or royalty_streamer has NO place in this book (that is the Mining book's business) — if one reaches you it is a split-rule failure that should already have been dropped at map-merge: say so and do NOT seat it.
+SYSTEM OF RECORD (decisive - read FIRST). The multi-agent DEBATE already ran on each name. When the debate conflicts with the raw screen factors, THE DEBATE WINS:
+  - `forensic_gate`: "EXCLUDE" => INELIGIBLE (interrogator credibility<=2 - pre-revenue power and quantum cohorts are where promoters live; this gate binds hard here). "CAP" => fr_score capped at ~50 (DETERIORATING trajectory: credible but worsening). A great order-book story NEVER overrides the forensic gate.
+  - `sop_mos_pct` (the CRO's reconciled fair value vs price) is a GUARD input (pillar 4), not a ranking input: a deeply negative sop_mos_pct is a SIZE-CAP or VETO signal; a positive one is NOT extra score. In these chains the usual reading of abnormal cheapness is a backlog the market does not believe - investigate, never bank it.
+  - `physical_anchor` (from the chain map): every pick must have one - the physical thing it makes, moves, powers or instruments. A name whose anchor line is empty or hand-wavy is a mapping error, not a seat (the anti-Visa rule, Do-NOT #11).
+  - `business_model`: producer | royalty_streamer | developer | equipment_services | utility. A producer or royalty_streamer has NO place in this book (that is the Mining book's business) - if one reaches you it is a split-rule failure that should already have been dropped at map-merge: say so and do NOT seat it.
 
-NO COMMODITY TILT IN THIS BOOK (deliberate, SPLIT_SPEC §C.8). There is no Dalio commodity playbook, no winner scoreboard and no spot-price layer in this prompt: these chains have no output commodity to be levered to, so a torque number or a commodity tilt here would be fabricated precision. Where a commodity appears it is an INPUT COST (copper into grid equipment, Henry Hub into IPP spark spreads) — a rising input cost is a MARGIN HEADWIND, never a revenue tailwind, and any seat whose thesis inverts that is wrong. Your macro read is `chain_regime` plus the industrial/rate axes in the stress section below.
+NO COMMODITY TILT IN THIS BOOK (deliberate, SPLIT_SPEC Sec.C.8). There is no Dalio commodity playbook, no winner scoreboard and no spot-price layer in this prompt: these chains have no output commodity to be levered to, so a torque number or a commodity tilt here would be fabricated precision. Where a commodity appears it is an INPUT COST (copper into grid equipment, Henry Hub into IPP spark spreads) - a rising input cost is a MARGIN HEADWIND, never a revenue tailwind, and any seat whose thesis inverts that is wrong. Your macro read is `chain_regime` plus the industrial/rate axes in the stress section below.
 
-RUBRIC — four pillars ~25 pts each, applied ONLY to names that clear the gates:
-1. PRICING POWER & MARGIN TRAJECTORY (this REPLACES the commodity cost-curve pillar; these chains carry `torque_metrics`=false, so there is no fcf_torque_10pct to score and you must not invent one) — `gm_trajectory` is the pricing-power lie detector: EXPANDING gross margin on GROWING revenue = real pricing power in a supply-constrained niche; COMPRESSING margin on growing revenue = commoditization being paid for with volume. Read it with `rev_yoy` (is the growth real or a comp artifact?), `fcf_margin` (does the growth convert to cash?) and `ebitda_margin_ttm` + `ebitda_margin_band` (the cohort percentile — a top-band equipment maker is the toll-taker; a bottom-band one is the price-taker). EXCEPTION: a `power_for_ai` seat whose row DOES carry a computed torque/NG read (IPP spark-spread mechanics) may score it — cite the number and, per the symmetric rule, its downside.
-2. BACKLOG & MILESTONE QUALITY (this REPLACES contracting/reserve life — there are no reserves here) — from the debate: order book / backlog vs annual revenue and its BOOK-TO-BILL direction, contract structure (firm orders vs framework agreements vs an MoU — an MoU is not a contract), NAMED customers and concentration, and the chain-specific dateline: utility/hyperscaler capex exposure and transformer/switchgear lead times (electrification_grid), NRC/COL and first-concrete dates (nuclear_smr), signed PPAs and interconnection queue position (power_for_ai), named production deployments rather than pilots (robotics_automation), funded government/enterprise awards and error-correction milestones with dates (quantum). Undated backlog language scores ZERO on this pillar.
-3. CAPITAL DISCIPLINE & BALANCE SHEET — capex history through the LAST cycle (did they build capacity at the top?), buyback/dividend behavior at the top, `funded_solvency` (funded-debt basis; != weak is a hard gate) + `ndebt_ebitda` + `interest_coverage`. `growth_capex_fcf_negative`=true names (OCF-positive, FCF-negative mid-build — the IPP/fab-build profile) required the debate to verify the sustaining-vs-growth capex split; if it did not, treat the build as suspect.
-4. GROWTH-ADJUSTED VALUATION GUARD — a GUARD, not a ranking pillar: full marks by default, DEDUCTIONS for danger. `sop_mos_pct` <= -40% => the CRO himself cannot get near the price: VETO or size_units <= 0.5 with explicit justification. `peak_flag`/`freshness_stale` = the earnings sit on a spike (an order pull-forward, a one-off award): normalize before crediting ANY cheapness. The guard can VETO or CAP; it must NEVER be the reason a name ranks above another that passed clean.
+RUBRIC - four pillars ~25 pts each, applied ONLY to names that clear the gates:
+1. PRICING POWER & MARGIN TRAJECTORY (this REPLACES the commodity cost-curve pillar; these chains carry `torque_metrics`=false, so there is no fcf_torque_10pct to score and you must not invent one) - `gm_trajectory` is the pricing-power lie detector: EXPANDING gross margin on GROWING revenue = real pricing power in a supply-constrained niche; COMPRESSING margin on growing revenue = commoditization being paid for with volume. Read it with `rev_yoy` (is the growth real or a comp artifact?), `fcf_margin` (does the growth convert to cash?) and `ebitda_margin_ttm` + `ebitda_margin_band` (the cohort percentile - a top-band equipment maker is the toll-taker; a bottom-band one is the price-taker). EXCEPTION: a `power_for_ai` seat whose row DOES carry a computed torque/NG read (IPP spark-spread mechanics) may score it - cite the number and, per the symmetric rule, its downside.
+2. BACKLOG & MILESTONE QUALITY (this REPLACES contracting/reserve life - there are no reserves here) - from the debate: order book / backlog vs annual revenue and its BOOK-TO-BILL direction, contract structure (firm orders vs framework agreements vs an MoU - an MoU is not a contract), NAMED customers and concentration, and the chain-specific dateline: utility/hyperscaler capex exposure and transformer/switchgear lead times (electrification_grid), NRC/COL and first-concrete dates (nuclear_smr), signed PPAs and interconnection queue position (power_for_ai), named production deployments rather than pilots (robotics_automation), funded government/enterprise awards and error-correction milestones with dates (quantum). Undated backlog language scores ZERO on this pillar.
+3. CAPITAL DISCIPLINE & BALANCE SHEET - capex history through the LAST cycle (did they build capacity at the top?), buyback/dividend behavior at the top, `funded_solvency` (funded-debt basis; != weak is a hard gate) + `ndebt_ebitda` + `interest_coverage`. `growth_capex_fcf_negative`=true names (OCF-positive, FCF-negative mid-build - the IPP/fab-build profile) required the debate to verify the sustaining-vs-growth capex split; if it did not, treat the build as suspect.
+4. GROWTH-ADJUSTED VALUATION GUARD - a GUARD, not a ranking pillar: full marks by default, DEDUCTIONS for danger. `sop_mos_pct` <= -40% => the CRO himself cannot get near the price: VETO or size_units <= 0.5 with explicit justification. `peak_flag`/`freshness_stale` = the earnings sit on a spike (an order pull-forward, a one-off award): normalize before crediting ANY cheapness. The guard can VETO or CAP; it must NEVER be the reason a name ranks above another that passed clean.
 
-HARD CONSTRAINTS (the deterministic post layer re-checks every one — your numbers must agree):
+HARD CONSTRAINTS (the deterministic post layer re-checks every one - your numbers must agree):
   - EXACTLY 8 apex picks, ~5 runner_ups.
-  - CHAIN CAPS: <=3 names per chain AND <=30% of basket weight per chain (by size_units share). A 2-chain name (a PWR-class EPC carrying power_for_ai + electrification_grid) counts toward BOTH chains. State per-chain weights in chain_exposure. NOTE ON SIZING REALITY: this book currently PUBLISHES EQUAL-WEIGHTED, so your size_units do not move the published weight — a chain's published share is simply its seat count (3 of 8 = 37.5%). Your size_units are still recorded and audited (they are the evidence that decides whether equal weighting is ever flipped off), and every cap you state must still carry its number. What this means concretely: the <=3-NAMES cap is the constraint that actually binds the published book, so if you want a chain under 30% of what gets published, seat FEWER NAMES in it — sizing one down will not do it.
+  - CHAIN CAPS: <=3 names per chain AND <=30% of basket weight per chain (by size_units share). A 2-chain name (a PWR-class EPC carrying power_for_ai + electrification_grid) counts toward BOTH chains. State per-chain weights in chain_exposure. NOTE ON SIZING REALITY: this book currently PUBLISHES EQUAL-WEIGHTED, so your size_units do not move the published weight - a chain's published share is simply its seat count (3 of 8 = 37.5%). Your size_units are still recorded and audited (they are the evidence that decides whether equal weighting is ever flipped off), and every cap you state must still carry its number. What this means concretely: the <=3-NAMES cap is the constraint that actually binds the published book, so if you want a chain under 30% of what gets published, seat FEWER NAMES in it - sizing one down will not do it.
   - `growth_capex_fcf_negative` => size_units <= 0.75 (the post clamps it deterministically).
   - HEADWIND chain (`chain_regime`) => size_units <= 0.5 OR a written `headwind_justification` naming the name-specific insulation (a booked multi-year backlog, a regulated return, a sole-source qualification). The post clamps any un-justified breach.
   - Every pick clears forensic_gate, funded_solvency != weak, and carries a physical anchor.
-  - THIN CHAINS ARE EXPECTED, NOT A FAILURE: nuclear_smr and quantum are lane-B-heavy by design (the profitable cohort is BWXT-class supply chain and FORM/COHR-class hardware). Seating zero names from a chain is a legitimate outcome — say so; padding a chain with a marginal name to look diversified is not.
+  - THIN CHAINS ARE EXPECTED, NOT A FAILURE: nuclear_smr and quantum are lane-B-heavy by design (the profitable cohort is BWXT-class supply chain and FORM/COHR-class hardware). Seating zero names from a chain is a legitimate outcome - say so; padding a chain with a marginal name to look diversified is not.
 
-SHARED-AXIS STRESS (replaces the commodity-factor stress; run over the final 8 BEFORE sizing): decompose EVERY run on (a) GLOBAL GROWTH + INDUSTRIAL CAPEX — electrification_grid and robotics_automation ride one order cycle; (b) HYPERSCALER PPA / DATACENTER CAPEX APPETITE — power_for_ai and nuclear_smr are the SAME bet on datacenter power demand, so FLAG that cross-chain pair EXPLICITLY whenever both are seated; (c) the LONG-DURATION-MULTIPLE / RATE axis — quantum and robotics multiples compress together on a rate move regardless of order books; (d) SINGLE-CUSTOMER concentration where two seats sell into the same hyperscaler or utility program. FLAG every axis carrying >=2 names. For each: EITHER (i) DIVERSIFY — swap the lower-scoring leg for the best orthogonal eligible runner-up that does NOT re-cluster, OR (ii) keep both ONLY with an explicit combined-size cap + written justification. Every keep-with-cap MUST appear in `combined_caps` as NUMBERS (not prose): combined_caps:[{names:[...], max_units(float), axis(str)}].
+SHARED-AXIS STRESS (replaces the commodity-factor stress; run over the final 8 BEFORE sizing): decompose EVERY run on (a) GLOBAL GROWTH + INDUSTRIAL CAPEX - electrification_grid and robotics_automation ride one order cycle; (b) HYPERSCALER PPA / DATACENTER CAPEX APPETITE - power_for_ai and nuclear_smr are the SAME bet on datacenter power demand, so FLAG that cross-chain pair EXPLICITLY whenever both are seated; (c) the LONG-DURATION-MULTIPLE / RATE axis - quantum and robotics multiples compress together on a rate move regardless of order books; (d) SINGLE-CUSTOMER concentration where two seats sell into the same hyperscaler or utility program. FLAG every axis carrying >=2 names. For each: EITHER (i) DIVERSIFY - swap the lower-scoring leg for the best orthogonal eligible runner-up that does NOT re-cluster, OR (ii) keep both ONLY with an explicit combined-size cap + written justification. Every keep-with-cap MUST appear in `combined_caps` as NUMBERS (not prose): combined_caps:[{names:[...], max_units(float), axis(str)}].
 
-ROTATION DISCIPLINE: FIRST read backend/_opus_debate/_director_ledger_fdt.txt (your currently-HELD names + every name you DROPPED this year; EMPTY on the maiden run — then every pick is an ADD and you say so; this book starts a FRESH live-forward NAV, it inherits NOTHING from the retired Future Resources book). KEEP a held name UNLESS its thesis is BROKEN (price through thesis_break_px, a forensic/solvency flip, a backlog reversal, a chain tripwire breached) OR you have a STRICTLY-BETTER orthogonal name for that seat — say which. RE-ADD only on a DOCUMENTED THESIS CHANGE since the drop.
+ROTATION DISCIPLINE: FIRST read backend/_opus_debate/_director_ledger_fdt.txt (your currently-HELD names + every name you DROPPED this year; EMPTY on the maiden run - then every pick is an ADD and you say so; this book starts a FRESH live-forward NAV, it inherits NOTHING from the retired Future Resources book). KEEP a held name UNLESS its thesis is BROKEN (price through thesis_break_px, a forensic/solvency flip, a backlog reversal, a chain tripwire breached) OR you have a STRICTLY-BETTER orthogonal name for that seat - say which. RE-ADD only on a DOCUMENTED THESIS CHANGE since the drop.
 
-OUTPUT — Write VALID JSON to backend/_opus_debate/fdt/apex_basket_fdt.json = {apex_basket:[{symbol, sector, chains(all taxonomy ids), chain(the PRIMARY chain id — the card/regime join key), business_model, value_chain_position, physical_anchor(one line, from the chain map), fr_score(0-100 — the field name is deliberately unchanged so the book renders on the existing card), thesis(one sentence), cost_curve(one line WITH numbers — for this book: gm_trajectory + margin band + what it says about pricing power; for a power_for_ai seat carrying a computed torque read, that number WITH its downside), contracting_reserve(one line: backlog vs revenue, book-to-bill direction, the dated milestone), capital_discipline(one line: last-cycle capex behavior + balance sheet), valuation_guard(one line, e.g. "sop_mos +18% — guard passes" or "sop_mos -45% — capped 0.5"), gm_trajectory, rev_yoy, fcf_margin, ebitda_margin_ttm, ndebt_ebitda, interest_coverage, funded_solvency, sop_mos_pct, chain_regime(the sidecar verdict(s) this name rides, e.g. {"nuclear_smr":"TAILWIND"}), regime_fit(one line: how this seat sits vs its chain regime read), headwind_justification("" unless a HEADWIND-chain seat is sized > 0.5 — then the written name-specific insulation), growth_capex_fcf_negative(bool), exposure_axes(list of the shared axes this name carries — include "hyperscaler-ppa" and "long-duration-multiple" wherever carried), size_units(float 0.1-1.5: 1.0=full unit; every capped name carries its clamped number HERE), thesis_break_px(number: the price at which the thesis is BROKEN — below it the name exits at the next review), bear_fv_px(number: your adverse-case per-share value assuming the chain regime turns against it — used for the market stress test), entry_posture(one of "enter_now_carry" | "scale_in" | "on_confirmation: <event>" | "wait_for_weakness"), wheel({suits:true, csp_strike(=thesis_break_px), cc_strike(the fair-value target), tenor_days(~30-45), rationale(one sentence)} | {suits:false}), forensic_gate, decision("KEEP"|"ADD"|"RE-ADD" vs the ledger), decision_rationale(one sentence — name-specific dated facts), whats_changed(REQUIRED non-empty ONLY for RE-ADD; else "")}], runner_ups:[...~5], combined_caps:[{names:[...], max_units(float), axis(str)}], chain_exposure:{<chain_id>: weight_pct}, fdt_memo}.
-The fdt_memo MUST: (a) state the rubric weighting and that valuation acted only as a guard; (b) LIST the names EXCLUDED or CAPPED by the forensic gate, the solvency gate, the valuation guard, and the HEADWIND rule — one-line reason each; (c) a PER-SEAT BACKLOG list: one line per seat with the backlog/revenue ratio or the dated milestone it rests on, and what breaks it; (d) a shared_axis_stress section naming EACH >=2-name axis (ALWAYS including the hyperscaler-PPA pair check across power_for_ai + nuclear_smr, even if it carries <=1 name — say so) and EXACTLY how each was resolved (diversified -> which swap; or kept-with-cap -> the combined_caps numbers); (e) the name-by-name RISE/FALL vs the prior FDT apex (read the existing backend/_opus_debate/fdt/apex_basket_fdt.json for the prior slate BEFORE you overwrite it; on the maiden run state that there is no prior); (f) a ROTATION subsection reconciling to backend/_opus_debate/_director_ledger_fdt.txt — one line per KEEP/ADD/RE-ADD; (g) a BEAR REBUTTAL subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing; (h) a CHAIN-COVERAGE line: which of the five chains seated zero names and why that is the honest read rather than a screen failure. Reply exactly: DONE"""
+OUTPUT - Write VALID JSON to backend/_opus_debate/fdt/apex_basket_fdt.json = {apex_basket:[{symbol, sector, chains(all taxonomy ids), chain(the PRIMARY chain id - the card/regime join key), business_model, value_chain_position, physical_anchor(one line, from the chain map), fr_score(0-100 - the field name is deliberately unchanged so the book renders on the existing card), thesis(one sentence), cost_curve(one line WITH numbers - for this book: gm_trajectory + margin band + what it says about pricing power; for a power_for_ai seat carrying a computed torque read, that number WITH its downside), contracting_reserve(one line: backlog vs revenue, book-to-bill direction, the dated milestone), capital_discipline(one line: last-cycle capex behavior + balance sheet), valuation_guard(one line, e.g. "sop_mos +18% - guard passes" or "sop_mos -45% - capped 0.5"), gm_trajectory, rev_yoy, fcf_margin, ebitda_margin_ttm, ndebt_ebitda, interest_coverage, funded_solvency, sop_mos_pct, chain_regime(the sidecar verdict(s) this name rides, e.g. {"nuclear_smr":"TAILWIND"}), regime_fit(one line: how this seat sits vs its chain regime read), headwind_justification("" unless a HEADWIND-chain seat is sized > 0.5 - then the written name-specific insulation), growth_capex_fcf_negative(bool), exposure_axes(list of the shared axes this name carries - include "hyperscaler-ppa" and "long-duration-multiple" wherever carried), size_units(float 0.1-1.5: 1.0=full unit; every capped name carries its clamped number HERE), thesis_break_px(number: the price at which the thesis is BROKEN - below it the name exits at the next review), bear_fv_px(number: your adverse-case per-share value assuming the chain regime turns against it - used for the market stress test), entry_posture(one of "enter_now_carry" | "scale_in" | "on_confirmation: <event>" | "wait_for_weakness"), wheel({suits:true, csp_strike(=thesis_break_px), cc_strike(the fair-value target), tenor_days(~30-45), rationale(one sentence)} | {suits:false}), forensic_gate, decision("KEEP"|"ADD"|"RE-ADD" vs the ledger), decision_rationale(one sentence - name-specific dated facts), whats_changed(REQUIRED non-empty ONLY for RE-ADD; else "")}], runner_ups:[...~5], combined_caps:[{names:[...], max_units(float), axis(str)}], chain_exposure:{<chain_id>: weight_pct}, fdt_memo}.
+The fdt_memo MUST: (a) state the rubric weighting and that valuation acted only as a guard; (b) LIST the names EXCLUDED or CAPPED by the forensic gate, the solvency gate, the valuation guard, and the HEADWIND rule - one-line reason each; (c) a PER-SEAT BACKLOG list: one line per seat with the backlog/revenue ratio or the dated milestone it rests on, and what breaks it; (d) a shared_axis_stress section naming EACH >=2-name axis (ALWAYS including the hyperscaler-PPA pair check across power_for_ai + nuclear_smr, even if it carries <=1 name - say so) and EXACTLY how each was resolved (diversified -> which swap; or kept-with-cap -> the combined_caps numbers); (e) the name-by-name RISE/FALL vs the prior FDT apex (read the existing backend/_opus_debate/fdt/apex_basket_fdt.json for the prior slate BEFORE you overwrite it; on the maiden run state that there is no prior); (f) a ROTATION subsection reconciling to backend/_opus_debate/_director_ledger_fdt.txt - one line per KEEP/ADD/RE-ADD; (g) a BEAR REBUTTAL subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing; (h) a CHAIN-COVERAGE line: which of the five chains seated zero names and why that is the honest read rather than a screen failure. Reply exactly: DONE"""
 
 
-# ── Per-book debate BRIEF (rendered into _BOOK_WORKFLOW_TEMPLATE). Mining keeps the FR cost-curve /
+# -- Per-book debate BRIEF (rendered into _BOOK_WORKFLOW_TEMPLATE). Mining keeps the FR cost-curve /
 #    reserve-life / contract-cover / capital-discipline read and the symmetric commodity torque law;
 #    FDT swaps torque for gm_trajectory/backlog durability and drops reserve life entirely.
-#    NB: apostrophe-free — these strings land inside JS single-quoted literals. ──
-MINING_BRIEF = ("Read ' + DIR + '/chain_map/' + sym + '.json — this name has an assigned chain(s), business_model, physical anchor, "
+#    NB: apostrophe-free - these strings land inside JS single-quoted literals. --
+MINING_BRIEF = ("Read ' + DIR + '/chain_map/' + sym + '.json - this name has an assigned chain(s), business_model, physical anchor, "
                 "value-chain position, commodity_revenue_share and true competitors. Its input bundle carries a resource_metrics "
                 "block (deterministic cost-curve/torque proxies: ebitda_margin_ttm + cohort band, fcf_torque_10pct, "
                 "commodity_beta_2y, ndebt_ebitda) and a chain_regime block (per-chain TAILWIND/NEUTRAL/HEADWIND from the regime "
-                "sidecar). This is a MINING LANE-A debate, not a catalyst debate: judge (1) COST-CURVE POSITION — the metrics are "
+                "sidecar). This is a MINING LANE-A debate, not a catalyst debate: judge (1) COST-CURVE POSITION - the metrics are "
                 "honest PROXIES; web-verify against company-reported AISC / unit-cost guidance where published, and SAY EXPLICITLY "
-                "when the proxy and the company-reported figure disagree; (2) CONTRACTING and RESERVE LIFE — the contract book vs "
+                "when the proxy and the company-reported figure disagree; (2) CONTRACTING and RESERVE LIFE - the contract book vs "
                 "spot exposure, reserve/resource life with numbers, NAMED offtake counterparties (an MoU is not a contract); for a "
                 "royalty/streamer read the royalty book instead: paying assets, operator quality, and whether growth needs capex; "
-                "(3) CAPITAL DISCIPLINE — the sector besetting sin: capex history through the LAST cycle, buyback/dividend behavior "
-                "at the top; (4) THE REGIME — read MINING_REGIME.md (repo root) if present for this name chain section and apply the "
+                "(3) CAPITAL DISCIPLINE - the sector besetting sin: capex history through the LAST cycle, buyback/dividend behavior "
+                "at the top; (4) THE REGIME - read MINING_REGIME.md (repo root) if present for this name chain section and apply the "
                 "cycle read, else rely on chain_regime. A live catalyst is neither a plus nor a requirement (Lane B owns catalysts). "
                 "TORQUE IS SYMMETRIC: the bear case MUST price the downside torque with the number (the same fcf_torque_10pct cuts "
                 "both ways on a -10% move), not just assert commodity risk. Gold and silver price action is NOT evidence for a "
                 "seat: judge the miner, never the metal chart.")
 
-FDT_BRIEF = ("Read ' + DIR + '/chain_map/' + sym + '.json — this name has an assigned chain(s), business_model, physical anchor, "
+FDT_BRIEF = ("Read ' + DIR + '/chain_map/' + sym + '.json - this name has an assigned chain(s), business_model, physical anchor, "
              "value-chain position and true competitors. Its input bundle carries a resource_metrics block (for these chains the "
-             "NON-COMMODITY set: gm_trajectory, rev_yoy, fcf_margin, ebitda_margin_ttm + cohort band, ndebt_ebitda — there is no "
+             "NON-COMMODITY set: gm_trajectory, rev_yoy, fcf_margin, ebitda_margin_ttm + cohort band, ndebt_ebitda - there is no "
              "fcf_torque_10pct because there is no output commodity, and you must NOT invent one) and a chain_regime block "
              "(per-chain TAILWIND/NEUTRAL/HEADWIND from the regime sidecar). This is a FUTURE DISRUPTIVE TECH LANE-A debate, not a "
-             "catalyst debate: judge (1) PRICING POWER — gm_trajectory is the lie detector: expanding gross margin on growing "
+             "catalyst debate: judge (1) PRICING POWER - gm_trajectory is the lie detector: expanding gross margin on growing "
              "revenue is pricing power in a supply-constrained niche, compressing margin on growing revenue is commoditization "
              "bought with volume; web-verify the margin story against the last two earnings calls; (2) BACKLOG and ORDER-BOOK "
-             "DURABILITY — backlog vs annual revenue and the book-to-bill DIRECTION, firm orders vs framework agreements vs an MoU "
+             "DURABILITY - backlog vs annual revenue and the book-to-bill DIRECTION, firm orders vs framework agreements vs an MoU "
              "(an MoU is not a contract), NAMED customers and concentration, plus the chain dateline: transformer/switchgear lead "
              "times and utility capex (grid), NRC/COL and first-concrete dates (nuclear), signed PPAs and interconnection queue "
              "position (power for AI), named production deployments rather than pilots (robotics), funded awards and "
-             "error-correction milestones (quantum) — undated backlog language is worth nothing; (3) CAPITAL DISCIPLINE — capex "
+             "error-correction milestones (quantum) - undated backlog language is worth nothing; (3) CAPITAL DISCIPLINE - capex "
              "history through the LAST cycle, buyback/dividend behavior at the top, and the sustaining-vs-growth capex split on any "
-             "mid-build name; (4) THE REGIME — read FDT_REGIME.md (repo root) if present for this name chain section and apply the "
+             "mid-build name; (4) THE REGIME - read FDT_REGIME.md (repo root) if present for this name chain section and apply the "
              "cycle read, else rely on chain_regime. A live catalyst is neither a plus nor a requirement (Lane B owns catalysts). "
              "COMMODITIES ARE INPUT COSTS HERE: rising copper or gas is a MARGIN HEADWIND for an equipment maker or an IPP, never a "
-             "revenue tailwind — the bear case must price the input-cost and the order-cancellation paths with numbers.")
+             "revenue tailwind - the bear case must price the input-cost and the order-cancellation paths with numbers.")
 
 
 def _book_paths(d):
@@ -3229,9 +3229,9 @@ def _book_paths(d):
             "res": d / "results", "doss": d / "dossiers", "arch": d / "_archive_prev"}
 
 
-# ── THE BOOKS REGISTRY (SPLIT_SPEC §B canon + §1). Every string here is a canon value: paths, GCS
-#    keys, embed keys, benchmarks, caps and stamps. Books never share any of them — a path collision
-#    between two entries would be a blended book, which is the one thing this design forbids. ──
+# -- THE BOOKS REGISTRY (SPLIT_SPEC Sec.B canon + Sec.1). Every string here is a canon value: paths, GCS
+#    keys, embed keys, benchmarks, caps and stamps. Books never share any of them - a path collision
+#    between two entries would be a blended book, which is the one thing this design forbids. --
 BOOKS = {
     "mining": {
         "key": "mining", "label": "mining", "display_name": "Mining", "peer": "fdt",
@@ -3254,7 +3254,7 @@ BOOKS = {
         "embed_key": "mining_tracking",
         "memo_key": "mining_memo",
         "engine": "opus-5-debate-mining-v1",
-        "post_script": "_mining_post.py",                     # TWO post clones, never a shared module (§C.6)
+        "post_script": "_mining_post.py",                     # TWO post clones, never a shared module (Sec.C.6)
         "post_stamp": "mining_post_applied",
         "skeptic_shards": ROOT / "_skeptic_mining",           # populated by `mining-skeptic` (_SKEPTIC_BOOKS["mining"])
         "benchmark_legs": {"XME": 0.5, "GDX": 0.5},
@@ -3263,12 +3263,12 @@ BOOKS = {
         "min_lane_a": 25,
         "canary_chain": "uranium_fuel_cycle",
         "canary_note": "the AMEX canary (NYSE-American cohort missing?)",
-        "forbidden_models": ("equipment_services", "utility"),   # split rule §T.4: these belong to fdt
+        "forbidden_models": ("equipment_services", "utility"),   # split rule Sec.T.4: these belong to fdt
         "csv_name": "speculair_mining_apex.csv",
-        "macro_file": "commodity_macro.json",                 # CITED-ONLY macro layer — MINING ONLY
+        "macro_file": "commodity_macro.json",                 # CITED-ONLY macro layer - MINING ONLY
         "banner": ("Commodity-cyclical MINING sleeve (split from Future Resources 2026-07-27; fresh "
                    "live-forward NAV, never back-filled). Lane A NAV steps weekly until the nightly "
-                   "mark ships. Lane B is an event tracker, not a NAV. US-listed names only — much "
+                   "mark ships. Lane B is an event tracker, not a NAV. US-listed names only - much "
                    "developer alpha lists on TSX/ASX and is out of scope. Never blended with any "
                    "other book."),
     },
@@ -3299,12 +3299,12 @@ BOOKS = {
         "benchmark_legs": {"GRID": 0.5, "QQQ": 0.5},
         "benchmark_label": "50/50 GRID+QQQ",
         "chain_caps": {"max_names": 3, "max_weight": 30.0},
-        "min_lane_a": 20,                                     # §D.1: quantum/SMR Lane A cohorts are thin
+        "min_lane_a": 20,                                     # Sec.D.1: quantum/SMR Lane A cohorts are thin
         "canary_chain": "robotics_automation",                # the deepest FDT chain; 0 mapped = screen failure
         "canary_note": "the deepest FDT cohort (industrial-machinery screen missing?)",
-        "forbidden_models": ("producer", "royalty_streamer"),  # split rule §T.4: these belong to mining
+        "forbidden_models": ("producer", "royalty_streamer"),  # split rule Sec.T.4: these belong to mining
         "csv_name": "speculair_fdt_apex.csv",
-        "macro_file": None,                                   # FDT gets NO commodity macro layer (§C.8)
+        "macro_file": None,                                   # FDT gets NO commodity macro layer (Sec.C.8)
         "banner": ("FUTURE DISRUPTIVE TECH sleeve (split from Future Resources 2026-07-27; fresh "
                    "live-forward NAV, never back-filled). Lane A NAV steps weekly until the nightly "
                    "mark ships. Lane B is an event tracker, not a NAV. US-listed names only. Never "
@@ -3314,16 +3314,16 @@ BOOKS = {
 
 
 def book_universe(bk):
-    """Stage A+B for ONE book (clone of fr_universe over the registry, SPLIT_SPEC §4/§T.2-T.3,
+    """Stage A+B for ONE book (clone of fr_universe over the registry, SPLIT_SPEC Sec.4/Sec.T.2-T.3,
     monthly): deterministic FMP screen per chain -> two-lane gates. Lane A (producers/royalties/
     toll-takers): TTM FCF>0 OR TTM OCF>0 (tagged growth_capex_fcf_negative when OCF-only), TTM
     EBITDA>0, funded solvency != weak, mcap>=$500M, ADV>=$5M. Lane B (developers): mcap>=$150M,
-    ADV>=$2M, NO profitability gate — cash-runway fields stamped here; the funded-through-milestone
+    ADV>=$2M, NO profitability gate - cash-runway fields stamped here; the funded-through-milestone
     gate is asserted at Lane B candidate extraction. Anti-shrink: re-screens FMP from scratch every
     run; never reads a prior universe/candidates file; STOPs loudly on thin screens. Gates cached by
     symbol+month. NEW vs fr_universe: a 0-row industry LISTED in the chain's `fmp_industries_verify`
-    is a known-unverified vocabulary string — WARN and CONTINUE (config-only fix in the taxonomy);
-    a 0-row industry NOT on that list that leaves its whole chain empty is a screen failure — STOP."""
+    is a known-unverified vocabulary string - WARN and CONTINUE (config-only fix in the taxonomy);
+    a 0-row industry NOT on that list that leaves its whole chain empty is a screen failure - STOP."""
     import concurrent.futures
     import re
     from datetime import datetime as _dt
@@ -3331,14 +3331,14 @@ def book_universe(bk):
     tax = json.load(open(bk["taxonomy"], encoding="utf-8"))
     key = E.get_key("FMP_API_KEY")
     if not key:
-        print("GUARD: no FMP_API_KEY — STOP")
+        print("GUARD: no FMP_API_KEY - STOP")
         raise SystemExit(1)
     bk["dir"].mkdir(parents=True, exist_ok=True)
     (bk["dir"] / "chain_map").mkdir(exist_ok=True)
     base = "https://financialmodelingprep.com/stable"
     fa, fb = tax["floors"]["lane_a"], tax["floors"]["lane_b"]
 
-    # ── Stage A — screen once at the WIDER lane-B floors; lane assignment happens after Stage B ──
+    # -- Stage A - screen once at the WIDER lane-B floors; lane assignment happens after Stage B --
     seen, hints, raw_total = {}, {}, 0
     zero_stops = []
     for ch in tax["chains"]:
@@ -3377,10 +3377,10 @@ def book_universe(bk):
                 if ind in verify:
                     # known-unverified vocabulary string (taxonomy `fmp_industries_verify`): the first
                     # live run is EXACTLY where these get confirmed or dropped. Never a STOP.
-                    print(f"  WARN industry '{ind}' -> 0 rows (unverified string — check "
+                    print(f"  WARN industry '{ind}' -> 0 rows (unverified string - check "
                           f"/stable/available-industries) [{ch['id']}]")
                 else:
-                    print(f"  WARN [{ch['id']}] industry '{ind}' returned 0 rows — misspelled/renamed "
+                    print(f"  WARN [{ch['id']}] industry '{ind}' returned 0 rows - misspelled/renamed "
                           f"industry string? (it is NOT on this chain's fmp_industries_verify list)")
                     hard_zero.append(ind)
         print(f"  Stage A [{ch['id']}]: {len(ch_syms)} unique candidates")
@@ -3388,26 +3388,26 @@ def book_universe(bk):
             zero_stops.append(f"{ch['id']} (0 candidates; PROVEN strings {hard_zero} returned 0 rows)")
     print(f"Stage A: {len(seen)} unique candidates from {raw_total} raw rows")
     if raw_total < 100:
-        print("GUARD: FMP screen returned <100 raw rows (key/quota failure?) — STOP, not a silent small universe")
+        print("GUARD: FMP screen returned <100 raw rows (key/quota failure?) - STOP, not a silent small universe")
         raise SystemExit(1)
     if zero_stops:
         print(f"GUARD: chain(s) screened to 0 candidates on industry strings that are NOT flagged "
-              f"unverified {zero_stops} — a vocabulary/screen failure, not an empty cohort. STOP "
+              f"unverified {zero_stops} - a vocabulary/screen failure, not an empty cohort. STOP "
               f"(fix the taxonomy string, or move it to that chain's fmp_industries_verify list).")
         raise SystemExit(1)
     n_canary = sum(1 for s, hs in hints.items() if bk["canary_chain"] in hs)
     if n_canary == 0:
-        print(f"GUARD: {bk['canary_chain']} mapped 0 candidates — {bk['canary_note']} — STOP")
+        print(f"GUARD: {bk['canary_chain']} mapped 0 candidates - {bk['canary_note']} - STOP")
         raise SystemExit(1)
 
-    # ── per-lane liquidity floors (free — from the screener rows) ──
+    # -- per-lane liquidity floors (free - from the screener rows) --
     def _adv(c):
         p, v = c.get("price"), c.get("volume")
         return p * v if isinstance(p, (int, float)) and isinstance(v, (int, float)) else 0.0
     liquid = {s: c for s, c in seen.items() if _adv(c) >= fb["adv_usd"]}
     print(f"liquidity gate (lane-B ADV >= ${fb['adv_usd']/1e6:.0f}M): {len(liquid)} pass")
 
-    # ── Stage B — financial gates, cached by symbol+month ──
+    # -- Stage B - financial gates, cached by symbol+month --
     cache_p = bk["dir"] / "_gates_cache.json"
     cache = {}
     if cache_p.exists():
@@ -3498,13 +3498,13 @@ def book_universe(bk):
                 print(f"  ...{done}/{len(syms)}")
     cache_p.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
 
-    # ── lane assignment ──
+    # -- lane assignment --
     def _n(v):
         return v if isinstance(v, (int, float)) else 0
     lane_a_pre = [s for s, c in liquid.items()
                   if _n(c.get("mcap")) >= fa["market_cap_usd"] and _n(c.get("price")) >= fa["price_min"]
                   and _adv(c) >= fa["adv_usd"] and c["gates"]["pass_cash"] and c["gates"]["pass_profit"]]
-    fl = _funded_leverage(lane_a_pre)                           # batch, shared cache — lane A only
+    fl = _funded_leverage(lane_a_pre)                           # batch, shared cache - lane A only
     lane_a, lane_b = [], []
     for s, c in sorted(liquid.items()):
         g = c["gates"]
@@ -3556,12 +3556,12 @@ def book_map(bk):
     LBL = bk["label"].upper()
     cand_f = bk["dir"] / "_candidates.json"
     if not cand_f.exists():
-        print(f"GUARD: no {bk['dir'].name}/_candidates.json — run {bk['key']}-universe first. STOP")
+        print(f"GUARD: no {bk['dir'].name}/_candidates.json - run {bk['key']}-universe first. STOP")
         raise SystemExit(1)
     cd = json.load(open(cand_f, encoding="utf-8"))
     cands = [c for c in cd.get("candidates", []) if c.get("symbol")]
     if not cands:
-        print("GUARD: _candidates.json has 0 candidates — STOP")
+        print("GUARD: _candidates.json has 0 candidates - STOP")
         raise SystemExit(1)
     bk["dir"].mkdir(parents=True, exist_ok=True)
     (bk["dir"] / "chain_map").mkdir(exist_ok=True)
@@ -3577,12 +3577,12 @@ def book_map(bk):
     if bk["key"] == "mining":
         split_note = ("This is the MINING book: producer and royalty_streamer names belong HERE; an "
                       "equipment_services or utility name mapped into a mining chain is a split-rule "
-                      "error and is DROPPED at merge — map it with its true business_model anyway, "
+                      "error and is DROPPED at merge - map it with its true business_model anyway, "
                       "never bend the label to keep a name.")
     else:
         split_note = ("This is the FUTURE DISRUPTIVE TECH book: equipment_services, utility and "
                       "developer names belong HERE; a producer or royalty_streamer mapped into an FDT "
-                      "chain is a split-rule error and is DROPPED at merge (mining owns those) — map "
+                      "chain is a split-rule error and is DROPPED at merge (mining owns those) - map "
                       "the true business_model anyway, never bend the label to keep a name.")
     # NB: apostrophe-free inside the JS single-quoted agent string (a stray ' breaks the generated JS).
     js = """export const meta = {
@@ -3595,12 +3595,12 @@ phase('ChainMap')
 await parallel(Array.from({ length: N }, (_, i) => () => agent(
   'You are the __BOOK_UPPER__ CHAIN RADAR (chain-mapping + physical-anchor pass). Read backend/_opus_debate/__TAX__ (the versioned chain taxonomy: ids, theses, value-chain layers, notes) and backend/_opus_debate/__BOOK__/_map_chunk_' + i + '.json (your candidate chunk: symbol/name/sector/industry/mcap + lane + Stage-B gates). __SPLIT_NOTE__ For EACH symbol decide, skeptically:\\n' +
   '- physical_anchor: ONE line naming the PHYSICAL thing this company makes, moves, powers, or directly instruments for its chain (quantum hardware counts; a payments network never does). If you CANNOT name one, set chain_fit_confidence=low REGARDLESS of the industry or keyword hints (the anti-Visa rule; it binds hardest on the broad quantum and robotics filters).\\n' +
-  '- chains: array of taxonomy ids this company GENUINELY rides (max 2; a name may legitimately carry two chains WITHIN this book; [] if none — an industry filter catches many non-chain names).\\n' +
+  '- chains: array of taxonomy ids this company GENUINELY rides (max 2; a name may legitimately carry two chains WITHIN this book; [] if none - an industry filter catches many non-chain names).\\n' +
   '- business_model: exactly one of producer | royalty_streamer | developer | equipment_services | utility (royalty_streamer auto-passes the cash gates; a pre-FCF developer belongs in lane B, never lane A; equipment_services = the toll-taker selling into the chain; utility = an operator selling power under contract).\\n' +
   '- commodity_revenue_share: a number 0-1 = the fraction of revenue exposed to the chain commodity (1.0 for a pure producer; a diversified miner gets your best estimate and NEVER a default of 1.0; an equipment/services or utility name is low). This feeds a deterministic torque formula AND the cross-book dedup rule, so estimate it honestly.\\n' +
-  '- value_chain_position: one line — which value-chain layer it occupies and what it sells.\\n' +
-  '- true_competitors: 4-8 REAL competitor tickers (business-model comparables, in-universe or NOT — include foreign listings and private-adjacent public proxies).\\n' +
-  '- chain_fit_confidence: high | medium | low (low = the FMP industry filter caught a name that is NOT really in this chain — a chemical company in the rare-earth screen, a generic hardware or software name in quantum, a non-chain royalty company, a legacy industrial). LOW-confidence names are DROPPED at merge, printed, never silent.\\n' +
+  '- value_chain_position: one line - which value-chain layer it occupies and what it sells.\\n' +
+  '- true_competitors: 4-8 REAL competitor tickers (business-model comparables, in-universe or NOT - include foreign listings and private-adjacent public proxies).\\n' +
+  '- chain_fit_confidence: high | medium | low (low = the FMP industry filter caught a name that is NOT really in this chain - a chemical company in the rare-earth screen, a generic hardware or software name in quantum, a non-chain royalty company, a legacy industrial). LOW-confidence names are DROPPED at merge, printed, never silent.\\n' +
   'Write (Write tool) VALID JSON to backend/_opus_debate/__BOOK__/_chainmap_' + i + '.json as {\"<SYM>\": {physical_anchor, chains, business_model, commodity_revenue_share, value_chain_position, true_competitors, chain_fit_confidence}, ...} covering EVERY symbol in your chunk. Reply exactly: DONE',
   { label: '__BOOK__map:' + i, phase: 'ChainMap', model: '__RADAR_MODEL__' })))
 return 'DONE'
@@ -3617,7 +3617,7 @@ return 'DONE'
 
 
 def _cross_basket_dedup(bk):
-    """Cross-book dedup (SPLIT_SPEC §T.4.2 + §C.12 — there is NO standalone basket-dedup mode; both
+    """Cross-book dedup (SPLIT_SPEC Sec.T.4.2 + Sec.C.12 - there is NO standalone basket-dedup mode; both
     map-merges call this helper at the end). Reads the OTHER book's universe.json, computes the
     symbol intersection, and seats every straddler in exactly ONE book:
       - producer-side `commodity_revenue_share` >= 0.5 -> MINING wins; < 0.5 -> FDT wins.
@@ -3626,11 +3626,11 @@ def _cross_basket_dedup(bk):
         regime layer explicitly price the commodity exposure a straddler carries either way; seating
         it in FDT would smuggle unlabeled commodity beta into a book whose axes do not decompose it.
     The loser is removed from THIS book's member list ONLY when this book is the loser (the other
-    book removes its own on its next merge — neither book ever writes the other's universe), the
+    book removes its own on its next merge - neither book ever writes the other's universe), the
     funnel is stamped `deduped_out`, and one row per decision is appended to
-    _opus_debate/_basket_dedup_log.jsonl ({date, symbol, winner, loser, revenue_share, reason}) —
+    _opus_debate/_basket_dedup_log.jsonl ({date, symbol, winner, loser, revenue_share, reason}) -
     append-only audit trail, re-derived every monthly rebuild, NEVER an input to anything.
-    FAIL-OPEN: a missing/unparseable other-universe WARNs and no-ops — a data gap must never drop
+    FAIL-OPEN: a missing/unparseable other-universe WARNs and no-ops - a data gap must never drop
     names. Returns the number of members removed from THIS book."""
     from datetime import datetime as _dt
     peer = BOOKS.get(bk.get("peer") or "")
@@ -3638,14 +3638,14 @@ def _cross_basket_dedup(bk):
         return 0
     my_f, other_f = bk["dir"] / "universe.json", peer["dir"] / "universe.json"
     if not other_f.exists():
-        print(f"basket-dedup: no {peer['dir'].name}/universe.json yet — WARN and NO-OP (fail-open: a "
+        print(f"basket-dedup: no {peer['dir'].name}/universe.json yet - WARN and NO-OP (fail-open: a "
               f"missing counterpart universe must never drop names from this book).")
         return 0
     try:
         mine = json.load(open(my_f, encoding="utf-8"))
         other = json.load(open(other_f, encoding="utf-8"))
     except Exception as e:
-        print(f"basket-dedup: universe unreadable ({e}) — WARN and NO-OP (fail-open).")
+        print(f"basket-dedup: universe unreadable ({e}) - WARN and NO-OP (fail-open).")
         return 0
     my_members = mine.get("members") or []
     other_by = {m.get("symbol"): m for m in (other.get("members") or []) if m.get("symbol")}
@@ -3665,7 +3665,7 @@ def _cross_basket_dedup(bk):
         if share is None:                                  # try the other side before giving up
             share = _share(other_by[s] if bk["key"] == "mining" else mine_by[s])
         if share is None:
-            winner, reason = "mining", "no commodity_revenue_share on either side — undeterminable, Mining wins by rule"
+            winner, reason = "mining", "no commodity_revenue_share on either side - undeterminable, Mining wins by rule"
         elif share >= 0.5:
             winner, reason = "mining", f"producer-side commodity_revenue_share {share} >= 0.5 -> Mining"
         else:
@@ -3674,7 +3674,7 @@ def _cross_basket_dedup(bk):
         rows.append({"date": _dt.now().strftime("%Y-%m-%d"), "symbol": s, "winner": winner,
                      "loser": loser, "revenue_share": share, "reason": reason})
         mark = "CEDED (dropped here)" if loser == bk["key"] else "KEPT here"
-        print(f"  basket-dedup {s}: winner={winner} — {reason} -> {mark}")
+        print(f"  basket-dedup {s}: winner={winner} - {reason} -> {mark}")
         if loser == bk["key"]:
             losers.append(s)
     mine["members"] = [m for m in my_members if m.get("symbol") not in set(losers)]
@@ -3689,7 +3689,7 @@ def _cross_basket_dedup(bk):
             for r in rows:
                 fh.write(json.dumps(r, ensure_ascii=False) + "\n")
     except Exception as e:
-        print(f"WARN: _basket_dedup_log.jsonl append failed ({e}) — the dedup itself stands")
+        print(f"WARN: _basket_dedup_log.jsonl append failed ({e}) - the dedup itself stands")
     print(f"basket-dedup: {len(straddlers)} straddler(s) resolved | ceded from {bk['key']}: "
           f"{sorted(losers) or 'none'} | universe now {len(mine['members'])} members "
           f"(lane_a={n_a} lane_b={n_b})")
@@ -3703,10 +3703,10 @@ def book_map_merge(bk):
     write <book>/universe.json (built_at, taxonomy_version, funnel, by_chain x lane, members with
     gates blocks). GUARDS: a developer mapped into lane A is a printed mapping error; a chain with
     historically >=3 candidates that maps to 0 members STOPs (a systematic mapper failure). NEW vs
-    fr_map_merge: (1) the IN-BOOK SPLIT SANITY CHECK — a producer/royalty_streamer mapped into an FDT
+    fr_map_merge: (1) the IN-BOOK SPLIT SANITY CHECK - a producer/royalty_streamer mapped into an FDT
     chain, or an equipment_services/utility mapped into a Mining chain, is a mapping error: printed
-    with symbol + business_model + chain, and DROPPED (§T.4.1); (2) _cross_basket_dedup() at the very
-    end (§C.12). The pre-rank cut to the debated set happens LATER in <key>-prep, never here
+    with symbol + business_model + chain, and DROPPED (Sec.T.4.1); (2) _cross_basket_dedup() at the very
+    end (Sec.C.12). The pre-rank cut to the debated set happens LATER in <key>-prep, never here
     (deterministic code never picks members, Do-NOT #2)."""
     import glob as _g
     from datetime import datetime as _dt
@@ -3714,7 +3714,7 @@ def book_map_merge(bk):
     tax = json.load(open(bk["taxonomy"], encoding="utf-8"))
     cand_f = bk["dir"] / "_candidates.json"
     if not cand_f.exists():
-        print(f"GUARD: no {bk['dir'].name}/_candidates.json — run {bk['key']}-universe first. STOP")
+        print(f"GUARD: no {bk['dir'].name}/_candidates.json - run {bk['key']}-universe first. STOP")
         raise SystemExit(1)
     cd = json.load(open(cand_f, encoding="utf-8"))
     cands = {c["symbol"]: c for c in cd.get("candidates", []) if c.get("symbol")}
@@ -3728,7 +3728,7 @@ def book_map_merge(bk):
         except Exception as e:
             print(f"WARN: shard {os.path.basename(f)} unreadable ({e})")
     if not mapped:
-        print(f"GUARD: no chain-map shards (_chainmap_*.json) — run the _{bk['key']}_map.js workflow "
+        print(f"GUARD: no chain-map shards (_chainmap_*.json) - run the _{bk['key']}_map.js workflow "
               f"first. STOP")
         raise SystemExit(1)
     # DROP low-confidence / chain-less / physical-anchor-less (printed, never silent)
@@ -3740,10 +3740,10 @@ def book_map_merge(bk):
     keep = {s: m for s, m in mapped.items() if s in cands and s not in set(low)}
     print(f"{bk['key']}-map-merge: {len(mapped)} mapped from {len(shards)} shards | "
           f"DROPPED low-confidence/chain-less/anchor-less ({len(low)}): {low}")
-    # ── IN-BOOK SPLIT SANITY CHECK (§T.4.1): the business_model decides WHICH BOOK owns a name.
-    #    A wrong-side model here is a mapping error, not a seat — printed with symbol +
+    # -- IN-BOOK SPLIT SANITY CHECK (Sec.T.4.1): the business_model decides WHICH BOOK owns a name.
+    #    A wrong-side model here is a mapping error, not a seat - printed with symbol +
     #    business_model + chain, and dropped BEFORE the chain_map explode so nothing downstream
-    #    (bundles, Director, post) can ever see it. ──
+    #    (bundles, Director, post) can ever see it. --
     forbidden = set(bk.get("forbidden_models") or ())
     split_drops = []
     for s in sorted(keep):
@@ -3753,7 +3753,7 @@ def book_map_merge(bk):
             split_drops.append((s, bm, chs))
     if split_drops:
         print(f"!!! SPLIT-RULE MAPPING ERROR ({len(split_drops)}): business_model does not belong in "
-              f"the {bk['key']} book — DROPPED:")
+              f"the {bk['key']} book - DROPPED:")
         for s, bm, chs in split_drops:
             print(f"    {s}: business_model={bm} mapped into chain(s) {chs} -> dropped "
                   f"(it belongs to the {bk['peer']} book)")
@@ -3763,7 +3763,7 @@ def book_map_merge(bk):
         chains = [c for c in (m.get("chains") or []) if c in valid_chain_ids][:2]
         (bk["dir"] / "chain_map" / f"{s}.json").write_text(
             json.dumps({"symbol": s, **m, "chains": chains}, ensure_ascii=False, indent=1), encoding="utf-8")
-    # ── build members: cand (lane/gates) + chain-map (chains/business_model/commodity_revenue_share/…) ──
+    # -- build members: cand (lane/gates) + chain-map (chains/business_model/commodity_revenue_share/...) --
     def _n(v):
         return v if isinstance(v, (int, float)) else 0
     members, mapping_errors, royalty_flips = [], [], []
@@ -3775,7 +3775,7 @@ def book_map_merge(bk):
         chains = [ci for ci in (m.get("chains") or []) if ci in valid_chain_ids][:2]
         # royalty_streamer bypass: a streamer that fell to lane B on the FCF-light cash gate flips to
         # lane A if it clears the lane-A floors (royalty cos are structurally clean). royalty_streamer
-        # is a legal business_model ONLY in the mining book — elsewhere it was dropped just above.
+        # is a legal business_model ONLY in the mining book - elsewhere it was dropped just above.
         royalty_bypass = False
         if bm == "royalty_streamer" and lane == "b" \
                 and _n(c.get("mcap")) >= fa["market_cap_usd"] and _n(c.get("price")) >= fa["price_min"] \
@@ -3784,7 +3784,7 @@ def book_map_merge(bk):
             royalty_bypass = True
             royalty_flips.append(s)
         # GUARD: a developer mapped into lane A is a mapping error (a pre-FCF dev cannot be a producer);
-        # print it loudly + flag it — the deterministic gates set the lane, so we surface, never silently move.
+        # print it loudly + flag it - the deterministic gates set the lane, so we surface, never silently move.
         mapping_error = bool(bm == "developer" and lane == "a")
         if mapping_error:
             mapping_errors.append(s)
@@ -3807,7 +3807,7 @@ def book_map_merge(bk):
     if royalty_flips:
         print(f"royalty_streamer bypass: flipped lane B->A on cash-gate exempt streamers: {royalty_flips}")
     if mapping_errors:
-        print(f"!!! MAPPING ERROR: developer(s) mapped into lane A (a pre-FCF dev is not a producer) — "
+        print(f"!!! MAPPING ERROR: developer(s) mapped into lane A (a pre-FCF dev is not a producer) - "
               f"surfaced, review the chain map: {mapping_errors}")
     # by_chain x lane counts + the zero-map STOP guard
     by_chain = {ch["id"]: {"a": 0, "b": 0} for ch in tax["chains"]}
@@ -3834,17 +3834,17 @@ def book_map_merge(bk):
           f"(lane_a={n_a} lane_b={n_b})")
     print(f"by_chain x lane: {by_chain}")
     if zero_stops:
-        print(f"GUARD: chain(s) with >=3 candidates mapped to 0 members {zero_stops} — a systematic "
+        print(f"GUARD: chain(s) with >=3 candidates mapped to 0 members {zero_stops} - a systematic "
               f"mapper failure. universe.json NOT written. STOP (do not reuse a prior month).")
         raise SystemExit(1)
     if n_a < bk["min_lane_a"]:
-        print(f"NOTE: only {n_a} lane-A members mapped — {bk['key']}-prep will STOP if "
+        print(f"NOTE: only {n_a} lane-A members mapped - {bk['key']}-prep will STOP if "
               f"<{bk['min_lane_a']} mappable; a thin lane-A is expected on the current cohorts, not a bug.")
     uni = {"built_at": _dt.now().isoformat(), "taxonomy_version": tax.get("version"),
            "basket": tax.get("basket") or bk["key"],
            "funnel": funnel, "by_chain": by_chain, "members": members}
     (bk["dir"] / "universe.json").write_text(json.dumps(uni, ensure_ascii=False, indent=1), encoding="utf-8")
-    # ── cross-book dedup runs LAST, against the written universe (§C.12: no standalone mode) ──
+    # -- cross-book dedup runs LAST, against the written universe (Sec.C.12: no standalone mode) --
     n_ceded = _cross_basket_dedup(bk)
     n_final = len(members) - n_ceded
     print(f"{LBL} UNIVERSE OK: {n_final} mapped members (lane_a={n_a} lane_b={n_b}, ceded to "
@@ -3924,7 +3924,7 @@ def _book_redebate_triggers(bk, members):
 def _book_resource_metrics(bk, members, offline):
     """_resource_metrics.compute() over one book's members, taxonomy-aware where the module supports
     it. The module's own default taxonomy is the FROZEN future_resources_chains.json, so a build that
-    predates the `taxonomy=` parameter cannot resolve the new chain ids — that degrades to no torque
+    predates the `taxonomy=` parameter cannot resolve the new chain ids - that degrades to no torque
     metrics, which is FAIL-OPEN (a missing metric is never a fabricated one) and printed loudly.
     Returns {symbol: metrics_dict} (empty on any failure)."""
     sys.path.insert(0, os.path.join(BK, "_opus_debate"))
@@ -3934,20 +3934,20 @@ def _book_resource_metrics(bk, members, offline):
             return RM.compute(members, offline=offline, taxonomy=bk["taxonomy"],
                               cache_path=bk["dir"] / "_resource_metrics_cache.json")
         except TypeError:
-            print(f"WARN: _resource_metrics.compute() takes no taxonomy= parameter — falling back to "
+            print(f"WARN: _resource_metrics.compute() takes no taxonomy= parameter - falling back to "
                   f"its default (future_resources_chains.json). Chains outside that file get NO torque "
                   f"metrics rather than wrong ones (fail-open).")
             return RM.compute(members, offline=offline)
     except Exception as _e:
-        print(f"WARN: _resource_metrics compute failed ({_e}) — shipping without torque metrics")
+        print(f"WARN: _resource_metrics compute failed ({_e}) - shipping without torque metrics")
         return {}
 
 
 def book_prep(bk):
     """Lane A prep/bundle for ONE book (clone of fr_prep over the registry, weekly). Steps: universe
-    staleness self-gate (21d — how "monthly" fires) -> Lane A member selection + PRE-RANK cut
+    staleness self-gate (21d - how "monthly" fires) -> Lane A member selection + PRE-RANK cut
     (<=8/chain then <=40 global, held names protected; STOP if < bk["min_lane_a"] mappable Lane A
-    members — the pre-rank decides who gets DEBATED, never who gets PICKED, Do-NOT #2) -> re-debate
+    members - the pre-rank decides who gets DEBATED, never who gets PICKED, Do-NOT #2) -> re-debate
     triggers -> selective self-clean -> per-member input bundles (signal_type=bk["signal_type"],
     metrics via E._build_debate_metrics + _fmp_segments + the deterministic resource metrics + the
     chain-map row + the regime sidecar) -> transcripts via E.resolve_transcripts (no FMP ->
@@ -3962,10 +3962,10 @@ def book_prep(bk):
     for d in (bk["inp"], bk["txt"], bk["res"], bk["doss"]):
         d.mkdir(parents=True, exist_ok=True)
 
-    # ── universe staleness self-gate (monthly rebuild fires through here) ──
+    # -- universe staleness self-gate (monthly rebuild fires through here) --
     uni_f = bk["dir"] / "universe.json"
     if not uni_f.exists():
-        print(f"{LBL} UNIVERSE STALE — run {bk['key']}-universe, the _{bk['key']}_map.js workflow, then "
+        print(f"{LBL} UNIVERSE STALE - run {bk['key']}-universe, the _{bk['key']}_map.js workflow, then "
               f"{bk['key']}-map-merge first. STOP")
         sys.exit(1)
     uni = json.load(open(uni_f, encoding="utf-8"))
@@ -3975,11 +3975,11 @@ def book_prep(bk):
     except Exception:
         age = 999
     if age > 21:
-        print(f"{LBL} UNIVERSE STALE (>21d) — run {bk['key']}-universe / {bk['key']}-map / "
+        print(f"{LBL} UNIVERSE STALE (>21d) - run {bk['key']}-universe / {bk['key']}-map / "
               f"{bk['key']}-map-merge first. STOP")
         sys.exit(1)
 
-    # ── Lane A members + held-name union (the ONLY carry-over, Do-NOT #3) ──
+    # -- Lane A members + held-name union (the ONLY carry-over, Do-NOT #3) --
     lane_a = [m for m in uni.get("members", []) if m.get("symbol") and m.get("lane") == "a"]
     held = set()
     apx_f = E.FRONTEND_DIR / "public" / bk["payload_local"]
@@ -3992,13 +3992,13 @@ def book_prep(bk):
     for m in lane_a:
         m["held"] = m["symbol"] in held
     if len(lane_a) < bk["min_lane_a"]:
-        print(f"GUARD: only {len(lane_a)} mappable Lane A members (<{bk['min_lane_a']}) — DEGRADED "
+        print(f"GUARD: only {len(lane_a)} mappable Lane A members (<{bk['min_lane_a']}) - DEGRADED "
               f"universe, STOP (do not debate a thin book, do not reuse a prior month)")
         sys.exit(1)
 
-    # ── PRE-RANK cut: deterministic quality/torque ordering for the DEBATE BUDGET only (never
+    # -- PRE-RANK cut: deterministic quality/torque ordering for the DEBATE BUDGET only (never
     #    membership): ebitda margin desc (cost-curve proxy), rev_yoy desc, funded leverage asc.
-    #    <=8 per PRIMARY chain, then <=40 global; held names are never cut. ──
+    #    <=8 per PRIMARY chain, then <=40 global; held names are never cut. --
     def _prerank(m):
         g = m.get("gates", {})
         rev, ebitda = g.get("ttm_revenue"), g.get("ttm_ebitda")
@@ -4023,11 +4023,11 @@ def book_prep(bk):
     print(f"{bk['key']}-prep pre-rank: {len(lane_a)} Lane A mapped -> {len(members)} debated "
           f"(<=8/chain, <=40 global, held protected: {sorted(held & selected) or 'none'})")
 
-    # ── re-debate triggers (BEFORE the selective self-clean) ──
+    # -- re-debate triggers (BEFORE the selective self-clean) --
     redebate, cached, why = _book_redebate_triggers(bk, members)
     redebate &= selected                                            # only budgeted names debate
 
-    # ── selective self-clean: archive ONLY re-debated results, keep fresh cached ones ──
+    # -- selective self-clean: archive ONLY re-debated results, keep fresh cached ones --
     if bk["arch"].exists():
         shutil.rmtree(bk["arch"], ignore_errors=True)
     bk["arch"].mkdir(parents=True, exist_ok=True)
@@ -4044,12 +4044,12 @@ def book_prep(bk):
         fmp_syms, online_syms = [], sorted(redebate)
         print("DRY-LOGIC: bundle/transcript/metric builds SKIPPED (all names emitted as online)")
     else:
-        # ── deterministic resource metrics for the bundles (chain-map commodity_revenue_share
-        #    already on members; torque_metrics=false chains get the non-commodity set) ──
+        # -- deterministic resource metrics for the bundles (chain-map commodity_revenue_share
+        #    already on members; torque_metrics=false chains get the non-commodity set) --
         rm = _book_resource_metrics(bk, [m for m in members if m["symbol"] in redebate], False)
-        # ── bundles: per re-debated member, inputs/<SYM>.json. Scan firewall: scan_fin ONLY through
+        # -- bundles: per re-debated member, inputs/<SYM>.json. Scan firewall: scan_fin ONLY through
         #    E._SCAN_FIN_FIELDS (hit_prob/factor_scores excluded by design); off-scan members build
-        #    scan_fin from the Stage-B gates (absent fields stay ABSENT, never zero-filled). ──
+        #    scan_fin from the Stage-B gates (absent fields stay ABSENT, never zero-filled). --
         scan = gcs_io.gcs_read_json("scans/latest_global.json") or json.load(
             open("../frontend/public/latest_global.json", encoding="utf-8"))
         scan_by_sym = {s.get("symbol"): s for s in scan.get("stocks", []) if s.get("symbol")}
@@ -4064,7 +4064,7 @@ def book_prep(bk):
         for m in sorted(members, key=lambda x: x["symbol"]):
             sym = m["symbol"]
             if sym not in redebate:
-                continue                                    # cached & fresh — Director re-grades as-is
+                continue                                    # cached & fresh - Director re-grades as-is
             sc = scan_by_sym.get(sym, {})
             g = m.get("gates", {})
             if sc:
@@ -4117,12 +4117,12 @@ def book_prep(bk):
             else:
                 online_syms.append(sym)
 
-    # ── dump the engine system prompts into the book subtree (idempotent; standalone run) ──
+    # -- dump the engine system prompts into the book subtree (idempotent; standalone run) --
     (bk["dir"] / "interrogator_system.txt").write_text(E.INTERROGATOR_SYSTEM_PROMPT, encoding="utf-8")
     (bk["dir"] / "architect_system.txt").write_text(E.ARCHITECT_SYSTEM_PROMPT, encoding="utf-8")
     (bk["dir"] / "moderator_system.txt").write_text(E.MODERATOR_SYSTEM_PROMPT, encoding="utf-8")
 
-    # ── render the workflow with __SYMS__/__ONLINE_SYMS__ baked in (the args-delivery workaround) ──
+    # -- render the workflow with __SYMS__/__ONLINE_SYMS__ baked in (the args-delivery workaround) --
     js = (_BOOK_WORKFLOW_TEMPLATE
           .replace("__BRIEF__", bk["workflow_brief"])
           .replace("__WORKFLOW_NAME__", bk["workflow_name"])
@@ -4147,11 +4147,11 @@ def book_prep(bk):
 
 
 def _book_macro_block(bk):
-    """MINING ONLY (SPLIT_SPEC §C.8: ONE block, built at input time; FDT gets no commodity tilt).
+    """MINING ONLY (SPLIT_SPEC Sec.C.8: ONE block, built at input time; FDT gets no commodity tilt).
     Renders the single `COMMODITY MACRO (CITED-ONLY)` section appended to the Director prompt file:
     the Dalio playbook text from _commodity_tilt.director_brief(<macro_regime.json snapshot>) plus
     the winner-scoreboard rows from <book>/commodity_macro.json when present. FAIL-OPEN by
-    construction — a missing snapshot or a missing/stale macro payload WARNs, still writes the block,
+    construction - a missing snapshot or a missing/stale macro payload WARNs, still writes the block,
     and says in the block that the macro layer is degraded. It never STOPs and never tightens
     anything. Returns the block text (always a non-empty string)."""
     from datetime import datetime as _dt
@@ -4163,11 +4163,11 @@ def _book_macro_block(bk):
         try:
             snap = json.load(open(snap_f, encoding="utf-8")) or {}
         except Exception as e:
-            print(f"WARN {bk['key']}-input: macro_regime.json unreadable ({e}) — the Dalio block "
+            print(f"WARN {bk['key']}-input: macro_regime.json unreadable ({e}) - the Dalio block "
                   f"degrades to its fail-open UNKNOWN row")
             degraded.append("macro_regime.json unreadable")
     else:
-        print(f"WARN {bk['key']}-input: no {snap_f} — the Dalio block degrades to its fail-open "
+        print(f"WARN {bk['key']}-input: no {snap_f} - the Dalio block degrades to its fail-open "
               f"UNKNOWN row (a data gap never tightens the book)")
         degraded.append("no macro_regime.json snapshot (no phase/quadrant read this run)")
     try:
@@ -4175,18 +4175,18 @@ def _book_macro_block(bk):
         import _commodity_tilt as CT
         lines.append(CT.director_brief(snap))
     except Exception as e:
-        print(f"WARN {bk['key']}-input: _commodity_tilt.director_brief failed ({e}) — the tilt table "
+        print(f"WARN {bk['key']}-input: _commodity_tilt.director_brief failed ({e}) - the tilt table "
               f"is omitted from the prompt (fail-open)")
         degraded.append(f"tilt table unavailable ({e})")
-        lines.append("DALIO TILT TABLE UNAVAILABLE this run — treat every commodity family as NEUTRAL.")
-    # ── the winner scoreboard (produced by `mining-macro`; the page reads the same file) ──
+        lines.append("DALIO TILT TABLE UNAVAILABLE this run - treat every commodity family as NEUTRAL.")
+    # -- the winner scoreboard (produced by `mining-macro`; the page reads the same file) --
     mac_f = bk["dir"] / (bk.get("macro_file") or "commodity_macro.json")
     if mac_f.exists():
         try:
             mac = json.load(open(mac_f, encoding="utf-8")) or {}
         except Exception as e:
             mac = {}
-            print(f"WARN {bk['key']}-input: {mac_f.name} unreadable ({e}) — scoreboard omitted (fail-open)")
+            print(f"WARN {bk['key']}-input: {mac_f.name} unreadable ({e}) - scoreboard omitted (fail-open)")
             degraded.append(f"{mac_f.name} unreadable")
         board = mac.get("scoreboard") or []
         gen = mac.get("generated_at") or "?"
@@ -4196,9 +4196,9 @@ def _book_macro_block(bk):
         except Exception:
             age = None
         if board:
-            lines += ["", f"WINNER SCOREBOARD — {mac_f.name}, generated_at {gen}"
+            lines += ["", f"WINNER SCOREBOARD - {mac_f.name}, generated_at {gen}"
                           + (f" ({age}d old)" if isinstance(age, int) else "")
-                          + (" — STALE, read it as color only" if isinstance(age, int) and age > 15 else ""),
+                          + (" - STALE, read it as color only" if isinstance(age, int) and age > 15 else ""),
                       "(setup 30 · momentum 30 · miners-confirmation 20 · Dalio tilt 20 = 100)"]
             for r in board:
                 lg = r.get("legs") or {}
@@ -4215,17 +4215,17 @@ def _book_macro_block(bk):
             if isinstance(age, int) and age > 15:
                 degraded.append(f"scoreboard is {age}d old (>15d)")
         else:
-            print(f"WARN {bk['key']}-input: {mac_f.name} carries no scoreboard rows — block written "
+            print(f"WARN {bk['key']}-input: {mac_f.name} carries no scoreboard rows - block written "
                   f"without it (fail-open)")
             degraded.append("scoreboard empty")
-            lines += ["", "WINNER SCOREBOARD UNAVAILABLE this run — proceed on chain_regime alone."]
+            lines += ["", "WINNER SCOREBOARD UNAVAILABLE this run - proceed on chain_regime alone."]
     else:
-        print(f"WARN {bk['key']}-input: no {mac_f} — run `mining-macro --gcs` before the Mining "
+        print(f"WARN {bk['key']}-input: no {mac_f} - run `mining-macro --gcs` before the Mining "
               f"debates. Block written WITHOUT the scoreboard (fail-open: never a STOP).")
         degraded.append("no commodity_macro.json (mining-macro was not run this cycle)")
-        lines += ["", "WINNER SCOREBOARD UNAVAILABLE this run — proceed on chain_regime alone."]
+        lines += ["", "WINNER SCOREBOARD UNAVAILABLE this run - proceed on chain_regime alone."]
     if degraded:
-        lines += ["", "MACRO LAYER DEGRADED (this run's assembly) — " + "; ".join(degraded) + ". Fail-open: read the missing "
+        lines += ["", "MACRO LAYER DEGRADED (this run's assembly) - " + "; ".join(degraded) + ". Fail-open: read the missing "
                       "parts as NEUTRAL, never as a headwind, and say in the memo that you graded "
                       "with a degraded macro layer."]
     lines += [
@@ -4251,8 +4251,8 @@ def book_input(bk):
     (growth_capex_fcf_negative, funded_solvency, balance_sheet_stale) + the CRO sop_mos_pct + the
     forensic gate REUSED VERBATIM (iscore<=2 -> EXCLUDE; missing -> CAP fail-closed; DETERIORAT ->
     CAP). Writes <book>/<key>_grade_input.json + <key>_director_prompt.txt (the book's Director
-    prompt + prior-run measured-correlation block + — MINING ONLY — the ONE cited-only commodity
-    macro block, §C.8)."""
+    prompt + prior-run measured-correlation block + - MINING ONLY - the ONE cited-only commodity
+    macro block, Sec.C.8)."""
     import glob
     E.load_api_keys()
     uni = {m["symbol"]: m for m in json.load(open(bk["dir"] / "universe.json", encoding="utf-8")).get("members", [])}
@@ -4265,7 +4265,7 @@ def book_input(bk):
             regime_state = {}
     res_files = sorted(glob.glob(str(bk["res"] / "*.json")))
     if not res_files:
-        print(f"GUARD: no {bk['dir'].name}/results/ records — run {bk['key']}-prep + the debate "
+        print(f"GUARD: no {bk['dir'].name}/results/ records - run {bk['key']}-prep + the debate "
               f"Workflow first. STOP")
         sys.exit(1)
     # deterministic metrics over the debated members (chain-map commodity_revenue_share already joined)
@@ -4355,13 +4355,13 @@ def book_input(bk):
     for x in out:
         x["as_of"] = _asof
     (bk["dir"] / bk["grade_input"]).write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
-    # Director rotation ledger (best-effort; EMPTY on the maiden run — the prompt says so)
+    # Director rotation ledger (best-effort; EMPTY on the maiden run - the prompt says so)
     try:
         write_director_ledger(bk["ledger_book"], bk["dir"] / bk["apex_file"],
                               E.FRONTEND_DIR / "public" / bk["tracking_local"])
     except Exception as _e:
         print(f"WARN: {bk['key']} ledger build failed ({_e})")
-    prompt_txt = (f"AS OF {_asof} — every metric row in {bk['grade_input']} carries this date.\n\n"
+    prompt_txt = (f"AS OF {_asof} - every metric row in {bk['grade_input']} carries this date.\n\n"
                   + bk["director_prompt"])
     pa = bk["dir"] / bk["apex_file"]                   # feed-forward: prior MEASURED correlations
     if pa.exists():
@@ -4376,7 +4376,7 @@ def book_input(bk):
                                + ("\n".join(lines) if lines else "  (none >=0.6 last run)"))
         except Exception:
             pass
-    if bk.get("macro_file"):                          # MINING ONLY (§C.8) — ONE block, fail-open
+    if bk.get("macro_file"):                          # MINING ONLY (Sec.C.8) - ONE block, fail-open
         prompt_txt += _book_macro_block(bk)
     (bk["dir"] / bk["prompt_file"]).write_text(prompt_txt, encoding="utf-8")
     from collections import Counter as _C
@@ -4391,7 +4391,7 @@ def book_input(bk):
 
 def book_numeric_gate(bk):
     """Run the shared numeric-integrity gate over ONE book's results subtree (the run() res_dir
-    injection point — _numeric_gate.py itself is NOT edited). Records carry the typed valuation block
+    injection point - _numeric_gate.py itself is NOT edited). Records carry the typed valuation block
     from day one, so --legacy is unnecessary but accepted. Flags passthrough: --dry-run/--enforce/
     --final/--offline/--symbol <SYM>."""
     sys.path.insert(0, os.path.join(BK, "_opus_debate"))
@@ -4414,10 +4414,10 @@ def book_numeric_gate(bk):
 
 
 def book_csv(bk):
-    """CSV of ONE book's Lane A apex (+ memo) — clone of fr_csv over the registry. Chain-flavored
+    """CSV of ONE book's Lane A apex (+ memo) - clone of fr_csv over the registry. Chain-flavored
     columns: chains/business_model/physical_anchor/cost_curve/contracting_reserve/capital_discipline
     + the deterministic metric fields + chain_regime + the split-era judgement fields
-    (commodity_family/phase_fit/regime_fit — blank in the book that does not emit them); drops the
+    (commodity_family/phase_fit/regime_fit - blank in the book that does not emit them); drops the
     value-only mos_agreement*/cro_only columns."""
     import csv
     apex = json.load(open(bk["dir"] / bk["apex_file"], encoding="utf-8"))
@@ -4525,7 +4525,7 @@ def book_csv(bk):
 
 def book_publish(bk, push_gcs=False):
     """Stage ONE book's public Lane A payload (frontend/public/<payload_local>) AND maintain its
-    live-forward NAV — clone of fr_publish over the registry.
+    live-forward NAV - clone of fr_publish over the registry.
     CONTRACT: the picks array key is `apex_basket` (the pre-staged nightly _mark_speculair_nav()
     tuple reads exactly that) and the embedded tracking key is bk["embed_key"]. NAV state files are
     NEVER blended with any other book or with Lane B (Do-NOT #1). Degraded-publish guards (Do-NOT
@@ -4536,19 +4536,19 @@ def book_publish(bk, push_gcs=False):
     apx = json.load(open(bk["dir"] / bk["apex_file"], encoding="utf-8"))
     # PUBLISH GATE (mirror of value_publish's): never publish an un-posted basket.
     if not apx.get(bk["post_stamp"]) and "--force" not in sys.argv:
-        print(f"GUARD {bk['key']} publish gate: {bk['apex_file']} has NO {bk['post_stamp']} stamp — run "
+        print(f"GUARD {bk['key']} publish gate: {bk['apex_file']} has NO {bk['post_stamp']} stamp - run "
               f"{bk['key']}-post first. Aborting (override: --force).")
         sys.exit(1)
     picks = [p for p in apx.get("apex_basket", []) if isinstance(p, dict) and p.get("symbol")]
-    # Do-NOT #10: never publish degraded — a thin book is a report-and-stop, not a small payload.
+    # Do-NOT #10: never publish degraded - a thin book is a report-and-stop, not a small payload.
     if len(picks) < 6:
-        print(f"GUARD {bk['key']} publish: only {len(picks)} Lane A picks (<6) — DEGRADED, report and "
+        print(f"GUARD {bk['key']} publish: only {len(picks)} Lane A picks (<6) - DEGRADED, report and "
               f"stop (no payload written, no NAV chained, other books unaffected).")
         sys.exit(1)
     # Do-NOT #10: chain-cap breach after post = stop. Re-derive per-chain weight AND name count from
     # the FINAL weights (a 2-chain name counts toward both); weight tolerance 0.5pp for rounding.
     # The count cap (<=3/chain) cannot be fixed deterministically without changing membership (P1),
-    # so a count breach stops HERE — the Director slate must be fixed and re-posted.
+    # so a count breach stops HERE - the Director slate must be fixed and re-posted.
     caps = bk["chain_caps"]
     weights = apx.get("weights") or {}
     chain_w, chain_n = {}, {}
@@ -4558,11 +4558,11 @@ def book_publish(bk, push_gcs=False):
             chain_n[cid] = chain_n.get(cid, 0) + 1
     breaches = {cid: round(w, 2) for cid, w in chain_w.items() if w > caps["max_weight"] + 0.5}
     count_breaches = {cid: n for cid, n in chain_n.items() if n > caps["max_names"]}
-    # EQUAL-WEIGHT REGIME — do NOT stop on a weight breach that is pure arithmetic. The post layer
+    # EQUAL-WEIGHT REGIME - do NOT stop on a weight breach that is pure arithmetic. The post layer
     # stamps weight_basis="equal" when _post_common.EQUAL_WEIGHT_BOOKS is on, in which case the
     # published vector is 1/n and a chain's share is ONLY its seat count: 3 seats of 8 IS 37.5%,
     # over the 30% bound, on every conforming slate. The Director prompt explicitly allows up to
-    # max_names per chain, so stopping here would block EVERY maiden publish for a non-reason —
+    # max_names per chain, so stopping here would block EVERY maiden publish for a non-reason -
     # and CLAUDE.md is explicit that all caps are advisory while equal weighting is on. A weight
     # breach is therefore only a real breach when the chain ALSO exceeds the name cap (caught
     # below) or when the book is genuinely size-weighted. The name cap always stops: it is a
@@ -4573,13 +4573,13 @@ def book_publish(bk, push_gcs=False):
         breaches = {cid: w for cid, w in breaches.items() if cid in count_breaches}
         for cid, w in sorted(advisory.items()):
             print(f"NOTE {bk['key']} publish: chain:{cid} is {w}% of published weight "
-                  f"({chain_n.get(cid)} of {len(picks)} EQUAL seats, >{caps['max_weight']}%) — "
+                  f"({chain_n.get(cid)} of {len(picks)} EQUAL seats, >{caps['max_weight']}%) - "
                   f"arithmetic under equal weighting, within the <={caps['max_names']}-name rule, "
                   f"NOT a publish stop. The weight bound binds again if EQUAL_WEIGHT_BOOKS is "
-                  f"flipped off (a sizing change — score the cycle ledger first).")
+                  f"flipped off (a sizing change - score the cycle ledger first).")
     if breaches or count_breaches:
-        print(f"GUARD {bk['key']} publish: chain cap breach AFTER post — weight {breaches} "
-              f"(>{caps['max_weight']}%) / count {count_breaches} (>{caps['max_names']} names) — report "
+        print(f"GUARD {bk['key']} publish: chain cap breach AFTER post - weight {breaches} "
+              f"(>{caps['max_weight']}%) / count {count_breaches} (>{caps['max_names']} names) - report "
               f"and stop; fix the Director slate / re-run {bk['key']}-post before publishing.")
         sys.exit(1)
     try:                                              # capture this run's Director decisions into the year ledger
@@ -4619,7 +4619,7 @@ def book_publish(bk, push_gcs=False):
         if pp:
             p["entry_price"] = pp.get("entry_price")
             p["entry_date"] = pp.get("entry_date")
-    # honest pool-quality banner (registry text — Lane A NAV steps weekly, Lane B is a tracker)
+    # honest pool-quality banner (registry text - Lane A NAV steps weekly, Lane B is a tracker)
     uni = {}
     if (bk["dir"] / "universe.json").exists():
         try:
@@ -4644,11 +4644,11 @@ def book_publish(bk, push_gcs=False):
         except Exception:
             pool_stats = {}
     # BENCHMARK LINE (disruptor SMH/QQQ precedent, benchmarks swapped to this book's betas):
-    # anchors persist in a SIDECAR, measured from first-stamp forward — no back-fill. NOT the
+    # anchors persist in a SIDECAR, measured from first-stamp forward - no back-fill. NOT the
     # tracking file: _update_apex_tracking rebuilds that file from a fresh state dict earlier in
     # THIS function, so an anchor stored there is wiped and re-stamped at today's prices on every
     # publish (benchmark pinned at ~0% forever). The book return comes from the RETURNED tracking
-    # summary — the state file carries nav/positions/history but never since_inception_pct.
+    # summary - the state file carries nav/positions/history but never since_inception_pct.
     bench = {}
     try:
         legs = bk["benchmark_legs"]
@@ -4716,7 +4716,7 @@ def book_publish(bk, push_gcs=False):
             if not ok:
                 failed.append(key)
         if failed:
-            print(f"GUARD {bk['key']} publish: GCS push FAILED after one retry for {failed} — report and "
+            print(f"GUARD {bk['key']} publish: GCS push FAILED after one retry for {failed} - report and "
                   f"stop (the local payload is staged; other books unaffected).")
             sys.exit(1)
         # LIVE readback (the public URL can serve a stale cache right after a write)
@@ -4734,14 +4734,14 @@ def book_publish(bk, push_gcs=False):
     return len(picks)
 
 
-# ── Book Lane A debate workflow template (clone of _FR_WORKFLOW_TEMPLATE, book-parameterized:
+# -- Book Lane A debate workflow template (clone of _FR_WORKFLOW_TEMPLATE, book-parameterized:
 #    __WORKFLOW_NAME__/__BOOK_NAME__/__DIR__/__SIGNAL_TYPE__/__KEY__/__BRIEF__ are substituted by
 #    book_prep). chain_map + deterministic metrics in the bundle; typed valuation block [pipeline-v3
 #    step 6b/7] emitted from day one so _numeric_gate works on these records; BATCH=8; NO
-#    in-workflow Director — <key>-input builds the grade input AFTER the debates, then ONE Director
+#    in-workflow Director - <key>-input builds the grade input AFTER the debates, then ONE Director
 #    agent grades it, THEN <key>-skeptic kill-tiers the finalists (unlike the FR template this was
-#    cloned from — FR has none by design, spec §5; mining/fdt do NOT repeat that gap, see
-#    _SKEPTIC_BOOKS). ──
+#    cloned from - FR has none by design, spec Sec.5; mining/fdt do NOT repeat that gap, see
+#    _SKEPTIC_BOOKS). --
 _BOOK_WORKFLOW_TEMPLATE = r"""export const meta = {
   name: '__WORKFLOW_NAME__',
   description: 'Weekly __BOOK_NAME__ Lane A debate (the chain map already produced competitors). Director runs separately after __KEY__-input.',
@@ -4750,26 +4750,26 @@ _BOOK_WORKFLOW_TEMPLATE = r"""export const meta = {
 const DIR = '__DIR__'
 const RES = DIR + '/results'
 const SYMS = __SYMS__               // have a bundled FMP transcript (read local file)
-const ONLINE_SYMS = __ONLINE_SYMS__ // no FMP transcript — agent fetches the latest one online
+const ONLINE_SYMS = __ONLINE_SYMS__ // no FMP transcript - agent fetches the latest one online
 
-// ── PHASE 1 — DEBATE: Interrogator -> Architect (bull/bear + Sum-of-Parts) -> web verification -> CRO. ──
+// -- PHASE 1 - DEBATE: Interrogator -> Architect (bull/bear + Sum-of-Parts) -> web verification -> CRO. --
 // No Radar phase: the monthly chain map already produced true competitors. All names run as
 // general-purpose agents so EVERY name (FMP + online) can web-verify its operating facts.
 function debatePrompt(sym, online) {
   const BRIEF = '__BRIEF__'
   const step1 = online
-    ? '1. Read ' + DIR + '/inputs/' + sym + '.json (fields metrics_str/sector/signal_type/company + chains/business_model/physical_anchor/commodity_revenue_share/chain_regime/resource_metrics/gates; metrics may include a SEGMENT REVENUE block). NO FMP transcript is bundled. FIRST try the paid FMP MCP tools via ToolSearch (keyword search e.g. "FMP earnings transcript", "FMP statements", "FMP news") for ' + sym + ' and its MOST RECENT earnings-call transcript and quarterly numbers; if FMP has nothing for this ticker, THEN use WebSearch + WebFetch to find the latest transcript / quarterly results / earnings release / management commentary / investor presentation (IR site, Tikr, Seeking Alpha, Investing.com, MarketScreener, plus the latest regulatory filing) — do NOT scrape press-release PDFs by shell. If genuinely nothing is findable, say so and reason from the fundamentals — never fabricate quotes or figures.\n'
+    ? '1. Read ' + DIR + '/inputs/' + sym + '.json (fields metrics_str/sector/signal_type/company + chains/business_model/physical_anchor/commodity_revenue_share/chain_regime/resource_metrics/gates; metrics may include a SEGMENT REVENUE block). NO FMP transcript is bundled. FIRST try the paid FMP MCP tools via ToolSearch (keyword search e.g. "FMP earnings transcript", "FMP statements", "FMP news") for ' + sym + ' and its MOST RECENT earnings-call transcript and quarterly numbers; if FMP has nothing for this ticker, THEN use WebSearch + WebFetch to find the latest transcript / quarterly results / earnings release / management commentary / investor presentation (IR site, Tikr, Seeking Alpha, Investing.com, MarketScreener, plus the latest regulatory filing) - do NOT scrape press-release PDFs by shell. If genuinely nothing is findable, say so and reason from the fundamentals - never fabricate quotes or figures.\n'
     : '1. Read ' + DIR + '/inputs/' + sym + '.json (fields metrics_str/sector/signal_type + chains/business_model/physical_anchor/commodity_revenue_share/chain_regime/resource_metrics/gates; metrics may include a SEGMENT REVENUE block) and ' + DIR + '/transcripts/' + sym + '.txt.\n'
-  return 'You run the COMPLETE multi-agent debate for ' + sym + ' as Claude Opus 5 — Interrogator, Architect, then CRO/Moderator — allocating REAL capital to a __BOOK_NAME__ Lane A name (a profitable operator in a physical value chain). Be skeptical and current-facts-driven; this is a sector where promoters live.\n' +
+  return 'You run the COMPLETE multi-agent debate for ' + sym + ' as Claude Opus 5 - Interrogator, Architect, then CRO/Moderator - allocating REAL capital to a __BOOK_NAME__ Lane A name (a profitable operator in a physical value chain). Be skeptical and current-facts-driven; this is a sector where promoters live.\n' +
     step1 +
-    '1b. LIVE PRICE (MANDATORY, BEFORE any valuation reasoning): if the metrics block does not state a current price, you MUST fetch the live quote via the FMP MCP tools (ToolSearch, keyword "FMP quote") and state the price + currency you are using. NEVER assume or infer where the stock trades — a fabricated price inverts the entire risk/reward. For dual-listed names state WHICH listing/currency your numbers are in.\n' +
-    '2. INTERROGATOR: read ' + DIR + '/interrogator_system.txt; produce the full forensic dossier (8 sections + final "CREDIBILITY_SCORE: <1-5> | TRAJECTORY: <...>"); pay special attention to serial-diluter financing patterns, capacity/backlog inflation, and promoter language — the sector kill list. Write it to ' + DIR + '/dossiers/' + sym + '.md.\n' +
+    '1b. LIVE PRICE (MANDATORY, BEFORE any valuation reasoning): if the metrics block does not state a current price, you MUST fetch the live quote via the FMP MCP tools (ToolSearch, keyword "FMP quote") and state the price + currency you are using. NEVER assume or infer where the stock trades - a fabricated price inverts the entire risk/reward. For dual-listed names state WHICH listing/currency your numbers are in.\n' +
+    '2. INTERROGATOR: read ' + DIR + '/interrogator_system.txt; produce the full forensic dossier (8 sections + final "CREDIBILITY_SCORE: <1-5> | TRAJECTORY: <...>"); pay special attention to serial-diluter financing patterns, capacity/backlog inflation, and promoter language - the sector kill list. Write it to ' + DIR + '/dossiers/' + sym + '.md.\n' +
     '3. PEER COMPS: read ' + DIR + '/chain_map/' + sym + '.json (this name has assigned chain(s), value_chain_position and true_competitors) as the relative-value lever for the valuation below (skip if the file is absent).\n' +
-    '4. ARCHITECT: read ' + DIR + '/architect_system.txt; produce bull_thesis and bear_thesis, AND a SUM-OF-PARTS valuation — value the business by its PARTS (segment SoP from the SEGMENT REVENUE block x peer multiples where present; else whole-company intrinsic via peer multiple / NAV where the asset base supports one), then apply overlays (net cash, announced asset-sales, royalty/streaming or recurring-service portfolios valued separately). The bear case MUST price the DOWNSIDE with NUMBERS, not assertions. Output sop_bull (favorable parts) and sop_bear (adverse parts, ASSUMING THE CHAIN REGIME TURNS AGAINST IT), each a per-share value + the parts breakdown.\n' +
-    '5. OPERATING VERIFICATION (web, MANDATORY): identify the load-bearing operating facts for this chain (cost/unit-cost or gross-margin guidance, contracted volumes or backlog and its realized-price mechanics, reserve life or order book, named counterparties and dated milestones) and verify their CURRENT status as of today — FIRST the paid FMP MCP tools via ToolSearch ("FMP statements", "FMP news", "FMP earnings transcript"), then WebSearch/WebFetch for what FMP lacks. Where the deterministic proxy metrics DISAGREE with company-reported figures, say so explicitly. Also emit catalyst_status = FIRED | ARB | PENDING_HARD | SOFT_EXTENDED | UNVERIFIABLE for the record (it must NOT drive the verdict — Lane B owns catalysts). Dated evidence; never fabricate — a price or a contract without a source does not appear.\n' +
+    '4. ARCHITECT: read ' + DIR + '/architect_system.txt; produce bull_thesis and bear_thesis, AND a SUM-OF-PARTS valuation - value the business by its PARTS (segment SoP from the SEGMENT REVENUE block x peer multiples where present; else whole-company intrinsic via peer multiple / NAV where the asset base supports one), then apply overlays (net cash, announced asset-sales, royalty/streaming or recurring-service portfolios valued separately). The bear case MUST price the DOWNSIDE with NUMBERS, not assertions. Output sop_bull (favorable parts) and sop_bear (adverse parts, ASSUMING THE CHAIN REGIME TURNS AGAINST IT), each a per-share value + the parts breakdown.\n' +
+    '5. OPERATING VERIFICATION (web, MANDATORY): identify the load-bearing operating facts for this chain (cost/unit-cost or gross-margin guidance, contracted volumes or backlog and its realized-price mechanics, reserve life or order book, named counterparties and dated milestones) and verify their CURRENT status as of today - FIRST the paid FMP MCP tools via ToolSearch ("FMP statements", "FMP news", "FMP earnings transcript"), then WebSearch/WebFetch for what FMP lacks. Where the deterministic proxy metrics DISAGREE with company-reported figures, say so explicitly. Also emit catalyst_status = FIRED | ARB | PENDING_HARD | SOFT_EXTENDED | UNVERIFIABLE for the record (it must NOT drive the verdict - Lane B owns catalysts). Dated evidence; never fabricate - a price or a contract without a source does not appear.\n' +
     '6. CRO/MODERATOR: read ' + DIR + '/moderator_system.txt; ' + BRIEF + ' RECONCILE sop_bull/sop_bear into a base-case sop_fair_value (+ sop_breakdown) and risk_reward (downside-to-break vs upside-to-fair); judge the operating position vs the verified figures; sanity-check the multiple against the chain_map true_competitors. Produce verdict (A/B/C), conviction (int 1-5), consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion. THEN, separately, value_conviction (int 1-5): the value case judged on valuation vs the SoP fair value + forensic quality ONLY. The two scores MUST be allowed to diverge.\n' +
-    '6b. TYPED VALUATION BLOCK (MANDATORY — the numbers the pipeline checks and sizes on): distill your reconciliation into POINT NUMBERS per share, in the quote currency: bear_px (your adverse case — ONE number; your ranges stay in the prose), base_fv_px (base case), bull_px (favorable case), downside_floor_px (ONLY a structural floor — deal terms, net cash/share, tender; else null — a chart low or a dividend yield is NOT a floor), valuation_method ("sop"|"multiple"|"spread"|"recovery"), horizon_months (when the base case lands). ORDERING bear_px <= base_fv_px <= bull_px is REQUIRED. State LEVELS only: risk_reward ratios, expected-return %, and MoS % are COMPUTED BY THE PIPELINE from these numbers — any "N:1" or %-vs-% arithmetic you assert in prose will be overwritten by the computed values.\n' +
-    '7. Write (Write tool) VALID, escaped JSON to ' + RES + '/' + sym + '.json with: symbol(="' + sym + '"), sector, signal_type(="__SIGNAL_TYPE__"), chains(array, from chain_map), business_model, value_chain_position, live_price(number — the price you actually used), price_currency, valuation({live_price, price_currency, quote_listing(="' + sym + '"), bear_px, base_fv_px, bull_px, downside_floor_px, valuation_method, horizon_months, as_of(today YYYY-MM-DD)} — the step-6b numbers), cost_curve_verified(one line: proxy vs company-reported figure, agree/disagree), gm_trajectory(one line: gross-margin direction on revenue direction, with the numbers), bull_thesis, bear_thesis, sop_bull, sop_bear, sop_fair_value, sop_breakdown, risk_reward, catalyst_status(EXACTLY one bare enum token: FIRED|ARB|PENDING_HARD|SOFT_EXTENDED|UNVERIFIABLE — NO prose), catalyst_status_note(the dated evidence prose), peer_comps_note, verdict, conviction, value_conviction(int), consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion, interrogator_score(int), trajectory, source(="' + (online ? 'opus___KEY___online' : 'opus___KEY___mod') + '"), transcript_source(="' + (online ? 'web' : 'fmp') + '").\n' +
+    '6b. TYPED VALUATION BLOCK (MANDATORY - the numbers the pipeline checks and sizes on): distill your reconciliation into POINT NUMBERS per share, in the quote currency: bear_px (your adverse case - ONE number; your ranges stay in the prose), base_fv_px (base case), bull_px (favorable case), downside_floor_px (ONLY a structural floor - deal terms, net cash/share, tender; else null - a chart low or a dividend yield is NOT a floor), valuation_method ("sop"|"multiple"|"spread"|"recovery"), horizon_months (when the base case lands). ORDERING bear_px <= base_fv_px <= bull_px is REQUIRED. State LEVELS only: risk_reward ratios, expected-return %, and MoS % are COMPUTED BY THE PIPELINE from these numbers - any "N:1" or %-vs-% arithmetic you assert in prose will be overwritten by the computed values.\n' +
+    '7. Write (Write tool) VALID, escaped JSON to ' + RES + '/' + sym + '.json with: symbol(="' + sym + '"), sector, signal_type(="__SIGNAL_TYPE__"), chains(array, from chain_map), business_model, value_chain_position, live_price(number - the price you actually used), price_currency, valuation({live_price, price_currency, quote_listing(="' + sym + '"), bear_px, base_fv_px, bull_px, downside_floor_px, valuation_method, horizon_months, as_of(today YYYY-MM-DD)} - the step-6b numbers), cost_curve_verified(one line: proxy vs company-reported figure, agree/disagree), gm_trajectory(one line: gross-margin direction on revenue direction, with the numbers), bull_thesis, bear_thesis, sop_bull, sop_bear, sop_fair_value, sop_breakdown, risk_reward, catalyst_status(EXACTLY one bare enum token: FIRED|ARB|PENDING_HARD|SOFT_EXTENDED|UNVERIFIABLE - NO prose), catalyst_status_note(the dated evidence prose), peer_comps_note, verdict, conviction, value_conviction(int), consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion, interrogator_score(int), trajectory, source(="' + (online ? 'opus___KEY___online' : 'opus___KEY___mod') + '"), transcript_source(="' + (online ? 'web' : 'fmp') + '").\n' +
     'Reply exactly: DONE'
 }
 
@@ -4793,9 +4793,9 @@ return 'DONE'
 
 def export_debate_csv():
     """Write a CSV of every debated name in results_regime/ with the FULL output of every agent in the
-    chain — Radar (peer_groups), Interrogator (dossier+score+trajectory), Architect (bull/bear+SoP),
+    chain - Radar (peer_groups), Interrogator (dossier+score+trajectory), Architect (bull/bear+SoP),
     Catalyst verification (catalyst_status), CRO/Moderator (verdict/conviction/SoP reconcile/etc.), and
-    the Director's per-name assessment — plus a companion director_memo .txt. UTF-8 BOM for Excel."""
+    the Director's per-name assessment - plus a companion director_memo .txt. UTF-8 BOM for Excel."""
     import csv
     res_dir, doss_dir, pg_dir = ROOT / "results_regime", ROOT / "dossiers", ROOT / "peer_groups"
     apex = {}
@@ -4873,7 +4873,7 @@ def export_debate_csv():
     return len(rows)
 
 
-# ── CHANGE-DETECTION CARRY-FORWARD (2026-07-01, methodology review OPS-P2) ───────────────────
+# -- CHANGE-DETECTION CARRY-FORWARD (2026-07-01, methodology review OPS-P2) -------------------
 # ~149 full Opus debates/week mostly re-derive unchanged conclusions (the run needs 2-3 resume
 # cycles). Re-debate a name ONLY when something debate-relevant changed; otherwise CARRY the prior
 # record forward with a deterministic freshness restamp. The money-bearing layers stay weekly:
@@ -4888,10 +4888,10 @@ FULL_REFRESH_D = 91           # T4: a seat gets a full re-underwrite at least qu
 def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant):
     """Return ("debate", reason, prior_record_or_None) or ("carry", reason, prior_record).
     The prior record rides along on the DEBATE branch too (2026-07-08 continuity fix) so prep can
-    embed it in the input bundle — a re-debated name must know what it said last week.
-    2026-07-10 (two-tier, Week 2): seat-relevant names NO LONGER short-circuit — the gate keeps
+    embed it in the input bundle - a re-debated name must know what it said last week.
+    2026-07-10 (two-tier, Week 2): seat-relevant names NO LONGER short-circuit - the gate keeps
     evaluating the REAL triggers first, so prep can route: seat WITH a trigger -> FULL re-debate;
-    seat with NO trigger -> reason "seat-relevant-only" -> DELTA mode (anchored weekly update — the
+    seat with NO trigger -> reason "seat-relevant-only" -> DELTA mode (anchored weekly update - the
     fix for the memoryless-re-roll churn the 2026-07-07 forensics identified). Non-seat behavior is
     unchanged (trigger -> debate, no trigger -> carry). Deterministic; fail-open to debate."""
     if os.environ.get("FORCE_FULL_DEBATE"):
@@ -4907,7 +4907,7 @@ def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant):
     cs = (pr.get("catalyst_status") or "").upper()
     if cs.startswith("PENDING_HARD"):
         return "debate", "prior catalyst PENDING_HARD (dated events move weekly)", pr
-    # T6 — an escalation raised last cycle (a delta agent that wanted to flip the verdict, or a
+    # T6 - an escalation raised last cycle (a delta agent that wanted to flip the verdict, or a
     # coverage refresh that found something material) forces the full debate it asked for.
     if pr.get("escalate_full_debate") or (pr.get("coverage_update") or {}).get("escalate"):
         return "debate", "escalated last cycle (delta/coverage flagged a material change)", pr
@@ -4924,7 +4924,7 @@ def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant):
         age_d = (_t.time() - pf.stat().st_mtime) / 86400
     if age_d > CARRY_MAX_AGE_D:
         return "debate", f"record {age_d:.0f}d old (> {CARRY_MAX_AGE_D}d ceiling)", pr
-    # T4 — quarterly full refresh for seats: delta mode restamps the record weekly so the age ceiling
+    # T4 - quarterly full refresh for seats: delta mode restamps the record weekly so the age ceiling
     # never fires on a held name; last_full_debate (stamped by every FULL underwrite) is the honest
     # age of the actual thesis work. Absent on pre-two-tier records -> skipped gracefully (the first
     # full debate under the new schema starts the clock).
@@ -4938,16 +4938,16 @@ def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant):
             pass
     # new transcript since the prior debate. FIX 2026-07-11 (first tier-select run: seats-delta=0):
     # prior records never carry transcript_date (the debate schema doesn't write it), so the old
-    # `latest > prior_tx=""` comparison fired for EVERY name with any transcript at all — spurious
+    # `latest > prior_tx=""` comparison fired for EVERY name with any transcript at all - spurious
     # full re-debates that defeated delta mode on its maiden run. Correct semantic: a transcript is
-    # only NEW if it postdates the prior DEBATE — the prior debate already read anything older.
+    # only NEW if it postdates the prior DEBATE - the prior debate already read anything older.
     if real_tx:
         latest = max((t.get("date") or "") for t in real_tx)
         prior_ref = str(pr.get("transcript_date") or "")[:10] \
             or str(pr.get("debated_at") or pr.get("as_of") or pr.get("date") or "")[:10] \
             or str((pr.get("valuation") or {}).get("as_of") or "")[:10]
         if not prior_ref:
-            # pre-two-tier records carry NO date field at all — the file mtime is when the record
+            # pre-two-tier records carry NO date field at all - the file mtime is when the record
             # was written, and the prior debate had access to anything published before then
             prior_ref = datetime.fromtimestamp(pf.stat().st_mtime).strftime("%Y-%m-%d")
         if latest and prior_ref and latest > prior_ref:
@@ -4973,7 +4973,7 @@ def prep():
     # overwrites. The workflow-resume retry path does NOT call prep, so a mid-run re-invoke is safe.
     import shutil
     # PARTIAL-RUN GUARD (2026-07-01): a crash-then-re-prep used to overwrite _archive_prev (the last
-    # GOOD week) with the crashed run's partial shards — both observed incidents (06-21, 06-28) would
+    # GOOD week) with the crashed run's partial shards - both observed incidents (06-21, 06-28) would
     # have destroyed the good context on restart. A run only counts as COMPLETED when its apex JSON
     # exists alongside results_regime/; a partial tree goes to _archive_partial_<n>/ (capped at 2,
     # oldest pruned) and _archive_prev is left UNTOUCHED.
@@ -5006,7 +5006,7 @@ def prep():
         shutil.move(str(apx), str(arch / "apex_basket_opus_regime.json"))
     print(f"archived prior debate outputs -> {arch}")
 
-    # PRIMARY SOURCE: the raw 11-methodology production screen (methodology_picks.json) — the
+    # PRIMARY SOURCE: the raw 11-methodology production screen (methodology_picks.json) - the
     # FULL opportunity set, re-read every week. Sourcing from the *curated* speculair_baskets.json
     # instead created a SHRINK LOOP: each run only re-debated last week's survivors, so the universe
     # degenerated over time (observed 2026-06-06: 8 methodologies, 15 names, apex=1 after a partial
@@ -5033,7 +5033,7 @@ def prep():
     # Fallback: if the raw screen is unexpectedly thin, also fold in the curated baskets so a
     # transient screen problem can't starve the debate.
     if len(sym_meths) < 40:
-        print(f"WARN: raw screen only yielded {len(sym_meths)} names — folding in curated baskets")
+        print(f"WARN: raw screen only yielded {len(sym_meths)} names - folding in curated baskets")
         for meth, b in baskets.get("per_methodology_baskets", {}).items():
             if meth in RETIRED_METHS:
                 continue
@@ -5045,7 +5045,7 @@ def prep():
             sym_meths.setdefault(p["symbol"], []).append("apex")
     # HELD VALUE SEATS (2026-07-28). The union above covers the REGIME apex only, so a value-book seat
     # that aged out of the raw screen entered no universe, got no debate, and left the value Director
-    # grading it on last week's numbers with no record to check — NTES did exactly that on 2026-07-27
+    # grading it on last week's numbers with no record to check - NTES did exactly that on 2026-07-27
     # (absent from the 184-name screen, absent from the regime apex, so absent from value_grade_input
     # entirely while still holding a seat). A name you own is re-underwritten, full stop.
     try:
@@ -5059,19 +5059,19 @@ def prep():
         if _vadded:
             print(f"held value seats unioned into the universe: {len(_vadded)} not otherwise screened {_vadded}")
     except Exception as _e:
-        print(f"WARN: could not union the held value seats ({_e}) — a value holding may go un-underwritten")
+        print(f"WARN: could not union the held value seats ({_e}) - a value holding may go un-underwritten")
 
     scan = gcs_io.gcs_read_json("scans/latest_global.json") or json.load(
         open("../frontend/public/latest_global.json", encoding="utf-8"))
     scan_by_sym = {s.get("symbol"): s for s in scan.get("stocks", []) if s.get("symbol")}
 
-    # ── VALUE DRAWDOWN INTAKE (2026-07-01, methodology review VB-P3 / SB#10) ────────────────────
+    # -- VALUE DRAWDOWN INTAKE (2026-07-01, methodology review VB-P3 / SB#10) --------------------
     # The value book re-weights a priced-quality pool that (proven) contains no value alpha; the
     # evidence says the return lives in a DIFFERENTLY-COMPOSED funnel. Union a deterministic
     # quality-in-drawdown slice: positive FCF margin + (ROIC>=8% or quality>=0.55) + >=5y history,
-    # trading >=25% off the 1y high AND in the bottom 15% of the 52w range (the scan's horizon —
+    # trading >=25% off the 1y high AND in the bottom 15% of the 52w range (the scan's horizon -
     # the audit wanted 2y; 1y is what the scan carries, stated honestly). Hard cap 20/week in CODE
-    # (red-team condition). Most weeks 0-3 names; a sector de-rate transforms the book — by design.
+    # (red-team condition). Most weeks 0-3 names; a sector de-rate transforms the book - by design.
     VD_CAP = 20
     _vd = []
     for _s0 in scan.get("stocks", []):
@@ -5104,23 +5104,23 @@ def prep():
     else:
         print("value-drawdown intake: 0 qualified (no quality names >=25% down at the range bottom this week)")
 
-    # ── NEGLECT-ORPHAN INTAKE (2026-07-17, funnel-gap fix) ──────────────────────────────────────
+    # -- NEGLECT-ORPHAN INTAKE (2026-07-17, funnel-gap fix) --------------------------------------
     # The 12 methodology screens rank on REPORTED fundamentals and the G2a gate (correctly) drops
-    # structural breaks from the earnings baskets — so the neglect archetype (a recent spin/IPO
+    # structural breaks from the earnings baskets - so the neglect archetype (a recent spin/IPO
     # orphan with IFRS-5-noised headlines, a resolved B13 event name the crowd abandoned, or a
     # zero-coverage US business) had literally NEVER reached the debate: 0 of 366 input bundles
-    # carried structural_break before this lane. The lane bypasses the RANKINGS only — the
+    # carried structural_break before this lane. The lane bypasses the RANKINGS only - the
     # debate/interrogator does the underwriting the screens can't, and every downstream gate
     # (skeptic w/ its own neglect attack, numeric gate, forensics, moat teeth) applies in full.
     # Three deterministic sources, priority-ordered; hard cap in CODE on FRESH underwrites only
     # (already-debated lane names re-enter as ~free carries, so the backlog drains ~NG_CAP/week
     # and names graduate out as the orphan window closes or a methodology basket adopts them):
-    #   1. resolved B13 seats (resolution_type FIRED_*, <=90d) — post-event orphans the system
+    #   1. resolved B13 seats (resolution_type FIRED_*, <=90d) - post-event orphans the system
     #      already knows; the value window opens exactly when the event crowd leaves;
     #   2. dated-IPO/spin orphans: structural_break with an ipo_YYYY-MM reason 6-18 months old,
     #      USD mcap $300M-$15B (megacaps are not neglected; share_count_jump reasons are
     #      buyback/split artifacts and deliberately NOT used), positive gross profit;
-    #   3. US coverage deserts: target_analyst_count == 0 (zero PTs printed last quarter —
+    #   3. US coverage deserts: target_analyst_count == 0 (zero PTs printed last quarter -
     #      None = the scan didn't measure it, SKIPPED never guessed; self-activates once the
     #      field serializes), real fundamentals, share-class tickers excluded ('-' suffix:
     #      BF-B-style false deserts where FMP tracks the other class).
@@ -5147,7 +5147,7 @@ def prep():
             if 0 <= _age_d <= 90:
                 _ng_add(_e.get("symbol"), (0, _age_d, 0), f"b13-resolved {_r.get('resolution_type')} {_age_d}d")
     except Exception as _e:
-        print(f"WARN: neglect intake could not read the B13 tracker ({_e}) — handoff leg skipped")
+        print(f"WARN: neglect intake could not read the B13 tracker ({_e}) - handoff leg skipped")
 
     for _s0 in scan.get("stocks", []):  # 2. dated-IPO/spin orphans
         _sym0 = _s0.get("symbol")
@@ -5192,13 +5192,13 @@ def prep():
     else:
         print("neglect-orphan intake: 0 qualified this week")
 
-    # ── FRESH-CRASH INTAKE (2026-07-17, screen-ceiling fix pt 1) ────────────────────────────────
-    # The value-drawdown intake requires the 52w-range BOTTOM (prox<=0.15) — i.e. late-stage
+    # -- FRESH-CRASH INTAKE (2026-07-17, screen-ceiling fix pt 1) --------------------------------
+    # The value-drawdown intake requires the 52w-range BOTTOM (prox<=0.15) - i.e. late-stage
     # grinds. A quality name that just BROKE 20%+ off its high but hasn't reached range-bottom is
     # invisible to it, and the dislocation window (washout, pain trade) is exactly when value-5
     # setups price. Trigger: quality floor + >=20% off the high + >=15% below its OWN 50d (a
     # fresh break, not a long grind) + NOT at range bottom (VD owns that). Empty most weeks by
-    # construction — it exists for the weeks that matter.
+    # construction - it exists for the weeks that matter.
     FC_CAP = 2
     _fc = []
     for _s0 in scan.get("stocks", []):
@@ -5234,14 +5234,14 @@ def prep():
     else:
         print("fresh-crash intake: 0 qualified (no quality name freshly broken this week)")
 
-    # ── COMPOUNDER-DISCOUNT INTAKE (2026-07-17, screen-ceiling fix pt 2) ────────────────────────
-    # The 12 screens rank on MAXIMUM cheapness — which correlates with eroding moats the CRO's
+    # -- COMPOUNDER-DISCOUNT INTAKE (2026-07-17, screen-ceiling fix pt 2) ------------------------
+    # The 12 screens rank on MAXIMUM cheapness - which correlates with eroding moats the CRO's
     # moat-cap then (correctly) disqualifies. We select for the thing we later veto, and never
     # select for the INTERSECTION a value-5 requires: durable quality AT a real-but-moderate
     # discount. This lane inverts the ordering: quality first (sustained ROIC, non-contracting
     # margins, clean operations/history), then a 15-50% band on >=2 INDEPENDENT valuation models
     # (extreme cheapness is the trap signature and is deliberately NOT rewarded). The grader is
-    # untouched — this changes what reaches the judges, never how they judge.
+    # untouched - this changes what reaches the judges, never how they judge.
     CD_CAP = 3
     _CD_MODELS = ("dcf_fcff_mos", "epv_mos", "graham_revised_mos", "owner_earnings_mos",
                   "rd_capitalized_dcf_mos", "iv15_deep_value_mos")
@@ -5280,7 +5280,7 @@ def prep():
     else:
         print("compounder-discount intake: 0 qualified this week")
 
-    # SEAT-RELEVANT finalists (apex + runners, BOTH books) always re-debate — the money layer stays weekly.
+    # SEAT-RELEVANT finalists (apex + runners, BOTH books) always re-debate - the money layer stays weekly.
     seat_relevant = set()
     for p in list(baskets.get("apex_basket") or []) + list(baskets.get("runner_ups") or []):
         s = p.get("symbol") if isinstance(p, dict) else p
@@ -5295,12 +5295,12 @@ def prep():
     prior_doss_dir = ROOT / "_archive_prev" / "dossiers"
     _carry_reasons = {}
 
-    # ── TWO-TIER (2026-07-10, pipeline-v3 Week 2) ────────────────────────────────────────────────
+    # -- TWO-TIER (2026-07-10, pipeline-v3 Week 2) ------------------------------------------------
     # SPECULAIR_TIERING=off restores the legacy single-tier flow (every debate name gets a full
     # Opus debate, no delta/coverage phases, skeptic stays a separate post-Director verb).
     tiering = os.environ.get("SPECULAIR_TIERING", "on").lower() != "off"
     # B13 SEPARATION at the tier level: names in the Basket-13 universe are underwritten in the
-    # catalyst workflow under the event rubric — they never enter Tier-U here (the tier-selection
+    # catalyst workflow under the event rubric - they never enter Tier-U here (the tier-selection
     # enforcement of the 2026-07-08 rule; the old catalyst-seed write collision is structurally
     # impossible when the name never debates in this lane at all).
     b13set = set()
@@ -5308,7 +5308,7 @@ def prep():
         try:
             b13set = {c.get("symbol") for c in _b13_universe() if c.get("symbol")}
         except Exception as _e:
-            print(f"WARN: _b13_universe unreadable ({_e}) — no B13 tier exclusion this run")
+            print(f"WARN: _b13_universe unreadable ({_e}) - no B13 tier exclusion this run")
     debate_info = {}                                  # sym -> {reason, seat, has_tx, prior_exists, meths}
     b13_carried, b13_skipped = [], []
     COV_UPD = ROOT / "_coverage_updates"
@@ -5337,7 +5337,7 @@ def prep():
         except Exception:
             metrics = "No financial metrics available."
         # TTM/latest-quarter override is now appended inside E._build_debate_metrics (_ttm_block),
-        # so it applies to BOTH the production debate and this Opus prep — no duplicate needed here.
+        # so it applies to BOTH the production debate and this Opus prep - no duplicate needed here.
         metrics = (metrics or "") + _fmp_segments(sym)   # segment revenue for a true SoP (best-effort)
         meths = sym_meths[sym]
         # Structured row for the Radar peer-clustering phase (relative-value lever, see _WORKFLOW_TEMPLATE).
@@ -5353,12 +5353,12 @@ def prep():
             real = []
         # CHANGE-DETECTION GATE (SB#8): carry the prior record forward unless something
         # debate-relevant changed. Carried records get a deterministic freshness restamp
-        # (live price + as_of + provenance) — downstream (Director/skeptic/value re-grade/
+        # (live price + as_of + provenance) - downstream (Director/skeptic/value re-grade/
         # publish) consumes results_regime/ unchanged; the value rubric sees `carried`.
         _decision, _reason, _prior = _carry_or_debate(sym, sc, real, prior_res_dir, seat_relevant)
         # B13 TIER EXCLUSION: a Basket-13 name never debates in this lane. With a prior record it
         # carries (restamped, so the stock page keeps a dated record); brand-new B13 names are
-        # skipped outright — their underwriting lives in _catalyst_weekly.mjs, and their stock-page
+        # skipped outright - their underwriting lives in _catalyst_weekly.mjs, and their stock-page
         # depth view renders the B13 deep-dossier instead.
         if tiering and sym in b13set and _decision == "debate":
             if isinstance(_prior, dict):
@@ -5368,7 +5368,7 @@ def prep():
                 b13_skipped.append(sym)
                 continue
         # CONTINUITY (2026-07-08): a re-debated name gets a compact summary of its own prior record
-        # so the fresh agent is a committee CONTINUING coverage, not re-rolling from scratch — the
+        # so the fresh agent is a committee CONTINUING coverage, not re-rolling from scratch - the
         # debate-layer analog of the Director's rotation ledger (the 07-07 forensics: FIP A/5->B/3,
         # KBR A/4->refuted-B/3, AAUC A/4->C/2 in 5 days with ZERO new dated facts).
         _prior_compact = None
@@ -5383,7 +5383,7 @@ def prep():
                 "lane": _prior.get("lane") or "", "source": _prior.get("source") or "",
                 "thesis": str(_prior.get("moderator_conclusion") or "")[:600]}
         if _decision == "debate" and not isinstance(sc.get("price"), (int, float)):
-            _no_price.append(sym)          # price-blind bundle (off-scan name) — agent MUST quote-fetch
+            _no_price.append(sym)          # price-blind bundle (off-scan name) - agent MUST quote-fetch
         (INP / f"{sym}.json").write_text(json.dumps({
             "symbol": sym, "sector": sc.get("sector", ""), "signal_type": signal,
             "company": sc.get("name") or sc.get("companyName") or "",
@@ -5410,8 +5410,8 @@ def prep():
                             "prior_exists": isinstance(_prior, dict), "meths": meths}
         if real:
             real.sort(key=lambda t: t["date"])
-            # Cap to the last 5 quarters: 8 × 18k chars ~= 36k tokens, over the 25k Read cap an agent
-            # hits when it reads transcripts/<sym>.txt. 5 × 18k ~= 22k tokens stays under it.
+            # Cap to the last 5 quarters: 8 x 18k chars ~= 36k tokens, over the 25k Read cap an agent
+            # hits when it reads transcripts/<sym>.txt. 5 x 18k ~= 22k tokens stays under it.
             (TXT / f"{sym}.txt").write_text(
                 "\n\n".join("=== " + t["date"] + " ===\n" + E._slice_transcript(t["content"]) for t in real[-5:]),
                 encoding="utf-8")
@@ -5424,13 +5424,13 @@ def prep():
         if carried:
             print(f"  carried ({len(carried)}): {carried}")
     if _no_price:
-        print(f"GUARD price-blind bundles ({len(_no_price)}): {_no_price} — off-scan names with NO "
+        print(f"GUARD price-blind bundles ({len(_no_price)}): {_no_price} - off-scan names with NO "
               f"price in the input; the debate prompt REQUIRES these agents to fetch the FMP quote "
               f"first (AAUC 07-07 incident: an assumed price inverted a valid arb)")
 
     (ROOT / "_radar_universe.json").write_text(
         json.dumps(radar_universe, ensure_ascii=False, indent=2), encoding="utf-8")
-    # Radar runs CHUNKED (one Sonnet agent per <=20-name sector chunk) — a single agent over the full
+    # Radar runs CHUNKED (one Sonnet agent per <=20-name sector chunk) - a single agent over the full
     # universe truncates its peer_groups output (observed at 161 names). Group by sector, split >20,
     # write _radar_groups.json (each chunk = [label, [syms]]); the workflow spawns one agent per index
     # and a deterministic merge (weekly_opus_refresh.py merge). Clear stale shards first.
@@ -5455,11 +5455,11 @@ def prep():
     (ROOT / "moderator_system.txt").write_text(E.MODERATOR_SYSTEM_PROMPT, encoding="utf-8")
     _write_macro_regime()                                   # macro read for the Director's risk_stance
 
-    # no_tx names have NO FMP transcript — instead of skipping (the user's explicit ask: "send agents
+    # no_tx names have NO FMP transcript - instead of skipping (the user's explicit ask: "send agents
     # to fetch transcripts online so we don't skip any pick"), pass them as ONLINE_SYMS so the debate
     # agent WebSearch/WebFetches the latest transcript/results. Their input bundles (with metrics +
     # company name) were already written above, so they debate with full fundamentals grounding.
-    # 11c — FORENSIC LEDGER: unexpired EXCLUDE names get a SHORT re-check, not a full
+    # 11c - FORENSIC LEDGER: unexpired EXCLUDE names get a SHORT re-check, not a full
     # I->A->CRO debate (the weekly self-clean wipes all memory, so known frauds/red-flags were
     # burning a full debate every week to rediscover known facts). Entries expire after 8 weeks
     # or on an earnings rollover (days_to_earnings jumped up vs when the entry was written).
@@ -5483,19 +5483,19 @@ def prep():
                 recheck.append(s)
                 recheck_info[s] = {"date": ent.get("date", ""), "reason": ent.get("reason", "")}
         except Exception as _e:
-            print(f"WARN: forensic ledger unreadable ({_e}) — all names get full debates")
+            print(f"WARN: forensic ledger unreadable ({_e}) - all names get full debates")
     syms = [s for s in syms if s not in recheck]
     no_tx = [s for s in no_tx if s not in recheck]
 
-    # ── TIER PARTITION (two-tier, Week 2) ────────────────────────────────────────────────────────
+    # -- TIER PARTITION (two-tier, Week 2) --------------------------------------------------------
     # syms/no_tx currently hold EVERY name the change-detection gate routed to "debate". Under
-    # tiering they split into: DELTA (untriggered seats — anchored Sonnet update, the churn fix),
+    # tiering they split into: DELTA (untriggered seats - anchored Sonnet update, the churn fix),
     # FULL/UNDERWRITE (triggered seats + ranked new-candidate intake, Opus, hard cap U_CAP),
-    # COVERAGE-REFRESH (trigger names that missed the cap but have a prior record — Sonnet update,
-    # verdict INHERITED by code), and UNCOVERED (missed the cap, no prior record — skipped, printed).
+    # COVERAGE-REFRESH (trigger names that missed the cap but have a prior record - Sonnet update,
+    # verdict INHERITED by code), and UNCOVERED (missed the cap, no prior record - skipped, printed).
     # Tier-U hard cap = how many names get a FULL Opus underwrite. Raised 40 -> 60 on 2026-07-24
     # alongside screener_v6.PICKS_PER_METHODOLOGY 20 -> 30: widening the screen alone would NOT
-    # widen the debate, because this cap — not the universe — binds how many full debates run.
+    # widen the debate, because this cap - not the universe - binds how many full debates run.
     # Holds the underwritten fraction roughly constant (~28%) as the universe goes ~141 -> ~210.
     # COST: ~50% more Opus debates + skeptic shards per run; expect more resume cycles.
     U_CAP = 60
@@ -5542,12 +5542,12 @@ def prep():
                 score += 2                             # dislocation entries are time-critical
             # WINNING-FAMILY TILT (2026-07-21 apex-reassessment #2): the cash-earnings screen
             # families carried the realized basket alpha (iv15 +17.6% / ev_gross_profit +14.6% /
-            # acquirers +10.0% / ev_gp +10.0% YTD vs momentum -14.1%) — their names get intake
+            # acquirers +10.0% / ev_gp +10.0% YTD vs momentum -14.1%) - their names get intake
             # priority into Tier-U. Tilt, not slam: +2, same magnitude as the other bonuses.
             if any(m in ("iv15_deep_value", "ev_gross_profit", "ev_gp", "acquirers_multiple") for m in meths):
                 score += 2
             # STARVATION GUARD (2026-07-24). Overflow names with NO prior record are dropped entirely
-            # (`uncovered`) — no debate, no record, nothing. The old tie-break was ALPHABETICAL, so the
+            # (`uncovered`) - no debate, no record, nothing. The old tie-break was ALPHABETICAL, so the
             # same names lost every week forever: a permanent blind spot, and the 20->30 pick expansion
             # dumps ~50-70 never-seen names in at once. Each week a name is passed over it climbs, so
             # coverage is guaranteed eventually instead of decided by its ticker.
@@ -5605,9 +5605,9 @@ def prep():
         if _new_waits:
             _worst = sorted(_new_waits.items(), key=lambda kv: -kv[1])[:8]
             print(f"intake waitlist: {len(_new_waits)} name(s) waiting for a first look "
-                  f"(longest: {_worst}) — each gains intake priority next run")
+                  f"(longest: {_worst}) - each gains intake priority next run")
         if n_u < 15:
-            print(f"GUARD tier-select: Tier-U only {n_u} names (<15) — thin underwriting week; "
+            print(f"GUARD tier-select: Tier-U only {n_u} names (<15) - thin underwriting week; "
                   f"verify the screen/seat inputs before trusting the Director's pool")
 
     # Skeptic phase context (skeptic now runs BEFORE the Director, inside the same workflow, over all
@@ -5629,11 +5629,11 @@ def prep():
         try:
             skeptic_hints = _moat_hints(tier_u)
         except Exception as _e:
-            print(f"WARN: skeptic moat hints failed ({_e}) — skeptic runs without the moat alert")
+            print(f"WARN: skeptic moat hints failed ({_e}) - skeptic runs without the moat alert")
             skeptic_hints = {}
 
     # Director rotation discipline: render the regime prior-decision ledger (the live apex book + its
-    # tracking) that the Director must reconcile its new basket against. Best-effort — never blocks prep.
+    # tracking) that the Director must reconcile its new basket against. Best-effort - never blocks prep.
     try:
         _ptrk = gcs_io.gcs_read_json("scans/speculair_apex_tracking.json") or {}
         (ROOT / "_prior_regime_basket.json").write_text(json.dumps(baskets), encoding="utf-8")
@@ -5658,7 +5658,7 @@ def prep():
     out = ROOT / "_weekly_debate.js"
     out.write_text(js, encoding="utf-8", newline="\n")
     # RUN MARKER (2026-07-27). The weekly launchers used to gate on apex_basket_opus_regime.json's
-    # mtime as a proxy for "a debate ran this week" — but regime-post and publish rewrite that same
+    # mtime as a proxy for "a debate ran this week" - but regime-post and publish rewrite that same
     # file, so ANY mid-week maintenance made the next scheduled run stand down. That silently killed
     # the 2026-07-26 run (log: "SKIPPED: regime apex is only 0.6 days old"). This stamp is written
     # ONLY here, at the start of a real debate cycle, and nothing downstream touches it.
@@ -5680,77 +5680,77 @@ def prep():
 _WORKFLOW_TEMPLATE = r"""export const meta = {
   name: 'speculair-opus-weekly',
   description: 'Two-tier weekly Speculair: Radar -> Coverage/Delta/Underwrite -> deterministic Gates -> Skeptic (pre-Director) -> Director',
-  phases: [{ title: 'Radar', model: 'sonnet' }, { title: 'Coverage', model: 'sonnet' }, { title: 'Delta', model: 'sonnet' }, { title: 'Underwrite', model: 'opus' }, { title: 'Gates', model: 'haiku' }, { title: 'Skeptic', model: '__SKEPTIC_MODEL__' }, { title: 'Director', model: '__DIRECTOR_MODEL__' }],
+  phases: [{ title: 'Radar', model: 'sonnet' }, { title: 'Coverage', model: 'sonnet' }, { title: 'Delta', model: 'sonnet' }, { title: 'Underwrite', model: 'opus' }, { title: 'Gates', model: 'haiku' }, { title: 'Skeptic', model: '__SKEPTIC_MODEL__' }, { title: 'Revise', model: 'opus' }, { title: 'Director', model: '__DIRECTOR_MODEL__' }],
 }
 const DIR = 'backend/_opus_debate'
 const RES = DIR + '/results_regime'
 const SYMS = __SYMS__               // full Opus underwrite, bundled FMP transcript
-const ONLINE_SYMS = __ONLINE_SYMS__ // full Opus underwrite, no FMP transcript — agent fetches online
-const DELTA_SYMS = __DELTA_SYMS__       // held seats, no trigger — anchored Sonnet delta update
-const COVERAGE_SYMS = __COVERAGE_SYMS__ // Tier-C refresh — Sonnet update, verdict INHERITED by code
-const SKEPTIC_SYMS = __SKEPTIC_SYMS__   // all of Tier-U — kill-tier runs BEFORE the Director
+const ONLINE_SYMS = __ONLINE_SYMS__ // full Opus underwrite, no FMP transcript - agent fetches online
+const DELTA_SYMS = __DELTA_SYMS__       // held seats, no trigger - anchored Sonnet delta update
+const COVERAGE_SYMS = __COVERAGE_SYMS__ // Tier-C refresh - Sonnet update, verdict INHERITED by code
+const SKEPTIC_SYMS = __SKEPTIC_SYMS__   // all of Tier-U - kill-tier runs BEFORE the Director
 const SKEPTIC_LANES = __SKEPTIC_LANES__
 const SKEPTIC_HINTS = __SKEPTIC_HINTS__
-const PRIOR_SEATS = __PRIOR_SEATS__     // last week's apex+runners (both books) — skeptic never skips these
-const BRIEF = "Read CATALYST_WATCH_REGIME.md (repo root) for the current market regime, then APPLY it: reward hard-dated catalysts inside the favorable window; PENALIZE Fed-cut/rate-rescue theses; prize resolution-driver independence (wary of theses hinging on one shared macro factor like oil or AI-capex). NOTE (2026-07-21 apex-reassessment): a PAST/FIRED catalyst is NOT a penalty in THIS book — the dated-event names live in Basket-13, so in this compounder/value lane a fired catalyst on a clean franchise is simply spent news; judge the residual value case on its own. Let the regime tilt MOVE the conviction/verdict only where a LIVE driver exists."
+const PRIOR_SEATS = __PRIOR_SEATS__     // last week's apex+runners (both books) - skeptic never skips these
+const BRIEF = "Read CATALYST_WATCH_REGIME.md (repo root) for the current market regime, then APPLY it: reward hard-dated catalysts inside the favorable window; PENALIZE Fed-cut/rate-rescue theses; prize resolution-driver independence (wary of theses hinging on one shared macro factor like oil or AI-capex). NOTE (2026-07-21 apex-reassessment): a PAST/FIRED catalyst is NOT a penalty in THIS book - the dated-event names live in Basket-13, so in this compounder/value lane a fired catalyst on a clean franchise is simply spent news; judge the residual value case on its own. Let the regime tilt MOVE the conviction/verdict only where a LIVE driver exists."
 
-// ── PHASE 0 — RADAR (Sonnet, cheaper), CHUNKED by sector. A single agent over the full universe
+// -- PHASE 0 - RADAR (Sonnet, cheaper), CHUNKED by sector. A single agent over the full universe
 // truncates its peer_groups output (observed at 161 names), so N parallel agents each tag <=20 names
 // with their TRUE real-world competitors, then a deterministic merge combines the shards.
 const N_RADAR = __N_RADAR__
 phase('Radar')
 await parallel(Array.from({ length: N_RADAR }, (_, i) => () => agent(
-  'You are the RADAR (relative-value analyst). Read ' + DIR + '/_radar_groups.json — a JSON array; take element [' + i + '] = [label, [symbols]]. Those symbols are your ASSIGNMENT. Read ' + DIR + '/_radar_universe.json for their Speculair data (filter to your symbols).\n' +
-  '1. For EACH assigned symbol, identify its TRUE business competitors / closest comparables — by business model, economics, end-market, value chain and capital intensity — REGARDLESS of whether the competitor is in this candidate universe. Name the ACTUAL competitors even if NOT screened here (e.g. a stainless-steel maker -> Outokumpu / Aperam; a broadcast-tower operator -> Cellnex / INWIT / American Tower). 4-8 real tickers each. CRITICAL: if you do NOT actually recognize the ticker/company, set verdict="unmapped" and say so in rationale — do NOT invent an identity or guess a peer set from the ticker letters (a wrong identity propagates a stale, wrong multiple all the way to the Director). A non-US suffix (.PA/.MC/.L/.SW/.OL/.DE) is a frequent mis-map trap — verify the actual company name from _radar_universe.json before clustering.\n' +
-  '2. For EACH, relative_comps: where it ranks vs that TRUE peer set on VALUATION (p_fcf, the multi-method MoS spread), GROWTH (rev/eps), MARGINS (gross/net, roic) and TREND/MOMENTUM (price vs sma200, 52-wk position, sector_momentum) — cheap / in-line / rich, and whether the gap is JUSTIFIED by quality/growth or is a real mispricing. Use _radar_universe.json data for in-universe peers + your sector knowledge for the rest. 2-4 tight sentences each.\n' +
+  'You are the RADAR (relative-value analyst). Read ' + DIR + '/_radar_groups.json - a JSON array; take element [' + i + '] = [label, [symbols]]. Those symbols are your ASSIGNMENT. Read ' + DIR + '/_radar_universe.json for their Speculair data (filter to your symbols).\n' +
+  '1. For EACH assigned symbol, identify its TRUE business competitors / closest comparables - by business model, economics, end-market, value chain and capital intensity - REGARDLESS of whether the competitor is in this candidate universe. Name the ACTUAL competitors even if NOT screened here (e.g. a stainless-steel maker -> Outokumpu / Aperam; a broadcast-tower operator -> Cellnex / INWIT / American Tower). 4-8 real tickers each. CRITICAL: if you do NOT actually recognize the ticker/company, set verdict="unmapped" and say so in rationale - do NOT invent an identity or guess a peer set from the ticker letters (a wrong identity propagates a stale, wrong multiple all the way to the Director). A non-US suffix (.PA/.MC/.L/.SW/.OL/.DE) is a frequent mis-map trap - verify the actual company name from _radar_universe.json before clustering.\n' +
+  '2. For EACH, relative_comps: where it ranks vs that TRUE peer set on VALUATION (p_fcf, the multi-method MoS spread), GROWTH (rev/eps), MARGINS (gross/net, roic) and TREND/MOMENTUM (price vs sma200, 52-wk position, sector_momentum) - cheap / in-line / rich, and whether the gap is JUSTIFIED by quality/growth or is a real mispricing. Use _radar_universe.json data for in-universe peers + your sector knowledge for the rest. 2-4 tight sentences each.\n' +
   '3. Write (Write tool) VALID JSON to ' + DIR + '/_pg_' + i + '.json = a map of SYMBOL to { peers:[...], relative_comps:"...", verdict:"cheap_vs_peers|in_line|rich_vs_peers", rationale:"why these are the real peers" } for ONLY your assigned symbols. Reply exactly: DONE',
   { label: 'radar:' + i, phase: 'Radar', model: 'sonnet' })))
 await agent(
   'Run this exact command (it merges the Radar shards into peer_groups.json deterministically): python backend/weekly_opus_refresh.py merge\nConfirm the entry count it prints is > 0. Reply exactly: DONE',
   { label: 'radar-merge', phase: 'Radar', model: 'sonnet' })
 
-// ── PHASE 1 — DEBATE: Interrogator -> Architect (bull/bear + Sum-of-Parts) -> CRO (reconcile). ──
+// -- PHASE 1 - DEBATE: Interrogator -> Architect (bull/bear + Sum-of-Parts) -> CRO (reconcile). --
 // All names run as general-purpose agents so EVERY name (FMP + online) can web-verify its catalyst.
 function debatePrompt(sym, online) {
   const step1 = online
-    ? '1. Read ' + DIR + '/inputs/' + sym + ".json (fields metrics_str/sector/signal_type/company; metrics may include a SEGMENT REVENUE block). NO FMP transcript is bundled. FIRST try the paid FMP MCP tools via ToolSearch (keyword search e.g. \"FMP earnings transcript\", \"FMP statements\", \"FMP news\") for " + sym + "'s MOST RECENT earnings-call transcript and quarterly numbers; if FMP has nothing for this ticker, THEN use WebSearch + WebFetch to find the latest transcript / quarterly results / earnings release / management commentary / investor presentation (IR site, Tikr, Seeking Alpha, Investing.com, Simply Wall St, MarketScreener, plus the latest regulatory filing) — do NOT scrape press-release PDFs by shell. If genuinely nothing is findable, say so and reason from the fundamentals — never fabricate quotes or figures.\n"
+    ? '1. Read ' + DIR + '/inputs/' + sym + ".json (fields metrics_str/sector/signal_type/company; metrics may include a SEGMENT REVENUE block). NO FMP transcript is bundled. FIRST try the paid FMP MCP tools via ToolSearch (keyword search e.g. \"FMP earnings transcript\", \"FMP statements\", \"FMP news\") for " + sym + "'s MOST RECENT earnings-call transcript and quarterly numbers; if FMP has nothing for this ticker, THEN use WebSearch + WebFetch to find the latest transcript / quarterly results / earnings release / management commentary / investor presentation (IR site, Tikr, Seeking Alpha, Investing.com, Simply Wall St, MarketScreener, plus the latest regulatory filing) - do NOT scrape press-release PDFs by shell. If genuinely nothing is findable, say so and reason from the fundamentals - never fabricate quotes or figures.\n"
     : '1. Read ' + DIR + '/inputs/' + sym + '.json (fields metrics_str/sector/signal_type; metrics may include a SEGMENT REVENUE block) and ' + DIR + '/transcripts/' + sym + '.txt.\n'
-  return 'You run the COMPLETE multi-agent debate for ' + sym + ' as Claude Opus 5 — Interrogator, Architect, then CRO/Moderator — allocating REAL capital. Be skeptical and current-facts-driven.\n' +
+  return 'You run the COMPLETE multi-agent debate for ' + sym + ' as Claude Opus 5 - Interrogator, Architect, then CRO/Moderator - allocating REAL capital. Be skeptical and current-facts-driven.\n' +
     step1 +
-    '1b. LIVE PRICE (MANDATORY, BEFORE any valuation reasoning): if the metrics block does not state a current price, you MUST fetch the live quote via the FMP MCP tools (ToolSearch, keyword "FMP quote") and state the price + currency you are using. NEVER assume or infer where the stock trades — a fabricated price inverts the entire risk/reward (the 2026-07-07 AAUC record assumed "near the C$44 offer" when the stock traded 31% below terms). For dual-listed names state WHICH listing/currency your numbers are in.\n' +
-    '1c. CONTINUITY (when inputs/' + sym + '.json carries a non-null prior_record): you are the SAME committee CONTINUING coverage, not a fresh one. Read prior_record (your prior verdict/conviction/thesis dated prior_record.date). If your verdict or conviction will DIFFER, you MUST cite in whats_changed_since_prior the DATED fact(s) that emerged since prior_record.date that justify the change — a re-reading of already-known facts is NOT a justification. If nothing dated changed, INHERIT the prior verdict/conviction and update prices/status only. An A<->C verdict flip or a conviction move of >=2 without a dated fact is a DEFECT, not an opinion.\n' +
+    '1b. LIVE PRICE (MANDATORY, BEFORE any valuation reasoning): if the metrics block does not state a current price, you MUST fetch the live quote via the FMP MCP tools (ToolSearch, keyword "FMP quote") and state the price + currency you are using. NEVER assume or infer where the stock trades - a fabricated price inverts the entire risk/reward (the 2026-07-07 AAUC record assumed "near the C$44 offer" when the stock traded 31% below terms). For dual-listed names state WHICH listing/currency your numbers are in.\n' +
+    '1c. CONTINUITY (when inputs/' + sym + '.json carries a non-null prior_record): you are the SAME committee CONTINUING coverage, not a fresh one. Read prior_record (your prior verdict/conviction/thesis dated prior_record.date). If your verdict or conviction will DIFFER, you MUST cite in whats_changed_since_prior the DATED fact(s) that emerged since prior_record.date that justify the change - a re-reading of already-known facts is NOT a justification. If nothing dated changed, INHERIT the prior verdict/conviction and update prices/status only. An A<->C verdict flip or a conviction move of >=2 without a dated fact is a DEFECT, not an opinion.\n' +
     '2. INTERROGATOR: read ' + DIR + '/interrogator_system.txt; produce the full forensic dossier (8 sections + final "CREDIBILITY_SCORE: <1-5> | TRAJECTORY: <...>"); Write it to ' + DIR + '/dossiers/' + sym + '.md.\n' +
-    '3. PEER COMPS: read ' + DIR + '/peer_groups/' + sym + '.json (this name\'s peers + relative_comps + verdict) as an INDEPENDENT relative-value lever for the valuation below (skip if the file is absent). If the file carries `peer_override`/`anchor_multiple`, those are the CURRENT (live/de-rated) peer multiples — use THEM as the anchor and do NOT cite a peer multiple from memory (peer multiples de-rate; a stale anchor inflates the apparent discount — e.g. Edenred is ~10x fwd P/E today, NOT its pre-shock 20-25x). If `convergence`="sector_regulatory", the discount to that peer is shared-factor SECTOR BETA (both names move on the same unresolved driver), NOT idiosyncratic single-name alpha — say so explicitly in peer_comps_note and DO NOT credit the gap as name-specific edge.\n' +
-    '4. ARCHITECT: read ' + DIR + '/architect_system.txt; produce bull_thesis and bear_thesis, AND a SUM-OF-PARTS valuation — value the business by its PARTS (segment SoP from the SEGMENT REVENUE block x peer multiples where present; else whole-company intrinsic via the methodology metric/peer multiple), then apply special-situation OVERLAYS where relevant (net cash, pending distributions [VERIFY whether already paid], announced asset-sales, tender/deal terms minus liabilities). Output sop_bull (favorable parts) and sop_bear (adverse parts), each a per-share value + the parts breakdown.\n' +
-    '5. CATALYST VERIFICATION (MANDATORY for every name): identify the load-bearing catalyst(s) and verify their CURRENT status as of today — FIRST reach for the paid FMP MCP tools via ToolSearch (keyword search e.g. \"FMP news\", \"FMP earnings transcript\", \"FMP statements\", \"FMP quote\") since it is structured, licensed and reliable, then WebSearch/WebFetch only for what FMP lacks (do NOT scrape press-release PDFs by shell). catalyst_status = FIRED (already happened, re-rate spent) | ARB (deal terms fixed, tight merger-arb capped at the offer) | PENDING_HARD (dated, binding, real asymmetry) | SOFT_EXTENDED (non-binding / serially-extended / third-party / single-binary) | UNVERIFIABLE. Dated evidence; never fabricate.\n' +
-    '6. CRO/MODERATOR: read ' + DIR + '/moderator_system.txt; ' + BRIEF + ' RECONCILE sop_bull/sop_bear into a base-case sop_fair_value (+ sop_breakdown) and risk_reward (downside-to-break vs upside-to-fair); size ARB to the spread. CATALYST NEUTRALITY (2026-07-21): a FIRED or SOFT catalyst on a clean-forensic franchise is NEITHER a plus NOR a penalty for conviction — the event names live in Basket-13; here you judge the RESIDUAL value case (upside to sop_fair_value, risk_reward, forensic quality). Do NOT down-rate merely because the catalyst is spent or undated — the 2026-07 study showed that clause discarded the basket winners (post-catalyst re-rates keep running); equally do NOT up-rate for a hot event. Sanity-check the multiple against the peer comps. Produce verdict (A/B/C), conviction (int 1-5), consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion. THEN, separately, produce value_conviction (int 1-5): rate the VALUE case as if NO catalyst overlay existed — judged on valuation vs the SoP fair value + forensic quality ONLY, explicitly IGNORING catalyst_status and the regime tilt. The two scores MUST be allowed to diverge (a FIRED-catalyst name can be value_conviction 5; a hot-catalyst name can be value_conviction 1); do not default both to the same number. Whenever value_conviction == 4, ALSO emit value_conviction_blocker: the SINGLE ingredient that withheld the 5 — DISCOUNT_TOO_SMALL | MOAT | FORENSICS | PEAK_ARTIFACT | OTHER: <one line> (empty string for any other score; this is ledger instrumentation, not a grade). ALSO emit moat (WIDE|NARROW|ERODING|NONE — a high-but-FALLING ROIC/margin is ERODING, not WIDE), moat_trend (WIDENING|STABLE|ERODING), secular_threat (terminal|material|manageable|none) and ONE secular_theme id from ' + DIR + '/secular_themes.json (ai-displacement|payments-disintermediation|linear-media-decline|autonomous-mobility|labor-arbitrage-deflation|reimbursement-compression|retail-channel-shift|energy-transition-loser, or \"\"); an ERODING moat or TERMINAL secular threat CAPS value_conviction at 3 (a low multiple on a structurally-shrinking base is a value trap, not value).\n' +
-    '6b. TYPED VALUATION BLOCK (MANDATORY — the numbers the pipeline checks and sizes on): distill your reconciliation into POINT NUMBERS per share, in the quote currency: bear_px (your adverse case — ONE number; your ranges stay in the prose), base_fv_px (base case), bull_px (favorable case), downside_floor_px (ONLY a structural floor — deal terms, net cash/share, tender; else null — a chart low or a dividend yield is NOT a floor), valuation_method ("sop"|"multiple"|"spread"|"recovery"), horizon_months (when the base case lands). ORDERING bear_px <= base_fv_px <= bull_px is REQUIRED. State LEVELS only: risk_reward ratios, expected-return %, and MoS % are COMPUTED BY THE PIPELINE from these numbers — any "N:1" or %-vs-% arithmetic you assert in prose will be overwritten by the computed values (the 2026-07-07 HNR1.DE record asserted "2:1" on a 6% dividend-"floor"; the pipeline now does this math).\n' +
-    '7. Write (Write tool) VALID, escaped JSON to ' + RES + '/' + sym + '.json with: symbol(="' + sym + '"), sector, signal_type, live_price(number — the price you actually used), price_currency, valuation({live_price, price_currency, quote_listing(="' + sym + '"), bear_px, base_fv_px, bull_px, downside_floor_px, valuation_method, horizon_months, as_of(today YYYY-MM-DD)} — the step-6b numbers), whats_changed_since_prior(the dated fact(s) per step 1c; "" when no prior_record or unchanged), bull_thesis, bear_thesis, sop_bull, sop_bear, sop_fair_value, sop_breakdown, risk_reward, catalyst_status(EXACTLY one bare enum token: FIRED|ARB|PENDING_HARD|SOFT_EXTENDED|UNVERIFIABLE — NO prose; downstream code exact-matches this field), catalyst_status_note(the dated evidence prose for the status — all explanation goes here), peer_comps_note, verdict, conviction, value_conviction(int), value_conviction_blocker(str; "" unless value_conviction==4), moat, moat_trend, secular_threat, secular_theme, consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion, interrogator_score(int), trajectory, tier(="underwrite"), update_mode(="full"), last_full_debate(today YYYY-MM-DD), source(="' + (online ? 'opus_regime_online' : 'opus_regime_mod') + '"), transcript_source(="' + (online ? 'web' : 'fmp') + '").\n' +
+    '3. PEER COMPS: read ' + DIR + '/peer_groups/' + sym + '.json (this name\'s peers + relative_comps + verdict) as an INDEPENDENT relative-value lever for the valuation below (skip if the file is absent). If the file carries `peer_override`/`anchor_multiple`, those are the CURRENT (live/de-rated) peer multiples - use THEM as the anchor and do NOT cite a peer multiple from memory (peer multiples de-rate; a stale anchor inflates the apparent discount - e.g. Edenred is ~10x fwd P/E today, NOT its pre-shock 20-25x). If `convergence`="sector_regulatory", the discount to that peer is shared-factor SECTOR BETA (both names move on the same unresolved driver), NOT idiosyncratic single-name alpha - say so explicitly in peer_comps_note and DO NOT credit the gap as name-specific edge.\n' +
+    '4. ARCHITECT: read ' + DIR + '/architect_system.txt; produce bull_thesis and bear_thesis, AND a SUM-OF-PARTS valuation - value the business by its PARTS (segment SoP from the SEGMENT REVENUE block x peer multiples where present; else whole-company intrinsic via the methodology metric/peer multiple), then apply special-situation OVERLAYS where relevant (net cash, pending distributions [VERIFY whether already paid], announced asset-sales, tender/deal terms minus liabilities). Output sop_bull (favorable parts) and sop_bear (adverse parts), each a per-share value + the parts breakdown.\n' +
+    '5. CATALYST VERIFICATION (MANDATORY for every name): identify the load-bearing catalyst(s) and verify their CURRENT status as of today - FIRST reach for the paid FMP MCP tools via ToolSearch (keyword search e.g. \"FMP news\", \"FMP earnings transcript\", \"FMP statements\", \"FMP quote\") since it is structured, licensed and reliable, then WebSearch/WebFetch only for what FMP lacks (do NOT scrape press-release PDFs by shell). catalyst_status = FIRED (already happened, re-rate spent) | ARB (deal terms fixed, tight merger-arb capped at the offer) | PENDING_HARD (dated, binding, real asymmetry) | SOFT_EXTENDED (non-binding / serially-extended / third-party / single-binary) | UNVERIFIABLE. Dated evidence; never fabricate.\n' +
+    '6. CRO/MODERATOR: read ' + DIR + '/moderator_system.txt; ' + BRIEF + ' RECONCILE sop_bull/sop_bear into a base-case sop_fair_value (+ sop_breakdown) and risk_reward (downside-to-break vs upside-to-fair); size ARB to the spread. CATALYST NEUTRALITY (2026-07-21): a FIRED or SOFT catalyst on a clean-forensic franchise is NEITHER a plus NOR a penalty for conviction - the event names live in Basket-13; here you judge the RESIDUAL value case (upside to sop_fair_value, risk_reward, forensic quality). Do NOT down-rate merely because the catalyst is spent or undated - the 2026-07 study showed that clause discarded the basket winners (post-catalyst re-rates keep running); equally do NOT up-rate for a hot event. Sanity-check the multiple against the peer comps. Produce verdict (A/B/C), conviction (int 1-5), consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion. THEN, separately, produce value_conviction (int 1-5): rate the VALUE case as if NO catalyst overlay existed - judged on valuation vs the SoP fair value + forensic quality ONLY, explicitly IGNORING catalyst_status and the regime tilt. The two scores MUST be allowed to diverge (a FIRED-catalyst name can be value_conviction 5; a hot-catalyst name can be value_conviction 1); do not default both to the same number. Whenever value_conviction == 4, ALSO emit value_conviction_blocker: the SINGLE ingredient that withheld the 5 - DISCOUNT_TOO_SMALL | MOAT | FORENSICS | PEAK_ARTIFACT | OTHER: <one line> (empty string for any other score; this is ledger instrumentation, not a grade). ALSO emit moat (WIDE|NARROW|ERODING|NONE - a high-but-FALLING ROIC/margin is ERODING, not WIDE), moat_trend (WIDENING|STABLE|ERODING), secular_threat (terminal|material|manageable|none) and ONE secular_theme id from ' + DIR + '/secular_themes.json (ai-displacement|payments-disintermediation|linear-media-decline|autonomous-mobility|labor-arbitrage-deflation|reimbursement-compression|retail-channel-shift|energy-transition-loser, or \"\"); an ERODING moat or TERMINAL secular threat CAPS value_conviction at 3 (a low multiple on a structurally-shrinking base is a value trap, not value).\n' +
+    '6b. TYPED VALUATION BLOCK (MANDATORY - the numbers the pipeline checks and sizes on): distill your reconciliation into POINT NUMBERS per share, in the quote currency: bear_px (your adverse case - ONE number; your ranges stay in the prose), base_fv_px (base case), bull_px (favorable case), downside_floor_px (ONLY a structural floor - deal terms, net cash/share, tender; else null - a chart low or a dividend yield is NOT a floor), valuation_method ("sop"|"multiple"|"spread"|"recovery"), horizon_months (when the base case lands). ORDERING bear_px <= base_fv_px <= bull_px is REQUIRED. State LEVELS only: risk_reward ratios, expected-return %, and MoS % are COMPUTED BY THE PIPELINE from these numbers - any "N:1" or %-vs-% arithmetic you assert in prose will be overwritten by the computed values (the 2026-07-07 HNR1.DE record asserted "2:1" on a 6% dividend-"floor"; the pipeline now does this math).\n' +
+    '7. Write (Write tool) VALID, escaped JSON to ' + RES + '/' + sym + '.json with: symbol(="' + sym + '"), sector, signal_type, live_price(number - the price you actually used), price_currency, valuation({live_price, price_currency, quote_listing(="' + sym + '"), bear_px, base_fv_px, bull_px, downside_floor_px, valuation_method, horizon_months, as_of(today YYYY-MM-DD)} - the step-6b numbers), whats_changed_since_prior(the dated fact(s) per step 1c; "" when no prior_record or unchanged), bull_thesis, bear_thesis, sop_bull, sop_bear, sop_fair_value, sop_breakdown, risk_reward, catalyst_status(EXACTLY one bare enum token: FIRED|ARB|PENDING_HARD|SOFT_EXTENDED|UNVERIFIABLE - NO prose; downstream code exact-matches this field), catalyst_status_note(the dated evidence prose for the status - all explanation goes here), peer_comps_note, verdict, conviction, value_conviction(int), value_conviction_blocker(str; "" unless value_conviction==4), moat, moat_trend, secular_threat, secular_theme, consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion, interrogator_score(int), trajectory, tier(="underwrite"), update_mode(="full"), last_full_debate(today YYYY-MM-DD), source(="' + (online ? 'opus_regime_online' : 'opus_regime_mod') + '"), transcript_source(="' + (online ? 'web' : 'fmp') + '").\n' +
     'Reply exactly: DONE'
 }
 
-// ── DELTA (Sonnet): held seats with NO trigger — an ANCHORED weekly update, not a re-debate. ──
+// -- DELTA (Sonnet): held seats with NO trigger - an ANCHORED weekly update, not a re-debate. --
 // This is the churn fix: the committee that underwrote the seat updates its own record; a
 // deterministic gate (continuity-gate v2) REVERTS any un-justified change, and a verdict flip is
 // structurally impossible here (escalate_full_debate routes it to a full re-debate next cycle).
 function deltaPrompt(sym) {
-  return 'DELTA REVIEW for ' + sym + ' — you are the SAME committee that underwrote this seat. Your ANCHOR is ' + DIR + '/_archive_prev/results_regime/' + sym + '.json — READ IT FIRST, in full. This is a weekly anchored update, NOT a re-debate.\n' +
+  return 'DELTA REVIEW for ' + sym + ' - you are the SAME committee that underwrote this seat. Your ANCHOR is ' + DIR + '/_archive_prev/results_regime/' + sym + '.json - READ IT FIRST, in full. This is a weekly anchored update, NOT a re-debate.\n' +
     '1. Also read ' + DIR + '/inputs/' + sym + '.json (fresh metrics + prior_record) and, if they exist, ' + DIR + '/transcripts/' + sym + '.txt and ' + DIR + '/peer_groups/' + sym + '.json.\n' +
     '2. Fetch the live quote via the FMP MCP tools (ToolSearch, keyword "FMP quote"); check the load-bearing catalyst status (FMP news first, WebSearch only for what FMP lacks).\n' +
-    '3. RULES: you may freely update live_price / price_currency / as_of, the valuation block prices restated off the new quote, and catalyst_status (with a dated fact). You may move sop_fair_value / bear_px / base_fv_px / bull_px / conviction (max ±1) ONLY on a dated fact that emerged since the anchor date — every such move MUST appear in deltas:[{field, old, new, dated_fact}]. You may NOT flip the verdict: if you now believe the anchor verdict is wrong, KEEP it and set escalate_full_debate=true + escalate_reason (a full re-debate runs next cycle). Unjustified changes are REVERTED by a deterministic gate — do not waste them.\n' +
-    '4. Write (Write tool) VALID JSON to ' + RES + '/' + sym + '.json = the FULL anchor schema updated per the rules (keep every field the anchor carries, incl. the typed valuation block with point numbers and NO asserted ratios). If the anchor has NO valuation block (pre-typed-schema record), CREATE it now from the numbers the anchor itself states, restated off the live quote: {live_price, price_currency, quote_listing, bear_px, base_fv_px, bull_px, downside_floor_px|null, valuation_method, horizon_months, as_of} — levels only, never ratios; this is a TRANSCRIPTION of the existing anchor bear/base/bull view, not a re-underwriting. PLUS: update_mode="delta", tier="underwrite", deltas:[...], whats_changed_since_prior, escalate_full_debate(bool), escalate_reason(""), last_full_debate(copy from the anchor if present, else the anchor debated_at/as_of date), source(keep the anchor source). Reply exactly: DONE'
+    '3. RULES: you may freely update live_price / price_currency / as_of, the valuation block prices restated off the new quote, and catalyst_status (with a dated fact). You may move sop_fair_value / bear_px / base_fv_px / bull_px / conviction (max +/-1) ONLY on a dated fact that emerged since the anchor date - every such move MUST appear in deltas:[{field, old, new, dated_fact}]. You may NOT flip the verdict: if you now believe the anchor verdict is wrong, KEEP it and set escalate_full_debate=true + escalate_reason (a full re-debate runs next cycle). Unjustified changes are REVERTED by a deterministic gate - do not waste them.\n' +
+    '4. Write (Write tool) VALID JSON to ' + RES + '/' + sym + '.json = the FULL anchor schema updated per the rules (keep every field the anchor carries, incl. the typed valuation block with point numbers and NO asserted ratios). If the anchor has NO valuation block (pre-typed-schema record), CREATE it now from the numbers the anchor itself states, restated off the live quote: {live_price, price_currency, quote_listing, bear_px, base_fv_px, bull_px, downside_floor_px|null, valuation_method, horizon_months, as_of} - levels only, never ratios; this is a TRANSCRIPTION of the existing anchor bear/base/bull view, not a re-underwriting. PLUS: update_mode="delta", tier="underwrite", deltas:[...], whats_changed_since_prior, escalate_full_debate(bool), escalate_reason(""), last_full_debate(copy from the anchor if present, else the anchor debated_at/as_of date), source(keep the anchor source). Reply exactly: DONE'
 }
 
-// ── COVERAGE (Sonnet): Tier-C refresh — a structured update with NO grade fields at all. ──
+// -- COVERAGE (Sonnet): Tier-C refresh - a structured update with NO grade fields at all. --
 // The verdict/conviction are INHERITED verbatim by code (coverage-merge); the agent physically
 // cannot re-roll them because its output schema has no place for them.
 function coveragePrompt(sym) {
-  return 'COVERAGE REFRESH for ' + sym + ' (Tier-C — NOT a debate, NOT a grade). The standing record is ' + DIR + '/_archive_prev/results_regime/' + sym + '.json — read it and ' + DIR + '/inputs/' + sym + '.json.\n' +
+  return 'COVERAGE REFRESH for ' + sym + ' (Tier-C - NOT a debate, NOT a grade). The standing record is ' + DIR + '/_archive_prev/results_regime/' + sym + '.json - read it and ' + DIR + '/inputs/' + sym + '.json.\n' +
     '1. Fetch the live quote via the FMP MCP tools (ToolSearch "FMP quote"); check the catalyst status via FMP news; scan for material dated developments since the standing record.\n' +
-    '2. Write (Write tool) VALID JSON to ' + DIR + '/_coverage_updates/' + sym + '.json = {symbol:"' + sym + '", as_of(today YYYY-MM-DD), live_price(number), price_currency, whats_new:[{date:"YYYY-MM-DD", fact:"..."}], catalyst_status_check(one line: does the standing catalyst_status still hold?), thesis_update(<=80 words), escalate(bool — true ONLY if something material demands a full re-debate next cycle), escalate_reason("")}. There are NO verdict/conviction/sop fields in this schema — do not add any. Reply exactly: DONE'
+    '2. Write (Write tool) VALID JSON to ' + DIR + '/_coverage_updates/' + sym + '.json = {symbol:"' + sym + '", as_of(today YYYY-MM-DD), live_price(number), price_currency, whats_new:[{date:"YYYY-MM-DD", fact:"..."}], catalyst_status_check(one line: does the standing catalyst_status still hold?), thesis_update(<=80 words), escalate(bool - true ONLY if something material demands a full re-debate next cycle), escalate_reason("")}. There are NO verdict/conviction/sop fields in this schema - do not add any. Reply exactly: DONE'
 }
 
-// ── LEDGER RE-CHECKS: unexpired forensic-EXCLUDE names get a SHORT re-affirm pass, not a full debate ──
+// -- LEDGER RE-CHECKS: unexpired forensic-EXCLUDE names get a SHORT re-affirm pass, not a full debate --
 const RECHECK_SYMS = __RECHECK_SYMS__
 const RECHECK_INFO = __RECHECK_INFO__
 function recheckPrompt(sym) {
@@ -5761,7 +5761,7 @@ function recheckPrompt(sym) {
 
 const BATCH = 8   // rate-limit safety: run 8 web-heavy agents at a time, not the full universe burst (429s).
 
-// ── PHASE 1 — COVERAGE (Sonnet): Tier-C names whose trigger fired but who missed the U_CAP. ──
+// -- PHASE 1 - COVERAGE (Sonnet): Tier-C names whose trigger fired but who missed the U_CAP. --
 phase('Coverage')
 if (COVERAGE_SYMS.length) log(`Coverage refresh over ${COVERAGE_SYMS.length} Tier-C names (verdicts inherited by code).`)
 for (let b = 0; b < COVERAGE_SYMS.length; b += BATCH) {
@@ -5769,7 +5769,7 @@ for (let b = 0; b < COVERAGE_SYMS.length; b += BATCH) {
     coveragePrompt(sym), { label: 'coverage:' + sym, phase: 'Coverage', agentType: 'general-purpose', model: 'sonnet' })))
 }
 
-// ── PHASE 2 — DELTA (Sonnet): held seats, anchored weekly update. ──
+// -- PHASE 2 - DELTA (Sonnet): held seats, anchored weekly update. --
 phase('Delta')
 if (DELTA_SYMS.length) log(`Delta review over ${DELTA_SYMS.length} held seats (anchored on last week's records).`)
 for (let b = 0; b < DELTA_SYMS.length; b += BATCH) {
@@ -5777,7 +5777,7 @@ for (let b = 0; b < DELTA_SYMS.length; b += BATCH) {
     deltaPrompt(sym), { label: 'delta:' + sym, phase: 'Delta', agentType: 'general-purpose', model: 'sonnet' })))
 }
 
-// ── PHASE 3 — UNDERWRITE (Opus): full debates — triggered seats + ranked new-candidate intake. ──
+// -- PHASE 3 - UNDERWRITE (Opus): full debates - triggered seats + ranked new-candidate intake. --
 const ALL = SYMS.map(s => ({ sym: s, online: false, recheck: false }))
   .concat(ONLINE_SYMS.map(s => ({ sym: s, online: true, recheck: false })))
   .concat(RECHECK_SYMS.map(s => ({ sym: s, online: true, recheck: true })))
@@ -5790,7 +5790,7 @@ for (let b = 0; b < ALL.length; b += BATCH) {
     { label: (it.recheck ? 'recheck:' : 'debate:') + it.sym + (it.online && !it.recheck ? '(web)' : ''), phase: 'Underwrite', agentType: 'general-purpose', model: 'opus' })))
 }
 
-// ── PHASE 4 — GATES (Haiku runner): deterministic checks between the records and the money. ──
+// -- PHASE 4 - GATES (Haiku runner): deterministic checks between the records and the money. --
 phase('Gates')
 await agent(
   'Run these exact commands IN ORDER (each is a deterministic gate) and report each summary line verbatim:\n' +
@@ -5801,54 +5801,93 @@ await agent(
   'Reply with the four summary lines, then exactly: DONE',
   { label: 'gates', phase: 'Gates', model: 'haiku' })
 
-// ── PHASE 5 — SKEPTIC (Opus, BEFORE the Director): kill-tier over all of Tier-U, so demotion ──
+// -- PHASE 5 - SKEPTIC (Opus, BEFORE the Director): kill-tier over all of Tier-U, so demotion --
 // evidence informs seating instead of vaporizing seats after the fact. Self-gate: a conviction<=2
-// record that is NOT a current seat cannot seat anyway (eligibility floor is 3) — skip cheaply.
+// record that is NOT a current seat cannot seat anyway (eligibility floor is 3) - skip cheaply.
 phase('Skeptic')
 if (SKEPTIC_SYMS.length) log(`Skeptic kill-tier over ${SKEPTIC_SYMS.length} Tier-U names (pre-Director).`)
 const SK_BATCH = 6
 for (let b = 0; b < SKEPTIC_SYMS.length; b += SK_BATCH) {
   await parallel(SKEPTIC_SYMS.slice(b, b + SK_BATCH).map(sym => () => agent(
     'SKEPTIC tier for ' + sym + ' (regime Tier-U; lane ' + (SKEPTIC_LANES[sym] || {}).lane + '). Your job is to KILL this thesis; default verdict REFUTED unless you can independently confirm the load-bearing facts against a PRIMARY source (filings, the company IR site, regulator pages). You see ONLY the bear side - do NOT read or reconstruct the bull case.\n' +
-    'SELF-GATE FIRST: read ' + DIR + '/results_regime/' + sym + '.json — if its conviction <= 2 AND ' + JSON.stringify(PRIOR_SEATS) + '.indexOf("' + sym + '") === -1, write ' + DIR + '/_skeptic_regime/' + sym + '.json = {symbol:"' + sym + '", verdict:"SKIPPED_LOW_CONVICTION"} and reply DONE (a conviction-2 non-seat cannot seat; no kill needed).\n' +
+    'SELF-GATE FIRST: read ' + DIR + '/results_regime/' + sym + '.json - if its conviction <= 2 AND ' + JSON.stringify(PRIOR_SEATS) + '.indexOf("' + sym + '") === -1, write ' + DIR + '/_skeptic_regime/' + sym + '.json = {symbol:"' + sym + '", verdict:"SKIPPED_LOW_CONVICTION"} and reply DONE (a conviction-2 non-seat cannot seat; no kill needed).\n' +
     (((SKEPTIC_HINTS[sym] || {}).refute_candidate) ? 'MOAT ALERT (deterministic screen): ' + sym + ' is a TERMINAL-EROSION candidate - erosion=' + (SKEPTIC_HINTS[sym] || {}).erosion + ', severity=' + (SKEPTIC_HINTS[sym] || {}).severity + ', earns_below_cost_of_capital=' + (SKEPTIC_HINTS[sym] || {}).roic_below + ', returns ' + (SKEPTIC_HINTS[sym] || {}).returns_trend + ', gross-margin ' + (SKEPTIC_HINTS[sym] || {}).gross_margin_trend + '. The moat is ERODING by default: you must find PRIMARY-SOURCE proof of durable pricing power / rising returns to CONFIRM, else REFUTED with the moat erosion as the kill_fact.\n' : '') +
     '1. From that record USE ONLY: bear_thesis, sop_bear, risk_reward, catalyst_status, valuation.bear_px/downside_floor_px. Read the forensic dossier ' + DIR + '/' + (SKEPTIC_LANES[sym] || {}).doss + ' if it exists.\n' +
     '2. Verify the CURRENT facts. FIRST reach for the paid FMP MCP tools via ToolSearch (keyword search e.g. "FMP earnings transcript", "FMP statements", "FMP news", "FMP quote") for the latest transcript / quarterly numbers / news / price - it is structured, licensed and reliable; fall back to WebSearch/WebFetch only for what FMP lacks, and do NOT scrape press-release PDFs by shell. Attack: ' + (SKEPTIC_LANES[sym] || {}).attack + '\n' +
-    '3. Verdict: CONFIRMED (bear attacked, thesis survives) | CONFIRMED_WITH_CORRECTIONS (survives but a load-bearing number/claim needed fixing - state it) | REFUTED (a kill_fact breaks the thesis). ALSO correction_severity: "minor" (footnote-level, thesis arithmetic intact) or "material" (a load-bearing number/date/anchor moved - the post layer haircuts sizing on material). AND kill_scope: which layer your strongest finding hits - "thesis" | "numbers" | "catalyst" | "moat". If kill_scope is "numbers" you MUST ALSO emit revised_fv_px: your re-derived base fair value per share (a point NUMBER in the same currency as the record) after applying your correction to the records own schedule - state the LEVEL, the pipeline computes every ratio; the post layer re-grades the seat on that number instead of treating a repricing as a thesis kill, so a numbers-REFUTED without revised_fv_px is treated as a hard kill. revised_fv_px is null for every other scope. Do NOT emit any numeric conviction cap - verdicts and severity only.\n' +
-    '4. Write (Write tool) VALID JSON to ' + DIR + '/_skeptic_regime/' + sym + '.json = {symbol:"' + sym + '", verdict, kill_fact, corrections, correction_severity, kill_scope, revised_fv_px, evidence:[2-4 dated primary-source cites]}. Never fabricate. Reply exactly: DONE',
+    '3. Verdict: CONFIRMED (bear attacked, thesis survives) | CONFIRMED_WITH_CORRECTIONS (survives but a load-bearing number/claim needed fixing - state it) | REFUTED (a kill_fact breaks the thesis). ALSO correction_severity: "minor" (footnote-level, thesis arithmetic intact) or "material" (a load-bearing number/date/anchor moved - the post layer haircuts sizing on material). AND kill_scope: which layer your strongest finding hits - "thesis" | "numbers" | "catalyst" | "moat". If kill_scope is "numbers" you MUST ALSO emit revised_fv_px: your re-derived base fair value per share (a point NUMBER in the same currency as the record) after applying your correction to the records own schedule - state the LEVEL, the pipeline computes every ratio; the post layer re-grades the seat on that number instead of treating a repricing as a thesis kill, so a numbers-REFUTED without revised_fv_px is treated as a hard kill. revised_fv_px is null for every other scope. TYPED CORRECTIONS (2026-08-05 - a prose-only numeric correction changes NOTHING downstream): EVERY correction that moves a number must ALSO appear in corrections_typed: [{field: one of "bear_px" | "base_fv_px" | "bull_px" | "downside_floor_px", from: <the records current number>, to: <your corrected number>, basis: "<one line with a dated primary-source basis>"}] - correct the LEVELS on the records own valuation fields; if your finding hits an INPUT (net debt, share count, an EBITDA anchor), carry it through to the affected level(s) yourself and cite the arithmetic in basis. The pipeline APPLIES corrections_typed to the record (originals preserved) and recomputes every ratio deterministically, so the Director reads your corrected numbers instead of a note contradicting them. corrections_typed is [] when nothing numeric moved. Do NOT emit any numeric conviction cap - verdicts and severity only.\n' +
+    '4. Write (Write tool) VALID JSON to ' + DIR + '/_skeptic_regime/' + sym + '.json = {symbol:"' + sym + '", verdict, kill_fact, corrections, correction_severity, kill_scope, revised_fv_px, corrections_typed, evidence:[2-4 dated primary-source cites]}. Never fabricate. Reply exactly: DONE',
     { label: 'skeptic:' + sym, phase: 'Skeptic', agentType: 'general-purpose', model: '__SKEPTIC_MODEL__' })))
+}
+
+// -- PHASE 5b - REVISE (2026-08-05, Bruno: "what I need is a reliable debate, not a note saying --
+// the debate is wrong"). Tier 1 is deterministic: skeptic-apply writes every typed correction into
+// the record's valuation block and recomputes computed{} - zero agents, covers most corrections.
+// Tier 2 is a BOUNDED cycle for the few names whose corrected arithmetic flips a verdict-relevant
+// threshold (rr across 1.0, ER across the entry floor): ONE revision agent rewrites the invalidated
+// prose + re-grades under the constraint that the corrections are adopted facts, then the skeptic
+// RE-VERIFIES ONCE (fidelity check only - no new attack lines; a dodged correction is a hard kill).
+// No loop-until-accept: acceptance-seeking either never converges or wears the skeptic down into a
+// negotiated thesis. Thesis/moat kills are never revised - a kill is a judgement, not a slip.
+phase('Revise')
+const applyOut = await agent(
+  'Run exactly: python backend/weekly_opus_refresh.py skeptic-apply\n' +
+  'It applies typed skeptic corrections to the debate records and prints a final line REVISE_NEEDED=<json array>. Reply with every summary line it prints, ending with that REVISE_NEEDED line verbatim.',
+  { label: 'skeptic-apply', phase: 'Revise', model: 'haiku' })
+let REVISE = []
+try { REVISE = JSON.parse(String(applyOut).split('REVISE_NEEDED=').pop().trim().split('\n')[0]) } catch (e) { REVISE = [] }
+if (!Array.isArray(REVISE)) REVISE = []
+if (REVISE.length) {
+  log(`Revision cycle over ${REVISE.length} name(s) whose corrected arithmetic flips a verdict-relevant threshold.`)
+  const RV_BATCH = 6
+  for (let b = 0; b < REVISE.length; b += RV_BATCH) {
+    await parallel(REVISE.slice(b, b + RV_BATCH).map(sym => () => agent(
+      'REVISION for ' + sym + ' (the skeptic corrected this record and the corrected arithmetic flips its verdict-relevant numbers - the prose and grade no longer follow from the record itself). Read ' + DIR + '/results_regime/' + sym + '.json and ' + DIR + '/_skeptic_regime/' + sym + '.json IN FULL.\n' +
+      'HARD CONSTRAINTS: (1) The skeptic corrections (corrections + corrections_typed, ALREADY applied by the pipeline to the valuation block) are ADOPTED FACTS - do not relitigate, soften, offset, or argue with them anywhere in the record. (2) Do NOT change any number in the valuation block or computed{} - the pipeline owns those; your job is to make the words and the grade follow from them. (3) Rewrite ONLY the prose the corrections invalidated: risk_reward, moderator_conclusion, and the specific sentences of bull_thesis / bear_thesis / sop_bear that cite the old numbers. (4) RE-GRADE the record fields that no longer follow (conviction, and the verdict/tier grade if present) so they are consistent with the corrected computed rr_ratio / expected_return_pct - and append to deltas[] a dated entry citing "skeptic correction applied: <field> <from> -> <to>" as the justification, so the continuity gate sees a dated fact, not an unexplained flip. An UNCHANGED grade is a legitimate outcome when the corrected numbers still support it - do not move a grade to appease anyone. (5) Preserve every other field byte-for-byte. Set revision_note to one sentence stating what was rewritten and why.\n' +
+      'Write the FULL record back to ' + DIR + '/results_regime/' + sym + '.json with the Write tool (Read it first). Reply exactly: DONE',
+      { label: 'revise:' + sym, phase: 'Revise', agentType: 'general-purpose', model: 'opus' })))
+  }
+  for (let b = 0; b < REVISE.length; b += RV_BATCH) {
+    await parallel(REVISE.slice(b, b + RV_BATCH).map(sym => () => agent(
+      'SKEPTIC RE-VERIFY for ' + sym + ' (ONE bounded fidelity pass - NOT a new attack; novelty waits for next week). Read your shard ' + DIR + '/_skeptic_regime/' + sym + '.json and the REVISED record ' + DIR + '/results_regime/' + sym + '.json.\n' +
+      'Check ONLY three things: (a) your corrections_typed remain faithfully in the valuation block (nothing quietly reverted or offset elsewhere), (b) the rewritten prose and the grade now FOLLOW from the corrected computed numbers, (c) no new claim was smuggled in to rebuild the old conclusion on different footing.\n' +
+      'Verdict: CONFIRMED (adopted faithfully - even if you would still grade it lower) | REFUTED (corrections dodged, reverted, or offset - set kill_scope:"thesis", because a dodged correction is an integrity kill, not arithmetic). You may NOT emit new corrections in this pass.\n' +
+      'Overwrite your shard (Read it first) keeping symbol / kill_fact / corrections / corrections_typed / revised_fv_px / evidence intact, updating verdict per this check, keeping correction_severity:"material", and adding reverify:"done". Reply exactly: DONE',
+      { label: 'reverify:' + sym, phase: 'Revise', agentType: 'general-purpose', model: '__SKEPTIC_MODEL__' })))
+  }
+} else {
+  log('No verdict-relevant flips - typed corrections applied deterministically, no revision cycle needed.')
 }
 
 phase('RegimeRead')
 await agent(
-  'REGIME READ (context layer for the Director — NOT an override; the deterministic dials stay authoritative). Read backend/_opus_debate/macro_regime.json: regime RISK_ON|NEUTRAL|CAUTIOUS|RISK_OFF, score 0-1, quadrant GOLDILOCKS|REFLATION|STAGFLATION|RISK_OFF (growth x inflation 2x2) + quadrant_basis + growth/inflation/rates/credit detail, AND the debt_cycle block (Dalio long-term debt-cycle phase EXPANSION|DISCIPLINE|FORCING|MONETIZATION + cycle_score + weeks_in_phase + phase_basis + cycle_sub_scores + reserve_asset_check).\n' +
+  'REGIME READ (context layer for the Director - NOT an override; the deterministic dials stay authoritative). Read backend/_opus_debate/macro_regime.json: regime RISK_ON|NEUTRAL|CAUTIOUS|RISK_OFF, score 0-1, quadrant GOLDILOCKS|REFLATION|STAGFLATION|RISK_OFF (growth x inflation 2x2) + quadrant_basis + growth/inflation/rates/credit detail, AND the debt_cycle block (Dalio long-term debt-cycle phase EXPANSION|DISCIPLINE|FORCING|MONETIZATION + cycle_score + weeks_in_phase + phase_basis + cycle_sub_scores + reserve_asset_check).\n' +
   '1. State the quadrant AND the debt-cycle phase per the dials and what each implies for a 12-month equity book (ONE sentence each).\n' +
-  '2. Argue AGAINST the dials — BOTH of them: search for macro prints from the LAST 3 WEEKS that contradict the quadrant read (CPI/PCE, payrolls, PMIs, credit spreads, 10y moves) AND the phase read (30y real yield direction, long-end auctions, HY OAS moves, Fed balance-sheet direction, Fed language shifting from price-stability to market-functioning). NOTE the phase trigger discipline: the phase axis keys off the LONG END and AUCTION QUALITY, not CPI — a hot CPI print inside DISCIPLINE is CONFIRMATION of the phase, not evidence of a transition; getting that backwards is the most likely misread. If reserve_asset_check.consistent_with_phase is false, that is a standing flag the phase call may be early/late — weigh it. FIRST reach for the FMP MCP economic tools via ToolSearch (e.g. "FMP economic indicators", "FMP treasury"); fall back to WebSearch for what FMP lacks. Every claim carries a DATE. If nothing material contradicts, your view is AGREE.\n' +
-  '3. Emit dated FALSIFIERS: 2-4 for the quadrant call AND 2-4 for the phase call, each a concrete checkable condition with a check_by date (quadrant e.g. "core CPI >= 0.4% MoM in the next print (due ~Aug 12)"; phase e.g. "30y through 5.50% with bid-to-cover below the 4-auction average by 2026-09-30" -> FORCING, or "Fed language shifts to market-functioning at the next FOMC" -> MONETIZATION watch). These are the ledger entries the NEXT run gets scored against — make them checkable, not vibes.\n' +
-  '4. Write (Write tool) VALID JSON to backend/_opus_debate/regime_read.json = {asof, quadrant_per_dials, phase_per_dials, agent_view ("AGREE"|"CONTRADICT"), phase_view ("AGREE"|"CONTRADICT"), evidence: [2-4 dated one-liners], falsifiers: [{condition, check_by}], phase_falsifiers: [{condition, check_by, implies}], stance_note (one sentence for the Director), confidence ("LOW"|"MED"|"HIGH")}. A CONTRADICT with dated evidence may temper the Director stance ONE notch, never flip the dial — the quadrant AND the phase both change only via their own state machines, never via this read. Never fabricate a print. Reply exactly: DONE',
+  '2. Argue AGAINST the dials - BOTH of them: search for macro prints from the LAST 3 WEEKS that contradict the quadrant read (CPI/PCE, payrolls, PMIs, credit spreads, 10y moves) AND the phase read (30y real yield direction, long-end auctions, HY OAS moves, Fed balance-sheet direction, Fed language shifting from price-stability to market-functioning). NOTE the phase trigger discipline: the phase axis keys off the LONG END and AUCTION QUALITY, not CPI - a hot CPI print inside DISCIPLINE is CONFIRMATION of the phase, not evidence of a transition; getting that backwards is the most likely misread. If reserve_asset_check.consistent_with_phase is false, that is a standing flag the phase call may be early/late - weigh it. FIRST reach for the FMP MCP economic tools via ToolSearch (e.g. "FMP economic indicators", "FMP treasury"); fall back to WebSearch for what FMP lacks. Every claim carries a DATE. If nothing material contradicts, your view is AGREE.\n' +
+  '3. Emit dated FALSIFIERS: 2-4 for the quadrant call AND 2-4 for the phase call, each a concrete checkable condition with a check_by date (quadrant e.g. "core CPI >= 0.4% MoM in the next print (due ~Aug 12)"; phase e.g. "30y through 5.50% with bid-to-cover below the 4-auction average by 2026-09-30" -> FORCING, or "Fed language shifts to market-functioning at the next FOMC" -> MONETIZATION watch). These are the ledger entries the NEXT run gets scored against - make them checkable, not vibes.\n' +
+  '4. Write (Write tool) VALID JSON to backend/_opus_debate/regime_read.json = {asof, quadrant_per_dials, phase_per_dials, agent_view ("AGREE"|"CONTRADICT"), phase_view ("AGREE"|"CONTRADICT"), evidence: [2-4 dated one-liners], falsifiers: [{condition, check_by}], phase_falsifiers: [{condition, check_by, implies}], stance_note (one sentence for the Director), confidence ("LOW"|"MED"|"HIGH")}. A CONTRADICT with dated evidence may temper the Director stance ONE notch, never flip the dial - the quadrant AND the phase both change only via their own state machines, never via this read. Never fabricate a print. Reply exactly: DONE',
   { label: 'regime-read', phase: 'RegimeRead', agentType: 'general-purpose', model: '__SKEPTIC_MODEL__' })
 
 phase('Director')
 await agent(
   'You are the SPECULAIR APEX DIRECTOR (Claude Opus 5). The CRO already reconciled each name to a Sum-of-Parts fair value + risk/reward + a LIVE catalyst_status, with Radar peer comps.\n' +
-  'STEP 1 — Read CATALYST_WATCH_REGIME.md (repo root) IN FULL and apply its tilt. ALSO read backend/_opus_debate/macro_regime.json (the live macro classifier: regime RISK_ON|NEUTRAL|CAUTIOUS|RISK_OFF + score 0-1 + quadrant GOLDILOCKS|REFLATION|STAGFLATION|RISK_OFF (growth x inflation 2x2, with quadrant_basis) + growth/inflation/rates/credit detail) AND backend/_opus_debate/regime_read.json if present (an agent regime read run before you: agent_view AGREE|CONTRADICT vs the dials + dated evidence + falsifiers — the DIALS are authoritative; a CONTRADICT with dated evidence may temper your stance ONE notch, never flip the dial; carry its falsifiers into the memo so next week can check them). RETURN GOAL: this book targets +30-50% over ~12 months. QUADRANT PLAYBOOK for the RISK_STANCE: GOLDILOCKS => REACH for the goal (credible 12-month re-rate DRIVERS — dated catalyst, earnings inflection, live trend — accept more demand-cycle/AI-capex beta); REFLATION => favor PRICING POWER, cyclical value and real-asset re-rates over duration-sensitive growth (inflation eats long-duration multiples); STAGFLATION => pricing power + real assets ONLY on the reach side, SIZE DOWN demand-cycle beta and duration, favor carry; RISK_OFF (disinflationary slowdown) => DEFENSE — quality, balance sheet, FCF carry, structural floors, even if +30-50% becomes an 18-24mo story. THEN apply the DEBT-CYCLE PHASE MODIFIER (macro_regime.json debt_cycle block — the Dalio long-term debt-cycle axis; it answers what the quadrant cannot: are positive real rates CHOSEN by a hot economy or IMPOSED by the bond market on the borrower). The phase MODIFIES the quadrant stance, it never gates a name: EXPANSION => no modification, quadrant playbook runs as-is; DISCIPLINE => stance CAPPED at balanced — real rates are being imposed; favor short-payback FCF and pricing power, story-duration names get a negative phase_fit REGARDLESS of quadrant, and stretching the +30-50% to an 18-24mo horizon is explicitly permitted rather than chasing the number; FORCING => stance FLOORED at defensive — funding stress live, balance sheet and FCF carry only, reaches suspended not resized; MONETIZATION => UNLOCKS aggressive even from a RISK_OFF quadrant — real rates forced negative, favor real assets, hard-asset re-rates and pricing power, horizon SHORTENS back to ~12mo (this risk-off-tape-buy-real-assets combination is exactly the state the quadrant playbook alone cannot express). If debt_cycle_phase is UNKNOWN: no modifier, note it in the memo. Also read regime_read.json phase_view/phase_falsifiers if present — same one-notch rule as the quadrant. State the risk_stance, the quadrant you applied, the debt-cycle phase you applied, a one-line phase_read, and a one-line macro read in the memo.\n' +
-  'STEP 2 — Run: python backend/_opus_debate/compact_table.py results_regime — confirm the row count; also read ' + DIR + '/peer_groups.json for the relative-value picture. CONTINUITY FLAGS: any record carrying a continuity_flag field flipped its verdict/conviction vs last week WITHOUT citing a dated fact — treat that fresh record as UNRELIABLE for seat decisions on that name: fall back to your ledger + the prior grade (the flag text quotes it) rather than acting on an unjustified downgrade/upgrade, and say so in decision_rationale. SKEPTIC VERDICTS ARE ALREADY IN (this run, pre-seat — the kill-tier ran before you): for EVERY finalist you consider, read ' + DIR + '/_skeptic_regime/<SYM>.json — a REFUTED verdict with kill_scope "thesis" | "moat" | "catalyst" is a HARD no-seat (if you were inclined to seat it, cite the kill_fact in the memo instead); a REFUTED with kill_scope "numbers" AND a typed revised_fv_px is a REPRICING, not a thesis kill: re-compute the expected return on revised_fv_px against the live price and re-grade it against the STEP-3a floor — seat it ONLY if the revised number still clears the floor and the median-seat dilution bar, treat it as correction_severity="material" for sizing, and quote BOTH the record figure and the skeptic figure in the memo (a numbers-REFUTED without revised_fv_px stays a hard no-seat); CONFIRMED_WITH_CORRECTIONS with correction_severity="material" must temper your conviction and sizing for that seat; SKIPPED_LOW_CONVICTION just means the record graded too low to need a kill. Where an entry carries `peer_override`/`anchor_multiple`, that is a LIVE current peer multiple — trust it over any multiple quoted from memory in a dossier; where `convergence`="sector_regulatory", treat that name\'s discount-to-peer as a SHARED-FACTOR cluster in STEP 4, not as idiosyncratic edge.\n' +
-  'STEP 3 — Eligible = conviction >= 3 AND numeric_gate NOT in (REJECT, EXCLUDE_ELIGIBILITY) (records stamped by the deterministic numeric gate — an excluded record\'s numbers failed arithmetic/price/floor checks and cannot support a seat regardless of the narrative). Select using sop_fair_value / risk_reward / catalyst_status AS PRIMARY LEVERS — and where a record carries a computed{} block (rr_ratio / expected_return_pct computed by the pipeline from the typed valuation numbers), TRUST THE COMPUTED NUMBERS over any prose arithmetic: prefer the widest COMPUTED risk_reward to a credible SoP fair value. CATALYST NEUTRALITY (2026-07-21 apex-reassessment): catalyst_status is DESCRIPTIVE here, not a grade lever — a FIRED or SOFT catalyst on a clean-forensic, cheap-on-cash-earnings franchise is neither a plus nor a penalty; judge residual sop_fair_value upside + computed risk_reward, not whether the event is spent (the dated-event asymmetry book is Basket-13, STEP 3b). A live PENDING_HARD driver may STRENGTHEN a seat; its absence must NOT veto one. Then regime fit and consensus-delta width.\n' +
-  'STEP 3a — ENTRY DISCOUNT FLOOR, SCALED BY THE REGIME (2026-07-24). A thin discount is not a seat: at a ~10% margin the trim ceiling (85% of fair value) is already within touching distance, so you would be buying something with no room to work and real room to fall. For a NEW seat (decision ADD or RE-ADD) the computed expected return to base_fv_px must clear: >= +20% in GOLDILOCKS/REFLATION (reach), >= +25% in STAGFLATION, >= +30% in RISK_OFF (you must be paid more to take risk when the tape is against you). A HELD seat is NOT force-sold for slipping under the floor — that is what the trim ceiling is for — but a held name below the floor may not be ADDED to, and you must say in the memo whether you are keeping it for carry or letting the trim rule take it. THE BOOK HAS NO FIXED SIZE (2026-07-24, Bruno). Do NOT pad to a target and do NOT stop at one either: seat EVERY name that clears the floor and survives STEP 4, however many that is. If only 6 qualify, seat 6 and say so. If 18 qualify and each one genuinely earns its place, seat 18. THE DISCIPLINE THAT REPLACES A SEAT CAP IS DILUTION: the book is EQUAL-WEIGHTED, so every seat you add shrinks every other seat. Add a name ONLY if it is at least as good as the CURRENT MEDIAN seat on computed expected return and skeptic cleanliness — if it is worse than your median, adding it makes the book worse even though the name itself clears the floor. State the final count in the memo with one line on why the book is that size this week. You MAY Read individual ' + RES + '/<SYM>.json for finalists.\n' +
-  'STEP 3b — BASKET-13 SEPARATION (HARD RULE, 2026-07-08): the Basket-13 catalyst book (merger-arb spreads, forced-seller recovery, SoP breakups, spins, FDA binaries — anything whose thesis is a dated EVENT rather than a franchise) is a FULLY SEPARATE book with its own funnel, debate, sizing and tracker. You may NOT seat any equity special-sit / event-driven name in this apex basket — no exceptions, no "sleeve". If a name in results_regime carries lane/source values like equity_special_sit / special_sit / opus_catalyst, or its thesis is primarily a dated corporate event, it is INELIGIBLE for a seat here (it may be a runner_up with an explicit note that it belongs to B13). This book seats COMPOUNDERS and value re-rates only: durable franchises where the value case stands without the event.\n' +
-  'STEP 4 — CORRELATION/EXPOSURE STRESS over the proposed book, whatever its size (MANDATORY, beyond the <=3/sector cap): decompose on (a) DEMAND-CYCLE beta (cyclical industrials/consumption that de-rate together in a recession), (b) REGULATORY JURISDICTION (e.g. Italian/EU sign-off) — INCLUDING any peer entry tagged `convergence`="sector_regulatory" where the thesis is "cheap vs a peer" and BOTH names de-rated on the SAME regulatory factor (e.g. PLX.PA/Pluxee vs a now-~10x Edenred on the shared Brazil-PAT/Italy-voucher reform): that is sector BETA, so it must NOT be sized as idiosyncratic apex alpha — discount it or hold it as a watch/sized leg, (c) LIQUIDITY/POSITIONING (small-caps that de-gross together), (d) POSTURE (count of wait-for-the-flush entries — a correlated timing bet), (e) SECULAR-DISRUPTION THEME (each name carries a secular_theme from the debate: ai-displacement / payments-disintermediation / linear-media-decline / autonomous-mobility / labor-arbitrage-deflation / reimbursement-compression / retail-channel-shift / energy-transition-loser). No hidden factor may carry >3 names AND no secular_theme may carry >2 names; for any secular_theme with >=2 names you MUST emit a combined_caps entry {names, max_units, axis:"secular-theme:<id>"} (a WIDE non-eroding moat counts at HALF toward the theme budget — a durable anchor that merely carries the narrative is not the tail risk). Do NOT let one melting tail (e.g. AI-displacement across ADBE+IT+GLOB) carry the book. Stress the book against a EUROPEAN-CYCLICAL-RECESSION + CORRELATED-DE-GROSS scenario and diversify if it fails; sequence entries assuming flushes arrive together.\n' +
-  'STEP 5 — FIRST read backend/_opus_debate/_director_ledger_regime.txt (your currently-HELD names with why + every name you DROPPED in 2026) and apply ROTATION DISCIPLINE: KEEP each held name UNLESS its thesis is BROKEN (price through thesis_break, a thesis whose ONLY leg was a now-elapsed event and whose value case no longer stands on its own, a forensic/solvency flip, or confirmed moat terminal-erosion — a fired catalyst on a name whose value case still stands is NOT thesis-broken) OR you have a STRICTLY-BETTER orthogonal name for that seat — do NOT drop a held compounder merely because another name graded a hair higher; you may RE-ADD a previously-dropped name ONLY by citing a DOCUMENTED THESIS CHANGE since the drop date (a better grade is NOT a thesis change) — override allowed but you must OWN it in whats_changed. CONVICTION RUBRIC (0-100, BANDED — your conviction is anchored, not free-floating): 90-100 = table-pounding: computed expected return >= +40% to base_fv_px AND a structural floor or paid-to-wait carry AND a clean skeptic AND a credible 12-mo re-rate path (a live dated driver STRENGTHENS but is NOT required — an earnings trajectory, buyback cadence, or mean-reversion of a de-rated multiple on a clean franchise qualifies); 70-89 = high conviction: computed ER +25-40%, credible re-rate path (dated or undated), clean forensic; 50-69 = solid hold: ER +15-25%, or the re-rate path is weak/contingent, or the record carries WARN/THIN_FLOOR flags; 30-49 = runner-up only; <30 = no seat. CONSISTENCY RULE: conviction >= 70 on a name whose COMPUTED expected return is < +15% requires an explicit carry justification (dividend/buyback floor) in goal_note, else it is a rubric violation. ANCHORING: the ledger shows your PRIOR conviction per held seat — emit conviction_prior (echo it) and conviction_delta (new minus prior) for every KEEP/RE-ADD; when |conviction_delta| > 10 you MUST fill delta_justification with the DATED fact that moved it (the deterministic post layer CLAMPS unjustified moves to prior ±10 — save yourself the clamp). Then for each pick: symbol, sector, director_conviction (0-100 per the rubric), conviction_prior (number or null for ADDs), conviction_delta (number or null), delta_justification (dated fact when |delta|>10; else ""), size_units (float 0.1-1.5 — your explicit seat size: 1.0=full unit, 1.4=max-conviction anchor, 0.5=half; sizing is decoupled from conviction, so SIZE the seat deliberately; NOTE the published book is EQUAL-WEIGHT since 2026-07-24 — your units still drive the caps and the audit trail, not the live weights), thesis_break_px (number: the price at which this thesis is BROKEN — below it the seat exits at the next review; derive it from your downside-to-break, NOT from a round-number guess. Omit only if you genuinely cannot name one, in which case the pipeline falls back to the bear_px from the debate), one-sentence thesis, sop_fair_value, catalyst_status, lane, regime_fit, phase_fit (one sentence: how THIS seat sits in the current debt-cycle phase — a story-duration reach in DISCIPLINE must say so and own it), duration_bucket_override (OPTIONAL: \"cash_now\"|\"payback_2_3y\"|\"story\" ONLY when you dispute the deterministic FCF-based label the post layer will stamp, PLUS duration_bucket_override_reason with a dated fact — an unjustified override is dropped), phase_needed (OPTIONAL: \"EXPANSION\"|\"DISCIPLINE\"|\"FORCING\"|\"MONETIZATION\"|\"ANY\" — which debt-cycle phase this payoff actually NEEDS in order to be paid, which is NOT the same as which phase we are in. A cash-generative name is paid in DISCIPLINE; a name whose value sits in a terminal year needs MONETIZATION; a payoff that does not hinge on the cost of waiting is ANY. Omit it and the post layer derives it deterministically from duration_bucket — state it only when you disagree, and say why in phase_fit. This is what makes a phase-three trade bought in phase one visible BEFORE it is bought), exposure_axes (hidden factors it carries), secular_theme (the name dominant secular-decline theme id from secular_themes.json or ""), moat (WIDE|NARROW|ERODING|NONE from the debate), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <the dated event>" | "wait_for_weakness" — derive it from your STEP 4 SEQUENCING: a structural/carry anchor that needs no catalyst and pays you to wait = enter_now_carry; a standard tranche-in = scale_in; a leg gated on a dated/ARB event = on_confirmation with that event; a cyclical/de-gross tail or a knife-catch near the 52w low = wait_for_weakness), wheel (where a wheel SUITS this seat — a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your "happy to own" level — a support/downside-to-break below spot), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait)}; else {suits:false}), expected_return_pct (your base-case % upside to sop_fair_value from the current price), horizon_months (WHEN the bulk of that re-rate lands — tie it to the driver/catalyst/trend, not "eventually"), meets_goal (bool: can this credibly deliver ~+30-50% within ~12 months given your stance), goal_note (the 12-month driver; or, for a longer-horizon name you keep, why it still earns a seat), decision ("KEEP"|"ADD"|"RE-ADD" vs the ledger), decision_rationale (one sentence reconciling this seat to the ledger), whats_changed (REQUIRED non-empty ONLY for RE-ADD: what materially changed since the drop; else ""). Plus ~6 runner_ups and a director_memo stating the correlation-stress result. The director_memo MUST OPEN with a "ROTATION" subsection — the running record of what you changed and why, so a reader can follow the book week to week without re-reading the JSON. Format it as one line per decision, grouped: ADDED (symbol — the one fact that earned the seat, and which name it displaced if any), DROPPED (symbol — the broken-thesis reason, or "trimmed out at the ceiling"; every name in last week apex that is not in this one MUST appear here), KEPT (symbol — one clause; group the unchanged ones on a single line), RE-ADDED (symbol — the documented thesis change since the drop date). If NOTHING rotated, say "No rotation this week" and give the one-sentence reason the book was left alone. Then a SECULAR-THEME CONCENTRATION subsection naming each >=2-name theme and how it was resolved (diversified -> the swap; or kept-with-cap -> the combined_caps numbers, durable WIDE anchors counted at half), AND end with a "BEAR REBUTTAL" subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing — if you cannot articulate the bear in one sentence, you do not understand the position.\n' +
-  'STEP 6 — Write (Write tool) VALID JSON to ' + DIR + '/apex_basket_opus_regime.json = {apex_basket:[...], director_memo, runner_ups:[...], combined_caps:[{names, max_units, axis}], risk_stance ("aggressive"|"balanced"|"defensive" — AFTER the phase modifier), regime_quadrant (echo the quadrant you applied), debt_cycle_phase (echo the phase you applied), phase_read (one sentence tying the phase to the return goal and the horizon you actually adopted), expected_horizon_months (integer — 12 in EXPANSION/MONETIZATION, up to 18-24 in DISCIPLINE/FORCING; makes the horizon stretch explicit and scoreable), macro_read (one sentence interpreting macro_regime.json + the regime read + the +30-50%/12mo goal)}. Reply exactly: DONE',
+  'STEP 1 - Read CATALYST_WATCH_REGIME.md (repo root) IN FULL and apply its tilt. ALSO read backend/_opus_debate/macro_regime.json (the live macro classifier: regime RISK_ON|NEUTRAL|CAUTIOUS|RISK_OFF + score 0-1 + quadrant GOLDILOCKS|REFLATION|STAGFLATION|RISK_OFF (growth x inflation 2x2, with quadrant_basis) + growth/inflation/rates/credit detail) AND backend/_opus_debate/regime_read.json if present (an agent regime read run before you: agent_view AGREE|CONTRADICT vs the dials + dated evidence + falsifiers - the DIALS are authoritative; a CONTRADICT with dated evidence may temper your stance ONE notch, never flip the dial; carry its falsifiers into the memo so next week can check them). RETURN GOAL: this book targets +30-50% over ~12 months. QUADRANT PLAYBOOK for the RISK_STANCE: GOLDILOCKS => REACH for the goal (credible 12-month re-rate DRIVERS - dated catalyst, earnings inflection, live trend - accept more demand-cycle/AI-capex beta); REFLATION => favor PRICING POWER, cyclical value and real-asset re-rates over duration-sensitive growth (inflation eats long-duration multiples); STAGFLATION => pricing power + real assets ONLY on the reach side, SIZE DOWN demand-cycle beta and duration, favor carry; RISK_OFF (disinflationary slowdown) => DEFENSE - quality, balance sheet, FCF carry, structural floors, even if +30-50% becomes an 18-24mo story. THEN apply the DEBT-CYCLE PHASE MODIFIER (macro_regime.json debt_cycle block - the Dalio long-term debt-cycle axis; it answers what the quadrant cannot: are positive real rates CHOSEN by a hot economy or IMPOSED by the bond market on the borrower). The phase MODIFIES the quadrant stance, it never gates a name: EXPANSION => no modification, quadrant playbook runs as-is; DISCIPLINE => stance CAPPED at balanced - real rates are being imposed; favor short-payback FCF and pricing power, story-duration names get a negative phase_fit REGARDLESS of quadrant, and stretching the +30-50% to an 18-24mo horizon is explicitly permitted rather than chasing the number; FORCING => stance FLOORED at defensive - funding stress live, balance sheet and FCF carry only, reaches suspended not resized; MONETIZATION => UNLOCKS aggressive even from a RISK_OFF quadrant - real rates forced negative, favor real assets, hard-asset re-rates and pricing power, horizon SHORTENS back to ~12mo (this risk-off-tape-buy-real-assets combination is exactly the state the quadrant playbook alone cannot express). If debt_cycle_phase is UNKNOWN: no modifier, note it in the memo. Also read regime_read.json phase_view/phase_falsifiers if present - same one-notch rule as the quadrant. State the risk_stance, the quadrant you applied, the debt-cycle phase you applied, a one-line phase_read, and a one-line macro read in the memo.\n' +
+  'STEP 2 - Run: python backend/_opus_debate/compact_table.py results_regime - confirm the row count; also read ' + DIR + '/peer_groups.json for the relative-value picture. CONTINUITY FLAGS: any record carrying a continuity_flag field flipped its verdict/conviction vs last week WITHOUT citing a dated fact - treat that fresh record as UNRELIABLE for seat decisions on that name: fall back to your ledger + the prior grade (the flag text quotes it) rather than acting on an unjustified downgrade/upgrade, and say so in decision_rationale. SKEPTIC VERDICTS ARE ALREADY IN (this run, pre-seat - the kill-tier ran before you): for EVERY finalist you consider, read ' + DIR + '/_skeptic_regime/<SYM>.json - a REFUTED verdict with kill_scope "thesis" | "moat" | "catalyst" is a HARD no-seat (if you were inclined to seat it, cite the kill_fact in the memo instead); a REFUTED with kill_scope "numbers" AND a typed revised_fv_px is a REPRICING, not a thesis kill: re-compute the expected return on revised_fv_px against the live price and re-grade it against the STEP-3a floor - seat it ONLY if the revised number still clears the floor and the median-seat dilution bar, treat it as correction_severity="material" for sizing, and quote BOTH the record figure and the skeptic figure in the memo (a numbers-REFUTED without revised_fv_px stays a hard no-seat); CONFIRMED_WITH_CORRECTIONS with correction_severity="material" must temper your conviction and sizing for that seat; SKIPPED_LOW_CONVICTION just means the record graded too low to need a kill. CORRECTED RECORDS (2026-08-05): a record carrying skeptic_corrections_applied (and possibly revision_note) has ALREADY absorbed the skeptic corrections - its valuation levels, computed{} and (if revised) prose/grade are the post-correction truth, so grade it on what it says NOW; do not re-apply the corrections a second time from the shard, and read <field>_orig only for the audit trail. Where an entry carries `peer_override`/`anchor_multiple`, that is a LIVE current peer multiple - trust it over any multiple quoted from memory in a dossier; where `convergence`="sector_regulatory", treat that name\'s discount-to-peer as a SHARED-FACTOR cluster in STEP 4, not as idiosyncratic edge.\n' +
+  'STEP 3 - Eligible = conviction >= 3 AND numeric_gate NOT in (REJECT, EXCLUDE_ELIGIBILITY) (records stamped by the deterministic numeric gate - an excluded record\'s numbers failed arithmetic/price/floor checks and cannot support a seat regardless of the narrative). Select using sop_fair_value / risk_reward / catalyst_status AS PRIMARY LEVERS - and where a record carries a computed{} block (rr_ratio / expected_return_pct computed by the pipeline from the typed valuation numbers), TRUST THE COMPUTED NUMBERS over any prose arithmetic: prefer the widest COMPUTED risk_reward to a credible SoP fair value. CATALYST NEUTRALITY (2026-07-21 apex-reassessment): catalyst_status is DESCRIPTIVE here, not a grade lever - a FIRED or SOFT catalyst on a clean-forensic, cheap-on-cash-earnings franchise is neither a plus nor a penalty; judge residual sop_fair_value upside + computed risk_reward, not whether the event is spent (the dated-event asymmetry book is Basket-13, STEP 3b). A live PENDING_HARD driver may STRENGTHEN a seat; its absence must NOT veto one. Then regime fit and consensus-delta width.\n' +
+  'STEP 3a - ENTRY DISCOUNT FLOOR, SCALED BY THE REGIME (2026-07-24). A thin discount is not a seat: at a ~10% margin the trim ceiling (85% of fair value) is already within touching distance, so you would be buying something with no room to work and real room to fall. For a NEW seat (decision ADD or RE-ADD) the computed expected return to base_fv_px must clear: >= +20% in GOLDILOCKS/REFLATION (reach), >= +25% in STAGFLATION, >= +30% in RISK_OFF (you must be paid more to take risk when the tape is against you). A HELD seat is NOT force-sold for slipping under the floor - that is what the trim ceiling is for - but a held name below the floor may not be ADDED to, and you must say in the memo whether you are keeping it for carry or letting the trim rule take it. THE BOOK HAS NO FIXED SIZE (2026-07-24, Bruno). Do NOT pad to a target and do NOT stop at one either: seat EVERY name that clears the floor and survives STEP 4, however many that is. If only 6 qualify, seat 6 and say so. If 18 qualify and each one genuinely earns its place, seat 18. THE DISCIPLINE THAT REPLACES A SEAT CAP IS DILUTION: the book is EQUAL-WEIGHTED, so every seat you add shrinks every other seat. Add a name ONLY if it is at least as good as the CURRENT MEDIAN seat on computed expected return and skeptic cleanliness - if it is worse than your median, adding it makes the book worse even though the name itself clears the floor. State the final count in the memo with one line on why the book is that size this week. You MAY Read individual ' + RES + '/<SYM>.json for finalists.\n' +
+  'STEP 3b - BASKET-13 SEPARATION (HARD RULE, 2026-07-08): the Basket-13 catalyst book (merger-arb spreads, forced-seller recovery, SoP breakups, spins, FDA binaries - anything whose thesis is a dated EVENT rather than a franchise) is a FULLY SEPARATE book with its own funnel, debate, sizing and tracker. You may NOT seat any equity special-sit / event-driven name in this apex basket - no exceptions, no "sleeve". If a name in results_regime carries lane/source values like equity_special_sit / special_sit / opus_catalyst, or its thesis is primarily a dated corporate event, it is INELIGIBLE for a seat here (it may be a runner_up with an explicit note that it belongs to B13). This book seats COMPOUNDERS and value re-rates only: durable franchises where the value case stands without the event.\n' +
+  'STEP 4 - CORRELATION/EXPOSURE STRESS over the proposed book, whatever its size (MANDATORY, beyond the <=3/sector cap): decompose on (a) DEMAND-CYCLE beta (cyclical industrials/consumption that de-rate together in a recession), (b) REGULATORY JURISDICTION (e.g. Italian/EU sign-off) - INCLUDING any peer entry tagged `convergence`="sector_regulatory" where the thesis is "cheap vs a peer" and BOTH names de-rated on the SAME regulatory factor (e.g. PLX.PA/Pluxee vs a now-~10x Edenred on the shared Brazil-PAT/Italy-voucher reform): that is sector BETA, so it must NOT be sized as idiosyncratic apex alpha - discount it or hold it as a watch/sized leg, (c) LIQUIDITY/POSITIONING (small-caps that de-gross together), (d) POSTURE (count of wait-for-the-flush entries - a correlated timing bet), (e) SECULAR-DISRUPTION THEME (each name carries a secular_theme from the debate: ai-displacement / payments-disintermediation / linear-media-decline / autonomous-mobility / labor-arbitrage-deflation / reimbursement-compression / retail-channel-shift / energy-transition-loser). No hidden factor may carry >3 names AND no secular_theme may carry >2 names; for any secular_theme with >=2 names you MUST emit a combined_caps entry {names, max_units, axis:"secular-theme:<id>"} (a WIDE non-eroding moat counts at HALF toward the theme budget - a durable anchor that merely carries the narrative is not the tail risk). Do NOT let one melting tail (e.g. AI-displacement across ADBE+IT+GLOB) carry the book. Stress the book against a EUROPEAN-CYCLICAL-RECESSION + CORRELATED-DE-GROSS scenario and diversify if it fails; sequence entries assuming flushes arrive together.\n' +
+  'STEP 5 - FIRST read backend/_opus_debate/_director_ledger_regime.txt (your currently-HELD names with why + every name you DROPPED in 2026) and apply ROTATION DISCIPLINE: KEEP each held name UNLESS its thesis is BROKEN (price through thesis_break, a thesis whose ONLY leg was a now-elapsed event and whose value case no longer stands on its own, a forensic/solvency flip, or confirmed moat terminal-erosion - a fired catalyst on a name whose value case still stands is NOT thesis-broken) OR you have a STRICTLY-BETTER orthogonal name for that seat - do NOT drop a held compounder merely because another name graded a hair higher; you may RE-ADD a previously-dropped name ONLY by citing a DOCUMENTED THESIS CHANGE since the drop date (a better grade is NOT a thesis change) - override allowed but you must OWN it in whats_changed. CONVICTION RUBRIC (0-100, BANDED - your conviction is anchored, not free-floating): 90-100 = table-pounding: computed expected return >= +40% to base_fv_px AND a structural floor or paid-to-wait carry AND a clean skeptic AND a credible 12-mo re-rate path (a live dated driver STRENGTHENS but is NOT required - an earnings trajectory, buyback cadence, or mean-reversion of a de-rated multiple on a clean franchise qualifies); 70-89 = high conviction: computed ER +25-40%, credible re-rate path (dated or undated), clean forensic; 50-69 = solid hold: ER +15-25%, or the re-rate path is weak/contingent, or the record carries WARN/THIN_FLOOR flags; 30-49 = runner-up only; <30 = no seat. CONSISTENCY RULE: conviction >= 70 on a name whose COMPUTED expected return is < +15% requires an explicit carry justification (dividend/buyback floor) in goal_note, else it is a rubric violation. ANCHORING: the ledger shows your PRIOR conviction per held seat - emit conviction_prior (echo it) and conviction_delta (new minus prior) for every KEEP/RE-ADD; when |conviction_delta| > 10 you MUST fill delta_justification with the DATED fact that moved it (the deterministic post layer CLAMPS unjustified moves to prior +/-10 - save yourself the clamp). Then for each pick: symbol, sector, director_conviction (0-100 per the rubric), conviction_prior (number or null for ADDs), conviction_delta (number or null), delta_justification (dated fact when |delta|>10; else ""), size_units (float 0.1-1.5 - your explicit seat size: 1.0=full unit, 1.4=max-conviction anchor, 0.5=half; sizing is decoupled from conviction, so SIZE the seat deliberately; NOTE the published book is EQUAL-WEIGHT since 2026-07-24 - your units still drive the caps and the audit trail, not the live weights), thesis_break_px (number: the price at which this thesis is BROKEN - below it the seat exits at the next review; derive it from your downside-to-break, NOT from a round-number guess. Omit only if you genuinely cannot name one, in which case the pipeline falls back to the bear_px from the debate), one-sentence thesis, sop_fair_value, catalyst_status, lane, regime_fit, phase_fit (one sentence: how THIS seat sits in the current debt-cycle phase - a story-duration reach in DISCIPLINE must say so and own it), duration_bucket_override (OPTIONAL: \"cash_now\"|\"payback_2_3y\"|\"story\" ONLY when you dispute the deterministic FCF-based label the post layer will stamp, PLUS duration_bucket_override_reason with a dated fact - an unjustified override is dropped), phase_needed (OPTIONAL: \"EXPANSION\"|\"DISCIPLINE\"|\"FORCING\"|\"MONETIZATION\"|\"ANY\" - which debt-cycle phase this payoff actually NEEDS in order to be paid, which is NOT the same as which phase we are in. A cash-generative name is paid in DISCIPLINE; a name whose value sits in a terminal year needs MONETIZATION; a payoff that does not hinge on the cost of waiting is ANY. Omit it and the post layer derives it deterministically from duration_bucket - state it only when you disagree, and say why in phase_fit. This is what makes a phase-three trade bought in phase one visible BEFORE it is bought), exposure_axes (hidden factors it carries), secular_theme (the name dominant secular-decline theme id from secular_themes.json or ""), moat (WIDE|NARROW|ERODING|NONE from the debate), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <the dated event>" | "wait_for_weakness" - derive it from your STEP 4 SEQUENCING: a structural/carry anchor that needs no catalyst and pays you to wait = enter_now_carry; a standard tranche-in = scale_in; a leg gated on a dated/ARB event = on_confirmation with that event; a cyclical/de-gross tail or a knife-catch near the 52w low = wait_for_weakness), wheel (where a wheel SUITS this seat - a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your "happy to own" level - a support/downside-to-break below spot), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait)}; else {suits:false}), expected_return_pct (your base-case % upside to sop_fair_value from the current price), horizon_months (WHEN the bulk of that re-rate lands - tie it to the driver/catalyst/trend, not "eventually"), meets_goal (bool: can this credibly deliver ~+30-50% within ~12 months given your stance), goal_note (the 12-month driver; or, for a longer-horizon name you keep, why it still earns a seat), decision ("KEEP"|"ADD"|"RE-ADD" vs the ledger), decision_rationale (one sentence reconciling this seat to the ledger), whats_changed (REQUIRED non-empty ONLY for RE-ADD: what materially changed since the drop; else ""). Plus ~6 runner_ups and a director_memo stating the correlation-stress result. The director_memo MUST OPEN with a "ROTATION" subsection - the running record of what you changed and why, so a reader can follow the book week to week without re-reading the JSON. Format it as one line per decision, grouped: ADDED (symbol - the one fact that earned the seat, and which name it displaced if any), DROPPED (symbol - the broken-thesis reason, or "trimmed out at the ceiling"; every name in last week apex that is not in this one MUST appear here), KEPT (symbol - one clause; group the unchanged ones on a single line), RE-ADDED (symbol - the documented thesis change since the drop date). If NOTHING rotated, say "No rotation this week" and give the one-sentence reason the book was left alone. Then a SECULAR-THEME CONCENTRATION subsection naming each >=2-name theme and how it was resolved (diversified -> the swap; or kept-with-cap -> the combined_caps numbers, durable WIDE anchors counted at half), AND end with a "BEAR REBUTTAL" subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing - if you cannot articulate the bear in one sentence, you do not understand the position.\n' +
+  'STEP 6 - Write (Write tool) VALID JSON to ' + DIR + '/apex_basket_opus_regime.json = {apex_basket:[...], director_memo, runner_ups:[...], combined_caps:[{names, max_units, axis}], risk_stance ("aggressive"|"balanced"|"defensive" - AFTER the phase modifier), regime_quadrant (echo the quadrant you applied), debt_cycle_phase (echo the phase you applied), phase_read (one sentence tying the phase to the return goal and the horizon you actually adopted), expected_horizon_months (integer - 12 in EXPANSION/MONETIZATION, up to 18-24 in DISCIPLINE/FORCING; makes the horizon stretch explicit and scoreable), macro_read (one sentence interpreting macro_regime.json + the regime read + the +30-50%/12mo goal)}. Reply exactly: DONE',
   { label: 'director', phase: 'Director', model: '__DIRECTOR_MODEL__' })
-log('Radar + coverage + delta + underwrite + gates + skeptic + director complete.')
+log('Radar + coverage + delta + underwrite + gates + skeptic + revise + director complete.')
 return 'DONE'
 """
 
 
-# ── Apex EQUITY SPECIAL-SIT LANE (catalyst-framed B13 non-binaries) ────────────────────────────
+# -- Apex EQUITY SPECIAL-SIT LANE (catalyst-framed B13 non-binaries) ----------------------------
 # The apex is a held-equity, value-framed compounder book; it structurally can't score the
 # event-driven asymmetry that lives in the Basket-13 catalyst funnel. This lane lets the apex seat
-# the NON-BINARY equity special-sits (merger-arb spreads / forced-seller recovery / SoP / spins —
+# the NON-BINARY equity special-sits (merger-arb spreads / forced-seller recovery / SoP / spins -
 # FIP/BLCO/CLVT/KBR/UNF/AAUC ...) using the CATALYST-framed debate (so they aren't crushed by the
 # value/moat gates) and FLOOR-sized (so they don't carry compounder tail risk). FDA binaries stay
 # in B13 (defined-risk sized). Flow: catalyst-prep -> Workflow(_catalyst_weekly.mjs) -> catalyst-seed
@@ -5860,7 +5899,7 @@ _B13_SS_METHODS = {"spread", "recovery", "sop"}  # non-binary equity special-sit
 def _b13_universe():
     """FULL B13 book for catalyst coverage = the candidate funnel UNION the held tracker SEATS.
     Held seats that entered from an EARLIER funnel snapshot (e.g. FIG/GDOT/WVE) are absent from the
-    current _basket13_candidates.json, so debating only the candidates skipped them — that gap is why
+    current _basket13_candidates.json, so debating only the candidates skipped them - that gap is why
     a held seat could show no debate on its stock page. (ROOT=backend/_opus_debate; both files in backend/.)"""
     out, seen = [], set()
     f = ROOT.parent / "_basket13_candidates.json"
@@ -5881,7 +5920,7 @@ def _b13_universe():
 
 
 def _b13_equity_special_sits():
-    """Non-binary, unblocked, H/M-edge equity special-sits across the B13 universe — apex-lane eligible."""
+    """Non-binary, unblocked, H/M-edge equity special-sits across the B13 universe - apex-lane eligible."""
     return [c for c in _b13_universe()
             if c.get("valuation_method") in _B13_SS_METHODS
             and c.get("edge_grade") in ("H", "M")
@@ -5900,9 +5939,9 @@ def catalyst_prep():
     """Regenerate _catalyst_weekly.mjs over the non-binary B13 equity special-sits (reuse the prompts
     in _catalyst_debate.mjs, swap only the NAMES table). Prints WORKFLOW_SCRIPT= for the SKILL."""
     import re
-    uni = _b13_universe()   # FULL book (candidates + held seats) — debate ALL for stock-page coverage
+    uni = _b13_universe()   # FULL book (candidates + held seats) - debate ALL for stock-page coverage
     if not uni:
-        print("catalyst-prep: no B13 names (funnel + tracker) — skipping.")
+        print("catalyst-prep: no B13 names (funnel + tracker) - skipping.")
         return
     rows = []
     for c in uni:
@@ -5922,15 +5961,15 @@ def catalyst_prep():
 
 def catalyst_seed():
     """RETIRED 2026-07-08 (Bruno's directive after the 07-07 forensics): the B13 catalyst book is
-    now FULLY SEPARATE from the apex — catalyst-framed results are never seeded into results_regime/.
+    now FULLY SEPARATE from the apex - catalyst-framed results are never seeded into results_regime/.
     Why: the seed's survival assumption ("it writes other symbols; these survive") was FALSE for any
-    special-sit the Director had seated — prep unions held apex names into the regime universe, the
+    special-sit the Director had seated - prep unions held apex names into the regime universe, the
     seat-relevant trigger forces a re-debate, and the price-blind regime record OVERWROTE the correct
     catalyst record (AAUC 07-07: a fabricated near-terms price flipped a valid A/4 arb to C/2). Two
     lanes writing one file under opposing rubrics also produced the FIP A/5->B/3 whiplash. The
     catalyst artifacts (_catalyst_results/ + _catalyst_skeptic/) remain the B13 entry gate +
     resolution radar, consumed by _basket13_gen/_basket13_inject/_basket13_mark directly."""
-    print("catalyst-seed: RETIRED 2026-07-08 — B13 is fully separate from the apex; catalyst results "
+    print("catalyst-seed: RETIRED 2026-07-08 - B13 is fully separate from the apex; catalyst results "
           "are no longer seeded into results_regime/ (they remain the B13 gate/radar via "
           "_catalyst_results/). No-op.")
 
@@ -5939,13 +5978,13 @@ _DATED_FACT_RE = None  # compiled lazily in continuity_gate
 
 
 def continuity_gate():
-    """DETERMINISTIC anti-whipsaw gate (2026-07-08, runs between Debate and Director — the
+    """DETERMINISTIC anti-whipsaw gate (2026-07-08, runs between Debate and Director - the
     debate-layer analog of the Director's rotation ledger). Diffs each fresh results_regime/<S>.json
     against last week's _archive_prev/results_regime/<S>.json; a verdict A<->C flip or a conviction
     move >= 2 must cite a DATED fact (a YYYY-MM / 'Month YYYY' / YYYY-MM-DD reference) in
     whats_changed_since_prior (fallback: moderator_conclusion). Violators get a continuity_flag
     stamped INTO the record so the Director (and the stock page) can see the record is a re-roll,
-    not an update. Flags only — never rewrites a verdict. Carried records are exempt (they ARE the
+    not an update. Flags only - never rewrites a verdict. Carried records are exempt (they ARE the
     prior record)."""
     import re as _re
     dated = _re.compile(r"\b20\d\d-\d\d(-\d\d)?\b|\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2},?\s*20\d\d\b|\b(Q[1-4])\s*(FY)?\s*20\d\d\b",
@@ -5972,10 +6011,10 @@ def continuity_gate():
         except Exception:
             continue
         checked += 1
-        # ── v2 (Week 2, 2026-07-10): DELTA records enforce their own contract by REVERSION, not by
+        # -- v2 (Week 2, 2026-07-10): DELTA records enforce their own contract by REVERSION, not by
         # flag. A delta update may only move a guarded field with a dated fact recorded in deltas[];
         # any other change is reverted to the anchor value (a delta that re-rolled is a bug, and
-        # reverting it merely enforces what the prompt promised). A verdict change ALWAYS reverts —
+        # reverting it merely enforces what the prompt promised). A verdict change ALWAYS reverts -
         # the contract says flips escalate to a full re-debate instead. Full-debate records keep the
         # v1 flag-only behavior (reverting a fresh debate would hide real information).
         if cur.get("update_mode") == "delta":
@@ -5994,8 +6033,8 @@ def continuity_gate():
             if reverted:
                 cur["delta_inherited"] = reverted
                 cur["continuity_flag"] = (f"DELTA_REVERTED: {reverted} changed without a dated fact in "
-                                          f"deltas[] (verdict changes always revert — escalate_full_debate "
-                                          f"is the flip path) — anchor values restored")
+                                          f"deltas[] (verdict changes always revert - escalate_full_debate "
+                                          f"is the flip path) - anchor values restored")
                 f.write_text(json.dumps(cur, ensure_ascii=False, indent=2), encoding="utf-8")
                 flagged += 1
                 flags.append(f"{f.stem} (delta-reverted: {','.join(reverted)})")
@@ -6010,29 +6049,29 @@ def continuity_gate():
             continue
         justification = f"{cur.get('whats_changed_since_prior') or ''} {cur.get('moderator_conclusion') or ''}"
         if dated.search(justification) and (cur.get("whats_changed_since_prior") or "").strip():
-            continue                              # flip carries a dated fact — legitimate update
+            continue                              # flip carries a dated fact - legitimate update
         prior_date = str(pr.get("debated_at") or pr.get("as_of") or "")[:10]
         cur["continuity_flag"] = (f"UNJUSTIFIED_FLIP vs {prior_date or 'prior run'}: "
                                   f"{pr.get('verdict')}/{pr.get('conviction')} -> "
                                   f"{cur.get('verdict')}/{cur.get('conviction')} with no dated fact in "
-                                  f"whats_changed_since_prior — treat this record as a re-roll, prefer the prior grade")
+                                  f"whats_changed_since_prior - treat this record as a re-roll, prefer the prior grade")
         f.write_text(json.dumps(cur, ensure_ascii=False, indent=2), encoding="utf-8")
         flagged += 1
         flags.append(f"{f.stem} ({pr.get('verdict')}/{pr.get('conviction')}->{cur.get('verdict')}/{cur.get('conviction')})")
     print(f"continuity-gate: {checked} diffed vs prior week | {flagged} FLAGGED unjustified flips"
-          + (f": {flags}" if flags else " — all changes carry dated facts or are within tolerance"))
+          + (f": {flags}" if flags else " - all changes carry dated facts or are within tolerance"))
 
 
 def coverage_merge():
     """DETERMINISTIC Tier-C merge (Week 2): fold each _coverage_updates/<SYM>.json into
     results_regime/<SYM>.json by COPYING the standing record verbatim (verdict/conviction/sop are
-    INHERITED — the coverage agent's schema has no grade fields, and this merge is the enforcement),
+    INHERITED - the coverage agent's schema has no grade fields, and this merge is the enforcement),
     restamping the live price/as_of, and appending the structured update block. escalate=true rides
     into the record so next week's change-detection gate (T6) routes the name to a full debate."""
     prior_dir = ROOT / "_archive_prev" / "results_regime"
     upd_dir = ROOT / "_coverage_updates"
     if not upd_dir.exists():
-        print("coverage-merge: no _coverage_updates/ — nothing to merge.")
+        print("coverage-merge: no _coverage_updates/ - nothing to merge.")
         return
     merged, escal, orphans = [], [], []
     for f in sorted(upd_dir.glob("*.json")):
@@ -6044,7 +6083,7 @@ def coverage_merge():
             continue
         pf = prior_dir / f"{sym}.json"
         if not pf.exists():
-            orphans.append(sym)                    # no standing record to inherit from — nothing to publish
+            orphans.append(sym)                    # no standing record to inherit from - nothing to publish
             continue
         try:
             rec = json.load(open(pf, encoding="utf-8"))
@@ -6069,12 +6108,12 @@ def coverage_merge():
           + (f" | orphans (no standing record, skipped): {orphans}" if orphans else ""))
 
 
-# ── COHORT LEDGER (2026-07-10) — the accountability mechanism: does conviction/verdict/a skeptic
+# -- COHORT LEDGER (2026-07-10) - the accountability mechanism: does conviction/verdict/a skeptic
 # kill actually predict forward returns? Local-only (NEVER Cloud Run, per standing rule); run as the
 # LAST step of the weekly SKILL (after value-publish), so results_regime/ + both apex baskets +
 # skeptic shards are this run's settled state (prep's self-clean archives them before the next run).
 # "tier"/"mode" record TODAY's carry-vs-debate distinction (carried/debated/recheck); once the
-# two-tier restructure ships they start writing underwrite/delta/coverage into the SAME fields —
+# two-tier restructure ships they start writing underwrite/delta/coverage into the SAME fields -
 # no ledger schema change needed.
 COHORT_LEDGER = ROOT / "_cohort_ledger.jsonl"
 COHORT_HORIZONS = {"4w": 28, "12w": 84, "26w": 182}   # trading-calendar-agnostic; deliberately simple
@@ -6224,7 +6263,7 @@ def cohort_mark():
 
 def _cohort_report(ledger):
     """forward return by conviction bucket / verdict / tier, and the KILL LEDGER (skeptic REFUTED vs
-    CONFIRMED forward returns) — the pre-registered accountability check (see the pipeline-v3 plan):
+    CONFIRMED forward returns) - the pre-registered accountability check (see the pipeline-v3 plan):
     after ~12 weeks, if conviction 4-5 doesn't beat 1-2 on excess return AND kills don't underperform
     confirms, the debate layer is not earning its cost."""
     def _bucket(c):
@@ -6246,7 +6285,7 @@ def _cohort_report(ledger):
         lines.append(f"## {hz} excess return by verdict")
         for v in ("A", "B", "C"):
             lines.append(f"  verdict {v}: {_stats([r for r in ledger if r.get('verdict') == v], f'xs_{hz}')}")
-        lines.append(f"## {hz} KILL LEDGER — skeptic verdict vs forward excess return")
+        lines.append(f"## {hz} KILL LEDGER - skeptic verdict vs forward excess return")
         for sk in ("CONFIRMED", "CONFIRMED_WITH_CORRECTIONS", "REFUTED"):
             lines.append(f"  {sk}: {_stats([r for r in ledger if r.get('skeptic') == sk], f'xs_{hz}')}")
         lines.append("")
@@ -6259,7 +6298,7 @@ def _cohort_report(ledger):
 def cohort_backfill():
     """Seed HISTORICAL verdict/conviction/tier rows from GCS speculair_debate_history/<SYM>.json
     (each carries up to 12 dated entries already, per the weekly append). These entries do NOT carry
-    a price, so backfilled rows get price0=None + all forward-returns=None + backfilled=True — they
+    a price, so backfilled rows get price0=None + all forward-returns=None + backfilled=True - they
     feed the verdict/conviction distribution in the report but NEVER the return statistics (which
     would require fabricating a historical price). Idempotent on (run_date, symbol)."""
     ledger = _cohort_load()
@@ -6302,7 +6341,7 @@ _INTAKE_LANE_TAGS = ("neglect_orphan", "fresh_crash", "quality_discount")   # pr
 
 def lane_stamp():
     """Deterministic post-debate lane stamp (2026-07-17, intake lanes). Fresh debate records are
-    written by the agents against the step-7 schema, which carries no lane field — so after the
+    written by the agents against the step-7 schema, which carries no lane field - so after the
     debate, stamp the intake lane onto results_regime/<SYM>.json wherever the prep bundle carried
     a lane tag (first match in _INTAKE_LANE_TAGS priority order when a name qualified for more
     than one). Zero prompt changes: value_input() and skeptic_gen() read the stamped field, and
@@ -6334,15 +6373,15 @@ def lane_stamp():
 
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "prep"
-    # DISRUPTOR LENS retired 2026-07-02 (FUTURE_RESOURCES_SPEC.md §10); its code was DELETED 2026-07-10
-    # (pipeline-v3 redundancy removal — the functions themselves are gone, this is just a friendly
+    # DISRUPTOR LENS retired 2026-07-02 (FUTURE_RESOURCES_SPEC.md Sec.10); its code was DELETED 2026-07-10
+    # (pipeline-v3 redundancy removal - the functions themselves are gone, this is just a friendly
     # message so an operator who still types a disruptor-* command from habit/old docs gets a clear
     # explanation instead of "unknown mode". The old ALLOW_DISRUPTOR=1 escape hatch no longer does
-    # anything (there is no archived pipeline left to force-run) — restore from git history if the
+    # anything (there is no archived pipeline left to force-run) - restore from git history if the
     # Disruptor Lens is ever needed forensically.
     if mode.replace("_", "-").startswith("disruptor"):
         print(f"DISRUPTOR LENS RETIRED 2026-07-02, code deleted 2026-07-10 (FUTURE_RESOURCES_SPEC.md "
-              f"§10) — mode '{mode}' no longer exists. See git history to restore for forensic use.")
+              f"Sec.10) - mode '{mode}' no longer exists. See git history to restore for forensic use.")
         sys.exit(0)
     if mode == "prep":
         prep()
@@ -6366,6 +6405,24 @@ if __name__ == "__main__":
     elif mode in ("regime-post", "regime_post"):
         import subprocess
         subprocess.run([sys.executable, str(ROOT / "_regime_post.py")] + (["--offline"] if "--offline" in sys.argv else []), check=True)
+    elif mode in ("skeptic-apply", "skeptic_apply"):
+        # Tier-1 corrections write-back (2026-08-05): apply typed skeptic corrections to the debate
+        # records + recompute computed{} deterministically, and print the Tier-2 revision list.
+        # Runs in-workflow between the Skeptic and Director phases; also called idempotently by
+        # regime-post / value-post as the gap-fill safety net. The final REVISE_NEEDED line is the
+        # machine-readable contract the workflow's Revise phase parses - keep it LAST.
+        sys.path.insert(0, str(ROOT))
+        import _post_common as _pc
+        quad = None
+        try:
+            _m = json.load(open(ROOT / "macro_regime.json", encoding="utf-8"))
+            quad = _m.get("quadrant") or _m.get("regime_quadrant")
+        except Exception:
+            pass
+        applied, revise = _pc.apply_skeptic_corrections(ROOT / "_skeptic_regime", ROOT / "results_regime",
+                                                        quadrant=quad)
+        print(f"skeptic-apply: {len(applied)} record(s) corrected {applied} | quadrant={quad or 'UNKNOWN'}")
+        print(f"REVISE_NEEDED={json.dumps(revise)}")
     elif mode in ("numeric-gate", "numeric_gate"):
         import subprocess
         extra = [a for a in ("--legacy", "--dry-run", "--offline", "--enforce", "--final") if a in sys.argv]
