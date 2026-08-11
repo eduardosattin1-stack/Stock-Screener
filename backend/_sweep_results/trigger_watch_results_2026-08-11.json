@@ -1,0 +1,221 @@
+{
+  "checked": 27,
+  "results": [
+    {
+      "symbol": "CCC",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "",
+      "note": "No definitive agreement or company confirmation as of 2026-08-11; the Morgan Stanley-run sale process reported by Reuters (2026-07-09) and Elliott's stake (Bloomberg, 2026-07-10) remain the last hard datapoints, and Q2 results on 2026-07-30 passed with raised FY guidance but no process update (Yahoo Finance/citybiz/CollisionWeek coverage through early Aug 2026). Catalyst is intact and still forward: definitive-agreement window Sept-Nov 2026, with Q3 earnings (~late Oct 2026) the next scheduled checkpoint."
+    },
+    {
+      "symbol": "CLPT",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "2026-09-30",
+      "note": "The headline catalyst is intact: uniQure's Q2 release (2026-07-29, GlobeNewswire) reaffirmed four-year AMT-130 topline in September 2026 and US BLA / UK MHRA submissions on track for Q3 2026, so the delivery-platform catalyst has not fired. The interim CLPT Q2 print did fire on 2026-08-03 and was adverse (revenue $10.9M vs ~$12.73M consensus, biologics/drug-delivery revenue -15% y/y, cash down to $29.4M, FY26 guidance cut to $48-52M; ClearPoint IR/AccessNewswire 2026-08-03) - a negative tilt to the near-term print but not terminal for the September/Q3 milestone."
+    },
+    {
+      "symbol": "GERN",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "",
+      "note": "The 2026-08-05 milestone was the Q2 print (call held 2026-08-06), not the catalyst itself: on that call management reaffirmed the IMpactMF interim analysis death-event trigger for 2H 2026 and stated \"our projected timelines remain unchanged,\" with the base case still a final OS readout in 2H 2028 and a positive interim as the upside scenario (Geron Q2 2026 earnings call transcript, 2026-08-06). One watch item — Geron says it is \"evaluating a modification to the event threshold for the interim analysis\" in consultation with regulators, which could shift the trigger; next hard checkpoint is Q3 2026 results (~early Nov 2026)."
+    },
+    {
+      "symbol": "OPFI",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "2026-12-31",
+      "note": "The Aug 10, 2026 milestone occurred on schedule — OppFi reported Q2 2026 results (PRNewswire/Morningstar, 2026-08-10: record Q2 revenue $145.2M, diluted EPS $0.18) and said it is \"advancing our pending acquisition of BNCCORP, Inc. and BNC National Bank\" — but it is not a terminal event: the deal still needs the BNCC stockholder vote (S-4/proxy filed, vote not yet held) plus OCC/Fed/FDIC approvals, with close still guided to Q4 2026 (unchanged, no slip). Catalyst remains FORWARD to the Q4 2026 close; no regulatory decision or adverse development disclosed."
+    },
+    {
+      "symbol": "AQST",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "2026-09-30",
+      "note": "On 2026-08-10 (8-K / GlobeNewswire PR) Aquestive reported POSITIVE topline human-factors validation and PK results — the two CRL deficiencies — with pouch-open time cut 17s to 3s, >80% fewer incorrect film placements, and self-administered PK comparable to clinician-administered; NDA resubmission remains guided to Q3-2026 with FDA action in 2027. The 2026-08-11 Q2 print (call 08-12 8:00am ET) is a reporting checkpoint only, so the catalyst is unfired and still forward, now de-risked, with the next hard date the resubmission filing by ~2026-09-30."
+    },
+    {
+      "symbol": "AVIR",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "",
+      "note": "Unfired: Atea confirmed (PR 2026-08-05, GlobeNewswire) its Q2-26 results/business-update call for Wed 2026-08-12 4:30pm ET — the hard date holds and is still ahead as of 08-11; C-FORWARD topline guidance remains \"around year-end 2026\" (PR 2026-06-25, enrollment complete, 880+ pts / 17 countries). Favorable tilt in the interim: the sister North America Phase 3 C-BEYOND met both primary and secondary endpoints (PR 2026-07-28), de-risking the regimen ahead of C-FORWARD and the planned NDA."
+    },
+    {
+      "symbol": "DMAC",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "SLIPPED",
+      "new_date": "2027-03-31",
+      "note": "DiaMedica's Q2-2026 results release (2026-08-10, BusinessWire/BioSpace) says ReMEDy2 has \"surpassed 85% of the 200 participants required to trigger the prespecified interim analysis\" (~70 activated sites) and that the company \"expects the interim analysis to read out in early 2027\" — so the interim has not fired and the readout has slipped from prior Q2-2026/2026 expectations into Q1 2027. Mildly adverse tilt: enrollment advanced only 75%→85% in ~3 months, pushing the binary catalyst 2-3 quarters further out against a cash runway."
+    },
+    {
+      "symbol": "LXRX",
+      "still_forward": true,
+      "fired": true,
+      "outcome": "SLIPPED",
+      "new_date": "2027-01-01",
+      "note": "The 2026-08-06 interim milestone fired on schedule (Q2 release, GlobeNewswire 2026-08-06): SONATA-HCM enrollment confirmed complete above the 500-patient target and topline REAFFIRMED for Q1 2027, with cash/investments of $190.6M at 6/30/26 (Feb equity raise + $55M of a $100M Hercules facility drawn, $45M in future tranches) — a favorable runway reset, offset by revenue collapsing to $0.7M vs $28.9M and a $31.8M net loss; shares fell ~5% to ~$2.33. The primary catalyst is unresolved and rolls forward to Q1 2027 topline, with an interim hard date of the ZYNQUISTA type-1-diabetes NDA resubmission guided to Q4 2026."
+    },
+    {
+      "symbol": "AAUC",
+      "still_forward": false,
+      "fired": true,
+      "outcome": "FIRED_GOOD",
+      "new_date": "",
+      "note": "Allied Gold confirmed closing of the Zijin Gold strategic investment on 10-Aug-2026 exactly as flagged: 12.8m shares at C$32.55 for C$416.6m gross (US$295m), leaving Zijin at ~9.2% of shares outstanding, with a four-month hold period ending 11-Dec-2026 (GlobeNewswire / Junior Mining Network, 10-Aug-2026). Terminal and favorable — capital was subscribed well above the broken-deal tape and is earmarked for Kurmuk ramp-up and Sadiola expansion; the Kurmuk H2-2026 first-gold milestone remains separately forward."
+    },
+    {
+      "symbol": "AHCO",
+      "still_forward": true,
+      "fired": true,
+      "outcome": "SLIPPED",
+      "new_date": "",
+      "note": "The 2026-08-04 Q2 milestone FIRED and adversely: AdaptHealth reported revenue ~$740.3mm (-7.5% y/y) with a GAAP loss of -$0.99/sh, and the pro-forma FY26 revenue guide (~$2.87bn midpoint) landed far below consensus, sending the stock down roughly 26-40% on the day (Business Wire 8-K release 2026-08-04; StockStory/Investing.com 2026-08-04). The underlying catalyst continues: the $235mm Cardinal Health Diabetes Health sale (signed 2026-07-19) is still pending HSR review with no company-confirmed close date, so proceeds/debt paydown remain ahead — same catalyst, materially worse operating backdrop."
+    },
+    {
+      "symbol": "BLTE",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "",
+      "note": "No acceptance PR issued as of 2026-08-11: latest Belite Bio releases are 2026-08-06 (Q2-2026 results webcast set for Aug 13) and 2026-07-20 (ASRS DRAGON data), with the 2026-06-12 rolling-NDA completion still the last regulatory milestone (stocktitan.net/news/BLTE, checked 2026-08-11). The Day-60 filing decision is internal to FDA and is normally communicated via the Day-74 letter (~late Aug 2026, i.e. ~2026-08-25 off a 06-12 completion), so the catalyst remains forward; the Aug 13 webcast is the next chance for a company read-out."
+    },
+    {
+      "symbol": "CDZI",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "2026-08-13",
+      "note": "FMP earnings calendar (pulled 2026-08-11) still shows CDZI Q2-2026 reporting on 2026-08-13 with epsActual null (est. -$0.10, rev est. $3.07M), so the milestone is 2 days out and unfired. No company news since the 2026-07-28 PRNewswire GMP/CMAR construction-contract release — no WIFIA close, no SBWPA bond pricing, no construction-start date announced (only a 07-27 CFO succession and a 07-22 RIC Energy solar/hydrogen MOU), so the financing leg remains real but undated."
+    },
+    {
+      "symbol": "CMPS",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "2026-12-31",
+      "note": "The 2026-08-05 Q2/1H-2026 results call happened on schedule and REAFFIRMED (did not slip) the guidance: FDA granted rolling NDA submission/review in April, modules are being submitted, and completion of all NDA modules remains on track for Q4 2026, with commercial launch expected 1H-2027 and $433M cash \"well beyond launch and into 2028\" (Compass Pathways press release / Form 8-K, 2026-08-05). The actual binary — NDA filing completion and the subsequent FDA decision — is still forward, so no terminal fire; interim tilt is mildly favorable (guidance intact plus 6-month durability data from the second Phase 3)."
+    },
+    {
+      "symbol": "CNNE",
+      "still_forward": false,
+      "fired": true,
+      "outcome": "FIRED_GOOD",
+      "new_date": "",
+      "note": "CNNE released Q2-2026 results after close on 10-Aug-2026 and held the 5:00pm ET call as scheduled: adjusted EPS $0.86 vs a consensus -$0.43 loss, revenue $102.2M vs ~$101.2M expected, and the stock rose ~2.3% after hours to ~$14.99 (Investing.com earnings-call transcript, 10-Aug-2026). Capital-plan commentary was catalyst-supportive: $44M of buybacks YTD through July with management \"committed\" to more repurchases in 2H26 funded by asset sales, the Watkins 49% sale ($90M, July) and Brasada transfer both booked, and an explicit stated goal to close the NAV discount; the Restaurant Group strategic review slipped on financing delays with an update guided to \"within the next quarter\" (no hard date), making that the next unscheduled disclosure leg."
+    },
+    {
+      "symbol": "EQH",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "2026-12-31",
+      "note": "The Corebridge/Equitable merger has NOT closed; the 2026-07-30 milestone was the shareholder votes (passed >97% both sides) and the follow-on dated item, EQH Q2 2026 results, landed on schedule 2026-08-04 (Businesswire/8-K), where management reaffirmed close \"by year-end 2026\" and disclosed that the federal antitrust review is COMPLETE with all required regulatory filings submitted - only state insurance-regulatory approvals remain. Timeline is intact and mildly de-risked (HSR done), so the catalyst stays forward with a guided close by 2026-12-31; no firm closing date has been published."
+    },
+    {
+      "symbol": "FLEX",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "",
+      "note": "The 2026-07-29 leadership-slate announcement (Advaithi to SpinCo, Hartung to Flex) is the latest dated item on Flex's own transaction-resources page as of 2026-08-11; the separation remains on track for Q1 CY2027 with no change to guidance. SpinCo's Form 10 registration statement is still described as \"to be filed\" (not yet on EDGAR), so the next dated markers are unchanged: Form 10 filing, then Q2 FY27 earnings ~late Oct 2026. (Sources: flex.com/transaction-resources and investors.flex.com news release 2026-07-29, checked 2026-08-11.)"
+    },
+    {
+      "symbol": "GILT",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "2026-12-31",
+      "note": "Interim milestone passed without resolving the catalyst: Gilat's Q2-2026 print (GlobeNewswire, 2026-08-05) showed revenue +17% to $122.7M, FY guidance reiterated ($500-520M rev), and management said the Comtech Satellite & Space acquisition is progressing toward a close \"around year-end,\" pro-forma >$700M revenue (shares fell ~5% on cash/working-capital concerns, per Investing.com 2026-08-05 call transcript). The terminal event - CFIUS/HSR clearance and deal close - remains pending with no fixed closing date beyond end-2026; Canaccord Growth Conference 2026-08-12 is still ahead and is a non-terminal appearance."
+    },
+    {
+      "symbol": "KDP",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "",
+      "note": "Q2 2026 results landed on schedule 2026-08-06 (PR Newswire, \"Keurig Dr Pepper Reports Q2 Results and Reaffirms Guidance for 2026\"): revenue $7.31B / adj. EPS $0.57 beat, FY guide reaffirmed, and CEO Tim Cofer reaffirmed \"a successful separation in early 2027\" with pro-forma management leverage guided to ~4.1x at year-end 2026 — i.e. the gating checkpoint passed favorably, no slip. The separation itself has not occurred (no Form 10 disclosed yet); one mild negative from the same 8-K is Coffee OU head Rafa Oliveira's end-July departure with the Global Coffee Co. CEO search still open."
+    },
+    {
+      "symbol": "NN",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "",
+      "note": "No FCC NPRM release found: as of searches on 2026-08-11 the draft Lower 900 MHz PNT NPRM remains in OMB/OIRA interagency review with no adoption, no open-meeting item, and no public comment cycle opened (latest coverage still describes the review as \"ongoing\"; PowerMag/Yahoo Finance policy pieces tracking the March 2026 submission). The only dated anchor, the Q2 2026 earnings call, is confirmed for today 2026-08-11 after market close (Business Wire, 2026-07-23) and had not occurred at check time, so the catalyst is still forward and remains undated."
+    },
+    {
+      "symbol": "ROIV",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "",
+      "note": "The 2026-08-06 Q1 FY27 business update happened on schedule and reaffirmed, not changed, the setup: Roivant's 08-06 press release (globenewswire/BioSpace, 2026-08-06) says brepocitinib DM commercial prep is \"on track for launch by the end of September 2026,\" with the PDUFA target action date still stated as Q3 CY2026 (exact day undisclosed). As of 2026-08-11 no FDA approval or CRL has been issued, so the terminal catalyst remains forward with an implicit outside date of 2026-09-30."
+    },
+    {
+      "symbol": "SATS",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "SLIPPED",
+      "new_date": "2027-11-30",
+      "note": "The SpaceX leg is NOT terminal: FCC conditionally granted the SpaceX-EchoStar applications in May 2026 (with a $2.4B escrow condition, SpaceNews 2026-05), and step 1 completed on 2026-05-22 when EchoStar subsidiaries moved 50MHz of AWS-4/H-block plus up to 15MHz AWS into Spectrum Business Trust 2025-1 (SATS 8-K). The terminal \"Spectrum Acquisition Closing\" — Trust transfers spectrum to SpaceX against the ~$17B consideration — is company-targeted for 2027-11-30, subject to closing conditions, unless SpaceX elects to close earlier and cover added debt-carry costs; so the board's \"imminent, no confirmed date\" framing is superseded by a confirmed but far-dated close, and the catalyst is no longer a near-term WATCH trigger."
+    },
+    {
+      "symbol": "SID",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "2026-08-12",
+      "note": "The exchange offer's 5:00pm NY expiration on 2026-08-10 has passed, but as of 2026-08-11 no results/tender-participation announcement has been published (GlobeNewswire 2026-07-31 launch release and SID's StockTitan news/6-K feed show no follow-up); the terminal step is settlement, expected 2026-08-12, so the catalyst is still forward pending confirmation the 70%/US$910mn minimum was met. The separate equity-relevant leg (unsigned CSN Cimentos control sale + Infra Newco stake, company-targeted Q3/Q4-2026) is untouched and remains a target, not a scheduled date."
+    },
+    {
+      "symbol": "PBI",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "2026-10-29",
+      "note": "Q2 2026 results/call (2026-07-30, Motley Fool transcript) passed with CEO Kurt Wolf confirming Phase 2 was initiated \"last month\" but explicitly declining to comment on outcomes or timeline — exactly as the milestone anticipated (announce-when-ready, no deadline; 06-30 Business Wire PR said no further statements unless the Board deems it necessary). No terminal event through 2026-08-11; press reports note inbound sale/take-private interest (mild favorable tilt), so the catalyst remains forward with the next scheduled disclosure checkpoint at Q3 results ~late Oct 2026."
+    },
+    {
+      "symbol": "RDN",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "2026-08-13",
+      "note": "CEO seating is still 2 days out: per the 8-K/BusinessWire release (2026-05-21, inducement grants 2026-06-03), Mike Weinbach becomes CEO and joins the board on 2026-08-13, with Thornberry advising through retirement 2026-12-31 — unchanged and un-fired as of 2026-08-11. The interim Q2 print did fire on 2026-08-05 (revenue $575M vs $298.6M, +93% on Inigo; GAAP net income $115.9M/-18% y/y, EPS missed consensus) and management confirmed on the 08-06 call that the Title sale to PLACE remains pending, so the terminal catalyst (Title close, expected Q4-2026) is intact."
+    },
+    {
+      "symbol": "TMC",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "2026-08-13",
+      "note": "TMC announced 6-Aug-2026 (GlobeNewswire) that its Q2-2026 corporate update call is Thursday 13-Aug-2026, i.e. still ahead and one day earlier than the tracked 08-14 date; no NOAA action since the 30-Apr/1-May-2026 full-compliance determination. The commercial-recovery permit decision remains guided \"before end of Q1 2027\" (post-full-compliance sequence: Federal Register posting, draft EIS + public comment, then final decision), so the catalyst is unfired and forward."
+    },
+    {
+      "symbol": "WHR",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "",
+      "note": "The named checkpoint is Q3-2026 earnings (~late Oct 2026), which has not occurred; the 2026-08-03 Q2 release and 2026-08-10 earnings call (Motley Fool Q2 2026 transcript, 2026-08-10) delivered a weak quarter with FY guidance below consensus and no further India-stake sale timeline, but produced no terminal resolution of the YE-2026 net-debt-below-$5.0B commitment. Funding legs are in place (common dividend suspended May 2026; ~$800M of 8.50% Series A mandatory convertible priced Feb 2026; ~$166M India stake sale Nov 2025 cutting the holding to ~40%), so the de-lever remains a forward, un-fired catalyst with an adverse operating tilt."
+    },
+    {
+      "symbol": "NAMS",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "2026-09-29",
+      "note": "The 2026-08-05 Investor Day was held as scheduled (NYC, 9:00 ET; CEO Davidson, CSO Kastelein, CCO Jones, CFO Somaiya — GlobeNewswire 2026-07-29 announcement; Seeking Alpha transcript/slideshow dated 2026-08-05), but that was an informational checkpoint, not the catalyst; no EC decision has been issued. The core trigger — European Commission adoption of marketing authorization for Ubeslo/Evlarco — remains FORWARD, with the standard ~67-day clock from the 2026-07-24 positive CHMP opinion (PRNewswire/Menarini, 2026-07-24) implying ~late Sept/Oct 2026; new_date 2026-09-29 is that estimated window start, not a company-confirmed date."
+    }
+  ]
+}
