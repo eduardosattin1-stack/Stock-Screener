@@ -18,8 +18,8 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 
 # FIXED synthetic candidate universe — the selftest must be deterministic and board-independent
 # (a live re-sweep used to drop the hardcoded SEL names and break test 2). All distinct super_clusters
-# + a non-bio lane so the 8-name held book is cap-valid; FIP+ARBX share FDA_clinical_readout (2/2) and
-# VIR is a spare on that driver (test 3); WCH* are distinct-driver watchlist spares; HERD* share one
+# + a non-bio lane so the 8-name held book is cap-valid; FIPQ+ARBX share FDA_clinical_readout (2/2) and
+# VIRQ is a spare on that driver (test 3); WCH* are distinct-driver watchlist spares; HERD* share one
 # driver so the cap-trim path (6c-ii) can fire.
 SHARED_DRV = "FDA_clinical_readout"
 
@@ -33,13 +33,13 @@ def _cand(sym, drv, clus, live=10.0):
             "days_to_milestone": 200, "instrument": "equity", "valuation_asof": "2026-06-30", "score": 80}
 
 
-SEL = ["FIP", "ARBX", "DSTX", "SPNX", "RGAX", "CYCX", "ENGX", "MNAX"]   # FIP is resolved in test 4
+SEL = ["FIPQ", "ARBX", "DSTX", "SPNX", "RGAX", "CYCX", "ENGX", "MNAX"]   # FIPQ is resolved in test 4
 _SYNTH = [
-    _cand("FIP", SHARED_DRV, "c_fip"), _cand("ARBX", SHARED_DRV, "c_arbx"),   # 2/2 on the shared driver
+    _cand("FIPQ", SHARED_DRV, "c_fipq"), _cand("ARBX", SHARED_DRV, "c_arbx"),   # 2/2 on the shared driver
     _cand("DSTX", "drv_dst", "c_dst"), _cand("SPNX", "drv_spn", "c_spn"),
     _cand("RGAX", "drv_rga", "c_rga"), _cand("CYCX", "drv_cyc", "c_cyc"),
     _cand("ENGX", "drv_eng", "c_eng"), _cand("MNAX", "drv_mna", "c_mna"),
-    _cand("VIR", SHARED_DRV, "c_vir"),                                        # spare on the shared driver (test 3)
+    _cand("VIRQ", SHARED_DRV, "c_virq"),                                        # spare on the shared driver (test 3)
     _cand("WCHA", "drv_wa", "c_wa"), _cand("WCHB", "drv_wb", "c_wb"),         # distinct-driver watchlist spares
     _cand("WCHC", "drv_wc", "c_wc"), _cand("WCHD", "drv_wd", "c_wd"), _cand("WCHE", "drv_we", "c_we"),
 ] + [_cand(f"HERD{i}", "herd_drv", f"c_h{i}") for i in range(6)]             # one driver, 6 names -> cap trims
@@ -133,11 +133,24 @@ def load():
 
 
 print("== 1. cap-violating fresh basket rejected ==")
-bad = json.loads(json.dumps(valid))
-for q in bad["result"]["director"]["picks"][:3]:
-    q["resolution_driver"] = "FDA_clinical_readout"          # 3 names, one driver
-assert run(bad) == 1 and not os.path.exists(tf), "fresh cap-violating basket must be rejected, nothing stamped"
-print("   OK")
+if B.MAX_PER_DRIVER is None:
+    # 2026-08-11 (Bruno): all count/type caps removed — driver concentration is legal by
+    # design, so the OPPOSITE now holds: a many-on-one-driver basket must NOT be rejected
+    # for concentration. (It may still be rejected by structural gates on other grounds,
+    # so this arm only asserts validate() itself raises no driver violation.)
+    bad = json.loads(json.dumps(valid))
+    for q in bad["result"]["director"]["picks"][:3]:
+        q["resolution_driver"] = "Merger_close"              # 3 names, one NON-exempt driver
+    v = B.validate([{"symbol": q["symbol"], "resolution_driver": "Merger_close", "weight_pct": 0,
+                     "expression": {"type": "equity"}} for q in bad["result"]["director"]["picks"][:3]], {})
+    assert not [x for x in v if x.startswith("DRIVER")], f"caps are removed — no DRIVER violation expected, got {v}"
+    print("   OK (caps removed: concentration raises no violation)")
+else:
+    bad = json.loads(json.dumps(valid))
+    for q in bad["result"]["director"]["picks"][:3]:
+        q["resolution_driver"] = "Merger_close"              # 3 names, one non-exempt driver
+    assert run(bad) == 1 and not os.path.exists(tf), "fresh cap-violating basket must be rejected, nothing stamped"
+    print("   OK")
 
 print("== 2. valid fresh basket injects ==")
 assert run(valid) == 0, "valid basket should inject"
@@ -146,24 +159,30 @@ assert len([e for e in t["entries"] if not e.get("resolution")]) == len(picks)
 print(f"   OK: {len(t['entries'])} entries")
 
 print("== 3. incremental breaching COMBINED driver cap rejected ==")
-# held already has CELC+EYPT on FDA_clinical_readout (2/2); adding VIR (same driver) -> 3 combined
-vir = "VIR" if "VIR" in cands else next((s for s in cands if cands[s].get("resolution_driver") == "FDA_clinical_readout" and s not in SEL), None)
-assert vir, "need a spare FDA_clinical_readout candidate"
-incr = {"result": {"director": {"picks": [pick(vir, "FDA_clinical_readout")], "passed": [], "memo": "incr"},
-                   "cro": [{"symbol": vir, "verdict": "TRADE", "live_price": cands[vir].get("live_price")}]}}
-assert run(incr) == 1, "incremental that makes 3-on-a-driver (combined) must be rejected"
-t2 = json.load(open(tf, encoding="utf-8"))
-assert len(t2["entries"]) == len(t["entries"]), "rejected incremental must not stamp"
-print(f"   OK: {vir} rejected, book unchanged ({len(t2['entries'])} entries)")
+if B.MAX_PER_DRIVER is None:
+    # Caps removed 2026-08-11 — there is no combined driver cap to breach; the incremental
+    # rejection path is exercised by the structural gates elsewhere. Skip, loudly.
+    t2 = t
+    print("   SKIP (caps removed: no combined driver cap exists)")
+else:
+    # held already has CELC+EYPT on FDA_clinical_readout (2/2); adding VIRQ (same driver) -> 3 combined
+    vir = "VIRQ" if "VIRQ" in cands else next((s for s in cands if cands[s].get("resolution_driver") == "FDA_clinical_readout" and s not in SEL), None)
+    assert vir, "need a spare FDA_clinical_readout candidate"
+    incr = {"result": {"director": {"picks": [pick(vir, "FDA_clinical_readout")], "passed": [], "memo": "incr"},
+                       "cro": [{"symbol": vir, "verdict": "TRADE", "live_price": cands[vir].get("live_price")}]}}
+    assert run(incr) == 1, "incremental that makes 3-on-a-driver (combined) must be rejected"
+    t2 = json.load(open(tf, encoding="utf-8"))
+    assert len(t2["entries"]) == len(t["entries"]), "rejected incremental must not stamp"
+    print(f"   OK: {vir} rejected, book unchanged ({len(t2['entries'])} entries)")
 
-print("== 4. resolve FIP FIRED_WIN + report ==")
-fip = [x for x in t2["entries"] if x["symbol"] == "FIP"][0]
-B.resolve("FIP", "FIRED_WIN", round((fip["entry_price"] or 10) * 1.25, 2), notes="synthetic")
+print("== 4. resolve FIPQ FIRED_WIN + report ==")
+fip = [x for x in t2["entries"] if x["symbol"] == "FIPQ"][0]
+B.resolve("FIPQ", "FIRED_WIN", round((fip["entry_price"] or 10) * 1.25, 2), notes="synthetic")
 B.report()
 
 # watchlist tests use force=True: picks:[] trips the 8-name COUNT floor, which is irrelevant to the
 # watchlist mechanism under test (the held book is already stamped from tests 2-4).
-A, Bn, Cn = spare_names(3, set(SEL) | {"VIR", "FIP"})
+A, Bn, Cn = spare_names(3, set(SEL) | {"VIRQ", "FIPQ"})
 assert A and Bn and Cn, "need 3 spare distinct-driver candidates for the watchlist tests"
 
 print("== 5. re-debate never silently drops an un-resolved on-deck name ==")
@@ -183,11 +202,11 @@ assert not byw[A]["de_prioritized"], "re-nominated name must stay active"
 assert byw[Bn]["entry_date"] == "2026-03-01" and byw[Bn]["first_seen_date"] == "2026-03-01", "carry must not reset the marking basis"
 print(f"   OK: {Bn},{Cn} carried+de-prioritized; {A} active")
 
-print("== 5b. stale-resolution false-prune guard (FIP fired in test 4, now re-surfaces on-deck) ==")
-assert run(debate(watchlist=["FIP"]), force=True, date="2026-03-20") == 0
+print("== 5b. stale-resolution false-prune guard (FIPQ fired in test 4, now re-surfaces on-deck) ==")
+assert run(debate(watchlist=["FIPQ"]), force=True, date="2026-03-20") == 0
 w = load()
-assert "FIP" in w["watchlist_state"], "a re-nominated name with an OLD resolved entry must NOT be pruned"
-print("   OK: FIP re-surfaced on-deck despite a stale FIRED_WIN entry")
+assert "FIPQ" in w["watchlist_state"], "a re-nominated name with an OLD resolved entry must NOT be pruned"
+print("   OK: FIPQ re-surfaced on-deck despite a stale FIRED_WIN entry")
 
 print("== 6. graduation removes from watchlist (+ GRADUATED event) ==")
 # seat Cn (it's on the watchlist) -> it becomes a held entry -> must leave the on-deck book
@@ -206,7 +225,7 @@ assert any(e["symbol"] == Bn and e["event"] == "WL_RESOLVED" for e in w["watchli
 print(f"   OK: {Bn} retired on-deck via wl-resolve")
 
 print("== 6c. event taxonomy + entry-basis invariant on add->deprio->re-champion ==")
-D = spare_names(1, set(SEL) | {"VIR", "FIP", A, Bn, Cn})[0]
+D = spare_names(1, set(SEL) | {"VIRQ", "FIPQ", A, Bn, Cn})[0]
 assert run(debate(watchlist=[D]), force=True, date="2026-05-01") == 0     # ADDED
 d_entry = {x["symbol"]: x for x in load()["watchlist"]}[D]
 ep0, fs0 = d_entry["entry_price"], d_entry["first_seen_date"]
@@ -223,15 +242,15 @@ assert not dnow["de_prioritized"], "re-championed name is active again"
 print(f"   OK: {D} ADDED->DEPRIORITIZED_NO_RATIONALE->RE_CHAMPIONED, basis preserved")
 
 print("== 6c-ii. CAP_TRIMMED attribution (a fresh nom dropped by the cap, not the Director) ==")
-herd = spare_names(B.MAX_WATCHLIST_PER_DRIVER + 1, set(SEL) | {"VIR", "FIP", A, Bn, Cn, D},
+herd = spare_names(B.MAX_WATCHLIST_PER_DRIVER + 1, set(SEL) | {"VIRQ", "FIPQ", A, Bn, Cn, D},
                    distinct_driver=False, same_driver=None)
 # find a driver with enough names
 from collections import Counter
 drv_counts = Counter(cands[s].get("resolution_driver") for s in cands
-                     if s not in (set(SEL) | {"VIR", "FIP"}) and cands[s].get("live_price") is not None)
+                     if s not in (set(SEL) | {"VIRQ", "FIPQ"}) and cands[s].get("live_price") is not None)
 big_drv = next((d for d, n in drv_counts.most_common() if n >= B.MAX_WATCHLIST_PER_DRIVER + 1), None)
 if big_drv:
-    herd = spare_names(B.MAX_WATCHLIST_PER_DRIVER + 1, set(SEL) | {"VIR", "FIP"}, same_driver=big_drv)
+    herd = spare_names(B.MAX_WATCHLIST_PER_DRIVER + 1, set(SEL) | {"VIRQ", "FIPQ"}, same_driver=big_drv)
     assert run(debate(watchlist=herd), force=True, date="2026-06-01") == 0
     w = load()
     trimmed = [e["symbol"] for e in w["watchlist_history"] if e["event"] == "CAP_TRIMMED" and e["date"] == "2026-06-01"]

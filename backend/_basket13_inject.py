@@ -50,19 +50,18 @@ CAND = os.path.join(BASE, "_basket13_candidates.json")
 RES_TYPES = ["FIRED_WIN", "FIRED_LOSS", "SLIPPED", "THESIS_BROKEN", "EDGE_GONE", "EXPIRED"]
 
 # ---- cap dials (•) — re-fit from realized outcomes (see `report`); NOT constants ----
-MAX_PER_DRIVER     = 2
+# 2026-08-11 (Bruno): ALL count/type caps REMOVED — no per-driver cap, no super-cluster
+# cap, no lane cap, for any driver or sector. The lift arrived in three steps (bio/FDA
+# drivers 07-20, the FDA/biotech cluster 07-28, everything 08-11); the terminal state is
+# that quality gates (dossier/CRO/skeptic/weekly diagnosis) and equal-weight dilution are
+# the ONLY filters on what enters the book. None = uncapped; the validate() checks below
+# no-op on None so `report` can still re-fit a number here if the realized outcomes ever
+# argue for one.
+MAX_PER_DRIVER     = None    # was 2 (FDA drivers already exempt since 2026-07-20)
 UNCAPPED_DRIVERS   = {"FDA_clinical_readout", "FDA_approval_decision", "FDA_pathway_feedback"}
-                               # • 2026-07-20 (Bruno): bio/FDA drivers exempt from the per-driver cap —
-                               #   quality gates (dossier/CRO/skeptic) remain the only bio gate
-MAX_SUPER_PTS      = 40.0    # weight-POINTS of NAV per super-cluster (pinned basis — see header)
+MAX_SUPER_PTS      = None    # was 40.0 NAV weight-points (FDA/biotech already exempt since 2026-07-28)
 UNCAPPED_CLUSTERS  = {"FDA/biotech"}
-                               # • 2026-07-28 (Bruno): the bio gate is fully lifted — with equal
-                               #   weight the super-cluster cap had become the LAST binding limit on
-                               #   biotech head-count (n seats x INVESTED_PCT/n crosses 40 pts as the
-                               #   book grows), so exempting the cluster is what "remove the biotech
-                               #   limit" actually requires. Quality gates (dossier/CRO/skeptic/
-                               #   weekly diagnosis) remain the only bio filter.
-MAX_PER_LANE       = {}        # • 2026-07-20 (Bruno): bio_convergence 5-name lane cap LIFTED (was {"bio_convergence": 5})
+MAX_PER_LANE       = {}      # bio_convergence 5-name lane cap LIFTED 2026-07-20 (was {"bio_convergence": 5})
 
 # ---- SIZING (2026-07-28, Bruno) — EQUAL WEIGHT, NO HEAD-COUNT CAP ----------------------
 # The Director no longer sizes. He SELECTS and chooses EXPRESSION; the weight is mechanical:
@@ -376,18 +375,21 @@ def validate(picks, bysym, live_px=None, held_syms=None):
     # HEAD-COUNT CAP REMOVED 2026-07-28 (Bruno): book size is the Director's free call. Equal
     # weight makes every add self-limiting — a new seat shrinks every existing one — so the
     # discipline is arithmetic rather than a number someone had to defend.
+    # Count/type caps no-op while their dials are None (all removed 2026-08-11, Bruno) —
+    # the loops stay so a re-fitted number in the dials becomes binding again with no
+    # code change, and so concentration keeps being COMPUTED even while it can't veto.
     bydrv = {}
     for p in picks:
         bydrv.setdefault(p.get("resolution_driver"), []).append(p["symbol"])
     for drv, syms in bydrv.items():
-        if drv not in UNCAPPED_DRIVERS and len(syms) > MAX_PER_DRIVER:
+        if MAX_PER_DRIVER is not None and drv not in UNCAPPED_DRIVERS and len(syms) > MAX_PER_DRIVER:
             v.append(f"DRIVER {drv}: {len(syms)} names ({','.join(syms)}) > {MAX_PER_DRIVER}")
     bysc = {}
     for p in picks:
         sc = p.get("super_cluster") or bysym.get(p["symbol"], {}).get("super_cluster")
         bysc[sc] = bysc.get(sc, 0.0) + (p.get("weight_pct") or 0)
     for sc, w in bysc.items():
-        if sc in UNCAPPED_CLUSTERS:            # 2026-07-28: bio gate fully lifted (see dials)
+        if MAX_SUPER_PTS is None or sc in UNCAPPED_CLUSTERS:
             continue
         if w > MAX_SUPER_PTS + TOL:
             v.append(f"SUPER_CLUSTER {sc}: {w:.1f} NAV weight-points > {MAX_SUPER_PTS}")

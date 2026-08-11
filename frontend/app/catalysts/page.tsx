@@ -68,6 +68,16 @@ const driverPlain = (d: any) => {
   return DRIVER_PLAIN[k] || (k ? k.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase()) : "Event");
 };
 
+// One sentence, hard-capped — the agent prose behind these fields runs to paragraphs;
+// the full version lives on the stock page's debate tab, not here.
+const firstSentence = (s: any, max = 200): string => {
+  const t = String(s || "").trim();
+  if (!t) return "";
+  const cut = t.search(/(?<=[.!?])\s+(?=[A-Z$])/);
+  const one = cut > 30 ? t.slice(0, cut + 1) : t;
+  return one.length > max ? `${one.slice(0, max - 1).trimEnd()}…` : one;
+};
+
 // Per-seat radar flags, in the reader's words — SEAT-SPECIFIC facts only. The weekly
 // skeptic's blanket verdict=REFUTED currently sits on nearly every seat, so repeating
 // it per card would be the same noise the redesign removes; it renders ONCE as a
@@ -311,15 +321,17 @@ export default function CatalystsPage() {
           </div>
         )}
         <div style={{ borderTop: "1px solid var(--border-subtle)", paddingTop: 7 }}>
+          {/* Concise on purpose (Bruno, 2026-08-11): one sentence per field, three fields
+              max — the full agent-written record lives on the stock page's debate tab.
+              Field order = the reader's questions in order: why is it here, what does the
+              Director think now, what kills it. */}
           {isMore && (
             <div style={{ fontSize: 12, lineHeight: 1.55, color: "var(--text-secondary)", display: "flex", flexDirection: "column", gap: 6, marginBottom: 6 }}>
-              {e.entry_rationale && <div><strong style={{ color: "var(--text)" }}>Why we entered:</strong> {e.entry_rationale}</div>}
-              {e.dated_milestone && <div><strong style={{ color: "var(--text)" }}>The event:</strong> {e.dated_milestone}</div>}
-              {a && <div><strong style={{ color: "var(--text)" }}>Director&apos;s latest view:</strong> {a.would_seat ? "would keep it" : "would not seat it today"}{typeof a.conviction === "number" ? ` · conviction ${a.conviction}/100` : ""} — {a.binding_reason || "no note"}</div>}
-              {doss?.thesis_summary && <div><strong style={{ color: "var(--text)" }}>Latest re-check{doss.asof ? ` (${doss.asof})` : ""}:</strong> {doss.thesis_summary}{doss.kill_risk ? <span style={{ color: "var(--red)" }}> · kill risk: {typeof doss.kill_risk === "string" ? doss.kill_risk : JSON.stringify(doss.kill_risk)}</span> : null}</div>}
-              {e.invalidation && <div><strong style={{ color: "var(--text)" }}>What would kill it:</strong> {e.invalidation}</div>}
+              {e.entry_rationale && <div><strong style={{ color: "var(--text)" }}>Why:</strong> {firstSentence(e.entry_rationale)}</div>}
+              {a && <div><strong style={{ color: "var(--text)" }}>Director now:</strong> {a.would_seat ? "would keep it" : "would not seat it today"}{a.binding_reason ? ` — ${firstSentence(a.binding_reason, 160)}` : ""}</div>}
+              {(doss?.kill_risk || e.invalidation) && <div><strong style={{ color: "var(--red)" }}>Kill risk:</strong> {firstSentence(typeof doss?.kill_risk === "string" ? doss.kill_risk : e.invalidation, 180)}</div>}
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 10 }}>
-                full debate on the <Link href={`/stock/${encodeURIComponent(e.symbol)}?tab=debate`} style={{ color: "var(--green)" }}>stock page →</Link>
+                the full record — thesis, re-checks, skeptic — is on the <Link href={`/stock/${encodeURIComponent(e.symbol)}?tab=debate`} style={{ color: "var(--green)" }}>stock page →</Link>
               </div>
             </div>
           )}
@@ -347,6 +359,31 @@ export default function CatalystsPage() {
       <div style={{ background: "var(--bg-surface)", border: "1px solid var(--green)", borderRadius: 12, padding: "20px 24px" }}>
 
         <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 12 }}>Basket 13 — Catalyst Book</div>
+
+        {/* How this book works — the commodities-page idiom: orient the reader BEFORE the
+            positions. The three steps are a true sequence (enter → hold → close), and the
+            mix line is computed from the live book, not hand-written. */}
+        <div style={{ border: "1px solid var(--border)", background: "var(--bg)", borderRadius: 8, padding: "12px 16px", marginBottom: 18 }}>
+          <div style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-light)", fontFamily: "var(--font-mono)", marginBottom: 8 }}>How this book works</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "10px 22px", fontSize: 12, lineHeight: 1.55, color: "var(--text-secondary)" }}>
+            <div><b style={{ color: "var(--green)", fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.08em" }}>1 · ENTER</b><br />
+              Only situations with a dated event attached — an FDA decision, trial results, a takeover closing, forced selling. Each candidate clears four checks (dossier → trade desk → skeptic → Director) before it gets a seat. No limit on how many seats, or of what kind.</div>
+            <div><b style={{ color: "var(--green)", fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.08em" }}>2 · HOLD</b><br />
+              Every seat carries the same slice; half the book stays in cash as the shock absorber. Nothing rebalances — adding a name dilutes every other seat, and that dilution is the only sizing rule.</div>
+            <div><b style={{ color: "var(--green)", fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.08em" }}>3 · CLOSE</b><br />
+              A seat leaves only when its event lands — win or lose — or the weekly debate rules the edge gone. Every close is graded afterwards against what the stock did next.</div>
+          </div>
+          {(() => {
+            const mix = new Map<string, number>();
+            for (const e of held) { const k = driverPlain(e.resolution_driver); mix.set(k, (mix.get(k) || 0) + 1); }
+            const rows = [...mix.entries()].sort((a, b) => b[1] - a[1]);
+            return rows.length ? (
+              <div style={{ borderTop: "1px dashed var(--border)", marginTop: 10, paddingTop: 8, fontFamily: "var(--font-mono)", fontSize: 10.5, color: "var(--text-muted)" }}>
+                In the book now: {rows.map(([k, n], i) => <span key={k}>{i > 0 && " · "}<b style={{ color: "var(--text)" }}>{k}</b> ×{n}</span>)}
+              </div>
+            ) : null;
+          })()}
+        </div>
 
         {/* whole-basket track record */}
         <div style={{ border: "1px solid var(--border)", background: "var(--bg)", borderRadius: 8, padding: "12px 16px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 18, justifyContent: "space-between", marginBottom: 18 }}>
