@@ -47,6 +47,14 @@ const chip = (bg: string, fg: string): React.CSSProperties => ({
   fontSize: 10, padding: "2px 7px", borderRadius: 4, fontFamily: "var(--font-mono)",
   fontWeight: 700, background: bg, color: fg, whiteSpace: "nowrap",
 });
+const CARD: React.CSSProperties = {
+  background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12,
+  padding: "18px 22px", marginTop: 16,
+};
+const CARD_TITLE: React.CSSProperties = {
+  fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em",
+  fontFamily: "var(--font-mono)", color: "var(--text)", marginBottom: 6,
+};
 const CHIP_AMBER = chip("var(--amber-light)", "var(--amber)");
 const CHIP_GREEN = chip("var(--green-light)", "var(--green)");
 const CHIP_MUTED = chip("var(--bg-elevated)", "var(--text-light)");
@@ -67,6 +75,20 @@ const driverPlain = (d: any) => {
   const k = String(d || "").trim();
   return DRIVER_PLAIN[k] || (k ? k.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase()) : "Event");
 };
+
+// Why a seat closed, in the reader's words. The tracker's resolution_type IS the reason
+// (it is chosen by hand at stamp time, not derived), so it always answers "why"; the
+// free-text note, present on 9 of 15 closes, is the specific evidence on top of it.
+const CLOSE_REASON: Record<string, { label: string; blurb: string; good: boolean | null }> = {
+  FIRED_WIN:     { label: "Event landed", blurb: "the event happened and went our way", good: true },
+  FIRED_LOSS:    { label: "Event landed", blurb: "the event happened and went against us", good: false },
+  THESIS_BROKEN: { label: "Reasoning was wrong", blurb: "we found a hole in the case before the event", good: false },
+  EDGE_GONE:     { label: "Priced in early", blurb: "the market moved to fair value before the event, so there was nothing left to wait for", good: null },
+  SLIPPED:       { label: "Date moved out", blurb: "the event was pushed beyond the window we were holding for", good: null },
+  EXPIRED:       { label: "Window closed", blurb: "the holding window ran out without the event landing", good: null },
+};
+const closeReason = (t: any) => CLOSE_REASON[String(t || "").toUpperCase()]
+  || { label: String(t || "Closed").replace(/_/g, " ").toLowerCase(), blurb: "", good: null };
 
 // One sentence, hard-capped — the agent prose behind these fields runs to paragraphs;
 // the full version lives on the stock page's debate tab, not here.
@@ -201,8 +223,30 @@ export default function CatalystsPage() {
   const daysLive = inceptionDate && lastMark.date
     ? Math.max(0, Math.round((Date.parse(lastMark.date) - Date.parse(inceptionDate)) / 86400000))
     : null;
-  const closedCount = entries.filter((e) => e.resolution).length
-    + priorBooks.reduce((n: number, b: any) => n + (b.resolutions || []).length, 0);
+  // Every close, this book and the re-founded ones before it, in one shape. A re-founding
+  // must never erase the closed record — the prior book's rows carry a `prior` marker
+  // rather than being dropped. realized_return_pct is stored as a FRACTION in the tracker
+  // (0.0533 = +5.33%), so it is scaled here exactly once.
+  const closedRows = useMemo(() => {
+    const live = entries.filter((e) => e.resolution).map((e) => ({
+      symbol: e.symbol, prior: false, note: e.resolution.notes || "",
+      type: e.resolution.resolution_type,
+      date: e.resolution.resolution_date,
+      days: e.resolution.days_held,
+      entry: e.resolution.entry_price ?? e.entry_price,
+      exit: e.resolution.exit_price,
+      ret: typeof e.resolution.realized_return_pct === "number" ? e.resolution.realized_return_pct * 100 : null,
+    }));
+    const old = priorBooks.flatMap((b: any) => (b.resolutions || []).map((r: any) => ({
+      symbol: r.symbol, prior: true, note: r.notes || "",
+      type: r.resolution_type, date: r.resolution_date, days: r.days_held,
+      entry: r.entry_price, exit: r.exit_price,
+      ret: typeof r.realized_return_pct === "number" ? r.realized_return_pct * 100 : null,
+    })));
+    return [...live, ...old].sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+  }, [entries, priorBooks]);
+  const closedCount = closedRows.length;
+  const closedWins = closedRows.filter((r) => (r.ret ?? 0) > 0).length;
 
   // Director assessments — details-only context (the board table is gone from the page).
   const latest: any = B13.latest_debate || null;
@@ -396,6 +440,7 @@ export default function CatalystsPage() {
           <Sparkline marks={chainedMarks} />
           <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)", textAlign: "right" }}>
             <b style={{ color: "var(--text)" }}>{held.length}</b> held · <b style={{ color: "var(--text)" }}>{closedCount}</b> closed
+            {closedCount > 0 && <div style={{ fontSize: 10 }}>{closedWins} of {closedCount} closed up</div>}
           </div>
         </div>
 
@@ -442,6 +487,95 @@ export default function CatalystsPage() {
           <div style={{ fontSize: 12, color: "var(--text-light)", fontFamily: "var(--font-mono)" }}>No open seats.</div>
         )}
       </div>
+
+      {/* ── EVERY POSITION — one diverging bar per name, held and closed on the same
+             scale. Diverging (zero in the middle) rather than left-anchored: these are
+             signed returns, and a left-anchored bar makes -30% and +30% look identical.
+             Held bars are hollow (still moving), closed bars solid (final). ── */}
+      {(held.length > 0 || closedRows.length > 0) && (() => {
+        // `when` disambiguates a name seated more than once (FIP sits in both the earlier
+        // book and this one) — without it the two closes collide on a React key and the
+        // list renders a phantom third row.
+        const rows = [
+          ...held.map((e) => ({ symbol: e.symbol, ret: liveRet(e), live: true, when: "live", sub: driverPlain(e.resolution_driver) })),
+          ...closedRows.map((r) => ({ symbol: r.symbol, ret: r.ret, live: false, when: String(r.date || ""), sub: `${closeReason(r.type).label}, ${dNice(r.date)}` })),
+        ].filter((r) => typeof r.ret === "number") as { symbol: string; ret: number; live: boolean; when: string; sub: string }[];
+        if (!rows.length) return null;
+        rows.sort((a, b) => b.ret - a.ret);
+        const maxAbs = Math.max(5, ...rows.map((r) => Math.abs(r.ret)));
+        return (
+          <div style={CARD}>
+            <div style={CARD_TITLE}>Every position — held and closed</div>
+            <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 12, lineHeight: 1.5 }}>
+              Return per name on one scale: <b style={{ color: "var(--text)" }}>{held.length}</b> still held (hollow bars, still moving) and{" "}
+              <b style={{ color: "var(--text)" }}>{closedRows.length}</b> closed (solid bars, final).
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+              {rows.map((r) => {
+                const pos = r.ret >= 0;
+                const w = (Math.abs(r.ret) / maxAbs) * 50;   // % of the track, half each side
+                const c = pos ? "var(--green)" : "var(--red)";
+                return (
+                  <div key={`${r.symbol}-${r.when}`} title={`${r.symbol} · ${r.sub} · ${fmtPct(r.ret)}`}
+                    style={{ display: "grid", gridTemplateColumns: "62px 58px 1fr", alignItems: "center", gap: 8, fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums" }}>
+                    <Link href={`/stock/${encodeURIComponent(r.symbol)}?tab=debate`}
+                      style={{ fontSize: 11, fontWeight: 700, color: r.live ? "var(--text)" : "var(--text-muted)", textDecoration: "none", overflow: "hidden", textOverflow: "ellipsis" }}>{r.symbol}</Link>
+                    <span style={{ fontSize: 10.5, fontWeight: 700, color: c, textAlign: "right" }}>{fmtPct(r.ret)}</span>
+                    <span style={{ position: "relative", height: 11, background: "var(--bg)", borderRadius: 2 }}>
+                      <span style={{ position: "absolute", left: "50%", top: 0, bottom: 0, width: 1, background: "var(--border)" }} />
+                      <span style={{
+                        position: "absolute", top: 2, height: 7, borderRadius: 2,
+                        left: pos ? "50%" : `${50 - w}%`, width: `${w}%`,
+                        background: r.live ? "transparent" : c,
+                        border: r.live ? `1px solid ${c}` : "none",
+                      }} />
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+            <div style={{ fontSize: 9, color: "var(--text-light)", marginTop: 10 }}>
+              Held returns are live against the entry price; closed returns are realized entry → exit. Scale is ±{Math.round(maxAbs)}%.
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* ── WHY EACH ONE CLOSED. The tracker's resolution_type is a hand-stamped decision,
+             not a derived label, so it is the honest answer to "why". Where the stamp also
+             carried a written note (9 of 15 today) that evidence sits underneath. ── */}
+      {closedRows.length > 0 && (
+        <div style={CARD}>
+          <div style={CARD_TITLE}>Why each one closed — {closedRows.length} positions</div>
+          <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 12, lineHeight: 1.5 }}>
+            A seat leaves for one of these reasons, stamped by hand on primary sources — never automatically.
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {closedRows.map((r, i) => {
+              const cr = closeReason(r.type);
+              const cc = cr.good === true ? "var(--green)" : cr.good === false ? "var(--red)" : "var(--amber)";
+              return (
+                <div key={`${r.symbol}-${r.date}-${i}`} style={{ borderTop: i ? "1px solid var(--border-subtle)" : "none", paddingTop: i ? 10 : 0 }}>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
+                    <Link href={`/stock/${encodeURIComponent(r.symbol)}?tab=debate`}
+                      style={{ fontFamily: "var(--font-mono)", fontSize: 13, fontWeight: 700, color: "var(--text)", textDecoration: "none" }}>{r.symbol}</Link>
+                    <span style={chip("color-mix(in srgb, " + cc + " 14%, transparent)", cc)}>{cr.label}</span>
+                    {r.prior && <span style={CHIP_MUTED}>earlier book</span>}
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: 10.5, color: "var(--text-light)" }}>
+                      {dNice(r.date)}{typeof r.days === "number" ? ` · held ${r.days}d` : ""}
+                      {typeof r.entry === "number" && typeof r.exit === "number" ? ` · $${fmtPx(r.entry)} → $${fmtPx(r.exit)}` : ""}
+                    </span>
+                    <span style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 13, fontWeight: 700, color: perfColor(r.ret) }}>{fmtPct(r.ret)}</span>
+                  </div>
+                  <div style={{ fontSize: 12, lineHeight: 1.55, color: "var(--text-secondary)", marginTop: 3 }}>
+                    {r.note ? firstSentence(r.note, 260) : `Closed because ${cr.blurb}.`}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
