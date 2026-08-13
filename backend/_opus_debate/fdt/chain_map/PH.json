@@ -1,0 +1,19 @@
+{
+ "symbol": "PH",
+ "physical_anchor": "manufactures precision motion-control and fluid-power components — hydraulics, pneumatics, electromechanical actuators, and filtration systems",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.03,
+ "value_chain_position": "motion control & actuators layer — engineered components sold into industrial automation, aerospace, and robotics OEM builds.",
+ "true_competitors": [
+  "ETN",
+  "HON",
+  "EMR",
+  "AME",
+  "IEX",
+  "6273.T"
+ ],
+ "chain_fit_confidence": "high"
+}

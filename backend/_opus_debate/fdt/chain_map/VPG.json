@@ -1,0 +1,19 @@
+{
+ "symbol": "VPG",
+ "physical_anchor": "Precision resistors, strain gauges, and load-cell force sensors used in weighing, test, and motion-sensing systems",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Machine-vision & sensing layer — precision force/strain sensors used in industrial automation, robotics force-feedback, and weighing/test systems",
+ "true_competitors": [
+  "TE Connectivity (TEL)",
+  "Honeywell Sensing & IoT (HON)",
+  "Amphenol Corp (APH)",
+  "Interface Inc load cells (private)",
+  "Kistler Group (private)",
+  "Zemic Europe (private)"
+ ],
+ "chain_fit_confidence": "medium"
+}

@@ -1,0 +1,18 @@
+{
+ "symbol": "NRGV",
+ "physical_anchor": "Builds gravity-based and battery energy-storage systems (physical storage towers/battery installations) for grid customers",
+ "chains": [
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Grid-scale energy-storage technology/EPC vendor selling and deploying storage systems",
+ "true_competitors": [
+  "FLNC",
+  "STEM",
+  "EOSE",
+  "GWH",
+  "WRT1V.HE"
+ ],
+ "chain_fit_confidence": "high"
+}

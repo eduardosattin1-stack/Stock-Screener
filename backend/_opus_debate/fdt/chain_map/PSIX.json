@@ -1,0 +1,18 @@
+{
+ "symbol": "PSIX",
+ "physical_anchor": "designs and manufactures internal-combustion engines and natural-gas/propane power-generation systems (gensets)",
+ "chains": [
+  "power_for_ai"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "turbines & generation equipment layer — engine/genset maker supplying backup and prime power, including emerging behind-the-meter datacenter power-generation demand.",
+ "true_competitors": [
+  "GNRC",
+  "CAT",
+  "CMI",
+  "RR.L",
+  "WRT1V.HE"
+ ],
+ "chain_fit_confidence": "medium"
+}

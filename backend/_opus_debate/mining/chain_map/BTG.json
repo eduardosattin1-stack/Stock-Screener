@@ -1,0 +1,20 @@
+{
+ "symbol": "BTG",
+ "physical_anchor": "Mines and pours gold doré at open-pit mines in Mali, Namibia and the Philippines.",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Mid-tier gold producer selling refined bullion from a globally diversified mine portfolio.",
+ "true_competitors": [
+  "AEM",
+  "AGI",
+  "EGO",
+  "KGC",
+  "B",
+  "EDVMF",
+  "PRU.AX"
+ ],
+ "chain_fit_confidence": "high"
+}

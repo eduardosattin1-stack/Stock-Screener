@@ -1,0 +1,182 @@
+{
+ "KBR": {
+  "physical_anchor": "None identifiable — revenue is government mission-IT/defense services and licensed chemical-process technology (ammonia, olefins, sustainable-fuels plants), not grid, nuclear, or power-for-AI equipment KBR itself manufactures.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Diversified government-services and process-technology-licensing contractor (~76% defense/space mission IT, ~24% ammonia/olefins licensing); no grid-equipment, nuclear-component, or power-generation physical scope.",
+  "true_competitors": ["LDOS", "SAIC", "J", "FLR", "ACM", "PSN"],
+  "chain_fit_confidence": "low"
+ },
+ "KEYS": {
+  "physical_anchor": "Electronic test, measurement and control instrumentation — oscilloscopes, network/spectrum analyzers, and quantum-control-and-readout electronics racks that stimulate and read out qubit devices.",
+  "chains": ["quantum"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cryogenics & control electronics layer — sells dedicated quantum control/readout instrumentation plus general RF/microwave test gear to quantum-hardware developers, chipmakers and aerospace/defense labs.",
+  "true_competitors": ["TER", "ADTTF", "EMR", "FTV", "MKSI", "6754.T"],
+  "chain_fit_confidence": "medium"
+ },
+ "KLAC": {
+  "physical_anchor": "Process-control and wafer-inspection/metrology systems used across mainstream semiconductor fabs — a real physical product, but sized to the whole logic/memory chip industry, not quantum-hardware fabrication specifically.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Broad semiconductor capital-equipment (yield management/inspection) toll-taker on the whole chip industry — no quantum-specific product line or disclosed exposure.",
+  "true_competitors": ["ASML", "LRCX", "AMAT", "TER", "ONTO", "CAMT"],
+  "chain_fit_confidence": "low"
+ },
+ "KLIC": {
+  "physical_anchor": "Wire-bonding and semiconductor/LED assembly & packaging equipment for generic chip back-end manufacturing.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Back-end semiconductor packaging-equipment maker serving the broad chip-assembly market; no quantum-specific exposure.",
+  "true_competitors": ["ASMPT.HK", "BESI.AS", "AMAT", "ASX", "ONTO"],
+  "chain_fit_confidence": "low"
+ },
+ "KN": {
+  "physical_anchor": "MEMS microphones/acoustic components and high-performance RF capacitors/filters sold into consumer, medical and defense electronics.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Precision electronic-component maker (capacitors, MEMS mics) sold broadly across consumer/medical/defense electronics — no direct robotics or quantum-chain product.",
+  "true_competitors": ["VSH", "CTS", "MURATA.T", "TDK.T", "AVX-KYOCERA"],
+  "chain_fit_confidence": "low"
+ },
+ "KSPI": {
+  "physical_anchor": "None — Kaspi.kz is a payments, marketplace and fintech super-app platform; a payments network never counts as a physical anchor.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Kazakhstan payments/e-commerce/fintech super-app; no physical value-chain position in any FDT chain.",
+  "true_competitors": ["PYPL", "MELI", "SE", "NU", "PAGS"],
+  "chain_fit_confidence": "low"
+ },
+ "LASR": {
+  "physical_anchor": "High-power semiconductor and fiber lasers/laser diodes for industrial materials processing, aerospace/defense directed-energy systems, and photonics sensing.",
+  "chains": ["quantum"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Photonics & lasers layer — supplies high-power laser sources/components; overlaps quantum-adjacent photonics demand alongside its core industrial/defense laser business.",
+  "true_competitors": ["COHR", "IPGP", "LITE", "NOVT", "MKSI"],
+  "chain_fit_confidence": "medium"
+ },
+ "LFUS": {
+  "physical_anchor": "Circuit-protection fuses, power semiconductors and sensors sold broadly into automotive, industrial and electronics end markets.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Generic electronic-component maker (fuses/protection); components go into thousands of unrelated end products, no specific robotics or quantum chain exposure.",
+  "true_competitors": ["TEL", "ETN", "VSH", "ST", "APH"],
+  "chain_fit_confidence": "low"
+ },
+ "LHX": {
+  "physical_anchor": "Defense/aerospace electronics — tactical radios, satellites, sensors, electronic-warfare systems; no reactor components or nuclear fuel-cycle products.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Broad defense-electronics prime; Aerospace & Defense classification is a false-positive catch for the nuclear_smr filter — no nuclear-component or SMR-services business.",
+  "true_competitors": ["LMT", "RTX", "NOC", "GD", "BAH", "LDOS"],
+  "chain_fit_confidence": "low"
+ },
+ "LIF": {
+  "physical_anchor": "None core — subscription location-sharing/family-safety software app; the ancillary Tile hardware tag business is small and not a robotics/automation anchor.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Consumer safety/location software platform; no physical robotics, automation or industrial value-chain position.",
+  "true_competitors": ["GOOGL", "AAPL", "VZ", "T"],
+  "chain_fit_confidence": "low"
+ },
+ "LII": {
+  "physical_anchor": "Residential and commercial HVAC equipment — furnaces, air conditioners, heat pumps — a real physical product, but climate-control appliances, not grid/transmission gear, reactor components, generation turbines, or robots.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "HVAC OEM selling heating/cooling equipment to residential and commercial customers; adjacent to electrification via heat-pump adoption but not a grid-equipment or power-for-AI toll-taker.",
+  "true_competitors": ["CARR", "TT", "JCI", "AAON", "WSO"],
+  "chain_fit_confidence": "low"
+ },
+ "LIVN": {
+  "physical_anchor": "Cardiopulmonary bypass/perfusion systems and implantable vagus-nerve-stimulation neuromodulation devices — real medical hardware, but not a surgical-robotics platform.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Medtech device maker in cardiac-surgery support and neuromodulation; adjacent to but not part of the surgical-robotics layer (no robotic platform product).",
+  "true_competitors": ["ISRG", "MDT", "EW", "ABT", "BSX", "STXS"],
+  "chain_fit_confidence": "low"
+ },
+ "LMAT": {
+  "physical_anchor": "Manual vascular surgical devices — grafts, catheters, valvulotomes, shunts — used in open/hybrid vascular surgery, not robotic surgical platforms.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Niche vascular-device maker selling disposable/implantable surgical tools; no robotic-surgery platform or automation exposure.",
+  "true_competitors": ["ISRG", "EW", "ABT", "BSX", "MDT", "ATRC"],
+  "chain_fit_confidence": "low"
+ },
+ "LMB": {
+  "physical_anchor": "On-site mechanical, electrical and plumbing (MEP) systems — power distribution, HVAC, controls — installed and serviced inside commercial, healthcare and data-center buildings.",
+  "chains": ["electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Electrical infrastructure services layer — specialty MEP contractor installing and maintaining building-level electrical/mechanical systems, with a growing owner-direct book in mission-critical/data-center facilities.",
+  "true_competitors": ["EME", "FIX", "MTZ", "IESC", "GVA"],
+  "chain_fit_confidence": "medium"
+ },
+ "LMT": {
+  "physical_anchor": "Military aircraft, missiles, and space-systems manufacturer; no nuclear-reactor components or SMR/fuel-cycle products in its portfolio.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Prime defense/aerospace contractor; Aerospace & Defense classification catches it in the nuclear_smr industry filter, but it has no reactor-component or nuclear fuel-service business.",
+  "true_competitors": ["RTX", "NOC", "GD", "LHX", "BA", "BWXT"],
+  "chain_fit_confidence": "low"
+ },
+ "LOAR": {
+  "physical_anchor": "Proprietary aftermarket and OEM aircraft components (safety, sensing, fluid-control parts) — an aerospace parts maker with no nuclear or reactor-related product line.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Niche aerospace-component supplier (TransDigm-style aftermarket model); Aerospace & Defense classification is a false-positive for the nuclear_smr filter.",
+  "true_competitors": ["TDG", "HEI", "WWD", "MOG.A", "CW"],
+  "chain_fit_confidence": "low"
+ },
+ "LOGI": {
+  "physical_anchor": "Consumer/enterprise computer peripherals — mice, keyboards, webcams, headsets.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Consumer electronics accessory maker; no exposure to quantum hardware, cryogenics, photonics, or qubit control systems.",
+  "true_competitors": ["CRSR", "HPQ", "DELL", "AAPL"],
+  "chain_fit_confidence": "low"
+ },
+ "LRCX": {
+  "physical_anchor": "Etch and deposition process equipment for mainstream semiconductor wafer fabrication — real capital equipment, but sold broadly across the memory/logic chip industry, not quantum-specific.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Core semiconductor capital-equipment supplier (etch/deposition); generic semicap exposure, not a quantum-hardware toll-taker.",
+  "true_competitors": ["ASML", "AMAT", "KLAC", "TER", "ASMI.AS"],
+  "chain_fit_confidence": "low"
+ },
+ "LSCC": {
+  "physical_anchor": "Low-power FPGA chips sold into communications, industrial, automotive and consumer edge-compute applications.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Small-form-factor, low-power programmable-logic chipmaker; not a supplier of the higher-performance FPGAs used in quantum-control racks, and no other FDT chain fit.",
+  "true_competitors": ["AMD", "INTC", "MCHP", "ON"],
+  "chain_fit_confidence": "low"
+ },
+ "MANH": {
+  "physical_anchor": "None — Manhattan Associates sells warehouse/supply-chain-execution SOFTWARE; it does not itself make, move, power, or physically instrument robots or automation hardware.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Enterprise WMS/supply-chain-execution software vendor that orchestrates (but does not manufacture) warehouse robotics and automation equipment.",
+  "true_competitors": ["SAP", "ORCL", "KXS.TO", "DSGX", "ETWO"],
+  "chain_fit_confidence": "low"
+ }
+}

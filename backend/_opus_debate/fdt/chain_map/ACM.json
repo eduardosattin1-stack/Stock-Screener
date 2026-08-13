@@ -1,0 +1,19 @@
+{
+ "symbol": "ACM",
+ "physical_anchor": "Designs and manages construction of infrastructure projects including power/grid interconnection alongside transportation, water and environmental work",
+ "chains": [
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.02,
+ "value_chain_position": "Global diversified engineering & construction management firm; grid/power EPC is a minority slice of a much broader infrastructure book",
+ "true_competitors": [
+  "J",
+  "MTZ",
+  "PWR",
+  "FLR",
+  "TTEK",
+  "STN"
+ ],
+ "chain_fit_confidence": "medium"
+}

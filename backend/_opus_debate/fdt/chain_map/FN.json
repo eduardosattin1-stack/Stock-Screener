@@ -1,0 +1,18 @@
+{
+ "symbol": "FN",
+ "physical_anchor": "contract manufacturer of precision optical and photonic components — transceivers, lasers, sensors — for networking, datacom, and photonics equipment makers",
+ "chains": [
+  "quantum"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "optical/photonics contract manufacturer (photonics & lasers layer) serving networking customers and some photonics/quantum equipment makers",
+ "true_competitors": [
+  "COHR",
+  "LITE",
+  "JBL",
+  "CLS",
+  "FLEX"
+ ],
+ "chain_fit_confidence": "medium"
+}

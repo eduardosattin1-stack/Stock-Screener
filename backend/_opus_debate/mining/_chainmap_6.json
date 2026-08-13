@@ -1,0 +1,182 @@
+{
+ "SA": {
+  "physical_anchor": "Undeveloped gold-copper-silver deposit (KSM project) in British Columbia, plus the Iskut exploration project",
+  "chains": ["precious_metals", "copper_mining"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.65,
+  "value_chain_position": "Pre-production developer advancing the large-tonnage KSM gold-copper deposit through permitting/financing toward construction; no current mine revenue",
+  "true_competitors": ["NAK", "NG", "WRN", "FIL.TO", "SOLR.TO", "IVN.TO", "PVG", "IAUX"],
+  "chain_fit_confidence": "high"
+ },
+ "SCZM": {
+  "physical_anchor": "Mined silver-lead-zinc ore processed into concentrate at operations in Mexico and Bolivia",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.35,
+  "value_chain_position": "Mid-tier polymetallic producer selling silver-lead-zinc concentrates to smelters; branded a silver miner but zinc/lead dominate realized revenue",
+  "true_competitors": ["FSM", "SVM", "EXK", "AG", "MAG", "CDE", "HL", "EXN.TO"],
+  "chain_fit_confidence": "high"
+ },
+ "SGML": {
+  "physical_anchor": "Battery-grade lithium spodumene concentrate mined and processed at Grota do Cirilo, Brazil",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Hard-rock lithium producer selling spodumene concentrate to battery/cathode makers; lithium has no chain in this taxonomy (the electrification chain lives in the fdt book)",
+  "true_competitors": ["ALB", "SQM", "ALTM", "PLS.AX", "MIN.AX", "PLL", "LAC", "CXO.AX"],
+  "chain_fit_confidence": "low"
+ },
+ "SIND": {
+  "physical_anchor": "Silver-gold-copper-lead-zinc epithermal deposit under exploration at the Sinda Property, Guanajuato, Mexico",
+  "chains": ["precious_metals"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.6,
+  "value_chain_position": "Pre-revenue silver exploration company (recent NYSE IPO) advancing the Sinda Property toward a targeted ~2031 first production",
+  "true_competitors": ["MAG", "GATO", "EXK", "AG", "FSM", "VZLA", "GPL"],
+  "chain_fit_confidence": "high"
+ },
+ "SKE": {
+  "physical_anchor": "Eskay Creek high-grade gold-silver deposit under construction/redevelopment in British Columbia",
+  "chains": ["precious_metals"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.75,
+  "value_chain_position": "Construction-stage developer redeveloping the past-producing Eskay Creek gold-silver mine, targeting near-term first production",
+  "true_competitors": ["NG", "ARTG.TO", "OSK.TO", "IAUX", "MOZ", "NGD", "GATO"],
+  "chain_fit_confidence": "high"
+ },
+ "SLI": {
+  "physical_anchor": "Lithium brine resource in the Smackover Formation, Arkansas, under development for direct lithium extraction",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Pre-revenue lithium brine developer building DLE capacity in Arkansas; lithium has no chain in this taxonomy",
+  "true_competitors": ["LAC", "ALB", "ETL.V", "ALTM", "VUL.AX", "PLL", "XOM"],
+  "chain_fit_confidence": "low"
+ },
+ "SXC": {
+  "physical_anchor": "Metallurgical coke produced from purchased coal at cokemaking facilities and sold to blast-furnace steelmakers",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.1,
+  "value_chain_position": "Toll cokemaker/logistics operator converting purchased coal into coke for steel producers; does not mine or sell ore/concentrate itself",
+  "true_competitors": ["CLF", "X", "NUE", "MT", "METC", "ARCH", "CEIX"],
+  "chain_fit_confidence": "low"
+ },
+ "TFPM": {
+  "physical_anchor": "Portfolio of gold and silver streams/royalties entitling delivery of physical metal from producing and development mines",
+  "chains": ["precious_metals"],
+  "business_model": "royalty_streamer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Streaming and royalty company monetizing upfront capital for a fixed share of future gold/silver production, carrying no operating or capex exposure",
+  "true_competitors": ["WPM", "FNV", "RGLD", "OR", "SAND", "MTA", "GROY", "ELE.V"],
+  "chain_fit_confidence": "high"
+ },
+ "TGB": {
+  "physical_anchor": "Copper concentrate and cathode produced from an operating open-pit copper mine (BC) and a low-cost ISR copper project (Arizona)",
+  "chains": ["copper_mining"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.85,
+  "value_chain_position": "Mid-tier copper producer running an operating open-pit mine while ramping a low-cost in-situ-recovery copper project",
+  "true_competitors": ["FCX", "SCCO", "HBM", "ERO", "CS.TO", "LUN.TO", "TECK", "FM.TO"],
+  "chain_fit_confidence": "high"
+ },
+ "THM": {
+  "physical_anchor": "Livengood gold deposit under development in Alaska",
+  "chains": ["precious_metals"],
+  "business_model": "developer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Pre-revenue developer advancing feasibility on the large-tonnage, low-grade Livengood gold project",
+  "true_competitors": ["NG", "CTGO", "KGC", "CDE", "HL", "NAK", "GATO"],
+  "chain_fit_confidence": "high"
+ },
+ "TMC": {
+  "physical_anchor": "Polymetallic nodules (nickel-copper-cobalt-manganese) targeted for harvest from the deep seafloor in the Clarion-Clipperton Zone",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Pre-revenue deep-sea nodule collection company pursuing permits for battery-metal (Ni/Cu/Co/Mn) harvesting; not a gold/silver name despite the FMP 'Other Precious Metals' tag",
+  "true_competitors": ["VALE", "GLNCY", "TLO.TO", "S.TO", "BHP", "NILSY"],
+  "chain_fit_confidence": "low"
+ },
+ "TMQ": {
+  "physical_anchor": "Copper-zinc-cobalt-gold-silver deposits (Arctic and Bornite) under development in the Ambler Mining District, Alaska",
+  "chains": ["copper_mining"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.6,
+  "value_chain_position": "Pre-revenue developer advancing a polymetallic, copper-dominant deposit pending the Ambler Road access permit",
+  "true_competitors": ["HBM", "ERO", "TGB", "CS.TO", "SOLR.TO", "FIL.TO", "NG"],
+  "chain_fit_confidence": "high"
+ },
+ "UAMY": {
+  "physical_anchor": "Mined and smelted antimony (antimony metal/trisulfide) plus zeolite products from Montana smelting and Mexico mining operations",
+  "chains": ["rare_earth_strategic"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.75,
+  "value_chain_position": "One of the only Western antimony miner-smelters, selling antimony products into the strategic-metals stockpile/defense chain",
+  "true_competitors": ["PPTA", "MND.TO", "MP", "USAR", "METC", "TRR.L"],
+  "chain_fit_confidence": "high"
+ },
+ "UEC": {
+  "physical_anchor": "In-situ recovery (ISR) mined uranium (U3O8) from Texas and Wyoming wellfields",
+  "chains": ["uranium_fuel_cycle"],
+  "business_model": "producer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Near-term/restart ISR uranium producer ramping Texas and Wyoming operations toward term-contract delivery",
+  "true_competitors": ["CCJ", "DNN", "EU", "URG", "PEN.AX", "GLO.TO", "PDN.AX"],
+  "chain_fit_confidence": "high"
+ },
+ "URG": {
+  "physical_anchor": "In-situ recovery (ISR) mined uranium (U3O8) from the Lost Creek project, Wyoming",
+  "chains": ["uranium_fuel_cycle"],
+  "business_model": "producer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Operating ISR uranium producer at Lost Creek, Wyoming, selling U3O8 under term and spot contracts",
+  "true_competitors": ["UEC", "EU", "DNN", "CCJ", "PEN.AX", "GLO.TO"],
+  "chain_fit_confidence": "high"
+ },
+ "UROY": {
+  "physical_anchor": "Royalty and streaming interests plus physical uranium holdings entitling delivery of U3O8 from uranium mines/projects",
+  "chains": ["uranium_fuel_cycle"],
+  "business_model": "royalty_streamer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Uranium royalty/streaming pure-play holding physical U3O8 and royalty interests across producing and development projects; auto-passes cash/profit gates",
+  "true_competitors": ["YCA.L", "CCJ", "U.UN", "DNN", "BOE.AX", "DYL.AX"],
+  "chain_fit_confidence": "high"
+ },
+ "USAR": {
+  "physical_anchor": "Rare earth oxides mined/processed at Round Top (Texas) and NdFeB permanent magnets manufactured at the Stillwater plant (Oklahoma)",
+  "chains": ["rare_earth_strategic"],
+  "business_model": "developer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Vertically-integrating rare-earth developer building US magnet manufacturing ahead of its own mine reaching production",
+  "true_competitors": ["MP", "LYC.AX", "UUUU", "UCU.V", "CRML", "ILU.AX"],
+  "chain_fit_confidence": "high"
+ },
+ "USAS": {
+  "physical_anchor": "Silver-lead ore mined and processed into concentrate at the Galena Complex (Idaho) and Cosalá Operations (Mexico)",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.55,
+  "value_chain_position": "Silver-primary mid-tier producer with lead/zinc/gold byproduct credits from operating US and Mexico mines",
+  "true_competitors": ["CDE", "HL", "AG", "EXK", "FSM", "SVM", "MAG"],
+  "chain_fit_confidence": "high"
+ },
+ "USAU": {
+  "physical_anchor": "CK Gold-Copper deposit under development in Wyoming",
+  "chains": ["precious_metals"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.8,
+  "value_chain_position": "Pre-revenue developer advancing the CK Gold-Copper project toward construction financing",
+  "true_competitors": ["SA", "NG", "CTGO", "NAK", "IAUX", "GATO", "VZLA"],
+  "chain_fit_confidence": "high"
+ },
+ "UUUU": {
+  "physical_anchor": "Uranium concentrate (U3O8) milled at White Mesa, Utah, plus rare-earth oxide (NdPr) separation from monazite feed",
+  "chains": ["uranium_fuel_cycle", "rare_earth_strategic"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.65,
+  "value_chain_position": "Only operating conventional uranium mill in the US, co-producing rare-earth oxides and vanadium as alternate-feed byproducts",
+  "true_competitors": ["UEC", "URG", "DNN", "CCJ", "MP", "USAR", "LYC.AX"],
+  "chain_fit_confidence": "high"
+ }
+}

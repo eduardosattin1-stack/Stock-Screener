@@ -1,0 +1,17 @@
+{
+ "symbol": "KDK",
+ "physical_anchor": "builds the autonomous-driving sensor/compute hardware stack retrofitted onto Class-8 trucks for driverless freight and off-road hauling",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "pre-revenue autonomous-trucking (physical-AI) developer, milestone-driven (named freight lanes, first driverless deployments)",
+ "true_competitors": [
+  "AUR",
+  "PONY",
+  "WRD",
+  "CREV"
+ ],
+ "chain_fit_confidence": "medium"
+}

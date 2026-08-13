@@ -1,0 +1,20 @@
+{
+ "symbol": "CCJ",
+ "physical_anchor": "Mines uranium ore, mills/converts it into U3O8 and UF6, and fabricates nuclear fuel at Canadian and US facilities.",
+ "chains": [
+  "uranium_fuel_cycle"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.75,
+ "value_chain_position": "Vertically integrated uranium miner/converter/fuel-services provider; also holds a 49% Westinghouse nuclear-services equity stake that dilutes pure uranium revenue share.",
+ "true_competitors": [
+  "UEC",
+  "UUUU",
+  "DNN",
+  "NXE",
+  "KAP.L",
+  "PDN.AX",
+  "UROY"
+ ],
+ "chain_fit_confidence": "high"
+}

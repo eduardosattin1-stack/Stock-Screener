@@ -1,0 +1,19 @@
+{
+ "symbol": "COHR",
+ "physical_anchor": "Manufactures lasers, optical/photonic components and precision optics (incl. transceivers, specialty materials, cryo-compatible photonics) used in comms, industrial and quantum-sensing hardware stacks.",
+ "chains": [
+  "quantum"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.02,
+ "value_chain_position": "Photonics & lasers layer of the quantum chain — supplies laser sources, optical components and specialty materials/optics that lab, testbed and comms-infrastructure builds consume regardless of which qubit modality wins.",
+ "true_competitors": [
+  "IPGP",
+  "LITE",
+  "FN",
+  "MKSI",
+  "VIAV",
+  "AMAT"
+ ],
+ "chain_fit_confidence": "high"
+}

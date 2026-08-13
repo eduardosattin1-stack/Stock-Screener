@@ -1,0 +1,19 @@
+{
+ "symbol": "MDT",
+ "physical_anchor": "Manufactures and sells the Hugo surgical robotic system (arms, console, instruments) alongside cardiac, diabetes and neuro implantable devices",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Surgical-robotics layer of a diversified medtech: Hugo RAS platform competes in minimally invasive robotic surgery, a small but growing slice of total device sales",
+ "true_competitors": [
+  "ISRG",
+  "SYK",
+  "ZBH",
+  "JNJ",
+  "BSX",
+  "ABT"
+ ],
+ "chain_fit_confidence": "medium"
+}

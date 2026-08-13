@@ -1,0 +1,19 @@
+{
+ "symbol": "NEM",
+ "physical_anchor": "mines and pours gold doré, with meaningful copper concentrate byproduct, at open-pit and underground operations globally",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.85,
+ "value_chain_position": "world's largest gold producer by output; senior producer with copper byproduct credits",
+ "true_competitors": [
+  "AEM",
+  "B",
+  "AU",
+  "KGC",
+  "GFI",
+  "AGI"
+ ],
+ "chain_fit_confidence": "high"
+}

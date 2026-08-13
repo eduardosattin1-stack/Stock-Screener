@@ -1,0 +1,19 @@
+{
+ "symbol": "GD",
+ "physical_anchor": "Nuclear-powered submarines (Virginia-class, Columbia-class) built and integrated at Electric Boat, carrying naval nuclear propulsion systems",
+ "chains": [
+  "nuclear_smr"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Naval nuclear shipbuilder/integrator (Marine Systems/Electric Boat segment) — builds and delivers nuclear-propelled submarines; reactor fuel/cores sourced from specialists (e.g. BWXT), GD integrates the hull and propulsion system, within an otherwise diversified aerospace/defense conglomerate",
+ "true_competitors": [
+  "HII",
+  "BWXT",
+  "LMT",
+  "NOC",
+  "RTX",
+  "LHX"
+ ],
+ "chain_fit_confidence": "medium"
+}

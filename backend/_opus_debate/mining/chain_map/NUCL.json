@@ -1,0 +1,19 @@
+{
+ "symbol": "NUCL",
+ "physical_anchor": "Explores and aims to develop uranium mineral deposits toward future ISR/conventional production; no producing asset yet.",
+ "chains": [
+  "uranium_fuel_cycle"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.85,
+ "value_chain_position": "Early-stage uranium exploration/development layer (mining & ISR production), pre-revenue, small-cap.",
+ "true_competitors": [
+  "Uranium Energy Corp (UEC)",
+  "enCore Energy (EU)",
+  "Ur-Energy (URG)",
+  "Peninsula Energy (PENMF)",
+  "Global Atomic (GLATF)",
+  "Anfield Energy (ANLDF)"
+ ],
+ "chain_fit_confidence": "medium"
+}

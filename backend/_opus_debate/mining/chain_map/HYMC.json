@@ -1,0 +1,19 @@
+{
+ "symbol": "HYMC",
+ "physical_anchor": "Gold and silver ore at the Hycroft heap-leach mine, Nevada, currently paused for a mill/POX expansion",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Nevada gold-silver producer transitioning from heap-leach to a milling/oxidation process; zero current revenue during the expansion pause",
+ "true_competitors": [
+  "IAUX",
+  "DC",
+  "GAU",
+  "AG",
+  "PAAS",
+  "CDE"
+ ],
+ "chain_fit_confidence": "high"
+}

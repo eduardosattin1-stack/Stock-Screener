@@ -1,0 +1,604 @@
+[
+ {
+  "symbol": "IPX",
+  "name": "IperionX Limited",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 795120300,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -54701677,
+   "ttm_ocf": -30690942,
+   "ttm_capex": -24017677,
+   "ttm_ebitda": -72513886,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 65826830,
+   "balance_date": "2025-12-31",
+   "balance_sheet_stale": true,
+   "monthly_burn": 4559052.0,
+   "runway_months": 14.4,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 2939163.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "LAC",
+  "name": "Lithium Americas Corp.",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 695512932,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -1013751814,
+   "ttm_ocf": -61188345,
+   "ttm_capex": -952563469,
+   "ttm_ebitda": -51304000,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 1211596644,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 84479318.0,
+   "runway_months": 14.3,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 24135160.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "LAR",
+  "name": "Lithium Argentina AG",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 1069016850,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -20931518,
+   "ttm_ocf": -20731513,
+   "ttm_capex": -200003.5083294809,
+   "ttm_ebitda": -34037241,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 97753438,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1744293.0,
+   "runway_months": 56.0,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 5759937.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "LEU",
+  "name": "Centrus Energy Corp.",
+  "sector": "Energy",
+  "industry": "Uranium",
+  "mcap": 3615871895,
+  "lane": "b",
+  "chains_hint": [
+   "uranium_fuel_cycle"
+  ],
+  "gates": {
+   "ttm_fcf": -61400000,
+   "ttm_ocf": -20600000,
+   "ttm_capex": -40800000,
+   "ttm_ebitda": 88400000,
+   "ttm_revenue": 452300000,
+   "rev_yoy": -0.0405,
+   "cash_sti": 1868200000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 5116667.0,
+   "runway_months": 365.1,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 50312137.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "LWLG",
+  "name": "Lightwave Logic, Inc.",
+  "sector": "Basic Materials",
+  "industry": "Chemicals - Specialty",
+  "mcap": 1212609600,
+  "lane": "b",
+  "chains_hint": [
+   "rare_earth_strategic"
+  ],
+  "gates": {
+   "ttm_fcf": -15373996,
+   "ttm_ocf": -14320234,
+   "ttm_capex": -1053762,
+   "ttm_ebitda": -19763659,
+   "ttm_revenue": 243105,
+   "rev_yoy": 1.7593,
+   "cash_sti": 75102750,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1281166.0,
+   "runway_months": 58.6,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 26294213.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "LYB",
+  "name": "LyondellBasell Industries N.V.",
+  "sector": "Basic Materials",
+  "industry": "Chemicals - Specialty",
+  "mcap": 19534948200,
+  "lane": "b",
+  "chains_hint": [
+   "rare_earth_strategic"
+  ],
+  "gates": {
+   "ttm_fcf": 3995000000,
+   "ttm_ocf": 2973000000,
+   "ttm_capex": 1022000000,
+   "ttm_ebitda": 1887000000,
+   "ttm_revenue": 31192000000,
+   "rev_yoy": -0.0671,
+   "cash_sti": 2630000000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 81946017.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 6.142024377318495
+  }
+ },
+ {
+  "symbol": "MP",
+  "name": "MP Materials Corp.",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 8501440610,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -313750000,
+   "ttm_ocf": -94466000,
+   "ttm_capex": -219284000,
+   "ttm_ebitda": 18765000,
+   "ttm_revenue": 347569000,
+   "rev_yoy": 0.6093,
+   "cash_sti": 1739150000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 26145833.0,
+   "runway_months": 66.5,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 305241364.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "MTX",
+  "name": "Minerals Technologies Inc.",
+  "sector": "Basic Materials",
+  "industry": "Chemicals - Specialty",
+  "mcap": 2313249020,
+  "lane": "b",
+  "chains_hint": [
+   "rare_earth_strategic"
+  ],
+  "gates": {
+   "ttm_fcf": 129300000,
+   "ttm_ocf": 262400000,
+   "ttm_capex": -133100000,
+   "ttm_ebitda": 76800000,
+   "ttm_revenue": 2147200000,
+   "rev_yoy": 0.0406,
+   "cash_sti": 346200000,
+   "balance_date": "2026-07-05",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 8935738.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 8.108072916666666
+  }
+ },
+ {
+  "symbol": "MUX",
+  "name": "McEwen Mining Inc.",
+  "sector": "Basic Materials",
+  "industry": "Other Precious Metals",
+  "mcap": 1125802185,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": -23756000,
+   "ttm_ocf": 20900000,
+   "ttm_capex": -44656000,
+   "ttm_ebitda": 79001000,
+   "ttm_revenue": 235906000,
+   "rev_yoy": 0.3963,
+   "cash_sti": 70077000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1979667.0,
+   "runway_months": 35.4,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 9408234.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 1.9840512108999755
+  }
+ },
+ {
+  "symbol": "NAK",
+  "name": "Northern Dynasty Minerals Ltd.",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 904902523,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -23425000,
+   "ttm_ocf": -23425000,
+   "ttm_capex": 0,
+   "ttm_ebitda": -38333584,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 52629657,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1952083.0,
+   "runway_months": 27.0,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 6802990.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "NB",
+  "name": "NioCorp Developments Ltd.",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 725023499,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -16672000,
+   "ttm_ocf": -16672000,
+   "ttm_capex": 0,
+   "ttm_ebitda": -54174000,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 421261000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1389333.0,
+   "runway_months": 303.2,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 31727663.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "NEXA",
+  "name": "Nexa Resources S.A.",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 1766731071,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": 151578000,
+   "ttm_ocf": 543579444,
+   "ttm_capex": -392001444,
+   "ttm_ebitda": 1085213000,
+   "ttm_revenue": 3244333000,
+   "rev_yoy": 0.153,
+   "cash_sti": 395957000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 6614052.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 1.3513835532747949
+  }
+ },
+ {
+  "symbol": "NG",
+  "name": "NovaGold Resources Inc.",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 2810389833,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": -43263000,
+   "ttm_ocf": -43263000,
+   "ttm_capex": 0,
+   "ttm_ebitda": -6793356,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 371429000,
+   "balance_date": "2026-05-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 3605250.0,
+   "runway_months": 103.0,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 18843440.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "NUCL",
+  "name": "Eagle Nuclear Energy Corp.",
+  "sector": "Energy",
+  "industry": "Uranium",
+  "mcap": 194191374,
+  "lane": "b",
+  "chains_hint": [
+   "uranium_fuel_cycle"
+  ],
+  "gates": {
+   "ttm_fcf": -8666702,
+   "ttm_ocf": -7929037,
+   "ttm_capex": -737665,
+   "ttm_ebitda": -12314888,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 28091090,
+   "balance_date": "2026-05-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 722225.0,
+   "runway_months": 38.9,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 2049114.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "NXE",
+  "name": "NexGen Energy Ltd.",
+  "sector": "Energy",
+  "industry": "Uranium",
+  "mcap": 6536351375,
+  "lane": "b",
+  "chains_hint": [
+   "uranium_fuel_cycle"
+  ],
+  "gates": {
+   "ttm_fcf": -193380175,
+   "ttm_ocf": -71823581,
+   "ttm_capex": -121556594,
+   "ttm_ebitda": -363579394,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 1020983689,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 16115015.0,
+   "runway_months": 63.4,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 28757847.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "OGC",
+  "name": "OceanaGold Corporation",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 5605689600,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": null,
+   "ttm_ocf": null,
+   "ttm_capex": null,
+   "ttm_ebitda": null,
+   "ttm_revenue": null,
+   "rev_yoy": null,
+   "cash_sti": null,
+   "balance_date": null,
+   "balance_sheet_stale": null,
+   "monthly_burn": null,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 6447924.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "OGG",
+  "name": "Osisko Gold Group Inc.",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 751138197,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": -150648500,
+   "ttm_ocf": -10600117,
+   "ttm_capex": -140048384,
+   "ttm_ebitda": -85390097,
+   "ttm_revenue": 37697720,
+   "rev_yoy": 12.4972,
+   "cash_sti": 595821791,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 12554042.0,
+   "runway_months": 47.5,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 4122720.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "PPTA",
+  "name": "Perpetua Resources Corp.",
+  "sector": "Basic Materials",
+  "industry": "Other Precious Metals",
+  "mcap": 2623857200,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": -152164703,
+   "ttm_ocf": -105497223,
+   "ttm_capex": -46667480,
+   "ttm_ebitda": -148191880,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 669505000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 12680392.0,
+   "runway_months": 52.8,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 13295570.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "PRM",
+  "name": "Perimeter Solutions, Inc.",
+  "sector": "Basic Materials",
+  "industry": "Chemicals - Specialty",
+  "mcap": 5412555851,
+  "lane": "b",
+  "chains_hint": [
+   "rare_earth_strategic"
+  ],
+  "gates": {
+   "ttm_fcf": 103842210,
+   "ttm_ocf": 134569298,
+   "ttm_capex": -30727088,
+   "ttm_ebitda": -300151000,
+   "ttm_revenue": 757072000,
+   "rev_yoy": 0.2425,
+   "cash_sti": 82776000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 28530022.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "RYAM",
+  "name": "Rayonier Advanced Materials Inc.",
+  "sector": "Basic Materials",
+  "industry": "Chemicals - Specialty",
+  "mcap": 609306848,
+  "lane": "b",
+  "chains_hint": [
+   "rare_earth_strategic"
+  ],
+  "gates": {
+   "ttm_fcf": -84173000,
+   "ttm_ocf": 16320999,
+   "ttm_capex": -100493999,
+   "ttm_ebitda": 87403000,
+   "ttm_revenue": 1429495000,
+   "rev_yoy": -0.1058,
+   "cash_sti": 67944000,
+   "balance_date": "2026-03-28",
+   "balance_sheet_stale": false,
+   "monthly_burn": 7014417.0,
+   "runway_months": 9.7,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 2927981.0,
+   "royalty_hint": false
+  }
+ }
+]

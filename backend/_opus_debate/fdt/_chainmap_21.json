@@ -1,0 +1,182 @@
+{
+ "GTM": {
+  "physical_anchor": "none - cloud SaaS platform selling B2B contact/intent data, no physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "B2B go-to-market data/software vendor selling subscription access to a contact and intent database, not a physical product",
+  "true_competitors": ["HUBS", "CRM", "FRSH", "MNDY", "BRZE", "DNB"],
+  "chain_fit_confidence": "low"
+ },
+ "HAWK": {
+  "physical_anchor": "operates a satellite constellation carrying RF sensors that detects and geolocates radio-frequency emissions from orbit",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "space-based RF signals-intelligence operator; owns and operates a satellite constellation and sells geolocation data/analytics to defense and commercial customers - not a nuclear or grid name",
+  "true_competitors": ["SPIR", "PL", "BKSY", "LHX", "IRDM"],
+  "chain_fit_confidence": "low"
+ },
+ "HONA": {
+  "physical_anchor": "designs and manufactures jet engines, avionics and aircraft mechanical/environmental-control systems",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "aerospace propulsion and avionics OEM selling engines, flight-deck electronics and aircraft subsystems to airframers and airlines - aerospace, not naval/defense nuclear",
+  "true_competitors": ["RTX", "GE", "SAF.PA", "TDG", "WWD", "PH", "LHX"],
+  "chain_fit_confidence": "low"
+ },
+ "HPE": {
+  "physical_anchor": "manufactures enterprise servers, storage and networking hardware, including HPC/supercomputing systems",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "enterprise IT infrastructure OEM selling servers, storage, networking gear and HPC systems; early-stage quantum-computing research/partnerships are immaterial to revenue",
+  "true_competitors": ["DELL", "IBM", "CSCO", "NTAP", "SMCI"],
+  "chain_fit_confidence": "low"
+ },
+ "HQ": {
+  "physical_anchor": "none - builds compiler/software tools that translate classical algorithms for quantum hardware, no physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "quantum software layer selling a compiler/dev-tools platform that runs on third-party quantum hardware; not a hardware maker itself",
+  "true_competitors": ["IONQ", "RGTI", "QBTS", "IBM"],
+  "chain_fit_confidence": "low"
+ },
+ "IART": {
+  "physical_anchor": "manufactures neurosurgical instruments, regenerative tissue matrices and wound-care devices",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "medical device maker selling surgical instruments and biomaterial/tissue products to hospitals; not a robotics platform",
+  "true_competitors": ["STE", "BSX", "MDT", "ZBH", "OMI"],
+  "chain_fit_confidence": "low"
+ },
+ "IBTA": {
+  "physical_anchor": "none - mobile cashback/rewards app, a marketing/software platform with no physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "consumer cashback rewards network monetizing retailer/CPG advertising through a mobile app; the anti-Visa case",
+  "true_competitors": ["QNST", "PYPL"],
+  "chain_fit_confidence": "low"
+ },
+ "ICHR": {
+  "physical_anchor": "manufactures precision gas and chemical fluid-delivery subsystems installed inside semiconductor fabrication tools",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "semiconductor capital-equipment subsystem supplier selling fluid-delivery modules to wafer-fab tool OEMs (Lam, Applied Materials) across all chip types - general chip supply chain, not quantum-specific",
+  "true_competitors": ["UCTT", "LRCX", "AMAT", "FLEX"],
+  "chain_fit_confidence": "low"
+ },
+ "ICUI": {
+  "physical_anchor": "manufactures IV infusion pumps, administration sets and vascular access devices",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "medical device maker of infusion-therapy hardware sold to hospitals; not a robotics platform",
+  "true_competitors": ["BDX", "BAX", "FMS", "MDT", "STE"],
+  "chain_fit_confidence": "low"
+ },
+ "IIIV": {
+  "physical_anchor": "none - vertical-market payments processing and software for government/healthcare/education customers",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "payments/software provider processing electronic payments and selling vertical SaaS; the anti-Visa case, no physical anchor",
+  "true_competitors": ["GPN", "FIS", "JKHY", "TYL", "PAY"],
+  "chain_fit_confidence": "low"
+ },
+ "INDI": {
+  "physical_anchor": "designs automotive semiconductor chips (radar, ADAS vision and connectivity SoCs) for vehicles",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "fabless automotive semiconductor supplier selling ADAS/sensing chips to auto OEMs and tier-1s; an automotive-mobility name, not industrial robotics or quantum",
+  "true_competitors": ["MBLY", "ON", "NXPI", "TXN", "STM", "MCHP"],
+  "chain_fit_confidence": "low"
+ },
+ "INFQ": {
+  "physical_anchor": "builds cold-atom quantum computing hardware and atomic-physics-based precision sensors and clocks",
+  "chains": ["quantum"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "qubit hardware and quantum-sensing platform (neutral/cold-atom technology); pre-scale developer of quantum computers and precision timing/navigation sensors",
+  "true_competitors": ["IONQ", "RGTI", "QBTS", "IQMX"],
+  "chain_fit_confidence": "high"
+ },
+ "INFU": {
+  "physical_anchor": "rents and services ambulatory infusion pumps and biomedical equipment for oncology/home-infusion patients",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "medical device rental/servicing company leasing infusion pumps to providers; not part of an FDT chain",
+  "true_competitors": ["OMI", "BAX", "ICUI", "PDCO", "HSIC"],
+  "chain_fit_confidence": "low"
+ },
+ "INIO": {
+  "physical_anchor": "manufactures large-bore reciprocating gas engines (Jenbacher/Waukesha) used as generator sets for distributed power generation",
+  "chains": ["power_for_ai"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "distributed power-generation equipment OEM selling gas-engine gensets and services for backup/prime power, including datacenter and grid-support applications - the turbines & generation-equipment layer",
+  "true_competitors": ["CAT", "CMI", "GEV", "WWD"],
+  "chain_fit_confidence": "medium"
+ },
+ "INMD": {
+  "physical_anchor": "manufactures RF and energy-based aesthetic medical devices for body contouring",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "aesthetic medical device maker selling minimally invasive RF platforms to clinics; not a robotics/automation name",
+  "true_competitors": ["CUTR"],
+  "chain_fit_confidence": "low"
+ },
+ "INTA": {
+  "physical_anchor": "none - cloud/on-prem SaaS platform for professional-services firm operations (legal, financial), no physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "vertical enterprise software for professional-services firms; no physical anchor",
+  "true_competitors": ["TRI", "LAW"],
+  "chain_fit_confidence": "low"
+ },
+ "INTC": {
+  "physical_anchor": "designs and manufactures general-purpose semiconductors (CPUs) and operates chip fabrication foundries",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "general-purpose semiconductor IDM (CPUs, foundry services); has an early-stage quantum research program (silicon spin qubits, cryo-CMOS control chips) but it is immaterial to revenue - the generic-semis exclusion applies",
+  "true_competitors": ["AMD", "NVDA", "TSM", "QCOM", "MU", "GFS"],
+  "chain_fit_confidence": "low"
+ },
+ "IONQ": {
+  "physical_anchor": "builds trapped-ion quantum computers and sells cloud/on-prem access to them",
+  "chains": ["quantum"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "qubit hardware platform; trapped-ion quantum computer developer selling QCaaS access plus government/enterprise contracts, pre-FCF",
+  "true_competitors": ["RGTI", "QBTS", "INFQ", "IQMX"],
+  "chain_fit_confidence": "high"
+ },
+ "IQMX": {
+  "physical_anchor": "builds superconducting-qubit quantum computers and on-premise quantum computing systems",
+  "chains": ["quantum"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "qubit hardware platform (superconducting) selling full quantum-computer systems to research institutions and governments, pre-revenue/pre-FCF",
+  "true_competitors": ["IONQ", "RGTI", "QBTS", "INFQ"],
+  "chain_fit_confidence": "high"
+ },
+ "IRTC": {
+  "physical_anchor": "manufactures a wearable ECG patch (Zio) for ambulatory cardiac monitoring",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "cardiac diagnostics device/service company selling a wearable monitoring patch plus a data-analysis service; not a robotics platform",
+  "true_competitors": ["BSX", "GEHC", "PHG", "MDT"],
+  "chain_fit_confidence": "low"
+ }
+}

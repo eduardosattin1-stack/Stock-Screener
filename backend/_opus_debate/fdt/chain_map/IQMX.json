@@ -1,0 +1,17 @@
+{
+ "symbol": "IQMX",
+ "physical_anchor": "builds superconducting-qubit quantum computers and on-premise quantum computing systems",
+ "chains": [
+  "quantum"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "qubit hardware platform (superconducting) selling full quantum-computer systems to research institutions and governments, pre-revenue/pre-FCF",
+ "true_competitors": [
+  "IONQ",
+  "RGTI",
+  "QBTS",
+  "INFQ"
+ ],
+ "chain_fit_confidence": "high"
+}

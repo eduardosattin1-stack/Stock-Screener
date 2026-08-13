@@ -1,0 +1,19 @@
+{
+ "symbol": "BEPC",
+ "physical_anchor": "Owns and operates hydroelectric dams, wind farms and utility-scale solar plants generating electricity (corporate share class of the same operating business as BEP)",
+ "chains": [
+  "power_for_ai"
+ ],
+ "business_model": "utility",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Renewable-generation IPP selling firm power under long-dated PPAs, including hyperscaler/datacenter supply deals — same operating asset base and thesis as BEP, distinct listed share class",
+ "true_competitors": [
+  "NEE",
+  "AES",
+  "CWEN",
+  "ORA",
+  "NRG",
+  "VST"
+ ],
+ "chain_fit_confidence": "medium"
+}

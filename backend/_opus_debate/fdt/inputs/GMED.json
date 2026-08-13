@@ -1,0 +1,60 @@
+{
+  "symbol": "GMED",
+  "sector": "Healthcare",
+  "signal_type": "future_disruptive_tech",
+  "company": "Globus Medical, Inc.",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Healthcare\nValuation: Price 81.46 | Fair Value 188.19 | Margin of Safety 131% | P/FCF 19.0x\nRevenue growth: +16.7% YoY | 3-yr CAGR +42.2%\nMargins: Gross 67.4% (expanding) | Net 18.3% | FCF 20.0%\nEPS / guidance delivery: 3.92 latest | +422.7% YoY | 3-yr CAGR +28.4% | beat 6/7 qtrs (86%)\nFCF growth: +45.3% YoY | 3-yr CAGR +78.0%\nReturns / leverage: ROE 7.2% | ROIC 6.2% | Net debt -439M\nForward / signals: Consensus fwd EPS growth +8.5% | Margin -0.31sigma vs hist. peak | Insider buy ratio 0.00\nValuation models (stock page): DCF fair value 42.1 | Buffett fair value 188.2\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -93% | EPV -100% | Graham +60% | OwnerErn -100% | IV15 +24%\nQuality / scores: Bull score 5 | Catalyst score 0.5499999999999999 | Piotroski 8/9 | Altman-Z (solvency) 11.0 | Days to next earnings 2\nAnalyst consensus target: 98.88 (+21% upside)\nPositioning / smart money: Smart-money score 39/100 | Institutional flow 50/100 | Analyst-target velocity -2% (vs yr-ago avg PT)\nTechnical posture (timing context, not thesis): price -3% vs 200d SMA | 59% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2021: rev 958M, NI 149M, EPS 1.44\n  2022: rev 1.02B, NI 190M, EPS 1.85\n  2023: rev 1.57B, NI 123M, EPS 1.07\n  2024: rev 2.52B, NI 103M, EPS 0.75\n  2025: rev 2.94B, NI 538M, EPS 3.92\n  CAGRs: bvps_5y +18.7%, eps_5y +28.4%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-03-31 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 600M | TTM diluted EPS 4.28 | latest-Q EPS YoY +67%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-03-31): NET CASH 515M (cash 630M exceeds total debt 115M, incl. capitalized leases 15M) — a genuine SoP add-back; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 23 sells (239,178sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 98.88 | median 100.00 | high 117.00 | low 80.00\nBreadth: last month: 5 PTs avg 94.20 | last quarter: 8 PTs avg 98.88 | last year: 17 PTs avg 100.71\nNewest individual targets (dated — judge freshness yourself):\n  2026-07-28 UBS: 82.00 (stock was 78.25)\n  2026-07-16 Richard Newitter: 100.00 (stock was 80.85)\n  2026-07-13 Shagun Singh: 115.00 (stock was 79.53)\n  2026-07-08 BMO Capital: 94.00 (stock was 76.20)\n  2026-07-08 Stifel Nicolaus: 80.00 (stock was 78.83)\nNewest PT is 7 day(s) old\n\n=== SEGMENT REVENUE (FMP, 2024-12-31 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nSpine: 2.37B (94%) | Emerging Technology: 154M (6%)",
+  "dossier": "",
+  "chains": [
+    "robotics_automation"
+  ],
+  "business_model": "equipment_services",
+  "physical_anchor": "Robotic-assisted spine/orthopedic surgical navigation platforms (ExcelsiusGPS) plus the spinal implant hardware delivered through them",
+  "commodity_revenue_share": 0.0,
+  "chain_regime": {
+    "robotics_automation": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "robotics_automation",
+    "torque_metrics": false,
+    "commodity_beta_2y": 0.21,
+    "beta_benchmark": "BOTZ",
+    "beta_is_proxy": true,
+    "ndebt_ebitda": -0.5,
+    "commodity_revenue_share": 0.0,
+    "as_of": "2026-08-04",
+    "gm_trajectory": {
+      "direction": "compressing",
+      "gm_recent_to_old": [
+        0.7422,
+        0.6505,
+        0.589,
+        0.6741
+      ],
+      "delta_3y": -0.0681
+    },
+    "rev_yoy": 0.2349,
+    "fcf_margin": 0.1936,
+    "torque_note": "NON-COMMODITY chain (no spot to lever to): no torque metric. commodity_beta_2y is a PROXY factor-exposure read vs BOTZ, not a commodity torque."
+  },
+  "gates": {
+    "ttm_fcf": 600320000,
+    "ttm_ocf": 778511000,
+    "ttm_capex": -178191000,
+    "ttm_ebitda": 879885000,
+    "ttm_revenue": 3100633000,
+    "rev_yoy": 0.2349,
+    "cash_sti": 629851000,
+    "balance_date": "2026-03-31",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 35406863.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.5028610689296489
+  }
+}

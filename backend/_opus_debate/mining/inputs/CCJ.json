@@ -1,0 +1,56 @@
+{
+  "symbol": "CCJ",
+  "sector": "Energy",
+  "signal_type": "mining",
+  "company": "Cameco Corporation",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Energy\nRevenue growth: -2.7% YoY\nReturns / leverage: Net debt -0\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-06-30 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 534M | TTM diluted EPS 0.82 | latest-Q EPS YoY -92%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-06-30): NET CASH 104M (cash 1.11B exceeds total debt 1.01B, incl. capitalized leases 12M) — a genuine SoP add-back; use this, not the scan's net_debt above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 134.00 | median 132.00 | high 175.00 | low 97.00\nBreadth: last month: 3 PTs avg 110.00 | last quarter: 6 PTs avg 124.67 | last year: 13 PTs avg 118.44\nNewest individual targets (dated — judge freshness yourself):\n  2026-08-04 Barclays: 97.00 (stock was 89.72)\n  2026-07-15 Barclays: 104.00 (stock was 91.57)\n  2026-07-13 Truist Financial: 129.00 (stock was 90.20)\n  2026-06-15 Bob Brackett: 135.00 (stock was 106.96)\n  2026-05-21 Barclays: 108.00 (stock was 105.33)\nNewest PT is 0 day(s) old",
+  "dossier": "",
+  "chains": [
+    "uranium_fuel_cycle"
+  ],
+  "business_model": "producer",
+  "physical_anchor": "Mines uranium ore, mills/converts it into U3O8 and UF6, and fabricates nuclear fuel at Canadian and US facilities.",
+  "commodity_revenue_share": 0.75,
+  "chain_regime": {
+    "uranium_fuel_cycle": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "uranium_fuel_cycle",
+    "torque_metrics": true,
+    "commodity_beta_2y": 0.98,
+    "beta_benchmark": "URA",
+    "beta_is_proxy": true,
+    "ndebt_ebitda": -0.1,
+    "commodity_revenue_share": 0.75,
+    "as_of": "2026-08-04",
+    "ebitda_margin_ttm": 0.2486,
+    "ebitda_margin_band": {
+      "band": "low(<25%)",
+      "pct": null,
+      "basis": "fixed_bands",
+      "n_cohort": 1
+    },
+    "fcf_torque_10pct": 0.302,
+    "torque_note": "SYMMETRIC: fcf_torque_10pct is the +/-10% commodity move's % EBITDA swing (read the downside too). beta_is_proxy=True (proxy ETF regression where the spot is off-FMP)."
+  },
+  "gates": {
+    "ttm_fcf": 534445326,
+    "ttm_ocf": 920368468,
+    "ttm_capex": -385923141,
+    "ttm_ebitda": 863754233,
+    "ttm_revenue": 3473995912,
+    "rev_yoy": -0.027,
+    "cash_sti": 1113200118,
+    "balance_date": "2026-06-30",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 193284574.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.09596185367307405
+  }
+}

@@ -1,0 +1,17 @@
+{
+ "symbol": "IONQ",
+ "physical_anchor": "builds trapped-ion quantum computers and sells cloud/on-prem access to them",
+ "chains": [
+  "quantum"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "qubit hardware platform; trapped-ion quantum computer developer selling QCaaS access plus government/enterprise contracts, pre-FCF",
+ "true_competitors": [
+  "RGTI",
+  "QBTS",
+  "INFQ",
+  "IQMX"
+ ],
+ "chain_fit_confidence": "high"
+}

@@ -1,0 +1,19 @@
+{
+ "symbol": "ROK",
+ "physical_anchor": "manufactures physical factory-automation hardware — PLCs, motor control centers, industrial safety and control systems",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Factory/industrial automation equipment and software — PLCs, motor control centers and safety systems sold directly into factory and warehouse automation buildouts; the electrification_grid/nuclear_smr/power_for_ai hints are secondary/overlapping industry noise, robotics_automation is the genuine primary chain.",
+ "true_competitors": [
+  "SIEGY",
+  "ABB",
+  "SU.PA",
+  "HON",
+  "EMR",
+  "6503.T"
+ ],
+ "chain_fit_confidence": "high"
+}

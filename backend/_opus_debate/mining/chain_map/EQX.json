@@ -1,0 +1,19 @@
+{
+ "symbol": "EQX",
+ "physical_anchor": "Operates open-pit mines across the Americas producing gold doré/bullion (Los Filos, Castle Mountain, Greenstone).",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.97,
+ "value_chain_position": "Multi-asset Americas gold producer selling refined gold from company-operated mines.",
+ "true_competitors": [
+  "AGI",
+  "EGO",
+  "CGAU",
+  "IAG",
+  "TXG.TO",
+  "NGD"
+ ],
+ "chain_fit_confidence": "high"
+}

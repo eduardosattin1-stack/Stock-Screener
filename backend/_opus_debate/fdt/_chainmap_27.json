@@ -1,0 +1,182 @@
+{
+ "SIBN": {
+  "physical_anchor": "Titanium triangular implants surgically placed to fuse the sacroiliac joint",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Orthopedic implant maker selling SI-joint fusion hardware; not on any FDT value chain (no robots, no automation platform).",
+  "true_competitors": ["GMED", "ZBH", "SYK", "IART", "OFIX", "CNMD"],
+  "chain_fit_confidence": "low"
+ },
+ "SIMO": {
+  "physical_anchor": "NAND-flash SSD controller chips it designs (fabless) and sells to storage OEMs",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Fabless storage-controller semiconductor designer; generic hardware caught by the quantum industry filter, not a quantum-hardware business.",
+  "true_competitors": ["MRVL", "MU", "WDC", "8299.TW", "2408.TW"],
+  "chain_fit_confidence": "low"
+ },
+ "SKYT": {
+  "physical_anchor": "Fabricates semiconductor wafers at its Minnesota foundry, including specialty superconducting/SFQ chips used as quantum-computer control electronics",
+  "chains": ["quantum"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "US pure-play specialty foundry supplying the cryogenics & control-electronics layer — toll fab for superconducting/SFQ wafers that go into quantum-computer control stacks.",
+  "true_competitors": ["GFS", "TSEM", "TSM", "UMC", "0981.HK", "XFAB.DE"],
+  "chain_fit_confidence": "medium"
+ },
+ "SLNH": {
+  "physical_anchor": "Modular data-center pods it builds and operates at stranded/curtailed renewable-power sites, hosting bitcoin-mining and HPC compute racks",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Behind-the-meter data-center developer monetizing stranded power via crypto-mining/HPC hosting; a power consumer, not an equipment or utility supplier into an FDT chain.",
+  "true_competitors": ["APLD", "CORZ", "WULF", "CIFR", "IREN", "BITF"],
+  "chain_fit_confidence": "low"
+ },
+ "SMCI": {
+  "physical_anchor": "Designs and assembles rack-scale AI/GPU servers and storage systems",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "AI/GPU server and rack integrator; generic compute hardware caught by the quantum filter, no quantum-hardware or power-delivery linkage.",
+  "true_competitors": ["DELL", "HPE", "2382.TW", "0992.HK", "CLS"],
+  "chain_fit_confidence": "low"
+ },
+ "SMR": {
+  "physical_anchor": "Factory-built VOYGR small modular nuclear reactor modules it is commercializing",
+  "chains": ["nuclear_smr"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "SMR & advanced-reactor developer layer — NRC-design-approved 77MWe module, monetizing on dated NRC/COL/first-concrete milestones ahead of revenue.",
+  "true_competitors": ["OKLO", "BWXT", "NNE", "GEV", "3350.T"],
+  "chain_fit_confidence": "high"
+ },
+ "SMTI": {
+  "physical_anchor": "Manufactures and distributes advanced wound-care and surgical biologics products",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Wound-care/surgical-biologics maker; no robotics, automation or grid linkage.",
+  "true_competitors": ["IART", "ORGO", "MDXG", "SNN", "VCEL"],
+  "chain_fit_confidence": "low"
+ },
+ "SNOW": {
+  "physical_anchor": "none identifiable — cloud data-warehousing/AI software platform, no physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Pure-software cloud data platform; fails the physical-anchor test for the robotics/automation chain (anti-Visa rule).",
+  "true_competitors": ["MSFT", "GOOGL", "AMZN", "PLTR", "MDB"],
+  "chain_fit_confidence": "low"
+ },
+ "SNPS": {
+  "physical_anchor": "none identifiable — EDA chip-design/simulation software, including quantum-computing simulation SDKs, but no physical hardware",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Electronic design automation software vendor; sells design/simulation tools, not physical quantum or automation hardware.",
+  "true_competitors": ["CDNS", "SIEGY", "ANSS", "KEYS"],
+  "chain_fit_confidence": "low"
+ },
+ "SOUN": {
+  "physical_anchor": "none identifiable — voice/conversational-AI software licensed into third-party cars, kiosks and call centers",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Voice-AI software layer embedded in others' hardware; no physical product of its own despite the robotics-automation industry hint.",
+  "true_competitors": ["CRNC", "MSFT", "AMZN", "GOOGL"],
+  "chain_fit_confidence": "low"
+ },
+ "SPCE": {
+  "physical_anchor": "Builds and flies suborbital spaceplanes (SpaceShip/mothership vehicles) for space tourism",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Suborbital space-tourism vehicle operator; aerospace, not nuclear/SMR or any other FDT chain despite the industry-filter hint.",
+  "true_competitors": ["RKLB", "SPCX"],
+  "chain_fit_confidence": "low"
+ },
+ "SPCX": {
+  "physical_anchor": "Builds orbital rockets and spacecraft (Falcon, Starship, Dragon) and operates the Starlink satellite constellation",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Launch-vehicle, spacecraft and satellite-constellation manufacturer/operator; aerospace, not a nuclear/SMR chain member despite the industry hint.",
+  "true_competitors": ["RKLB", "NOC", "SPCE"],
+  "chain_fit_confidence": "low"
+ },
+ "SPT": {
+  "physical_anchor": "none identifiable — social-media management SaaS",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Social-media management software; pure SaaS, no physical anchor.",
+  "true_competitors": ["HUBS", "CRM", "MWTR.OL"],
+  "chain_fit_confidence": "low"
+ },
+ "SSYS": {
+  "physical_anchor": "Designs and manufactures industrial 3D printers and additive-manufacturing materials/systems",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Industrial additive-manufacturing (3D printing) hardware maker; not one of the listed robotics_automation layers (factory automation/warehouse robotics/vision/motion-control/surgical/humanoid) and was mis-hinted to quantum by the generic-hardware filter.",
+  "true_competitors": ["DDD", "PRLB", "MTLS", "MKFG"],
+  "chain_fit_confidence": "low"
+ },
+ "ST": {
+  "physical_anchor": "Manufactures sensors and electrical-protection/connectivity components for vehicles and industrial equipment",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Diversified automotive/industrial sensor and electrical-protection supplier; not a grid-transformer/switchgear name and not a robotics motion-control/vision player.",
+  "true_competitors": ["TEL", "APH", "LFUS", "APTV", "ALGM"],
+  "chain_fit_confidence": "low"
+ },
+ "STAA": {
+  "physical_anchor": "Manufactures implantable collamer lenses (ICLs) for vision correction",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Ophthalmic implant maker; manual-surgery lens implants, no robotics or automation platform.",
+  "true_competitors": ["ALC", "JNJ", "BLCO", "AFX.DE"],
+  "chain_fit_confidence": "low"
+ },
+ "STIM": {
+  "physical_anchor": "Manufactures TMS (transcranial magnetic stimulation) devices for treating depression",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Neurostimulation medical-device maker; not a robotics or automation platform.",
+  "true_competitors": ["BWAY.TA", "ECOR"],
+  "chain_fit_confidence": "low"
+ },
+ "STNE": {
+  "physical_anchor": "none identifiable — Brazilian merchant-acquiring/payments network and banking software; card readers are commodity hardware, not a chain-defining anchor",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Payments network and merchant software platform (Brazil) — the canonical 'payments network is never a physical anchor' case.",
+  "true_competitors": ["PAGS", "XYZ", "ADYEN.AS", "NU"],
+  "chain_fit_confidence": "low"
+ },
+ "STRC": {
+  "physical_anchor": "none identifiable — preferred tracking security of a corporate bitcoin-treasury vehicle, no operating physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Preferred equity of a bitcoin-treasury holding company (Strategy/MicroStrategy); a financial instrument, not an operating FDT-chain business.",
+  "true_competitors": ["MSTR", "MARA", "RIOT", "SMLR"],
+  "chain_fit_confidence": "low"
+ },
+ "STRD": {
+  "physical_anchor": "none identifiable — preferred tracking security of a corporate bitcoin-treasury vehicle, no operating physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Preferred equity of a bitcoin-treasury holding company (Strategy/MicroStrategy); a financial instrument, not an operating FDT-chain business.",
+  "true_competitors": ["MSTR", "MARA", "RIOT", "SMLR"],
+  "chain_fit_confidence": "low"
+ }
+}

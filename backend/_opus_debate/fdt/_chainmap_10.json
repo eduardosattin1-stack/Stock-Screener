@@ -1,0 +1,182 @@
+{
+ "PAYC": {
+  "physical_anchor": "none — cloud payroll/HR software platform, no physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "SaaS provider of cloud-based human capital management (payroll, HR, benefits) software; a pure software platform with no physical chain product.",
+  "true_competitors": ["ADP", "PCTY", "WDAY", "DAY", "PYCR"],
+  "chain_fit_confidence": "low"
+ },
+ "PAYO": {
+  "physical_anchor": "none — cross-border digital payments and fintech infrastructure platform",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "digital payments network for cross-border commerce and marketplace sellers; the textbook anti-Visa case — a payments network never carries a physical anchor.",
+  "true_competitors": ["PYPL", "WISE.L", "GPN", "XYZ", "ADYEN.AS"],
+  "chain_fit_confidence": "low"
+ },
+ "PAYP": {
+  "physical_anchor": "none — Japanese mobile QR-code payments and financial super-app platform",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "mobile payments/e-wallet super-app (Japan); a payments network with no physical anchor, same category error as PAYO.",
+  "true_competitors": ["PYPL", "XYZ", "9984.T", "0700.HK", "6178.T"],
+  "chain_fit_confidence": "low"
+ },
+ "PCAR": {
+  "physical_anchor": "manufactures Class-8 heavy-duty trucks (Kenworth, Peterbilt, DAF) and diesel/natural-gas engines",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "commercial-truck OEM and powertrain manufacturer; a real physical anchor but not a grid/nuclear/power/robotics chain participant — the broad Industrial-Machinery filter mis-caught a truck maker.",
+  "true_competitors": ["DTG.DE", "VOLV-B.ST", "8TRA.DE", "CMI", "TRATON"],
+  "chain_fit_confidence": "low"
+ },
+ "PCOR": {
+  "physical_anchor": "none — cloud construction-project-management software platform",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "SaaS platform for construction project/financial management; software only, no physical product.",
+  "true_competitors": ["ADSK", "TRMB", "BSY", "ORCL (Aconex)", "SAGE.L"],
+  "chain_fit_confidence": "low"
+ },
+ "PCTY": {
+  "physical_anchor": "none — cloud payroll/HR software platform, no physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "SaaS provider of cloud-based HR/payroll software; same category as PAYC — pure software, no physical chain product.",
+  "true_competitors": ["PAYC", "ADP", "WDAY", "DAY", "PYCR"],
+  "chain_fit_confidence": "low"
+ },
+ "PDFS": {
+  "physical_anchor": "none — sells yield-analytics software and IP licenses to semiconductor fabs, does not itself manufacture hardware",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "semiconductor yield-management software and characterization-IP licensing; analytics layer, not a physical quantum-hardware maker.",
+  "true_competitors": ["KLAC", "ONTO", "CDNS", "SNPS", "ASML.AS"],
+  "chain_fit_confidence": "low"
+ },
+ "PEGA": {
+  "physical_anchor": "none — low-code CRM/business-process-management software platform",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "enterprise low-code/CRM software vendor; no physical product.",
+  "true_competitors": ["CRM", "APPN", "NOW", "MSFT"],
+  "chain_fit_confidence": "low"
+ },
+ "PEN": {
+  "physical_anchor": "manufactures catheter-based mechanical thrombectomy and aspiration devices, including computer-controlled vascular intervention platforms (e.g., Lightning aspiration system)",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "surgical/interventional robotics layer — physical thrombectomy hardware and computer-assisted vascular intervention systems sold into hospital procedure volume.",
+  "true_competitors": ["ISRG", "SYK", "MDT", "BSX", "JNJ", "NARI"],
+  "chain_fit_confidence": "medium"
+ },
+ "PH": {
+  "physical_anchor": "manufactures precision motion-control and fluid-power components — hydraulics, pneumatics, electromechanical actuators, and filtration systems",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.03,
+  "value_chain_position": "motion control & actuators layer — engineered components sold into industrial automation, aerospace, and robotics OEM builds.",
+  "true_competitors": ["ETN", "HON", "EMR", "AME", "IEX", "6273.T"],
+  "chain_fit_confidence": "high"
+ },
+ "PHG": {
+  "physical_anchor": "manufactures diagnostic imaging equipment (MRI, CT, ultrasound) and image-guided interventional therapy systems",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "diversified medtech conglomerate (imaging, patient monitoring, personal health); a real device maker but a general medtech, not a genuine surgical-robotics chain participant.",
+  "true_competitors": ["GEHC", "SHL.DE", "MDT", "4901.T"],
+  "chain_fit_confidence": "low"
+ },
+ "PLAB": {
+  "physical_anchor": "manufactures photomasks — the physical lithography templates used to print circuit patterns onto semiconductor and flat-panel-display wafers",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "photomask manufacturer supplying the broad semiconductor/FPD industry; a generic semis supply-chain name caught by the quantum filter, not quantum-specific hardware.",
+  "true_competitors": ["AMAT", "ASML.AS", "TOPPAN (private)", "DNP (private)"],
+  "chain_fit_confidence": "low"
+ },
+ "PLTR": {
+  "physical_anchor": "none — enterprise/government data-analytics and AI software platform (Foundry, Gotham, AIP), no physical hardware",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "AI/data-fusion software platform; the textbook anti-Visa case for the quantum industry-keyword filter — software with no physical anchor.",
+  "true_competitors": ["SNOW", "AI", "MSFT", "BAH"],
+  "chain_fit_confidence": "low"
+ },
+ "PLXS": {
+  "physical_anchor": "contract manufacturer that designs and builds complex electronic assemblies and circuit boards for industrial, aerospace/defense, and healthcare customers",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.03,
+  "value_chain_position": "diversified electronics-manufacturing-services (EMS) provider; a real physical anchor but spread across many end-markets rather than monetizing one FDT chain's demand curve.",
+  "true_competitors": ["JBL", "CLS", "SANM", "BHE", "FLEX"],
+  "chain_fit_confidence": "low"
+ },
+ "PNR": {
+  "physical_anchor": "manufactures water treatment, filtration, and pool/pump equipment",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.03,
+  "value_chain_position": "industrial/residential water-treatment and filtration equipment maker; not a grid/nuclear/power/robotics chain participant despite the Industrial-Machinery filter catch.",
+  "true_competitors": ["XYL", "ECL", "WTS", "AOS"],
+  "chain_fit_confidence": "low"
+ },
+ "PODD": {
+  "physical_anchor": "manufactures tubeless wearable insulin-delivery pump devices (Omnipod)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "diabetes-device maker (wearable insulin pump hardware); a real medical device but not a surgical-robotics/automation chain participant.",
+  "true_competitors": ["TNDM", "MDT", "DXCM", "ABT", "ROG.SW"],
+  "chain_fit_confidence": "low"
+ },
+ "POWI": {
+  "physical_anchor": "designs and fabs high-voltage semiconductor ICs for AC-DC and motor-drive power conversion",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "power-conversion semiconductor maker (chargers, appliances, EV/industrial power supplies); a generic power-semis name caught by the broad Semiconductors filter, not quantum control electronics.",
+  "true_competitors": ["IFX.DE", "ON", "STM", "TXN", "MPWR", "NVTS"],
+  "chain_fit_confidence": "low"
+ },
+ "POWL": {
+  "physical_anchor": "manufactures medium/high-voltage switchgear, motor control centers, and integrated power-control room systems",
+  "chains": ["electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.07,
+  "value_chain_position": "transformers & switchgear layer — a named taxonomy anchor_example; sells electrical distribution/protection equipment into utility, industrial, and datacenter customers.",
+  "true_competitors": ["ETN", "HUBB", "NVT", "ABBN.SW", "SU.PA", "ENR.DE"],
+  "chain_fit_confidence": "high"
+ },
+ "PRIM": {
+  "physical_anchor": "builds and installs physical power-delivery, pipeline, and utility-scale renewable-energy infrastructure as an EPC contractor",
+  "chains": ["power_for_ai", "electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "grid EPC & interconnection layer — construction contractor delivering transmission, substation, and utility-scale power projects, the same slot the taxonomy notes assign to Quanta Services (PWR).",
+  "true_competitors": ["PWR", "MYRG", "MTZ", "EME", "DY"],
+  "chain_fit_confidence": "high"
+ },
+ "PSIX": {
+  "physical_anchor": "designs and manufactures internal-combustion engines and natural-gas/propane power-generation systems (gensets)",
+  "chains": ["power_for_ai"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "turbines & generation equipment layer — engine/genset maker supplying backup and prime power, including emerging behind-the-meter datacenter power-generation demand.",
+  "true_competitors": ["GNRC", "CAT", "CMI", "RR.L", "WRT1V.HE"],
+  "chain_fit_confidence": "medium"
+ }
+}

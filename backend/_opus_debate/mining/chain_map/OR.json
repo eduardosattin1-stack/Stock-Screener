@@ -1,0 +1,19 @@
+{
+ "symbol": "OR",
+ "physical_anchor": "holds royalty and stream contracts entitling it to a fixed percentage of gold and silver ounces poured at partner mines",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "royalty_streamer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "royalty/streaming pure-play — no operating costs, direct claim on physical ounces produced by third-party mines",
+ "true_competitors": [
+  "WPM",
+  "FNV",
+  "RGLD",
+  "SAND",
+  "TFPM",
+  "UROY"
+ ],
+ "chain_fit_confidence": "high"
+}

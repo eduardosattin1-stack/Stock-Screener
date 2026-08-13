@@ -1,0 +1,20 @@
+{
+ "symbol": "STRL",
+ "physical_anchor": "Physically builds and grades data-center/e-commerce distribution-center sites and executes electrical/grid-interconnection civil construction — genuine EPC/construction on physical infrastructure.",
+ "chains": [
+  "power_for_ai",
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.02,
+ "value_chain_position": "E-Infrastructure/EPC contractor — site development and civil/electrical construction for data centers and grid-interconnection projects (toll-taker on the interconnection-queue backlog).",
+ "true_competitors": [
+  "PWR",
+  "MTZ",
+  "EME",
+  "ACM",
+  "IESC",
+  "MYRG"
+ ],
+ "chain_fit_confidence": "high"
+}

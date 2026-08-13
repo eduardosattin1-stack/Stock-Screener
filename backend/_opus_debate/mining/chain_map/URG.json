@@ -1,0 +1,19 @@
+{
+ "symbol": "URG",
+ "physical_anchor": "In-situ recovery (ISR) mined uranium (U3O8) from the Lost Creek project, Wyoming",
+ "chains": [
+  "uranium_fuel_cycle"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Operating ISR uranium producer at Lost Creek, Wyoming, selling U3O8 under term and spot contracts",
+ "true_competitors": [
+  "UEC",
+  "EU",
+  "DNN",
+  "CCJ",
+  "PEN.AX",
+  "GLO.TO"
+ ],
+ "chain_fit_confidence": "high"
+}

@@ -1,0 +1,20 @@
+{
+ "symbol": "XE",
+ "physical_anchor": "designs and is building the Xe-100 small modular nuclear reactor (TRISO-fueled) for utility and industrial/AI-datacenter power customers",
+ "chains": [
+  "nuclear_smr",
+  "power_for_ai"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "pre-revenue SMR & advanced-reactor developer advancing NRC licensing milestones toward first deployment, incl. a dated AI-datacenter power tie-up (Amazon)",
+ "true_competitors": [
+  "SMR",
+  "OKLO",
+  "NNE",
+  "BWXT",
+  "LEU",
+  "CEG"
+ ],
+ "chain_fit_confidence": "high"
+}

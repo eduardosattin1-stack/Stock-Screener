@@ -1,0 +1,19 @@
+{
+ "symbol": "AGX",
+ "physical_anchor": "Engineers, procures and constructs gas-fired power generation plants and grid interconnection infrastructure (Gemma Power Services)",
+ "chains": [
+  "power_for_ai"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.03,
+ "value_chain_position": "Power-plant EPC contractor building/commissioning generation capacity into utility and datacenter-driven demand queues",
+ "true_competitors": [
+  "PWR",
+  "MYRG",
+  "MTZ",
+  "IESC",
+  "FLR",
+  "ACM"
+ ],
+ "chain_fit_confidence": "high"
+}

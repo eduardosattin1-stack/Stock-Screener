@@ -1,0 +1,20 @@
+{
+ "symbol": "QUBT",
+ "physical_anchor": "Manufactures photonic quantum-computing systems (the Dirac series) built on its own thin-film lithium-niobate (TFLN) photonic-chip foundry — physical hardware.",
+ "chains": [
+  "quantum"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Qubit hardware platform layer (photonic) plus an in-house TFLN photonic-chip foundry — a vertically-integrated small-cap spanning the photonics and qubit-hardware layers, pre-commercial revenue funded by dated program/pilot contracts.",
+ "true_competitors": [
+  "IONQ",
+  "RGTI",
+  "QBTS",
+  "QNT",
+  "PsiQuantum (private)",
+  "Xanadu Quantum (private)",
+  "ORCA Computing (private)"
+ ],
+ "chain_fit_confidence": "high"
+}

@@ -1,0 +1,173 @@
+{
+ "CRML": {
+  "physical_anchor": "Rare-earth (Tanbreez, Greenland) and lithium (Wolfsberg, Austria) mineral deposits it is permitting and developing toward extraction",
+  "chains": ["rare_earth_strategic"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.9,
+  "value_chain_position": "Pre-production developer of the Tanbreez REE-zirconium deposit and Wolfsberg lithium project; negligible current ore/concentrate sales",
+  "true_competitors": ["MP", "USAR", "LYC.AX", "ARU.AX", "PEK.AX", "TMRC", "ILU.AX"],
+  "chain_fit_confidence": "high"
+ },
+ "CTGO": {
+  "physical_anchor": "Gold doré/concentrate produced at the Manh Choh mine (Tetlin, Alaska), toll-processed via the Kinross-operated JV",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Non-operating 30% JV partner receiving gold production cash flow from the Manh Choh mine, ore trucked to Kinross's Fort Knox mill",
+  "true_competitors": ["KGC", "AEM", "NEM", "HL", "AG", "GAU", "DC", "IAUX"],
+  "chain_fit_confidence": "high"
+ },
+ "DC": {
+  "physical_anchor": "Gold ore at the Richmond Hill and Maitland deposits in the historic Homestake District, South Dakota, pre-construction",
+  "chains": ["precious_metals"],
+  "business_model": "developer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Pre-revenue gold developer advancing permitting and feasibility on Black Hills, SD deposits",
+  "true_competitors": ["IAUX", "HYMC", "GAU", "NEM", "AEM", "CDE", "PAAS"],
+  "chain_fit_confidence": "high"
+ },
+ "DNN": {
+  "physical_anchor": "Uranium ore and yellowcake (U3O8) from the Wheeler River ISR project and McClean Lake mill toll-processing, Saskatchewan",
+  "chains": ["uranium_fuel_cycle"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.95,
+  "value_chain_position": "ISR-stage uranium developer/near-producer (Phoenix deposit at Wheeler River) plus a toll-milling revenue stream via the McClean Lake JV",
+  "true_competitors": ["CCJ", "UEC", "UUUU", "NXE", "EU", "UROY", "LEU"],
+  "chain_fit_confidence": "high"
+ },
+ "DRD": {
+  "physical_anchor": "Gold recovered by reprocessing surface mine-tailings dumps around Johannesburg and the West Rand",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Producer extracting gold from historical tailings retreatment (surface operations only, no underground mining)",
+  "true_competitors": ["AU", "HMY", "GFI", "B", "NEM", "AEM"],
+  "chain_fit_confidence": "high"
+ },
+ "ECVT": {
+  "physical_anchor": "Regenerated sulfuric acid and silica-based catalysts it manufactures for refining, polyethylene and emission-control customers",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Specialty-chemicals/catalyst manufacturer selling into refining and petrochemical customers - not a mining or metals company",
+  "true_competitors": ["ECL", "WLK", "CE", "ASH", "GRA", "HUN"],
+  "chain_fit_confidence": "low"
+ },
+ "EMN": {
+  "physical_anchor": "Specialty plastics, acetate tow and chemical intermediates it manufactures from petrochemical feedstocks",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Diversified specialty-chemicals producer (fibers, plastics, coatings) running on petrochemical feedstock - not mining/metals",
+  "true_competitors": ["DOW", "LYB", "CE", "HUN", "DD", "PPG"],
+  "chain_fit_confidence": "low"
+ },
+ "ESI": {
+  "physical_anchor": "Specialty chemicals (solder alloys, plating chemistries, electronic-assembly materials) it formulates for electronics and industrial customers",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Electronics/industrial specialty-chemicals formulator - not a miner or metal producer",
+  "true_competitors": ["DD", "AVNT", "CBT", "ENTG", "MKSI", "ECL"],
+  "chain_fit_confidence": "low"
+ },
+ "EU": {
+  "physical_anchor": "Uranium extracted via in-situ recovery wellfields at Alta Mesa and Rosita, South Texas",
+  "chains": ["uranium_fuel_cycle"],
+  "business_model": "producer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "ISR uranium producer with active South Texas wellfields selling U3O8 under term/spot contracts",
+  "true_competitors": ["UEC", "UUUU", "CCJ", "DNN", "NXE", "URG"],
+  "chain_fit_confidence": "high"
+ },
+ "FUL": {
+  "physical_anchor": "Industrial adhesives, sealants and specialty chemical formulations it manufactures for packaging, construction and durable-goods customers",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Global adhesives/specialty-chemicals manufacturer - not a miner or metals producer",
+  "true_competitors": ["SIKA.SW", "MMM", "AVY", "HNKG.DE", "ARKAY.PA", "DD"],
+  "chain_fit_confidence": "low"
+ },
+ "GAU": {
+  "physical_anchor": "Gold ore mined and processed (CIL) at the Asanko Gold Mine, Ghana",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Sole owner-operator gold producer at the Asanko mine in Ghana following the 2023-24 JV buyout",
+  "true_competitors": ["AEM", "NEM", "B", "GOLD.TO", "AU", "IAG", "EGO"],
+  "chain_fit_confidence": "high"
+ },
+ "GEVO": {
+  "physical_anchor": "Renewable isobutanol and sustainable aviation fuel it produces from corn/biomass feedstock",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Renewable-fuels producer (SAF, isobutanol) on the agricultural/biofuel chain - not mining or metals",
+  "true_competitors": ["AMRS", "REGI", "GPRE", "DAR", "CLNE"],
+  "chain_fit_confidence": "low"
+ },
+ "GMTL": {
+  "physical_anchor": "Tungsten (plus antimony and gold) mineralization at the Pilot Mountain project, Nevada, currently being drilled and permitted",
+  "chains": ["rare_earth_strategic"],
+  "business_model": "developer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Pre-revenue developer advancing the Pilot Mountain tungsten-antimony deposit toward a US-strategic-metals mine",
+  "true_competitors": ["MP", "USAR", "THM.V", "ASM.V", "TMRC"],
+  "chain_fit_confidence": "high"
+ },
+ "GROY": {
+  "physical_anchor": "Royalty and stream interests over gold (and some silver/copper) production at third-party mines",
+  "chains": ["precious_metals"],
+  "business_model": "royalty_streamer",
+  "commodity_revenue_share": 0.9,
+  "value_chain_position": "Gold-focused royalty/streaming company collecting NSR/stream payments across a diversified portfolio of producing and development-stage mines",
+  "true_competitors": ["WPM", "FNV", "RGLD", "OR", "ELE", "SAND.TO"],
+  "chain_fit_confidence": "high"
+ },
+ "GSM": {
+  "physical_anchor": "Ferrosilicon, silicon metal and manganese-based alloys it smelts from mined quartz and ore for steel, aluminum and chemical customers",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.15,
+  "value_chain_position": "Vertically-integrated ferroalloy/silicon-metal smelter selling smelted alloy products, not raw ore/concentrate - a converter, not a chain producer",
+  "true_competitors": ["ELK.OL", "WCH.DE", "OMH.AX", "RIMA3.SA"],
+  "chain_fit_confidence": "low"
+ },
+ "HYMC": {
+  "physical_anchor": "Gold and silver ore at the Hycroft heap-leach mine, Nevada, currently paused for a mill/POX expansion",
+  "chains": ["precious_metals"],
+  "business_model": "developer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Nevada gold-silver producer transitioning from heap-leach to a milling/oxidation process; zero current revenue during the expansion pause",
+  "true_competitors": ["IAUX", "DC", "GAU", "AG", "PAAS", "CDE"],
+  "chain_fit_confidence": "high"
+ },
+ "IAUX": {
+  "physical_anchor": "Gold-silver ore mined and processed at Ruby Hill, Granite Creek and McCoy-Cove, Nevada",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Multi-mine Nevada gold-silver producer/developer with active production plus growth projects funded by production cash flow",
+  "true_competitors": ["HYMC", "DC", "GAU", "CDE", "HL", "AG", "PAAS"],
+  "chain_fit_confidence": "high"
+ },
+ "IDR": {
+  "physical_anchor": "Gold ore mined and milled at the Golden Chest mine, Idaho, alongside a rare-earth-bearing (monazite) tailings stockpile",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Underground gold producer in Idaho's Coeur d'Alene district; monazite/REE by-product recovery from tailings is an unmonetized optionality",
+  "true_competitors": ["HL", "CDE", "AG", "GAU", "IAUX", "PAAS"],
+  "chain_fit_confidence": "high"
+ },
+ "IE": {
+  "physical_anchor": "Copper (and gold/nickel) mineralization at the Santa Cruz project, Arizona, drilled using its Typhoon geophysical technology",
+  "chains": ["copper_mining"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.7,
+  "value_chain_position": "Pre-production copper developer (Santa Cruz, Arizona) that also sells its proprietary Typhoon geophysical exploration technology as a minority equipment/services revenue line",
+  "true_competitors": ["FCX", "ERO", "HBM", "TECK", "TRQ", "NAK"],
+  "chain_fit_confidence": "high"
+ }
+}

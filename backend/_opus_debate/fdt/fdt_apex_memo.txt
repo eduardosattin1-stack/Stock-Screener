@@ -1,0 +1,193 @@
+FUTURE DISRUPTIVE TECH - LANE A APEX MEMO, as of 11 August 2026.
+
+Rubric And Weighting
+Four pillars carry roughly 25 points each, applied only to names that clear the gates: pricing power
+and margin direction; the order book and its dated milestones; capital discipline and the balance
+sheet; and a valuation guard. The guard is a guard only. It can cut a position's size or veto a name
+outright, but it was never allowed to lift one name above another that passed the first three pillars
+cleanly. Two seats are held despite the shares trading above our own reconciled value (GE Vernova
+about 16% above, Intuitive Surgical about 18% above); in both cases the guard took its deduction in
+the size, not in the ranking. There is no commodity tilt in this book and none was applied: where a
+commodity appears - copper into connectors and grid gear, natural gas into power economics - it is an
+input cost and therefore a margin headwind, never a revenue tailwind.
+
+Data Quality - A Parsing Error You Should Know About
+The input file's margin-of-safety number is wrong for six names, and the error is systematic rather
+than random. The builder reads the fair value out of the analyst's prose before it reads the typed
+number, and the text pattern it uses grabs whatever digits follow the words "base case". So a fair
+value written as "$370 per share (base case, 24-month horizon)" is read as $24, and the file then
+reports a margin of safety of -92.6% for a name that is genuinely about 14% below our reconciled
+value. The six affected names in this file are Huntington Ingalls (file says -92.6%, true +14.1%),
+Keysight (-94.7%, true -11.8%), General Dynamics (-95.3%, true -16.0%), Woodward (-95.2%, true
+-6.6%), Crane (-92.0%, true -2.8%) and Leonardo DRS (+4,380.5%, true -16.0%); four more are distorted
+more mildly where the parser averaged two unrelated numbers (Flowserve, Corning, Teradyne, Powell).
+Every guard reading in this memo and in the published rows uses the typed reconciled fair value
+against the traded price, which is the number the analysts actually reached. Taken at face value the
+file would have vetoed our best-value seat, so the correction matters: uncorrected, six of thirty-six
+names would have been sent through a veto that none of them earns.
+
+Names Excluded Or Capped, With The Reason
+- Credibility check, excluded: Power Solutions International. The interrogator scored its management
+  credibility at the bottom of the scale and marked the trajectory as turning rather than improving;
+  a re-examination completed this week did not repair it. Its own margin line is fixed-cost absorption
+  recovering from a botched capacity ramp, not pricing power. It is not seatable at any size.
+- Credibility check, capped: none. No other name in the file carries a capped credibility read.
+- Solvency gate: no exclusions. Every one of the thirty-six names clears the funded-debt test; the
+  weakest readings are Zimmer Biomet at 3.19 times and Eaton at 3.41 times, and neither is seated.
+- Valuation guard, deductions taken: GE Vernova (-13.7%, cut to 0.30 units, the smallest seat in the
+  book), Intuitive Surgical (-15.1%, 0.70 units), Keysight (-11.8%, 0.75 units) and Emerson (-4.0%,
+  0.70 units). No seat is capped at the guard's half-unit floor.
+- Valuation guard, vetoes: none. Once the parsing error is corrected, not one name in the file sits
+  40% or more above our reconciled value. The deepest genuine gap is Argan at -38.7%, which is
+  correctly parsed, sits just inside the veto line, and is not seated for other reasons.
+- Cycle-read rule: not triggered. All five chains read neutral this week, so no seat needed a written
+  insulation argument to be sized above a half unit.
+- Mid-build cash-flow rule: not triggered. No name in the file is running positive operating cash flow
+  with negative free cash flow, so the three-quarter-unit clamp binds nothing.
+
+Per-Seat Order Book - What It Rests On And What Breaks It
+- Constellation Energy: not a backlog but a signed contract book - more than 1,100 megawatts to Meta
+  for twenty years at Clinton, roughly 176 megawatts to Walmart from Dresden signed 23 June 2026 for
+  fifteen-year terms starting 2029 and 2030, and the Crane restart guided to the second half of 2027.
+  Breaks if the regional capacity auction closing 15 December 2026 clears weakly or the Crane restart
+  date slips.
+- Vertiv: $15.0 billion of backlog disclosed 11 February 2026, about one year of guided 2026 revenue,
+  on orders taken at 2.9 times revenue billed. Breaks if the late-October 2026 revenue print misses
+  the guided 34-36% organic growth; the company no longer publishes the order book quarterly, so that
+  print is the only interim evidence.
+- GE Vernova: $176 billion of backlog at 30 June 2026, about 3.8 times expected 2026 revenue, orders
+  taken at 2.2 times revenue billed, and gas turbines under contract at 116 gigawatts against 46
+  entering 2025. Breaks if the 125-gigawatt year-end target is missed or backlog margin stops rising.
+- TE Connectivity: a record $5.7 billion of orders in the June 2026 quarter, up 27% and the fifth
+  consecutive quarterly increase, orders at 1.1 times revenue billed. Breaks at the late-October 2026
+  full-year report if the fiscal-2027 outlook does not confirm the visibility management claims.
+- Huntington Ingalls: $57.3 billion of backlog at 30 June 2026, about 4.3 times annual revenue,
+  rising toward roughly $80 billion - close to six times revenue - once the $76.6 billion Navy award
+  of 29 July 2026 books in the third quarter. Breaks if that booking slips or the carrier CVN 79
+  acceptance and the late-2026 SSN 800 and LPD 30 deliveries slide.
+- Keysight: orders above $2.1 billion in the April 2026 quarter, up 56% and running roughly 20% above
+  revenue billed. The weakest order book among the eight because it is measured in months and carries
+  no dated contractual milestone; breaks on a single quarter of test spending digesting.
+- Intuitive Surgical: no order book exists, and inventing one would be dishonest. The equivalent is an
+  installed fleet of 11,710 systems at the end of the June 2026 quarter, up 12%, with 468 placed in
+  the quarter against 395. Breaks if quarterly placements fall below the prior-year figure.
+- Emerson: five consecutive quarters of orders exceeding sales, with backlog up 9% year on year as
+  confirmed 5 May 2026. Breaks the first quarter orders fall below sales.
+
+Shared-Axis Stress, Argued Against The Measured Correlations
+The measured two-year weekly correlations for this slate average 0.36 across all pairs, with three
+pairs at or above 0.60: Vertiv and GE Vernova at 0.67, TE Connectivity and Emerson at 0.61, and
+Keysight and Emerson at 0.61. Those are real numbers and the stress test is argued against them
+rather than asserted around them.
+- Data-centre power and hyperscaler contracts (three names: Constellation Energy, Vertiv, GE Vernova).
+  This is the book's genuine concentration and the measured tape agrees: Vertiv and GE Vernova are the
+  most correlated pair in the slate at 0.67. We kept all three rather than diversifying, because each
+  sits on a different rung - one sells the electrons under twenty-year contract, one sells the room
+  hardware, one sells the turbines and the grid gear - and because the alternates that would replace a
+  leg (Comfort Systems, Sterling Infrastructure) sit on the same rung as one we already hold and would
+  not reduce the exposure. Resolution: kept with a written cap of 1.55 combined units across the three,
+  which is where they are sized today and which the deterministic layer will hold.
+- The cross-chain pair the rules require us to check explicitly - power for artificial intelligence
+  together with nuclear and small modular reactors, which are the same bet on data-centre power demand
+  - is seated, and it meets inside a single name: Constellation Energy rides both chains. Huntington
+  Ingalls is the other nuclear seat, and it is deliberately not a data-centre bet at all: its revenue
+  is a multi-year defence appropriation. So the pair is flagged, and it is contained by the fact that
+  only one of the two nuclear seats touches data-centre demand. The 1.50-unit cap across Constellation
+  Energy and Huntington Ingalls records the chain concentration in numbers.
+- Global growth and industrial capital spending (two names: TE Connectivity, Emerson). Measured at
+  0.61, the second-highest pair in the book. Kept rather than diversified because roughly two thirds
+  of Emerson's revenue is maintenance on an installed base and TE Connectivity's order book already
+  covers the next fiscal year, so the two do not depend on the same incremental order. Resolution:
+  kept with a cap of 1.45 combined units.
+- Long-duration multiples and the rate axis (two names: Keysight, Intuitive Surgical). No measured
+  pair correlation is flagged between them; the interesting fact is that Keysight's strongest measured
+  link is to Emerson at 0.61, an industrial, not to any long-duration name. That is evidence Keysight
+  trades as an instrument maker levered to capital spending rather than as a rate-sensitive growth
+  multiple, which weakens rather than strengthens the case for treating this as a tight cluster. Kept
+  with a cap of 1.45 combined units on the grounds that a sharp rate move would still hit both.
+- Single-customer concentration: only Huntington Ingalls carries it, selling almost entirely to the US
+  Navy. This is exactly why General Dynamics stays an alternate: it shares the same 29 July 2026
+  submarine award, so seating both would have turned a one-name exposure into a two-name one.
+
+Rise And Fall Against The Prior Slate
+The prior slate, written 4 August 2026, was Constellation Energy, Vertiv, GE Vernova, TE Connectivity,
+Huntington Ingalls, Keysight, Intuitive Surgical and Emerson. It is unchanged, and the scores are
+unchanged: Constellation Energy 88, Vertiv 86, TE Connectivity 83, GE Vernova 82, Keysight 80,
+Huntington Ingalls 78, Intuitive Surgical 77, Emerson 72. That is a deliberate result, not inertia.
+Only two of the thirty-six records in this file were re-examined this week - Power Solutions
+International and nLight - and neither produced a fact that displaces a seat: the first is excluded on
+credibility, and the second is a laser maker whose operating profit is close to zero, which makes its
+apparently strong balance-sheet grade an artefact of a near-zero profit denominator rather than
+strength. Every other record carries the same evidence that produced last week's ranking, and
+re-shuffling a book on unchanged evidence is churn, not judgement. The alternate bench is also
+unchanged: Comfort Systems 85, AMETEK 84, Powell 79, Woodward 78, General Dynamics 77.
+
+Rotation, Reconciled To The Ledger
+The ledger records eight held names and no drops. Every one is kept and none is broken.
+- Constellation Energy: keep. Contract book unchanged and still dated; price $268.73 against a break
+  level of $205.
+- Vertiv: keep. Margin widened 550 basis points year on year on revenue up 24% in the June 2026
+  quarter; price $273.35 against a break level of $165.
+- GE Vernova: keep. Backlog $176 billion at 30 June 2026 and 116 gigawatts of gas turbines under
+  contract; price $1,019.74 against a break level of $690.
+- TE Connectivity: keep. Record $5.7 billion of orders in the June 2026 quarter; price $215.87 against
+  a break level of $165.
+- Huntington Ingalls: keep. The $76.6 billion Navy award of 29 July 2026 has still not booked; price
+  $324.21 against a break level of $235.
+- Keysight: keep. Best quarter in company history in April 2026, orders above $2.1 billion; price
+  $342.48 against a break level of $205.
+- Intuitive Surgical: keep. 468 systems placed in the June 2026 quarter against 395; margin guidance
+  raised 16 July 2026; price $365.33 against a break level of $250.
+- Emerson: keep, and on merit rather than tolerance. Five consecutive quarters of orders above sales;
+  price $154.15 against a break level of $118. The two robotics-chain names that could have taken the
+  seat are both worse: the chip-test and cobot maker would re-cluster on the same semiconductor-test
+  factor as our quantum seat, and the factory-automation rival's revenue is falling 17% year on year.
+No name was dropped, so there is no broken-thesis line to write, and no name is re-added, so no
+statement of what changed since a drop is required.
+
+Bear Rebuttal - The Strongest Case Against Each Seat
+- Constellation Energy: if the capacity auction closing 15 December 2026 clears under its
+  administrative price ceiling and the Crane restart slips past 2027, the two nearest proof points
+  both fail and the shares re-rate toward the adverse case of $180.
+- Vertiv: the company stopped publishing its order book quarterly in February 2026, so a buyer today
+  is trusting a $15.0 billion figure that is six months old in the fastest-moving spending cycle in
+  the market.
+- GE Vernova: we would be paying about 16% more than our own reconciled value for an order book that
+  is already signed at fixed prices, so any slippage in delivery or margin conversion comes straight
+  out of the buyer's pocket.
+- TE Connectivity: roughly half the revenue still rides vehicle production, and a car cycle that rolls
+  over would swamp the data-centre and grid growth long before the fiscal-2027 outlook arrives.
+- Huntington Ingalls: cash conversion is the thinnest in the book at under 3% of revenue, and a
+  shipbuilder with a record order book that cannot turn it into cash is a company that has sold a
+  great deal of work at the wrong price.
+- Keysight: the order book is measured in months rather than years and carries no dated contractual
+  milestone, so one quarter of artificial-intelligence test spending digesting removes the whole
+  reason to own it.
+- Intuitive Surgical: the competitive shelter is wide but thinning, and rival platforms that lock
+  instrument choice at the point of purchase attack precisely the recurring revenue that is the entire
+  investment case.
+- Emerson: gross margin has stopped expanding, which means the toll collector is not taking price, and
+  if orders normalise from five quarters above sales the seat has neither growth nor pricing power to
+  fall back on.
+
+Chain Coverage
+No chain seated zero names this week. The count is three in power for artificial intelligence
+(Constellation Energy, Vertiv, GE Vernova), three in electrification and grid (Vertiv, GE Vernova, TE
+Connectivity - two of them two-chain names), two in nuclear and small modular reactors (Constellation
+Energy, Huntington Ingalls), two in robotics and automation (Intuitive Surgical, Emerson) and one in
+quantum (Keysight). The single quantum seat is the honest read rather than a screen failure: the
+profitable quantum-adjacent cohort in this file is five names, and of those, one has an operating
+profit close to zero, one converts barely 1% of revenue to cash, one carries a material competitive
+threat with almost no cash conversion, and the remaining two are a probe-card maker and a fibre
+supplier whose order evidence is thinner than the instrument maker we hold. Padding the chain to look
+diversified would be the failure; one seat is what the evidence supports.
+
+A Note On How Weight Is Published
+This book publishes equal-weighted, so a chain's published share is simply its seat count: three of
+eight is 37.5%, which is why power for artificial intelligence and electrification and grid both show
+above the 30% guideline in the exposure table. That is arithmetic under equal weighting, not
+concentration drift, and the constraint that actually binds the published book is the limit of three
+names per chain, which is respected. Measured on the sizes recorded here - 5.20 units in total - every
+chain sits inside 30%: power for artificial intelligence 29.8%, electrification and grid 29.8%,
+nuclear 28.8%, robotics 26.9%, quantum 14.4%. Those sizes are the audit trail that would decide the
+book if equal weighting were ever switched off.

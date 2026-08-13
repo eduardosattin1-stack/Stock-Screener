@@ -1,0 +1,20 @@
+{
+ "symbol": "DC",
+ "physical_anchor": "Gold ore at the Richmond Hill and Maitland deposits in the historic Homestake District, South Dakota, pre-construction",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Pre-revenue gold developer advancing permitting and feasibility on Black Hills, SD deposits",
+ "true_competitors": [
+  "IAUX",
+  "HYMC",
+  "GAU",
+  "NEM",
+  "AEM",
+  "CDE",
+  "PAAS"
+ ],
+ "chain_fit_confidence": "high"
+}

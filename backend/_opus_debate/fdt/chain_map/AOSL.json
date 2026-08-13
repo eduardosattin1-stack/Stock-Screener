@@ -1,0 +1,18 @@
+{
+ "symbol": "AOSL",
+ "physical_anchor": "designs and fabricates power semiconductor discretes (MOSFETs/power ICs) used in power conversion for servers, EVs and industrial motor drives",
+ "chains": [
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Power management & connectors layer — power-conversion silicon feeding datacenter, EV and grid-adjacent electrification demand",
+ "true_competitors": [
+  "ON",
+  "IFX.DE",
+  "STM",
+  "VSH",
+  "DIOD"
+ ],
+ "chain_fit_confidence": "medium"
+}

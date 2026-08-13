@@ -1,0 +1,19 @@
+{
+ "symbol": "TRMB",
+ "physical_anchor": "GNSS receivers, laser positioning, and machine-control guidance hardware that automate construction, agriculture, and surveying equipment",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Machine-vision & positioning-sensor toll-taker — sells GNSS/guidance hardware that automates off-road construction and agricultural equipment",
+ "true_competitors": [
+  "Topcon Corp (7732.T)",
+  "Hexagon AB (HEXA-B.ST)",
+  "Deere & Co Precision Ag (DE)",
+  "CNH Industrial Precision (CNH)",
+  "Cognex Corp (CGNX)",
+  "FARO Technologies (FARO)"
+ ],
+ "chain_fit_confidence": "medium"
+}

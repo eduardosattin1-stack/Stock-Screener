@@ -1,0 +1,19 @@
+{
+ "symbol": "NB",
+ "physical_anchor": "Developing the Elk Creek niobium-scandium-titanium-rare earth deposit in Nebraska, pre-production, working toward a construction financing decision.",
+ "chains": [
+  "rare_earth_strategic"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.85,
+ "value_chain_position": "Strategic-metals developer (niobium primary, scandium/titanium/rare-earth byproducts) — niobium is a textbook export-chokepoint strategic metal (CBMM/Brazil dominance).",
+ "true_competitors": [
+  "CBMM (private, Brazil)",
+  "Magris Resources (private)",
+  "Texas Mineral Resources (TMRC)",
+  "USA Rare Earth (USAR)",
+  "Ucore Rare Metals (UURAF)",
+  "Defense Metals (DEFTF)"
+ ],
+ "chain_fit_confidence": "high"
+}

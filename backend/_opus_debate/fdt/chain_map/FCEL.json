@@ -1,0 +1,20 @@
+{
+ "symbol": "FCEL",
+ "physical_anchor": "Manufactures and operates stationary fuel-cell power-generation platforms (SureSource) that produce electricity and hydrogen on-site.",
+ "chains": [
+  "power_for_ai"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Generation-equipment layer of power_for_ai: sells/services distributed fuel-cell generation platforms that can deliver firm behind-the-meter power, including to data-center-class loads.",
+ "true_competitors": [
+  "BE",
+  "PLUG",
+  "BLDP",
+  "CMI",
+  "CWR.L",
+  "ITM.L",
+  "036200.KQ"
+ ],
+ "chain_fit_confidence": "medium"
+}

@@ -1,0 +1,20 @@
+{
+ "symbol": "PPTA",
+ "physical_anchor": "Developing the Stibnite Gold-Antimony deposit in Idaho — a permitted, DoD/EXIM-backed construction-stage project producing both gold and strategic antimony.",
+ "chains": [
+  "precious_metals",
+  "rare_earth_strategic"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.9,
+ "value_chain_position": "Dual-commodity permitted/construction-stage developer — gold (precious metals) and antimony (a named export-chokepoint strategic metal with US government price-floor/stockpile backing).",
+ "true_competitors": [
+  "United States Antimony Corp (UAMY)",
+  "NioCorp (NB)",
+  "MP Materials (MP)",
+  "i-80 Gold (IAUX)",
+  "Hycroft Mining (HYMC)",
+  "Vista Gold (VGZ)"
+ ],
+ "chain_fit_confidence": "high"
+}

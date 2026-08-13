@@ -1,0 +1,19 @@
+{
+ "symbol": "OGC",
+ "physical_anchor": "Operates open-pit/underground gold mines (Haile, South Carolina; Waihi, New Zealand; Didipio, Philippines — gold-copper porphyry) producing doré and copper-gold concentrate.",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.85,
+ "value_chain_position": "Established multi-mine gold producer with a copper-byproduct asset (Didipio); balance-sheet fields here are null due to a data-feed gap on this TSX/OTC-adjacent listing, not evidence against the chain fit.",
+ "true_competitors": [
+  "Alamos Gold (AGI)",
+  "Eldorado Gold (EGO)",
+  "IAMGOLD (IAG)",
+  "B2Gold (BTG)",
+  "Centerra Gold (CGAU)",
+  "Equinox Gold (EQX)"
+ ],
+ "chain_fit_confidence": "high"
+}

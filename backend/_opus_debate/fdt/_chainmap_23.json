@@ -1,0 +1,182 @@
+{
+ "MAIR": {
+  "physical_anchor": "Industrial air-handling / compression equipment (Industrial-Machinery filer) — no confirmed data-center, grid, nuclear or robotics end-market disclosed",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "General industrial air-handling/compressor equipment manufacturer selling into broad industrial and HVAC end markets — no verifiable link to any FDT chain's value-chain layers",
+  "true_competitors": ["IR", "ATLKY", "GTLS", "FLS", "XYL", "PNR"],
+  "chain_fit_confidence": "low"
+ },
+ "MBGL": {
+  "physical_anchor": "No physical product identified — mobility/fleet-management software platform (SaaS)",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "SaaS platform for mobility/fleet management — pure software, no physical value-chain layer in any FDT chain",
+  "true_competitors": ["IOT", "TRMB", "VRRM", "UBER", "LYFT"],
+  "chain_fit_confidence": "low"
+ },
+ "MCHP": {
+  "physical_anchor": "Microcontrollers, analog/mixed-signal ICs, FPGAs and precision-timing semiconductors sold broadly across industrial, automotive, aerospace-defense and comms end markets",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Diversified general-purpose semiconductor component supplier — the 'Semiconductors' industry filter catches it for the quantum chain, but revenue is not concentrated in qubit hardware, cryo/control electronics or photonics; classic generic-semi false positive",
+  "true_competitors": ["TXN", "ADI", "NXPI", "ON", "STM", "IFX.DE"],
+  "chain_fit_confidence": "low"
+ },
+ "MDB": {
+  "physical_anchor": "None — cloud database software (DBaaS), no physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cloud document-database software vendor — no physical anchor, no FDT chain linkage",
+  "true_competitors": ["ORCL", "SNOW", "ESTC", "AMZN", "MSFT"],
+  "chain_fit_confidence": "low"
+ },
+ "MDLN": {
+  "physical_anchor": "Manufactures and distributes medical consumables/supplies and instruments (exam gloves, surgical drapes, wound care) — not surgical-robotics or motion-control hardware",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.1,
+  "value_chain_position": "Hospital/medical-supplies manufacturer-distributor — a consumables business, not a robotics_automation chain participant (no vision, actuator, or surgical-platform hardware of its own)",
+  "true_competitors": ["CAH", "OMI", "HSIC", "MCK", "BDX", "BAX"],
+  "chain_fit_confidence": "low"
+ },
+ "MIDD": {
+  "physical_anchor": "Commercial and residential foodservice/kitchen cooking equipment (ovens, ranges, food-processing lines)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Commercial kitchen and food-processing capital-goods manufacturer — an industrial-cyclical name, not grid, nuclear, power-generation or robotics chain equipment",
+  "true_competitors": ["ITW", "SXI", "AAON", "WBT", "DOV"],
+  "chain_fit_confidence": "low"
+ },
+ "MIR": {
+  "physical_anchor": "Manufactures radiation-detection, dosimetry and reactor-safety instrumentation deployed inside nuclear power plants, naval/defense nuclear platforms, and medical/industrial radiation environments",
+  "chains": ["nuclear_smr"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "Reactor-safety and radiation-monitoring instrumentation vendor — the safety/measurement toll-taker sitting across the reactor-components and fuel-services layers, paid on every nuclear build-out and SMR deployment regardless of who owns the plant",
+  "true_competitors": ["BWXT", "CW", "AME", "TMO", "FTV", "ROP", "HON"],
+  "chain_fit_confidence": "high"
+ },
+ "MITK": {
+  "physical_anchor": "None — mobile identity-verification and document/forgery-detection software",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Biometric/identity-verification software vendor — no physical hardware, no robotics_automation chain fit",
+  "true_competitors": ["FICO", "RAMP", "OKTA", "PING"],
+  "chain_fit_confidence": "low"
+ },
+ "MKSI": {
+  "physical_anchor": "Manufactures vacuum systems, laser/photonics subsystems and precision motion-control components sold into semiconductor, advanced-manufacturing and lab/testbed hardware",
+  "chains": ["quantum", "robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.03,
+  "value_chain_position": "Vacuum, photonics/laser and precision motion-control toll-taker — instruments the cryogenics/photonics layer of quantum-hardware build-outs (via its laser/vacuum subsystems) and the motion-control/actuator layer of factory automation (via its motion segment); genuinely dual-chain within this book",
+  "true_competitors": ["COHR", "AEIS", "ICHR", "ENTG", "UCTT", "AZTA"],
+  "chain_fit_confidence": "high"
+ },
+ "MRAM": {
+  "physical_anchor": "Manufactures MRAM (magnetoresistive RAM) non-volatile memory chips for industrial, aerospace and automotive embedded systems",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Niche spintronic memory-chip manufacturer — adjacent to, but not a supplier of, qubit hardware, cryogenics/control electronics, photonics or quantum sensing; MRAM caught this by the 'Semiconductors' keyword only",
+  "true_competitors": ["GFS", "005930.KS", "6723.T", "IFX.DE", "MU"],
+  "chain_fit_confidence": "low"
+ },
+ "MRCY": {
+  "physical_anchor": "Rugged embedded computing, RF/microwave and sensor-processing subsystems for defense/aerospace radar and electronic-warfare platforms",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.03,
+  "value_chain_position": "Defense-electronics subsystem supplier for radar/EW sensor processing — a general aerospace-defense toll-taker, not a reactor-component or naval-nuclear propulsion supplier; the nuclear_smr hint is an 'Aerospace & Defense' industry-string false positive",
+  "true_competitors": ["CW", "LHX", "KTOS", "DRS", "TDY"],
+  "chain_fit_confidence": "low"
+ },
+ "MRLN": {
+  "physical_anchor": "Not identifiable from disclosed data — near-zero revenue ($1M TTM), deeply negative EBITDA, cash-heavy balance sheet consistent with a pre-revenue developer, but no confirmed physical asset or product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Unconfirmed — Aerospace & Defense-tagged pre-revenue shell/developer profile; cannot honestly be placed on nuclear_smr's reactor-component or fuel-services layers without a named physical anchor",
+  "true_competitors": ["KTOS", "RDW", "RKLB", "LOAR"],
+  "chain_fit_confidence": "low"
+ },
+ "MSTR": {
+  "physical_anchor": "None — business-intelligence software plus a corporate bitcoin treasury holding",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "BI software vendor / bitcoin-holding vehicle — no physical product, no robotics_automation chain fit whatsoever",
+  "true_competitors": ["PLTR", "DOMO", "CRM"],
+  "chain_fit_confidence": "low"
+ },
+ "MXL": {
+  "physical_anchor": "RF, analog and mixed-signal semiconductors for broadband, Wi-Fi/connectivity and data-center interconnect",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Broadband/connectivity semiconductor supplier — a generic communications chipmaker caught by the 'Semiconductors' filter, not a quantum-hardware toll-taker (no qubit, cryo, or photonics content)",
+  "true_competitors": ["AVGO", "MRVL", "QCOM", "SWKS", "QRVO", "SMTC"],
+  "chain_fit_confidence": "low"
+ },
+ "NATL": {
+  "physical_anchor": "Manufactures and services ATMs and self-service banking/retail kiosks",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.03,
+  "value_chain_position": "Self-service banking/retail hardware vendor (ATMs, kiosks) — physically automated but not a factory, warehouse, machine-vision, motion-control, surgical or humanoid robotics_automation chain participant",
+  "true_competitors": ["DBD", "FI", "6822.HK", "6588.T"],
+  "chain_fit_confidence": "low"
+ },
+ "NAVN": {
+  "physical_anchor": "None — corporate travel and expense-management software",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "T&E SaaS platform — no physical anchor of any kind",
+  "true_competitors": ["SAP", "EXFY", "AWEX"],
+  "chain_fit_confidence": "low"
+ },
+ "NBIS": {
+  "physical_anchor": "Owns/operates GPU-accelerated cloud data-center infrastructure for AI workloads — a compute-cloud operator that CONSUMES grid power, not a supplier of it",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "AI GPU-cloud infrastructure operator — a datacenter power demand-side name, not a turbine/IPP/grid-equipment supplier (power_for_ai) nor a qubit/cryo/photonics vendor (quantum); no genuine FDT chain fit",
+  "true_competitors": ["CRWV", "ORCL", "MSFT", "AMZN", "DLR"],
+  "chain_fit_confidence": "low"
+ },
+ "NCNO": {
+  "physical_anchor": "None — cloud banking/loan-origination workflow software",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Bank-workflow SaaS vendor — no physical anchor",
+  "true_competitors": ["TEMN.SW", "QTWO", "JKHY", "FIS"],
+  "chain_fit_confidence": "low"
+ },
+ "NET": {
+  "physical_anchor": "None — CDN, network-security and edge-compute software/services running on commodity servers; a network, not a physical instrument (the anti-Visa case in point)",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Edge network/security SaaS — no physical anchor; post-quantum-cryptography features are software, not qubit/cryo/photonics hardware, so no genuine quantum chain fit",
+  "true_competitors": ["AKAM", "FSLY", "GOOGL", "FFIV", "ZS"],
+  "chain_fit_confidence": "low"
+ },
+ "NEXT": {
+  "physical_anchor": "Building the Rio Grande LNG liquefaction and export terminal — a physical natural-gas export facility, not domestic grid equipment or an AI-datacenter power supplier",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.9,
+  "value_chain_position": "Pre-revenue LNG liquefaction/export terminal developer selling gas to international buyers once online — not on electrification_grid's transformer/switchgear layer nor power_for_ai's IPP/turbine/grid-EPC layer; the Engineering & Construction industry string is a false positive for both hints",
+  "true_competitors": ["LNG", "VG", "SRE", "WDS"],
+  "chain_fit_confidence": "low"
+ }
+}

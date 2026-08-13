@@ -1,0 +1,20 @@
+{
+ "symbol": "THM",
+ "physical_anchor": "Livengood gold deposit under development in Alaska",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Pre-revenue developer advancing feasibility on the large-tonnage, low-grade Livengood gold project",
+ "true_competitors": [
+  "NG",
+  "CTGO",
+  "KGC",
+  "CDE",
+  "HL",
+  "NAK",
+  "GATO"
+ ],
+ "chain_fit_confidence": "high"
+}

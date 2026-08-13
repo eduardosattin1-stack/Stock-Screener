@@ -1,0 +1,19 @@
+{
+ "symbol": "EOSE",
+ "physical_anchor": "Manufactures zinc-based long-duration battery energy-storage systems sold to utilities and grid operators.",
+ "chains": [
+  "electrification_grid",
+  "power_for_ai"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Electrical-infrastructure-services / capacity-and-ancillary-markets layer — toll-taker manufacturing grid-scale storage hardware that firms up renewable and datacenter power demand.",
+ "true_competitors": [
+  "FLNC",
+  "STEM",
+  "QS",
+  "6752.T",
+  "TSLA"
+ ],
+ "chain_fit_confidence": "medium"
+}

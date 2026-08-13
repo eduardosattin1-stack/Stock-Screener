@@ -1,0 +1,56 @@
+{
+  "symbol": "WPM",
+  "sector": "Basic Materials",
+  "signal_type": "mining",
+  "company": "Wheaton Precious Metals Corp.",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Basic Materials\nRevenue growth: +88.3% YoY\nReturns / leverage: Net debt -1\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-03-31 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 992M | TTM diluted EPS 3.96 | latest-Q EPS YoY +125%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-03-31): NET CASH 2.16B (cash 2.17B exceeds total debt 8M, incl. capitalized leases 7M) — a genuine SoP add-back; use this, not the scan's net_debt above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 164.80 | median 160.00 | high 180.00 | low 150.00\nBreadth: last month: 3 PTs avg 164.67 | last quarter: 5 PTs avg 164.80 | last year: 16 PTs avg 147.06\nNewest individual targets (dated — judge freshness yourself):\n  2026-07-28 Berenberg Bank: 157.00 (stock was 112.01)\n  2026-07-09 RBC Capital: 160.00 (stock was 110.45)\n  2026-07-06 Fahad Tariq: 177.00 (stock was 115.73)\n  2026-06-30 Daniel Major: 150.00 (stock was 109.85)\n  2026-05-14 Scotiabank: 180.00 (stock was 139.03)\nNewest PT is 7 day(s) old",
+  "dossier": "",
+  "chains": [
+    "precious_metals"
+  ],
+  "business_model": "royalty_streamer",
+  "physical_anchor": "Streamed gold, silver and palladium bullion delivered under long-term offtake/streaming agreements with third-party mine operators.",
+  "commodity_revenue_share": 1.0,
+  "chain_regime": {
+    "precious_metals": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "precious_metals",
+    "torque_metrics": true,
+    "commodity_beta_2y": 1.47,
+    "beta_benchmark": "GCUSD",
+    "beta_is_proxy": false,
+    "ndebt_ebitda": -0.9,
+    "commodity_revenue_share": 1.0,
+    "as_of": "2026-08-04",
+    "ebitda_margin_ttm": 0.8749,
+    "ebitda_margin_band": {
+      "band": "q2_below_median",
+      "pct": 0.62,
+      "basis": "cohort_percentile",
+      "n_cohort": 8
+    },
+    "fcf_torque_10pct": 0.114,
+    "torque_note": "SYMMETRIC: fcf_torque_10pct is the +/-10% commodity move's % EBITDA swing (read the downside too). beta_is_proxy=False (proxy ETF regression where the spot is off-FMP)."
+  },
+  "gates": {
+    "ttm_fcf": 992158682,
+    "ttm_ocf": 2308922437,
+    "ttm_capex": -1316763755,
+    "ttm_ebitda": 2402983634,
+    "ttm_revenue": 2746462847,
+    "rev_yoy": 0.8834,
+    "cash_sti": 2171623637,
+    "balance_date": "2026-03-31",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 125560787.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.9005206728761266
+  }
+}

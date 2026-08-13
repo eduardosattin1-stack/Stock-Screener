@@ -1,0 +1,60 @@
+{
+  "symbol": "AME",
+  "sector": "Industrials",
+  "signal_type": "future_disruptive_tech",
+  "company": "AMETEK, Inc.",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Industrials\nValuation: Price 243.77 | Fair Value 200.89 | Margin of Safety -18% | P/FCF 33.7x\nRevenue growth: +6.6% YoY | 3-yr CAGR +6.4%\nMargins: Gross 36.4% (stable) | Net 20.0% | FCF 22.6%\nEPS / guidance delivery: 6.4 latest | +7.9% YoY | 3-yr CAGR +8.5% | beat 7/7 qtrs (100%)\nFCF growth: -1.8% YoY | 3-yr CAGR +18.3%\nReturns / leverage: ROE 14.6% | ROIC 10.6% | Net debt 1.89B\nForward / signals: Consensus fwd EPS growth +8.5% | Margin 1.41sigma vs hist. peak | Insider buy ratio 0.00\nValuation models (stock page): DCF fair value 99.1 | Buffett fair value 200.9\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -100% | EPV -100% | Graham -67% | OwnerErn -100% | IV15 -100%\nQuality / scores: Bull score 7 | Catalyst score 0.8 | Piotroski 8/9 | Altman-Z (solvency) 8.1 | Days to next earnings 0\nAnalyst consensus target: 258.38 (+6% upside)\nPositioning / smart money: Smart-money score 64/100 | Institutional flow 51/100 | Analyst-target velocity +9% (vs yr-ago avg PT)\nTechnical posture (timing context, not thesis): price +11% vs 200d SMA | 98% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2021: rev 5.55B, NI 990M, EPS 4.25\n  2022: rev 6.15B, NI 1.16B, EPS 5.01\n  2023: rev 6.60B, NI 1.31B, EPS 5.67\n  2024: rev 6.94B, NI 1.38B, EPS 5.93\n  2025: rev 7.40B, NI 1.48B, EPS 6.4\n  CAGRs: bvps_5y +11.7%, eps_5y +10.8%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-03-31 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 1.70B | TTM diluted EPS 6.84 | latest-Q EPS YoY +14%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-06-30): NET DEBT 485M (borrowings 981M + capitalized leases 0M, minus cash 495M; ex-lease net debt ≈ 485M — filings often quote the ex-lease figure; STATE which definition your SoP uses) — this is a LIABILITY; in any Sum-of-Parts SUBTRACT it from enterprise value, NEVER add it back as 'net cash'; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 1 sells (530sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 258.57 | median 253.00 | high 303.00 | low 230.00\nBreadth: last month: 1 PTs avg 245.00 | last quarter: 3 PTs avg 271.00 | last year: 26 PTs avg 241.15\nNewest individual targets (dated — judge freshness yourself):\n  2026-07-10 Morgan Stanley: 245.00 (stock was 234.99)\n  2026-07-02 Jamie Cook: 303.00 (stock was 237.13)\n  2026-06-18 Richard Radbourne: 265.00 (stock was 231.27)\n  2026-05-04 Truist Financial: 275.00 (stock was 231.30)\n  2026-05-04 Julian Mitchell: 230.00 (stock was 230.48)\nNewest PT is 25 day(s) old\n\n=== SEGMENT REVENUE (FMP, 2025-12-31 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nElectronic Instruments Group: 4.92B (66%) | Electromechanical Group: 2.48B (34%)",
+  "dossier": "",
+  "chains": [
+    "electrification_grid"
+  ],
+  "business_model": "equipment_services",
+  "physical_anchor": "Manufactures precision electronic instruments, sensors, and electromechanical motion/power devices for aerospace, industrial and energy markets",
+  "commodity_revenue_share": 0.05,
+  "chain_regime": {
+    "electrification_grid": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "electrification_grid",
+    "torque_metrics": false,
+    "commodity_beta_2y": 0.68,
+    "beta_benchmark": "GRID",
+    "beta_is_proxy": true,
+    "ndebt_ebitda": 0.72,
+    "commodity_revenue_share": 0.05,
+    "as_of": "2026-08-04",
+    "gm_trajectory": {
+      "direction": "expanding",
+      "gm_recent_to_old": [
+        0.3488,
+        0.3614,
+        0.3568,
+        0.3638
+      ],
+      "delta_3y": 0.015
+    },
+    "rev_yoy": 0.1266,
+    "fcf_margin": 0.2166,
+    "torque_note": "NON-COMMODITY chain (no spot to lever to): no torque metric. commodity_beta_2y is a PROXY factor-exposure read vs GRID, not a commodity torque."
+  },
+  "gates": {
+    "ttm_fcf": 1703087000,
+    "ttm_ocf": 1835734000,
+    "ttm_capex": -132647000,
+    "ttm_ebitda": 2257738000,
+    "ttm_revenue": 7863923000,
+    "rev_yoy": 0.1266,
+    "cash_sti": 495446000,
+    "balance_date": "2026-06-30",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 272544702.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.7181031701883926
+  }
+}

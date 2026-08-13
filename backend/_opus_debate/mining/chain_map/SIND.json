@@ -1,0 +1,20 @@
+{
+ "symbol": "SIND",
+ "physical_anchor": "Silver-gold-copper-lead-zinc epithermal deposit under exploration at the Sinda Property, Guanajuato, Mexico",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.6,
+ "value_chain_position": "Pre-revenue silver exploration company (recent NYSE IPO) advancing the Sinda Property toward a targeted ~2031 first production",
+ "true_competitors": [
+  "MAG",
+  "GATO",
+  "EXK",
+  "AG",
+  "FSM",
+  "VZLA",
+  "GPL"
+ ],
+ "chain_fit_confidence": "high"
+}

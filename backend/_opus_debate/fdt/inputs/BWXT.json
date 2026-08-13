@@ -1,0 +1,60 @@
+{
+  "symbol": "BWXT",
+  "sector": "Industrials",
+  "signal_type": "future_disruptive_tech",
+  "company": "BWX Technologies, Inc.",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Industrials\nValuation: Price 168.88 | Fair Value 72.56 | Margin of Safety -57% | P/FCF 52.5x\nRevenue growth: +18.3% YoY | 3-yr CAGR +12.7%\nMargins: Gross 22.9% (stable) | Net 10.3% | FCF 9.2%\nEPS / guidance delivery: 3.59 latest | +16.9% YoY | 3-yr CAGR +11.4% | beat 7/7 qtrs (100%)\nFCF growth: +15.9% YoY | 3-yr CAGR +85.3%\nReturns / leverage: ROE 31.8% | ROIC 11.5% | Net debt 1.51B\nForward / signals: Consensus fwd EPS growth +11.5% | Margin -2.62sigma vs hist. peak | Insider buy ratio 0.00\nValuation models (stock page): DCF fair value 32.3 | Buffett fair value 72.6\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -100% | EPV -100% | Graham -24% | OwnerErn -100% | IV15 -100%\nQuality / scores: Bull score 4 | Catalyst score 0.95 | Piotroski 5/9 | Altman-Z (solvency) 5.3 | Days to next earnings 83\nAnalyst consensus target: 250.00 (+48% upside)\nPositioning / smart money: Smart-money score 50/100 | Institutional flow 48/100 | Analyst-target velocity +19% (vs yr-ago avg PT)\nTechnical posture (timing context, not thesis): price -14% vs 200d SMA | 14% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2021: rev 2.12B, NI 306M, EPS 3.24\n  2022: rev 2.23B, NI 238M, EPS 2.6\n  2023: rev 2.50B, NI 246M, EPS 2.68\n  2024: rev 2.70B, NI 282M, EPS 3.07\n  2025: rev 3.20B, NI 330M, EPS 3.59\n  CAGRs: bvps_5y +18.8%, eps_5y +2.6%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-06-30 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 317M | TTM diluted EPS 3.88 | latest-Q EPS YoY +14%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-06-30): NET DEBT 1.41B (borrowings 2.02B + capitalized leases 0M, minus cash 608M; ex-lease net debt ≈ 1.41B — filings often quote the ex-lease figure; STATE which definition your SoP uses) — this is a LIABILITY; in any Sum-of-Parts SUBTRACT it from enterprise value, NEVER add it back as 'net cash'; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 6 sells (13,761sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 250.00 | median 250.00 | high 255.00 | low 245.00\nBreadth: last month: 0 PTs | last quarter: 2 PTs avg 250.00 | last year: 11 PTs avg 209.36\n[THIN CONSENSUS: only 2 price target(s) printed last quarter — this is NOT a street-wide view; weigh individual PTs below accordingly]\nNewest individual targets (dated — judge freshness yourself):\n  2026-06-22 Seaport Global: 245.00 (stock was 205.40)\n  2026-05-15 Scott Deuschle: 255.00 (stock was 210.94)\n  2026-05-05 Deutsche Bank: 205.00 (stock was 213.51)\n  2026-01-15 BNP Paribas: 215.00 (stock was 204.08)\n  2026-01-09 Michael Ciarmoli: 205.00 (stock was 193.20)\nNewest PT is 50 day(s) old\n\n=== SEGMENT REVENUE (FMP, 2025-12-31 - build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nGovernment Operations Segment: 2.35B (73%) | Commercial Operations Segment: 853M (27%)",
+  "dossier": "",
+  "chains": [
+    "nuclear_smr"
+  ],
+  "business_model": "equipment_services",
+  "physical_anchor": "Manufactures naval nuclear reactor cores/components and commercial nuclear fuel assemblies/reactor pressure vessels",
+  "commodity_revenue_share": 0.05,
+  "chain_regime": {
+    "nuclear_smr": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "nuclear_smr",
+    "torque_metrics": false,
+    "commodity_beta_2y": 0.67,
+    "beta_benchmark": "NLR",
+    "beta_is_proxy": true,
+    "ndebt_ebitda": 2.77,
+    "commodity_revenue_share": 0.05,
+    "as_of": "2026-08-11",
+    "gm_trajectory": {
+      "direction": "compressing",
+      "gm_recent_to_old": [
+        0.2472,
+        0.2486,
+        0.2423,
+        0.2287
+      ],
+      "delta_3y": -0.0185
+    },
+    "rev_yoy": 0.227,
+    "fcf_margin": 0.1044,
+    "torque_note": "NON-COMMODITY chain (no spot to lever to): no torque metric. commodity_beta_2y is a PROXY factor-exposure read vs NLR, not a commodity torque."
+  },
+  "gates": {
+    "ttm_fcf": 366856000,
+    "ttm_ocf": 611758000,
+    "ttm_capex": -244902000,
+    "ttm_ebitda": 546228000,
+    "ttm_revenue": 3514821000,
+    "rev_yoy": 0.227,
+    "cash_sti": 0,
+    "balance_date": "2026-06-30",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 104635650,
+    "royalty_hint": false,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 2.768471855265655
+  }
+}

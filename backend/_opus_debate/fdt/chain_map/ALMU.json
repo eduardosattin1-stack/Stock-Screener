@@ -1,0 +1,18 @@
+{
+ "symbol": "ALMU",
+ "physical_anchor": "grows and fabricates III-V compound-semiconductor epitaxial wafers/photonic chips (GaAs/InP-on-silicon) for optical interconnect, sensing and quantum-photonics applications",
+ "chains": [
+  "quantum"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Photonics & lasers layer — supplies compound-semiconductor photonic wafers/chips to defense, telecom and early quantum-photonics programs",
+ "true_competitors": [
+  "IQE.L",
+  "COHR",
+  "AXTI",
+  "LASR",
+  "SIVE.ST"
+ ],
+ "chain_fit_confidence": "medium"
+}

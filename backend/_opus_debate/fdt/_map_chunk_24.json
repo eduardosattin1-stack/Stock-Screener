@@ -1,0 +1,601 @@
+[
+ {
+  "symbol": "NNDM",
+  "name": "Nano Dimension Ltd.",
+  "sector": "Technology",
+  "industry": "Computer Hardware",
+  "mcap": 333653435,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -89077410,
+   "ttm_ocf": -88138251,
+   "ttm_capex": -939159,
+   "ttm_ebitda": -81490729,
+   "ttm_revenue": 117680426,
+   "rev_yoy": 1.0028,
+   "cash_sti": 439778000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 7423118.0,
+   "runway_months": 59.2,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 2814944.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "NNE",
+  "name": "Nano Nuclear Energy Inc.",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 979722601,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -38292795,
+   "ttm_ocf": -23255185,
+   "ttm_capex": -15037610,
+   "ttm_ebitda": -44565281,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 568672913,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 3191066.0,
+   "runway_months": 178.2,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 23012551.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "NRG",
+  "name": "NRG Energy, Inc.",
+  "sector": "Utilities",
+  "industry": "Independent Power Producers",
+  "mcap": 24823557830,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": 686000000,
+   "ttm_ocf": 1555000000,
+   "ttm_capex": -869000000,
+   "ttm_ebitda": 3074000000,
+   "ttm_revenue": 15385000000,
+   "rev_yoy": -0.4761,
+   "cash_sti": 167000000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 734757357.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 8.986397201710066
+  }
+ },
+ {
+  "symbol": "NRGV",
+  "name": "Energy Vault Holdings, Inc.",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 590839140,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -98084000,
+   "ttm_ocf": -56716000,
+   "ttm_capex": -41368000,
+   "ttm_ebitda": -86710000,
+   "ttm_revenue": 217016000,
+   "rev_yoy": 3.6199,
+   "cash_sti": 69081000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 8173667.0,
+   "runway_months": 8.5,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 8611326.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "NTSK",
+  "name": "Netskope, Inc. Class A Common Stock",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 5580528668,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -58375000,
+   "ttm_ocf": -41432000,
+   "ttm_capex": -16943000,
+   "ttm_ebitda": -674478000,
+   "ttm_revenue": 752853000,
+   "rev_yoy": 0.3093,
+   "cash_sti": 1103188000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 4864583.0,
+   "runway_months": 226.8,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 16703744.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "NVCR",
+  "name": "Novocure Ltd",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 1879435858,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -21125000,
+   "ttm_ocf": 1494000,
+   "ttm_capex": -22619000,
+   "ttm_ebitda": -134402000,
+   "ttm_revenue": 699193000,
+   "rev_yoy": 0.1095,
+   "cash_sti": 440559000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1760417.0,
+   "runway_months": 250.3,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 9637267.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "NVMI",
+  "name": "Nova Ltd.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 13138739409,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 194251000,
+   "ttm_ocf": 217140999,
+   "ttm_capex": -22889999,
+   "ttm_ebitda": 334276000,
+   "ttm_revenue": 902529000,
+   "rev_yoy": 0.2132,
+   "cash_sti": 1098544000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 89681452.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 1.2933364696709893
+  }
+ },
+ {
+  "symbol": "NVTS",
+  "name": "Navitas Semiconductor Corp",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 3305437380,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -67847000,
+   "ttm_ocf": -66473999,
+   "ttm_capex": -1373000,
+   "ttm_ebitda": -100142000,
+   "ttm_revenue": 36535000,
+   "rev_yoy": -0.464,
+   "cash_sti": 557409000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 5653917.0,
+   "runway_months": 98.6,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 90487666.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "OCTV",
+  "name": "Octave Intelligence plc",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 5233973030,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": null,
+   "ttm_ocf": null,
+   "ttm_capex": null,
+   "ttm_ebitda": null,
+   "ttm_revenue": null,
+   "rev_yoy": null,
+   "cash_sti": 175506000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": null,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 18356856.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "OKLO",
+  "name": "Oklo Inc.",
+  "sector": "Utilities",
+  "industry": "Independent Power Producers",
+  "mcap": 7600796267,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": -153481000,
+   "ttm_ocf": -87798000,
+   "ttm_capex": -65683000,
+   "ttm_ebitda": -125320000,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 2208609000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 12790083.0,
+   "runway_months": 172.7,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 180906225.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "OPTX",
+  "name": "Syntec Optics Holdings, Inc.",
+  "sector": "Technology",
+  "industry": "Hardware, Equipment & Parts",
+  "mcap": 319822231,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation",
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -1344241,
+   "ttm_ocf": 842956,
+   "ttm_capex": -2187197,
+   "ttm_ebitda": 643734,
+   "ttm_revenue": 27528309,
+   "rev_yoy": -0.0593,
+   "cash_sti": 617007,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 112020.0,
+   "runway_months": 5.5,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 3115553.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ORA",
+  "name": "Ormat Technologies, Inc.",
+  "sector": "Utilities",
+  "industry": "Renewable Utilities",
+  "mcap": 6110634241,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": -215291000,
+   "ttm_ocf": 325672000,
+   "ttm_capex": -540961000,
+   "ttm_ebitda": 555075000,
+   "ttm_revenue": 1163692000,
+   "rev_yoy": 0.3145,
+   "cash_sti": 762942000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 17940750.0,
+   "runway_months": 42.5,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 21495063.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 4.771951538080439
+  }
+ },
+ {
+  "symbol": "ORCL",
+  "name": "Oracle Corporation",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 427000872800,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -23686000000,
+   "ttm_ocf": 31977000000,
+   "ttm_capex": -55663000000,
+   "ttm_ebitda": 32097000000,
+   "ttm_revenue": 67358000000,
+   "rev_yoy": 0.1735,
+   "cash_sti": 31894000000,
+   "balance_date": "2026-05-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1973833333.0,
+   "runway_months": 16.2,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 3649218002.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.89132940773281
+  }
+ },
+ {
+  "symbol": "ORN",
+  "name": "Orion Group Holdings, Inc.",
+  "sector": "Industrials",
+  "industry": "Engineering & Construction",
+  "mcap": 412242001,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": -18433000,
+   "ttm_ocf": 24372000,
+   "ttm_capex": -42805000,
+   "ttm_ebitda": 39185000,
+   "ttm_revenue": 896499000,
+   "rev_yoy": 0.0705,
+   "cash_sti": 2527000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1536083.0,
+   "runway_months": 1.6,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 2324084.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "OSPN",
+  "name": "OneSpan Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 599998126,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 46634000,
+   "ttm_ocf": 57087000,
+   "ttm_capex": -10453000,
+   "ttm_ebitda": 59659000,
+   "ttm_revenue": 245761000,
+   "rev_yoy": 0.0168,
+   "cash_sti": 49754000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 2672269.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "OSS",
+  "name": "One Stop Systems, Inc.",
+  "sector": "Technology",
+  "industry": "Computer Hardware",
+  "mcap": 356797690,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -1229669,
+   "ttm_ocf": -1112877,
+   "ttm_capex": -116796,
+   "ttm_ebitda": -894466,
+   "ttm_revenue": 28026022,
+   "rev_yoy": -0.4839,
+   "cash_sti": 24339602,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 102473.0,
+   "runway_months": 237.5,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 8849687.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "OUST",
+  "name": "Ouster, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 3026696055,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -69260000,
+   "ttm_ocf": -42358000,
+   "ttm_capex": -26902000,
+   "ttm_ebitda": -45031000,
+   "ttm_revenue": 185330000,
+   "rev_yoy": 0.5734,
+   "cash_sti": 173118000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 5771667.0,
+   "runway_months": 30.0,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 99105626.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "PACB",
+  "name": "Pacific Biosciences of California, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 450403508,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -116212000,
+   "ttm_ocf": -111844000,
+   "ttm_capex": -4368000,
+   "ttm_ebitda": -106601000,
+   "ttm_revenue": 160030000,
+   "rev_yoy": 0.0504,
+   "cash_sti": 275981000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 9684333.0,
+   "runway_months": 28.5,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 4907995.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "PAR",
+  "name": "PAR Technology Corporation",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 714796629,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -28724000,
+   "ttm_ocf": -26631000,
+   "ttm_capex": -2093000,
+   "ttm_ebitda": -21443000,
+   "ttm_revenue": 475661000,
+   "rev_yoy": 0.2394,
+   "cash_sti": 77807000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 2393667.0,
+   "runway_months": 32.5,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 2331553.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "PD",
+  "name": "PagerDuty, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 1011999570,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 125005000,
+   "ttm_ocf": 128470000,
+   "ttm_capex": -3465000,
+   "ttm_ebitda": 56041000,
+   "ttm_revenue": 493708000,
+   "rev_yoy": 0.0369,
+   "cash_sti": 443957000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 5946620.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.637872272086508
+  }
+ }
+]

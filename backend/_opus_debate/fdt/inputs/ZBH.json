@@ -1,0 +1,60 @@
+{
+  "symbol": "ZBH",
+  "sector": "Healthcare",
+  "signal_type": "future_disruptive_tech",
+  "company": "Zimmer Biomet Holdings, Inc.",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Healthcare\nValuation: Price 96.98 | Fair Value 61.48 | Margin of Safety -37% | P/FCF 13.1x\nRevenue growth: +7.2% YoY | 3-yr CAGR +5.9%\nMargins: Gross 61.6% (contracting) | Net 8.6% | FCF 17.9%\nEPS / guidance delivery: 3.55 latest | -19.9% YoY | 3-yr CAGR +47.8% | beat 7/7 qtrs (100%)\nFCF growth: +28.9% YoY | 3-yr CAGR +11.3%\nReturns / leverage: ROE 5.2% | ROIC 4.7% | Net debt 6.93B\nForward / signals: Consensus fwd EPS growth +6.1% | Margin 0.97sigma vs hist. peak | Insider buy ratio 0.00\nValuation models (stock page): DCF fair value 50.2 | Buffett fair value 61.5\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -93% | EPV -100% | Graham +38% | OwnerErn +4% | IV15 -100%\nQuality / scores: Bull score 6 | Catalyst score 0.8 | Piotroski 8/9 | Altman-Z (solvency) 2.5 | Days to next earnings 1\nAnalyst consensus target: 96.57 (-0% upside)\nPositioning / smart money: Smart-money score 42/100 | Institutional flow 50/100 | Analyst-target velocity +2% (vs yr-ago avg PT)\nTechnical posture (timing context, not thesis): price +6% vs 200d SMA | 61% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2021: rev 6.83B, NI 402M, EPS 1.91\n  2022: rev 6.94B, NI 231M, EPS 1.1\n  2023: rev 7.39B, NI 1.02B, EPS 4.88\n  2024: rev 7.68B, NI 904M, EPS 4.43\n  2025: rev 8.23B, NI 705M, EPS 3.55\n  CAGRs: bvps_5y +1.5%, eps_5y +16.8%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-03-31 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 1.84B | TTM diluted EPS 3.85 | latest-Q EPS YoY +34%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-03-31): NET DEBT 7.05B (borrowings 7.47B + capitalized leases 0M, minus cash 424M; ex-lease net debt ≈ 7.05B — filings often quote the ex-lease figure; STATE which definition your SoP uses) — this is a LIABILITY; in any Sum-of-Parts SUBTRACT it from enterprise value, NEVER add it back as 'net cash'; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 3 sells (7,650sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 96.57 | median 94.00 | high 115.00 | low 83.00\nBreadth: last month: 2 PTs avg 105.00 | last quarter: 2 PTs avg 105.00 | last year: 22 PTs avg 103.05\n[THIN CONSENSUS: only 2 price target(s) printed last quarter — this is NOT a street-wide view; weigh individual PTs below accordingly]\nNewest individual targets (dated — judge freshness yourself):\n  2026-07-28 Patrick Wood: 115.00 (stock was 92.07)\n  2026-07-08 BMO Capital: 95.00 (stock was 87.56)\n  2026-04-29 Truist Financial: 92.00 (stock was 80.80)\n  2026-04-29 Canaccord Genuity: 83.00 (stock was 82.80)\n  2026-04-29 Rick Wise: 105.00 (stock was 82.80)\nNewest PT is 7 day(s) old\n\n=== SEGMENT REVENUE (FMP, 2025-12-31 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nKnees: 3.32B (44%) | S E T: 2.15B (28%) | Hips: 2.09B (28%)",
+  "dossier": "",
+  "chains": [
+    "robotics_automation"
+  ],
+  "business_model": "equipment_services",
+  "physical_anchor": "Manufactures the ROSA robotic-assisted surgical system used in joint-replacement surgery",
+  "commodity_revenue_share": 0.1,
+  "chain_regime": {
+    "robotics_automation": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "robotics_automation",
+    "torque_metrics": false,
+    "commodity_beta_2y": 0.23,
+    "beta_benchmark": "BOTZ",
+    "beta_is_proxy": true,
+    "ndebt_ebitda": 3.19,
+    "commodity_revenue_share": 0.1,
+    "as_of": "2026-08-04",
+    "gm_trajectory": {
+      "direction": "compressing",
+      "gm_recent_to_old": [
+        0.709,
+        0.7182,
+        0.7146,
+        0.6162
+      ],
+      "delta_3y": -0.0928
+    },
+    "rev_yoy": 0.0923,
+    "fcf_margin": 0.2183,
+    "torque_note": "NON-COMMODITY chain (no spot to lever to): no torque metric. commodity_beta_2y is a PROXY factor-exposure read vs BOTZ, not a commodity torque."
+  },
+  "gates": {
+    "ttm_fcf": 1835500000,
+    "ttm_ocf": 1673399999,
+    "ttm_capex": 162100000,
+    "ttm_ebitda": 2206100000,
+    "ttm_revenue": 8409200000,
+    "rev_yoy": 0.0923,
+    "cash_sti": 424200000,
+    "balance_date": "2026-03-31",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 92155380.0,
+    "royalty_hint": false,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 3.1942341688953357
+  }
+}

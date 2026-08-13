@@ -1,0 +1,21 @@
+{
+ "symbol": "J",
+ "physical_anchor": "designs and builds physical infrastructure — grid interconnection, substations, data-center electrical/mechanical systems, water and advanced-facility construction — as engineer-of-record and construction manager",
+ "chains": [
+  "electrification_grid",
+  "power_for_ai"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.03,
+ "value_chain_position": "large-scale E&C / professional services toll-taker on grid interconnection, data-center EPC and advanced-facility build-out",
+ "true_competitors": [
+  "AECOM",
+  "FLR",
+  "STN",
+  "WSP.TO",
+  "TTEK",
+  "KBR",
+  "ARCAD.AS"
+ ],
+ "chain_fit_confidence": "medium"
+}

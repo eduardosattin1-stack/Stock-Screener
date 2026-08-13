@@ -1,0 +1,607 @@
+[
+ {
+  "symbol": "RBRK",
+  "name": "Rubrik, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 16521696767,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 306457000,
+   "ttm_ocf": 326845000,
+   "ttm_capex": -20388000,
+   "ttm_ebitda": -213254000,
+   "ttm_revenue": 1424778000,
+   "rev_yoy": 0.4573,
+   "cash_sti": 1749114000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 125195112.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "RCAT",
+  "name": "Red Cat Holdings, Inc.",
+  "sector": "Technology",
+  "industry": "Computer Hardware",
+  "mcap": 970591072,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -143852715,
+   "ttm_ocf": -124219344,
+   "ttm_capex": -19633371,
+   "ttm_ebitda": -83642876,
+   "ttm_revenue": 52981423,
+   "rev_yoy": 5.8651,
+   "cash_sti": 131919000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 11987726.0,
+   "runway_months": 11.0,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 48512459.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "RDW",
+  "name": "Redwire Corp",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 2504080125,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": -160975000,
+   "ttm_ocf": -139916000,
+   "ttm_capex": -21059000,
+   "ttm_ebitda": -214297000,
+   "ttm_revenue": 370958000,
+   "rev_yoy": 0.3358,
+   "cash_sti": 145211000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 13414583.0,
+   "runway_months": 10.8,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 115671254.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "RELL",
+  "name": "Richardson Electronics, Ltd.",
+  "sector": "Technology",
+  "industry": "Hardware, Equipment & Parts",
+  "mcap": 300130136,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation",
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -9533000,
+   "ttm_ocf": -5150000,
+   "ttm_capex": -4383000,
+   "ttm_ebitda": 10723000,
+   "ttm_revenue": 228564000,
+   "rev_yoy": 0.0941,
+   "cash_sti": 31779000,
+   "balance_date": "2026-05-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 794417.0,
+   "runway_months": 40.0,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 7932269.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "RGEN",
+  "name": "Repligen Corporation",
+  "sector": "Healthcare",
+  "industry": "Medical - Instruments & Supplies",
+  "mcap": 8359523250,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 110777000,
+   "ttm_ocf": 134864000,
+   "ttm_capex": -24087000,
+   "ttm_ebitda": 121829000,
+   "ttm_revenue": 785101000,
+   "rev_yoy": 0.1649,
+   "cash_sti": 810449000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 57904729.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 0.5743126795240049
+  }
+ },
+ {
+  "symbol": "RGTI",
+  "name": "Rigetti Computing, Inc.",
+  "sector": "Technology",
+  "industry": "Computer Hardware",
+  "mcap": 5810331146,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -81648000,
+   "ttm_ocf": -61108000,
+   "ttm_capex": -20540000,
+   "ttm_ebitda": -216765000,
+   "ttm_revenue": 10016000,
+   "rev_yoy": 0.0875,
+   "cash_sti": 418246000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 6804000.0,
+   "runway_months": 61.5,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 223758963.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "RIOT",
+  "name": "Riot Platforms, Inc.",
+  "sector": "Technology",
+  "industry": "Hardware, Equipment & Parts",
+  "mcap": 8393066550,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation",
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -1023629000,
+   "ttm_ocf": -633519000,
+   "ttm_capex": -390110000,
+   "ttm_ebitda": -92203000,
+   "ttm_revenue": 653267000,
+   "rev_yoy": 0.424,
+   "cash_sti": 205666000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 85302417.0,
+   "runway_months": 2.4,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 168503675.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "RKLB",
+  "name": "Rocket Lab USA, Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 43241400383,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": -316301000,
+   "ttm_ocf": -161628000,
+   "ttm_capex": -154673000,
+   "ttm_ebitda": -152086000,
+   "ttm_revenue": 679578000,
+   "rev_yoy": 0.4583,
+   "cash_sti": 1383351000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 26358417.0,
+   "runway_months": 52.5,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 809681816.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "RNW",
+  "name": "ReNew Energy Global Plc",
+  "sector": "Utilities",
+  "industry": "Renewable Utilities",
+  "mcap": 2256587093,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": -26065578000,
+   "ttm_ocf": 61662046000,
+   "ttm_capex": -87727625000,
+   "ttm_ebitda": 102679252866,
+   "ttm_revenue": 132899518507,
+   "rev_yoy": 0.3692,
+   "cash_sti": 75315834000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 2172131583.0,
+   "runway_months": 34.7,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 3777737.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ROAD",
+  "name": "Construction Partners, Inc.",
+  "sector": "Industrials",
+  "industry": "Engineering & Construction",
+  "mcap": 6154168801,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": 191346000,
+   "ttm_ocf": 342779000,
+   "ttm_capex": -151433000,
+   "ttm_ebitda": 393171000,
+   "ttm_revenue": 3257791000,
+   "rev_yoy": 0.4881,
+   "cash_sti": 76980000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 29768022.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 4.49800977182956
+  }
+ },
+ {
+  "symbol": "RPD",
+  "name": "Rapid7, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 700384688,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 146729000,
+   "ttm_ocf": 163484000,
+   "ttm_capex": -16755000,
+   "ttm_ebitda": 82467000,
+   "ttm_revenue": 859232000,
+   "rev_yoy": 0.0119,
+   "cash_sti": 670258000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 6782991.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 7.541198297500818
+  }
+ },
+ {
+  "symbol": "RR",
+  "name": "Richtech Robotics Inc. Class B Common Stock",
+  "sector": "Industrials",
+  "industry": "Industrial - Machinery",
+  "mcap": 300708363,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "power_for_ai",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -12151000,
+   "ttm_ocf": -7049000,
+   "ttm_capex": -5102000,
+   "ttm_ebitda": -23691000,
+   "ttm_revenue": 4935000,
+   "rev_yoy": 0.1241,
+   "cash_sti": 328494000,
+   "balance_date": "2025-12-31",
+   "balance_sheet_stale": true,
+   "monthly_burn": 1012583.0,
+   "runway_months": 324.4,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 5119820.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "RRX",
+  "name": "Regal Rexnord Corporation",
+  "sector": "Industrials",
+  "industry": "Industrial - Machinery",
+  "mcap": 14452919994,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "power_for_ai",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 805100000,
+   "ttm_ocf": 903400000,
+   "ttm_capex": -98300000,
+   "ttm_ebitda": 1193400000,
+   "ttm_revenue": 5995400000,
+   "rev_yoy": 0.0154,
+   "cash_sti": 401000000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 149581191.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.7379755320931793
+  }
+ },
+ {
+  "symbol": "RXT",
+  "name": "Rackspace Technology, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 1288586145,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 76900000,
+   "ttm_ocf": 143900000,
+   "ttm_capex": -66999999,
+   "ttm_ebitda": 356899998,
+   "ttm_revenue": 2698400000,
+   "rev_yoy": -0.0049,
+   "cash_sti": 93600000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 26268647.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 8.78033067402819
+  }
+ },
+ {
+  "symbol": "RZLV",
+  "name": "Rezolve AI PLC",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 722058683,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -95724962,
+   "ttm_ocf": -61873286,
+   "ttm_capex": -23946172.0,
+   "ttm_ebitda": -177600261,
+   "ttm_revenue": 46893993,
+   "rev_yoy": null,
+   "cash_sti": 111112251,
+   "balance_date": "2025-12-31",
+   "balance_sheet_stale": true,
+   "monthly_burn": 7151622.0,
+   "runway_months": 15.5,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 14739091.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "S",
+  "name": "SentinelOne, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 6992510174,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 44332000,
+   "ttm_ocf": 62835000,
+   "ttm_capex": -18503000,
+   "ttm_ebitda": -229163000,
+   "ttm_revenue": 1048906000,
+   "rev_yoy": 0.2138,
+   "cash_sti": 656787000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 52180057.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SAIL",
+  "name": "SailPoint, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 9758383463,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 184974000,
+   "ttm_ocf": 205628000,
+   "ttm_capex": -20654000,
+   "ttm_ebitda": 12597000,
+   "ttm_revenue": 1121090000,
+   "rev_yoy": 0.2396,
+   "cash_sti": 390806000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 16774637.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.7538690804724584
+  }
+ },
+ {
+  "symbol": "SATL",
+  "name": "Satellogic Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 620851110,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": -33019000,
+   "ttm_ocf": -22006000,
+   "ttm_capex": -11013000,
+   "ttm_ebitda": -84054000,
+   "ttm_revenue": 20427000,
+   "rev_yoy": 0.5799,
+   "cash_sti": 128946000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 2751583.0,
+   "runway_months": 46.9,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 18529061.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SDGR",
+  "name": "Schrödinger, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 1168632030,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -148351000,
+   "ttm_ocf": -144998000,
+   "ttm_capex": -3353000,
+   "ttm_ebitda": -94572000,
+   "ttm_revenue": 254905000,
+   "rev_yoy": 0.1059,
+   "cash_sti": 398959000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 12362583.0,
+   "runway_months": 32.3,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 4775934.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SERV",
+  "name": "Serve Robotics Inc.",
+  "sector": "Industrials",
+  "industry": "Industrial - Machinery",
+  "mcap": 384303455,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "power_for_ai",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -147921273,
+   "ttm_ocf": -112199186,
+   "ttm_capex": -35722087,
+   "ttm_ebitda": -127400937,
+   "ttm_revenue": 5194535,
+   "rev_yoy": 2.9767,
+   "cash_sti": 187478000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 12326773.0,
+   "runway_months": 15.2,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 13882907.0,
+   "royalty_hint": false
+  }
+ }
+]

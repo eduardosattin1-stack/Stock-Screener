@@ -1,0 +1,182 @@
+{
+ "CRWD": {
+  "physical_anchor": "None — cloud-native endpoint/cloud security agent software, no physical product.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cybersecurity SaaS (endpoint/cloud threat detection); not a participant in any FDT physical chain.",
+  "true_competitors": ["PANW", "S", "FTNT", "ZS", "OKTA", "CYBR"],
+  "chain_fit_confidence": "low"
+ },
+ "CVLT": {
+  "physical_anchor": "None — enterprise data backup/recovery software, no physical product.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Data protection/backup software; not a physical chain participant.",
+  "true_competitors": ["RBRK", "NTAP", "DELL", "IBM", "VRTS", "COHESITY_PRIVATE"],
+  "chain_fit_confidence": "low"
+ },
+ "DAKT": {
+  "physical_anchor": "Manufactures large-format LED video displays, scoreboards, and digital billboards.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "LED display/scoreboard hardware manufacturer for sports, commercial and transportation markets — not a layer in any FDT chain (not grid, nuclear, power, robotics, or quantum).",
+  "true_competitors": ["LYTS", "BAR.BR", "LG_ELECTRONICS_KRX066570", "SAMSUNG_ELECTRONICS_KRX005930", "LEYARD_SZSE300296", "ABSEN_PRIVATE"],
+  "chain_fit_confidence": "low"
+ },
+ "DAVE": {
+  "physical_anchor": "None — consumer cash-advance/banking mobile app, no physical product (anti-Visa rule).",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Consumer fintech app (cash advance/neobanking); a payments/financial-services app, never a physical chain.",
+  "true_competitors": ["SOFI", "UPST", "AFRM", "PYPL", "XYZ", "LC"],
+  "chain_fit_confidence": "low"
+ },
+ "DBD": {
+  "physical_anchor": "Manufactures ATMs and self-checkout/point-of-sale kiosks for banking and retail.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Banking & retail self-service hardware (ATMs, kiosks) — adjacent to but not within robotics_automation's factory/warehouse/surgical-robotics layers.",
+  "true_competitors": ["VYX", "GRG_BANKING_SHE002151", "HYOSUNG_TNS_PRIVATE", "FUJITSU_TYO6702", "GLORY_LTD_TYO6457"],
+  "chain_fit_confidence": "low"
+ },
+ "DBX": {
+  "physical_anchor": "None — cloud file storage/collaboration software, no physical product.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cloud file storage/collaboration SaaS; no physical anchor.",
+  "true_competitors": ["BOX", "GOOGL", "MSFT", "EGNYTE_PRIVATE", "PCLOUD_PRIVATE"],
+  "chain_fit_confidence": "low"
+ },
+ "DCI": {
+  "physical_anchor": "Manufactures air and liquid filtration systems for engines, industrial processes, and bioprocessing.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Industrial/engine filtration equipment maker (construction, mining, agriculture, aerospace, life sciences) — no segment maps onto grid, nuclear, power-for-AI, or robotics value-chain layers.",
+  "true_competitors": ["PH", "MMM", "CMI", "AHLSTROM_HEL_AHLST", "MANN_HUMMEL_PRIVATE", "FTV"],
+  "chain_fit_confidence": "low"
+ },
+ "DELL": {
+  "physical_anchor": "Manufactures servers, storage systems, and PCs.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Diversified IT hardware OEM (servers/storage/PCs); sells broad AI-server infrastructure but is not a dedicated quantum, grid, nuclear, power, or robotics chain toll-taker.",
+  "true_competitors": ["HPE", "SMCI", "LNVGY_HKG0992", "NTAP", "IBM", "HPQ"],
+  "chain_fit_confidence": "low"
+ },
+ "DIOD": {
+  "physical_anchor": "Manufactures discrete semiconductors and analog/power-management integrated circuits.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Broad-market discrete & analog semiconductor supplier (automotive, computing, consumer, industrial) — a general component input everywhere, not a dedicated grid-equipment or quantum-control-electronics toll-taker.",
+  "true_competitors": ["ON", "VSH", "LFUS", "STM", "NEXPERIA_PRIVATE", "IFX.DE"],
+  "chain_fit_confidence": "low"
+ },
+ "DLO": {
+  "physical_anchor": "None — cross-border payments processing platform, no physical product (anti-Visa rule).",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cross-border payments network for emerging markets; a payments platform, never a physical chain.",
+  "true_competitors": ["PAGS", "STNE", "ADYEN.AS", "PYPL", "EBANX_PRIVATE"],
+  "chain_fit_confidence": "low"
+ },
+ "DOCN": {
+  "physical_anchor": "None — sells virtualized cloud compute/hosting; the underlying data centers are largely leased infrastructure, not a company-specific physical chain asset.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cloud infrastructure-as-a-service (IaaS) for SMB/developers; a generic cloud reseller, not a chain-specific physical-asset owner.",
+  "true_competitors": ["AMZN", "MSFT", "GOOGL", "AKAM", "OVH.PA", "VULTR_PRIVATE"],
+  "chain_fit_confidence": "low"
+ },
+ "DOCU": {
+  "physical_anchor": "None — e-signature/agreement-management software, no physical product.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "E-signature/agreement-management SaaS; no physical anchor.",
+  "true_competitors": ["ADBE", "DBX", "PANDADOC_PRIVATE", "AIRSLATE_PRIVATE", "ZOHO_PRIVATE"],
+  "chain_fit_confidence": "low"
+ },
+ "DOV": {
+  "physical_anchor": "Manufactures fueling systems, industrial pumps, precision components, and CO2 refrigeration/heat-exchange equipment.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Diversified industrial manufacturer (clean-energy fueling, pumps & process, climate & sustainability, engineered products) — no segment is grid transformers/switchgear, nuclear components, IPP generation, or robotics/automation toll-taking specifically.",
+  "true_competitors": ["ITW", "IEX", "ROP", "XYL", "PNR", "FLS"],
+  "chain_fit_confidence": "low"
+ },
+ "DOX": {
+  "physical_anchor": "None — telecom OSS/BSS billing and network-management software, no physical product.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Telecom OSS/BSS software and managed services; no physical anchor.",
+  "true_competitors": ["CSGS", "NOK", "ERIC", "IBM", "ACN"],
+  "chain_fit_confidence": "low"
+ },
+ "DRS": {
+  "physical_anchor": "Manufactures electro-optical/infrared sensors, radar, and power conversion/distribution systems for U.S. Navy surface ships and submarines, including nuclear-powered vessels.",
+  "chains": ["nuclear_smr"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Naval defense electronics and power-systems supplier occupying the 'reactor components & naval/defense nuclear' layer alongside BWXT, though electro-optical/sensor systems — not reactor hardware — is DRS's larger revenue base.",
+  "true_competitors": ["BWXT", "LHX", "LDOS", "KTOS", "HII", "GD", "RTX"],
+  "chain_fit_confidence": "medium"
+ },
+ "DSGX": {
+  "physical_anchor": "None — logistics/supply-chain network software (customs, routing, visibility), no physical product.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Logistics/supply-chain network software; no physical anchor.",
+  "true_competitors": ["MANH", "SAP", "ORCL", "KXS.TO", "E2OPEN_ETWO"],
+  "chain_fit_confidence": "low"
+ },
+ "DT": {
+  "physical_anchor": "None — application performance monitoring/observability software, no physical product.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "APM/observability SaaS; no physical anchor.",
+  "true_competitors": ["DDOG", "ESTC", "CSCO", "NEWR_PRIVATE", "SPLK"],
+  "chain_fit_confidence": "low"
+ },
+ "DUOL": {
+  "physical_anchor": "None — consumer language-learning mobile app/software, no physical product.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Consumer language-learning app/SaaS; no physical anchor.",
+  "true_competitors": ["CHGG", "COUR", "UDMY", "BABBEL_PRIVATE", "ROSETTA_STONE_PRIVATE"],
+  "chain_fit_confidence": "low"
+ },
+ "DV": {
+  "physical_anchor": "None — digital ad verification/measurement software, no physical product.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Digital ad verification/measurement SaaS; no physical anchor.",
+  "true_competitors": ["IAS", "TTD", "CRTO", "MGNI", "PUBM"],
+  "chain_fit_confidence": "low"
+ },
+ "DXCM": {
+  "physical_anchor": "Manufactures wearable continuous glucose monitor (CGM) biosensors and transmitters.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Wearable diagnostic biosensor (CGM) manufacturer for diabetes management — a medical device, not a surgical-robotics or motion-control chain participant.",
+  "true_competitors": ["PODD", "ABT", "MDT", "TNDM", "ROG.SW"],
+  "chain_fit_confidence": "low"
+ }
+}

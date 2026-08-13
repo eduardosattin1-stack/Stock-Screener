@@ -1,0 +1,20 @@
+{
+ "symbol": "AMTM",
+ "physical_anchor": "provides engineering, operations & maintenance services for the DOE/NNSA nuclear-weapons complex, naval nuclear-propulsion programs, and nuclear-site environmental remediation, alongside broad government engineering services",
+ "chains": [
+  "nuclear_smr"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Reactor components & naval/defense nuclear layer — legacy DOE-nuclear-complex and naval-reactor service work is a real but small slice of a much larger diversified government-services book",
+ "true_competitors": [
+  "LDOS",
+  "SAIC",
+  "BAH",
+  "PSN",
+  "FLR",
+  "KBR",
+  "J"
+ ],
+ "chain_fit_confidence": "medium"
+}

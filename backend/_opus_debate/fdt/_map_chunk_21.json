@@ -1,0 +1,596 @@
+[
+ {
+  "symbol": "GTM",
+  "name": "ZoomInfo Technologies Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 1062458513,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 375000000,
+   "ttm_ocf": 460900000,
+   "ttm_capex": -85900000,
+   "ttm_ebitda": 324000000,
+   "ttm_revenue": 1254000000,
+   "rev_yoy": 0.0364,
+   "cash_sti": 175200000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 7216936.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 4.31820987654321
+  }
+ },
+ {
+  "symbol": "HAWK",
+  "name": "HawkEye 360, Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 2394141642,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": null,
+   "ttm_ocf": null,
+   "ttm_capex": null,
+   "ttm_ebitda": null,
+   "ttm_revenue": null,
+   "rev_yoy": null,
+   "cash_sti": null,
+   "balance_date": null,
+   "balance_sheet_stale": null,
+   "monthly_burn": null,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 17143267.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "HONA",
+  "name": "Honeywell Aerospace Inc",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 67688188528,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": null,
+   "ttm_ocf": null,
+   "ttm_capex": null,
+   "ttm_ebitda": null,
+   "ttm_revenue": null,
+   "rev_yoy": null,
+   "cash_sti": null,
+   "balance_date": null,
+   "balance_sheet_stale": null,
+   "monthly_burn": null,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 177493540.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "HPE",
+  "name": "Hewlett Packard Enterprise Company",
+  "sector": "Technology",
+  "industry": "Computer Hardware",
+  "mcap": 70447627317,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 5640000000,
+   "ttm_ocf": 6358000000,
+   "ttm_capex": -718000000,
+   "ttm_ebitda": 4014000000,
+   "ttm_revenue": 38877000000,
+   "rev_yoy": 0.2321,
+   "cash_sti": 5292000000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 818497268.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 5.0857507172457765
+  }
+ },
+ {
+  "symbol": "HQ",
+  "name": "Horizon Quantum Holdings Ltd. Class A Ordinary Shares",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 806682016,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -4950504,
+   "ttm_ocf": -4835993,
+   "ttm_capex": -114510.14,
+   "ttm_ebitda": -12156011,
+   "ttm_revenue": 49962,
+   "rev_yoy": null,
+   "cash_sti": 124377366,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 412542.0,
+   "runway_months": 301.5,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 3048315.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "IART",
+  "name": "Integra LifeSciences Holdings Corporation",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 1387935919,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 38755000,
+   "ttm_ocf": 85327000,
+   "ttm_capex": -46572000,
+   "ttm_ebitda": 210655000,
+   "ttm_revenue": 1647666000,
+   "rev_yoy": 0.016,
+   "cash_sti": 274084000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 4049670.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "IBTA",
+  "name": "Ibotta, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 954842853,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 70548000,
+   "ttm_ocf": 93191000,
+   "ttm_capex": -22643000,
+   "ttm_ebitda": -604000,
+   "ttm_revenue": 343174000,
+   "rev_yoy": -0.0665,
+   "cash_sti": 148173000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 22143264.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ICHR",
+  "name": "Ichor Holdings, Ltd.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 2485323538,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -25605000,
+   "ttm_ocf": -375000,
+   "ttm_capex": -25230000,
+   "ttm_ebitda": -8587000,
+   "ttm_revenue": 1013753999,
+   "rev_yoy": 0.091,
+   "cash_sti": 256456000,
+   "balance_date": "2026-06-26",
+   "balance_sheet_stale": false,
+   "monthly_burn": 2133750.0,
+   "runway_months": 120.2,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 90631505.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ICUI",
+  "name": "ICU Medical, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Instruments & Supplies",
+  "mcap": 4269654126,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 80396000,
+   "ttm_ocf": 167429000,
+   "ttm_capex": -87033000,
+   "ttm_ebitda": 262706000,
+   "ttm_revenue": 2156540000,
+   "rev_yoy": -0.1089,
+   "cash_sti": 288330000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 21202590.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 4.00792901570577
+  }
+ },
+ {
+  "symbol": "IIIV",
+  "name": "i3 Verticals, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 519401252,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 49500000,
+   "ttm_ocf": 45471000,
+   "ttm_capex": 4029000,
+   "ttm_ebitda": 38517000,
+   "ttm_revenue": 216991000,
+   "rev_yoy": -0.102,
+   "cash_sti": 7142000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 4014210.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "INDI",
+  "name": "indie Semiconductor, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 772259800,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -65333000,
+   "ttm_ocf": -50205000,
+   "ttm_capex": -15128000,
+   "ttm_ebitda": -107006000,
+   "ttm_revenue": 218774000,
+   "rev_yoy": 0.0017,
+   "cash_sti": 184714000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 5444417.0,
+   "runway_months": 33.9,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 8231915.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "INFQ",
+  "name": "Infleqtion Inc",
+  "sector": "Technology",
+  "industry": "Hardware, Equipment & Parts",
+  "mcap": 2480898526,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation",
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -21743729,
+   "ttm_ocf": -21431729,
+   "ttm_capex": -312000,
+   "ttm_ebitda": -96227868,
+   "ttm_revenue": 9461000,
+   "rev_yoy": 0.0223,
+   "cash_sti": 443540000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1811977.0,
+   "runway_months": 244.8,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 74234287.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "INFU",
+  "name": "InfuSystem Holdings, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Instruments & Supplies",
+  "mcap": 235520474,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 21879000,
+   "ttm_ocf": 23366000,
+   "ttm_capex": -1487000,
+   "ttm_ebitda": 16977000,
+   "ttm_revenue": 143335000,
+   "rev_yoy": 0.0247,
+   "cash_sti": 964000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 3541588.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "INIO",
+  "name": "INNIO N.V. Ordinary Shares",
+  "sector": "Industrials",
+  "industry": "Industrial - Machinery",
+  "mcap": 20088750000,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "power_for_ai",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": null,
+   "ttm_ocf": null,
+   "ttm_capex": null,
+   "ttm_ebitda": null,
+   "ttm_revenue": null,
+   "rev_yoy": null,
+   "cash_sti": 1039899999,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": null,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 82237021.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "INMD",
+  "name": "InMode Ltd.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 878594028,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 90649220,
+   "ttm_ocf": 91767136,
+   "ttm_capex": -1117916,
+   "ttm_ebitda": 102901000,
+   "ttm_revenue": 374638000,
+   "rev_yoy": -0.0453,
+   "cash_sti": 537159000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 2156775.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "INTA",
+  "name": "Intapp, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 2566536588,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 120843000,
+   "ttm_ocf": 125038000,
+   "ttm_capex": -4195000,
+   "ttm_ebitda": -8845000,
+   "ttm_revenue": 554339000,
+   "rev_yoy": 0.1466,
+   "cash_sti": 146823000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 9704511.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "INTC",
+  "name": "Intel Corp.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 507225111517,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 2831000000,
+   "ttm_ocf": 14936000000,
+   "ttm_capex": -12105000000,
+   "ttm_ebitda": 3672000000,
+   "ttm_revenue": 57032000000,
+   "rev_yoy": 0.0747,
+   "cash_sti": 29727000000,
+   "balance_date": "2026-06-27",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 6641170213.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 2.4367654797403966
+  }
+ },
+ {
+  "symbol": "IONQ",
+  "name": "IonQ, Inc.",
+  "sector": "Technology",
+  "industry": "Computer Hardware",
+  "mcap": 15570955881,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -424755000,
+   "ttm_ocf": -401186000,
+   "ttm_capex": -23569000,
+   "ttm_ebitda": 392347000,
+   "ttm_revenue": 187118000,
+   "rev_yoy": 3.3458,
+   "cash_sti": 2033470000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 35396250.0,
+   "runway_months": 57.4,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 608977387.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "IQMX",
+  "name": "IQM Quantum Computers Oyj",
+  "sector": "Technology",
+  "industry": "Computer Hardware",
+  "mcap": 1971225077,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": null,
+   "ttm_ocf": null,
+   "ttm_capex": null,
+   "ttm_ebitda": null,
+   "ttm_revenue": null,
+   "rev_yoy": null,
+   "cash_sti": null,
+   "balance_date": null,
+   "balance_sheet_stale": null,
+   "monthly_burn": null,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 2791124.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "IRTC",
+  "name": "iRhythm Technologies, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 4147893138,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 18753000,
+   "ttm_ocf": 62581000,
+   "ttm_capex": -43828000,
+   "ttm_ebitda": 12596000,
+   "ttm_revenue": 787851000,
+   "rev_yoy": 0.2736,
+   "cash_sti": 549620000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 24993580.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 101.88398250364507
+  }
+ }
+]

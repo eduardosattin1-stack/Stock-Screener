@@ -1,0 +1,1164 @@
+{
+ "apex_basket": [
+  {
+   "headwind_justification": "",
+   "growth_capex_fcf_negative": false,
+   "torque_leverage_quadrant": false,
+   "whats_changed": "",
+   "forensic_gate": "",
+   "symbol": "OR",
+   "sector": "Basic Materials",
+   "chains": [
+    "precious_metals"
+   ],
+   "chain": "precious_metals",
+   "commodity_family": "precious_metals",
+   "business_model": "royalty_streamer",
+   "value_chain_position": "Royalty and streaming pure-play - no operating costs, a direct claim on physical ounces produced by third-party mines.",
+   "physical_anchor": "Holds royalty and stream contracts entitling it to a fixed percentage of the gold and silver ounces poured at partner mines.",
+   "fr_score": 83,
+   "thesis": "OR Royalties owns contractual claims on the gold and silver poured at 23 to 24 mines it neither operates nor funds, turning 96.8 cents of every revenue dollar into cash with no exposure to the mining-cost inflation now eating into its producer peers.",
+   "cost_curve": "Company-reported cash margin of 96.8% in the June 2026 quarter (the screen's 102.85% is arithmetically impossible - it carries non-cash mark-ups including a $54M gain on the Osisko Development stake - so the company figure is the one used), the best in a peer group that includes Wheaton and Franco-Nevada. A plus-or-minus 10% move in the gold price swings cash profit by plus-or-minus 9.7%: the downside 9.7% is exactly as large as the upside, because a royalty has almost no cost base to absorb it - but it takes that hit from the lowest cost position available in the sector.",
+   "contracting_reserve": "Twenty-three to twenty-four paying assets with volumes already contracted out to 2030; the book grows by buying new royalties out of cash flow rather than by funding mine construction, so growth does not consume capital and no capex commitment sits between the company and its cash.",
+   "capital_discipline": "Net cash - net debt of minus 0.25 times cash profit - with interest cover near 86 times. There is no mine-building obligation at all, which is the structural reason this model cannot repeat the sector's habit of building at the top of the cycle.",
+   "valuation_guard": "Base fair value of $35.00 against a $31.19 price and a reconciled margin-of-safety reading of about plus 12% - the guard passes. Points come off only for asymmetry: the adverse case at $20.00 is 36% below the price, roughly three dollars of identified risk for each dollar of upside to fair value.",
+   "ebitda_margin_ttm": 1.0285,
+   "fcf_torque_10pct": 0.097,
+   "commodity_beta_2y": 1.41,
+   "ndebt_ebitda": -0.25,
+   "interest_coverage": 85.7,
+   "funded_solvency": "strong",
+   "sop_mos_pct": 12.2,
+   "chain_regime": {
+    "precious_metals": "NEUTRAL"
+   },
+   "regime_fit": "The precious-metals chain reads neutral in the cycle sidecar, so this seat is carried on its own merits rather than on a chain call. A royalty is the shape that survives a flat or falling metal best, because its costs do not rise when the metal does not.",
+   "phase_fit": "The macro note describes a phase in which the bond market is imposing positive real rates, so payback speed beats resource optionality - that favours cash-generative royalty models in every metal family, and this is the purest one in the book. The same note calls monetary metals the family currently without a driver, which is a reason to hold the seat below a full unit rather than a reason to drop it.",
+   "exposure_axes": [
+    "gold-real-rate",
+    "royalty-operator-counterparty"
+   ],
+   "size_units": 0.75,
+   "thesis_break_px": 24.0,
+   "bear_fv_px": 20.0,
+   "entry_posture": "scale_in",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 24.0,
+    "cc_strike": 35.0,
+    "tenor_days": 35,
+    "source": "qualitative",
+    "rationale": "Torque is the lowest in the book at 9.7% either way, so capping the upside at the $35.00 fair value costs little, and being assigned at $24.00 means owning a 96.8%-cash-margin royalty book a fifth below today's price.",
+    "csp_premium": null,
+    "csp_yield_annualized": null,
+    "expiry": null,
+    "dte": null,
+    "delta": null,
+    "iv": null
+   },
+   "decision": "KEEP",
+   "decision_rationale": "Cash margin of 96.8% reported on 8 July 2026 with 2030 volumes already contracted; nothing in the June-quarter disclosure touches the thesis, so the seat is kept at three-quarters of a unit.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_kill_fact": "No kill fact survived. The two loudest bear claims verify against primary sources but one of them has since been answered by the company on the record, and the valuation anchors are stale by a week in the bull's favour. (1) Cost-curve truth holds: the 96.8% cash margin is the company's own filed figure - $94.7 million of cash margin on $97.8 million of revenue in the second quarter of 2026 (5 August 2026 release and 6 August call) - and a royalty company has no all-in sustaining cost to check it against, so the record's rejection of the 102.85% deterministic proxy is right. (2) Reserve/contract truth holds on the numbers but not on the rhetoric: Agnico Eagle's own releases confirm 60,000-80,000 ounces lost in the second half of 2026 and up to approximately 150,000 ounces a year in 2027 and 2028, and OR quantified its own share on the 6 August call at roughly 3,500 ounces in 2026 and up to roughly 7,500 a year in 2027-2028, about 18,500 over three years - the same arithmetic the bear did. But the bear's claim that the five-year outlook 'does not survive the arithmetic' is now rebutted by a checkable reason: the 2030 outlook is a 2030 endpoint, and Barnat was always scheduled to be mined out by 2028 or 2029, so the hole sits in the path rather than in the endpoint. Management reconciled rather than repeated a reassurance, which is precisely the development the record itself listed as the one that would bring an entry forward. (3) Cyclical-peak cheapness is the one bear point that survives intact and gets worse: gold is $4,436.50 today against the record's $4,154 anchor, and 96.8 cents of every revenue dollar drops to cash, so the passing valuation guard is a metal-price print. At today's $33.54 the enterprise is about $6.43 billion against roughly $362 million of cash earnings - about 17.8 times, the same multiple the record measured, because price and earnings rose together. (4) No hidden disqualifier found: no reserve downgrade (Odyssey set a quarterly production record and the operator's stated life of mine runs decades out), no permit or licence issue, and the opposite of dilution - roughly 1.6 million shares bought back and cancelled year to date, including about 1.0 million for $29.1 million in July after the Barnat selloff, which fires the record's own 'is the buyback finally countercyclical' test in the company's favour. The fifth acquisition (Murray Brook, $28 million, closed July) was funded from cash, not equity, so the bear's stated confirming tripwire did not fire. The one structure worth naming is Amulsar, where OR's stream accrues but pays nothing until a $150 million Armenian government loan and OR's own loan are repaid - a disclosed subordination, and it carries almost no weight in the base case.",
+   "skeptic_corrections": "One load-bearing correction, plus two footnotes. MATERIAL: the base fair value is anchored to spot metal on 4 August ($4,150 gold) and the record says 95% of the value is the producing book, which converts metal price to cash roughly one-for-one. Gold is $4,436.50 on 11 August, 6.8% higher. Re-running the record's own schedule at today's spot: 92,000 gold-equivalent ounces at $4,436.50 is $408.2 million of revenue, a 97% cash margin leaves $395.9 million, less $34 million of corporate cash costs gives $361.9 million of cash earnings - which the chief financial officer independently corroborated on 6 August as 'close to USD 90 million per quarter' of adjusted earnings at current prices. At the record's own 19 times that is $6.88 billion, or $36.65 a share, plus $1.71 for development royalties and $0.80 for the investment portfolio, less $0.77 of net debt, and applying the record's own 2.2% discount step gives $37.50. FOOTNOTE 1: net debt as filed at 30 June 2026 is $143.7 million including finance leases, not the $139.4 million revolver-only figure the record uses - a $0.02 per share difference, and the record's direction and magnitude are right. FOOTNOTE 2: the record attributes the 'remediation complete in the third quarter, mining resumes in the fourth' timetable to Agnico Eagle's 2 July release; that release explicitly declined to give a timetable, and the schedule was published in Agnico Eagle's 29 July second-quarter results. The substance is correct, the date is not. NOTE ON THE CONCLUSION: the correction does not rescue the thesis. The shares are $33.54 today, not $31.19, so upside to the corrected fair value is 11.8% against the record's 12%, and downside to the unchanged $20 adverse case is 40%. The record's 'good business, fair price' verdict survives its own numbers being moved.",
+   "correction_severity": "material",
+   "skeptic_kill_scope": "numbers",
+   "hype_flag": false,
+   "headwind_chain": false,
+   "headwind_unjustified": false,
+   "stale_anchor": false,
+   "size_units_effective": 0.28,
+   "weight_pct": 12.5,
+   "weight_basis": "equal",
+   "duration_bucket": "unknown",
+   "duration_bucket_source": "no_fcf_data",
+   "corr_flag": true,
+   "entry_plan": "2 tranches / 2 wks",
+   "trim_at_px": null,
+   "exit_action": "HOLD"
+  },
+  {
+   "headwind_justification": "",
+   "growth_capex_fcf_negative": false,
+   "torque_leverage_quadrant": false,
+   "whats_changed": "",
+   "forensic_gate": "",
+   "symbol": "RIO",
+   "sector": "Basic Materials",
+   "chains": [
+    "copper_mining",
+    "diversified_miners"
+   ],
+   "chain": "copper_mining",
+   "commodity_family": "copper_mining",
+   "business_model": "producer",
+   "value_chain_position": "Diversified major - iron ore about 55% of revenue, plus copper, aluminium and lithium - selling raw ore, concentrate and metal; legal two-chain membership within this book.",
+   "physical_anchor": "Mines and ships iron ore, copper concentrate and cathode, and bauxite and aluminium from operations on five continents.",
+   "fr_score": 82,
+   "thesis": "Rio Tinto is the cheapest of the large diversified miners once its earnings are measured correctly, holds a first-quartile cost position in both of its main businesses, and for the first time earns more than half its profit from copper, aluminium and lithium rather than iron ore.",
+   "cost_curve": "The screen's 36.2% margin is a data artifact - Rio reports half-yearly and the automated trailing calculation summed four reporting periods instead of two - so the verified figure is used: roughly 46% ($28.6B of underlying cash operating profit on $61.7B of revenue), with Pilbara iron ore guided at $23.5-25.0 a tonne against a seaborne price near $93, and copper net unit costs cut to 30-50 cents a pound on 15 July 2026 from 65-75 cents. Iron ore, not copper, drives the torque figure: a plus-or-minus 10% commodity move swings cash profit by plus-or-minus 24.9%, and the minus 24.9% is the number to hold in mind, because part of that copper cost cut is a record gold by-product credit that reverses if gold falls.",
+   "contracting_reserve": "Multi-decade Pilbara reserves plus Simandou's 1.5 billion tonnes at 65-66% iron with about twenty years of life and Gudai-Darri with more than forty; copper life extends through Oyu Tolgoi averaging about 500,000 tonnes a year from 2028 to 2036. Iron ore sells on an index, so no contracted book cushions the downside torque above.",
+   "capital_discipline": "Net debt of $14.1B against about $28.6B of annual underlying cash profit - roughly half a turn - and this cycle it walked away from a Glencore merger on price, bought Arcadium near the lithium bottom, and refused to be a forced seller of its titanium dioxide and borates units. The counterweight is history: Alcan in 2007 is the sector's canonical top-of-cycle purchase, and Simandou is a large build into a strong tape.",
+   "valuation_guard": "Base fair value of $104 against a $99.08 price and a reconciled margin-of-safety reading of about plus 2.5% - thin, so the guard passes without granting anything. The adverse case at $62 is 37% below. The cheapness that does exist is genuine rather than accounting: on the corrected earnings base this is about 7.2 times enterprise value to cash profit against BHP at 8.6 and Southern Copper at 16.7.",
+   "ebitda_margin_ttm": 0.3619,
+   "fcf_torque_10pct": 0.249,
+   "commodity_beta_2y": 0.5,
+   "ndebt_ebitda": 0.69,
+   "interest_coverage": 18.6,
+   "funded_solvency": "strong",
+   "sop_mos_pct": 2.5,
+   "chain_regime": {
+    "copper_mining": "NEUTRAL",
+    "diversified_miners": "NEUTRAL"
+   },
+   "regime_fit": "Both chains it rides read neutral in the cycle sidecar. Its iron-ore half is the leg most exposed to Chinese steel demand, and the reconciled valuation already discounts that structurally by valuing iron ore at 5.0 times against 8.5 times for copper; the copper and aluminium halves are what earn the seat.",
+   "phase_fit": "A phase of imposed positive real rates rewards payback speed, and this is a business that paid a $3.4B interim dividend out of $3.8B of first-half free cash flow. It is also the seat most open to the criticism the phase note makes: Simandou and lithium are resource optionality, which is the cohort the phase disfavours, so the seat is opened below a full unit and entered on weakness.",
+   "exposure_axes": [
+    "global-growth-china-demand",
+    "china-steel-iron-ore"
+   ],
+   "size_units": 0.65,
+   "thesis_break_px": 78.0,
+   "bear_fv_px": 62.0,
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": false
+   },
+   "decision": "ADD",
+   "decision_rationale": "First-half results on 28 July 2026 showed underlying cash operating profit up 28% to $14.8B and free cash flow up 75% to $3.8B, with $870M of productivity benefits banked by 30 June against a $650M promise and the year-end target raised to $1.8B; it takes the eighth seat because its verified trailing margin is about ten points above what the screen printed.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_kill_fact": "No kill fact found. Every load-bearing fact in the bear case verifies against a primary source. (a) COST-CURVE: the cost claim is NOT a proxy artifact - the 2026 Q2 production report (Business Wire 14 July 2026 US / 15 July AEST, filed as a Form 6-K exhibit) carries company guidance of copper net cash unit costs of 30-50 US cents/lb, cut from 65-75 cents, with Rio's own stated reason being higher than expected gold prices plus productivity, and Pilbara cash unit costs of US$23.5-25.0 per wet tonne; the 28 July 2026 half-year call confirms iron ore is 'on track to deliver full year unit costs within guidance'. The record's caveat that a cost guide moving with a by-product metal price is not a cost position stands, and is Rio's own disclosure. (b) RESERVE/CONTRACT: nothing stale or narrative-only found that breaks the case; the opposite - the 28 July call discloses that Kennecott's approved mine life 'officially ends in 2032' with the Apex life-extension to the 2040s still a study ('that decision will be coming in the not-too-distant future'), i.e. the asset carrying the base-case 40-50% copper growth is not yet reserve-backed past 2032, a fact the record does not use. (c) CYCLICAL-PEAK CHEAPNESS: the peak-cycle trap is the record's own conclusion and the chain state corroborates it - this book's own commodity_macro.json (generated 2026-08-11) scores copper_mining setup 0.1/30 with momentum at the 95.8th percentile and diversified_miners setup 1.5/30 with momentum at the 77.4th, i.e. price at the top of its 6y range on maximum momentum. Copper $6.6353/lb and gold $4,436.50/oz on 11 August 2026 confirm the price set is not normalised. (d) HIDDEN DISQUALIFIER: none found. No reserve downgrade, no permit revocation, no disguised streaming/royalty loan; diluted share count went 1,632.4m (Q4 2024) to 1,640.2m (Q2 2026), +0.5% over two years, so there is no serial equity dilution funding the capex step-up. The Mongolian shareholder loan is disclosed and Rio is the lender, not the borrower. The nearest thing to an undisclosed structural risk is new, and it cuts the record's way: incremental unionisation across Pilbara sites for the first time in about 30 years, raised by UBS on the 28 July 2026 call, is a live threat to the first-quartile cost position the whole valuation rests on.",
+   "skeptic_corrections": "1) LOAD-BEARING CONFLATION IN THE DATA WARNING (the record's single most emphatic claim). The record asserts the automated bundle is inflated 2x and concludes 'roughly 13.4 times earnings and a 3.6% free-cash-flow yield, not the 7.2 times and 6.8% the bundle implies'. Half of that verifies and half does not. Verified: FMP's independent TTM metrics on 11 August 2026 read free-cash-flow yield 3.47% and earnings yield 7.34% (P/E 13.6), so the 6.8% FCF yield and the $13.67 diluted EPS in the bundle were indeed double-counted (Rio reports half-yearly; four periods were summed). NOT verified: the 7.2x was never a doubling artifact. FMP's TTM EV/EBITDA is 7.40x and TTM EV/sales 2.894x on EV $178.5B, which back-solves to TTM revenue of $61.7B - the same undoubled revenue the record itself calls the true figure. A doubled EBITDA would have printed ~4.3x, not 7.2x. So 13.6x earnings and 7.2-7.4x EV/EBITDA are both true simultaneously; they are different measures, not a corrupted one and a corrected one. The record's rhetorical pairing wrongly tars the peer-comparison anchor (Rio 7.2x vs BHP 8.6x, Vale 8.4x) that its own SoP sanity-check leans on. This corrects the narrative, not the schedule: no valuation level moves, so corrections_typed is empty.\n2) DATED INPUTS HAVE MOVED SINCE as_of 2026-08-04, both against two named bear reversion triggers. Gold is $4,436.50/oz on 11 August 2026 versus the $4,152 the record uses, +6.8% in a week, so the gold by-product credit inside the 30-50c copper guide is currently larger, not smaller; the record's 'gold reverting toward $3,000' is a horizon claim, not a near-term one. Brent is $88.76 versus the $79.26 the record cites for 4 August, +12%, so the valley_of_death statement that the diesel headwind 'is now reversing hard into the second half' is no longer true. Both are small in dollars (Rio's own sensitivity is about $0.15/t per $10/bbl, roughly $50m a year on ~330Mt) and neither moves a valuation level.\n3) PRICE AND RANGE ANCHORS ARE STALE, IN THE RECORD'S FAVOUR. RIO trades at $100.86 on 11 August 2026 (52-week range now $60.22-$112.58, not the $59.49 low cited). Base-case upside to the unchanged $104 is now +3.1%, not the ~5% stated, and the identified asymmetry widens from about 7:1 to about 12:1 against ($38.86 of downside to the $62 adverse case per $3.14 of base-case upside). The risk_reward verdict of 'poor' is understated, not overstated.\n4) BALANCE-SHEET INPUTS RE-DERIVED AND HELD. The filed 30 June 2026 balance sheet (accepted 29 July 2026) shows total debt $22.85B against cash and short-term investments of $9.51B, net debt $13.94B versus the $14.1B company-reported figure the SoP deducts - a $0.10/share difference. Diluted weighted shares are 1,640,167,000, exactly the 1,640m divisor used. Book minority interest is $6.24B, matching the record's $6B deduction (an EV-basis mark on the ~$1.1B/yr of earnings attributable to minorities would be higher, but the record's Oyu Tolgoi shareholder-loan argument is factually correct and offsets it). Re-derived base fair value is $103.7, i.e. $104 unchanged.\n5) TWO OMISSIONS THAT STRENGTHEN THE CASE RATHER THAN WEAKEN IT. (i) The record repeatedly frames capex against 'sustaining capital of about $4B' as the mandatory floor; on the 28 July 2026 call Cunningham guided the first-priority bucket (sustaining plus replacement plus decarbonisation) at '$7 billion to $8 billion a year', so the non-discretionary call in a downturn is $3-4B/yr larger than the record assumes. (ii) Kennecott's approved life ends 2032 and the Apex extension is un-FID'd, while the base-case copper leg capitalises 40-50% Kennecott growth at 8.5x.\n6) MINOR: the record puts iron ore at 'about 46%' of first-half group earnings; the segment split ($6.8B iron ore of $15.8B product-group EBITDA) and management's own '[n]early 60% of EBITDA... from copper, aluminium and lithium' (28 July 2026) put it nearer 43%. Immaterial to the SoP, which values the segments directly.\n7) CATALYST STATUS VERIFIED AS DESCRIBED. SOFT_EXTENDED is correct: the 27 July 2026 Dampier desalination agreements are explicitly non-binding, and on 28 July 2026 Trott said only 'targeting $5 billion of announcements this year' with nothing signed ('No, progressing'). The ~$900m Mongolian tax claim was confirmed by Cunningham as being in a formal arbitration process with no public hearing date, so it remains unschedulable and unsizable as stated.",
+   "correction_severity": "minor",
+   "skeptic_kill_scope": "thesis",
+   "hype_flag": false,
+   "headwind_chain": false,
+   "headwind_unjustified": false,
+   "stale_anchor": false,
+   "size_units_effective": 0.357,
+   "weight_pct": 12.5,
+   "weight_basis": "equal",
+   "duration_bucket": "unknown",
+   "duration_bucket_source": "no_fcf_data",
+   "corr_flag": true,
+   "entry_plan": "2 tranches / 2 wks",
+   "trim_at_px": null,
+   "exit_action": "HOLD"
+  },
+  {
+   "headwind_justification": "",
+   "growth_capex_fcf_negative": true,
+   "torque_leverage_quadrant": false,
+   "whats_changed": "",
+   "forensic_gate": "",
+   "symbol": "RGLD",
+   "sector": "Basic Materials",
+   "chains": [
+    "precious_metals"
+   ],
+   "chain": "precious_metals",
+   "commodity_family": "precious_metals",
+   "business_model": "royalty_streamer",
+   "value_chain_position": "Royalty and streaming pure-play, the anchor example for this chain; passes the cash and profit gates of Lane A automatically.",
+   "physical_anchor": "Holds royalty and stream contracts entitling it to a fixed percentage of the gold, silver and copper produced at partner mines.",
+   "fr_score": 81,
+   "thesis": "Royal Gold collects a contractual slice of the gold poured at roughly eighty mines it neither operates nor funds, at a disclosed cost of $871 per gold-equivalent ounce against a $4,506 realised price - the widest cash spread anywhere in this book.",
+   "cost_curve": "Company-reported adjusted margin of 83% is used rather than the screen's 78.7%, which still carries the one-off Sandstorm and Horizon transaction charges booked in the December 2025 quarter; the preliminary disclosure of 21 July 2026 put stream cost of sales at $871 per gold-equivalent ounce against a $4,506 quarterly gold average, with essentially no cost of sales on the royalty half. A plus-or-minus 10% gold move swings cash profit by plus-or-minus 12.7%, and the minus 12.7% is real and unhedged - a royalty book has no cost to cut when the metal falls.",
+   "contracting_reserve": "About eighty producing mines pay into the book, the deepest paying-asset count in this slate and a genuine spread of operator risk; the royalty half carries essentially no cost of sales, and growth has come from buying books rather than funding construction.",
+   "capital_discipline": "Net debt of 0.35 times cash profit with interest cover near 24 times - modest, but it is the only royalty seat here carrying any debt, and the Sandstorm purchase deployed capital at a high gold price, which is the honest knock against it.",
+   "valuation_guard": "The two readings disagree and the conservative one governs: the reconciled sum-of-the-parts base case is $253 a share against a $207.27 price, while the sidecar's own margin-of-safety field reads about minus 2%. Scored on the conservative reading the guard passes with nothing to spare, and the adverse case at $153 is 26% below the price. The mid-build cash-flow flag independently holds the seat at three-quarters of a unit.",
+   "ebitda_margin_ttm": 0.7866,
+   "fcf_torque_10pct": 0.127,
+   "commodity_beta_2y": 1.28,
+   "ndebt_ebitda": 0.35,
+   "interest_coverage": 23.6,
+   "funded_solvency": "strong",
+   "sop_mos_pct": -2.1,
+   "chain_regime": {
+    "precious_metals": "NEUTRAL"
+   },
+   "regime_fit": "The precious-metals chain reads neutral in the sidecar. With eighty paying mines the seat is closer to an index of gold production than to any single operator's cost curve, which is what makes it the right way to hold a neutral chain.",
+   "phase_fit": "The phase note is explicit that royalties survive on cash flow and that the gold price does not have to rise for them to pay - that is precisely this seat's shape. It also flags monetary metals as the family without a driver while growth is rising and inflation cooling, which is why the seat is held rather than added to.",
+   "exposure_axes": [
+    "gold-real-rate",
+    "royalty-operator-counterparty"
+   ],
+   "size_units": 0.75,
+   "thesis_break_px": 170.0,
+   "bear_fv_px": 153.0,
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 170.0,
+    "cc_strike": 253.0,
+    "tenor_days": 40,
+    "source": "qualitative",
+    "rationale": "Torque of 12.7% either way is low enough that a call struck at the $253 fair value gives up little, and a put at $170 would put the book on at a price the eighty-mine cash spread comfortably supports.",
+    "csp_premium": null,
+    "csp_yield_annualized": null,
+    "expiry": null,
+    "dte": null,
+    "delta": null,
+    "iv": null
+   },
+   "decision": "KEEP",
+   "decision_rationale": "Stream cost of sales of $871 per gold-equivalent ounce against a $4,506 realised price, disclosed 21 July 2026, holds the thesis exactly as it was underwritten; kept at the three-quarter-unit ceiling that the mid-build cash-flow flag imposes.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_kill_fact": "No kill fact survived verification. The two attacks that could have broken the record both failed against primary sources. (a) COST-CURVE TRUTH holds independently: the record rejects the deterministic 78.7% ebitda_margin_band proxy in favour of management's 83% cash margin, and the Q2 2026 income statement filed 6 August 2026 recomputes to exactly that - reported EBITDA of $353.817m plus the $22.321m non-operating equity fair-value gain that management adjusts out equals $375.0m on revenue of $450.539m, a margin of 83.2%. The contractual $871 per gold-equivalent ounce stream cost of sales is a filed figure, not a narrative one, and it does not inflate with diesel, labour or grade. (b) RESERVE/CONTRACT TRUTH holds and in fact moved the right way: Allied extended Bonikro from 2029 to 2036, Coeur expanded Rainy River exploration, Lundin Gold reported a seventh porphyry at Fruta del Norte, and Newmont's Red Chris block cave received British Columbia regulatory approvals plus a CAD 500m federal investment. Hod Maden project expenditures were confirmed on 6 August 2026 to remain within the scope of the technical report summary SSR Mining filed in January 2026, at roughly 25% overall progress and $175m cumulative spend. (d) HIDDEN DISQUALIFIER: none found. There is no undisclosed reserve downgrade, no permit or licence impairment (MARA's environmental submission is pending, Red Chris's approvals are received), no serial dilution - the 2025 share issuance was a single disclosed, shareholder-approved acquisition and the count is now falling, with 147,205 shares repurchased AND CANCELLED against filed diluted shares of 85,052,094 - and no disguised-loan structure: the one debt-like fixed-delivery obligation in the book, Relief Canyon, was settled and extinguished during the quarter. What did break is narrower and numeric, and it is stated in the corrections: the record's base fair value is explicitly marked to a spot gold price that is now seven days stale, and the adverse case's net-debt line rests on a Hod Maden cash drain that primary disclosure has eliminated. On (c) CYCLICAL-PEAK CHEAPNESS the record cannot be convicted of the trap because it self-reports it: value_conviction_blocker is already set to PEAK_ARTIFACT and the moderator states in terms that the multiple is 'eleven to thirteen times peak-metal earnings'. The peak-cycle risk is real - gold's 52-week range is $3,353 to $5,627 - but it is disclosed and priced, not concealed by the valuation guard.",
+   "skeptic_corrections": "THREE corrections, two of them numeric and load-bearing. FIRST, and materially, the base case is marked to a gold price that no longer exists. sop_breakdown states the base is struck 'at today's spot gold of $4,153.90 an ounce'; COMEX gold settled $4,441.10 on 11 August 2026, up 6.95% from the $4,152.60 settlement on 4 August 2026, the record's own as_of date. Re-marking the record's own schedule and changing nothing else: the stream book's contractual cost of sales is fixed at $871/GEO, so the record's $904m stream cash margin implies about 275,400 gold-equivalent ounces ($904m divided by $4,153.90 less $871); at $4,441.10 the margin per ounce rises to $3,570.10 and the stream cash margin to $983m, worth $14.26bn at the record's own 14.5x. The royalty book scales with price: $487m times 4441.10/4153.90 equals $521m, worth $8.85bn at the record's own 17x. Overhead, the $1.20bn development carry and the $0.31bn non-core mark are all held flat, which is conservative given the Red Chris and Bonikro news. SECOND, the net-debt line is overstated in BOTH the base and the adverse case, and the error is a primary-source one. sop_breakdown deducts $0.35bn 'allowing for the Hod Maden and Warintza funding still to come', and sop_bear deducts $0.55bn on the explicit premise that 'the company keeps funding Hod Maden at the second-quarter rate of $70 million'. That recurring drain does not exist. On the 6 August 2026 call Libner disclosed that Lidya is required to fund the NEXT $397m of Hod Maden capital before Royal Gold contributes anything further, and Heissenbuttel quantified Royal Gold's entire remaining base-capex share at roughly $65m - 15% of a roughly $900m project less the $70m already funded - not beginning until mid-2027. The only other commitment is $50m at Warintza. Against that, $75m of revolver was repaid in July and a further $100m was intended for mid-August, taking drawings from $400m to about $225m against $244m of working capital at 30 June, with full repayment still guided for Q4 2026. Base-case net debt is therefore about $0.10bn, not $0.35bn, and the adverse case about $0.30bn, not $0.55bn. Base parts re-sum to $23.47bn over 85.0m diluted shares, or $276; the adverse case re-sums to $13.29bn, or $156. THIRD, non-numeric but worth stamping: catalyst_status reads PENDING_HARD and describes the Q2 print as 'a firm, scheduled, company-confirmed event one day from now'. That event has fired. Results were released after the close on 5 August 2026 and the call was held 6 August 2026 - revenue $451m (up 115%), record operating cash flow $335m, adjusted net income $2.56 per share (up 41%), 2026 guidance reaffirmed with copper and other metals tracking at or above the top of their ranges. The catalyst is now RESOLVED_BEAT on cash flow and guidance while missing consensus on reported EPS, and the status field should not continue to read PENDING_HARD. Two secondary anchors also decayed and should not be relied on again: live_price of $207.27 is now $232.395, a 12.1% drift the numeric gate already caught as G1A_PRICE_MISMATCH, which means the record's 'wait for the high $170s to $180' entry has moved further away rather than closer; and the adverse case's cross-check that $153 'lands within 2% of the actual 52-week low of $156.44' no longer validates, because that low has rolled out of the trailing window - the 52-week low quoted on 11 August 2026 is $166.52. Finally, one bear-side point that survives untouched and should NOT be treated as cleared: the Pueblo Viejo silver deferral of 1.97 million ounces, which requires recovery above 52.5% before any delivery, was not mentioned once on the 6 August 2026 call. It remains unresolved.",
+   "correction_severity": "material",
+   "skeptic_kill_scope": "numbers",
+   "hype_flag": false,
+   "headwind_chain": false,
+   "headwind_unjustified": false,
+   "stale_anchor": false,
+   "size_units_effective": 0.28,
+   "weight_pct": 12.5,
+   "weight_basis": "equal",
+   "duration_bucket": "unknown",
+   "duration_bucket_source": "no_fcf_data",
+   "corr_flag": true,
+   "entry_plan": "2 tranches / 2 wks",
+   "trim_at_px": null,
+   "exit_action": "HOLD"
+  },
+  {
+   "headwind_justification": "",
+   "growth_capex_fcf_negative": false,
+   "torque_leverage_quadrant": false,
+   "whats_changed": "",
+   "forensic_gate": "",
+   "symbol": "HBM",
+   "sector": "Basic Materials",
+   "chains": [
+    "copper_mining"
+   ],
+   "chain": "copper_mining",
+   "commodity_family": "copper_mining",
+   "business_model": "producer",
+   "value_chain_position": "Polymetallic base-metal producer - sells copper concentrate as the dominant product with meaningful zinc, gold and silver by-product credits.",
+   "physical_anchor": "Operates open-pit and underground mines - Constancia in Peru, Snow Lake in Manitoba, Copper World in Arizona - producing copper concentrate with zinc, gold and silver by-products.",
+   "fr_score": 76,
+   "thesis": "Hudbay mines copper concentrate in Peru, Manitoba and British Columbia at a verified first-quartile cost - a negative cash cost per pound once by-product credits are counted - with reserve lives extended into the 2040s and effectively no net debt.",
+   "cost_curve": "The screened 66.5% margin is about fifteen points too high: trailing profit embeds a $322M non-cash Copper World impairment reversal from the September 2025 quarter, and the honest adjusted figure is 51%. The cost claim itself is verified - 2026 cash cost guidance improved on 29 July 2026 to minus $0.45 to minus $0.25 per pound of copper, with a June 2026 quarter actual of minus $0.40 against a $1.39 sustaining cash cost. A plus-or-minus 10% copper move swings cash profit by plus-or-minus 11.3%, and that minus 11.3% is absorbable precisely because it is taken from a first-quartile position - that is what separates torque worth owning from a coin flip.",
+   "contracting_reserve": "Reserve lives run into the 2040s at Constancia and Snow Lake and Copper World is permitted; against that, concentrate sells on annual smelter terms with no long-dated contract cushion, and the depletion of high-grade Pampacancha ore in late 2025 removed the gold by-product credits that flattered earlier quarters - which is why margin fell from 48.6% in the March quarter to 41.0% in June 2026.",
+   "capital_discipline": "Net debt of 0.04 times cash profit - effectively unlevered - with interest cover of 9.4 times. The risk ahead is the Copper World build, which is exactly the point in a cycle where this sector historically overreaches; the seat is sized on the assumption that it will be funded from cash flow.",
+   "valuation_guard": "Base fair value of $26.75 against a $24.765 price and a reconciled margin-of-safety reading of about plus 8% - the guard passes, but the deduction is real: strip the impairment reversal and the stock is 8.6 times enterprise value to cash profit rather than the screened 6.6 times, so part of the apparent cheapness was an accounting artifact. The adverse case at $14.50 is 41% below.",
+   "ebitda_margin_ttm": 0.665,
+   "fcf_torque_10pct": 0.113,
+   "commodity_beta_2y": 1.02,
+   "ndebt_ebitda": 0.04,
+   "interest_coverage": 9.4,
+   "funded_solvency": "strong",
+   "sop_mos_pct": 8.0,
+   "chain_regime": {
+    "copper_mining": "NEUTRAL"
+   },
+   "regime_fit": "Copper reads neutral in the sidecar, and this is the seat built to sit through a neutral chain: a bottom-quartile cost position bounds the downside without needing the metal to rise, and the two-year measured beta of 1.02 confirms it is a genuine copper producer rather than a hedged one.",
+   "phase_fit": "A phase of imposed positive real rates favours producers that convert to cash quickly, and a negative cash cost per pound is as fast as conversion gets. The growth-and-cooling-inflation quadrant favours demand-linked metals such as copper on volume, which is a reason to be comfortable holding the seat - not a reason to size it larger, since the macro layer moves nothing here.",
+   "exposure_axes": [
+    "global-growth-china-demand",
+    "copper-cost-curve"
+   ],
+   "size_units": 0.65,
+   "thesis_break_px": 18.0,
+   "bear_fv_px": 14.5,
+   "entry_posture": "scale_in",
+   "wheel": {
+    "suits": false
+   },
+   "decision": "KEEP",
+   "decision_rationale": "Cash cost guidance was improved on 29 July 2026 to a negative cost per pound of copper and the June quarter came in at minus $0.40, so the thesis is intact; the seat is trimmed from 0.8 to 0.65 units because the screened margin proved about fifteen points too high once the September 2025 impairment reversal is stripped.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_kill_fact": "No kill fact found. The bear's load-bearing valuation claim verifies against SEC-filed statements: the four quarters to 2026-06-30 sum to $1,654.5M of reported EBITDA (Q3-25 $435.7M + Q4-25 $431.7M + Q1-26 $460.9M + Q2-26 $326.2M), exactly the screened figure, and the September-2025 quarter carried +$320.1M of total other income against only $346.8M of revenue - a 126% EBITDA margin that is arithmetically impossible from operations. Strip it and trailing EBITDA is ~$1,334M, so the '6.6x is an accounting artifact' argument stands. The peak-cycle premise also verifies: copper is $6.6363 on 2026-08-11, 1.4% under its 52-week high of $6.728 and 13.3% above its 200-day average of $5.856. And the bear's conclusion is arithmetically STRONGER than when written - at the live $27.275 the enterprise value is ~$12.03B against $1,271.6M of adjusted EBITDA, 9.5x, versus the 8.6x the record cites and a 7.4x clean-peer median. The strongest counter-finding does not break the conclusion, only its framing: the equity was never at its 52-week high.",
+   "skeptic_corrections": "MATERIAL 1 - the joint-peak premise is false. The bear opens that 'the equity has tracked the metal to within a whisker of both their 52-week highs.' It has not. HBM's 52-week high is $32.15; the stock closed $31.87 on 2026-06-02, then fell to $20.36 on 2026-07-17 - a 36% peak-to-trough drawdown - while copper never left ~1.5% of its own high. At the record's $24.765 anchor the equity sat 23% BELOW its own 52-week high. The multiple compression the bear forecasts from a copper roll-over has already partly occurred independently of the metal, and partly reversed. The bear may still be right that the stock is expensive, but not because equity and metal are jointly pinned at their highs.\n\nMATERIAL 2 - the price anchor is stale by 10.1%. risk_reward is computed 'From $24.765' (as_of 2026-08-04). HBM closed $27.265 on 2026-08-11 (mktcap $12.113B / 444.1M shares). The stock now trades ABOVE the $26.75 base fair value: upside is minus $0.53, not plus $1.99, and downside to the $14.50 adverse case is $12.78. The asymmetry the bear describes is worse than stated, not better - this correction runs in the bear's favour. No typed correction is emitted because the moved number is live_price, not one of the four correctable valuation levels; bear_px, base_fv_px and bull_px are each internally consistent with their own stated commodity decks and share count (444.1M confirmed: $12,113M market cap / $27.275).\n\nMATERIAL 3 - the Q2 2026 revenue miss did not happen. The bear states 'the June 2026 quarter missed revenue expectations at $631.3 million against roughly $652 million.' The SEC-filed income statement (CIK 0001322422, filed 2026-07-29) reports revenue of $651,037,075 and gross profit of $266,847,232 - a 41.0% margin, and in line with the ~$652M consensus the bear itself cites. $631.3M is not the filed number, and it contradicts the record's own gm_trajectory field, which carries $651.0M for the same quarter. The Peruvian port deferral is real and is a genuine second occurrence in four quarters, but it did not produce a ~$20M revenue shortfall. What did miss was EPS: $0.28 against a $0.30 consensus. The 'operational fragility' pillar loses its headline number.\n\nMINOR - footnotes, none of which move a valuation level: copper's 200-day average is $5.856 not $5.81, and its 52-week low $4.4075 not $4.36; gold is $4,434.7 and silver $64.86 on 2026-08-11 versus the record's $4,151 and $60 on 2026-08-04, i.e. both by-product metals rose 6.8% and 8.1% in the week after the as-of and both sit far above the sop_bear deck of $3,600 gold / $45 silver - the by-product-deflation claim survives structurally (gold remains below its $4,587.69 200-day average, silver below its $70.71) but is not deflating on the current tape; HBM's 52-week low is $9.62 not $9.04. Unresolved definitional gap, deliberately NOT corrected: the filed 2026-06-30 balance sheet shows cash of $939.9M and total debt of $912.1M including $26.0M of leases, i.e. net cash of $27.8M, against the record's $890.9M cash and $80.5M net cash. The $52.7M difference is $0.12 per share against a SoP line already carried at $0.18, and I could not resolve the definition against the filing itself, so no typed correction is made.\n\nWHAT SURVIVED THE ATTACK. (a) Cost-curve truth: not disputed by the bear and independently corroborated - the company's own dated release of 2026-07-29 is titled 'Hudbay Delivers Strong Second Quarter 2026 Results and Improves Cash Cost Guidance', so guidance moved the right way on the same date the bear's window opens. (b) Reserve/contract truth: the bear does not lean on reserve life or contract cover, so there is nothing stale to break there. (c) Cyclical-peak cheapness: this is the classic trap and the bear is on the correct side of it - copper 13.3% above its 200-day average and the name at 9.5x adjusted EBITDA is not cheap, it is a producer flattered by the tape. (d) Hidden disqualifier: the dilution charge verifies rather than being exaggerated - common stock rose from $2,680.1M to $3,803.8M quarter-on-quarter (+$1,123.7M) and PP&E from $4,768M to $6,189M (+$1,421M) in the June 2026 quarter, against weighted-average shares of 396.9M in Q1 2026 versus 444.1M outstanding now, an ~11.9% stock-funded acquisition of a pre-feasibility asset. I found no undisclosed reserve downgrade, no permit revocation, and no evidence that the Wheaton stream or the Mitsubishi structure is a disguised debt-like repayment obligation.",
+   "correction_severity": "material",
+   "skeptic_kill_scope": "thesis",
+   "hype_flag": false,
+   "headwind_chain": false,
+   "headwind_unjustified": false,
+   "stale_anchor": false,
+   "size_units_effective": 0.357,
+   "weight_pct": 12.5,
+   "weight_basis": "equal",
+   "duration_bucket": "unknown",
+   "duration_bucket_source": "no_fcf_data",
+   "corr_flag": true,
+   "entry_plan": "2 tranches / 2 wks",
+   "trim_at_px": null,
+   "exit_action": "HOLD"
+  },
+  {
+   "headwind_justification": "",
+   "growth_capex_fcf_negative": false,
+   "torque_leverage_quadrant": false,
+   "whats_changed": "",
+   "forensic_gate": "",
+   "symbol": "AEM",
+   "sector": "Basic Materials",
+   "chains": [
+    "precious_metals"
+   ],
+   "chain": "precious_metals",
+   "commodity_family": "precious_metals",
+   "business_model": "producer",
+   "value_chain_position": "Senior gold producer selling refined bullion plus by-product base metals.",
+   "physical_anchor": "Mines and pours gold, with silver, copper and zinc by-products, at Canadian, Mexican and Finnish mines.",
+   "fr_score": 73,
+   "thesis": "Agnico Eagle pours about 3.4 million ounces a year at the lowest all-in cost in the senior tier and holds $3.267B of net cash, but the shares already trade above the reconciled value of the parts and those earnings were struck on a gold price that has started to fall.",
+   "cost_curve": "Verified and in agreement with the screen: an all-in sustaining cost of $1,459 an ounce in the June 2026 quarter against a realised $4,483, a 67.5% all-in margin, with full-year guidance of $1,400-1,550 tracking inside range. The cost advantage over Newmont is about $220 an ounce - real, but at the thin end of management's claim of hundreds of dollars. A plus-or-minus 10% gold move swings cash profit by plus-or-minus 13.2%, and the minus 13.2% is the operative half here: the realised price already fell from about $4,900 to $4,483 between the March and June quarters and margin fell 4.2 points with it.",
+   "contracting_reserve": "Reserves are booked at a $1,450 gold price - deeply conservative against a $4,483 realisation - across long-life mines in Canada, Mexico and Finland. There is no contracted book, because gold producers sell into spot, so nothing at all cushions the downside torque above.",
+   "capital_discipline": "Net cash of $3.267B, net debt of minus 0.3 times cash profit and interest cover near 116 times. It did not build at the top of the last cycle, which is the strongest single item in its file and the reason the seat survives a failing valuation guard.",
+   "valuation_guard": "The guard bites. Base fair value of $164 sits below the $181.44 price, the reconciled margin-of-safety reading is about minus 10%, and the adverse case at $107 is 41% below. Earnings behind that price were struck at a gold price now falling, so no part of the apparent cheapness is credited and the seat is cut.",
+   "ebitda_margin_ttm": 0.718,
+   "fcf_torque_10pct": 0.132,
+   "commodity_beta_2y": 1.55,
+   "ndebt_ebitda": -0.3,
+   "interest_coverage": 115.9,
+   "funded_solvency": "strong",
+   "sop_mos_pct": -9.6,
+   "chain_regime": {
+    "precious_metals": "NEUTRAL"
+   },
+   "regime_fit": "Precious metals read neutral in the sidecar, and a spot-selling producer is the shape with the least protection in a neutral chain: a two-year measured beta of 1.55 means it moves half again as much as the metal, in both directions.",
+   "phase_fit": "This is the seat that sits worst against the phase read and it should own that plainly: the note says imposed positive real rates compete with a zero-yield asset and that monetary metals lack a driver while growth rises and inflation cools. It is held for its balance sheet and its cost position, not for the metal, and it is the leg cut to bring the gold cluster inside its cap.",
+   "exposure_axes": [
+    "gold-real-rate"
+   ],
+   "size_units": 0.5,
+   "thesis_break_px": 135.0,
+   "bear_fv_px": 107.0,
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": false
+   },
+   "decision": "KEEP",
+   "decision_rationale": "The June 2026 quarter's all-in sustaining cost of $1,459 an ounce is still the lowest in the senior tier, so the thesis holds; the seat is cut from 0.7 to 0.5 units because the realised price fell from about $4,900 to $4,483 in that same quarter and margin rolled over with it.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_kill_fact": "No kill fact found. I attacked all four vectors against primary sources and the bear case survived every one. (a) COST-CURVE: the record's cost claim verifies against the company's own Q2 2026 disclosure - total cash costs $1,054/oz and all-in sustaining cost ~$1,459/oz, both inside the 2026 guidance ranges ($1,020-1,120 and $1,400-1,550) and, per management on the 2026-07-30 call, BELOW first-quarter costs and below the guidance midpoints. If anything the record's 'unit costs rose' framing is softer than the primary text supports; the genuine forward cost risk is narrower and dated - the CFO confirmed on that same call, in answer to Barclays, that Canadian Malartic cash-cost guidance was raised for the second half of 2026. (b) RESERVE/CONTRACT: no undisclosed downgrade found; the reserve figures are not load-bearing for the bear side and no bear number depends on them. (c) CYCLICAL-PEAK: this is the one place the record could have been trapped and it is not - the valuation guard FAILS (base fair value below the market price), and the peak-cycle denominator makes the bear's central claim stronger, not weaker: the 8.6x trailing EV/EBITDA is struck on twelve months of EBITDA earned at realised gold well above the $4,200/oz base deck, so the forward multiple on the record's own deck is roughly 9.0x. (d) HIDDEN DISQUALIFIER: none. No reserve downgrade, no permit or licence action, no equity dilution funding capex (diluted share count fell year on year and the company repurchased stock every quarter), and no streaming or royalty structure of any kind - Agnico is a royalty BUYER (the $5M Prism net-profit-interest buy-back, 2026-06-04), not a seller. The junior-equity book (C$22.4M Wallbridge 2026-05-20, C$60.0M Cadillac 2026-07-24) is real and confirmed by primary releases, but at ~1% of market value it is a governance flag, not a disqualifier. What does move is the base-case level: the record's own sum-of-the-parts does not tie to its stated total, and the share count is stale post-Rupert.",
+   "skeptic_corrections": "1) BASE FAIR VALUE, $164 -> $161 (the one number that moved). The record's own base-case parts are $69.2B producing mines + $8.0B growth pipeline + $3.27B net cash + $1.2B junior equity = $81.67B, not the '$82.5B' stated, and the per-share components it lists ($138 + $16 + $6.50 + $2.40) sum to $162.90, not $164. Separately the divisor is stale: the record uses 503M diluted shares, which is the Q2 2026 weighted-average (502.9M) and therefore captures only two weeks of the shares issued to close the Rupert Resources arrangement on 2026-06-16. Actual shares outstanding as of 2026-08-11 are ~506.4M ($91.903B market cap / $181.495). $81.67B / 506.4M = $161.3. The correction is fully within the bear's direction - it widens the gap to the $181.44 price from 10.6% to 12.7% - so nothing in the conclusion turns on it. 2) NET CASH, footnote only, not carried into the level. The record's $3.27B follows management's own definition (the CEO said 'approximately $3.3 billion' on the 2026-07-30 call), but the filed balance sheet also carries $34.3M of short-term debt and $89.1M of finance leases against $3,473.7M of cash and short-term investments, i.e. $3.15B on a strict basis. Using $3.15B leaves the corrected fair value at $161 either way, so the level is robust to the choice. 3) SOP_BEAR HEADER MISLABEL, footnote. The adverse case is headed 'about $107 a share (roughly $54B of equity value)', but the four parts listed underneath sum to $50.3B, which is $99-100 a share. The $54B is a back-solve from the point number, not the sum of the parts. The $107 itself is defensible and I am NOT correcting it: the record discloses that it blends the sum-of-the-parts with the commodity-beta cross-check, and the two legs check out independently - $50.3B / 506.4M = $99.3, and 1.55 beta x 23.5% gold decline = 36.4% off $181.44 = $115.4; the midpoint is $107.4. The header wording should say so rather than attributing $54B to the parts. 4) MULTIPLE-REVERSION ARITHMETIC OVERSTATED, footnote. 'A reversion merely to Newmont's 8.2 times... costs about 5%' - at 8.2x on $10.36B TTM EBITDA plus net cash the price is $175.4, a 3.3% fall, not 5%. 'A reversion to the 6.8-7.8 times where AngloGold and Alamos trade costs 15-25%' - that band actually maps to $146.5-$167.2, a fall of 8% to 19%, not 15-25%; and the closing claim that the 6.8-8.2x band 'alone takes the stock to the low $150s' corresponds to ~7.1x, near the bottom of the band rather than its middle ($161 at the midpoint). The direction is right and the peer ranking is exactly right; the magnitudes at the shallow end are overstated. VERIFIED AND LEFT ALONE: EV/EBITDA 8.58x for AEM against Newmont 8.23x, Alamos 7.75x, AngloGold 6.75x, Kinross 5.42x - Agnico is confirmed the most expensive senior on the board, on FMP TTM data as of 2026-08-11. EV/FCF 19.74x, FCF yield 4.89%, ROIC 15.7%, ROE 22.6%, capex/revenue 19.7% - all exact. Q2 2026 revenue $3,706.3M (-9.6% QoQ from $4,099.6M), EBITDA $2,636.5M from $2,995.6M, gross margin 62.2% from 66.4% (-4.2pp) - all exact. Capex guidance $2.6-2.8B, cash $3.46B, the Barnat wall movement of 2026-07-01 and the 'lower end' of 3.3-3.5Moz, the 25% one-month run, the DUST -13% week and the 2026-07-30 implied-volatility surge, the BofA 5.246M-share position trimmed 4.2% - all confirmed. The gold anchors hold too: spot $4,441/oz on 2026-08-11, the late-January-2026 record of $5,589 is corroborated by third-party reporting on 2026-08-07 (front-month futures closes peaked lower, at $5,366.5 on 2026-03-01, but the January intraday spike to $5,626.8 on 2026-01-29 confirms the date and the ~21% drawdown), and $3,400/oz was genuinely traded inside the last twelve months (closes of $3,404.7 on 2025-08-11 and a low of $3,358.7 on 2025-08-19) - though that anchor rolls out of the trailing-twelve-month window within days, which is worth a marker for the next re-run.",
+   "correction_severity": "minor",
+   "skeptic_kill_scope": "numbers",
+   "hype_flag": false,
+   "headwind_chain": false,
+   "headwind_unjustified": false,
+   "stale_anchor": false,
+   "size_units_effective": 0.187,
+   "weight_pct": 12.5,
+   "weight_basis": "equal",
+   "duration_bucket": "unknown",
+   "duration_bucket_source": "no_fcf_data",
+   "corr_flag": true,
+   "entry_plan": "2 tranches / 2 wks",
+   "trim_at_px": null,
+   "exit_action": "HOLD"
+  },
+  {
+   "headwind_justification": "",
+   "growth_capex_fcf_negative": false,
+   "torque_leverage_quadrant": false,
+   "whats_changed": "",
+   "forensic_gate": "",
+   "symbol": "VALE",
+   "sector": "Basic Materials",
+   "chains": [
+    "diversified_miners"
+   ],
+   "chain": "diversified_miners",
+   "commodity_family": "diversified_miners",
+   "business_model": "producer",
+   "value_chain_position": "Bulk and base-metal major selling raw ore and concentrate - iron ore primary, nickel and copper secondary.",
+   "physical_anchor": "Iron-ore fines and pellets mined in Brazil and shipped as bulk ore to steelmakers, plus nickel and copper concentrate.",
+   "fr_score": 73,
+   "thesis": "Vale mines the highest-grade iron ore in the seaborne trade at Carajas, welded to rail and port that competitors cannot rent, and this cycle it cut capital spending and paid shareholders rather than building - but its cost guidance has now been raised twice in a year.",
+   "cost_curve": "The screened 25.0% margin and 1.5 times net debt are both corrupted by December 2025 non-cash charges - a $3.5B Canadian nickel impairment and a $2.8B deferred-tax write-off - which the mechanical calculation sweeps into trailing profit; on the company's pro forma measure the last four quarters are roughly $17B of cash profit on about $40.5B of revenue, a 42% margin. Iron ore is the commodity driving the torque number, not nickel or copper: 2026 cash cost guidance of $22.50-23.50 a tonne is still first-quartile globally but was raised on 31 July 2026 from $20.00-21.50, with all-in cost lifted to $58-62 from $52-56. A plus-or-minus 10% iron-ore move swings cash profit by plus-or-minus 31.9% - the largest downside torque of any seat here - and the beta behind it is an index regression rather than a direct iron-ore fit, so it should be read softly.",
+   "contracting_reserve": "Multi-decade Carajas reserves at grades no competitor can match, shipped through owned rail and port. Iron ore prices off an index with no contracted cushion, and the nickel and copper legs are too small to offset a bulk-price move.",
+   "capital_discipline": "Corrected net debt of about 0.97 times cash profit rather than the screened 1.5 times; capital spending has been cut and distributions raised through this cycle, which is genuinely better behaviour than the sector average - set against Mariana and Brumadinho obligations that will consume cash for years.",
+   "valuation_guard": "Base fair value of $16.25 against a $14.875 price and a reconciled margin-of-safety reading of about plus 9% - the guard passes. Points come off for direction rather than level: margin is now compressing on rising revenue after two cost-guidance increases, and the adverse case at $9.50 is 36% below.",
+   "ebitda_margin_ttm": 0.2504,
+   "fcf_torque_10pct": 0.319,
+   "commodity_beta_2y": 0.45,
+   "ndebt_ebitda": 1.5,
+   "interest_coverage": 6.6,
+   "funded_solvency": "strong",
+   "sop_mos_pct": 9.2,
+   "chain_regime": {
+    "diversified_miners": "NEUTRAL"
+   },
+   "regime_fit": "Diversified miners read neutral in the sidecar. This is the purest expression in the book of Chinese steel demand, and with no contracted book and the highest downside torque of any seat, it is deliberately not the largest position.",
+   "phase_fit": "The phase note favours cash-generative producers over resource optionality, and Vale is the clearest example in the book of a major that stopped building and started paying. The reservation is that its payback depends on a bulk commodity whose demand driver - Chinese steel - is the one the sum-of-the-parts already discounts structurally.",
+   "exposure_axes": [
+    "global-growth-china-demand",
+    "china-steel-iron-ore"
+   ],
+   "size_units": 0.55,
+   "thesis_break_px": 11.5,
+   "bear_fv_px": 9.5,
+   "entry_posture": "scale_in",
+   "wheel": {
+    "suits": false
+   },
+   "decision": "KEEP",
+   "decision_rationale": "Second-quarter results on 31 July 2026 lifted 2026 all-in cost guidance to $58-62 a tonne from $52-56 while pro forma cash profit still rose 19% to $4.066B; the thesis is not broken but the cost trend has turned, so the seat comes down from 0.6 to 0.55 units.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_kill_fact": "The adverse case is mislabelled by roughly a full commodity cycle: sop_bear says it assumes 'the 62% benchmark sustained near $80 per tonne', but the arithmetic it actually applies is a $14/t realised-price fall ($4.6B on 330 Mt). At the record's own realisation ratio - Vale's 2Q26 release (2026-07-31) reports a realised fines price of $95.0/t against a $108.27 Q2 62% Fe average, i.e. 87.7% - a $14/t realised fall corresponds to a benchmark of about $92, which is essentially the $94.45 the index printed on 2026-08-11. So $9.50 is not a downside scenario at all; it is the value of the record's own schedule at TODAY'S iron ore price. A genuine $80/t sustained deck implies realised ~$70.2/t, a $24.8/t fall, or ~$8.2B of EBITDA on 330 Mt - cutting iron-ore-and-pellets EBITDA from $7.6B to ~$4.0B and, on the record's own 5.5x/6.5x multiples, -$1.0B corporate and $18.0B expanded net debt, an equity value of $23.2B, or $5.43 per share on 4.266B diluted shares (FMP 2Q26). The record therefore carries no modelled adverse case, and the risk_reward statement that there is 'roughly four times as much room below to the adverse case as above to fair value' understates the true asymmetry rather than overstating it. This corrects the number in the direction of the record's own conclusion, so the finding - poor risk/reward at the quoted price - survives the attack.",
+   "skeptic_corrections": "(1) MATERIAL, bear_px: $9.50 -> $5.50. sop_bear's stated $80/t benchmark and its applied $14/t realised price fall are inconsistent by roughly $11/t of realised price, about $3.6B of annualised EBITDA. Re-derived on the record's own schedule (iron ore EBITDA $4.0B at 5.5x = $22.0B; base metals $3.8B at 6.5x = $24.7B; corporate -$1.0B at 5.5x = -$5.5B; EV $41.2B less $18.0B expanded net debt = $23.2B equity / 4.266B shares) gives $5.43; published at $5.50. Two partial offsets are acknowledged and deliberately not netted, because they are judgement rather than arithmetic: trough earnings would plausibly capitalise above the 5.5x the record chose, and a $23B market value would sit near the ~$26B the 2023 Manara transaction implied for the base-metals arm alone. (2) MINOR, prose only, no level moves: the bear thesis states 'roughly a third' of the $16.677B expanded net debt is the reparation obligation. Vale's 2Q26 filing shows Brumadinho provisions of $1,774M plus Samarco provisions of $2,097M = $3,871M, or 23% - net debt is $13,173M. The CFO's non-refinanceable point stands; the weight of it is about a third smaller than claimed. (3) MINOR, prose only: sop_bear's aside that removing the currency offset 'drops the arithmetic to roughly $8.00-$8.50' does not reconcile - removing the stated $0.6B of FX relief from the record's own uncorrected schedule gives $9.30, not $8.00-$8.50. (4) NOTE, not a correction: valuation.live_price of $14.875 is stale as of 2026-08-04; VALE closed at $14.265 on 2026-08-11, down 4.2% on the day. (5) NOTE for the Director, unmodelled by the bear leg: the cyclical-peak risk in this name is currently in COPPER, not iron ore. The 62% Fe index at $94.45 sits at the bottom of its 52-week $93.66-$111.42 range, so the valuation is not passing on peak iron ore. But Vale realised $14,062/t of copper in 2Q26, +57% y/y, and COMEX copper at $6.64/lb on 2026-08-11 is within 1.3% of its 52-week high and 13% above its 200-day average of $5.86. sop_bear's $3.8B base-metals EBITDA is nominally struck at '$8,000 per tonne' copper, but on ~400kt of annual copper sales a $6,000/t price fall is about $2.4B against a current base-metals run rate near $5.5B (2Q26 pro forma EBITDA $4.066B annualised, less the $11.6B iron ore run rate, plus $1.0B corporate), implying about $3.1B rather than $3.8B. That residual generosity is not carried into the correction above, and it is the direction in which the bear leg is still too kind.",
+   "correction_severity": "material",
+   "skeptic_kill_scope": "numbers",
+   "hype_flag": false,
+   "headwind_chain": false,
+   "headwind_unjustified": false,
+   "stale_anchor": false,
+   "size_units_effective": 0.55,
+   "weight_pct": 12.5,
+   "weight_basis": "equal",
+   "duration_bucket": "unknown",
+   "duration_bucket_source": "no_fcf_data",
+   "corr_flag": true,
+   "entry_plan": "2 tranches / 2 wks",
+   "trim_at_px": null,
+   "exit_action": "HOLD"
+  },
+  {
+   "headwind_justification": "",
+   "growth_capex_fcf_negative": false,
+   "torque_leverage_quadrant": false,
+   "whats_changed": "",
+   "forensic_gate": "",
+   "symbol": "CCJ",
+   "sector": "Energy",
+   "chains": [
+    "uranium_fuel_cycle"
+   ],
+   "chain": "uranium_fuel_cycle",
+   "commodity_family": "uranium_fuel_cycle",
+   "business_model": "producer",
+   "value_chain_position": "Vertically integrated uranium miner, converter and fuel-services provider; also holds a 49% equity stake in Westinghouse nuclear services, which dilutes the pure uranium revenue share.",
+   "physical_anchor": "Mines uranium ore, mills and converts it into uranium concentrate and uranium hexafluoride, and fabricates nuclear fuel at Canadian and United States facilities.",
+   "fr_score": 67,
+   "thesis": "Cameco owns the best assets in the nuclear fuel chain - the world's highest-grade uranium orebodies, scarce conversion licences and roughly 230 million pounds committed under long-term contracts - and it is the only seat in this book that does not ride the global-growth and China-demand axis.",
+   "cost_curve": "The screened 24.9% margin understates the business because the 49% Westinghouse stake is equity-accounted and sits outside consolidated earnings; the company's adjusted figure was C$899M on C$1,659M of first-half 2026 revenue, or 54%, with the uranium segment alone at 38%. The direction is the problem and it is stated plainly: unit cost of sales of C$62.21 a pound in the June 2026 quarter against a C$93.13 realised price is up 36% year over year, and full-year cost guidance was raised. A plus-or-minus 10% uranium move swings cash profit by plus-or-minus 30.2%, and that minus 30.2% is the second-largest downside torque in the book - the contracted volumes are what stop it being a coin flip. The beta is an exchange-traded-fund regression, so read it softly.",
+   "contracting_reserve": "Roughly 230 million pounds committed under long-term contracts - the strongest contracted position in this slate and the canonical tell of where the uranium cycle stands - against McArthur River and Cigar Lake reserves that run for decades. The conversion licences are effectively unreplicable, which is a second and separate scarcity.",
+   "capital_discipline": "Net cash, at minus 0.1 times cash profit, with interest cover of 9.6 times. It restarted idled capacity rather than building new mines into a rising price, which is the discipline this sector usually lacks and the reason a failing valuation guard does not end the seat.",
+   "valuation_guard": "The guard is the binding constraint. The reconciled margin-of-safety reading is about minus 21% and the base value of roughly $62 sits well below the $94.06 price, with the adverse case at $40, some 57% below. The seat is kept for the contract book and for being the only genuinely separate risk in the basket, at half a unit, and any fresh money waits for evidence rather than for a better price alone.",
+   "ebitda_margin_ttm": 0.2486,
+   "fcf_torque_10pct": 0.302,
+   "commodity_beta_2y": 0.97,
+   "ndebt_ebitda": -0.1,
+   "interest_coverage": 9.6,
+   "funded_solvency": "strong",
+   "sop_mos_pct": -20.8,
+   "chain_regime": {
+    "uranium_fuel_cycle": "NEUTRAL"
+   },
+   "regime_fit": "The uranium chain reads neutral in the sidecar, and the contracted book is what a neutral chain calls for: a producer selling spot into a soft term market owns the downside torque with no cushion, and this one does not.",
+   "phase_fit": "The growth-and-cooling-inflation quadrant favours demand-linked metals on volume, and reactor fuel is bought on utility schedules rather than on the economic cycle - which is why this seat is the diversifier of the book rather than a second bet on the same thing. Under a phase that rewards payback speed, its raised unit cost of sales is the honest mark against it.",
+   "exposure_axes": [
+    "utility-contracting-cycle"
+   ],
+   "size_units": 0.5,
+   "thesis_break_px": 66.0,
+   "bear_fv_px": 40.0,
+   "entry_posture": "on_confirmation: third-quarter 2026 results showing long-term contract volumes held above 230 million pounds and unit cost of sales no longer rising",
+   "wheel": {
+    "suits": false
+   },
+   "decision": "KEEP",
+   "decision_rationale": "Roughly 230 million pounds remain under long-term contract and the balance sheet is still net cash, so the thesis holds; the seat rises from 0.4 to 0.5 units as the book's only separate risk, while the June 2026 quarter's C$62.21 unit cost of sales, up 36% year over year, keeps it well below a full unit.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_kill_fact": "No kill fact survived. The attack that came closest was the cost-curve test: the record's headline cost claim quotes the wrong metric, but correcting it makes the company's position WORSE, not better, so it cannot break a bear thesis. Cameco's reported Q2 2026 uranium average unit cost of sales was C$70.81/lb (Q2 2025: C$56.19/lb, +26%), not the C$62.21/lb the record calls 'reported average unit cost of sales'; C$62.21 is the produced-and-purchased cash cost (Q2 2025: C$45.66/lb, +36%). The record stitched the 36% growth rate onto the lower level. On the true metric the realized-vs-cost spread is C$22.32/lb (C$93.13 less C$70.81), not the C$30.92/lb the record's prose implies, and per-pound unit margin compressed year over year (C$24.84 to C$22.32) because realized price rose 15% while cost of sales rose 26%. The sum-of-the-parts already uses ~C$70 costs in the adverse case and ~C$75 in the favorable case, so no valuation level breaks. Every other load-bearing number verifies against the 2026-07-31 filing: TTM revenue C$3,474M, TTM free cash flow C$534M against TTM capex C$386M, TTM diluted EPS C$0.82 (earnings yield 0.60%, i.e. ~168x), free-cash-flow yield 0.85%, ROIC 3.93%, ROE 5.09%, H1 net earnings C$156M vs C$391M (-60%), Q2 EPS C$0.058 vs C$0.74 (-92%), gross margin 21.1% vs 29.3% on revenue -7.2%, cash C$1,113M vs total debt C$1,009M, production 3.9Mlb vs sales 7.1Mlb with 2.8Mlb purchased at C$91.40. Reserve truth verifies: 457Mlb to 433Mlb during 2025, 25Mlb removed by production at Cigar Lake, Inkai and McArthur River with only minor offsetting re-estimates. Contract truth verifies verbatim from the call: >28Mlb/yr committed over five years, market-related floors 'in the high 70s escalated' and ceilings '160 escalated'. Cyclical-peak-cheapness does not apply in the trap direction: no valuation guard is passing here, the record is an explicit price objection with base fair value BELOW market, and the name is absent from the nightly scan (GQ_NO_QUANT_COVERAGE), so no deterministic cheapness screen is carrying it.",
+   "skeptic_corrections": "THREE corrections, none fatal, two of which cut against the record's own bear framing. (1) COST METRIC MISLABELLED (load-bearing on this lane's cost-curve test). 'Unit cost of sales rose 36% to C$62.21 per pound' conflates two separate disclosed lines. Reported uranium average unit cost of sales (including depreciation and amortisation) was C$70.81/lb in Q2 2026, up 26% from C$56.19/lb; the produced-and-purchased cash cost was C$62.21/lb, up 36% from C$45.66/lb. The correct cost level is C$8.60/lb HIGHER than stated and the correct growth rate is 10pp LOWER. Direction of the cost-curve drift (up the curve, on a raised full-year guide) is confirmed; the magnitude claim as written is not. No valuation level moves because both sum-of-the-parts cases already assume ~C$70-75 costs. (2) THE GOVERNMENT HAIRCUT IS APPLIED AS A CERTAINTY WHEN IT IS UNVESTED. The record deducts 20% of the US$6.5B above US$17.5B from the base Westinghouse leg as though the US government's participation interest were live. It is not. The 2025-10-28 announcement grants the interest 'once vested', and Grant Isaac on the 2026-07-31 call stated the Department of Commerce partnership 'had two important vesting conditions in it. And the first vesting condition was that it was the responsibility of the Department of Commerce to arrange financing of a minimum $80 billion to support the development of AP1000... That would be the trigger that we would look for under that participation interest.' The record itself concedes the definitive agreements remain unsigned. Applying an unvested contingent claim at 100% understates base fair value. Probability-weighting it at 50% raises the Westinghouse leg from US$25.53 to US$26.27 per share and the base sum from US$59.2 to US$59.9, which on the record's own rounding convention lifts base fair value from US$62 to US$63. The favorable case is unchanged: at a US$45B listing the US$80B financing condition is effectively satisfied by construction, so the full deduction stands. The adverse case is unchanged: at a US$16B listing the value sits below the US$17.5B threshold and no deduction arises either way. (3) THE 'NO CONTRACTED BACKLOG' LIMB IS STALE AS OF THE Q2 2026 FILING. The record argues Westinghouse rests on '91 identified reactor opportunities and at least US$80B of planned investment, neither of which is contracted backlog.' Cameco's Q2 2026 MD&A does disclose Westinghouse contracted backlog and new orders entered: Bernstein's Bob Brackett interrogated those disclosed figures on the 2026-07-31 call, management defined backlog as 'at a point in time of December 31, how much contracted business does Westinghouse have for delivery and revenue recognition in the future', and separately disclosed AP1000 two-pack unit economics of US$14-17B. A filed backlog number therefore exists and the claim that the registration statement will reveal contracted backlog 'for the first time' is wrong. This weakens one supporting limb; it does not touch the multiple argument, which is the load-bearing one. NOT A CORRECTION BUT A STALENESS FLAG FOR THE DIRECTOR: the record's live price of US$94.06 (as-of 2026-08-04) is stale. CCJ traded US$98.18 on 2026-08-11 (market cap US$42.8B), +4.4% since the as-of, on no company-specific news. The gap to the corrected base fair value of US$63 widens from 34% to 36%, so the price objection is stronger now, not weaker.",
+   "correction_severity": "material",
+   "skeptic_kill_scope": "numbers",
+   "hype_flag": false,
+   "headwind_chain": false,
+   "headwind_unjustified": false,
+   "stale_anchor": false,
+   "size_units_effective": 0.5,
+   "weight_pct": 12.5,
+   "weight_basis": "equal",
+   "duration_bucket": "unknown",
+   "duration_bucket_source": "no_fcf_data",
+   "corr_flag": false,
+   "entry_plan": "2 tranches / 2 wks",
+   "trim_at_px": null,
+   "exit_action": "HOLD"
+  },
+  {
+   "headwind_justification": "",
+   "growth_capex_fcf_negative": false,
+   "torque_leverage_quadrant": false,
+   "whats_changed": "",
+   "forensic_gate": "",
+   "symbol": "SCCO",
+   "sector": "Basic Materials",
+   "chains": [
+    "copper_mining"
+   ],
+   "chain": "copper_mining",
+   "commodity_family": "copper_mining",
+   "business_model": "producer",
+   "value_chain_position": "Lowest-cost-quartile major copper producer, the anchor example for this chain.",
+   "physical_anchor": "Mines and produces copper cathode and concentrate, with molybdenum, zinc and silver by-products, in Peru and Mexico.",
+   "fr_score": 65,
+   "thesis": "Southern Copper sits on the largest reserve base in the sector - about 51.1 million tons, more than thirty-five years of life - and earns 26.2% on invested capital, but its near-zero headline cash cost is a by-product windfall rather than a mining achievement, and the price already sits well above what the parts support.",
+   "cost_curve": "The 62.9% screened margin and the lowest-cost-quartile band are confirmed by a June 2026 quarter cash cost of $0.05 a pound after by-product credits - but the cost before those credits rose from $2.05 a pound in the first quarter of 2025 to $2.29 in the June 2026 quarter, so the near-zero headline is a $2.24 silver and molybdenum credit rather than a cost improvement. A plus-or-minus 10% copper move swings cash profit by plus-or-minus 13.5%, and the minus 13.5% understates the true exposure, because a fall in copper would most likely arrive alongside a fall in the by-product metals now doing the work.",
+   "contracting_reserve": "About 51.1 million tons of copper reserves and a life beyond thirty-five years, the longest in this book. Against that, June-quarter volumes fell across every metal - copper down 3.5%, molybdenum 11%, silver 4%, zinc 14% - while total operating costs rose $202M, or 14%.",
+   "capital_discipline": "Net debt of 0.28 times cash profit, interest cover of 21.6 times and a 26.2% return on invested capital. The reservations are the controlling shareholder's appetite for dividends and the Tia Maria and Los Chancas projects, permitted on paper and stalled in practice for years.",
+   "valuation_guard": "The guard bites hardest here. The base value of about $156 sits roughly 20% below the $195.475 price, the reconciled margin-of-safety reading is about minus 10%, and the adverse case at $100 is 49% below. A low multiple on by-product-flattered peak earnings is the classic resources value trap, so the seat is cut to the smallest in the book.",
+   "ebitda_margin_ttm": 0.6288,
+   "fcf_torque_10pct": 0.135,
+   "commodity_beta_2y": 0.8,
+   "ndebt_ebitda": 0.28,
+   "interest_coverage": 21.6,
+   "funded_solvency": "strong",
+   "sop_mos_pct": -10.1,
+   "chain_regime": {
+    "copper_mining": "NEUTRAL"
+   },
+   "regime_fit": "Copper reads neutral in the sidecar. A thirty-five-year reserve life is the right asset to hold through a chain with no directional call, but the seat is sized as the smallest in the book because its current earnings depend on by-product metals rather than on that reserve life.",
+   "phase_fit": "The phase note favours copper on both of its axes, and this seat is deliberately not sized on that: the macro read moves nothing here. What the phase does change is the entry bar - in a phase that rewards payback speed, paying 20% above the reconciled value of the parts is not a payback trade, so no fresh money goes in at this price.",
+   "exposure_axes": [
+    "global-growth-china-demand",
+    "copper-cost-curve"
+   ],
+   "size_units": 0.4,
+   "thesis_break_px": 145.0,
+   "bear_fv_px": 100.0,
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": false
+   },
+   "decision": "KEEP",
+   "decision_rationale": "The June 2026 quarter's cash cost of $0.05 a pound and a reserve life beyond thirty-five years both still stand, so the thesis is not broken - but that same quarter showed the cost before by-product credits rising to $2.29 a pound from $2.05, so the seat is cut from 0.6 to 0.4 units, the smallest in the book.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_kill_fact": "No kill fact found. I attacked the four load-bearing pillars of the bear/pass case against primary sources and each survived. COST-CURVE TRUTH: the company's own 2026-07-22 Q2 call states the operating cash cost per pound BEFORE by-product credits was $2.29 and the cost AFTER credits was $0.05, with a total by-product credit of $1,106 million or $2.24 per pound - the record's central claim that the near-zero headline cost is a by-product artifact, not a mining-cost improvement, is management's own arithmetic, not an inference. CYCLICAL-PEAK CHEAPNESS: the valuation guard is failing for the right reason. On live 2026-08-11 data SCCO trades at 16.39x TTM EV/EBITDA against Freeport at 11.62x and Teck at 7.45x, and the denominator is itself a peak - the Q2 LME copper average was $6.04/lb versus $4.32 a year earlier, silver $73.49/oz (+118%), molybdenum $29.44/lb (+43%), zinc $1.57/lb (+31%), while EVERY product fell in volume (copper -3.5%, moly -11%, silver -4%, zinc -14%) and total operating costs rose $202 million. A 41% revenue increase on four simultaneous multi-year-high prices and falling tons is a price event, and the record refuses to capitalise it. VOLUME: management confirmed on the call that 2026 is 917,000 tons and that 2027 copper will be 'more or less the same', so the third-consecutive-flat-to-down-year claim is verbatim guidance. BALANCE SHEET / FCF: the record's $1.2bn net debt is correct on the filed 30-June-2026 balance sheet ($7,994.4m long-term debt + $534.4m capitalised leases - $7,329.9m cash and short-term investments = $1,198.9m); FMP's own netDebt field of $2,863.8m simply omits the $1,664.9m of short-term investments. And the record's data correction is independently confirmed: the Q2-2026 capital-expenditure sign IS flipped in the source feed (capitalExpenditure +$441.9m, freeCashFlow $2,430.4m), which inflates the TTM figure to $5,965.1m; computed correctly, TTM operating cash flow $6,736.9m less capex $1,655.6m = $5.08bn, an $883.8m overstatement - the record caught this before I did. HIDDEN DISQUALIFIER search found none that breaks the case: no reserve downgrade, no equity issuance (the $1.25bn 10-year 5.35% June note covers most of Tia Maria's $1.8bn), no royalty or streaming structure, and the permit/licence issues that exist (illegal miners obstructing Los Chancas; the El Pilar water licence, now renewed) are already netted to zero in the record's own parts valuation.",
+   "skeptic_corrections": "Four corrections, none of which moves the fair-value level. (1) STALE SILVER - load-bearing to the timing argument, not to the valuation. The record asserts silver 'trades at $60.14 an ounce today', 18% below the $73.49 Q2 average that produced the credit. Silver closed at $60.245 on 2026-08-04 (the record's as-of date) but has rallied to $64.92 on 2026-08-11, so the gap is 11.7%, not 18%. The record's own sizing of the hit (~$270m annualised on 9% of sales at near-100% incremental margin) should read ~$175m. The direction of the argument survives; the magnitude is a third smaller than stated. (2) THE PRE-CREDIT UNIT COST HAS ALREADY INFLECTED DOWN. The record repeatedly frames pre-credit cash cost as 'rising 12% in five quarters, from $2.05 to $2.29'. True over five quarters, but the company said on 2026-07-22 that the $2.29 was '$0.02 lower than the value for the first quarter of this year' ($2.31), a 1% sequential DECLINE driven by lower production and administrative cost per pound and higher premiums. The base case's $2.35/lb and the adverse case's $2.40/lb therefore both sit above the latest actual print - the record has penalised itself by ~$0.06/lb, worth roughly +$1.8/share, which is why I am not moving the level. (3) THE CREDIT COMPRESSION IS NOT A FUTURE EVENT - IT ALREADY HAPPENED ONCE WITHOUT DAMAGE. The record's forcing function says the credit reversal first meets the numbers in the late-October Q3 report. In fact the by-product credit already fell 7% sequentially, from $1,189m ($2.41/lb) in Q1 2026 to $1,106m ($2.24/lb) in Q2, and EBITDA still set a record and the shares still made highs. The Q3 print is therefore a weaker forcing function than the record claims; a single quarter of credit compression has already been absorbed. (4) AN UNSOURCED DATE. The catalyst note and forcing function state Tia Maria 'commissioning tests targeted for May or June 2027 ... (second-quarter 2026 call)'. That detail does not appear in the 2026-07-22 transcript, which says only 'hopefully in the later part of 2027'; on that same call a Goldman Sachs analyst noted the disclosure had moved from 'third quarter of 2027' on the prior call to 'second half' in this release, and management answered 'for now, we don't expect a delay'. Attribute the May/June date to an earlier call or drop it - the softening from Q3-2027 to 2H-2027 is the better-supported point and cuts the record's way. Two footnotes: company-reported adjusted EBITDA was $2,856m at a 67% margin versus the record's computed $2,849m/66.4%; and the 0.012 stock dividend declared 2026-07-16 has a record date of 2026-08-11 (today), which has already restated the 52-week range in the data feed (high $221.67 -> $219.04, low $90.11 -> $89.04) - the record's levels, struck against a pre-adjustment $195.475, correspond to about $98.8/$154.1/$215.4 post-adjustment, a uniform 1.2% that leaves every ratio in the record intact.",
+   "correction_severity": "minor",
+   "skeptic_kill_scope": "thesis",
+   "hype_flag": false,
+   "headwind_chain": false,
+   "headwind_unjustified": false,
+   "stale_anchor": false,
+   "size_units_effective": 0.22,
+   "weight_pct": 12.5,
+   "weight_basis": "equal",
+   "duration_bucket": "unknown",
+   "duration_bucket_source": "no_fcf_data",
+   "corr_flag": true,
+   "entry_plan": "2 tranches / 2 wks",
+   "trim_at_px": null,
+   "exit_action": "HOLD"
+  }
+ ],
+ "runner_ups": [
+  {
+   "headwind_justification": "",
+   "growth_capex_fcf_negative": false,
+   "torque_leverage_quadrant": false,
+   "whats_changed": "",
+   "forensic_gate": "",
+   "symbol": "TECK",
+   "sector": "Basic Materials",
+   "chains": [
+    "copper_mining",
+    "diversified_miners"
+   ],
+   "chain": "copper_mining",
+   "commodity_family": "copper_mining",
+   "business_model": "producer",
+   "value_chain_position": "Diversified base-metal major transitioning to a copper-weighted mix, still carrying a large zinc business.",
+   "physical_anchor": "Copper concentrate from QB2 and Highland Valley and zinc concentrate from Red Dog, shipped from its own mines.",
+   "fr_score": 77,
+   "thesis": "Teck is finally being paid for QB2: copper unit costs are falling, the balance sheet is in net cash, and it carries the only genuinely large discount to reconciled value in the eligible universe - but that discount is anchored to a merger, which is not a reason this book owns anything.",
+   "cost_curve": "The screen understates it: against a proxy margin of 46.2%, the company's 23 July 2026 release reports a copper net cash unit cost of US$1.64 a pound, down from US$2.02 a year earlier, full-year guidance of US$1.85-2.20, and a 61% quarterly margin. A plus-or-minus 10% copper move swings cash profit by plus-or-minus 14.1%, the minus 14.1% taken from an improving but not yet first-quartile cost position.",
+   "contracting_reserve": "QB2 and Highland Valley carry multi-decade copper lives and Red Dog remains among the largest zinc mines in the world; concentrate sells on annual smelter terms, so there is no contracted cushion.",
+   "capital_discipline": "Net cash of C$1,244M at 30 June 2026 - the screen's 0.83 times net debt is simply wrong - but QB2's cost overrun is the sector's most recent cautionary tale and the Highland Valley extension is a fresh multi-billion build.",
+   "valuation_guard": "A reconciled margin-of-safety reading of about plus 29%, the largest in the universe, which is exactly why it is treated with suspicion rather than banked: the price is anchored to a pending merger, and abnormal cheapness on a producer usually means the market is pricing something the screen is not.",
+   "ebitda_margin_ttm": 0.4624,
+   "fcf_torque_10pct": 0.141,
+   "commodity_beta_2y": 0.69,
+   "ndebt_ebitda": 0.83,
+   "interest_coverage": 3.7,
+   "funded_solvency": "moderate",
+   "sop_mos_pct": 28.9,
+   "chain_regime": {
+    "copper_mining": "NEUTRAL",
+    "diversified_miners": "NEUTRAL"
+   },
+   "regime_fit": "Both chains read neutral. It would be the quality upgrade over the smallest copper seat, but it sits on the same global-growth and China-demand axis, so the swap would buy quality without buying diversification.",
+   "phase_fit": "A phase rewarding payback speed suits a company that has just finished its big build and turned cash-positive; the merger, however, is optionality rather than payback, and it is the merger that supplies most of the discount.",
+   "exposure_axes": [
+    "global-growth-china-demand",
+    "copper-cost-curve"
+   ],
+   "size_units": 0.6,
+   "thesis_break_px": 48.0,
+   "bear_fv_px": 32.0,
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": false
+   },
+   "decision": "ADD",
+   "decision_rationale": "Copper net cash unit cost of US$1.64 a pound reported 23 July 2026 against US$2.02 a year earlier, with net cash of C$1,244M at 30 June 2026; the first name promoted if a copper seat opens, held out today only because the copper chain is at its three-name limit and the discount is merger-anchored.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS"
+  },
+  {
+   "headwind_justification": "",
+   "growth_capex_fcf_negative": false,
+   "torque_leverage_quadrant": false,
+   "whats_changed": "",
+   "forensic_gate": "",
+   "symbol": "BHP",
+   "sector": "Basic Materials",
+   "chains": [
+    "copper_mining",
+    "diversified_miners"
+   ],
+   "chain": "copper_mining",
+   "commodity_family": "copper_mining",
+   "business_model": "producer",
+   "value_chain_position": "Multi-commodity major - copper, iron ore, steelmaking coal, potash - selling raw ore and concentrate.",
+   "physical_anchor": "Mines and ships copper concentrate and cathode from Escondida and iron ore, steelmaking coal and potash from operations across Australia, Chile and Canada.",
+   "fr_score": 72,
+   "thesis": "BHP has been the lowest-cost iron-ore producer for six straight years and runs Escondida at the bottom of its cost guidance, but the shares sit above the reconciled value of the parts and Jansen is a very large build.",
+   "cost_curve": "The screen understates it by dividing through low-margin third-party trading revenue: against a proxy of 48.5%, the company reported a 58% underlying margin for the December 2025 half, and the 16 July 2026 operational review put Escondida at the bottom of its $1.00-1.20 a pound range and Western Australia iron ore inside $18.25-19.75 a tonne, with a December-half cost of $17.66. A plus-or-minus 10% commodity move swings cash profit by plus-or-minus 17.5%, and the minus 17.5% is taken from a genuinely first-quartile position on both main legs.",
+   "contracting_reserve": "Multi-decade reserves across iron ore, copper and potash; Escondida's grade decline is the live issue, and bulk sales are index-priced with no contracted cushion.",
+   "capital_discipline": "Net debt of 0.67 times cash profit with interest cover of 25.5 times, but the balance sheet reading is stale and Jansen is the sector's largest current build - the exact behaviour pillar three is designed to catch.",
+   "valuation_guard": "A reconciled margin-of-safety reading of about minus 8%, with the shares roughly 18% above the $74 base value; the guard deducts and the seat is not taken.",
+   "ebitda_margin_ttm": 0.4852,
+   "fcf_torque_10pct": 0.175,
+   "commodity_beta_2y": 0.56,
+   "ndebt_ebitda": 0.67,
+   "interest_coverage": 25.5,
+   "funded_solvency": "strong",
+   "sop_mos_pct": -7.7,
+   "chain_regime": {
+    "copper_mining": "NEUTRAL",
+    "diversified_miners": "NEUTRAL"
+   },
+   "regime_fit": "Both chains read neutral; the cost position is the best in the diversified cohort, which is why it is the first quality alternative rather than a discard.",
+   "phase_fit": "Payback speed is real here - the dividend is funded from operating cash - but Jansen is precisely the resource optionality the phase note says is out of favour.",
+   "exposure_axes": [
+    "global-growth-china-demand",
+    "china-steel-iron-ore"
+   ],
+   "size_units": 0.55,
+   "thesis_break_px": 68.0,
+   "bear_fv_px": 55.0,
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": false
+   },
+   "decision": "ADD",
+   "decision_rationale": "The 16 July 2026 operational review put financial-year 2026 unit costs at the bottom of the guided range at Escondida and inside the range at Western Australia iron ore, a sixth consecutive year as lowest-cost major; not seated because the copper chain is full and the price sits about 18% above the reconciled value.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS"
+  },
+  {
+   "headwind_justification": "",
+   "growth_capex_fcf_negative": false,
+   "torque_leverage_quadrant": false,
+   "whats_changed": "",
+   "forensic_gate": "",
+   "symbol": "WPM",
+   "sector": "Basic Materials",
+   "chains": [
+    "precious_metals"
+   ],
+   "chain": "precious_metals",
+   "commodity_family": "precious_metals",
+   "business_model": "royalty_streamer",
+   "value_chain_position": "Royalty and streaming layer - funds mine construction for a fixed share of metal output, carries no operating costs.",
+   "physical_anchor": "Streamed gold, silver and palladium bullion delivered under long-term offtake and streaming agreements with third-party mine operators.",
+   "fr_score": 70,
+   "thesis": "Wheaton buys metal at a fixed dollar amount per ounce and sells it at spot, which is the cleanest leverage to a rising metal in the book - and the same mechanic in reverse is why the guard will not let it in at this price.",
+   "cost_curve": "The proxy and the company agree: an 87.5% screened margin against company-reported cash operating margins near 84% on silver and 86% on gold. The cohort band placing it below median is an artifact of contract form, not cost - a stream pays an ongoing 20% of spot silver where a royalty pays nothing ongoing. A plus-or-minus 10% metal move swings cash profit by plus-or-minus 11.4%, and the minus 11.4% compresses the margin rather than holding it flat, because the payment per ounce is fixed.",
+   "contracting_reserve": "A long book of streams over third-party mines with no operating exposure and no capex obligation beyond agreed upfront payments.",
+   "capital_discipline": "The strongest balance sheet in the eligible universe: net debt of minus 0.9 times cash profit and interest cover near 446 times.",
+   "valuation_guard": "A reconciled margin-of-safety reading of about minus 26% with the price essentially at the $118 base value - the guard caps it out, and the three-name limit on the precious-metals chain blocks it independently.",
+   "ebitda_margin_ttm": 0.8749,
+   "fcf_torque_10pct": 0.114,
+   "commodity_beta_2y": 1.53,
+   "ndebt_ebitda": -0.9,
+   "interest_coverage": 446.4,
+   "funded_solvency": "strong",
+   "sop_mos_pct": -26.0,
+   "chain_regime": {
+    "precious_metals": "NEUTRAL"
+   },
+   "regime_fit": "Precious metals read neutral; a streamer holds up better than a producer in a flat metal, but it is a fourth name on an axis that already carries three.",
+   "phase_fit": "The phase note's point that royalties survive on cash flow applies here in full; what stops the seat is price, not shape.",
+   "exposure_axes": [
+    "gold-real-rate",
+    "royalty-operator-counterparty"
+   ],
+   "size_units": 0.5,
+   "thesis_break_px": 95.0,
+   "bear_fv_px": 78.0,
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": false
+   },
+   "decision": "ADD",
+   "decision_rationale": "Company-reported cash operating margins of about 84% on silver and 86% on gold confirmed on the 8 May 2026 call; not seated because the precious-metals chain is at its three-name limit and the valuation guard reads about minus 26%.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS"
+  },
+  {
+   "headwind_justification": "",
+   "growth_capex_fcf_negative": false,
+   "torque_leverage_quadrant": false,
+   "whats_changed": "",
+   "forensic_gate": "",
+   "symbol": "ERO",
+   "sector": "Basic Materials",
+   "chains": [
+    "copper_mining"
+   ],
+   "chain": "copper_mining",
+   "commodity_family": "copper_mining",
+   "business_model": "producer",
+   "value_chain_position": "Focused Brazilian copper producer selling copper concentrate with a gold by-product credit.",
+   "physical_anchor": "Operates underground and open-pit mines in Brazil producing copper concentrate with gold by-product - Caraiba, Tucuma and Xavantina.",
+   "fr_score": 63,
+   "thesis": "Ero's revenue nearly doubled on the Tucuma ramp, but its own disclosures show a mid-curve operator enjoying a record metal price rather than a low-cost one, and its cost guidance is going up, not down.",
+   "cost_curve": "Proxy and company agree on direction but not meaning: a 58.6% screened margin against a company-reported June 2026 consolidated cash cost of $2.42 a pound with copper at $6.63 - a mid-curve position ($2.76 at Caraiba, $2.10 at Tucuma), and Xavantina's gold cost guidance was revised upward on 5 August 2026 to $1,100-1,350 cash and $2,200-2,700 all-in. A plus-or-minus 10% copper move swings cash profit by plus-or-minus 14.5%, and the minus 14.5% is taken from the middle of the curve, which is the definition of a coin-flip torque.",
+   "contracting_reserve": "Shorter reserve lives than the seated copper names, concentrated in a single country, with concentrate sold on annual smelter terms.",
+   "capital_discipline": "Net debt of 0.97 times cash profit with interest cover of 12.4 times; the Tucuma build is largely behind it, which is the best thing in its file.",
+   "valuation_guard": "A reconciled margin-of-safety reading of about minus 6%, with the $31.50 base value below the $35.745 price; the guard deducts.",
+   "ebitda_margin_ttm": 0.5856,
+   "fcf_torque_10pct": 0.145,
+   "commodity_beta_2y": 0.9,
+   "ndebt_ebitda": 0.97,
+   "interest_coverage": 12.4,
+   "funded_solvency": "strong",
+   "sop_mos_pct": -5.9,
+   "chain_regime": {
+    "copper_mining": "NEUTRAL"
+   },
+   "regime_fit": "Copper reads neutral, and a mid-curve producer is the wrong shape for a chain with no directional call - there is no cost cushion under the downside torque.",
+   "phase_fit": "A phase rewarding payback speed does not reward a mid-curve cost position with rising guidance; the seat is not taken.",
+   "exposure_axes": [
+    "global-growth-china-demand",
+    "copper-cost-curve"
+   ],
+   "size_units": 0.4,
+   "thesis_break_px": 24.0,
+   "bear_fv_px": 13.5,
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": false
+   },
+   "decision": "ADD",
+   "decision_rationale": "Xavantina cost guidance was revised upward on 5 August 2026 to $2,200-2,700 all-in from $2,000-2,500, confirming a mid-curve rather than first-quartile position; held in reserve only.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS"
+  },
+  {
+   "headwind_justification": "",
+   "growth_capex_fcf_negative": false,
+   "torque_leverage_quadrant": false,
+   "whats_changed": "",
+   "forensic_gate": "",
+   "symbol": "FCX",
+   "sector": "Basic Materials",
+   "chains": [
+    "copper_mining"
+   ],
+   "chain": "copper_mining",
+   "commodity_family": "copper_mining",
+   "business_model": "producer",
+   "value_chain_position": "Major vertically integrated copper producer, mine through smelter, selling concentrate, cathode and by-product gold and molybdenum.",
+   "physical_anchor": "Operates large open-pit copper mines - Grasberg, Morenci, Cerro Verde - and an integrated smelter producing copper concentrate and cathode.",
+   "fr_score": 58,
+   "thesis": "Freeport owns some of the best orebodies in the world and is nonetheless a high-cost producer whose recent earnings recovery came from price rather than volume, with the Grasberg mudflow still being worked through.",
+   "cost_curve": "Proxy and company agree that this is not a low-cost producer: a 34.8% screened margin sits in the highest-cost quartile of its copper cohort, and the flattering $1.90 a pound 2026 guide is struck net of by-product credits at $4,000 gold and excludes $284M of idle-facility costs, while management's own 2027 target for the United States mines is $2.50 a pound. A plus-or-minus 10% copper move swings cash profit by plus-or-minus 24.4%, and the minus 24.4% is taken from a high-cost position - the coin flip the first pillar is written to catch.",
+   "contracting_reserve": "Very long reserve lives at Grasberg and Morenci, offset by Indonesian ownership and export terms that no other seat here carries.",
+   "capital_discipline": "Net debt of 0.67 times cash profit and interest cover of 17.8 times; the Indonesian smelter was capital committed near the top of the cycle.",
+   "valuation_guard": "A reconciled margin-of-safety reading of about minus 14%, with the shares roughly 12% above the $60 base value; the guard deducts.",
+   "ebitda_margin_ttm": 0.3479,
+   "fcf_torque_10pct": 0.244,
+   "commodity_beta_2y": 0.91,
+   "ndebt_ebitda": 0.67,
+   "interest_coverage": 17.8,
+   "funded_solvency": "strong",
+   "sop_mos_pct": -14.1,
+   "chain_regime": {
+    "copper_mining": "NEUTRAL"
+   },
+   "regime_fit": "Copper reads neutral, and high-cost torque into a neutral chain is the least attractive combination the rubric recognises.",
+   "phase_fit": "Payback speed is exactly what a high-cost producer cannot promise in a phase of imposed positive real rates.",
+   "exposure_axes": [
+    "global-growth-china-demand",
+    "copper-cost-curve"
+   ],
+   "size_units": 0.4,
+   "thesis_break_px": 48.0,
+   "bear_fv_px": 38.0,
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": false
+   },
+   "decision": "ADD",
+   "decision_rationale": "June 2026 quarter revenue of $7.03B was 7.3% below the year-earlier figure even though the realised copper price rose from about $4.50 to $6.17 a pound - a 37% better price did not offset lost volume; held in reserve only.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS"
+  }
+ ],
+ "combined_caps": [
+  {
+   "names": [
+    "RGLD",
+    "OR",
+    "AEM"
+   ],
+   "max_units": 2.0,
+   "axis": "gold-real-rate"
+  },
+  {
+   "names": [
+    "HBM",
+    "SCCO",
+    "RIO",
+    "VALE"
+   ],
+   "max_units": 2.25,
+   "axis": "global-growth-china-demand"
+  },
+  {
+   "names": [
+    "HBM",
+    "SCCO"
+   ],
+   "max_units": 1.05,
+   "axis": "copper-cost-curve"
+  }
+ ],
+ "chain_exposure": {
+  "precious_metals": 37.5,
+  "copper_mining": 37.5,
+  "diversified_miners": 25.0,
+  "uranium_fuel_cycle": 12.5
+ },
+ "risk_stance": "cautious",
+ "debt_cycle_phase": "DISCIPLINE",
+ "regime_quadrant": "GOLDILOCKS",
+ "expected_horizon_months": 18,
+ "mining_memo": "MINING BOOK, LANE A - DIRECTOR'S MEMO, 11 AUGUST 2026\n\n(a) How the names were scored, and what valuation was allowed to do\n\nFour pillars of twenty-five points each, applied only to names that cleared the gates. First,\ncost-curve position and the quality of the torque - how much cash profit moves for a 10% move in\nthe commodity, and whether that swing is taken from a low-cost or a marginal position. Second, the\ncontracting cycle and reserve life, which for a royalty company means the paying-asset book. Third,\ncapital discipline and the balance sheet - this sector's besetting sin is building at the top, so\nlast-cycle behaviour is scored, not just today's leverage. Fourth, a valuation guard.\n\nThe guard is a guard, not a ranking pillar. Every name starts with full marks and loses them only\nfor danger: a price well above the reconciled value of the parts, or earnings struck on a peak\ncommodity price that must be normalised before any cheapness is credited. It vetoed one name, capped\nseveral, and in no case lifted a name above another that passed clean. Teck is the clearest\nillustration - it carries the largest discount in the universe, about 29%, and it is a runner-up, not\na seat, because a discount cannot buy rank.\n\nCatalysts played no part. This book has the event overlay fully removed: a live catalyst is neither\na plus nor a requirement, and the dated-event book is elsewhere.\n\nOne methodological point that changed several rankings materially. Where the debate verified\ncompany-reported cost and margin figures against the automated screen and the two disagreed, the\ncompany figure won, as the rubric requires. That correction cut Hudbay (the screened 66.5% margin\nembeds a $322M non-cash impairment reversal; the honest figure is 51%), cut Southern Copper's\ncost-curve credit (the near-zero cash cost is a by-product credit, not a mining achievement), and\nlifted Rio Tinto by roughly ten points of margin (the screen summed four half-year periods instead of\ntwo) and Vale (the screened 25% margin and 1.5 times net debt are both corrupted by December 2025\nnon-cash charges; the true figures are about 42% and 0.97 times).\n\n(b) Excluded and capped\n\nBy the credibility gate:\n  - Alamos Gold - excluded outright, credibility scored two out of five with a turning trajectory.\n    Its own 29 July 2026 revision lifted 2026 all-in sustaining cost guidance 18% at the midpoint to\n    $1,775-1,875 an ounce while the screen still filed it in the high-margin cohort. Not eligible at\n    any price. No other name in the universe was gated, and none was capped for a worsening\n    trajectory.\n\nBy the solvency gate:\n  - No eligible name reads weak on funded debt, so the gate excluded nobody. Alcoa and Teck read\n    moderate, which passes; Teck's own 30 June 2026 balance sheet in fact shows net cash of C$1,244\n    million, which the screen missed entirely.\n\nBy the valuation guard:\n  - Franco-Nevada - vetoed. A reconciled margin-of-safety reading of about minus 53%, past the level\n    at which the reconciled fair value cannot reach the price. A superb business - a cash cost of $341\n    per gold-equivalent ounce, roughly a fifth of a typical producer's all-in cost - at a price this\n    book will not pay.\n  - Wheaton Precious Metals - capped out at about minus 26%, and blocked independently by the\n    three-name limit on the precious-metals chain.\n  - Southern Copper - seated but cut to 0.40 units, the smallest seat, on a guard reading of about\n    minus 10% and a price roughly 20% above the reconciled value of the parts.\n  - Cameco - seated at 0.50 units on a guard reading of about minus 21%; kept for its contract book\n    and because it is the only separate risk in the basket, with fresh money held back for evidence.\n  - Agnico Eagle - trimmed to 0.50 units on a guard reading of about minus 10%, with earnings struck\n    at a gold price that has already begun to fall.\n  - Freeport-McMoRan, Ero Copper, Buenaventura and Fortuna Mining - all deducted for a price above\n    the reconciled value or for a cost position their own disclosures show to be mid-curve; none\n    seated.\n  - Alcoa - not seated. Worst cost position in its cohort, an alumina business losing $96M a quarter,\n    interest cover of 3.5 times. A taxonomy note for the map while we are here: it is a metal\n    converter filed in the copper chain and benchmarked against orebody miners whose margins are\n    structurally far higher, so its bottom-of-cohort band overstates the case against it - it is not\n    seated on the merits either way.\n\nBy the headwind rule:\n  - Nobody. Every chain reads neutral in the cycle sidecar, so no seat is clamped by the headwind\n    rule and no headwind justification is required or given. The macro note's separate view that\n    monetary metals are currently out of favour is a macro read; by this book's rules it cannot move\n    a size, and it has not.\n\nSplit rule and physical anchors: every name in the input is a producer or a royalty company. No\nequipment, services or utility name reached this desk, so there is nothing to report as a\nmap-merge failure, and every seat carries a specific physical anchor - ore mined, metal poured, or a\ncontractual claim on ounces produced by a named third party.\n\n(c) Downside torque, seat by seat\n\nTorque cuts both ways, and every seat whose case cites it carries the downside number here.\n\n  - OR Royalties: plus-or-minus 9.7% cash profit per 10% gold move. Downside minus 9.7%, taken from\n    a 96.8% cash margin - the lowest-cost position in the book, so the swing is survivable.\n  - Rio Tinto: plus-or-minus 24.9%. Downside minus 24.9%, driven by iron ore rather than copper, and\n    part of the recent copper cost cut is a gold by-product credit that reverses with the metal.\n  - Royal Gold: plus-or-minus 12.7%. Downside minus 12.7% with no cost to cut - a royalty book has\n    no operating lever.\n  - Hudbay: plus-or-minus 11.3%. Downside minus 11.3%, absorbed from a verified negative cash cost\n    per pound - the reason this torque is compounding leverage rather than a coin flip.\n  - Agnico Eagle: plus-or-minus 13.2%. Downside minus 13.2%, and it is already happening: the\n    realised price fell from about $4,900 to $4,483 between the March and June 2026 quarters.\n  - Vale: plus-or-minus 31.9%. Downside minus 31.9% - the largest in the book - with no contracted\n    book beneath it, and the beta behind it is an index regression, so read it softly.\n  - Cameco: plus-or-minus 30.2%. Downside minus 30.2%, bounded only by roughly 230 million pounds of\n    committed long-term contracts; the beta is an exchange-traded-fund regression, so read it softly.\n  - Southern Copper: plus-or-minus 13.5%. Downside minus 13.5%, and it understates the true risk,\n    because a copper fall would most likely arrive with a fall in the silver and molybdenum credits\n    now producing the near-zero headline cost.\n\n(d) Shared commodity factors, and how each was resolved\n\nThe shared global-growth and China-demand axis, decomposed first as required. Four of the eight seats\nride it: Hudbay and Southern Copper through copper, Rio Tinto and Vale through seaborne iron ore into\nChinese steel. The measured two-year weekly correlations say these are not four independent bets -\nHudbay against Southern Copper is 0.82, Vale against Southern Copper 0.74, Hudbay against Vale 0.61,\nagainst a book-wide average pairwise figure of 0.57. A China demand shock or a global-growth\ndowngrade hits all four in the same week. Resolved by keeping with an explicit cap rather than by\ndiversifying, for the arithmetic reason set out below, and the cap is numeric: the four names are\ncapped at 2.25 units combined and the two copper names at 1.05 units combined. Southern Copper - the\nlowest-scoring seat in the book and the name appearing in both measured breaches - is cut from 0.6 to\n0.4 units, the smallest position here.\n\nThe gold and real-rate axis. Three of the eight seats ride it: Royal Gold, OR Royalties and Agnico\nEagle. These are the most damning numbers on the page - Royal Gold against Agnico Eagle 0.86, OR\nagainst Agnico Eagle 0.86, Royal Gold against OR 0.84. Two of them are one bet, and the royalties are\nemphatically not a diversifier of the producer; all three de-rate together on a real-rate move.\nResolved by keeping with a cap of 2.00 units combined, achieved by cutting Agnico Eagle - the\nlowest-scoring of the three, the only one whose price sits above the reconciled value of its parts,\nand the only one with no moat in its file - from 0.7 to 0.5 units.\n\nWhy diversification was not available on either axis. After the credibility exclusion, seventeen\nnames remain and they occupy only four chains: precious metals, copper, diversified miners and the\nuranium fuel cycle. There is not one rare-earth or strategic-metals name in the input, and exactly one\nuranium name, which is already seated. With a limit of three names per chain, and with the only\ndiversified-miners name that is not also a copper name being Vale, the arithmetic closes: the maximum\nnumber of distinct seats reachable without a fourth copper name is seven, unless the precious-metals\nchain carries three. An eight-name slate therefore forces a three-plus-three-plus-two-plus-one shape,\nand no swap inside that shape removes an axis - it only exchanges one name on the axis for another.\nThat is why both resolutions are caps rather than swaps, and it is stated rather than glossed.\n\nThe uranium contracting cycle. One seat, Cameco, so no action is required; it is named because the\ninstruction requires every chain-specific axis to be reported. It is the one genuinely separate risk\nin this basket, and the reason its size went up rather than down.\n\nExport controls and rare earths. Zero seats, because the eligible universe contains no rare-earth or\nstrategic-metals name at all. Reported for completeness; no action is possible.\n\nOne standing note on gold. This system does not score the gold price anywhere, by design - the\nmomentum guard exists because a price-following rule would have bought the January 2026 top. Nothing\nabove ranks a seat because gold rose.\n\n(e) Rise and fall against the prior slate\n\nThe prior apex, dated 4 August 2026, carried seven seats: Royal Gold 80, Hudbay 78, OR Royalties 77,\nAgnico Eagle 76, Vale 70, Southern Copper 66, Cameco 60, with Teck 74, Rio Tinto 68, Fortuna 66,\nWheaton 65, Buenaventura 63 and Ero 60 in reserve. This run:\n\n  - OR Royalties 77 to 83. Up six: the 8 July 2026 disclosure confirmed a 96.8% cash margin and 2030\n    volumes contracted, and the correction to the impossible screened margin left the conclusion\n    intact.\n  - Rio Tinto 68 to 82, promoted from reserve. Up fourteen, almost all of it a data correction - the\n    screen had summed four half-year periods instead of two, understating the trailing margin by\n    about ten points - plus verified first-quartile costs on both legs and a 28 July 2026 result\n    showing cash profit up 28% and free cash flow up 75%.\n  - Royal Gold 80 to 81. Up one: the 21 July 2026 disclosure of $871 per gold-equivalent ounce\n    against $4,506 realised confirmed the widest cash spread in the book.\n  - Hudbay 78 to 76. Down two: the cost claim was verified and improved, but the screened margin\n    proved about fifteen points too high once the September 2025 impairment reversal is stripped, and\n    the stock is 8.6 rather than 6.6 times cash profit.\n  - Agnico Eagle 76 to 73. Down three: the cost position is still the best in the senior tier, but the\n    advantage over Newmont is about $220 an ounce rather than the hundreds management claims, margin\n    rolled over 4.2 points in the June quarter, and the price sits above the reconciled value.\n  - Vale 70 to 73. Up three on net: the corrected margin (42%, not 25%) and net debt (0.97 times, not\n    1.5) are materially better than the screen showed, partly offset by the 31 July 2026 increase in\n    both cash and all-in cost guidance.\n  - Cameco 60 to 67. Up seven: the contract book at roughly 230 million pounds is the strongest\n    contracted position in the slate and the adjusted margin is 54% rather than the screened 24.9%;\n    held back by unit cost of sales up 36% year over year.\n  - Southern Copper 66 to 65. Down one, and the composition changed more than the number: the reserve\n    life and return on capital still score well, but the near-zero cash cost turned out to be a $2.24\n    by-product credit while the underlying mining cost rose from $2.05 to $2.29 a pound.\n\nReserve list changes: Teck 74 to 77 and Rio Tinto promoted out of it; BHP added at 72 (the 16 July\n2026 operational review confirmed a sixth consecutive year as lowest-cost iron-ore major); Wheaton 65\nto 70; Ero 60 to 63; Freeport enters at 58. Fortuna and Buenaventura drop off the reserve list -\nboth were shown by their own disclosures to be mid- or high-cost operators enjoying a high metal\nprice, Fortuna at $2,157 per gold-equivalent ounce against guidance of $1,830-1,975.\n\n(f) Rotation, reconciled to the ledger\n\nThe ledger records seven held names and no drops this year. This run drops nothing, re-adds nothing,\nadds one, and re-sizes six.\n\n  - OR Royalties - KEEP at 0.75 units. Thesis untouched; 96.8% cash margin confirmed 8 July 2026.\n  - Royal Gold - KEEP at 0.75 units, which is also the ceiling the mid-build cash-flow flag imposes.\n    $871 per gold-equivalent ounce disclosed 21 July 2026.\n  - Hudbay - KEEP, trimmed 0.8 to 0.65. Cost guidance improved 29 July 2026 to a negative cost per\n    pound; the trim is for the fifteen-point margin overstatement, not for the thesis.\n  - Agnico Eagle - KEEP, trimmed 0.7 to 0.5. Still the lowest-cost senior, but it is the cut leg of\n    the gold cap and its realised price has turned.\n  - Vale - KEEP, trimmed 0.6 to 0.55. Cost guidance raised 31 July 2026; thesis intact, trend adverse.\n  - Southern Copper - KEEP, cut 0.6 to 0.4. Not broken - the price is nowhere near the level that\n    would break it, the credibility and solvency files are clean, and the reserve life stands - but it\n    is the weakest seat on the rubric and the one in both measured correlation breaches. Teck was\n    considered as the strictly-better replacement for this seat and rejected: it scores higher, but it\n    sits on the same global-growth and China-demand axis, so the swap would buy quality without\n    buying orthogonality, and the discount that makes it attractive is anchored to a pending merger,\n    which is not a reason this book owns anything. Teck stays first in reserve.\n  - Cameco - KEEP, raised 0.4 to 0.5. Raised because it is the only seat not on a shared axis, not\n    because anything in its own numbers improved - its unit cost of sales is going the wrong way.\n  - Rio Tinto - ADD at 0.65 units. The eighth seat, required because the slate must carry exactly\n    eight. Added on the verified margin correction and the 28 July 2026 half-year result, not on the\n    capital-release programme, which remains unsigned and carries no weight in this book.\n\n(g) Bear rebuttal - the strongest reason each seat is wrong, written before final sizing\n\n  - OR Royalties: cleaning the impossible screened margin lifts the multiple from about 16 to about\n    20 times cash earnings, so the cheapest-looking royalty in the book is not actually cheap.\n  - Rio Tinto: it is a 55%-iron-ore company being seated in the copper chain, and its own valuation\n    discounts Chinese steel structurally - if that discount is too small, the largest part of the\n    business is worth less than the base case says.\n  - Royal Gold: it is the only royalty here carrying debt, it bought the Sandstorm book at a high gold\n    price, and the two valuation readings on file disagree with each other.\n  - Hudbay: the high-grade Pampacancha ore that supplied the gold credits behind the negative cash\n    cost is depleted, so the first-quartile position may already be historical.\n  - Agnico Eagle: the shares trade above the reconciled value of the parts on earnings struck at a\n    gold price that has fallen 8% in a quarter, and the file records no moat.\n  - Vale: cost guidance has now been raised twice in a year while margin compresses on rising revenue,\n    and it carries the book's largest downside torque with no contracted cushion.\n  - Cameco: unit cost of sales rose 36% year over year, guidance was raised, and the reconciled value\n    sits about a third below the market price - the contract book is bounding a thesis that the\n    numbers are currently working against.\n  - Southern Copper: strip the silver and molybdenum credit and the mining cost rose 12%; the market\n    is paying 20% above the reconciled value for a cost position that is borrowed from other metals.\n\n(h) Macro - what it changed, and what it did not\n\nThe cited block reads a debt-cycle phase in which the bond market is imposing positive real rates, a\ngrowth-rising and inflation-cooling quadrant, and a neutral risk regime, with a winner scoreboard\nplacing strategic metals first and the uranium fuel cycle last. It also carries an explicit warning\nthat the macro layer is degraded - the phase is a seeded prior, not yet earned by the state machine.\nThat warning is honoured here: unnamed families are treated as neutral, no headwind is read into the\ngap, and because a data gap must never tighten the book, nothing was cut on the strength of it.\n\nWhat it changed. Three things, all of them the sanctioned channels. First, posture: the stance for\nthis run is cautious, which reflects the phase read alongside the fact that six of the eight seats\ntrade at or above the reconciled value of their parts. Second, the entry bar: in this quadrant a\nfresh entry wants a discount of at least 20% to reconciled value, and no seat in this book clears\nthat - which is why five of the eight are marked to wait for weakness, two to scale in, and Cameco\nto wait for a specific piece of evidence rather than a price. Third, the horizon: eighteen months\nrather than twelve, because a phase in which real rates are being imposed lengthens the time a\ncost-curve advantage needs to show up in cash rather than in the multiple. Fourth, the per-seat\nphase commentary, which is judgement and nothing more - Rio Tinto's Simandou and lithium builds and\nCameco's raised unit costs are both named there as sitting against the phase, and both seats were\ntaken anyway.\n\nWhat it did not change. Membership: no name is in or out of this book because of the phase, the\nquadrant, or its rank on the scoreboard - the seats were chosen on the four pillars and the gates,\nand the shape was forced by the chain caps and the eligible universe. Conviction: no score moved on a\nmacro citation, and no decision rationale above cites one. Sizing: not one unit was set or moved by\nthe macro read - the only things that moved sizes were name-specific dated facts (Hudbay's margin\ncorrection, Agnico's falling realised price, Vale's raised cost guidance, Southern Copper's\nby-product credit) and the two correlation caps. The clearest test of this is precious metals: the\nmacro block calls it a headwind family and ranks it second on the scoreboard, and neither fact\ntouched a single unit - the gold cluster was cut on measured correlation and on Agnico's own price\nagainst its own value, not on the phase. Copper is the mirror image: the block calls it a tailwind\nand the top-confidence family, and Southern Copper was still cut to the smallest seat in the book.\n\nSizing note for the audit trail. This book publishes equal-weighted, so the eight seats each carry\n12.5% of published weight regardless of the units above. The chain exposure reported alongside this\nmemo is therefore the published one: precious metals and copper each carry three of eight seats and\nso 37.5%, diversified miners two seats and 25%, the uranium fuel cycle one seat and 12.5%. Both\nthree-seat chains sit above the 30% weight bound by arithmetic rather than by drift - under equal\nweighting three of eight seats is always 37.5% - and both are inside the three-name limit that\nactually binds. Measured on the size units instead, precious metals is 42.1%, copper 35.8%,\ndiversified miners 25.3% and the uranium fuel cycle 10.5%. Those two breaches are stated rather than\nengineered away: bringing them under 30% would require sizing Vale and Cameco at roughly double every\nother seat, which would misrepresent conviction in the very record that is meant to decide whether\nequal weighting is ever switched off.\n",
+ "post_anchor_ts": 1786470254.070886,
+ "debt_cycle_phase_applied": "DISCIPLINE",
+ "duration_caps_applied": {
+  "story_max": 0.2,
+  "cash_now_min": 0.35
+ },
+ "duration_cap_effect": "advisory",
+ "cap_binding": [],
+ "duration_cap_warnings": [
+  "8/8 seats have NO FCF data (duration_bucket=unknown) — excluded from the story cap (fail-open); check scan freshness",
+  "cash_now share 0% < DISCIPLINE floor 35% — WARN only (a cap cannot conjure names); Director must own it in the memo"
+ ],
+ "weights": {
+  "OR": 0.125,
+  "RIO": 0.125,
+  "RGLD": 0.125,
+  "HBM": 0.125,
+  "AEM": 0.125,
+  "VALE": 0.125,
+  "CCJ": 0.125,
+  "SCCO": 0.125
+ },
+ "stress_test": {
+  "asof": "2026-08-11",
+  "basket_to_52w_lows_pct": -36.8,
+  "recession_stress_pct": -46.3,
+  "cro_bear_weighted_pct": -42.6,
+  "bear_case_invalid": false,
+  "published_downside_pct": -46.3,
+  "per_name": [
+   {
+    "symbol": "OR",
+    "price": 33.455,
+    "yr_low": 27.54,
+    "to_52w_low_pct": -17.7,
+    "recession_pct": -30.0,
+    "cro_bear_pct": -40.2
+   },
+   {
+    "symbol": "RIO",
+    "price": 100.69,
+    "yr_low": 60.22,
+    "to_52w_low_pct": -40.2,
+    "recession_pct": -49.2,
+    "cro_bear_pct": -38.4
+   },
+   {
+    "symbol": "RGLD",
+    "price": 231.819,
+    "yr_low": 166.52,
+    "to_52w_low_pct": -28.2,
+    "recession_pct": -38.9,
+    "cro_bear_pct": -34.0
+   },
+   {
+    "symbol": "HBM",
+    "price": 27.275,
+    "yr_low": 9.62,
+    "to_52w_low_pct": -64.7,
+    "recession_pct": -70.0,
+    "cro_bear_pct": -46.8
+   },
+   {
+    "symbol": "AEM",
+    "price": 180.78,
+    "yr_low": 130.04,
+    "to_52w_low_pct": -28.1,
+    "recession_pct": -38.9,
+    "cro_bear_pct": -40.8
+   },
+   {
+    "symbol": "VALE",
+    "price": 14.305,
+    "yr_low": 9.67,
+    "to_52w_low_pct": -32.4,
+    "recession_pct": -42.5,
+    "cro_bear_pct": -33.6
+   },
+   {
+    "symbol": "CCJ",
+    "price": 98.28,
+    "yr_low": 68.96,
+    "to_52w_low_pct": -29.8,
+    "recession_pct": -40.4,
+    "cro_bear_pct": -59.3
+   },
+   {
+    "symbol": "SCCO",
+    "price": 191.08,
+    "yr_low": 89.04163,
+    "to_52w_low_pct": -53.4,
+    "recession_pct": -60.4,
+    "cro_bear_pct": -47.7
+   }
+  ],
+  "note": "Market-based stress: weighted basket return to the 52-week lows, and to 52w-lows -15% (recession). cro_bear is the agents' own adverse SoP (bear_fv_px); when missing or implying upside it is flagged invalid and the published downside is the market-based recession stress."
+ },
+ "correlation": {
+  "window": "2y weekly log returns",
+  "avg_pairwise": 0.57,
+  "n_pairs": 28,
+  "max_pair": {
+   "a": "RGLD",
+   "b": "AEM",
+   "corr": 0.87
+  },
+  "flagged_pairs": [
+   {
+    "a": "OR",
+    "b": "RGLD",
+    "corr": 0.84,
+    "combined_weight_pct": 25.0,
+    "breach": true
+   },
+   {
+    "a": "OR",
+    "b": "HBM",
+    "corr": 0.63,
+    "combined_weight_pct": 25.0,
+    "breach": false
+   },
+   {
+    "a": "OR",
+    "b": "AEM",
+    "corr": 0.86,
+    "combined_weight_pct": 25.0,
+    "breach": true
+   },
+   {
+    "a": "RIO",
+    "b": "HBM",
+    "corr": 0.67,
+    "combined_weight_pct": 25.0,
+    "breach": false
+   },
+   {
+    "a": "RIO",
+    "b": "VALE",
+    "corr": 0.78,
+    "combined_weight_pct": 25.0,
+    "breach": true
+   },
+   {
+    "a": "RIO",
+    "b": "SCCO",
+    "corr": 0.75,
+    "combined_weight_pct": 25.0,
+    "breach": true
+   },
+   {
+    "a": "RGLD",
+    "b": "AEM",
+    "corr": 0.87,
+    "combined_weight_pct": 25.0,
+    "breach": true
+   },
+   {
+    "a": "HBM",
+    "b": "AEM",
+    "corr": 0.61,
+    "combined_weight_pct": 25.0,
+    "breach": false
+   },
+   {
+    "a": "HBM",
+    "b": "SCCO",
+    "corr": 0.82,
+    "combined_weight_pct": 25.0,
+    "breach": true
+   },
+   {
+    "a": "VALE",
+    "b": "SCCO",
+    "corr": 0.74,
+    "combined_weight_pct": 25.0,
+    "breach": true
+   }
+  ],
+  "chain_beta": {
+   "OR": {
+    "xme": 0.79,
+    "gdx": 0.83
+   },
+   "RIO": {
+    "xme": 0.48,
+    "gdx": 0.31
+   },
+   "RGLD": {
+    "xme": 0.7,
+    "gdx": 0.8
+   },
+   "HBM": {
+    "xme": 1.29,
+    "gdx": 0.91
+   },
+   "AEM": {
+    "xme": 0.83,
+    "gdx": 0.96
+   },
+   "VALE": {
+    "xme": 0.45,
+    "gdx": 0.32
+   },
+   "CCJ": {
+    "xme": 0.87,
+    "gdx": 0.47
+   },
+   "SCCO": {
+    "xme": 0.85,
+    "gdx": 0.61
+   }
+  },
+  "correlation_breach": true,
+  "fx_note": "betas vs XME (metals & mining) + GDX (gold miners) — the 50/50 Mining benchmark and this book's systematic commodity axes."
+ },
+ "exits": {
+  "OR": {
+   "thesis_break_px": 24.0,
+   "valid": true,
+   "fair_value_px": null,
+   "trim_at_px": null,
+   "pct_of_fair_value": null,
+   "action": "HOLD",
+   "review_trigger": "weekly refresh OR close < thesis_break_px OR close >= trim_at_px"
+  },
+  "RIO": {
+   "thesis_break_px": 78.0,
+   "valid": true,
+   "fair_value_px": null,
+   "trim_at_px": null,
+   "pct_of_fair_value": null,
+   "action": "HOLD",
+   "review_trigger": "weekly refresh OR close < thesis_break_px OR close >= trim_at_px"
+  },
+  "RGLD": {
+   "thesis_break_px": 170.0,
+   "valid": true,
+   "fair_value_px": null,
+   "trim_at_px": null,
+   "pct_of_fair_value": null,
+   "action": "HOLD",
+   "review_trigger": "weekly refresh OR close < thesis_break_px OR close >= trim_at_px"
+  },
+  "HBM": {
+   "thesis_break_px": 18.0,
+   "valid": true,
+   "fair_value_px": null,
+   "trim_at_px": null,
+   "pct_of_fair_value": null,
+   "action": "HOLD",
+   "review_trigger": "weekly refresh OR close < thesis_break_px OR close >= trim_at_px"
+  },
+  "AEM": {
+   "thesis_break_px": 135.0,
+   "valid": true,
+   "fair_value_px": null,
+   "trim_at_px": null,
+   "pct_of_fair_value": null,
+   "action": "HOLD",
+   "review_trigger": "weekly refresh OR close < thesis_break_px OR close >= trim_at_px"
+  },
+  "VALE": {
+   "thesis_break_px": 11.5,
+   "valid": true,
+   "fair_value_px": null,
+   "trim_at_px": null,
+   "pct_of_fair_value": null,
+   "action": "HOLD",
+   "review_trigger": "weekly refresh OR close < thesis_break_px OR close >= trim_at_px"
+  },
+  "CCJ": {
+   "thesis_break_px": 66.0,
+   "valid": true,
+   "fair_value_px": null,
+   "trim_at_px": null,
+   "pct_of_fair_value": null,
+   "action": "HOLD",
+   "review_trigger": "weekly refresh OR close < thesis_break_px OR close >= trim_at_px"
+  },
+  "SCCO": {
+   "thesis_break_px": 145.0,
+   "valid": true,
+   "fair_value_px": null,
+   "trim_at_px": null,
+   "pct_of_fair_value": null,
+   "action": "HOLD",
+   "review_trigger": "weekly refresh OR close < thesis_break_px OR close >= trim_at_px"
+  }
+ },
+ "chain_caps": [
+  {
+   "names": [
+    "OR",
+    "RGLD",
+    "AEM"
+   ],
+   "max_units": 0.748,
+   "axis": "chain:precious_metals"
+  },
+  {
+   "names": [
+    "RIO",
+    "HBM",
+    "SCCO"
+   ],
+   "max_units": 0.935,
+   "axis": "chain:copper_mining"
+  },
+  {
+   "names": [
+    "RIO",
+    "VALE"
+   ],
+   "max_units": 0.935,
+   "axis": "chain:diversified_miners"
+  }
+ ],
+ "duration_caps": [],
+ "mining_post_applied": true
+}

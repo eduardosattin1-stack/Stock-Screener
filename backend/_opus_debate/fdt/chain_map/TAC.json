@@ -1,0 +1,18 @@
+{
+ "symbol": "TAC",
+ "physical_anchor": "owns and operates natural-gas, hydro and wind power-generation plants (incl. the Keephills gas plant) that generate and deliver electricity",
+ "chains": [
+  "power_for_ai"
+ ],
+ "business_model": "utility",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "merchant/contracted power generator (IPP); signed a Feb-2026 MOU with CPP Investments and Brookfield to be exclusive site/power provider for a datacenter build at Keephills, scaling toward 1 GW under a long-term PPA — direct AI-load power-delivery exposure",
+ "true_competitors": [
+  "VST",
+  "NRG",
+  "CEG",
+  "TLN",
+  "CPX.TO"
+ ],
+ "chain_fit_confidence": "high"
+}

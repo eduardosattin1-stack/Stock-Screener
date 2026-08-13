@@ -1,0 +1,20 @@
+{
+ "symbol": "SCCO",
+ "physical_anchor": "mines and produces copper cathode and concentrate (plus molybdenum, zinc, silver byproduct) in Peru and Mexico",
+ "chains": [
+  "copper_mining"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.85,
+ "value_chain_position": "low-cost-quartile major copper producer, anchor example for the chain",
+ "true_competitors": [
+  "FCX",
+  "ERO",
+  "HBM",
+  "TECK",
+  "GLEN",
+  "ANTO",
+  "CS.TO"
+ ],
+ "chain_fit_confidence": "high"
+}

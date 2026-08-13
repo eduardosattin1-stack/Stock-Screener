@@ -1,0 +1,19 @@
+{
+ "symbol": "USAR",
+ "physical_anchor": "Rare earth oxides mined/processed at Round Top (Texas) and NdFeB permanent magnets manufactured at the Stillwater plant (Oklahoma)",
+ "chains": [
+  "rare_earth_strategic"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Vertically-integrating rare-earth developer building US magnet manufacturing ahead of its own mine reaching production",
+ "true_competitors": [
+  "MP",
+  "LYC.AX",
+  "UUUU",
+  "UCU.V",
+  "CRML",
+  "ILU.AX"
+ ],
+ "chain_fit_confidence": "high"
+}

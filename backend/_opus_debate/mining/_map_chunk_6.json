@@ -1,0 +1,602 @@
+[
+ {
+  "symbol": "SA",
+  "name": "Seabridge Gold Inc.",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 2996222622,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": -163165446,
+   "ttm_ocf": -18125517,
+   "ttm_capex": -145039928,
+   "ttm_ebitda": -87464346,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 145021808,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 13597120.0,
+   "runway_months": 10.7,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 9432303.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SCZM",
+  "name": "Santacruz Silver Mining Ltd.",
+  "sector": "Basic Materials",
+  "industry": "Other Precious Metals",
+  "mcap": 671442661,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": 48275000,
+   "ttm_ocf": 80960000,
+   "ttm_capex": -32685000,
+   "ttm_ebitda": 120213723,
+   "ttm_revenue": 385497866,
+   "rev_yoy": 0.2901,
+   "cash_sti": 59083000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 2471332.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SGML",
+  "name": "Sigma Lithium Corporation",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 1241586435,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -6007571,
+   "ttm_ocf": 2213192.8,
+   "ttm_capex": -8220762,
+   "ttm_ebitda": 9528939,
+   "ttm_revenue": 99602944,
+   "rev_yoy": -0.4053,
+   "cash_sti": 15154677,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 500631.0,
+   "runway_months": 30.3,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 10651436.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 12.621386155555507
+  }
+ },
+ {
+  "symbol": "SIND",
+  "name": "Sinda Ltd.",
+  "sector": "Basic Materials",
+  "industry": "Other Precious Metals",
+  "mcap": 1955529943,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": null,
+   "ttm_ocf": null,
+   "ttm_capex": null,
+   "ttm_ebitda": null,
+   "ttm_revenue": null,
+   "rev_yoy": null,
+   "cash_sti": null,
+   "balance_date": null,
+   "balance_sheet_stale": null,
+   "monthly_burn": null,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 3375098.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SKE",
+  "name": "Skeena Resources Limited",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 3610855604,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -373885220,
+   "ttm_ocf": -35901321,
+   "ttm_capex": -337983899,
+   "ttm_ebitda": -241512187,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 43463029,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 31157102.0,
+   "runway_months": 1.4,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 8714519.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SLI",
+  "name": "Standard Lithium Ltd.",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 535270505,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -12710000.0,
+   "ttm_ocf": -12646000.0,
+   "ttm_capex": -64000,
+   "ttm_ebitda": -50533000,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 142641582,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1059167.0,
+   "runway_months": 134.7,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 2287656.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SXC",
+  "name": "SunCoke Energy, Inc.",
+  "sector": "Basic Materials",
+  "industry": "Steel",
+  "mcap": 744776765,
+  "lane": "b",
+  "chains_hint": [
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": 49300000,
+   "ttm_ocf": 131500001,
+   "ttm_capex": -82200000,
+   "ttm_ebitda": 130500000,
+   "ttm_revenue": 1897600000,
+   "rev_yoy": 0.0278,
+   "cash_sti": 42700000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 8503835.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 4.7026819923371646
+  }
+ },
+ {
+  "symbol": "TFPM",
+  "name": "Triple Flag Precious Metals Corp.",
+  "sector": "Basic Materials",
+  "industry": "Other Precious Metals",
+  "mcap": 6245636260,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": 174520900,
+   "ttm_ocf": 358770909,
+   "ttm_capex": -184250010,
+   "ttm_ebitda": 402569886,
+   "ttm_revenue": 453243782,
+   "rev_yoy": 0.5432,
+   "cash_sti": 210390665,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 4746091.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "TGB",
+  "name": "Trekor Metals Limited",
+  "sector": "Basic Materials",
+  "industry": "Copper",
+  "mcap": 2831827585,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining"
+  ],
+  "gates": {
+   "ttm_fcf": 121768000,
+   "ttm_ocf": 257523000,
+   "ttm_capex": -135755000,
+   "ttm_ebitda": 221211631,
+   "ttm_revenue": 768309588,
+   "rev_yoy": 0.2799,
+   "cash_sti": 170979716,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 26614058.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.2027529104018946
+  }
+ },
+ {
+  "symbol": "THM",
+  "name": "International Tower Hill Mines Ltd.",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 495802115,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": -1188891,
+   "ttm_ocf": -1188888,
+   "ttm_capex": -3,
+   "ttm_ebitda": -4029933,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 114689792,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 99074.0,
+   "runway_months": 1157.6,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 4815638.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "TMC",
+  "name": "TMC the metals company inc.",
+  "sector": "Basic Materials",
+  "industry": "Other Precious Metals",
+  "mcap": 1696060755,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": -34329000,
+   "ttm_ocf": -34119000,
+   "ttm_capex": -210000,
+   "ttm_ebitda": -316575000,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 119682000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 2860750.0,
+   "runway_months": 41.8,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 9266902.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "TMQ",
+  "name": "Trilogy Metals Inc.",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 595108726,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -5603000,
+   "ttm_ocf": -5603000,
+   "ttm_capex": 0,
+   "ttm_ebitda": -49849000,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 38838000,
+   "balance_date": "2026-05-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 466917.0,
+   "runway_months": 83.2,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 4255671.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "UAMY",
+  "name": "United States Antimony Corporation",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 901709510,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -59548935,
+   "ttm_ocf": -20021371,
+   "ttm_capex": -39527564,
+   "ttm_ebitda": -18425669,
+   "ttm_revenue": 39041772,
+   "rev_yoy": 0.9417,
+   "cash_sti": 3220400,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 4962411.0,
+   "runway_months": 0.6,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 15179355.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "UEC",
+  "name": "Uranium Energy Corp.",
+  "sector": "Energy",
+  "industry": "Uranium",
+  "mcap": 5319874000,
+  "lane": "b",
+  "chains_hint": [
+   "uranium_fuel_cycle"
+  ],
+  "gates": {
+   "ttm_fcf": -120234000,
+   "ttm_ocf": -113513000,
+   "ttm_capex": -6721000,
+   "ttm_ebitda": -116698000,
+   "ttm_revenue": 20200000,
+   "rev_yoy": -0.6978,
+   "cash_sti": 488053000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 10019500.0,
+   "runway_months": 48.7,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 42060772.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "URG",
+  "name": "Ur-Energy Inc.",
+  "sector": "Energy",
+  "industry": "Uranium",
+  "mcap": 514544746,
+  "lane": "b",
+  "chains_hint": [
+   "uranium_fuel_cycle"
+  ],
+  "gates": {
+   "ttm_fcf": -94598860,
+   "ttm_ocf": -62514513,
+   "ttm_capex": -32084346,
+   "ttm_ebitda": -81134000,
+   "ttm_revenue": 31138000,
+   "rev_yoy": -0.0762,
+   "cash_sti": 123253000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 7883238.0,
+   "runway_months": 15.6,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 9277814.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "UROY",
+  "name": "Uranium Royalty Corp.",
+  "sector": "Energy",
+  "industry": "Uranium",
+  "mcap": 501704275,
+  "lane": "b",
+  "chains_hint": [
+   "uranium_fuel_cycle"
+  ],
+  "gates": {
+   "ttm_fcf": 232080842,
+   "ttm_ocf": 232842702,
+   "ttm_capex": -774573,
+   "ttm_ebitda": 75733657.6,
+   "ttm_revenue": 254196250.6,
+   "rev_yoy": 15.2999,
+   "cash_sti": 345594474,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 4373346.0,
+   "royalty_hint": true
+  }
+ },
+ {
+  "symbol": "USAR",
+  "name": "USA Rare Earth Inc",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 1675376750,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -131101000,
+   "ttm_ocf": -57112000,
+   "ttm_capex": -73989000,
+   "ttm_ebitda": -280777000,
+   "ttm_revenue": 7341000,
+   "rev_yoy": null,
+   "cash_sti": 1749644000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 10925083.0,
+   "runway_months": 160.1,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 133759876.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "USAS",
+  "name": "Americas Gold and Silver Corporation",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 1512191686,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -59468740,
+   "ttm_ocf": 24706314,
+   "ttm_capex": -84175054,
+   "ttm_ebitda": -19786352,
+   "ttm_revenue": 161518057,
+   "rev_yoy": 0.5262,
+   "cash_sti": 122831645,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 4955728.0,
+   "runway_months": 24.8,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 15009331.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "USAU",
+  "name": "U.S. Gold Corp.",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 242237073,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": -20140627,
+   "ttm_ocf": -18213416,
+   "ttm_capex": -1927211,
+   "ttm_ebitda": -17050634,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 30655391,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1678386.0,
+   "runway_months": 18.3,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 2903437.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "UUUU",
+  "name": "Energy Fuels Inc.",
+  "sector": "Energy",
+  "industry": "Uranium",
+  "mcap": 3220208119,
+  "lane": "b",
+  "chains_hint": [
+   "uranium_fuel_cycle"
+  ],
+  "gates": {
+   "ttm_fcf": -96082000,
+   "ttm_ocf": -53181219,
+   "ttm_capex": -42900780,
+   "ttm_ebitda": -70851000,
+   "ttm_revenue": 84862000,
+   "rev_yoy": 0.2195,
+   "cash_sti": 910685000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 8006833.0,
+   "runway_months": 113.7,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 66596728.0,
+   "royalty_hint": false
+  }
+ }
+]

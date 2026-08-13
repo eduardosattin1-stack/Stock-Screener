@@ -1,0 +1,182 @@
+{
+ "IPX": {
+  "physical_anchor": "Produces titanium metal powder and sponge from mineral-sand ore via a hydrogen-based (HAMR) reduction process at its Titan Valley, Virginia facility; also holds a Tennessee critical-minerals project targeting rare-earth/titanium byproduct extraction.",
+  "chains": ["rare_earth_strategic"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.9,
+  "value_chain_position": "Pre-commercial titanium-metal producer (mine-to-metal), DPA Title III / DoD-funded strategic-metal build-out, not yet at nameplate revenue.",
+  "true_competitors": ["ATI", "VSMPO-AVISMA (MCX: VSMO)", "Toho Titanium (5727.T)", "Osaka Titanium Technologies (5726.T)", "TIMET (Precision Castparts, private)", "MP", "USAR"],
+  "chain_fit_confidence": "high"
+ },
+ "LAC": {
+  "physical_anchor": "Develops the Thacker Pass lithium clay deposit in Nevada, aiming to produce lithium carbonate.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Pre-revenue lithium-clay developer; lithium is not a covered chain in this taxonomy version (no lithium chain exists — uranium, copper, precious metals, rare-earth/strategic, diversified-miners only), so this is an industry-filter false positive despite a real physical anchor.",
+  "true_competitors": ["Albemarle (ALB)", "SQM", "Sigma Lithium (SGML)", "Piedmont Lithium (PLL)", "Standard Lithium (SLI)", "Ganfeng Lithium (1772.HK)"],
+  "chain_fit_confidence": "low"
+ },
+ "LAR": {
+  "physical_anchor": "Holds the producing Caucharí-Olaroz lithium brine operation (Argentina JV) plus exploration-stage lithium assets, producing lithium carbonate via evaporation/processing.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Lithium-brine producer/JV holder; equity-accounted JV revenue does not flow to the parent P&L (ttm_revenue=0 here). Lithium is not a covered chain in this taxonomy version — industry-filter false positive.",
+  "true_competitors": ["Albemarle (ALB)", "SQM", "Livent (merged into ALB)", "Allkem/Arcadium (absorbed by Rio Tinto)", "Ganfeng Lithium (1772.HK)", "Standard Lithium (SLI)"],
+  "chain_fit_confidence": "low"
+ },
+ "LEU": {
+  "physical_anchor": "Enriches uranium (SWU) into low-enriched uranium (LEU) and HALEU fuel via centrifuge cascades at its Piketon, Ohio plant, and fabricates related nuclear fuel components under DOE/commercial contracts.",
+  "chains": ["uranium_fuel_cycle"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.95,
+  "value_chain_position": "Conversion & enrichment layer — sells enriched uranium product (SWU/LEU/HALEU) and technical fuel services directly into the reactor fuel-cycle chain.",
+  "true_competitors": ["Cameco (CCJ)", "BWX Technologies (BWXT)", "Orano (ORAAF)", "Urenco (private consortium)", "Silex Systems (SLX.AX)", "Lightbridge (LTBR)", "NANO Nuclear Energy (NNE)"],
+  "chain_fit_confidence": "high"
+ },
+ "LWLG": {
+  "physical_anchor": "Manufactures organic electro-optic polymer thin-film materials used in photonic integrated circuits for optical datacom/telecom transceivers — a photonics materials company, not a metal or mineral.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Specialty photonic-materials supplier to optical component makers; caught by the 'Chemicals - Specialty' industry string used to sweep rare-earth processors — no mining-chain relevance.",
+  "true_competitors": ["Coherent Corp (COHR)", "II-VI/Coherent legacy", "Lumentum (LITE)", "Infinera (INFN)", "MACOM (MTSI)"],
+  "chain_fit_confidence": "low"
+ },
+ "LYB": {
+  "physical_anchor": "Manufactures polyethylene, polypropylene, and other petrochemicals from oil/gas feedstocks at global refining and cracking complexes — a petrochemicals producer, not a metal or mineral extractor.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Global commodity-chemicals/plastics producer; caught by the 'Chemicals - Specialty' industry string used to sweep rare-earth separators/processors — no mining-chain relevance.",
+  "true_competitors": ["Dow Inc (DOW)", "Westlake Chemical (WLK)", "Chevron Phillips Chemical (private)", "BASF (BAS.DE)", "SABIC (2010.SR)"],
+  "chain_fit_confidence": "low"
+ },
+ "MP": {
+  "physical_anchor": "Mines and separates rare-earth ore (bastnaesite) into NdPr oxide concentrate at Mountain Pass, California, and is scaling downstream into sintered NdFeB magnet manufacturing (incl. DoD-backed capacity).",
+  "chains": ["rare_earth_strategic"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.9,
+  "value_chain_position": "Mining and separation layer plus emerging magnet-alloy production — sells rare-earth concentrate/oxide and, increasingly, finished NdFeB magnets.",
+  "true_competitors": ["Lynas Rare Earths (LYC.AX)", "Iluka Resources (ILU.AX)", "Energy Fuels (UUUU)", "USA Rare Earth (USAR)", "Australian Strategic Materials (ASM.AX)", "Neo Performance Materials (NEO.TO)", "Arafura Rare Earths (ARU.AX)"],
+  "chain_fit_confidence": "high"
+ },
+ "MTX": {
+  "physical_anchor": "Mines limestone and bentonite clay and processes them into engineered mineral products (precipitated calcium carbonate, specialty additives) for paper, environmental, and construction customers.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Industrial-minerals processor (limestone/bentonite to specialty additives), not a rare-earth or strategic-metal name; caught by the 'Chemicals - Specialty' industry string.",
+  "true_competitors": ["Imerys (private/NR20.PA)", "Ecolab (ECL)", "Newmarket (NEU)", "Quaker Chemical (KWR)", "Cabot Corporation (CBT)"],
+  "chain_fit_confidence": "low"
+ },
+ "MUX": {
+  "physical_anchor": "Operates underground/open-pit gold-silver mines (Fox Complex Canada, Gold Bar Nevada, El Gallo Mexico) producing doré bars.",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.85,
+  "value_chain_position": "Mid-tier/emerging gold-silver producer selling doré; separately holds a majority stake in the pre-production Los Azules copper project (McEwen Copper), which is not yet revenue-generating and is excluded from the current commodity mix.",
+  "true_competitors": ["Hecla Mining (HL)", "Coeur Mining (CDE)", "Alamos Gold (AGI)", "Equinox Gold (EQX)", "New Gold (NGD)", "Fortuna Mining (FSM)"],
+  "chain_fit_confidence": "high"
+ },
+ "NAK": {
+  "physical_anchor": "Holds and is permitting the Pebble copper-gold-molybdenum porphyry deposit in Alaska; no mine built, permit denied by the Army Corps with ongoing litigation/appeals.",
+  "chains": ["copper_mining"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.6,
+  "value_chain_position": "Pre-permit copper-gold-moly developer — a genuine copper deposit, but the project sits well outside the taxonomy's 'permitted/FID-stage' developer bar given the permit denial and litigation overhang.",
+  "true_competitors": ["Western Copper and Gold (WRN)", "Trilogy Metals (TMQ)", "Taseko Mines (TGB)", "Hudbay Minerals (HBM)", "Ivanhoe Electric (IE)", "Solaris Resources (SLS)"],
+  "chain_fit_confidence": "medium"
+ },
+ "NB": {
+  "physical_anchor": "Developing the Elk Creek niobium-scandium-titanium-rare earth deposit in Nebraska, pre-production, working toward a construction financing decision.",
+  "chains": ["rare_earth_strategic"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.85,
+  "value_chain_position": "Strategic-metals developer (niobium primary, scandium/titanium/rare-earth byproducts) — niobium is a textbook export-chokepoint strategic metal (CBMM/Brazil dominance).",
+  "true_competitors": ["CBMM (private, Brazil)", "Magris Resources (private)", "Texas Mineral Resources (TMRC)", "USA Rare Earth (USAR)", "Ucore Rare Metals (UURAF)", "Defense Metals (DEFTF)"],
+  "chain_fit_confidence": "high"
+ },
+ "NEXA": {
+  "physical_anchor": "Mines and smelts zinc, copper, and lead concentrates (with silver byproduct) at integrated operations and refineries in Peru and Brazil.",
+  "chains": ["diversified_miners"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.95,
+  "value_chain_position": "Base-metal mid-tier producer with own smelting/refining — zinc-dominant multi-metal book (zinc/copper/lead/silver), fits the diversified-miners 'base-metal mid-tiers' layer better than the single-commodity copper chain.",
+  "true_competitors": ["Teck Resources (TECK)", "Boliden AB (BOL.ST)", "Hudbay Minerals (HBM)", "South32 (S32.AX)", "Glencore (GLEN.L)", "Hindustan Zinc (HZINDIA.NS)"],
+  "chain_fit_confidence": "high"
+ },
+ "NG": {
+  "physical_anchor": "Co-develops (50% JV with Barrick) the Donlin Gold deposit in Alaska, a large permitted-but-unbuilt gold resource, pre-production.",
+  "chains": ["precious_metals"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.9,
+  "value_chain_position": "Permitted/construction-stage gold developer — Donlin is fully permitted but awaiting a construction go-ahead and financing.",
+  "true_competitors": ["Barrick Mining Corp (B)", "Seabridge Gold (SA)", "Contango Ore (CTGO)", "Kinross Gold (KGC)", "Agnico Eagle (AEM)", "Northern Star Resources (NST.AX)"],
+  "chain_fit_confidence": "high"
+ },
+ "NUCL": {
+  "physical_anchor": "Explores and aims to develop uranium mineral deposits toward future ISR/conventional production; no producing asset yet.",
+  "chains": ["uranium_fuel_cycle"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.85,
+  "value_chain_position": "Early-stage uranium exploration/development layer (mining & ISR production), pre-revenue, small-cap.",
+  "true_competitors": ["Uranium Energy Corp (UEC)", "enCore Energy (EU)", "Ur-Energy (URG)", "Peninsula Energy (PENMF)", "Global Atomic (GLATF)", "Anfield Energy (ANLDF)"],
+  "chain_fit_confidence": "medium"
+ },
+ "NXE": {
+  "physical_anchor": "Developing the Rook I high-grade uranium deposit in the Athabasca Basin, Saskatchewan — one of the largest undeveloped uranium resources globally, pre-production/permitted construction stage.",
+  "chains": ["uranium_fuel_cycle"],
+  "business_model": "developer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Permitted/construction-stage uranium developer (mining & ISR/conventional production layer) — pure-play uranium, no byproducts.",
+  "true_competitors": ["Denison Mines (DNN)", "Fission Uranium (FCUUF)", "Cameco (CCJ)", "Paladin Energy (PDN.AX)", "Global Atomic (GLATF)", "IsoEnergy (ISENF)"],
+  "chain_fit_confidence": "high"
+ },
+ "OGC": {
+  "physical_anchor": "Operates open-pit/underground gold mines (Haile, South Carolina; Waihi, New Zealand; Didipio, Philippines — gold-copper porphyry) producing doré and copper-gold concentrate.",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.85,
+  "value_chain_position": "Established multi-mine gold producer with a copper-byproduct asset (Didipio); balance-sheet fields here are null due to a data-feed gap on this TSX/OTC-adjacent listing, not evidence against the chain fit.",
+  "true_competitors": ["Alamos Gold (AGI)", "Eldorado Gold (EGO)", "IAMGOLD (IAG)", "B2Gold (BTG)", "Centerra Gold (CGAU)", "Equinox Gold (EQX)"],
+  "chain_fit_confidence": "high"
+ },
+ "OGG": {
+  "physical_anchor": "Ramping gold production from a construction-stage mine complex (large ongoing growth capex against small but fast-growing revenue), explicitly flagged royalty_hint=false distinguishing it from the Osisko royalty vehicle.",
+  "chains": ["precious_metals"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.9,
+  "value_chain_position": "Construction/early-production-stage gold developer (permitted/construction-stage layer); the revenue-ramp-against-heavy-capex pattern is the classic transitional producer profile, not an established miner.",
+  "true_competitors": ["Osisko Development Corp (ODV)", "Skeena Resources (SKE)", "i-80 Gold (IAUX)", "Marathon Gold (MOZYF)", "Artemis Gold (ARTGF)", "Torex Gold (TORXF)"],
+  "chain_fit_confidence": "medium"
+ },
+ "PPTA": {
+  "physical_anchor": "Developing the Stibnite Gold-Antimony deposit in Idaho — a permitted, DoD/EXIM-backed construction-stage project producing both gold and strategic antimony.",
+  "chains": ["precious_metals", "rare_earth_strategic"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.9,
+  "value_chain_position": "Dual-commodity permitted/construction-stage developer — gold (precious metals) and antimony (a named export-chokepoint strategic metal with US government price-floor/stockpile backing).",
+  "true_competitors": ["United States Antimony Corp (UAMY)", "NioCorp (NB)", "MP Materials (MP)", "i-80 Gold (IAUX)", "Hycroft Mining (HYMC)", "Vista Gold (VGZ)"],
+  "chain_fit_confidence": "high"
+ },
+ "PRM": {
+  "physical_anchor": "Manufactures ammonium-phosphate wildfire retardant (Phos-Chek) and firefighting foam — a specialty-chemicals producer with no mining/mineral-extraction linkage.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Fire-suppression chemicals manufacturer; caught by the 'Chemicals - Specialty' industry string used to sweep rare-earth processors — no mining-chain relevance.",
+  "true_competitors": ["Chemours (CC)", "Tyco Fire Products (JCI)", "Fomtec (private)", "Angus Fire (private)"],
+  "chain_fit_confidence": "low"
+ },
+ "RYAM": {
+  "physical_anchor": "Manufactures high-purity cellulose specialty pulp (for acetate, filters, etc.) and paperboard from harvested wood fiber — a forestry/cellulose chemicals producer, not a metal or mineral extractor.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "High-purity cellulose specialty-products producer; caught by the 'Chemicals - Specialty' industry string used to sweep rare-earth processors — no mining-chain relevance.",
+  "true_competitors": ["International Paper (IP)", "Domtar (private)", "Georgia-Pacific (private)", "Sappi (SAP.JO)", "Nine Dragons Paper (2689.HK)"],
+  "chain_fit_confidence": "low"
+ }
+}

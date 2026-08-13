@@ -1,0 +1,60 @@
+{
+  "symbol": "IPGP",
+  "sector": "Technology",
+  "signal_type": "future_disruptive_tech",
+  "company": "IPG Photonics Corporation",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Technology\nValuation: Price 87.2 | Fair Value 21.83 | Margin of Safety -75% | P/FCF 0.0x\nRevenue growth: +2.7% YoY | 3-yr CAGR -11.1%\nMargins: Gross 38.0% (contracting) | Net 3.1% | FCF -0.3%\nEPS / guidance delivery: 0.73 latest | +0.0% YoY | 3-yr CAGR -30.3% | beat 5/7 qtrs (71%)\nFCF growth: -102.3% YoY | 3-yr CAGR +0.0%\nReturns / leverage: ROE 3.3% | ROIC 2.3% | Net debt -822M\nForward / signals: Consensus fwd EPS growth +68.7% | Margin -0.97sigma vs hist. peak | Insider buy ratio 0.00\nValuation models (stock page): DCF fair value 53.8 | Buffett fair value 21.8\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -62% | EPV -100% | Graham -31% | OwnerErn -100% | IV15 -100%\nQuality / scores: Bull score 3 | Catalyst score 0.7 | Piotroski 6/9 | Altman-Z (solvency) 9.7 | Days to next earnings 1\nAnalyst consensus target: 154.00 (+77% upside)\nPositioning / smart money: Smart-money score 50/100 | Institutional flow 52/100 | Analyst-target velocity -1% (vs yr-ago avg PT)\nTechnical posture (timing context, not thesis): price -14% vs 200d SMA | 19% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2021: rev 1.46B, NI 278M, EPS 5.16\n  2022: rev 1.43B, NI 110M, EPS 2.16\n  2023: rev 1.29B, NI 219M, EPS 4.63\n  2024: rev 977M, NI -182M, EPS -4.09\n  2025: rev 1.00B, NI 31M, EPS 0.73\n  CAGRs: bvps_5y -0.5%, eps_5y -38.7%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-06-30 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 21M | TTM diluted EPS 0.65 | latest-Q EPS YoY -25%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-06-30): NET CASH 871M (cash 871M exceeds total debt 0M, incl. capitalized leases 0M) — a genuine SoP add-back; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 65 sells (275,130sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 154.00 | median 158.00 | high 180.00 | low 120.00\nBreadth: last month: 1 PTs avg 120.00 | last quarter: 3 PTs avg 127.00 | last year: 8 PTs avg 128.00\nNewest individual targets (dated — judge freshness yourself):\n  2026-07-17 Needham: 120.00 (stock was 104.33)\n  2026-05-19 Roth Capital: 151.00 (stock was 106.35)\n  2026-05-06 Needham: 110.00 (stock was 90.84)\n  2026-02-13 Stifel Nicolaus: 165.00 (stock was 150.25)\n  2026-02-13 Raymond James: 180.00 (stock was 150.25)\nNewest PT is 18 day(s) old",
+  "dossier": "",
+  "chains": [
+    "quantum"
+  ],
+  "business_model": "equipment_services",
+  "physical_anchor": "High-power fiber lasers and photonic/laser subsystems used in industrial cutting/welding, medical and precision-optics applications",
+  "commodity_revenue_share": 0.02,
+  "chain_regime": {
+    "quantum": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "quantum",
+    "torque_metrics": false,
+    "commodity_beta_2y": 0.83,
+    "beta_benchmark": "QTUM",
+    "beta_is_proxy": true,
+    "ndebt_ebitda": -4.75,
+    "commodity_revenue_share": 0.02,
+    "as_of": "2026-08-04",
+    "gm_trajectory": {
+      "direction": "flat",
+      "gm_recent_to_old": [
+        0.3885,
+        0.4208,
+        0.3461,
+        0.38
+      ],
+      "delta_3y": -0.0085
+    },
+    "rev_yoy": 0.1304,
+    "fcf_margin": 0.0194,
+    "torque_note": "NON-COMMODITY chain (no spot to lever to): no torque metric. commodity_beta_2y is a PROXY factor-exposure read vs QTUM, not a commodity torque."
+  },
+  "gates": {
+    "ttm_fcf": 20798000,
+    "ttm_ocf": 96444000,
+    "ttm_capex": -75646000,
+    "ttm_ebitda": 122764000,
+    "ttm_revenue": 1069340000,
+    "rev_yoy": 0.1304,
+    "cash_sti": 871319000,
+    "balance_date": "2026-06-30",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 43615131.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -4.7472198372787116
+  }
+}

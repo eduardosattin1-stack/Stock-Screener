@@ -1,0 +1,19 @@
+{
+ "symbol": "FSM",
+ "physical_anchor": "Operates underground and open-pit mines across the Americas and West Africa producing gold and silver doré/concentrate (Séguéla, Lindero, San Jose).",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.95,
+ "value_chain_position": "Multi-country gold/silver producer selling refined doré/concentrate from company-operated mines.",
+ "true_competitors": [
+  "PAAS",
+  "CDE",
+  "EXK",
+  "AGI",
+  "BTG",
+  "SSRM"
+ ],
+ "chain_fit_confidence": "high"
+}

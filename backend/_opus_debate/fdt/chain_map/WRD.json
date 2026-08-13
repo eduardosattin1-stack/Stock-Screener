@@ -1,0 +1,18 @@
+{
+ "symbol": "WRD",
+ "physical_anchor": "designs and operates autonomous vehicles (robotaxis/robovans) with self-driving sensor and compute hardware stacks",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "autonomous-driving developer/operator running physical robotaxi and robovan fleets (China-based, expanding internationally)",
+ "true_competitors": [
+  "PONY",
+  "MBLY",
+  "AUR",
+  "TSLA",
+  "BIDU"
+ ],
+ "chain_fit_confidence": "medium"
+}

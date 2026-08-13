@@ -1,0 +1,18 @@
+{
+ "symbol": "SWMR",
+ "physical_anchor": "embedded flight-control/autonomy software (TRIDENT OS, STYX C2, MINAS) that directly pilots and coordinates physical drone and unmanned-vehicle swarms in the field",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "military autonomy/C2 software layer for drone and unmanned-systems swarms — pre-revenue developer, not the hardware OEM, but the embedded control layer physically instruments the robots it commands",
+ "true_competitors": [
+  "AVAV",
+  "KTOS",
+  "PLTR",
+  "RCAT",
+  "ONDS"
+ ],
+ "chain_fit_confidence": "medium"
+}

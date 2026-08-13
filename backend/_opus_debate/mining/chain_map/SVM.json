@@ -1,0 +1,21 @@
+{
+ "symbol": "SVM",
+ "physical_anchor": "Silver-lead-zinc concentrate and doré mined at its Ying Mining District (China) underground mines, plus early copper-zinc-gold-silver concentrate from El Domo (Ecuador).",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.55,
+ "value_chain_position": "Silver-primary mid-tier producer with meaningful base-metal byproduct credits.",
+ "true_competitors": [
+  "PAAS",
+  "HL",
+  "CDE",
+  "AG",
+  "FSM",
+  "MAG",
+  "EXK",
+  "SSRM"
+ ],
+ "chain_fit_confidence": "high"
+}

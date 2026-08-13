@@ -1,0 +1,58 @@
+{
+  "symbol": "TECK",
+  "sector": "Basic Materials",
+  "signal_type": "mining",
+  "company": "Teck Resources Limited",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Basic Materials\nRevenue growth: +40.5% YoY\nReturns / leverage: Net debt 1\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-06-30 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 1.52B | TTM diluted EPS 5.08 | latest-Q EPS YoY +322%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-06-30): NET DEBT 3.74B (borrowings 9.03B + capitalized leases 769M, minus cash 6.05B; ex-lease net debt ≈ 2.97B — filings often quote the ex-lease figure; STATE which definition your SoP uses) — this is a LIABILITY; in any Sum-of-Parts SUBTRACT it from enterprise value, NEVER add it back as 'net cash'; use this, not the scan's net_debt above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 67.50 | median 67.50 | high 68.00 | low 67.00\nBreadth: last month: 0 PTs | last quarter: 1 PTs avg 68.00 | last year: 5 PTs avg 57.00\n[THIN CONSENSUS: only 1 price target(s) printed last quarter — this is NOT a street-wide view; weigh individual PTs below accordingly]\nNewest individual targets (dated — judge freshness yourself):\n  2026-07-02 Deutsche Bank: 68.00 (stock was 60.64)\n  2026-04-15 Deutsche Bank: 62.00 (stock was 59.03)\n  2026-02-23 Truist Financial: 67.00 (stock was 58.77)\n  2025-11-26 Deutsche Bank: 46.00 (stock was 42.20)\n  2025-09-08 Liam Fitzpatrick: 42.00 (stock was 35.11)\nNewest PT is 33 day(s) old",
+  "dossier": "",
+  "chains": [
+    "copper_mining",
+    "diversified_miners"
+  ],
+  "business_model": "producer",
+  "physical_anchor": "Copper concentrate (QB2, Highland Valley) and zinc concentrate (Red Dog) shipped from its own mines.",
+  "commodity_revenue_share": 0.65,
+  "chain_regime": {
+    "copper_mining": "NEUTRAL",
+    "diversified_miners": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "copper_mining",
+    "torque_metrics": true,
+    "commodity_beta_2y": 0.69,
+    "beta_benchmark": "HGUSD",
+    "beta_is_proxy": false,
+    "ndebt_ebitda": 0.83,
+    "commodity_revenue_share": 0.65,
+    "as_of": "2026-08-04",
+    "ebitda_margin_ttm": 0.4624,
+    "ebitda_margin_band": {
+      "band": "q3_above_median",
+      "pct": 0.38,
+      "basis": "cohort_percentile",
+      "n_cohort": 8
+    },
+    "fcf_torque_10pct": 0.141,
+    "torque_note": "SYMMETRIC: fcf_torque_10pct is the +/-10% commodity move's % EBITDA swing (read the downside too). beta_is_proxy=False (proxy ETF regression where the spot is off-FMP)."
+  },
+  "gates": {
+    "ttm_fcf": 1523074970,
+    "ttm_ocf": 4197816725,
+    "ttm_capex": -2674741755,
+    "ttm_ebitda": 6469660052,
+    "ttm_revenue": 13990069905,
+    "rev_yoy": 0.405,
+    "cash_sti": 6054622209,
+    "balance_date": "2026-06-30",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 157016194.0,
+    "royalty_hint": false,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 0.8309038320449424
+  }
+}

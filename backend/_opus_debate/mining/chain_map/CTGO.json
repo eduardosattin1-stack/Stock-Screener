@@ -1,0 +1,21 @@
+{
+ "symbol": "CTGO",
+ "physical_anchor": "Gold doré/concentrate produced at the Manh Choh mine (Tetlin, Alaska), toll-processed via the Kinross-operated JV",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Non-operating 30% JV partner receiving gold production cash flow from the Manh Choh mine, ore trucked to Kinross's Fort Knox mill",
+ "true_competitors": [
+  "KGC",
+  "AEM",
+  "NEM",
+  "HL",
+  "AG",
+  "GAU",
+  "DC",
+  "IAUX"
+ ],
+ "chain_fit_confidence": "high"
+}

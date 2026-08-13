@@ -1,0 +1,20 @@
+{
+ "symbol": "MIR",
+ "physical_anchor": "Manufactures radiation-detection, dosimetry and reactor-safety instrumentation deployed inside nuclear power plants, naval/defense nuclear platforms, and medical/industrial radiation environments",
+ "chains": [
+  "nuclear_smr"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.02,
+ "value_chain_position": "Reactor-safety and radiation-monitoring instrumentation vendor — the safety/measurement toll-taker sitting across the reactor-components and fuel-services layers, paid on every nuclear build-out and SMR deployment regardless of who owns the plant",
+ "true_competitors": [
+  "BWXT",
+  "CW",
+  "AME",
+  "TMO",
+  "FTV",
+  "ROP",
+  "HON"
+ ],
+ "chain_fit_confidence": "high"
+}

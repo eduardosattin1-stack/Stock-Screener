@@ -1,0 +1,19 @@
+{
+ "symbol": "IAG",
+ "physical_anchor": "Operates open-pit and underground mines (Essakane Burkina Faso, Côté Gold and Westwood Canada) producing gold doré.",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.95,
+ "value_chain_position": "Multi-country gold producer selling refined doré from company-operated mines.",
+ "true_competitors": [
+  "EGO",
+  "CGAU",
+  "AGI",
+  "BTG",
+  "EQX",
+  "SSRM"
+ ],
+ "chain_fit_confidence": "high"
+}

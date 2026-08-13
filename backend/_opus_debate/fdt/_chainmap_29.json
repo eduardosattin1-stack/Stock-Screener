@@ -1,0 +1,182 @@
+{
+ "VERX": {
+  "physical_anchor": "none identified — Vertex Inc. sells cloud tax-compliance and rate-calculation SaaS, no physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "indirect tax-determination software vendor selling to enterprise finance/ERP stacks",
+  "true_competitors": ["AVLR", "INTU", "THOM", "WK", "BILL", "SOVOS"],
+  "chain_fit_confidence": "low"
+ },
+ "VGNT": {
+  "physical_anchor": "manufactures electrical distribution and power-connection equipment (industry-classified Electrical Equipment & Parts) sold into grid and industrial electrification build-out",
+  "chains": ["electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "electrical equipment manufacturer supplying components into grid/industrial power-distribution build-out",
+  "true_competitors": ["ETN", "HUBB", "NVT", "POWL", "AZZ", "ABB", "SIEGY", "SBGSY"],
+  "chain_fit_confidence": "medium"
+ },
+ "VIA": {
+  "physical_anchor": "none identified — Via Transportation sells on-demand transit routing/dispatch SaaS to transit agencies, does not itself operate or build vehicles",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "microtransit/paratransit scheduling and dispatch software licensed to public transit agencies",
+  "true_competitors": ["UBER", "LYFT", "GRAB", "DIDIY", "SWVL"],
+  "chain_fit_confidence": "low"
+ },
+ "VOYG": {
+  "physical_anchor": "builds space-station modules and national-security space/defense electronics hardware — physical, but not a nuclear, grid, robotics or quantum chain link",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "space infrastructure and national-security space systems developer (Starlab commercial station, defense space electronics)",
+  "true_competitors": ["RKLB", "LMT", "NOC", "LHX", "RDW", "KTOS"],
+  "chain_fit_confidence": "low"
+ },
+ "VRNS": {
+  "physical_anchor": "none identified — Varonis sells data-security/data-access-governance software, no physical hardware",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "data security posture management and insider-threat detection SaaS",
+  "true_competitors": ["CYBR", "CRWD", "TENB", "RPD", "QLYS", "OKTA"],
+  "chain_fit_confidence": "low"
+ },
+ "VSH": {
+  "physical_anchor": "manufactures discrete semiconductors and passive electronic components (resistors, capacitors, diodes, MOSFETs) — a real physical product but a generic diversified supplier, not a quantum-specific cryo/photonics/control toll-taker",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "diversified discrete-semiconductor and passive-component manufacturer selling into automotive/industrial/general electronics, not a chain-specific toll-taker",
+  "true_competitors": ["ON", "DIOD", "LFUS", "STM", "ROHM", "NXPI"],
+  "chain_fit_confidence": "low"
+ },
+ "VST": {
+  "physical_anchor": "owns and dispatches power-generation plants (nuclear, gas, coal) that deliver electrons onto the grid, including datacenter PPAs",
+  "chains": ["power_for_ai", "nuclear_smr"],
+  "business_model": "utility",
+  "commodity_revenue_share": 0.15,
+  "value_chain_position": "independent power producer selling firm generation (incl. nuclear-levered baseload) under wholesale and datacenter PPA contracts",
+  "true_competitors": ["NRG", "CEG", "TLN", "PPL", "NEE", "EXC"],
+  "chain_fit_confidence": "high"
+ },
+ "VVX": {
+  "physical_anchor": "performs aircraft/vehicle maintenance and base-operations logistics services for defense customers — a physical service business, not a nuclear/SMR component or fuel supplier",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "defense logistics, maintenance and IT-services contractor, not a reactor/component supplier",
+  "true_competitors": ["LDOS", "SAIC", "KBR", "BAH", "PSN", "CACI"],
+  "chain_fit_confidence": "low"
+ },
+ "WEX": {
+  "physical_anchor": "none identified — WEX operates fleet-card and corporate-payments processing rails, the canonical payments-network case that never counts as a physical anchor",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "fleet fuel-card and corporate/travel payments processor",
+  "true_competitors": ["CPAY", "GPN", "FIS", "FISV", "PYPL", "MA"],
+  "chain_fit_confidence": "low"
+ },
+ "WIX": {
+  "physical_anchor": "none identified — Wix sells website-building/e-commerce SaaS, no physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "DIY website-building and small-business e-commerce SaaS platform",
+  "true_competitors": ["SQSP", "SHOP", "GDDY", "BIGC", "HUBS"],
+  "chain_fit_confidence": "low"
+ },
+ "WK": {
+  "physical_anchor": "none identified — Workiva sells regulatory/ESG reporting and compliance SaaS, no physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "connected-reporting and compliance-workflow SaaS for finance/ESG teams",
+  "true_competitors": ["WKL.AS", "THOM", "SAP", "IBM", "MSCI", "RELX"],
+  "chain_fit_confidence": "low"
+ },
+ "WLTH": {
+  "physical_anchor": "none identified — Wealthfront operates a digital robo-advisory/brokerage platform, no physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "automated investing/robo-advisor and cash-management platform",
+  "true_competitors": ["SOFI", "HOOD", "SCHW", "IBKR", "NU"],
+  "chain_fit_confidence": "low"
+ },
+ "WOLF": {
+  "physical_anchor": "manufactures silicon-carbide power-semiconductor wafers and devices used in EV, industrial and grid-scale power-conversion electronics",
+  "chains": ["electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.1,
+  "value_chain_position": "SiC power-semiconductor device and wafer manufacturer supplying power-management/conversion components into electrification build-out",
+  "true_competitors": ["ON", "STM", "IFNNY", "ROHM", "NVTS", "SICC"],
+  "chain_fit_confidence": "medium"
+ },
+ "WRD": {
+  "physical_anchor": "designs and operates autonomous vehicles (robotaxis/robovans) with self-driving sensor and compute hardware stacks",
+  "chains": ["robotics_automation"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "autonomous-driving developer/operator running physical robotaxi and robovan fleets (China-based, expanding internationally)",
+  "true_competitors": ["PONY", "MBLY", "AUR", "TSLA", "BIDU"],
+  "chain_fit_confidence": "medium"
+ },
+ "WULF": {
+  "physical_anchor": "owns and operates power-sited data-center facilities (former bitcoin-mining sites pivoting to AI/HPC hosting) — a physical compute/power-hosting asset, but not a grid-equipment, nuclear, robotics or quantum chain link in this taxonomy",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.1,
+  "value_chain_position": "power-sited data-center operator hosting bitcoin-mining and AI/HPC compute, not a seller of grid equipment or firm power under contract",
+  "true_competitors": ["CIFR", "CORZ", "HUT", "RIOT", "MARA", "APLD"],
+  "chain_fit_confidence": "low"
+ },
+ "XE": {
+  "physical_anchor": "designs and is building the Xe-100 small modular nuclear reactor (TRISO-fueled) for utility and industrial/AI-datacenter power customers",
+  "chains": ["nuclear_smr", "power_for_ai"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "pre-revenue SMR & advanced-reactor developer advancing NRC licensing milestones toward first deployment, incl. a dated AI-datacenter power tie-up (Amazon)",
+  "true_competitors": ["SMR", "OKLO", "NNE", "BWXT", "LEU", "CEG"],
+  "chain_fit_confidence": "high"
+ },
+ "XIFR": {
+  "physical_anchor": "owns and operates wind, solar and natural-gas-pipeline assets that deliver power/throughput under long-term contracts",
+  "chains": ["power_for_ai"],
+  "business_model": "utility",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "renewable-power and pipeline yieldco selling contracted capacity (PPAs) into the grid",
+  "true_competitors": ["CWEN", "AY", "BEP", "ORA", "NEE", "AES"],
+  "chain_fit_confidence": "high"
+ },
+ "XNDU": {
+  "physical_anchor": "builds photonic quantum-computing hardware (photonic qubit chips and systems)",
+  "chains": ["quantum"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "pre-revenue photonic qubit-hardware platform developer",
+  "true_competitors": ["IONQ", "RGTI", "QBTS", "QUBT", "ARQQ", "HON"],
+  "chain_fit_confidence": "high"
+ },
+ "XRAY": {
+  "physical_anchor": "manufactures dental equipment and consumables (imaging systems, chairs, implants, CAD/CAM restorative devices) — a legacy dental-industrial maker, not a surgical-robotics or physical-AI toll-taker",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "dental equipment and consumables manufacturer, legacy industrial rather than a robotics/physical-AI chain participant",
+  "true_competitors": ["ALGN", "HSIC", "NVST", "PDCO", "STMN.SW"],
+  "chain_fit_confidence": "low"
+ },
+ "YSS": {
+  "physical_anchor": "designs and manufactures small-satellite buses/spacecraft platforms for defense and commercial customers — physical, but not a chain in this taxonomy (no grid, nuclear, robotics or quantum link)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "small-satellite platform manufacturer for defense/commercial space missions",
+  "true_competitors": ["RKLB", "ASTS", "RDW", "SPIR", "PL", "LMT"],
+  "chain_fit_confidence": "low"
+ }
+}

@@ -1,0 +1,19 @@
+{
+ "symbol": "MYRG",
+ "physical_anchor": "Builds and maintains electric transmission & distribution lines and substations as a specialty electrical contractor for utilities",
+ "chains": [
+  "electrification_grid",
+  "power_for_ai"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.02,
+ "value_chain_position": "Grid EPC & interconnection layer: T&D line and substation construction/maintenance directly for utility and datacenter-driven grid capex - a pure-play analog to PWR/MTZ",
+ "true_competitors": [
+  "PWR",
+  "EME",
+  "MTZ",
+  "DY",
+  "IESC"
+ ],
+ "chain_fit_confidence": "high"
+}

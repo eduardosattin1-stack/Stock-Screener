@@ -1,0 +1,19 @@
+{
+ "symbol": "PI",
+ "physical_anchor": "Designs and sells RAIN RFID chips, readers and antennas — physical silicon and radio hardware embedded in tags for item-level asset tracking.",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Sensing/identification layer feeding warehouse and supply-chain automation — RFID ICs and readers give automated logistics systems real-time inventory visibility.",
+ "true_competitors": [
+  "NXPI",
+  "STM",
+  "ZBRA",
+  "AVY",
+  "Alien Technology (private)",
+  "CCL Industries (CCL.TO)"
+ ],
+ "chain_fit_confidence": "medium"
+}

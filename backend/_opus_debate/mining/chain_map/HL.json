@@ -1,0 +1,19 @@
+{
+ "symbol": "HL",
+ "physical_anchor": "Operates underground mines (Greens Creek, Lucky Friday, Casa Berardi) producing silver-lead-zinc concentrate and gold doré.",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.85,
+ "value_chain_position": "US silver-primary producer selling concentrate/doré from company-operated mines; dominant_metal=silver with a gold byproduct at Casa Berardi.",
+ "true_competitors": [
+  "PAAS",
+  "CDE",
+  "AG",
+  "EXK",
+  "MAG",
+  "SSRM"
+ ],
+ "chain_fit_confidence": "high"
+}

@@ -1,0 +1,19 @@
+{
+ "symbol": "CGNX",
+ "physical_anchor": "Manufactures machine-vision cameras, sensors and vision software used to guide factory and warehouse robots",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Machine vision & sensing layer — toll-taker selling vision hardware/software into every automated production-line deployment",
+ "true_competitors": [
+  "6861.T",
+  "6645.T",
+  "ZBRA",
+  "FARO",
+  "BSL.DE",
+  "TDY"
+ ],
+ "chain_fit_confidence": "high"
+}

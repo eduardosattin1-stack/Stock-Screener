@@ -1,0 +1,19 @@
+{
+ "symbol": "VECO",
+ "physical_anchor": "manufactures molecular-beam-epitaxy (MBE) and ion-beam-deposition systems used to fabricate quantum-dot photonic devices and compound-semiconductor wafers",
+ "chains": [
+  "quantum"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "photonics & lasers / qubit-hardware-enablement layer — over 30 Veeco MBE systems deployed into quantum technology development globally (e.g. Innolume quantum-dot laser production, Sparrow Quantum single-photon emitters), a genuine toll-taker on the quantum photonics build-out",
+ "true_competitors": [
+  "AMAT",
+  "LRCX",
+  "KLAC",
+  "COHR",
+  "IPGP",
+  "FORM"
+ ],
+ "chain_fit_confidence": "high"
+}

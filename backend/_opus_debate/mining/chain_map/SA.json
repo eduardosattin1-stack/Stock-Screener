@@ -1,0 +1,22 @@
+{
+ "symbol": "SA",
+ "physical_anchor": "Undeveloped gold-copper-silver deposit (KSM project) in British Columbia, plus the Iskut exploration project",
+ "chains": [
+  "precious_metals",
+  "copper_mining"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.65,
+ "value_chain_position": "Pre-production developer advancing the large-tonnage KSM gold-copper deposit through permitting/financing toward construction; no current mine revenue",
+ "true_competitors": [
+  "NAK",
+  "NG",
+  "WRN",
+  "FIL.TO",
+  "SOLR.TO",
+  "IVN.TO",
+  "PVG",
+  "IAUX"
+ ],
+ "chain_fit_confidence": "high"
+}

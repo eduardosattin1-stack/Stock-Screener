@@ -1,0 +1,182 @@
+{
+ "AMSC": {
+  "physical_anchor": "Makes grid-interconnection power electronics (D-VAR reactive power compensators, superconductor cable systems) and licensed wind-turbine electrical control systems.",
+  "chains": ["electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.03,
+  "value_chain_position": "Power management & connectors / protective grid-interconnection equipment layer — sells reactive-power compensation and superconductor-based grid hardware plus licensed wind ECS.",
+  "true_competitors": ["HUBB", "POWL", "NVT", "ETN", "ABB", "GEV", "AZZ"],
+  "chain_fit_confidence": "high"
+ },
+ "ANET": {
+  "physical_anchor": "Makes high-speed Ethernet switches and routers for cloud/AI-datacenter networking.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Networking hardware for datacenter compute fabric — adjacent to, but not part of, any FDT power/quantum/robotics chain in this taxonomy.",
+  "true_competitors": ["CSCO", "JNPR", "CIEN", "NVDA", "HPE", "FFIV"],
+  "chain_fit_confidence": "low"
+ },
+ "AOS": {
+  "physical_anchor": "Makes residential and commercial water heaters and boilers.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Water-heating/boiler equipment maker — no genuine tie to grid, nuclear, power-for-AI, robotics or quantum chains despite the Industrial-Machinery filter hit.",
+  "true_competitors": ["RNNAY", "WTS", "LII", "CARR", "JCI", "MAS"],
+  "chain_fit_confidence": "low"
+ },
+ "APG": {
+  "physical_anchor": "Provides fire, life-safety and specialty electrical/mechanical contracting services — a services business, not a manufacturer.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Fire/life-safety and specialty infrastructure services contractor — not grid-EPC-specific despite the Engineering & Construction filter hit.",
+  "true_competitors": ["EME", "MYRG", "IESC", "PWR", "MTZ", "FIX"],
+  "chain_fit_confidence": "low"
+ },
+ "APH": {
+  "physical_anchor": "Makes electrical, electronic and fiber-optic connectors and interconnect systems sold across IT/datacom, industrial, auto, mobile and defense end markets.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "Diversified interconnect component supplier — touches many chains' supply chains at low, non-attributable intensity rather than genuinely riding any single one.",
+  "true_competitors": ["TEL", "GLW", "BDC", "LFUS", "BELFB", "JBL"],
+  "chain_fit_confidence": "low"
+ },
+ "APP": {
+  "physical_anchor": "None — AppLovin is an AI-driven mobile advertising and app-monetization software platform with no physical product.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Ad-tech / app-monetization software — outside the physical value chain entirely (anti-Visa case).",
+  "true_competitors": ["META", "GOOGL", "UNITY", "TTD", "PUBM", "DV"],
+  "chain_fit_confidence": "low"
+ },
+ "APPF": {
+  "physical_anchor": "None — AppFolio is property-management SaaS software.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Vertical SaaS for real-estate property managers — no physical anchor, no chain tie.",
+  "true_competitors": ["CSGP", "RealPage (private)", "Yardi (private)", "Entrata (private)", "Buildium (private)"],
+  "chain_fit_confidence": "low"
+ },
+ "ARM": {
+  "physical_anchor": "None — Arm licenses CPU/GPU core IP architectures; it manufactures no physical chips itself.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Semiconductor IP licensor — the payments-network analog; downstream licensees (Apple, Qualcomm, Nvidia) fabricate the physical chips.",
+  "true_competitors": ["QCOM", "INTC", "AMD", "MRVL", "AVGO", "NVDA"],
+  "chain_fit_confidence": "low"
+ },
+ "ASML": {
+  "physical_anchor": "Makes EUV and DUV photolithography systems for semiconductor fabs.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Leading-edge lithography equipment for general semiconductor manufacturing — real physical anchor but not quantum-specific; a generic-semis false hit on the quantum filter.",
+  "true_competitors": ["AMAT", "LRCX", "KLAC", "TOELY", "NKX", "CAJFY"],
+  "chain_fit_confidence": "low"
+ },
+ "ASX": {
+  "physical_anchor": "Provides semiconductor assembly, packaging and test (OSAT) services.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "OSAT packaging/test for the general chip industry — physical but not quantum-specific.",
+  "true_competitors": ["AMKR", "TSM", "UMC", "SIMO", "STM", "MU"],
+  "chain_fit_confidence": "low"
+ },
+ "ATEN": {
+  "physical_anchor": "Makes application-delivery-controller and DDoS-protection network appliances.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Network security/traffic-management appliances — no quantum tie despite the Software-Infrastructure filter hit.",
+  "true_competitors": ["FFIV", "CSCO", "JNPR", "RDWR", "AKAM", "CHKP"],
+  "chain_fit_confidence": "low"
+ },
+ "ATR": {
+  "physical_anchor": "Makes dispensing pumps, closures and drug-delivery devices for pharma, beauty and food packaging.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Precision dispensing/packaging hardware — unrelated to any FDT chain despite the Medical-Instruments filter hit pulling it into the robotics screen.",
+  "true_competitors": ["AVY", "SEE", "BERY", "CCK", "SLGN"],
+  "chain_fit_confidence": "low"
+ },
+ "ATRC": {
+  "physical_anchor": "Makes cardiac ablation devices and surgical clips (AtriClip) for AFib treatment — hand-held/minimally-invasive instruments, not a robotic surgical platform.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cardiac-surgery device maker — adjacent to but not itself surgical robotics; ISRG-class platforms are the genuine chain member.",
+  "true_competitors": ["ISRG", "EW", "MDT", "BSX", "JNJ"],
+  "chain_fit_confidence": "low"
+ },
+ "ATRO": {
+  "physical_anchor": "Makes aircraft cabin power systems, lighting and electrical connectors, plus aerospace test equipment.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Aerospace electrical-systems supplier — no nuclear tie; caught by the broad Aerospace & Defense industry string shared with BWXT.",
+  "true_competitors": ["HEICO", "TDY", "CW", "MOG.A", "TXT"],
+  "chain_fit_confidence": "low"
+ },
+ "AVGO": {
+  "physical_anchor": "Makes networking/AI ASICs, RF and broadband semiconductors.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "General AI/networking silicon — real chips, but not quantum-hardware-specific; a large-cap-semis false hit on the quantum filter.",
+  "true_competitors": ["NVDA", "MRVL", "AMD", "QCOM", "TXN", "ADI"],
+  "chain_fit_confidence": "low"
+ },
+ "AVPT": {
+  "physical_anchor": "None — AvePoint is data-governance/management SaaS for Microsoft 365 environments.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Enterprise SaaS — no physical anchor, no chain tie.",
+  "true_competitors": ["MSFT", "VRNS", "CDW", "BOX", "DOCU"],
+  "chain_fit_confidence": "low"
+ },
+ "BB": {
+  "physical_anchor": "None — BlackBerry sells QNX embedded operating-system software and cybersecurity software; it manufactures no hardware.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Embedded-software/cybersecurity vendor — no chain tie despite the Software-Infrastructure filter hit.",
+  "true_competitors": ["MSFT", "QCOM", "PANW", "CRWD", "ZS"],
+  "chain_fit_confidence": "low"
+ },
+ "BE": {
+  "physical_anchor": "Makes solid-oxide fuel cell power-generation systems (Energy Servers) deployed on-site to power datacenters and commercial customers.",
+  "chains": ["power_for_ai", "electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Behind-the-meter distributed power generation — sells firm on-site fuel-cell electrons directly into the datacenter power-delivery queue (power_for_ai) and grid-independent electrification capacity (electrification_grid).",
+  "true_competitors": ["PLUG", "FCEL", "GEV", "CEG", "VST", "BLDP"],
+  "chain_fit_confidence": "high"
+ },
+ "BELFB": {
+  "physical_anchor": "Makes electronic connectors, power modules and magnetics for networking, aerospace/defense and industrial electronics.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "Diversified electronic-component supplier — too generalized across end markets to genuinely ride any single FDT chain.",
+  "true_competitors": ["APH", "TEL", "LFUS", "VICR", "MEI", "CTS"],
+  "chain_fit_confidence": "low"
+ },
+ "BIO": {
+  "physical_anchor": "Makes life-science research instruments (chromatography, PCR/ddPCR systems) and clinical-diagnostics quality-control products.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Lab instrumentation/diagnostics — not a surgical-robotics or automation platform despite the Medical-Devices filter hit.",
+  "true_competitors": ["DHR", "TMO", "ILMN", "QGEN", "A", "WAT"],
+  "chain_fit_confidence": "low"
+ }
+}

@@ -1,0 +1,21 @@
+{
+ "symbol": "SCZM",
+ "physical_anchor": "Mined silver-lead-zinc ore processed into concentrate at operations in Mexico and Bolivia",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.35,
+ "value_chain_position": "Mid-tier polymetallic producer selling silver-lead-zinc concentrates to smelters; branded a silver miner but zinc/lead dominate realized revenue",
+ "true_competitors": [
+  "FSM",
+  "SVM",
+  "EXK",
+  "AG",
+  "MAG",
+  "CDE",
+  "HL",
+  "EXN.TO"
+ ],
+ "chain_fit_confidence": "high"
+}

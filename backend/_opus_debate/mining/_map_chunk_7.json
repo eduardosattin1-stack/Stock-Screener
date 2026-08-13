@@ -1,0 +1,91 @@
+[
+ {
+  "symbol": "VGZ",
+  "name": "Vista Gold Corp.",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 272965770,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": -7762000,
+   "ttm_ocf": -7220000,
+   "ttm_capex": -542000,
+   "ttm_ebitda": -8391000,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 49536000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 646833.0,
+   "runway_months": 76.6,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 2613239.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "VZLA",
+  "name": "Vizsla Silver Corp.",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 1200166088,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -15731839,
+   "ttm_ocf": -15447738,
+   "ttm_capex": -297969,
+   "ttm_ebitda": -44534680,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 581419220,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1312142.0,
+   "runway_months": 443.1,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 14859634.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "WLK",
+  "name": "Westlake Corporation",
+  "sector": "Basic Materials",
+  "industry": "Chemicals - Specialty",
+  "mcap": 9947465372,
+  "lane": "b",
+  "chains_hint": [
+   "rare_earth_strategic"
+  ],
+  "gates": {
+   "ttm_fcf": -265000000,
+   "ttm_ocf": 631000000,
+   "ttm_capex": -896000000,
+   "ttm_ebitda": -671000000,
+   "ttm_revenue": 11294000000,
+   "rev_yoy": -0.0395,
+   "cash_sti": 1852000000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 22083333.0,
+   "runway_months": 83.9,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 141307362.0,
+   "royalty_hint": false
+  }
+ }
+]

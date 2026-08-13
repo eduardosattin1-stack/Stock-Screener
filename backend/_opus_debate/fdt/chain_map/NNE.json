@@ -1,0 +1,19 @@
+{
+ "symbol": "NNE",
+ "physical_anchor": "Designs microreactor nuclear power systems (ZEUS/ODIN) and provides nuclear fuel transport/logistics services",
+ "chains": [
+  "nuclear_smr"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Pre-revenue SMR/microreactor developer plus nuclear fuel-cycle logistics services layer",
+ "true_competitors": [
+  "OKLO",
+  "SMR",
+  "BWXT",
+  "LEU",
+  "USNC",
+  "KAIROSPOWER"
+ ],
+ "chain_fit_confidence": "high"
+}

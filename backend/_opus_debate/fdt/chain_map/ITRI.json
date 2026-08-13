@@ -1,0 +1,19 @@
+{
+ "symbol": "ITRI",
+ "physical_anchor": "Smart electric/gas/water meters and grid-edge sensing/communication modules deployed by utilities",
+ "chains": [
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.02,
+ "value_chain_position": "Grid-edge metering and distributed-intelligence hardware/software maker for utilities -- sits in the power-management/grid-monitoring layer, not the robotics or quantum chains the industry filters also caught it in.",
+ "true_competitors": [
+  "LAND.SW",
+  "BMI",
+  "XYL",
+  "HON",
+  "HUBB",
+  "ABB"
+ ],
+ "chain_fit_confidence": "medium"
+}

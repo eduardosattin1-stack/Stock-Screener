@@ -1,0 +1,19 @@
+{
+ "symbol": "POET",
+ "physical_anchor": "Designs and fabricates photonic integrated circuits and optical-engine chips — physical semiconductor components for high-speed data-center/AI-cluster optical interconnects.",
+ "chains": [
+  "quantum"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Photonics & lasers component layer (the same layer anchored by COHR in this chain) — supplies optical-engine chips whose core market is AI-datacenter interconnect but which can also serve quantum-networking/photonic-qubit hardware.",
+ "true_competitors": [
+  "COHR",
+  "LITE",
+  "MRVL",
+  "CIEN",
+  "AAOI",
+  "Ayar Labs (private)"
+ ],
+ "chain_fit_confidence": "medium"
+}

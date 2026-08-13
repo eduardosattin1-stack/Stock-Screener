@@ -1,0 +1,19 @@
+{
+ "symbol": "TDY",
+ "physical_anchor": "Manufactures machine-vision and infrared/thermal-imaging cameras and sensors (FLIR, DALSA, e2v brands) plus precision instrumentation used in industrial inspection and robotic guidance.",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Machine-vision/imaging-sensor and precision-instrumentation manufacturer — the Digital Imaging segment (FLIR/DALSA) is the toll-taker into factory-automation and robotic-vision deployments, alongside unrelated aerospace/defense and marine instrumentation businesses.",
+ "true_competitors": [
+  "CGNX",
+  "6861.T",
+  "6645.T",
+  "BSL.DE",
+  "HEXA-B.ST",
+  "EMR"
+ ],
+ "chain_fit_confidence": "medium"
+}

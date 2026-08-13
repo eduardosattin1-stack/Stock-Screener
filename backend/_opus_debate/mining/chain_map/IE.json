@@ -1,0 +1,19 @@
+{
+ "symbol": "IE",
+ "physical_anchor": "Copper (and gold/nickel) mineralization at the Santa Cruz project, Arizona, drilled using its Typhoon geophysical technology",
+ "chains": [
+  "copper_mining"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.7,
+ "value_chain_position": "Pre-production copper developer (Santa Cruz, Arizona) that also sells its proprietary Typhoon geophysical exploration technology as a minority equipment/services revenue line",
+ "true_competitors": [
+  "FCX",
+  "ERO",
+  "HBM",
+  "TECK",
+  "TRQ",
+  "NAK"
+ ],
+ "chain_fit_confidence": "high"
+}

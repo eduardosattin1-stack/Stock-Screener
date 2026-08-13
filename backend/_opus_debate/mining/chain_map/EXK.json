@@ -1,0 +1,19 @@
+{
+ "symbol": "EXK",
+ "physical_anchor": "Operates underground mines in Mexico producing silver-gold doré/concentrate (Guanaceví, Bolañitos, Terronera).",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.9,
+ "value_chain_position": "Silver-primary Mexican producer selling doré and concentrate with dominant_metal=silver; gold is the byproduct credit.",
+ "true_competitors": [
+  "PAAS",
+  "AG",
+  "HL",
+  "CDE",
+  "MAG",
+  "FSM"
+ ],
+ "chain_fit_confidence": "high"
+}

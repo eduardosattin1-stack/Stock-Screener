@@ -1,0 +1,622 @@
+[
+ {
+  "symbol": "CENX",
+  "name": "Century Aluminum Company",
+  "sector": "Basic Materials",
+  "industry": "Aluminum",
+  "mcap": 4695326560,
+  "lane": "a",
+  "chains_hint": [
+   "copper_mining"
+  ],
+  "gates": {
+   "ttm_fcf": 27300000,
+   "ttm_ocf": 179700000,
+   "ttm_capex": -152400000,
+   "ttm_ebitda": 454299999,
+   "ttm_revenue": 2543200000,
+   "rev_yoy": 0.0755,
+   "cash_sti": 244100000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 26810574.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.6643187335776332
+  }
+ },
+ {
+  "symbol": "CGAU",
+  "name": "Centerra Gold Inc.",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 3569846000,
+  "lane": "a",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": 92322187,
+   "ttm_ocf": 448823554,
+   "ttm_capex": -356501367,
+   "ttm_ebitda": 1017773873,
+   "ttm_revenue": 1698975253,
+   "rev_yoy": 0.3993,
+   "cash_sti": 457202000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 11213822.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.4764356396665959
+  }
+ },
+ {
+  "symbol": "CMC",
+  "name": "Commercial Metals Company",
+  "sector": "Basic Materials",
+  "industry": "Steel",
+  "mcap": 8024133818,
+  "lane": "a",
+  "chains_hint": [
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": 405038000,
+   "ttm_ocf": 918228000,
+   "ttm_capex": -513190000,
+   "ttm_ebitda": 1148064000,
+   "ttm_revenue": 8850088000,
+   "rev_yoy": 0.1523,
+   "cash_sti": 559759000,
+   "balance_date": "2026-05-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 20297179.0,
+   "royalty_hint": false,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 2.4743620564707194
+  }
+ },
+ {
+  "symbol": "CRS",
+  "name": "Carpenter Technology Corporation",
+  "sector": "Basic Materials",
+  "industry": "Steel",
+  "mcap": 28452458840,
+  "lane": "a",
+  "chains_hint": [
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": 362300000,
+   "ttm_ocf": 605000000,
+   "ttm_capex": -242700000,
+   "ttm_ebitda": 841100000,
+   "ttm_revenue": 3124200000,
+   "rev_yoy": 0.0859,
+   "cash_sti": 393300000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 175905482.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.35358459160622996
+  }
+ },
+ {
+  "symbol": "CSTM",
+  "name": "Constellium SE",
+  "sector": "Basic Materials",
+  "industry": "Aluminum",
+  "mcap": 4024503960,
+  "lane": "a",
+  "chains_hint": [
+   "copper_mining"
+  ],
+  "gates": {
+   "ttm_fcf": 221943455,
+   "ttm_ocf": 559614288,
+   "ttm_capex": -337670833,
+   "ttm_ebitda": 1066000000,
+   "ttm_revenue": 9576000000,
+   "rev_yoy": 0.42,
+   "cash_sti": 163000000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 13687881.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.8080306199371439
+  }
+ },
+ {
+  "symbol": "ECL",
+  "name": "Ecolab Inc.",
+  "sector": "Basic Materials",
+  "industry": "Chemicals - Specialty",
+  "mcap": 79347222530,
+  "lane": "a",
+  "chains_hint": [
+   "rare_earth_strategic"
+  ],
+  "gates": {
+   "ttm_fcf": 1385100000,
+   "ttm_ocf": 2327300000,
+   "ttm_capex": -942200000,
+   "ttm_ebitda": 3335400000,
+   "ttm_revenue": 16842500000,
+   "rev_yoy": 0.0711,
+   "cash_sti": 5135300000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 139516099.0,
+   "royalty_hint": false,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 2.4662907091498663
+  }
+ },
+ {
+  "symbol": "EGO",
+  "name": "Eldorado Gold Corporation",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 6895030013,
+  "lane": "a",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": -624424794,
+   "ttm_ocf": 658213013,
+   "ttm_capex": -1282637807,
+   "ttm_ebitda": 1052047797,
+   "ttm_revenue": 2023444997,
+   "rev_yoy": 0.2852,
+   "cash_sti": 553896525,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 52035400.0,
+   "runway_months": 10.6,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 31666279.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.147402917854311
+  }
+ },
+ {
+  "symbol": "EQX",
+  "name": "Equinox Gold Corp.",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 7548294730,
+  "lane": "a",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": 67417009,
+   "ttm_ocf": 860364514,
+   "ttm_capex": -792947505,
+   "ttm_ebitda": 1223431574,
+   "ttm_revenue": 2286874968,
+   "rev_yoy": 0.348,
+   "cash_sti": 499619000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 111827380.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.20578510915560203
+  }
+ },
+ {
+  "symbol": "ERO",
+  "name": "Ero Copper Corp.",
+  "sector": "Basic Materials",
+  "industry": "Copper",
+  "mcap": 2997991580,
+  "lane": "a",
+  "chains_hint": [
+   "copper_mining"
+  ],
+  "gates": {
+   "ttm_fcf": 120667459,
+   "ttm_ocf": 396785529,
+   "ttm_capex": -276118069,
+   "ttm_ebitda": 541801318,
+   "ttm_revenue": 925201814,
+   "rev_yoy": 0.8899,
+   "cash_sti": 91506962,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 9217451.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.9698151893368707
+  }
+ },
+ {
+  "symbol": "EXK",
+  "name": "Endeavour Silver Corp.",
+  "sector": "Basic Materials",
+  "industry": "Silver",
+  "mcap": 2480206000,
+  "lane": "a",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": -40958236,
+   "ttm_ocf": 99388213,
+   "ttm_capex": -140346449,
+   "ttm_ebitda": 212634716,
+   "ttm_revenue": 733781313,
+   "rev_yoy": 1.9618,
+   "cash_sti": 243107920,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 3413186.0,
+   "runway_months": 71.2,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 44505529.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.04791202580485493
+  }
+ },
+ {
+  "symbol": "FCX",
+  "name": "Freeport-McMoRan Inc.",
+  "sector": "Basic Materials",
+  "industry": "Copper",
+  "mcap": 97006548800,
+  "lane": "a",
+  "chains_hint": [
+   "copper_mining"
+  ],
+  "gates": {
+   "ttm_fcf": 5919000000,
+   "ttm_ocf": 5919000000,
+   "ttm_capex": 0,
+   "ttm_ebitda": 8999000000,
+   "ttm_revenue": 25868000000,
+   "rev_yoy": 0.0067,
+   "cash_sti": 4080000000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 491160198.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.6655546288573811
+  }
+ },
+ {
+  "symbol": "FNV",
+  "name": "Franco-Nevada Corporation",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 42727246800,
+  "lane": "a",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": 1777623453,
+   "ttm_ocf": 1717991559,
+   "ttm_capex": 59631894,
+   "ttm_ebitda": 2057900000,
+   "ttm_revenue": 2105100000,
+   "rev_yoy": 0.7182,
+   "cash_sti": 717050509,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 73626382.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.18623661159434374
+  }
+ },
+ {
+  "symbol": "FSM",
+  "name": "Fortuna Mining Corp.",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 2741764352,
+  "lane": "a",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": 366337029,
+   "ttm_ocf": 551879721,
+   "ttm_capex": -185542691,
+   "ttm_ebitda": 743424880,
+   "ttm_revenue": 1096279101,
+   "rev_yoy": 0.0711,
+   "cash_sti": 675821000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 24853300.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.6140580067753449
+  }
+ },
+ {
+  "symbol": "GFI",
+  "name": "Gold Fields Limited",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 31057332800,
+  "lane": "a",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": 3845641500,
+   "ttm_ocf": 6520453272,
+   "ttm_capex": -2674812772,
+   "ttm_ebitda": 9060089342,
+   "ttm_revenue": 13976196509,
+   "rev_yoy": 0.5905,
+   "cash_sti": 1779199110,
+   "balance_date": "2025-12-31",
+   "balance_sheet_stale": true,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 68684070.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.3355494847234317
+  }
+ },
+ {
+  "symbol": "GGB",
+  "name": "Gerdau S.A.",
+  "sector": "Basic Materials",
+  "industry": "Steel",
+  "mcap": 10252934686,
+  "lane": "a",
+  "chains_hint": [
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": 2410018000,
+   "ttm_ocf": 8595901000,
+   "ttm_capex": -6185883000,
+   "ttm_ebitda": 8052503000,
+   "ttm_revenue": 69198857000,
+   "rev_yoy": 0.0148,
+   "cash_sti": 5589835000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 41971984.0,
+   "royalty_hint": false,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 1.2408470164406167
+  }
+ },
+ {
+  "symbol": "HBM",
+  "name": "Hudbay Minerals Inc.",
+  "sector": "Basic Materials",
+  "industry": "Copper",
+  "mcap": 10974205200,
+  "lane": "a",
+  "chains_hint": [
+   "copper_mining"
+  ],
+  "gates": {
+   "ttm_fcf": 246423600,
+   "ttm_ocf": 787421945,
+   "ttm_capex": -540998344,
+   "ttm_ebitda": 1654500761,
+   "ttm_revenue": 2488037075,
+   "rev_yoy": 0.1299,
+   "cash_sti": 939870800,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 72582067.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.03828198651095985
+  }
+ },
+ {
+  "symbol": "HL",
+  "name": "Hecla Mining Company",
+  "sector": "Basic Materials",
+  "industry": "Other Precious Metals",
+  "mcap": 10463107200,
+  "lane": "a",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": 467330000,
+   "ttm_ocf": 721146000,
+   "ttm_capex": -253816000,
+   "ttm_ebitda": 845514000,
+   "ttm_revenue": 1573113000,
+   "rev_yoy": 0.5704,
+   "cash_sti": 607118000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 182531123.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.3800090832322114
+  }
+ },
+ {
+  "symbol": "HMY",
+  "name": "Harmony Gold Mining Company Limited",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 10719140699,
+  "lane": "a",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": 20378243855,
+   "ttm_ocf": 44495481195,
+   "ttm_capex": -24117237339,
+   "ttm_ebitda": 55562177819,
+   "ttm_revenue": 150276844125,
+   "rev_yoy": 0.5572,
+   "cash_sti": 7674466000,
+   "balance_date": "2025-12-31",
+   "balance_sheet_stale": true,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 22362060.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.14760524054982818
+  }
+ },
+ {
+  "symbol": "IAG",
+  "name": "Iamgold Corporation",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 8661330000,
+  "lane": "a",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": 1276562107,
+   "ttm_ocf": 1628136659,
+   "ttm_capex": -351574552,
+   "ttm_ebitda": 1954537005,
+   "ttm_revenue": 3422525480,
+   "rev_yoy": 0.9323,
+   "cash_sti": 551200000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 42240647.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.05157231597157712
+  }
+ },
+ {
+  "symbol": "IFF",
+  "name": "International Flavors & Fragrances Inc.",
+  "sector": "Basic Materials",
+  "industry": "Chemicals - Specialty",
+  "mcap": 20697414210,
+  "lane": "a",
+  "chains_hint": [
+   "rare_earth_strategic"
+  ],
+  "gates": {
+   "ttm_fcf": 398000000,
+   "ttm_ocf": 980000000,
+   "ttm_capex": -582000000,
+   "ttm_ebitda": 1995000000,
+   "ttm_revenue": 10788000000,
+   "rev_yoy": -0.056,
+   "cash_sti": 562000000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 46726073.0,
+   "royalty_hint": false,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 2.6340852130325816
+  }
+ }
+]

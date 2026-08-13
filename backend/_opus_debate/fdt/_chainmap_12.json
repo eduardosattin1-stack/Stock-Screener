@@ -1,0 +1,182 @@
+{
+ "SHOP": {
+  "physical_anchor": "None — Shopify is a cloud e-commerce/SaaS platform; it does not make, move, or power anything physical.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cloud commerce/SaaS platform selling subscription and payments software to merchants; no physical product anywhere in the value chain.",
+  "true_competitors": ["BIGC", "WIX", "SQSP", "ADYEN", "PYPL", "GLBE"],
+  "chain_fit_confidence": "low"
+ },
+ "SITM": {
+  "physical_anchor": "Fabricates MEMS-based silicon precision-timing oscillators and clock ICs — a real chip, but a general-purpose timing component, not qubit/cryo/photonic hardware.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "Precision-timing semiconductor supplier (MEMS oscillators/clocks) sold broadly into networking, datacenter, industrial and automotive customers — not dedicated to any FDT chain.",
+  "true_competitors": ["MCHP", "ADI", "TXN", "DIOD", "6723.T", "6724.T"],
+  "chain_fit_confidence": "low"
+ },
+ "SKHY": {
+  "physical_anchor": "Manufactures DRAM and NAND flash memory chips, including HBM used in AI accelerators — real semiconductor hardware, but general memory, not quantum-computing hardware.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Memory semiconductor manufacturer (DRAM/NAND/HBM) selling into AI/datacenter and consumer electronics broadly — the FMP quantum industry filter caught a memory-chip maker, not a quantum-chain company.",
+  "true_competitors": ["MU", "005930.KS", "SNDK", "WDC", "285A.T"],
+  "chain_fit_confidence": "low"
+ },
+ "SMTC": {
+  "physical_anchor": "Designs analog/mixed-signal, LoRa IoT and optical/copper signal-integrity chips for data centers — real chips, but not tied to any FDT chain's physical thesis.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Analog/IoT/signal-integrity semiconductor supplier diversified across data-center connectivity and industrial IoT — no dedicated FDT-chain exposure.",
+  "true_competitors": ["MCHP", "SWKS", "QRVO", "MPWR", "ADI", "SLAB"],
+  "chain_fit_confidence": "low"
+ },
+ "SNDK": {
+  "physical_anchor": "Manufactures NAND flash memory chips and storage products (SSDs, memory cards) — physical hardware, but general storage, not quantum hardware.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "NAND flash/storage device manufacturer selling into consumer and enterprise storage markets — no FDT-chain fit.",
+  "true_competitors": ["MU", "WDC", "005930.KS", "STX", "285A.T"],
+  "chain_fit_confidence": "low"
+ },
+ "SNN": {
+  "physical_anchor": "Makes the CORI robotic-assisted surgical system for knee/hip procedures plus orthopedic implants and surgical instruments — a real robotic-surgery platform.",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Surgical robotics & orthopedic device maker — CORI robotic platform drives implant pull-through, alongside wound-care/sports-medicine franchises unrelated to the chain.",
+  "true_competitors": ["SYK", "ZBH", "ISRG", "MDT", "GMED", "JNJ"],
+  "chain_fit_confidence": "medium"
+ },
+ "SOLV": {
+  "physical_anchor": "Manufactures wound-care/surgical supplies, dental products and lab purification/filtration equipment — physical products, but no robotics or automation anchor.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Diversified healthcare/industrial products maker (wound care, dental, health IT, purification & filtration) spun off from 3M — no FDT-chain fit.",
+  "true_competitors": ["MDT", "BDX", "DHR", "ECL", "MMM"],
+  "chain_fit_confidence": "low"
+ },
+ "SPSC": {
+  "physical_anchor": "None — cloud EDI/retail supply-chain SaaS network; no physical product.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cloud-based retail supply-chain data/EDI network — software only, no FDT-chain exposure.",
+  "true_competitors": ["DSGX", "ETWO", "SAP", "MANH", "EPAY"],
+  "chain_fit_confidence": "low"
+ },
+ "SRAD": {
+  "physical_anchor": "None — sports-data and betting-technology software/platform.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Sports-data and odds/betting-technology provider — pure software/data services, no FDT-chain exposure.",
+  "true_competitors": ["GENI", "DKNG", "KAMBI.ST", "ESPGY"],
+  "chain_fit_confidence": "low"
+ },
+ "SSNC": {
+  "physical_anchor": "None — financial-services back-office and fund-administration software.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Enterprise software for asset management, fund administration and healthcare back-office — no physical FDT-chain exposure.",
+  "true_competitors": ["FIS", "BR", "SEIC", "TEMN.SW"],
+  "chain_fit_confidence": "low"
+ },
+ "STM": {
+  "physical_anchor": "Fabricates a broad line of analog, MCU, MEMS-sensor and power (including SiC) semiconductor chips — real silicon, but a diversified automotive/industrial chipmaker with no dedicated quantum or grid-equipment identity.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.03,
+  "value_chain_position": "Diversified analog/MCU/power/MEMS semiconductor manufacturer serving automotive, industrial and consumer markets broadly — the quantum industry filter caught a generic large-cap chipmaker.",
+  "true_competitors": ["NXPI", "ON", "TXN", "ADI", "MCHP", "INFXF"],
+  "chain_fit_confidence": "low"
+ },
+ "STRL": {
+  "physical_anchor": "Physically builds and grades data-center/e-commerce distribution-center sites and executes electrical/grid-interconnection civil construction — genuine EPC/construction on physical infrastructure.",
+  "chains": ["power_for_ai", "electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "E-Infrastructure/EPC contractor — site development and civil/electrical construction for data centers and grid-interconnection projects (toll-taker on the interconnection-queue backlog).",
+  "true_competitors": ["PWR", "MTZ", "EME", "ACM", "IESC", "MYRG"],
+  "chain_fit_confidence": "high"
+ },
+ "STVN": {
+  "physical_anchor": "Manufactures glass primary-packaging (vials, syringes, cartridges) and drug-delivery devices for pharma/biotech — physical products, but not robotics/automation.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Pharma packaging & drug-delivery device manufacturer (glass vials, pre-fillable syringes) — no FDT-chain fit.",
+  "true_competitors": ["WST", "GXI.DE", "1SXP.DE", "GLW"],
+  "chain_fit_confidence": "low"
+ },
+ "STX": {
+  "physical_anchor": "Manufactures hard-disk-drive (HDD) storage devices for hyperscale/enterprise datacenters — real physical hardware, but general storage, not quantum hardware.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "HDD/data-storage device manufacturer selling into hyperscale and enterprise datacenter storage — no FDT-chain fit.",
+  "true_competitors": ["WDC", "SNDK", "005930.KS", "6502.T"],
+  "chain_fit_confidence": "low"
+ },
+ "SWKS": {
+  "physical_anchor": "Manufactures RF front-end semiconductor modules for smartphones and wireless devices — real chips, but consumer-wireless focused, not quantum hardware.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "RF/analog semiconductor supplier for mobile and wireless connectivity — no FDT-chain exposure.",
+  "true_competitors": ["QRVO", "AVGO", "QCOM", "MPWR", "CRUS"],
+  "chain_fit_confidence": "low"
+ },
+ "SYK": {
+  "physical_anchor": "Makes the Mako robotic-arm-assisted surgical system for joint reconstruction plus orthopedic implants and surgical instruments — a leading physical surgical-robotics platform.",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Surgical robotics & orthopedic/medtech device maker — Mako robotic platform is the flagship capital-equipment franchise driving implant pull-through.",
+  "true_competitors": ["ISRG", "ZBH", "SNN", "MDT", "GMED", "JNJ"],
+  "chain_fit_confidence": "high"
+ },
+ "SYM": {
+  "physical_anchor": "Designs, manufactures and deploys autonomous robots and automated storage/retrieval structures inside warehouse fulfillment centers — genuine physical robotics hardware.",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Warehouse-robotics/automation systems integrator — builds and licenses robotic fulfillment-center hardware+software (Walmart flagship customer); the electrification/power/nuclear hints on this name are keyword noise, not a genuine second chain.",
+  "true_competitors": ["OCDO.L", "KGX.DE", "HON", "ABBN.SW", "AUTO.OL", "6954.T"],
+  "chain_fit_confidence": "high"
+ },
+ "TDC": {
+  "physical_anchor": "None — cloud/on-prem data-warehousing and analytics software.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Enterprise data-warehouse and analytics software vendor — no physical FDT-chain exposure.",
+  "true_competitors": ["SNOW", "PLTR", "MDB", "ORCL", "IBM"],
+  "chain_fit_confidence": "low"
+ },
+ "TDY": {
+  "physical_anchor": "Manufactures machine-vision and infrared/thermal-imaging cameras and sensors (FLIR, DALSA, e2v brands) plus precision instrumentation used in industrial inspection and robotic guidance.",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Machine-vision/imaging-sensor and precision-instrumentation manufacturer — the Digital Imaging segment (FLIR/DALSA) is the toll-taker into factory-automation and robotic-vision deployments, alongside unrelated aerospace/defense and marine instrumentation businesses.",
+  "true_competitors": ["CGNX", "6861.T", "6645.T", "BSL.DE", "HEXA-B.ST", "EMR"],
+  "chain_fit_confidence": "medium"
+ },
+ "TEL": {
+  "physical_anchor": "Manufactures electrical/electronic connectors, power-distribution components and sensors used in grid, data-center and EV power-management systems — a genuine physical connector/power-management maker.",
+  "chains": ["electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "Power-management & connectivity component maker — sells connectors and sensors into grid power distribution, data-center and EV electrification build-out (the chain's 'power management & connectors' layer); the FMP 'Semiconductors' classification is a filing quirk, not TEL's real business.",
+  "true_competitors": ["APH", "LFUS", "BDC", "ROG", "HUBB", "ETN"],
+  "chain_fit_confidence": "medium"
+ }
+}

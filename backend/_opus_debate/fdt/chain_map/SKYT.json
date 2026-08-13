@@ -1,0 +1,19 @@
+{
+ "symbol": "SKYT",
+ "physical_anchor": "Fabricates semiconductor wafers at its Minnesota foundry, including specialty superconducting/SFQ chips used as quantum-computer control electronics",
+ "chains": [
+  "quantum"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "US pure-play specialty foundry supplying the cryogenics & control-electronics layer — toll fab for superconducting/SFQ wafers that go into quantum-computer control stacks.",
+ "true_competitors": [
+  "GFS",
+  "TSEM",
+  "TSM",
+  "UMC",
+  "0981.HK",
+  "XFAB.DE"
+ ],
+ "chain_fit_confidence": "medium"
+}

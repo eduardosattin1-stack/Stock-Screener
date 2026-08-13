@@ -1,0 +1,19 @@
+{
+ "symbol": "PEN",
+ "physical_anchor": "manufactures catheter-based mechanical thrombectomy and aspiration devices, including computer-controlled vascular intervention platforms (e.g., Lightning aspiration system)",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.02,
+ "value_chain_position": "surgical/interventional robotics layer — physical thrombectomy hardware and computer-assisted vascular intervention systems sold into hospital procedure volume.",
+ "true_competitors": [
+  "ISRG",
+  "SYK",
+  "MDT",
+  "BSX",
+  "JNJ",
+  "NARI"
+ ],
+ "chain_fit_confidence": "medium"
+}

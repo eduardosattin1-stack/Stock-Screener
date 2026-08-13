@@ -1,0 +1,17 @@
+{
+ "symbol": "INFQ",
+ "physical_anchor": "builds cold-atom quantum computing hardware and atomic-physics-based precision sensors and clocks",
+ "chains": [
+  "quantum"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "qubit hardware and quantum-sensing platform (neutral/cold-atom technology); pre-scale developer of quantum computers and precision timing/navigation sensors",
+ "true_competitors": [
+  "IONQ",
+  "RGTI",
+  "QBTS",
+  "IQMX"
+ ],
+ "chain_fit_confidence": "high"
+}

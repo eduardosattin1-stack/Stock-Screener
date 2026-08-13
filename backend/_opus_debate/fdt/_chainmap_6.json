@@ -1,0 +1,182 @@
+{
+ "HAYW": {
+  "physical_anchor": "Residential/light-commercial pool pumps, filters, heaters, salt chlorinators and pool-automation controllers",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "Consumer/light-commercial pool-equipment manufacturer selling pumps, filtration, heating and automation hardware through pool builders and dealers -- not a grid or energy-chain company despite the Electrical Equipment & Parts FMP tag.",
+  "true_competitors": ["PNR", "FDR.MC", "SWIM", "POOL", "AOS"],
+  "chain_fit_confidence": "low"
+ },
+ "HEI": {
+  "physical_anchor": "FAA-PMA aftermarket jet-engine and airframe replacement parts, plus specialty defense/space electronic components (connectors, power supplies, RF/microwave subsystems)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "Aftermarket aerospace-parts and niche defense-electronics supplier -- no genuine nuclear, grid, quantum or robotics exposure; the Aerospace & Defense industry tag is a false positive for the nuclear_smr screen.",
+  "true_competitors": ["TDG", "CW", "MOG.A", "WWD", "ATRO", "DCO"],
+  "chain_fit_confidence": "low"
+ },
+ "HII": {
+  "physical_anchor": "Nuclear-powered aircraft carriers (Ford/Nimitz-class) and Virginia-class submarines built and reactor-plant-integrated for the US Navy",
+  "chains": ["nuclear_smr"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.03,
+  "value_chain_position": "Prime shipbuilder/integrator for naval nuclear-propulsion vessels -- occupies the chain's 'reactor components & naval/defense nuclear' layer at the platform-EPC level, not as a fuel or component sub-supplier.",
+  "true_competitors": ["GD", "BWXT", "BAB.L", "FCT.MI", "7011.T", "7012.T", "ASB.AX"],
+  "chain_fit_confidence": "high"
+ },
+ "HIMX": {
+  "physical_anchor": "Display-driver ICs and CMOS image-sensor chips for LCD/OLED panels and cameras",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Fabless display-driver and imaging-sensor semiconductor supplier -- consumer-electronics chips, not quantum hardware; the Semiconductors tag falsely caught it in the quantum screen.",
+  "true_competitors": ["SYNA", "3034.TW", "108320.KQ", "ON", "6758.T", "603501.SH"],
+  "chain_fit_confidence": "low"
+ },
+ "HPQ": {
+  "physical_anchor": "Personal computers, laptops and inkjet/laser printers",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Consumer/enterprise PC and printer OEM -- no quantum-computing hardware business; Computer Hardware tag is a false positive for the quantum screen.",
+  "true_competitors": ["DELL", "0992.HK", "2357.TW", "XRX", "7751.T"],
+  "chain_fit_confidence": "low"
+ },
+ "HUBB": {
+  "physical_anchor": "Electrical wiring devices/connectors plus transmission-and-distribution grid hardware -- transformers, protective devices and utility-grade connectors",
+  "chains": ["electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "T&D and wiring-device equipment maker selling into utility grid build-out and electrification -- an explicit anchor name for this chain.",
+  "true_competitors": ["ETN", "NVT", "POWL", "AZZ", "EMR", "ABB", "SU.PA", "LR.PA"],
+  "chain_fit_confidence": "high"
+ },
+ "HUBS": {
+  "physical_anchor": "None -- cloud CRM/marketing-automation SaaS, no physical product",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "SaaS marketing/CRM platform -- no physical anchor, no FDT-chain membership; Software - Application tag falsely caught it in the robotics_automation screen.",
+  "true_competitors": ["CRM", "FRSH", "BRZE", "KVYO", "ADBE"],
+  "chain_fit_confidence": "low"
+ },
+ "HWM": {
+  "physical_anchor": "Precision-forged and cast titanium/nickel-superalloy components -- jet-engine turbine blades, airframe fasteners and industrial gas-turbine parts",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Aerospace-first structural/engine-component forger; industrial gas-turbine parts are a minority sub-segment, not enough to genuinely ride power_for_ai or nuclear_smr.",
+  "true_competitors": ["ATI", "CRS", "TDG", "MOG.A", "HXL"],
+  "chain_fit_confidence": "low"
+ },
+ "HXL": {
+  "physical_anchor": "Carbon-fiber composite materials -- prepreg, honeycomb core and reinforcement fabrics for aircraft and wind-turbine structures",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.1,
+  "value_chain_position": "Advanced-composites materials maker, overwhelmingly aerospace-structures revenue; no genuine nuclear tie despite the Aerospace & Defense industry filter.",
+  "true_competitors": ["3402.T", "SOLB.BR", "3401.T", "SGL.DE", "GURN.SW"],
+  "chain_fit_confidence": "low"
+ },
+ "IEX": {
+  "physical_anchor": "Precision pumps, metering valves and fluidics/dispensing equipment sold across industrial, life-science and energy end markets",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.03,
+  "value_chain_position": "Diversified flow-control/instrumentation conglomerate with no single dominant FDT end market -- too generic to genuinely ride the grid, nuclear, power, or robotics chains despite the broad chains_hint list.",
+  "true_competitors": ["DOV", "ROP", "XYL", "FLS", "CR", "PNR"],
+  "chain_fit_confidence": "low"
+ },
+ "INSP": {
+  "physical_anchor": "Implantable neurostimulation device (Inspire system) for obstructive sleep apnea",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Single-product implantable medical device company -- a real physical product, but a surgical implant is not a robot and does not ride robotics_automation.",
+  "true_competitors": ["MDT", "RMD", "NVRO", "LIVN", "BSX", "PEN"],
+  "chain_fit_confidence": "low"
+ },
+ "INTU": {
+  "physical_anchor": "None -- TurboTax/QuickBooks/Credit Karma cloud software, no physical product",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Consumer/SMB financial-software SaaS -- no physical anchor, no chain membership.",
+  "true_competitors": ["HRB", "XRO.AX", "SGE.L", "BILL"],
+  "chain_fit_confidence": "low"
+ },
+ "IOT": {
+  "physical_anchor": "IoT sensor hardware -- vehicle telematics gateways, AI dashcams and asset trackers installed in fleets and industrial equipment",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Connected-operations SaaS platform monetized through subscription; sensor hardware is an enabler, not a chain-defining product -- no genuine quantum tie despite the false-positive hint.",
+  "true_competitors": ["TRMB", "VZ", "PTC"],
+  "chain_fit_confidence": "low"
+ },
+ "IPGP": {
+  "physical_anchor": "High-power fiber lasers and photonic/laser subsystems used in industrial cutting/welding, medical and precision-optics applications",
+  "chains": ["quantum"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "Laser/photonics component maker occupying the quantum stack's photonics & lasers layer, though the bulk of revenue is industrial materials-processing rather than quantum-lab sales; direct comp to the chain's COHR anchor.",
+  "true_competitors": ["COHR", "LASR", "NOVT", "LITE", "002008.SZ", "JEN.DE"],
+  "chain_fit_confidence": "medium"
+ },
+ "IR": {
+  "physical_anchor": "Industrial air compressors, blowers, pumps and vacuum systems sold across general industrial, life-science and energy end markets",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "Diversified flow-control/compression equipment maker -- broad industrial exposure with no dominant tie to any single FDT chain despite the wide chains_hint list.",
+  "true_competitors": ["DOV", "ROP", "XYL", "ATCO-A.ST", "FLS", "PNR"],
+  "chain_fit_confidence": "low"
+ },
+ "ISRG": {
+  "physical_anchor": "da Vinci robotic surgical systems -- robotic arms, articulated instruments and 3D-vision consoles for minimally invasive surgery",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Surgical-robotics platform maker with capital-equipment placements plus recurring instrument/service revenue -- an explicit anchor name for this chain.",
+  "true_competitors": ["MDT", "SYK", "JNJ", "SNN", "ASXC", "GMED"],
+  "chain_fit_confidence": "high"
+ },
+ "ITRI": {
+  "physical_anchor": "Smart electric/gas/water meters and grid-edge sensing/communication modules deployed by utilities",
+  "chains": ["electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "Grid-edge metering and distributed-intelligence hardware/software maker for utilities -- sits in the power-management/grid-monitoring layer, not the robotics or quantum chains the industry filters also caught it in.",
+  "true_competitors": ["LAND.SW", "BMI", "XYL", "HON", "HUBB", "ABB"],
+  "chain_fit_confidence": "medium"
+ },
+ "ITW": {
+  "physical_anchor": "Welding equipment, industrial fasteners and specialty components for automotive, food-equipment and construction end markets",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "Highly diversified multi-industrial conglomerate (welding, automotive OEM, food equipment, polymers) -- no genuine single-chain physical anchor within this book.",
+  "true_competitors": ["DOV", "ROP", "EMR", "HON", "PH"],
+  "chain_fit_confidence": "low"
+ },
+ "JBL": {
+  "physical_anchor": "Contract electronics manufacturing and design services -- PCB assembly and system integration for networking, cloud, healthcare and industrial customers",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Generalist electronics-manufacturing-services (EMS) provider across dozens of end markets -- no dominant tie to any single FDT chain despite the Hardware, Equipment & Parts tag.",
+  "true_competitors": ["FLEX", "CLS", "SANM", "BHE", "2317.TW", "FN"],
+  "chain_fit_confidence": "low"
+ },
+ "JBTM": {
+  "physical_anchor": "Automated poultry/protein-processing and food-packaging machinery lines",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "Food-and-beverage processing automation equipment maker (post JBT/Marel merger) -- specialized capital equipment for a single vertical, not the physical-AI/factory-robotics narrative this chain targets.",
+  "true_competitors": ["G1A.DE", "MIDD", "KRN.DE"],
+  "chain_fit_confidence": "low"
+ }
+}

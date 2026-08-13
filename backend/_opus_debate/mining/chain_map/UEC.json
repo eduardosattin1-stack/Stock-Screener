@@ -1,0 +1,20 @@
+{
+ "symbol": "UEC",
+ "physical_anchor": "In-situ recovery (ISR) mined uranium (U3O8) from Texas and Wyoming wellfields",
+ "chains": [
+  "uranium_fuel_cycle"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Near-term/restart ISR uranium producer ramping Texas and Wyoming operations toward term-contract delivery",
+ "true_competitors": [
+  "CCJ",
+  "DNN",
+  "EU",
+  "URG",
+  "PEN.AX",
+  "GLO.TO",
+  "PDN.AX"
+ ],
+ "chain_fit_confidence": "high"
+}

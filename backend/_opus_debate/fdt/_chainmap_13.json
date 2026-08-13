@@ -1,0 +1,182 @@
+{
+ "TER": {
+  "physical_anchor": "Collaborative robot arms and autonomous mobile robots (Universal Robots / MiR) plus semiconductor and systems automated test equipment hardware",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Motion control & automation equipment toll-taker — sells cobots, AMRs, and chip/system ATE hardware into every factory-automation and chip-test buildout",
+  "true_competitors": ["ABB Ltd (ABBN.SW)", "FANUC Corp (6954.T)", "Yaskawa Electric (6506.T)", "Zebra Technologies (ZBRA)", "Cohu Inc (COHU)", "Advantest Corp (6857.T)", "ATS Corp (ATS)"],
+  "chain_fit_confidence": "high"
+ },
+ "TMDX": {
+  "physical_anchor": "Organ Care System — portable ex-vivo perfusion devices that keep donor organs warm and functioning during transport",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Medical-device maker of organ preservation/perfusion hardware and transport logistics — outside the FDT taxonomy; no robotics, energy, quantum, or grid chain rides this business",
+  "true_competitors": ["Paragonix Technologies (private)", "XVIVO Perfusion (XVIVO.ST)", "OrganOx (private)", "Bridge to Life (private)", "Waters Medical Systems (private)"],
+  "chain_fit_confidence": "low"
+ },
+ "TOST": {
+  "physical_anchor": "Restaurant point-of-sale terminals and handheld ordering hardware",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Restaurant-management SaaS plus POS hardware — no linkage to quantum, robotics, grid, or nuclear chains; the quantum chains_hint is a keyword/industry-string false positive off Software - Infrastructure",
+  "true_competitors": ["Block/Square (XYZ)", "Lightspeed Commerce (LSPD)", "Olo Inc (OLO)", "PAR Technology (PAR)", "NCR Voyix (VYX)", "Fiserv/Clover (FI)"],
+  "chain_fit_confidence": "low"
+ },
+ "TPC": {
+  "physical_anchor": "General and heavy civil construction — highways, bridges, transit systems, and large buildings such as stadiums and casinos",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Diversified civil/building general contractor — revenue mix is transportation and buildings, not power/grid infrastructure; not a grid-equipment or grid-EPC business like Quanta/PWR",
+  "true_competitors": ["Quanta Services (PWR)", "MasTec (MTZ)", "Granite Construction (GVA)", "Fluor Corp (FLR)", "AECOM (ACM)", "Sterling Infrastructure (STRL)"],
+  "chain_fit_confidence": "low"
+ },
+ "TRMB": {
+  "physical_anchor": "GNSS receivers, laser positioning, and machine-control guidance hardware that automate construction, agriculture, and surveying equipment",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Machine-vision & positioning-sensor toll-taker — sells GNSS/guidance hardware that automates off-road construction and agricultural equipment",
+  "true_competitors": ["Topcon Corp (7732.T)", "Hexagon AB (HEXA-B.ST)", "Deere & Co Precision Ag (DE)", "CNH Industrial Precision (CNH)", "Cognex Corp (CGNX)", "FARO Technologies (FARO)"],
+  "chain_fit_confidence": "medium"
+ },
+ "TSEM": {
+  "physical_anchor": "Specialty analog, RF, and photonics semiconductor wafer fabrication (foundry)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Analog/RF/photonics foundry serving mobile, auto, and industrial customers broadly — not a quantum-dedicated fab; the industry filter caught a generic specialty foundry",
+  "true_competitors": ["United Microelectronics (UMC)", "GlobalFoundries (GFS)", "SkyWater Technology (SKYT)", "X-FAB Silicon Foundries (XFAB.PA)", "Vanguard International Semiconductor (5347.TWO)"],
+  "chain_fit_confidence": "low"
+ },
+ "TSM": {
+  "physical_anchor": "Leading-edge logic semiconductor wafer fabrication for the entire chip industry",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "The world's largest foundry, manufacturing chips for every end market (AI, mobile, auto, defense) — not a quantum-specific chain play; the industry filter caught the whole semis universe",
+  "true_competitors": ["Samsung Foundry (005930.KS)", "Intel Foundry (INTC)", "GlobalFoundries (GFS)", "United Microelectronics (UMC)", "SMIC (0981.HK)"],
+  "chain_fit_confidence": "low"
+ },
+ "TT": {
+  "physical_anchor": "Commercial and residential HVAC systems, chillers, and building climate-control equipment",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "HVAC/climate-control equipment maker — supplies cooling to buildings and data centers but makes no grid, generation, or nuclear equipment; the chains_hint matches are keyword false positives off 'data center'",
+  "true_competitors": ["Carrier Global (CARR)", "Johnson Controls (JCI)", "Lennox International (LII)", "Daikin Industries (6367.T)", "Vertiv Holdings (VRT)"],
+  "chain_fit_confidence": "low"
+ },
+ "TTEK": {
+  "physical_anchor": "Environmental, water, and infrastructure engineering consulting services",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Environmental/water-focused engineering consultancy — some renewable/grid-adjacent advisory work but revenue mix is water and environment, not power; not a physical grid-equipment EPC like Quanta/MYR",
+  "true_competitors": ["Jacobs Solutions (J)", "AECOM (ACM)", "Stantec Inc (STN)", "ICF International (ICFI)", "WSP Global (WSP.TO)"],
+  "chain_fit_confidence": "low"
+ },
+ "TTMI": {
+  "physical_anchor": "Printed circuit board (PCB) manufacturing for aerospace/defense, networking, and industrial electronics",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "PCB fabricator serving broad end-markets (defense, networking, medical, industrial) — a generic electronics-manufacturing supplier, not tied distinctly to any single FDT chain",
+  "true_competitors": ["Nan Ya PCB (8046.TWO)", "Unimicron Technology (3037.TW)", "Ibiden Co (4062.T)", "AT&S Austria Technologie (ATS.VI)", "TTM peer Multek/private makers"],
+  "chain_fit_confidence": "low"
+ },
+ "TXN": {
+  "physical_anchor": "Analog and embedded-processing semiconductor chip design and manufacturing",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Diversified analog/embedded semiconductor maker selling into industrial, auto, and personal-electronics markets broadly — not a distinct quantum or robotics chain play",
+  "true_competitors": ["Analog Devices (ADI)", "Infineon Technologies (IFX.DE)", "STMicroelectronics (STM)", "NXP Semiconductors (NXPI)", "ON Semiconductor (ON)"],
+  "chain_fit_confidence": "low"
+ },
+ "TXT": {
+  "physical_anchor": "Bell helicopters, Cessna/Beechcraft aircraft, and Textron Systems defense/unmanned land and aerial systems",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Aerospace/defense and specialty-vehicle manufacturer (aircraft, unmanned systems, golf carts) — no nuclear reactor-component or fuel-cycle business; the nuclear_smr hint is an industry-string false positive off Aerospace & Defense",
+  "true_competitors": ["General Dynamics (GD)", "Lockheed Martin (LMT)", "Leonardo DRS (DRS)", "AeroVironment (AVAV)", "The Boeing Company (BA)"],
+  "chain_fit_confidence": "low"
+ },
+ "TYL": {
+  "physical_anchor": "none identifiable — cloud software for courts, public safety, and local-government administration",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Government-sector enterprise SaaS (courts, public safety, ERP) — pure software, no physical product tying it to any FDT chain",
+  "true_competitors": ["OpenGov Inc (private)", "CentralSquare Technologies (private)", "Oracle Public Sector (ORCL)", "SAP Public Sector (SAP)", "Granicus (private)"],
+  "chain_fit_confidence": "low"
+ },
+ "UBER": {
+  "physical_anchor": "none identifiable — ride-hailing and delivery marketplace app; integrates but does not manufacture vehicles or robots",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Ride-hailing/delivery network operator that lists third-party autonomous vehicles (Waymo, etc.) on its marketplace but builds no physical robotics hardware itself — the anti-Visa rule excludes networks",
+  "true_competitors": ["Lyft Inc (LYFT)", "DoorDash (DASH)", "Grab Holdings (GRAB)", "DiDi Global (DIDIY)", "Waymo (private, Alphabet)"],
+  "chain_fit_confidence": "low"
+ },
+ "UFPT": {
+  "physical_anchor": "Engineered foam and plastic components for single-use medical devices and surgical kits",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Contract manufacturer of medical-device components (foam positioners, catheter/IV parts, packaging) — a generic medical supplier, not a surgical-robotics-dedicated toll-taker",
+  "true_competitors": ["Integer Holdings (ITGR)", "West Pharmaceutical Services (WST)", "Nordson MEDICAL (NDSN)", "Freudenberg Medical (private)", "Marle Group (private)"],
+  "chain_fit_confidence": "low"
+ },
+ "UMC": {
+  "physical_anchor": "Mature-node semiconductor wafer fabrication (foundry)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Trailing/mature-node foundry serving mobile, auto, and consumer chip customers broadly — a generic semis fab, not a quantum-chain play",
+  "true_competitors": ["TSMC (TSM)", "GlobalFoundries (GFS)", "SMIC (0981.HK)", "Tower Semiconductor (TSEM)", "Vanguard International Semiconductor (5347.TWO)"],
+  "chain_fit_confidence": "low"
+ },
+ "VEEV": {
+  "physical_anchor": "none identifiable — cloud CRM and quality-management software for life-sciences companies",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Life-sciences cloud software (CRM, quality, regulatory) — pure SaaS, no physical product or chain linkage",
+  "true_competitors": ["Salesforce Life Sciences Cloud (CRM)", "IQVIA Holdings (IQV)", "Dassault Systemes/Medidata (DASTY)", "MasterControl (private)", "ArisGlobal (private)"],
+  "chain_fit_confidence": "low"
+ },
+ "VICR": {
+  "physical_anchor": "High-density power-conversion modules (DC-DC / AC-DC converters) that deliver and manage electrical power to servers, data centers, defense, and industrial systems",
+  "chains": ["electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Power management & connectors layer — sells power-delivery modules feeding AI/data-center racks and industrial electrification build-outs",
+  "true_competitors": ["Delta Electronics (2308.TW)", "Bel Fuse (BELFA)", "Monolithic Power Systems (MPWR)", "Infineon Technologies (IFX.DE)", "Advanced Energy Industries (AEIS)", "Flex Power Modules (private)"],
+  "chain_fit_confidence": "medium"
+ },
+ "VNT": {
+  "physical_anchor": "Fuel dispensers, EV-charging hardware, and vehicle-service/diagnostic equipment (Gilbarco Veeder-Root, Matco Tools)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Mobility/retail-fuel and vehicle-service equipment maker — EV-charging is a minor slice of a fuel-dispensing/car-wash/tools portfolio, not a grid-equipment or power-generation business",
+  "true_competitors": ["Dover Corp/Wayne Fueling (DOV)", "ChargePoint Holdings (CHPT)", "Blink Charging (BLNK)", "Snap-on Inc (SNA)", "Fortive Corp (FTV)"],
+  "chain_fit_confidence": "low"
+ },
+ "VPG": {
+  "physical_anchor": "Precision resistors, strain gauges, and load-cell force sensors used in weighing, test, and motion-sensing systems",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Machine-vision & sensing layer — precision force/strain sensors used in industrial automation, robotics force-feedback, and weighing/test systems",
+  "true_competitors": ["TE Connectivity (TEL)", "Honeywell Sensing & IoT (HON)", "Amphenol Corp (APH)", "Interface Inc load cells (private)", "Kistler Group (private)", "Zemic Europe (private)"],
+  "chain_fit_confidence": "medium"
+ }
+}

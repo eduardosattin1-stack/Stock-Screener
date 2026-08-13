@@ -1,0 +1,20 @@
+{
+ "symbol": "TMQ",
+ "physical_anchor": "Copper-zinc-cobalt-gold-silver deposits (Arctic and Bornite) under development in the Ambler Mining District, Alaska",
+ "chains": [
+  "copper_mining"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.6,
+ "value_chain_position": "Pre-revenue developer advancing a polymetallic, copper-dominant deposit pending the Ambler Road access permit",
+ "true_competitors": [
+  "HBM",
+  "ERO",
+  "TGB",
+  "CS.TO",
+  "SOLR.TO",
+  "FIL.TO",
+  "NG"
+ ],
+ "chain_fit_confidence": "high"
+}

@@ -1,0 +1,19 @@
+{
+ "symbol": "TEL",
+ "physical_anchor": "Manufactures electrical/electronic connectors, power-distribution components and sensors used in grid, data-center and EV power-management systems — a genuine physical connector/power-management maker.",
+ "chains": [
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.02,
+ "value_chain_position": "Power-management & connectivity component maker — sells connectors and sensors into grid power distribution, data-center and EV electrification build-out (the chain's 'power management & connectors' layer); the FMP 'Semiconductors' classification is a filing quirk, not TEL's real business.",
+ "true_competitors": [
+  "APH",
+  "LFUS",
+  "BDC",
+  "ROG",
+  "HUBB",
+  "ETN"
+ ],
+ "chain_fit_confidence": "medium"
+}

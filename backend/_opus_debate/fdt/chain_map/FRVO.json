@@ -1,0 +1,19 @@
+{
+ "symbol": "FRVO",
+ "physical_anchor": "Drills and operates enhanced geothermal system (EGS) wells and power plants that deliver firm, 24/7 baseload electricity under long-term PPAs (e.g., Google, utilities).",
+ "chains": [
+  "power_for_ai"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Nuclear-levered-IPP-adjacent firm-power developer layer of power_for_ai: a next-gen firm-generation asset developer competing for the same datacenter-PPA queue as gas turbines and SMRs; pre-commercial-scale, null trailing financials reflect early-stage development.",
+ "true_competitors": [
+  "ORA",
+  "VST",
+  "CEG",
+  "TLN",
+  "NEE",
+  "036460.KS"
+ ],
+ "chain_fit_confidence": "high"
+}

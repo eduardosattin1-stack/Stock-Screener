@@ -1,0 +1,56 @@
+{
+  "symbol": "AGX",
+  "sector": "Industrials",
+  "signal_type": "future_disruptive_tech",
+  "company": "Argan, Inc.",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Industrials\nValuation: Price 592.66 | Fair Value 195.58 | Margin of Safety -67% | P/FCF 20.5x\nRevenue growth: +8.1% YoY | 3-yr CAGR +27.6%\nMargins: Gross 20.5% (expanding) | Net 14.6% | FCF 43.5%\nEPS / guidance delivery: 9.73 latest | +58.2% YoY | 3-yr CAGR +61.0% | beat 7/7 qtrs (100%)\nFCF growth: +155.2% YoY | 3-yr CAGR +0.0%\nReturns / leverage: ROE 17.7% | ROIC 14.4% | Net debt -889M\nForward / signals: Consensus fwd EPS growth +29.3% | Margin 0.71sigma vs hist. peak | Insider buy ratio 0.00\nValuation models (stock page): DCF fair value 295.4 | Buffett fair value 195.6\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -100% | EPV -100% | Graham -100% | OwnerErn -100% | IV15 +3%\nQuality / scores: Bull score 5 | Catalyst score 0.75 | Piotroski 5/9 | Altman-Z (solvency) 8.1 | Days to next earnings 30\nAnalyst consensus target: 559.00 (-6% upside)\nPositioning / smart money: Smart-money score 61/100 | Institutional flow 48/100\nTechnical posture (timing context, not thesis): price +22% vs 200d SMA | 65% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2022: rev 509M, NI 38M, EPS 2.4\n  2023: rev 455M, NI 33M, EPS 2.33\n  2024: rev 573M, NI 32M, EPS 2.39\n  2025: rev 874M, NI 85M, EPS 6.15\n  2026: rev 945M, NI 138M, EPS 9.73\n  CAGRs: bvps_5y +12.3%, eps_5y +41.9%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-04-30 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 487M | TTM diluted EPS 11.38 | latest-Q EPS YoY +102%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-04-30): NET CASH 974M (cash 974M exceeds total debt 0M, incl. capitalized leases 0M) — a genuine SoP add-back; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 21 sells (170,619sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 559.00 | median 559.00 | high 600.00 | low 518.00\nBreadth: last month: 0 PTs | last quarter: 1 PTs avg 600.00 | last year: 7 PTs avg 393.29\n[THIN CONSENSUS: only 1 price target(s) printed last quarter — this is NOT a street-wide view; weigh individual PTs below accordingly]\nNewest individual targets (dated — judge freshness yourself):\n  2026-06-05 Lake Street: 600.00 (stock was 732.66)\n  2026-03-27 Robert Brown: 375.00 (stock was 566.62)\n  2026-03-27 Ati Modak: 518.00 (stock was 566.62)\n  2025-12-05 Lake Street: 325.00 (stock was 294.38)\n  2025-11-10 GLJ Research: 369.00 (stock was 329.07)\nNewest PT is 60 day(s) old\n\n=== SEGMENT REVENUE (FMP, 2026-01-31 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nPower Industry Services: 756M (82%) | Industrial Fabrication And Field Services: 168M (18%)",
+  "dossier": "",
+  "chains": [
+    "power_for_ai"
+  ],
+  "business_model": "equipment_services",
+  "physical_anchor": "Engineers, procures and constructs gas-fired power generation plants and grid interconnection infrastructure (Gemma Power Services)",
+  "commodity_revenue_share": 0.03,
+  "chain_regime": {
+    "power_for_ai": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "power_for_ai",
+    "torque_metrics": true,
+    "commodity_beta_2y": 0.0,
+    "beta_benchmark": "NGUSD",
+    "beta_is_proxy": false,
+    "ndebt_ebitda": -1.9,
+    "commodity_revenue_share": 0.03,
+    "as_of": "2026-08-04",
+    "ebitda_margin_ttm": 0.1802,
+    "ebitda_margin_band": {
+      "band": "q3_above_median",
+      "pct": 0.25,
+      "basis": "cohort_percentile",
+      "n_cohort": 8
+    },
+    "fcf_torque_10pct": 0.017,
+    "torque_note": "SYMMETRIC: fcf_torque_10pct is the +/-10% commodity move's % EBITDA swing (read the downside too). beta_is_proxy=False (proxy ETF regression where the spot is off-FMP)."
+  },
+  "gates": {
+    "ttm_fcf": 486894000,
+    "ttm_ocf": 492809000,
+    "ttm_capex": -5915000,
+    "ttm_ebitda": 187706000,
+    "ttm_revenue": 1041900000,
+    "rev_yoy": 0.1447,
+    "cash_sti": 973555000,
+    "balance_date": "2026-04-30",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 63271405.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -1.8957678497224384
+  }
+}

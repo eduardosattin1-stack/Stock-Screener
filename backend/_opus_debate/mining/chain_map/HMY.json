@@ -1,0 +1,19 @@
+{
+ "symbol": "HMY",
+ "physical_anchor": "Operates deep-level underground and surface mines in South Africa plus Hidden Valley (PNG) producing gold doré/bullion.",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.95,
+ "value_chain_position": "South African gold major selling refined gold from company-operated mines; Eva Copper remains a pre-production development asset, not yet revenue.",
+ "true_competitors": [
+  "GFI",
+  "AU",
+  "SBSW",
+  "DRD",
+  "PAF.L",
+  "KGC"
+ ],
+ "chain_fit_confidence": "high"
+}

@@ -1,0 +1,18 @@
+{
+ "symbol": "FLEX",
+ "physical_anchor": "contract manufacturer of power-delivery and liquid-cooling hardware plus diversified electronics assembly for data centers and industrial customers",
+ "chains": [
+  "power_for_ai"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.02,
+ "value_chain_position": "diversified electronics manufacturing services (EMS) provider with a growing data-center power/cooling hardware segment",
+ "true_competitors": [
+  "CLS",
+  "JBL",
+  "SANM",
+  "FN",
+  "VRT"
+ ],
+ "chain_fit_confidence": "medium"
+}

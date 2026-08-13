@@ -1,0 +1,182 @@
+{
+ "APPN": {
+  "physical_anchor": "None — cloud low-code business-process-automation software; no physical product manufactured or moved.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Enterprise low-code/BPM SaaS platform sold as subscriptions; not a chain constituent.",
+  "true_competitors": ["PEGA", "NOW", "CRM", "SAP", "MSFT", "PATH"],
+  "chain_fit_confidence": "low"
+ },
+ "APPS": {
+  "physical_anchor": "None — mobile app-delivery and ad-tech software embedded on OEM Android devices; no physical product.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "On-device mobile app marketing/monetization software platform; ad-tech, not a physical chain.",
+  "true_competitors": ["APP", "U", "MGNI", "PUBM", "CRTO"],
+  "chain_fit_confidence": "low"
+ },
+ "ARQQ": {
+  "physical_anchor": "No revenue-generating physical anchor — core product is post-quantum symmetric-key-agreement encryption SOFTWARE; satellite-based QKD hardware is roadmap-stage, not commercialized, and the company markets itself as explicitly NOT requiring quantum hardware.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Post-quantum cryptography software vendor (QuantumCloud); a software encryption company, not a qubit-hardware or QKD-hardware constituent.",
+  "true_competitors": ["IONQ", "RGTI", "QBTS", "IDQC.PA", "HO.PA"],
+  "chain_fit_confidence": "low"
+ },
+ "ARXS": {
+  "physical_anchor": "Manufactures precision electronic and mechanical components — RF/microwave parts, connectors, cable assemblies, sensors, precision bearings — for extreme-environment systems.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Diversified precision-component supplier (connectors, RF/microwave hardware, sensors, bearings) across defense, space, medical-device and semiconductor-test end markets; no dated nuclear/grid/quantum contract concentration — industry-filter false positive via Aerospace & Defense.",
+  "true_competitors": ["TDG", "HEI", "APH", "CW", "DCO", "MOG.A"],
+  "chain_fit_confidence": "low"
+ },
+ "ASAN": {
+  "physical_anchor": "None — cloud work-management/collaboration SaaS; no physical product.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Enterprise work-management/collaboration software sold as subscriptions; not a chain constituent.",
+  "true_competitors": ["MNDY", "SMAR", "TEAM", "MSFT", "NOW"],
+  "chain_fit_confidence": "low"
+ },
+ "ASTE": {
+  "physical_anchor": "Manufactures road-building and materials-processing equipment — asphalt plants, aggregate crushing/screening systems, mobile pavers.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.1,
+  "value_chain_position": "Heavy-equipment OEM for road construction and aggregate/asphalt processing — an infrastructure-capex cyclical, not a grid/nuclear/power/robotics chain constituent; industry-filter false positive on generic 'Industrial - Machinery'.",
+  "true_competitors": ["CAT", "TEX", "DE", "6301.T", "VOLV-B.ST"],
+  "chain_fit_confidence": "low"
+ },
+ "ASYS": {
+  "physical_anchor": "Manufactures thermal-processing equipment (diffusion furnaces) for semiconductor and power/SiC device fabrication.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Semiconductor-fab capital-equipment maker (furnaces/wafer-processing tools) serving broad chip and power-device manufacturing — not specifically tied to quantum-hardware production.",
+  "true_competitors": ["6525.T", "8035.T", "ASM.AS", "VECO", "AMAT"],
+  "chain_fit_confidence": "low"
+ },
+ "ATEC": {
+  "physical_anchor": "Manufactures spinal implants, screws/rods and surgical instrumentation for spine surgery; no proprietary surgical-robot platform.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Spine-focused medical-device maker (implants plus navigation/imaging via EOS); adjacent to but not itself a surgical-robotics platform.",
+  "true_competitors": ["GMED", "MDT", "SYK", "ZBH", "OFIX"],
+  "chain_fit_confidence": "low"
+ },
+ "ATKR": {
+  "physical_anchor": "Manufactures electrical conduit, armored cable, wire and cable-management products for electrical construction and utility infrastructure.",
+  "chains": ["electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Electrical-infrastructure toll-taker — conduit, cable and cable-management for grid, datacenter and construction electrical build-out (power management & connectors layer).",
+  "true_competitors": ["HUBB", "NVT", "ETN", "AZZ", "PRY.MI", "LR.PA"],
+  "chain_fit_confidence": "high"
+ },
+ "ATOM": {
+  "physical_anchor": "No physical product of its own — licenses Mears Silicon Technology (MST) material-engineering IP to chipmakers; does not fabricate.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Semiconductor IP licensor (transistor-performance material technology); a pre-scale licensing business, not a chain physical anchor.",
+  "true_competitors": ["AMAT", "SOI.PA", "8035.T"],
+  "chain_fit_confidence": "low"
+ },
+ "AVAV": {
+  "physical_anchor": "Manufactures unmanned aircraft systems (drones), loitering munitions and space/cyber systems (BlueHalo) for defense customers.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Defense UAS/space-systems manufacturer — real physical hardware, but a defense-procurement business, not a commercial grid/nuclear/robotics-automation/quantum chain constituent; industry-filter false positive via Aerospace & Defense.",
+  "true_competitors": ["KTOS", "TXT", "ESLT", "LHX", "TDY"],
+  "chain_fit_confidence": "low"
+ },
+ "AVEX": {
+  "physical_anchor": "Designs and builds autonomous uncrewed aerial vehicles and unmanned surface vessels plus ISR mission-support services for defense/intelligence customers.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Defense ISR/tactical-autonomy hardware and services provider — physical uncrewed platforms, but a defense-ISR business, not a commercial robotics_automation constituent (factory/warehouse/surgical/humanoid thesis).",
+  "true_competitors": ["AVAV", "KTOS", "LHX", "TXT"],
+  "chain_fit_confidence": "low"
+ },
+ "AVR": {
+  "physical_anchor": "Manufactures a transcatheter aortic heart-valve device (DurAVR).",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Structural-heart medical-device developer/manufacturer; a cardiac-device company, not a robotics or FDT-chain constituent — industry-filter false positive via Medical - Devices.",
+  "true_competitors": ["EW", "MDT", "ABT", "BSX"],
+  "chain_fit_confidence": "low"
+ },
+ "AVTR": {
+  "physical_anchor": "Manufactures and distributes lab chemicals, reagents, consumables and lab equipment for biopharma/research customers.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Life-sciences materials and lab-supply distributor/manufacturer; not a robotics/automation or FDT-chain company.",
+  "true_competitors": ["TMO", "SRT.DE", "MRK.DE", "DHR"],
+  "chain_fit_confidence": "low"
+ },
+ "AXGN": {
+  "physical_anchor": "Manufactures peripheral-nerve-repair biologic grafts and matrices.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Nerve-repair biologics maker; a medical-device/biologics company, not a robotics or FDT-chain constituent.",
+  "true_competitors": ["IART", "ORGO", "SYK", "BAX"],
+  "chain_fit_confidence": "low"
+ },
+ "AXIA": {
+  "physical_anchor": "Owns and operates 44 hydroelectric plants plus nuclear, thermal and wind/solar generation, and roughly 66,500 km of transmission lines across Brazil (formerly Centrais Elétricas Brasileiras / Eletrobrás).",
+  "chains": [],
+  "business_model": "utility",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Diversified Brazilian state-linked generation-and-transmission utility running conventional large nuclear (Angra) and hydro, not SMRs or a US AI-datacenter PPA book — does not ride nuclear_smr's dated-milestone thesis or power_for_ai's datacenter-scarcity thesis.",
+  "true_competitors": ["EGIE3.SA", "EQTL3.SA", "ENGI11.SA", "DUK", "NEE"],
+  "chain_fit_confidence": "low"
+ },
+ "AXON": {
+  "physical_anchor": "Manufactures conducted-energy weapons (TASER) and body-worn/in-car cameras; also fields public-safety drones (Axon Air).",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Public-safety hardware and digital-evidence-management software (TASER, cameras, cloud); a law-enforcement technology company, not a grid/nuclear/FDT-chain constituent — industry-filter false positive via Aerospace & Defense.",
+  "true_competitors": ["MSI", "DGLY", "LHX"],
+  "chain_fit_confidence": "low"
+ },
+ "AXTI": {
+  "physical_anchor": "Manufactures compound-semiconductor substrate wafers (indium phosphide, gallium arsenide, germanium) via proprietary vertical-gradient-freeze crystal growth.",
+  "chains": ["quantum", "robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.2,
+  "value_chain_position": "Upstream compound-semiconductor substrate producer (InP/GaAs/Ge wafers) feeding photonic-integrated-circuit, silicon-photonics and laser makers (photonics & lasers layer) as well as LiDAR/industrial-robotics sensor makers — a materials toll-taker one to two steps back from both chains, but revenue is diversified across 5G/datacenter-optics/solar rather than concentrated on quantum or robotics specifically.",
+  "true_competitors": ["5802.T", "IQE.L", "COHR", "5020.T"],
+  "chain_fit_confidence": "medium"
+ },
+ "AZTA": {
+  "physical_anchor": "Operates automated cold-chain sample-storage/biobanking systems and provides genomics sequencing services (GENEWIZ); its former semiconductor-automation unit was divested.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Life-sciences sample-management (automated biobanking/cold storage) and genomics-services provider; not a robotics_automation-chain company.",
+  "true_competitors": ["TMO", "ILMN", "CRL"],
+  "chain_fit_confidence": "low"
+ },
+ "BA": {
+  "physical_anchor": "Manufactures commercial and military aircraft, satellites and defense systems.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Diversified commercial/defense aerospace OEM; a legacy industrial giant, not a chain constituent — industry-filter false positive via Aerospace & Defense.",
+  "true_competitors": ["AIR.PA", "LMT", "NOC", "RTX", "GD", "ERJ"],
+  "chain_fit_confidence": "low"
+ }
+}

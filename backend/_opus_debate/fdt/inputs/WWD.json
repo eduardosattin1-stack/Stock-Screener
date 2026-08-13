@@ -1,0 +1,56 @@
+{
+  "symbol": "WWD",
+  "sector": "Industrials",
+  "signal_type": "future_disruptive_tech",
+  "company": "Woodward, Inc.",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Industrials\nValuation: Price 363.57 | Fair Value 186.36 | Margin of Safety -49% | P/FCF 65.7x\nRevenue growth: +7.3% YoY | 3-yr CAGR +14.4%\nMargins: Gross 26.8% (expanding) | Net 12.4% | FCF 9.5%\nEPS / guidance delivery: 7.19 latest | +19.6% YoY | 3-yr CAGR +38.4% | beat 7/7 qtrs (100%)\nFCF growth: -0.7% YoY | 3-yr CAGR +34.2%\nReturns / leverage: ROE 12.8% | ROIC 7.8% | Net debt 395M\nForward / signals: Consensus fwd EPS growth +13.5% | Margin 1.65sigma vs hist. peak | Insider buy ratio 0.00\nValuation models (stock page): DCF fair value 64.5 | Buffett fair value 186.4\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -100% | EPV -100% | Graham -28% | OwnerErn -100% | IV15 -100%\nQuality / scores: Bull score 1 | Catalyst score 0.5 | Piotroski 6/9 | Altman-Z (solvency) 7.3 | Days to next earnings 112\nAnalyst consensus target: 434.60 (+20% upside)\nPositioning / smart money: Smart-money score 64/100 | Institutional flow 50/100 | Analyst-target velocity +9% (vs yr-ago avg PT)\nTechnical posture (timing context, not thesis): price +4% vs 200d SMA | 60% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2021: rev 2.25B, NI 209M, EPS 3.18\n  2022: rev 2.38B, NI 172M, EPS 2.71\n  2023: rev 2.91B, NI 232M, EPS 3.78\n  2024: rev 3.32B, NI 373M, EPS 6.01\n  2025: rev 3.57B, NI 442M, EPS 7.19\n  CAGRs: bvps_5y +5.4%, eps_5y +22.6%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-06-30 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 377M | TTM diluted EPS 8.99 | latest-Q EPS YoY +36%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-06-30): NET DEBT 885M (borrowings 1.34B + capitalized leases 18M, minus cash 475M; ex-lease net debt ≈ 867M — filings often quote the ex-lease figure; STATE which definition your SoP uses) — this is a LIABILITY; in any Sum-of-Parts SUBTRACT it from enterprise value, NEVER add it back as 'net cash'; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 62 sells (47,254sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 442.50 | median 440.00 | high 470.00 | low 420.00\nBreadth: last month: 2 PTs avg 425.00 | last quarter: 3 PTs avg 421.67 | last year: 19 PTs avg 388.11\nNewest individual targets (dated — judge freshness yourself):\n  2026-08-04 Truist Financial: 420.00 (stock was 363.57)\n  2026-07-30 RBC Capital: 430.00 (stock was 351.26)\n  2026-05-05 Truist Financial: 415.00 (stock was 367.90)\n  2026-05-01 Scott Deuschle: 470.00 (stock was 362.99)\n  2026-04-16 Ken Herbert: 450.00 (stock was 374.91)\nNewest PT is 0 day(s) old\n\n=== SEGMENT REVENUE (FMP, 2024-09-30 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nAerospace: 2.03B (61%) | Industrial: 1.30B (39%)",
+  "dossier": "",
+  "chains": [
+    "power_for_ai"
+  ],
+  "business_model": "equipment_services",
+  "physical_anchor": "Manufactures fuel-system and actuation/combustion controls for aircraft engines and industrial gas turbines",
+  "commodity_revenue_share": 0.05,
+  "chain_regime": {
+    "power_for_ai": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "power_for_ai",
+    "torque_metrics": true,
+    "commodity_beta_2y": 0.0,
+    "beta_benchmark": "NGUSD",
+    "beta_is_proxy": false,
+    "ndebt_ebitda": 0.86,
+    "commodity_revenue_share": 0.05,
+    "as_of": "2026-08-04",
+    "ebitda_margin_ttm": 0.2012,
+    "ebitda_margin_band": {
+      "band": "q3_above_median",
+      "pct": 0.38,
+      "basis": "cohort_percentile",
+      "n_cohort": 8
+    },
+    "fcf_torque_10pct": 0.025,
+    "torque_note": "SYMMETRIC: fcf_torque_10pct is the +/-10% commodity move's % EBITDA swing (read the downside too). beta_is_proxy=False (proxy ETF regression where the spot is off-FMP)."
+  },
+  "gates": {
+    "ttm_fcf": 376527000,
+    "ttm_ocf": 585255000,
+    "ttm_capex": -208728000,
+    "ttm_ebitda": 843260000,
+    "ttm_revenue": 4191991000,
+    "rev_yoy": 0.2235,
+    "cash_sti": 474851000,
+    "balance_date": "2026-06-30",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 119057063.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.8578953931379936
+  }
+}

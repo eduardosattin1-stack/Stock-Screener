@@ -1,0 +1,19 @@
+{
+ "symbol": "RRX",
+ "physical_anchor": "manufactures precision motion-control components — motors, actuators (Kollmorgen, Thomson), gearing and power-transmission systems — used across industrial automation",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.08,
+ "value_chain_position": "motion control & actuators layer — sells motors, actuators and mechanical power-transmission hardware that go directly into factory-automation and robotic systems; established, profitable industrial toll-taker",
+ "true_competitors": [
+  "ROK",
+  "ETN",
+  "EMR",
+  "ABB",
+  "AME",
+  "DOV"
+ ],
+ "chain_fit_confidence": "high"
+}

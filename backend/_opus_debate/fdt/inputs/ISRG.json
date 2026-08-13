@@ -1,0 +1,60 @@
+{
+  "symbol": "ISRG",
+  "sector": "Healthcare",
+  "signal_type": "future_disruptive_tech",
+  "company": "Intuitive Surgical, Inc.",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Healthcare\nValuation: Price 375.41 | Fair Value 406.92 | Margin of Safety 8% | P/FCF 54.7x\nRevenue growth: +20.5% YoY | 3-yr CAGR +17.4%\nMargins: Gross 66.0% (stable) | Net 28.4% | FCF 24.7%\nEPS / guidance delivery: 7.87 latest | +22.6% YoY | 3-yr CAGR +29.2% | beat 7/7 qtrs (100%)\nFCF growth: +91.0% YoY | 3-yr CAGR +37.5%\nReturns / leverage: ROE 14.0% | ROIC 12.5% | Net debt -5.63B\nForward / signals: Consensus fwd EPS growth +11.9% | Margin -0.07sigma vs hist. peak | Insider buy ratio 0.00\nValuation models (stock page): DCF fair value 77.8 | Buffett fair value 406.9\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -100% | EPV -100% | Graham +6% | OwnerErn -100% | IV15 -100%\nQuality / scores: Bull score 5 | Catalyst score 0.6 | Piotroski 7/9 | Altman-Z (solvency) 31.1 | Days to next earnings 78\nAnalyst consensus target: 491.15 (+31% upside)\nPositioning / smart money: Smart-money score 37/100 | Institutional flow 50/100 | Analyst-target velocity -13% (vs yr-ago avg PT)\nTechnical posture (timing context, not thesis): price -22% vs 200d SMA | 17% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2021: rev 5.71B, NI 1.70B, EPS 4.66\n  2022: rev 6.22B, NI 1.32B, EPS 3.65\n  2023: rev 7.12B, NI 1.80B, EPS 5.03\n  2024: rev 8.35B, NI 2.32B, EPS 6.42\n  2025: rev 10.06B, NI 2.86B, EPS 7.87\n  CAGRs: bvps_5y +10.7%, eps_5y +14.0%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-06-30 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 3.22B | TTM diluted EPS 8.79 | latest-Q EPS YoY +30%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-06-30): NET CASH 5.22B (cash 5.22B exceeds total debt 0M, incl. capitalized leases 0M) — a genuine SoP add-back; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 30 sells (17,667sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 491.15 | median 493.50 | high 651.00 | low 357.44\nBreadth: last month: 18 PTs avg 488.97 | last quarter: 20 PTs avg 496.97 | last year: 46 PTs avg 568.47\nNewest individual targets (dated — judge freshness yourself):\n  2026-07-30 HSBC: 391.00 (stock was 353.10)\n  2026-07-28 Priya Sachdeva: 500.00 (stock was 356.83)\n  2026-07-27 Piper Sandler: 357.44 (stock was 358.35)\n  2026-07-17 Jayson Bedford: 483.00 (stock was 356.77)\n  2026-07-17 Mizuho Securities: 400.00 (stock was 402.33)\nNewest PT is 5 day(s) old\n\n=== SEGMENT REVENUE (FMP, 2025-12-31 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nInstruments and Accessories: 6.02B (60%) | Systems: 2.47B (25%) | Services: 1.57B (16%)",
+  "dossier": "",
+  "chains": [
+    "robotics_automation"
+  ],
+  "business_model": "equipment_services",
+  "physical_anchor": "da Vinci robotic surgical systems -- robotic arms, articulated instruments and 3D-vision consoles for minimally invasive surgery",
+  "commodity_revenue_share": 0.0,
+  "chain_regime": {
+    "robotics_automation": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "robotics_automation",
+    "torque_metrics": false,
+    "commodity_beta_2y": 0.61,
+    "beta_benchmark": "BOTZ",
+    "beta_is_proxy": true,
+    "ndebt_ebitda": -0.54,
+    "commodity_revenue_share": 0.0,
+    "as_of": "2026-08-04",
+    "gm_trajectory": {
+      "direction": "compressing",
+      "gm_recent_to_old": [
+        0.6744,
+        0.6639,
+        0.6746,
+        0.66
+      ],
+      "delta_3y": -0.0144
+    },
+    "rev_yoy": 0.2066,
+    "fcf_margin": 0.2921,
+    "torque_note": "NON-COMMODITY chain (no spot to lever to): no torque metric. commodity_beta_2y is a PROXY factor-exposure read vs BOTZ, not a commodity torque."
+  },
+  "gates": {
+    "ttm_fcf": 3222600000,
+    "ttm_ocf": 3706400000,
+    "ttm_capex": -483800000,
+    "ttm_ebitda": 4506400000,
+    "ttm_revenue": 11034400000,
+    "rev_yoy": 0.2066,
+    "cash_sti": 5216200000,
+    "balance_date": "2026-06-30",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 609858478.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.541940461305169
+  }
+}

@@ -1,0 +1,19 @@
+{
+ "symbol": "TLN",
+ "physical_anchor": "owns and operates the Susquehanna nuclear power station plus a merchant gas/power generation fleet, delivering electricity directly to a co-located Amazon AWS datacenter",
+ "chains": [
+  "power_for_ai",
+  "nuclear_smr"
+ ],
+ "business_model": "utility",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "nuclear-levered independent power producer with a signed behind-the-meter datacenter PPA — an explicit power_for_ai anchor example, and the 'nuclear-levered IPPs' layer of nuclear_smr even though Susquehanna is legacy large-reactor, not SMR",
+ "true_competitors": [
+  "CEG",
+  "VST",
+  "NRG",
+  "PEG",
+  "TAC"
+ ],
+ "chain_fit_confidence": "high"
+}

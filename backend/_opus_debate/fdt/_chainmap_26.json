@@ -1,0 +1,182 @@
+{
+ "RBRK": {
+  "physical_anchor": "none identifiable — Rubrik sells data-backup/cyber-resilience SaaS running on customers' own infrastructure, no proprietary hardware",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "cloud/on-prem data-security software vendor; sells subscriptions, not a physical product",
+  "true_competitors": ["COHESITY", "VEEAM", "CMVT", "NTNX", "PANW", "CRWD"],
+  "chain_fit_confidence": "low"
+ },
+ "RCAT": {
+  "physical_anchor": "manufactures small tactical/reconnaissance drones (UAS) — Black Widow, Teal 2 — for military and public-safety customers",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "builds and sells small unmanned aircraft hardware; no FDT chain in this taxonomy covers drones/UAS (not factory/warehouse robotics, not humanoid, not grid/nuclear/quantum) — genuine physical anchor but no genuine chain seat",
+  "true_competitors": ["AVAV", "KTOS", "ONDS", "UMAC", "DPRO", "UAVS"],
+  "chain_fit_confidence": "low"
+ },
+ "RDW": {
+  "physical_anchor": "manufactures space infrastructure hardware — satellite buses, solar arrays, robotic arms/mechanisms, in-space manufacturing systems",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "space-hardware manufacturer selling engineered components/programs to government and commercial space customers; chains_hint(nuclear_smr) is an Aerospace & Defense industry-string false positive — Redwire builds no reactor content",
+  "true_competitors": ["RKLB", "ASTS", "SPCE", "LMT", "MAXR", "SATL"],
+  "chain_fit_confidence": "low"
+ },
+ "RELL": {
+  "physical_anchor": "manufactures/distributes electron tubes, RF/power semiconductor components, and custom visual-display assemblies",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "legacy electronic-component distributor/manufacturer across RF-wireless, healthcare-display and industrial 'green energy' tube niches; not a grid transformer/switchgear maker, not a robot builder, not a quantum platform — chains_hint(robotics_automation, quantum) is a generic Hardware/Equipment industry-string false positive",
+  "true_competitors": ["AVT", "WCC", "DXPE", "PLXS", "BELFB", "ROG"],
+  "chain_fit_confidence": "low"
+ },
+ "RGEN": {
+  "physical_anchor": "manufactures bioprocessing instruments and single-use consumables (chromatography, filtration systems) for biologics manufacturing",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "biopharma-manufacturing equipment/consumables supplier; not surgical robotics, not factory/warehouse automation — chains_hint(robotics_automation) is a Medical-Instruments industry-string false positive",
+  "true_competitors": ["DHR", "SRDX", "AVTR", "TMO", "MRVI", "BIO"],
+  "chain_fit_confidence": "low"
+ },
+ "RGTI": {
+  "physical_anchor": "designs and fabricates superconducting-qubit quantum processors and full-stack quantum computing systems in its own Fab-1 facility",
+  "chains": ["quantum"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "qubit hardware platform layer — builds and operates superconducting quantum computers, monetized via government/enterprise cloud-access contracts and named research awards years ahead of commercial breakeven",
+  "true_competitors": ["IONQ", "QBTS", "IBM", "GOOGL", "HON", "MSFT"],
+  "chain_fit_confidence": "high"
+ },
+ "RIOT": {
+  "physical_anchor": "operates large-scale bitcoin-mining data centers running ASIC hardware — a power CONSUMER, not a chain equipment/utility supplier",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "crypto-mining operator; buys grid power to run ASICs, sells no electricity or grid equipment — chains_hint(robotics_automation, quantum) is a Hardware/Equipment-Parts industry-string false positive, no genuine FDT chain seat",
+  "true_competitors": ["MARA", "CLSK", "CIFR", "WULF", "HUT", "BITF"],
+  "chain_fit_confidence": "low"
+ },
+ "RKLB": {
+  "physical_anchor": "designs, manufactures and launches orbital rockets (Electron, Neutron) and builds satellite/spacecraft components",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "launch-vehicle and spacecraft-component manufacturer; chains_hint(nuclear_smr) is an Aerospace & Defense industry-string false positive — no reactor, fuel-cycle or SMR content",
+  "true_competitors": ["LMT", "NOC", "RDW", "ASTS", "SPCE", "BA"],
+  "chain_fit_confidence": "low"
+ },
+ "RNW": {
+  "physical_anchor": "owns and operates utility-scale solar and wind generation assets in India, selling electricity under long-term PPAs",
+  "chains": [],
+  "business_model": "utility",
+  "commodity_revenue_share": 0.1,
+  "value_chain_position": "emerging-market intermittent-renewable IPP; sells power under conventional PPAs with no documented AI-datacenter or firm-baseload linkage — the power_for_ai chain's thesis is firm/dispatchable capacity (nuclear-levered IPPs, gas turbines) serving a US datacenter interconnection queue, which a wind/solar India book does not genuinely ride",
+  "true_competitors": ["NEE", "AY", "BEPC", "CWEN", "ORA", "TAC"],
+  "chain_fit_confidence": "low"
+ },
+ "ROAD": {
+  "physical_anchor": "produces asphalt and builds/paves roads and highways in the southeastern US",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "road/highway paving and construction-materials company; not grid interconnection or datacenter EPC — chains_hint(electrification_grid, power_for_ai) is an Engineering & Construction industry-string false positive",
+  "true_competitors": ["VMC", "MLM", "STRL", "NVEE", "GVA", "MTZ"],
+  "chain_fit_confidence": "low"
+ },
+ "RPD": {
+  "physical_anchor": "none identifiable — Rapid7 sells vulnerability-management and detection-response cybersecurity software",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "cybersecurity SaaS vendor; no physical product",
+  "true_competitors": ["CRWD", "S", "TENB", "QLYS", "CYBR", "PANW"],
+  "chain_fit_confidence": "low"
+ },
+ "RR": {
+  "physical_anchor": "manufactures and deploys autonomous service robots — robotic bartenders/kiosks and the ADAM robotic-arm platform for food and beverage service",
+  "chains": ["robotics_automation"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "warehouse/service-robotics deployer at the hospitality edge — sells and licenses AI-driven robotic arms and autonomous serving units, pre-FCF with a tiny revenue base",
+  "true_competitors": ["SERV", "KSCP", "IRBT", "SYM", "ABB", "FANUY"],
+  "chain_fit_confidence": "medium"
+ },
+ "RRX": {
+  "physical_anchor": "manufactures precision motion-control components — motors, actuators (Kollmorgen, Thomson), gearing and power-transmission systems — used across industrial automation",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.08,
+  "value_chain_position": "motion control & actuators layer — sells motors, actuators and mechanical power-transmission hardware that go directly into factory-automation and robotic systems; established, profitable industrial toll-taker",
+  "true_competitors": ["ROK", "ETN", "EMR", "ABB", "AME", "DOV"],
+  "chain_fit_confidence": "high"
+ },
+ "RXT": {
+  "physical_anchor": "none identifiable — Rackspace operates as a managed cloud-services/hosting provider on third-party and customer-owned infrastructure",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "managed multi-cloud services vendor; software/services layer, not a datacenter/grid equipment owner-operator",
+  "true_competitors": ["ACN", "DXC", "IBM", "NET", "FTNT", "CTSH"],
+  "chain_fit_confidence": "low"
+ },
+ "RZLV": {
+  "physical_anchor": "none identifiable — Rezolve AI sells an AI-driven mobile-commerce software platform to retailers",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "AI retail-commerce SaaS platform; no physical product",
+  "true_competitors": ["SHOP", "BIGC", "SE", "GLBE", "PYPL", "SQ"],
+  "chain_fit_confidence": "low"
+ },
+ "S": {
+  "physical_anchor": "none identifiable — SentinelOne sells AI-driven endpoint-security software",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "cybersecurity SaaS vendor; no physical product",
+  "true_competitors": ["CRWD", "PANW", "FTNT", "RPD", "ZS", "CYBR"],
+  "chain_fit_confidence": "low"
+ },
+ "SAIL": {
+  "physical_anchor": "none identifiable — SailPoint sells identity-governance and access-management software",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "identity-security SaaS vendor; no physical product",
+  "true_competitors": ["OKTA", "CYBR", "PING", "MSFT", "IBM", "ONTO"],
+  "chain_fit_confidence": "low"
+ },
+ "SATL": {
+  "physical_anchor": "designs, manufactures and operates a constellation of small earth-observation satellites providing geospatial imagery",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "small-satellite manufacturer/operator selling geospatial data and satellite hardware/programs; no FDT chain in this taxonomy covers earth-observation space assets — chains_hint(nuclear_smr) is an Aerospace & Defense industry-string false positive",
+  "true_competitors": ["PL", "BKSY", "RDW", "MAXR", "ASTS", "IRDM"],
+  "chain_fit_confidence": "low"
+ },
+ "SDGR": {
+  "physical_anchor": "none identifiable — Schrödinger sells physics-based molecular-simulation software; its co-development therapeutics pipeline is pre-clinical/pre-revenue biotech, not a physical/industrial product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "computational drug-discovery software platform plus internal therapeutics programs; not robotics automation despite a Software-Application/robotics_automation industry-string overlap",
+  "true_competitors": ["CRL", "CTLT", "RXRX", "AI", "DNA", "ABCL"],
+  "chain_fit_confidence": "low"
+ },
+ "SERV": {
+  "physical_anchor": "designs, manufactures and operates autonomous sidewalk delivery robots (Uber/Nvidia-backed last-mile fleet)",
+  "chains": ["robotics_automation"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "physical-AI/mobile-robotics deployer at the last-mile delivery edge — builds and operates its own autonomous robot fleet, pre-FCF with fast-growing but tiny revenue",
+  "true_competitors": ["RR", "KSCP", "IRBT", "SYM", "DPRO", "ONDS"],
+  "chain_fit_confidence": "high"
+ }
+}

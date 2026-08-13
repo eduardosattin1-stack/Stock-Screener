@@ -1,0 +1,20 @@
+{
+ "symbol": "MTZ",
+ "physical_anchor": "Builds and installs physical electric transmission lines, distribution systems, substations, and pipeline/telecom infrastructure as a specialty EPC contractor",
+ "chains": [
+  "electrification_grid",
+  "power_for_ai"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.03,
+ "value_chain_position": "Grid EPC & interconnection layer: Power Delivery/Clean Energy & Infrastructure segments build the physical grid and datacenter-adjacent power infrastructure - the direct construction-services analog to anchor name PWR",
+ "true_competitors": [
+  "PWR",
+  "EME",
+  "MYRG",
+  "DY",
+  "IESC",
+  "GVA"
+ ],
+ "chain_fit_confidence": "high"
+}

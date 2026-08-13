@@ -1,0 +1,21 @@
+{
+ "symbol": "BHP",
+ "physical_anchor": "Mines and ships copper concentrate/cathode (Escondida) and iron ore, met coal and potash from operations across Australia, Chile and Canada.",
+ "chains": [
+  "copper_mining",
+  "diversified_miners"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.85,
+ "value_chain_position": "Multi-commodity major (copper, iron ore, met coal, potash) selling raw ore/concentrate; no rare-earth production despite the industry-filter hint.",
+ "true_competitors": [
+  "RIO",
+  "VALE",
+  "GLEN.L",
+  "FCX",
+  "TECK",
+  "S32.AX",
+  "AAL.L"
+ ],
+ "chain_fit_confidence": "high"
+}

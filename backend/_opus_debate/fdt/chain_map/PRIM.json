@@ -1,0 +1,19 @@
+{
+ "symbol": "PRIM",
+ "physical_anchor": "builds and installs physical power-delivery, pipeline, and utility-scale renewable-energy infrastructure as an EPC contractor",
+ "chains": [
+  "power_for_ai",
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "grid EPC & interconnection layer — construction contractor delivering transmission, substation, and utility-scale power projects, the same slot the taxonomy notes assign to Quanta Services (PWR).",
+ "true_competitors": [
+  "PWR",
+  "MYRG",
+  "MTZ",
+  "EME",
+  "DY"
+ ],
+ "chain_fit_confidence": "high"
+}

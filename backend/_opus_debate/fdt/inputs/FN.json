@@ -1,0 +1,60 @@
+{
+  "symbol": "FN",
+  "sector": "Technology",
+  "signal_type": "future_disruptive_tech",
+  "company": "Fabrinet",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Technology\nRevenue growth: +29.8% YoY\nReturns / leverage: Net debt -1\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-03-27 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 46M | TTM diluted EPS 11.64 | latest-Q EPS YoY +54%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-03-27): NET CASH 941M (cash 945M exceeds total debt 4M, incl. capitalized leases 3M) — a genuine SoP add-back; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 49 sells (179,012sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 751.00 | median 751.00 | high 800.00 | low 702.00\nBreadth: last month: 0 PTs | last quarter: 1 PTs avg 702.00 | last year: 10 PTs avg 567.50\n[THIN CONSENSUS: only 1 price target(s) printed last quarter — this is NOT a street-wide view; weigh individual PTs below accordingly]\nNewest individual targets (dated — judge freshness yourself):\n  2026-05-05 Tim Long: 702.00 (stock was 717.80)\n  2026-04-20 Northland Securities: 800.00 (stock was 684.33)\n  2026-02-04 Wolfe Research: 540.00 (stock was 457.98)\n  2026-02-03 Tim Long: 548.00 (stock was 499.61)\n  2026-01-22 Susquehanna: 570.00 (stock was 488.36)\nNewest PT is 91 day(s) old",
+  "dossier": "",
+  "chains": [
+    "quantum"
+  ],
+  "business_model": "equipment_services",
+  "physical_anchor": "contract manufacturer of precision optical and photonic components — transceivers, lasers, sensors — for networking, datacom, and photonics equipment makers",
+  "commodity_revenue_share": 0.0,
+  "chain_regime": {
+    "quantum": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "quantum",
+    "torque_metrics": false,
+    "commodity_beta_2y": 0.93,
+    "beta_benchmark": "QTUM",
+    "beta_is_proxy": true,
+    "ndebt_ebitda": -0.69,
+    "commodity_revenue_share": 0.0,
+    "as_of": "2026-08-04",
+    "gm_trajectory": {
+      "direction": "flat",
+      "gm_recent_to_old": [
+        0.1232,
+        0.1271,
+        0.1235,
+        0.1209
+      ],
+      "delta_3y": -0.0023
+    },
+    "rev_yoy": 0.2979,
+    "fcf_margin": 0.0108,
+    "torque_note": "NON-COMMODITY chain (no spot to lever to): no torque metric. commodity_beta_2y is a PROXY factor-exposure read vs QTUM, not a commodity torque."
+  },
+  "gates": {
+    "ttm_fcf": 45583000,
+    "ttm_ocf": 256851000,
+    "ttm_capex": -211268000,
+    "ttm_ebitda": 510356999,
+    "ttm_revenue": 4235001000,
+    "rev_yoy": 0.2979,
+    "cash_sti": 945236000,
+    "balance_date": "2026-03-27",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 431623316.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.6899817200312364
+  }
+}

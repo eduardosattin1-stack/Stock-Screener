@@ -1,0 +1,182 @@
+{
+ "CENX": {
+  "physical_anchor": "Primary aluminum smelter — casts aluminum ingot/billet at Grundartangi (Iceland) and Mt. Holly/Hawesville (US) from purchased alumina, not mined bauxite.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Downstream smelter/converter — buys third-party alumina and smelts it into primary aluminum metal; does not mine bauxite/alumina ore and is not a copper producer.",
+  "true_competitors": ["AA", "NHYDY", "KALU", "S32", "RIO", "0486.HK"],
+  "chain_fit_confidence": "low"
+ },
+ "CGAU": {
+  "physical_anchor": "Operates open-pit and heap-leach mines producing gold doré (Öksüt, Goldfield) and copper-gold concentrate (Mount Milligan).",
+  "chains": ["precious_metals", "copper_mining"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.9,
+  "value_chain_position": "Mid-tier producer selling refined gold doré and copper-gold concentrate directly from its own mines — not a converter of purchased ore.",
+  "true_competitors": ["AEM", "EGO", "IAG", "BTG", "AGI", "HBM"],
+  "chain_fit_confidence": "high"
+ },
+ "CMC": {
+  "physical_anchor": "Electric-arc-furnace mini-mills recycling purchased scrap steel into rebar, merchant bar and wire products.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Downstream converter — melts purchased scrap into finished long-steel products; sells no iron ore/concentrate, the discriminator this chain requires.",
+  "true_competitors": ["NUE", "STLD", "GGB", "MT", "CLF", "SCHN"],
+  "chain_fit_confidence": "low"
+ },
+ "CRS": {
+  "physical_anchor": "Melts and forms specialty stainless, titanium and nickel-based alloy bar/billet/wire for aerospace and defense from purchased metal/scrap feedstock.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Downstream specialty-alloy converter — buys metal inputs and adds metallurgical value; does not mine or sell ore/concentrate.",
+  "true_competitors": ["ATI", "HAYN", "KMT", "USAP", "VSMPO.ME", "PCC"],
+  "chain_fit_confidence": "low"
+ },
+ "CSTM": {
+  "physical_anchor": "Rolls and extrudes aluminum sheet, plate and profiles for aerospace, automotive and packaging from purchased primary and recycled aluminum.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Downstream fabricator — converts purchased aluminum metal into rolled/extruded products; does not mine bauxite or produce primary metal from ore.",
+  "true_competitors": ["AA", "KALU", "NHYDY", "HNDL.L", "ARNC"],
+  "chain_fit_confidence": "low"
+ },
+ "ECL": {
+  "physical_anchor": "Manufactures and dispenses water-treatment and industrial-hygiene chemicals and dosing equipment on customer sites.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Specialty chemicals/water-treatment services provider — no rare-earth, antimony, gallium or tungsten exposure; caught only by the generic 'Chemicals - Specialty' FMP industry string.",
+  "true_competitors": ["VLTO", "ASH", "DD", "KWR", "BASFY"],
+  "chain_fit_confidence": "low"
+ },
+ "EGO": {
+  "physical_anchor": "Operates open-pit and underground mines producing gold doré (Kışladağ, Lamaque, Efemçukuru).",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.97,
+  "value_chain_position": "Mid-tier multi-country gold producer selling refined doré from company-operated mines.",
+  "true_competitors": ["AGI", "CGAU", "IAG", "BTG", "EQX", "KGC"],
+  "chain_fit_confidence": "high"
+ },
+ "EQX": {
+  "physical_anchor": "Operates open-pit mines across the Americas producing gold doré/bullion (Los Filos, Castle Mountain, Greenstone).",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.97,
+  "value_chain_position": "Multi-asset Americas gold producer selling refined gold from company-operated mines.",
+  "true_competitors": ["AGI", "EGO", "CGAU", "IAG", "TXG.TO", "NGD"],
+  "chain_fit_confidence": "high"
+ },
+ "ERO": {
+  "physical_anchor": "Operates underground/open-pit mines in Brazil producing copper concentrate with gold byproduct (Caraíba, Tucumã, Xavantina).",
+  "chains": ["copper_mining"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.85,
+  "value_chain_position": "Focused Brazilian copper producer selling copper concentrate with a gold-byproduct credit; not a converter or processor.",
+  "true_competitors": ["HBM", "LUN.TO", "CS.TO", "TGB", "IVN.TO", "FM.TO"],
+  "chain_fit_confidence": "high"
+ },
+ "EXK": {
+  "physical_anchor": "Operates underground mines in Mexico producing silver-gold doré/concentrate (Guanaceví, Bolañitos, Terronera).",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.9,
+  "value_chain_position": "Silver-primary Mexican producer selling doré and concentrate with dominant_metal=silver; gold is the byproduct credit.",
+  "true_competitors": ["PAAS", "AG", "HL", "CDE", "MAG", "FSM"],
+  "chain_fit_confidence": "high"
+ },
+ "FCX": {
+  "physical_anchor": "Operates large open-pit copper mines (Grasberg, Morenci, Cerro Verde) and an integrated smelter producing copper concentrate and cathode with gold/molybdenum byproducts.",
+  "chains": ["copper_mining"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.85,
+  "value_chain_position": "Major vertically-integrated copper producer (mine through smelter) — sells copper concentrate, cathode, and byproduct gold/moly; not a diversified multi-commodity major.",
+  "true_competitors": ["SCCO", "BHP", "RIO", "ANTO.L", "GLEN.L", "TECK"],
+  "chain_fit_confidence": "high"
+ },
+ "FNV": {
+  "physical_anchor": "Holds royalty and streaming contracts entitling it to a percentage of gold, PGM and copper output/revenue from mines it does not operate (e.g., Cobre Panama, Candelaria, Antamina).",
+  "chains": ["precious_metals"],
+  "business_model": "royalty_streamer",
+  "commodity_revenue_share": 0.8,
+  "value_chain_position": "Royalty/streaming layer — no operating or capex exposure, collects contractual metal-linked payment streams across a diversified portfolio; some non-metal energy royalties dilute the pure-gold mix.",
+  "true_competitors": ["WPM", "RGLD", "OR", "SAND", "TFPM", "MTA"],
+  "chain_fit_confidence": "high"
+ },
+ "FSM": {
+  "physical_anchor": "Operates underground and open-pit mines across the Americas and West Africa producing gold and silver doré/concentrate (Séguéla, Lindero, San Jose).",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.95,
+  "value_chain_position": "Multi-country gold/silver producer selling refined doré/concentrate from company-operated mines.",
+  "true_competitors": ["PAAS", "CDE", "EXK", "AGI", "BTG", "SSRM"],
+  "chain_fit_confidence": "high"
+ },
+ "GFI": {
+  "physical_anchor": "Operates deep-level and open-pit mines in South Africa, Australia, Ghana and Peru producing gold doré/bullion.",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.95,
+  "value_chain_position": "Senior multi-country gold producer selling refined gold from company-operated mines.",
+  "true_competitors": ["AU", "HMY", "NEM", "B", "KGC", "AEM"],
+  "chain_fit_confidence": "high"
+ },
+ "GGB": {
+  "physical_anchor": "Electric-arc and blast-furnace mini-mills producing long steel (rebar, wire rod) primarily from purchased scrap.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Downstream steel converter — sells finished long-steel products, not iron ore/concentrate; any captive ore feeds internal mills only and is never sold externally, the exact converter pattern the chain notes flag for exclusion.",
+  "true_competitors": ["CMC", "NUE", "MT", "TX", "SID", "STLD"],
+  "chain_fit_confidence": "low"
+ },
+ "HBM": {
+  "physical_anchor": "Operates open-pit/underground mines (Constancia Peru, Manitoba, Copper World Arizona) producing copper concentrate with zinc, gold and silver byproducts.",
+  "chains": ["copper_mining"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.75,
+  "value_chain_position": "Polymetallic base-metal producer — sells copper concentrate as the dominant product with meaningful zinc/gold/silver byproduct credits.",
+  "true_competitors": ["ERO", "LUN.TO", "CS.TO", "TECK", "TGB", "FM.TO"],
+  "chain_fit_confidence": "high"
+ },
+ "HL": {
+  "physical_anchor": "Operates underground mines (Greens Creek, Lucky Friday, Casa Berardi) producing silver-lead-zinc concentrate and gold doré.",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.85,
+  "value_chain_position": "US silver-primary producer selling concentrate/doré from company-operated mines; dominant_metal=silver with a gold byproduct at Casa Berardi.",
+  "true_competitors": ["PAAS", "CDE", "AG", "EXK", "MAG", "SSRM"],
+  "chain_fit_confidence": "high"
+ },
+ "HMY": {
+  "physical_anchor": "Operates deep-level underground and surface mines in South Africa plus Hidden Valley (PNG) producing gold doré/bullion.",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.95,
+  "value_chain_position": "South African gold major selling refined gold from company-operated mines; Eva Copper remains a pre-production development asset, not yet revenue.",
+  "true_competitors": ["GFI", "AU", "SBSW", "DRD", "PAF.L", "KGC"],
+  "chain_fit_confidence": "high"
+ },
+ "IAG": {
+  "physical_anchor": "Operates open-pit and underground mines (Essakane Burkina Faso, Côté Gold and Westwood Canada) producing gold doré.",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.95,
+  "value_chain_position": "Multi-country gold producer selling refined doré from company-operated mines.",
+  "true_competitors": ["EGO", "CGAU", "AGI", "BTG", "EQX", "SSRM"],
+  "chain_fit_confidence": "high"
+ },
+ "IFF": {
+  "physical_anchor": "Synthesizes and formulates flavor, fragrance and specialty food/nutrition ingredients.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Flavors & fragrances / specialty-ingredients manufacturer — no linkage to rare earths, antimony, gallium or tungsten; caught only by the generic 'Chemicals - Specialty' FMP industry string.",
+  "true_competitors": ["GIVN.SW", "SY1.DE", "DSFIR.AS", "SXT", "CRDA.L", "KRZ.IR"],
+  "chain_fit_confidence": "low"
+ }
+}

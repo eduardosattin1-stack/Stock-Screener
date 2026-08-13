@@ -1,0 +1,19 @@
+{
+ "symbol": "ERO",
+ "physical_anchor": "Operates underground/open-pit mines in Brazil producing copper concentrate with gold byproduct (Caraíba, Tucumã, Xavantina).",
+ "chains": [
+  "copper_mining"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.85,
+ "value_chain_position": "Focused Brazilian copper producer selling copper concentrate with a gold-byproduct credit; not a converter or processor.",
+ "true_competitors": [
+  "HBM",
+  "LUN.TO",
+  "CS.TO",
+  "TGB",
+  "IVN.TO",
+  "FM.TO"
+ ],
+ "chain_fit_confidence": "high"
+}

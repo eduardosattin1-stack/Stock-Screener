@@ -1,0 +1,20 @@
+{
+ "symbol": "DRS",
+ "physical_anchor": "Manufactures electro-optical/infrared sensors, radar, and power conversion/distribution systems for U.S. Navy surface ships and submarines, including nuclear-powered vessels.",
+ "chains": [
+  "nuclear_smr"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Naval defense electronics and power-systems supplier occupying the 'reactor components & naval/defense nuclear' layer alongside BWXT, though electro-optical/sensor systems — not reactor hardware — is DRS's larger revenue base.",
+ "true_competitors": [
+  "BWXT",
+  "LHX",
+  "LDOS",
+  "KTOS",
+  "HII",
+  "GD",
+  "RTX"
+ ],
+ "chain_fit_confidence": "medium"
+}

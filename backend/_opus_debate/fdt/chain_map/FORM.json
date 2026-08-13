@@ -1,0 +1,19 @@
+{
+ "symbol": "FORM",
+ "physical_anchor": "manufactures semiconductor wafer probe cards and cryogenic probe-station test systems used to test chips including quantum devices",
+ "chains": [
+  "quantum"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "semiconductor test/probe equipment maker — cryogenics & control-electronics/probing layer of the quantum stack; named taxonomy anchor example",
+ "true_competitors": [
+  "COHR",
+  "TER",
+  "KLAC",
+  "LRCX",
+  "AMAT",
+  "Bluefors (private)"
+ ],
+ "chain_fit_confidence": "high"
+}

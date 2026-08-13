@@ -1,0 +1,19 @@
+{
+ "symbol": "SYK",
+ "physical_anchor": "Makes the Mako robotic-arm-assisted surgical system for joint reconstruction plus orthopedic implants and surgical instruments — a leading physical surgical-robotics platform.",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Surgical robotics & orthopedic/medtech device maker — Mako robotic platform is the flagship capital-equipment franchise driving implant pull-through.",
+ "true_competitors": [
+  "ISRG",
+  "ZBH",
+  "SNN",
+  "MDT",
+  "GMED",
+  "JNJ"
+ ],
+ "chain_fit_confidence": "high"
+}

@@ -1,0 +1,20 @@
+{
+ "symbol": "BE",
+ "physical_anchor": "Makes solid-oxide fuel cell power-generation systems (Energy Servers) deployed on-site to power datacenters and commercial customers.",
+ "chains": [
+  "power_for_ai",
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Behind-the-meter distributed power generation — sells firm on-site fuel-cell electrons directly into the datacenter power-delivery queue (power_for_ai) and grid-independent electrification capacity (electrification_grid).",
+ "true_competitors": [
+  "PLUG",
+  "FCEL",
+  "GEV",
+  "CEG",
+  "VST",
+  "BLDP"
+ ],
+ "chain_fit_confidence": "high"
+}

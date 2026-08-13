@@ -1,0 +1,21 @@
+{
+ "symbol": "RIO",
+ "physical_anchor": "mines and ships iron ore, copper concentrate/cathode, and bauxite/aluminum from operations on five continents",
+ "chains": [
+  "copper_mining",
+  "diversified_miners"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.9,
+ "value_chain_position": "diversified major (iron ore ~55% of revenue, copper, aluminum, minerals) — anchor example for both copper_mining and diversified_miners, legal two-chain membership within this book",
+ "true_competitors": [
+  "BHP",
+  "VALE",
+  "GLEN",
+  "FCX",
+  "SCCO",
+  "TECK",
+  "S32"
+ ],
+ "chain_fit_confidence": "high"
+}

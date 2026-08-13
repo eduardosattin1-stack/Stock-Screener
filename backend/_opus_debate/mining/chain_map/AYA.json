@@ -1,0 +1,19 @@
+{
+ "symbol": "AYA",
+ "physical_anchor": "Mines and processes silver ore into concentrate/doré at the Zgounder and Boumadine mines in Morocco.",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.9,
+ "value_chain_position": "Silver-primary producer selling concentrate/doré from Moroccan mines.",
+ "true_competitors": [
+  "PAAS",
+  "AG",
+  "EXK",
+  "MAG",
+  "HL",
+  "FRES.L"
+ ],
+ "chain_fit_confidence": "high"
+}

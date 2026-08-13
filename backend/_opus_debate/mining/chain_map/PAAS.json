@@ -1,0 +1,20 @@
+{
+ "symbol": "PAAS",
+ "physical_anchor": "mines and produces silver/gold doré at primary-silver mines across the Americas",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.85,
+ "value_chain_position": "primary silver producer with significant gold byproduct credits; dominant_metal=silver",
+ "true_competitors": [
+  "AG",
+  "HL",
+  "CDE",
+  "MAG",
+  "SVM",
+  "FSM",
+  "EXK"
+ ],
+ "chain_fit_confidence": "high"
+}

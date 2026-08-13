@@ -1,0 +1,604 @@
+[
+ {
+  "symbol": "BAND",
+  "name": "Bandwidth Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 1463903955,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 72508000,
+   "ttm_ocf": 98418000,
+   "ttm_capex": -25910000,
+   "ttm_ebitda": 52011000,
+   "ttm_revenue": 828244000,
+   "rev_yoy": 0.0925,
+   "cash_sti": 174357000000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 14122558.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 7.052584185348467
+  }
+ },
+ {
+  "symbol": "BAX",
+  "name": "Baxter International Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Instruments & Supplies",
+  "mcap": 14302694119,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 678000000,
+   "ttm_ocf": 1319000000,
+   "ttm_capex": -641000000,
+   "ttm_ebitda": 750000000,
+   "ttm_revenue": 11470000000,
+   "rev_yoy": 0.0536,
+   "cash_sti": 2150000000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 66322051.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 10.392953929539296
+  }
+ },
+ {
+  "symbol": "BBNX",
+  "name": "Beta Bionics, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 633918201,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -61411000,
+   "ttm_ocf": -55810000,
+   "ttm_capex": -5601000,
+   "ttm_ebitda": -71740000,
+   "ttm_revenue": 119013000,
+   "rev_yoy": 0.5254,
+   "cash_sti": 180489000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 5117583.0,
+   "runway_months": 35.3,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 19740850.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "BDX",
+  "name": "Becton, Dickinson and Company",
+  "sector": "Healthcare",
+  "industry": "Medical - Instruments & Supplies",
+  "mcap": 61698855700,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 3142000000,
+   "ttm_ocf": 3901000000,
+   "ttm_capex": -759000000,
+   "ttm_ebitda": 4684000000,
+   "ttm_revenue": 21365000000,
+   "rev_yoy": 0.0239,
+   "cash_sti": 816000000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 98639463.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.5153714773697695
+  }
+ },
+ {
+  "symbol": "BEP",
+  "name": "Brookfield Renewable Partners L.P.",
+  "sector": "Utilities",
+  "industry": "Renewable Utilities",
+  "mcap": 10137382440,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": -4720958839,
+   "ttm_ocf": 1386656980,
+   "ttm_capex": -6107615819,
+   "ttm_ebitda": 4539413003,
+   "ttm_revenue": 6338054026,
+   "rev_yoy": 0.0266,
+   "cash_sti": 2767675000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 393413237.0,
+   "runway_months": 7.0,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 16844087.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 7.066661633028533
+  }
+ },
+ {
+  "symbol": "BEPC",
+  "name": "Brookfield Renewable Corporation",
+  "sector": "Utilities",
+  "industry": "Renewable Utilities",
+  "mcap": 4965869899,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": -541450070,
+   "ttm_ocf": 775959498,
+   "ttm_capex": -1224078787,
+   "ttm_ebitda": -1643376008,
+   "ttm_revenue": 4156218107,
+   "rev_yoy": 0.0693,
+   "cash_sti": 717000000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 37343274.0,
+   "runway_months": 19.2,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 20531182.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "BETA",
+  "name": "BETA Technologies, Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 4834036028,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": -367838000,
+   "ttm_ocf": -304896000,
+   "ttm_capex": -62942000,
+   "ttm_ebitda": -754264500,
+   "ttm_revenue": 37966500,
+   "rev_yoy": null,
+   "cash_sti": 1589398000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 30653167.0,
+   "runway_months": 51.9,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 43186974.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "BFLY",
+  "name": "Butterfly Network, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 2323338257,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -35793000,
+   "ttm_ocf": -31770000,
+   "ttm_capex": -4023000,
+   "ttm_ebitda": -69018000,
+   "ttm_revenue": 108557000,
+   "rev_yoy": 0.2404,
+   "cash_sti": 124659000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 2982750.0,
+   "runway_months": 41.8,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 46204485.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "BILL",
+  "name": "Bill.com Holdings, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 4817492379,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 383057999,
+   "ttm_ocf": 388662000,
+   "ttm_capex": -5604001,
+   "ttm_ebitda": 136765000,
+   "ttm_revenue": 1600324000,
+   "rev_yoy": 0.1247,
+   "cash_sti": 2173345000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 41455847.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 6.516155449128067
+  }
+ },
+ {
+  "symbol": "BKKT",
+  "name": "Bakkt Holdings, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 338384296,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -64491000,
+   "ttm_ocf": -60076000,
+   "ttm_capex": -4415000,
+   "ttm_ebitda": -129650000,
+   "ttm_revenue": 1522859000,
+   "rev_yoy": -0.5896,
+   "cash_sti": 80233000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 5374250.0,
+   "runway_months": 14.9,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 4061608.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "BKSY",
+  "name": "BlackSky Technology Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 1048616000,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": -73525000,
+   "ttm_ocf": -57912000,
+   "ttm_capex": -15613000,
+   "ttm_ebitda": -38515000,
+   "ttm_revenue": 97805000,
+   "rev_yoy": -0.0893,
+   "cash_sti": 115521000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 6127083.0,
+   "runway_months": 18.9,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 10894033.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "BL",
+  "name": "BlackLine, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 1898630972,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 152628000,
+   "ttm_ocf": 169121000,
+   "ttm_capex": -16493000,
+   "ttm_ebitda": 105406000,
+   "ttm_revenue": 716651000,
+   "rev_yoy": 0.0812,
+   "cash_sti": 525071000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 16443252.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 4.224427451947707
+  }
+ },
+ {
+  "symbol": "BLDP",
+  "name": "Ballard Power Systems Inc.",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 841117619,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -36720143,
+   "ttm_ocf": -30078707,
+   "ttm_capex": -6641436,
+   "ttm_ebitda": -63927015,
+   "ttm_revenue": 105634942,
+   "rev_yoy": 0.4569,
+   "cash_sti": 504541822,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 3060012.0,
+   "runway_months": 164.9,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 5433318.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "BLFS",
+  "name": "BioLife Solutions, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Instruments & Supplies",
+  "mcap": 1577850217,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -1794000,
+   "ttm_ocf": 17897000,
+   "ttm_capex": -19691000,
+   "ttm_ebitda": -7460000,
+   "ttm_revenue": 99773000,
+   "rev_yoy": 0.4092,
+   "cash_sti": 80996000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 149500.0,
+   "runway_months": 541.8,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 6784323.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "BLKB",
+  "name": "Blackbaud, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 2044869395,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 278514000,
+   "ttm_ocf": 289087000,
+   "ttm_capex": -10573000,
+   "ttm_ebitda": 321494000,
+   "ttm_revenue": 1148136000,
+   "rev_yoy": 0.0064,
+   "cash_sti": 34388000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 7544945.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.643408009359536
+  }
+ },
+ {
+  "symbol": "BLSH",
+  "name": "Bullish",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 3534922945,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 44793000,
+   "ttm_ocf": 47527999,
+   "ttm_capex": -2734999,
+   "ttm_ebitda": -978809000,
+   "ttm_revenue": 216526614000,
+   "rev_yoy": -0.1343,
+   "cash_sti": 359695000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 9254746.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "BLZE",
+  "name": "Backblaze, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 1290310715,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 21200000,
+   "ttm_ocf": 32203000,
+   "ttm_capex": -11003000,
+   "ttm_ebitda": 2853000,
+   "ttm_revenue": 156303000,
+   "rev_yoy": 0.1385,
+   "cash_sti": 49882000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 179571228.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 5.74124761298536
+  }
+ },
+ {
+  "symbol": "BRKR",
+  "name": "Bruker Corporation",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 7930193882,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 93900000,
+   "ttm_ocf": 190400000,
+   "ttm_capex": -96500000,
+   "ttm_ebitda": 136600000,
+   "ttm_revenue": 3499600000,
+   "rev_yoy": 0.0165,
+   "cash_sti": 184900000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 244621137.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 5.080607862570202
+  }
+ },
+ {
+  "symbol": "BRUN",
+  "name": "Boost Run Inc. Class A Common Stock",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 1793765089,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": null,
+   "ttm_ocf": null,
+   "ttm_capex": null,
+   "ttm_ebitda": 127419,
+   "ttm_revenue": 18541000,
+   "rev_yoy": null,
+   "cash_sti": 13241000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": null,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 7599630.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "BRZE",
+  "name": "Braze, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 2961086578,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 65941000,
+   "ttm_ocf": 75420000,
+   "ttm_capex": -9479000,
+   "ttm_ebitda": -105254000,
+   "ttm_revenue": 787122000,
+   "rev_yoy": 0.2695,
+   "cash_sti": 387521000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 13569139.0,
+   "royalty_hint": false
+  }
+ }
+]

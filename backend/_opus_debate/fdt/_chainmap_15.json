@@ -1,0 +1,182 @@
+{
+ "AEVA": {
+  "physical_anchor": "FMCW 4D LiDAR-on-chip sensors for autonomous vehicles, industrial automation and robotics",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Machine vision & sensing layer — designs and sells silicon-photonics FMCW LiDAR sensor modules to auto and industrial customers",
+  "true_competitors": ["LAZR", "OUST", "INVZ", "MVIS", "CPTN", "HSAI"],
+  "chain_fit_confidence": "medium"
+ },
+ "AHCO": {
+  "physical_anchor": "distributes and services home medical equipment (CPAP machines, oxygen concentrators, wheelchairs) — a DME logistics/service business, not a maker of chain-defined hardware",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Home durable-medical-equipment distribution/rental — no genuine tie to any FDT value-chain layer (electrification, nuclear, power, robotics or quantum)",
+  "true_competitors": ["OMI", "CAH", "MCK", "HSIC", "PDCO"],
+  "chain_fit_confidence": "low"
+ },
+ "AIN": {
+  "physical_anchor": "manufactures engineered paper-machine clothing (fabrics/belts) and composite aerostructures/jet-engine components for aerospace",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Industrial textiles + aerospace composites — FMP's Aerospace & Defense tag pulled it into the nuclear_smr screen, but the business is paper-mill fabrics and jet-engine composite parts, not reactors or naval/defense nuclear",
+  "true_competitors": ["HXL", "SPR", "CW", "HEI", "TDY", "ANDR.VI"],
+  "chain_fit_confidence": "low"
+ },
+ "AIP": {
+  "physical_anchor": "none — licenses semiconductor network-on-chip (NoC) interconnect IP; a design-IP licensor, not a maker of physical chain hardware",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Semiconductor IP licensing (ARM-style) — no qubit, cryo, photonics or reactor hardware; anti-Visa case in the quantum screen",
+  "true_competitors": ["ARM", "SNPS", "CDNS", "CEVA", "RMBS"],
+  "chain_fit_confidence": "low"
+ },
+ "AIRJ": {
+  "physical_anchor": "MOF-based adsorption cooling/dehumidification and atmospheric-water-harvesting modules (JV with GE Aerospace and Carrier)",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Pre-revenue thermal/moisture-management hardware developer — datacenter cooling is a target market but no defined FDT chain layer (transformers, reactors, turbines, robotics) covers cooling/dehumidification equipment",
+  "true_competitors": ["CARR", "VRT", "MOD", "JCI"],
+  "chain_fit_confidence": "low"
+ },
+ "AKAM": {
+  "physical_anchor": "none — operates a CDN/edge-compute and cybersecurity software network; no physical thing made, moved or powered",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cloud/edge software services — classic anti-Visa case caught by the quantum screen on post-quantum-cryptography keyword noise",
+  "true_competitors": ["NET", "FSLY", "AMZN", "GOOGL", "MSFT"],
+  "chain_fit_confidence": "low"
+ },
+ "ALGM": {
+  "physical_anchor": "designs and manufactures magnetic-sensor and motor-driver/power-management ICs used in motor control, current sensing and power conversion",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Motion-control & actuators layer — sensor/driver chips inside EV, industrial-automation and robotic motor systems",
+  "true_competitors": ["TXN", "ADI", "ON", "NXPI", "MCHP", "IFX.DE"],
+  "chain_fit_confidence": "medium"
+ },
+ "ALH": {
+  "physical_anchor": "manufactures commercial and industrial laundry machines (washers/dryers) sold under Alliance/IPSO/Speed Queen brands",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Legacy industrial-machinery manufacturer — laundry equipment, not electrification/grid, nuclear, power-for-AI or robotics/automation hardware; caught by the broad Industrial - Machinery filter",
+  "true_competitors": ["ELUXB.ST", "WHR"],
+  "chain_fit_confidence": "low"
+ },
+ "ALKT": {
+  "physical_anchor": "none — cloud-based digital banking software (online/mobile banking platform for banks and credit unions)",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Fintech SaaS — no physical anchor at all, textbook anti-Visa exclusion",
+  "true_competitors": ["QTWO", "NCNO", "JKHY", "FI", "FIS", "TEMN.SW"],
+  "chain_fit_confidence": "low"
+ },
+ "ALMU": {
+  "physical_anchor": "grows and fabricates III-V compound-semiconductor epitaxial wafers/photonic chips (GaAs/InP-on-silicon) for optical interconnect, sensing and quantum-photonics applications",
+  "chains": ["quantum"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Photonics & lasers layer — supplies compound-semiconductor photonic wafers/chips to defense, telecom and early quantum-photonics programs",
+  "true_competitors": ["IQE.L", "COHR", "AXTI", "LASR", "SIVE.ST"],
+  "chain_fit_confidence": "medium"
+ },
+ "AMBA": {
+  "physical_anchor": "designs edge-AI computer-vision processor SoCs embedded in cameras for autonomous vehicles, robotics and security/industrial vision systems",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Machine vision & sensing layer — vision-processing silicon that goes into every camera-equipped robot/AMR/ADAS deployment",
+  "true_competitors": ["NVDA", "QCOM", "MBLY", "SYNA", "CEVA", "ON"],
+  "chain_fit_confidence": "high"
+ },
+ "AMBQ": {
+  "physical_anchor": "designs ultra-low-power microcontroller/AI SoCs primarily for wearables, hearables and general IoT devices",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "General-purpose low-power edge silicon — not tied to robotics motion/vision, quantum hardware, or any grid/nuclear/power layer; keyword-matched into quantum on 'semiconductor' alone",
+  "true_competitors": ["STM", "NXPI", "MCHP", "SLAB", "NOD.OL", "6723.T"],
+  "chain_fit_confidence": "low"
+ },
+ "AMPL": {
+  "physical_anchor": "none — cloud product-analytics SaaS platform",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Software analytics — no physical thing made/moved/powered; anti-Visa exclusion, caught by generic 'Software - Application' listing under robotics_automation",
+  "true_competitors": ["ADBE", "GOOGL"],
+  "chain_fit_confidence": "low"
+ },
+ "AMPX": {
+  "physical_anchor": "manufactures high-energy-density silicon-anode lithium-ion battery cells for drones, eVTOL and defense applications",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Battery-cell manufacturing — a real physical product, but none of the FDT chains here define a battery-cell layer (electrification_grid is transformers/switchgear, robotics_automation is motion-control/vision/surgical/humanoid, not power cells); belongs to a battery/EV-adjacent book, not this one",
+  "true_competitors": ["QS", "SES", "ENVX", "FREY", "6752.T", "373220.KS"],
+  "chain_fit_confidence": "low"
+ },
+ "AMRC": {
+  "physical_anchor": "designs, builds and operates energy-infrastructure projects (solar, storage, energy efficiency retrofits, RNG) under long-term contracts, and owns a fleet of revenue-generating energy assets",
+  "chains": ["electrification_grid", "power_for_ai"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Grid EPC & interconnection layer — EPC/ESCO delivering electrification and energy-efficiency infrastructure into the same interconnection-queue bottleneck as grid-equipment and datacenter-power names",
+  "true_competitors": ["JCI", "TT", "HON", "SU.PA", "ENGI.PA", "NEE"],
+  "chain_fit_confidence": "medium"
+ },
+ "AMTM": {
+  "physical_anchor": "provides engineering, operations & maintenance services for the DOE/NNSA nuclear-weapons complex, naval nuclear-propulsion programs, and nuclear-site environmental remediation, alongside broad government engineering services",
+  "chains": ["nuclear_smr"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Reactor components & naval/defense nuclear layer — legacy DOE-nuclear-complex and naval-reactor service work is a real but small slice of a much larger diversified government-services book",
+  "true_competitors": ["LDOS", "SAIC", "BAH", "PSN", "FLR", "KBR", "J"],
+  "chain_fit_confidence": "medium"
+ },
+ "ANGO": {
+  "physical_anchor": "manufactures vascular-access catheters, thrombectomy and ablation devices for interventional/surgical procedures — not a robotic surgical platform",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Interventional medical devices — no robotic platform, motion control or actuator content; caught by the broad Medical - Devices filter under robotics_automation",
+  "true_competitors": ["BSX", "MDT", "ICUI", "TFX", "CNMD", "BDX"],
+  "chain_fit_confidence": "low"
+ },
+ "ANIK": {
+  "physical_anchor": "manufactures orthopedic/regenerative-medicine products (hyaluronic-acid joint injections, orthobiologics) — no robotics or automation content",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Orthopedic/regenerative medicine devices — not a surgical-robotics or automation platform; industry-filter false positive",
+  "true_competitors": ["ZBH", "BVS", "OFIX", "SNN", "ENOV"],
+  "chain_fit_confidence": "low"
+ },
+ "AORT": {
+  "physical_anchor": "manufactures aortic stent grafts, mechanical heart valves and vascular/cardiac tissue implants — not a robotic surgical platform",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cardiac/vascular implant devices — no motion-control, vision or robotic-platform content; industry-filter false positive under Medical - Devices",
+  "true_competitors": ["EW", "MDT", "ABT", "LIVN", "4543.T"],
+  "chain_fit_confidence": "low"
+ },
+ "AOSL": {
+  "physical_anchor": "designs and fabricates power semiconductor discretes (MOSFETs/power ICs) used in power conversion for servers, EVs and industrial motor drives",
+  "chains": ["electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Power management & connectors layer — power-conversion silicon feeding datacenter, EV and grid-adjacent electrification demand",
+  "true_competitors": ["ON", "IFX.DE", "STM", "VSH", "DIOD"],
+  "chain_fit_confidence": "medium"
+ }
+}

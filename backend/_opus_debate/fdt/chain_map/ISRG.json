@@ -1,0 +1,19 @@
+{
+ "symbol": "ISRG",
+ "physical_anchor": "da Vinci robotic surgical systems -- robotic arms, articulated instruments and 3D-vision consoles for minimally invasive surgery",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Surgical-robotics platform maker with capital-equipment placements plus recurring instrument/service revenue -- an explicit anchor name for this chain.",
+ "true_competitors": [
+  "MDT",
+  "SYK",
+  "JNJ",
+  "SNN",
+  "ASXC",
+  "GMED"
+ ],
+ "chain_fit_confidence": "high"
+}

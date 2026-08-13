@@ -1,0 +1,60 @@
+{
+  "symbol": "GLW",
+  "sector": "Technology",
+  "signal_type": "future_disruptive_tech",
+  "company": "Corning Inc",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Technology\nValuation: Price 146.67 | Fair Value 55.97 | Margin of Safety -62% | P/FCF 89.3x\nRevenue growth: +19.1% YoY | 3-yr CAGR +3.3%\nMargins: Gross 35.3% (expanding) | Net 10.2% | FCF 9.0%\nEPS / guidance delivery: 1.85 latest | +219.0% YoY | 3-yr CAGR +6.3% | beat 7/7 qtrs (100%)\nFCF growth: +45.1% YoY | 3-yr CAGR +11.8%\nReturns / leverage: ROE 9.9% | ROIC 5.0% | Net debt 8.70B\nForward / signals: Consensus fwd EPS growth +32.1% | Margin 0.85sigma vs hist. peak | Insider buy ratio 0.00\nValuation models (stock page): DCF fair value 6.5 | Buffett fair value 56.0\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -100% | EPV -100% | Graham -100% | OwnerErn -100% | IV15 -100%\nQuality / scores: Bull score 4 | Catalyst score 0.5 | Piotroski 7/9 | Altman-Z (solvency) 5.5 | Days to next earnings 85\nAnalyst consensus target: 173.75 (+18% upside)\nPositioning / smart money: Smart-money score 68/100 | Institutional flow 50/100 | Analyst-target velocity +41% (vs yr-ago avg PT)\nTechnical posture (timing context, not thesis): price +8% vs 200d SMA | 40% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2021: rev 14.08B, NI 1.91B, EPS 1.28\n  2022: rev 14.19B, NI 1.32B, EPS 1.54\n  2023: rev 12.59B, NI 581M, EPS 0.68\n  2024: rev 13.12B, NI 506M, EPS 0.58\n  2025: rev 15.63B, NI 1.60B, EPS 1.85\n  CAGRs: bvps_5y -1.6%, eps_5y +9.7%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-06-30 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 2.40B | TTM diluted EPS 2.20 | latest-Q EPS YoY +19%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-06-30): NET DEBT 6.88B (borrowings 8.51B + capitalized leases 865M, minus cash 2.50B; ex-lease net debt ≈ 6.01B — filings often quote the ex-lease figure; STATE which definition your SoP uses) — this is a LIABILITY; in any Sum-of-Parts SUBTRACT it from enterprise value, NEVER add it back as 'net cash'; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 12 sells (282,282sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 173.75 | median 177.50 | high 210.00 | low 129.00\nBreadth: last month: 8 PTs avg 193.50 | last quarter: 15 PTs avg 203.60 | last year: 44 PTs avg 144.43\nNewest individual targets (dated — judge freshness yourself):\n  2026-08-02 Truist Financial: 175.00 (stock was 138.25)\n  2026-07-29 Morgan Stanley: 165.00 (stock was 125.88)\n  2026-07-29 Mizuho Securities: 210.00 (stock was 125.88)\n  2026-07-29 Joshua Spector: 196.00 (stock was 125.88)\n  2026-07-29 Oppenheimer: 200.00 (stock was 125.88)\nNewest PT is 2 day(s) old\n\n=== SEGMENT REVENUE (FMP, 2025-12-31 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nOptical Communications: 6.27B (40%) | Display Technologies: 2.96B (19%) | Specialty Materials: 2.19B (14%) | Automotive Products: 1.78B (11%) | Life Sciences: 959M (6%) | Polycrystalline Silicon: 955M (6%) | All Other: 505M (3%)",
+  "dossier": "",
+  "chains": [
+    "quantum"
+  ],
+  "business_model": "equipment_services",
+  "physical_anchor": "Specialty optical fiber, cable and photonic/glass components used in datacenter and telecom interconnects, plus laser-optics and specialty-glass substrates",
+  "commodity_revenue_share": 0.03,
+  "chain_regime": {
+    "quantum": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "quantum",
+    "torque_metrics": false,
+    "commodity_beta_2y": 0.76,
+    "beta_benchmark": "QTUM",
+    "beta_is_proxy": true,
+    "ndebt_ebitda": 1.91,
+    "commodity_revenue_share": 0.03,
+    "as_of": "2026-08-04",
+    "gm_trajectory": {
+      "direction": "expanding",
+      "gm_recent_to_old": [
+        0.3176,
+        0.3123,
+        0.326,
+        0.3528
+      ],
+      "delta_3y": 0.0352
+    },
+    "rev_yoy": 0.1941,
+    "fcf_margin": 0.1412,
+    "torque_note": "NON-COMMODITY chain (no spot to lever to): no torque metric. commodity_beta_2y is a PROXY factor-exposure read vs QTUM, not a commodity torque."
+  },
+  "gates": {
+    "ttm_fcf": 2395000000,
+    "ttm_ocf": 3915000000,
+    "ttm_capex": -1520000000,
+    "ttm_ebitda": 3509000000,
+    "ttm_revenue": 16964000000,
+    "rev_yoy": 0.1941,
+    "cash_sti": 2504000000,
+    "balance_date": "2026-06-30",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 1726763764.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.9130665253114232
+  }
+}

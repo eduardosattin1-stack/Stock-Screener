@@ -1,0 +1,18 @@
+{
+ "symbol": "GMTL",
+ "physical_anchor": "Tungsten (plus antimony and gold) mineralization at the Pilot Mountain project, Nevada, currently being drilled and permitted",
+ "chains": [
+  "rare_earth_strategic"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Pre-revenue developer advancing the Pilot Mountain tungsten-antimony deposit toward a US-strategic-metals mine",
+ "true_competitors": [
+  "MP",
+  "USAR",
+  "THM.V",
+  "ASM.V",
+  "TMRC"
+ ],
+ "chain_fit_confidence": "high"
+}

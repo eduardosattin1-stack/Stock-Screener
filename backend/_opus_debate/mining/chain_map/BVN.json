@@ -1,0 +1,21 @@
+{
+ "symbol": "BVN",
+ "physical_anchor": "Mines and processes silver-gold ore into concentrate/doré at Peruvian mines, plus a 19.3% equity stake in the Cerro Verde copper mine.",
+ "chains": [
+  "precious_metals",
+  "copper_mining"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.65,
+ "value_chain_position": "Peruvian precious/base-metals producer; consolidated revenue is mostly silver/gold, with copper exposure carried as an equity-method affiliate (Cerro Verde), not consolidated sales.",
+ "true_competitors": [
+  "PAAS",
+  "HL",
+  "FCX",
+  "SCCO",
+  "AG",
+  "CDE",
+  "HOC.L"
+ ],
+ "chain_fit_confidence": "medium"
+}

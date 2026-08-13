@@ -1,0 +1,19 @@
+{
+ "symbol": "LPTH",
+ "physical_anchor": "manufactures precision molded infrared/specialty-glass optics and photonic components used in defense, industrial-sensing and laser systems",
+ "chains": [
+  "robotics_automation",
+  "quantum"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "photonics/optics component supplier feeding machine-vision sensing and photonics-and-lasers hardware layers",
+ "true_competitors": [
+  "COHR",
+  "MKSI",
+  "THORLABS",
+  "EXCELITAS",
+  "SUMITA"
+ ],
+ "chain_fit_confidence": "medium"
+}

@@ -1,0 +1,600 @@
+[
+ {
+  "symbol": "AEVA",
+  "name": "Aeva Technologies, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 1365426674,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -116508000,
+   "ttm_ocf": -110133000,
+   "ttm_capex": -6375000,
+   "ttm_ebitda": -133326000,
+   "ttm_revenue": 20973000,
+   "rev_yoy": 1.0311,
+   "cash_sti": 99504000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 9709000.0,
+   "runway_months": 10.2,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 12883590.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "AHCO",
+  "name": "AdaptHealth Corp.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 865983710,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 97680000,
+   "ttm_ocf": 583274000,
+   "ttm_capex": -485594000,
+   "ttm_ebitda": 73125000,
+   "ttm_revenue": 2869099000,
+   "rev_yoy": 0.0924,
+   "cash_sti": 43289000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 69532558.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 4.222366133593959
+  }
+ },
+ {
+  "symbol": "AIN",
+  "name": "Albany International Corp.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 1819254426,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": 58914000,
+   "ttm_ocf": 120633000,
+   "ttm_capex": -61719000,
+   "ttm_ebitda": 37583000,
+   "ttm_revenue": 1223455000,
+   "rev_yoy": 0.032,
+   "cash_sti": 77349000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 20051197.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 9.933214485272597
+  }
+ },
+ {
+  "symbol": "AIP",
+  "name": "Arteris, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 1465036989,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -4689000,
+   "ttm_ocf": -3189000,
+   "ttm_capex": -1500000,
+   "ttm_ebitda": -32234000,
+   "ttm_revenue": 76983000,
+   "rev_yoy": 0.2557,
+   "cash_sti": 38103000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 390750.0,
+   "runway_months": 97.5,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 13707580.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "AIRJ",
+  "name": "AirJoule Technologies Corporation",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 421371422,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -8085125,
+   "ttm_ocf": -8050633,
+   "ttm_capex": -34492,
+   "ttm_ebitda": -105090512,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 31093127,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 673760.0,
+   "runway_months": 46.1,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 11616254.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "AKAM",
+  "name": "Akamai Technologies, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 17883864328,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 764734000,
+   "ttm_ocf": 1580073000,
+   "ttm_capex": -815339000,
+   "ttm_ebitda": 1325086000,
+   "ttm_revenue": 4266646000,
+   "rev_yoy": 0.0615,
+   "cash_sti": 930445000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 280139284.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.958476657364126
+  }
+ },
+ {
+  "symbol": "ALGM",
+  "name": "Allegro MicroSystems, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 7955394300,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 88318000,
+   "ttm_ocf": 123911000,
+   "ttm_capex": -35593000,
+   "ttm_ebitda": 103881999,
+   "ttm_revenue": 945934000,
+   "rev_yoy": 0.2422,
+   "cash_sti": 162029000,
+   "balance_date": "2026-06-26",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 37854358.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 1.3183724318973093
+  }
+ },
+ {
+  "symbol": "ALH",
+  "name": "Alliance Laundry Holdings Inc.",
+  "sector": "Industrials",
+  "industry": "Industrial - Machinery",
+  "mcap": 5531251181,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "power_for_ai",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 215649000,
+   "ttm_ocf": 266205500,
+   "ttm_capex": -50556500,
+   "ttm_ebitda": 360708500,
+   "ttm_revenue": 1717745500,
+   "rev_yoy": 0.1201,
+   "cash_sti": 152362000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 4970250.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ALKT",
+  "name": "Alkami Technology, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 1999815400,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 65099000,
+   "ttm_ocf": 66531000,
+   "ttm_capex": -1432000,
+   "ttm_ebitda": -8591000,
+   "ttm_revenue": 489727000,
+   "rev_yoy": 0.2705,
+   "cash_sti": 80955000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 4475378.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ALMU",
+  "name": "Aeluma, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 338282572,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -2223148,
+   "ttm_ocf": -1708323,
+   "ttm_capex": -514825,
+   "ttm_ebitda": -5896717,
+   "ttm_revenue": 5195780,
+   "rev_yoy": 0.4324,
+   "cash_sti": 37780000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 185262.0,
+   "runway_months": 203.9,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 8518906.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "AMBA",
+  "name": "Ambarella, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 3615396467,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 26233000,
+   "ttm_ocf": 33092000,
+   "ttm_capex": -6859000,
+   "ttm_ebitda": -42135999,
+   "ttm_revenue": 405187000,
+   "rev_yoy": 0.2812,
+   "cash_sti": 277800000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 60250887.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "AMBQ",
+  "name": "Ambiq Micro, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 1648409052,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -41617000,
+   "ttm_ocf": -32269000,
+   "ttm_capex": -9348000,
+   "ttm_ebitda": -31315000,
+   "ttm_revenue": 81842000,
+   "rev_yoy": 0.0686,
+   "cash_sti": 204535000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 3468083.0,
+   "runway_months": 59.0,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 9605726.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "AMPL",
+  "name": "Amplitude, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 1296136100,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 22126000,
+   "ttm_ocf": 26237000,
+   "ttm_capex": -4111000,
+   "ttm_ebitda": -75987000,
+   "ttm_revenue": 356754000,
+   "rev_yoy": 0.1636,
+   "cash_sti": 181925000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 8001797.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "AMPX",
+  "name": "Amprius Technologies, Inc.",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 1554358191,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -58750000,
+   "ttm_ocf": -54283000,
+   "ttm_capex": -4467000,
+   "ttm_ebitda": -35515000,
+   "ttm_revenue": 90263000,
+   "rev_yoy": 1.7257,
+   "cash_sti": 62352000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 4895833.0,
+   "runway_months": 12.7,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 40812173.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "AMRC",
+  "name": "Ameresco, Inc.",
+  "sector": "Industrials",
+  "industry": "Engineering & Construction",
+  "mcap": 1560478200,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": -526276000,
+   "ttm_ocf": -61600000,
+   "ttm_capex": -464676000,
+   "ttm_ebitda": 219683000,
+   "ttm_revenue": 2023937000,
+   "rev_yoy": 0.0889,
+   "cash_sti": 138333000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 43856333.0,
+   "runway_months": 3.2,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 47047706.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "AMTM",
+  "name": "Amentum Holdings, Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 5827656963,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": 450000000,
+   "ttm_ocf": 465000000,
+   "ttm_capex": -15000000,
+   "ttm_ebitda": 961000000,
+   "ttm_revenue": 14201000000,
+   "rev_yoy": 0.0685,
+   "cash_sti": 428000000,
+   "balance_date": "2026-04-03",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 13272464.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.527217741935484
+  }
+ },
+ {
+  "symbol": "ANGO",
+  "name": "AngioDynamics, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Instruments & Supplies",
+  "mcap": 625082119,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 508000,
+   "ttm_ocf": 3089000,
+   "ttm_capex": -2581000,
+   "ttm_ebitda": -36001000,
+   "ttm_revenue": 320174000,
+   "rev_yoy": 0.0946,
+   "cash_sti": 53864000,
+   "balance_date": "2026-05-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 2578989.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ANIK",
+  "name": "Anika Therapeutics, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 260950439,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 562000,
+   "ttm_ocf": 5977000,
+   "ttm_capex": -5415000,
+   "ttm_ebitda": 2717000,
+   "ttm_revenue": 120654000,
+   "rev_yoy": 0.3136,
+   "cash_sti": 38412000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 2450542.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "AORT",
+  "name": "Artivion, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 1310911817,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 12831000,
+   "ttm_ocf": 56237000,
+   "ttm_capex": -43406000,
+   "ttm_ebitda": 65052000,
+   "ttm_revenue": 458689000,
+   "rev_yoy": 0.1759,
+   "cash_sti": 55764000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 4061606.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "AOSL",
+  "name": "Alpha and Omega Semiconductor Limited",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 999555124,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -60640860,
+   "ttm_ocf": -9104008,
+   "ttm_capex": -51536852,
+   "ttm_ebitda": 20687000,
+   "ttm_revenue": 685040000,
+   "rev_yoy": 0.006,
+   "cash_sti": 190253000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 5053405.0,
+   "runway_months": 37.6,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 8013301.0,
+   "royalty_hint": false
+  }
+ }
+]

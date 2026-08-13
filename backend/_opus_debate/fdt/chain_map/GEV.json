@@ -1,0 +1,21 @@
+{
+ "symbol": "GEV",
+ "physical_anchor": "Gas and steam turbines, wind turbines, and grid transmission/HVDC equipment (transformers, switchgear) that generate and move electricity",
+ "chains": [
+  "power_for_ai",
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Power-generation and grid-equipment OEM (gas/steam/wind turbines plus Grid Solutions HVDC/transformers/switchgear); also co-developing the BWRX-300 SMR with Hitachi — sells the hardware that delivers firm electrons and grid capacity, not a power producer itself",
+ "true_competitors": [
+  "ENR.DE",
+  "7011.T",
+  "ETN",
+  "HUBB",
+  "NVT",
+  "POWL",
+  "BWXT"
+ ],
+ "chain_fit_confidence": "high"
+}

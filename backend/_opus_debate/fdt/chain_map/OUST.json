@@ -1,0 +1,18 @@
+{
+ "symbol": "OUST",
+ "physical_anchor": "Manufactures LiDAR sensors (laser-based 3D imaging hardware)",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Machine-vision & sensing hardware supplier — LiDAR for AMRs, industrial automation and autonomous vehicles",
+ "true_competitors": [
+  "LAZR",
+  "CPTN",
+  "INVZ",
+  "HSAI",
+  "LIDR"
+ ],
+ "chain_fit_confidence": "high"
+}

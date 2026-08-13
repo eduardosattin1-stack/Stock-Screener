@@ -1,0 +1,182 @@
+{
+ "SSRM": {
+  "physical_anchor": "Doré gold bars and silver-lead-zinc concentrate poured/produced at its own open-pit and underground mines (Çöpler, Marigold, Seabee, Puna).",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.9,
+  "value_chain_position": "Mid-tier producer layer — mines and pours its own gold with silver/zinc/lead byproduct credits from Puna.",
+  "true_competitors": ["AEM", "NEM", "KGC", "EGO", "IAG", "CDE", "HL", "PAAS"],
+  "chain_fit_confidence": "high"
+ },
+ "STLD": {
+  "physical_anchor": "Steel bar, plate and coil melted in electric-arc-furnace mini-mills from purchased scrap and iron feedstocks — not ore or concentrate.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.1,
+  "value_chain_position": "Steel converter — buys scrap/iron inputs and sells finished steel products; does not sell ore or concentrate.",
+  "true_competitors": ["NUE", "CMC", "X", "RS", "CLF", "MT", "ATI"],
+  "chain_fit_confidence": "low"
+ },
+ "SVM": {
+  "physical_anchor": "Silver-lead-zinc concentrate and doré mined at its Ying Mining District (China) underground mines, plus early copper-zinc-gold-silver concentrate from El Domo (Ecuador).",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.55,
+  "value_chain_position": "Silver-primary mid-tier producer with meaningful base-metal byproduct credits.",
+  "true_competitors": ["PAAS", "HL", "CDE", "AG", "FSM", "MAG", "EXK", "SSRM"],
+  "chain_fit_confidence": "high"
+ },
+ "TECK": {
+  "physical_anchor": "Copper concentrate (QB2, Highland Valley) and zinc concentrate (Red Dog) shipped from its own mines.",
+  "chains": ["copper_mining", "diversified_miners"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.65,
+  "value_chain_position": "Diversified base-metal major transitioning to a copper-weighted mix, still carrying a large zinc business.",
+  "true_competitors": ["FCX", "SCCO", "HBM", "ERO", "ANTO.L", "IVN.TO", "GLEN.L"],
+  "chain_fit_confidence": "high"
+ },
+ "TX": {
+  "physical_anchor": "Flat and long finished steel products (sheet, plate, rebar) rolled from a mix of purchased and captive iron-ore/scrap feedstock across Latin American mills — sells steel, not ore.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.1,
+  "value_chain_position": "Integrated steel converter selling finished steel products, not ore/concentrate.",
+  "true_competitors": ["MT", "GGB", "SID", "PKX", "NUE", "X", "CLF"],
+  "chain_fit_confidence": "low"
+ },
+ "VALE": {
+  "physical_anchor": "Iron-ore fines and pellets mined in Brazil and shipped as bulk ore to steelmakers, plus nickel and copper concentrate.",
+  "chains": ["diversified_miners"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.8,
+  "value_chain_position": "Bulk/base-metal major selling raw ore and concentrate (iron ore primary, nickel/copper secondary) — the one 'Steel'-classified name that actually belongs here.",
+  "true_competitors": ["BHP", "RIO", "FMG.AX", "MT", "CLF", "AAL.L"],
+  "chain_fit_confidence": "high"
+ },
+ "WPM": {
+  "physical_anchor": "Streamed gold, silver and palladium bullion delivered under long-term offtake/streaming agreements with third-party mine operators.",
+  "chains": ["precious_metals"],
+  "business_model": "royalty_streamer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Royalty & streaming layer — funds mine capex for a fixed share of metal output, no operating costs carried.",
+  "true_competitors": ["FNV", "RGLD", "OR", "SAND", "TFPM", "MTA"],
+  "chain_fit_confidence": "high"
+ },
+ "ABAT": {
+  "physical_anchor": "Recycled lithium-ion battery black mass and recovered nickel/cobalt/lithium materials from its Nevada recycling facility, plus an early-stage lithium (claystone) extraction project — not a producing mine on any chain here.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.1,
+  "value_chain_position": "Battery-materials recycler/developer; lithium and recycled battery metals are not covered by any chain in this taxonomy (uranium, copper, precious metals, rare-earth/strategic, diversified majors).",
+  "true_competitors": ["LICY", "PLL", "LTHM", "AQMS", "REDW"],
+  "chain_fit_confidence": "low"
+ },
+ "ALB": {
+  "physical_anchor": "Lithium hydroxide and lithium carbonate extracted from brine (Salar de Atacama) and hard-rock spodumene (Greenbushes) and processed into battery-grade chemicals.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.9,
+  "value_chain_position": "Lithium miner/chemical producer — a genuine mined-commodity business, but lithium is not a defined chain in this taxonomy (rare_earth_strategic covers rare earths/antimony/gallium/tungsten only); caught by the Chemicals-Specialty industry filter.",
+  "true_competitors": ["SQM", "LTHM", "PLL", "LAC", "MIN.AX", "1772.HK", "IGO.AX"],
+  "chain_fit_confidence": "low"
+ },
+ "ALM": {
+  "physical_anchor": "Tungsten concentrate mined and processed at Sangdong (South Korea) and Panasqueira (Portugal).",
+  "chains": ["rare_earth_strategic"],
+  "business_model": "producer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Pure-play tungsten miner — the strategic-metal chokepoint the chain thesis is built on.",
+  "true_competitors": ["EMX", "THR.AX", "000657.SZ", "MHC", "NCF.V"],
+  "chain_fit_confidence": "high"
+ },
+ "ALOY": {
+  "physical_anchor": "Uncertain — no verifiable producing mine or metal-processing output could be confirmed for this recently-classified 'Other Precious Metals' name (revenue of $2.5M against a $100M EBITDA loss is inconsistent with an operating mine).",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.1,
+  "value_chain_position": "Insufficient verified information to place in a value-chain layer; treat as unconfirmed until a physical anchor is verified.",
+  "true_competitors": ["MTRN", "CRS", "ATI", "USAP", "IPX.AX"],
+  "chain_fit_confidence": "low"
+ },
+ "ALTO": {
+  "physical_anchor": "Fuel-grade and specialty ethanol/alcohol distilled from corn at its Pacific Northwest and Midwest plants — no mined commodity.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Corn ethanol/specialty-alcohol producer; caught by the Chemicals-Specialty industry filter, not a mining-chain participant.",
+  "true_competitors": ["GPRE", "REX", "ADM", "BG", "AMTX"],
+  "chain_fit_confidence": "low"
+ },
+ "APD": {
+  "physical_anchor": "Industrial gases (hydrogen, oxygen, nitrogen, argon) produced via air-separation and steam-methane-reforming units and piped/trucked to customers under long-term supply contracts.",
+  "chains": [],
+  "business_model": "utility",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Industrial-gas utility-style supplier; no mined commodity exposure, caught by the Chemicals-Specialty filter.",
+  "true_competitors": ["LIN", "AI.PA", "4091.T", "SOL.MI"],
+  "chain_fit_confidence": "low"
+ },
+ "ASH": {
+  "physical_anchor": "Specialty chemical additives and cellulosic/pharma excipients manufactured from petrochemical and biobased feedstocks — no mined commodity.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Specialty chemicals producer, unrelated to any mining chain; caught by the Chemicals-Specialty filter.",
+  "true_competitors": ["DD", "CE", "EMN", "FUL", "CBT", "IFF"],
+  "chain_fit_confidence": "low"
+ },
+ "ASPN": {
+  "physical_anchor": "Aerogel insulation blankets and panels manufactured for EV battery thermal barriers and energy-infrastructure insulation — a manufactured material, not a mined commodity.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Materials manufacturer selling insulation components into EV/industrial supply chains; no mining-chain exposure.",
+  "true_competitors": ["OC", "ROG", "MGAM.L", "IIN"],
+  "chain_fit_confidence": "low"
+ },
+ "ASTL": {
+  "physical_anchor": "Steel plate and coil rolled from purchased iron-ore pellets/scrap at its Sault Ste. Marie mill — sells finished steel, not ore.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.1,
+  "value_chain_position": "Integrated steel converter, same discriminator as STLD/TX/CLF — no ore/concentrate sold.",
+  "true_competitors": ["STLD", "NUE", "X", "CLF", "MT", "CMC", "RS"],
+  "chain_fit_confidence": "low"
+ },
+ "CC": {
+  "physical_anchor": "Titanium dioxide pigment and fluoropolymer/refrigerant chemicals (Opteon, Teflon) manufactured from mineral and petrochemical feedstocks — not a mined commodity itself.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Specialty/industrial chemicals producer; caught by the Chemicals-Specialty filter, not a mining-chain participant.",
+  "true_competitors": ["DD", "CE", "EMN", "HUN", "OLN", "TROX"],
+  "chain_fit_confidence": "low"
+ },
+ "CLF": {
+  "physical_anchor": "Hot-rolled, cold-rolled and specialty steel products made largely from its own captive iron ore, but sold as finished steel, never as ore or concentrate.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.15,
+  "value_chain_position": "Vertically integrated steelmaker with captive ore — explicitly the naive-extraction-test trap: revenue source is finished steel, not ore, so it is a converter, however integrated.",
+  "true_competitors": ["MT", "NUE", "STLD", "X", "PKX", "GGB", "TX"],
+  "chain_fit_confidence": "low"
+ },
+ "CLMT": {
+  "physical_anchor": "Specialty petroleum lubricants, waxes and renewable diesel refined from crude and biobased feedstocks — no mined commodity.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Specialty petroleum-products refiner, unrelated to any mining chain; caught by the Chemicals-Specialty filter.",
+  "true_competitors": ["DAR", "VLO", "PBF", "DINO", "REGI"],
+  "chain_fit_confidence": "low"
+ },
+ "CMP": {
+  "physical_anchor": "Rock salt mined at its Goderich (Ontario) and Kansas underground mines, plus sulfate-of-potash fertilizer produced from Great Salt Lake brine evaporation ponds.",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.3,
+  "value_chain_position": "Genuine miner (salt and potash) but neither commodity is covered by any chain in this taxonomy (no salt/agri-mineral chain defined); caught by the Industrial Materials filter.",
+  "true_competitors": ["MOS", "NTR", "SDF.DE", "ICL", "IPI"],
+  "chain_fit_confidence": "low"
+ }
+}

@@ -1,0 +1,18 @@
+{
+ "symbol": "LASR",
+ "physical_anchor": "High-power semiconductor and fiber lasers/laser diodes for industrial materials processing, aerospace/defense directed-energy systems, and photonics sensing.",
+ "chains": [
+  "quantum"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Photonics & lasers layer — supplies high-power laser sources/components; overlaps quantum-adjacent photonics demand alongside its core industrial/defense laser business.",
+ "true_competitors": [
+  "COHR",
+  "IPGP",
+  "LITE",
+  "NOVT",
+  "MKSI"
+ ],
+ "chain_fit_confidence": "medium"
+}

@@ -1,0 +1,615 @@
+[
+ {
+  "symbol": "COHR",
+  "name": "Coherent, Inc.",
+  "sector": "Technology",
+  "industry": "Hardware, Equipment & Parts",
+  "mcap": 65400268617,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation",
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -538236000,
+   "ttm_ocf": 140342000,
+   "ttm_capex": -678578000,
+   "ttm_ebitda": 1160372000,
+   "ttm_revenue": 6602414000,
+   "rev_yoy": 0.18,
+   "cash_sti": 2417700000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 44853000.0,
+   "runway_months": 53.9,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 2023067588.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 1.5791487557438477
+  }
+ },
+ {
+  "symbol": "COHU",
+  "name": "Cohu, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 2493214605,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 34918000,
+   "ttm_ocf": 46581000,
+   "ttm_capex": -11663000,
+   "ttm_ebitda": 22728000,
+   "ttm_revenue": 522600000,
+   "rev_yoy": 0.3266,
+   "cash_sti": 498167000,
+   "balance_date": "2026-06-27",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 20963374.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 166.62517482517484
+  }
+ },
+ {
+  "symbol": "CORZ",
+  "name": "Core Scientific, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 7455098231,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -967869000,
+   "ttm_ocf": 515798000,
+   "ttm_capex": -1483667000,
+   "ttm_ebitda": -1342438000,
+   "ttm_revenue": 440311000,
+   "rev_yoy": 0.2637,
+   "cash_sti": 1769735000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 80655750.0,
+   "runway_months": 21.9,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 129512562.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "CRNC",
+  "name": "Cerence Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 419342784,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 75070000,
+   "ttm_ocf": 88454000,
+   "ttm_capex": -13384000,
+   "ttm_ebitda": 37812000,
+   "ttm_revenue": 302143000,
+   "rev_yoy": 0.1884,
+   "cash_sti": 108260000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 2931826.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "CRWV",
+  "name": "CoreWeave, Inc. Class A Common Stock",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 50594288287,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -10615997000,
+   "ttm_ocf": 5980883000,
+   "ttm_capex": -16596880000,
+   "ttm_ebitda": 3056730000,
+   "ttm_revenue": 6227368000,
+   "rev_yoy": 1.2993,
+   "cash_sti": 3043000000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 884666417.0,
+   "runway_months": 3.4,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 1840656031.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 10.509924003755648
+  }
+ },
+ {
+  "symbol": "CWEN",
+  "name": "Clearway Energy, Inc.",
+  "sector": "Utilities",
+  "industry": "Renewable Utilities",
+  "mcap": 6562096507,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": 586000000,
+   "ttm_ocf": 994000000,
+   "ttm_capex": -408000000,
+   "ttm_ebitda": 1129000000,
+   "ttm_revenue": 1485000000,
+   "rev_yoy": 0.0562,
+   "cash_sti": 325000000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 12028350.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 8.518157661647475
+  }
+ },
+ {
+  "symbol": "CXM",
+  "name": "Sprinklr, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 1635003095,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 136392000,
+   "ttm_ocf": 145793000,
+   "ttm_capex": -9401000,
+   "ttm_ebitda": 68064000,
+   "ttm_revenue": 871179000,
+   "rev_yoy": 0.081,
+   "cash_sti": 442808000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 4644456.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "CXT",
+  "name": "Crane NXT, Co.",
+  "sector": "Industrials",
+  "industry": "Industrial - Machinery",
+  "mcap": 3145841204,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "power_for_ai",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 206400000,
+   "ttm_ocf": 246600000,
+   "ttm_capex": -40200000,
+   "ttm_ebitda": 298699999,
+   "ttm_revenue": 1714100000,
+   "rev_yoy": 0.1401,
+   "cash_sti": 232000000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 8766881.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 4.321392712826892
+  }
+ },
+ {
+  "symbol": "DCO",
+  "name": "Ducommun Incorporated",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 2898999752,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": -36296000,
+   "ttm_ocf": -22937000,
+   "ttm_capex": -13359000,
+   "ttm_ebitda": -3821001,
+   "ttm_revenue": 840973000,
+   "rev_yoy": 0.0648,
+   "cash_sti": 39103000,
+   "balance_date": "2026-04-04",
+   "balance_sheet_stale": false,
+   "monthly_burn": 3024667.0,
+   "runway_months": 12.9,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 23709453.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "DCTH",
+  "name": "Delcath Systems, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 455350880,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 19193000,
+   "ttm_ocf": 21170000,
+   "ttm_capex": -1977000,
+   "ttm_ebitda": 1668000,
+   "ttm_revenue": 90441000,
+   "rev_yoy": 0.6795,
+   "cash_sti": 89299000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 2330181.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "DDD",
+  "name": "3D Systems Corporation",
+  "sector": "Technology",
+  "industry": "Computer Hardware",
+  "mcap": 597009513,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -61665000,
+   "ttm_ocf": -49516000,
+   "ttm_capex": -12149000,
+   "ttm_ebitda": -25015000,
+   "ttm_revenue": 387641000,
+   "rev_yoy": -0.0622,
+   "cash_sti": 127951000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 5138750.0,
+   "runway_months": 24.9,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 28611256.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "DDOG",
+  "name": "Datadog, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 102285162719,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 1079430000,
+   "ttm_ocf": 1113216000,
+   "ttm_capex": -33786000,
+   "ttm_ebitda": 228566000,
+   "ttm_revenue": 3672031000,
+   "rev_yoy": 0.2954,
+   "cash_sti": 4758617000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 688998084.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.756866725584733
+  }
+ },
+ {
+  "symbol": "DOMO",
+  "name": "Domo, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 167429813,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 286000,
+   "ttm_ocf": 9153000,
+   "ttm_capex": -8867000,
+   "ttm_ebitda": -25160000,
+   "ttm_revenue": 318149000,
+   "rev_yoy": 0.0035,
+   "cash_sti": 33366000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 3120293.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ENLT",
+  "name": "Enlight Renewable Energy Ltd",
+  "sector": "Utilities",
+  "industry": "Renewable Utilities",
+  "mcap": 12551920403,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": -1302347599,
+   "ttm_ocf": 280393028,
+   "ttm_capex": -1582740628,
+   "ttm_ebitda": 967099387,
+   "ttm_revenue": 1216143646,
+   "rev_yoy": -0.2201,
+   "cash_sti": 979328000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 108528967.0,
+   "runway_months": 9.0,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 22932003.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 9.36862870091797
+  }
+ },
+ {
+  "symbol": "ENOV",
+  "name": "Enovis Corporation",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 1788469982,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 35922000,
+   "ttm_ocf": 242840000,
+   "ttm_capex": -206918000,
+   "ttm_ebitda": -748333000,
+   "ttm_revenue": 2278366000,
+   "rev_yoy": 0.0596,
+   "cash_sti": 33128999,
+   "balance_date": "2026-04-03",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 15609630.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ENR",
+  "name": "Energizer Holdings, Inc.",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 1441366859,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 150600000,
+   "ttm_ocf": 217500000,
+   "ttm_capex": -66900000,
+   "ttm_ebitda": 427700000,
+   "ttm_revenue": 2989100000,
+   "rev_yoy": 0.0217,
+   "cash_sti": 173400000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 20785633.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 6.232607438812874
+  }
+ },
+ {
+  "symbol": "ENTG",
+  "name": "Entegris, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 21740063500,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 614500000,
+   "ttm_ocf": 780700000,
+   "ttm_capex": -166200000,
+   "ttm_ebitda": 804900000,
+   "ttm_revenue": 3326100000,
+   "rev_yoy": 0.0319,
+   "cash_sti": 353600000,
+   "balance_date": "2026-06-27",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 211242616.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.919129817923859
+  }
+ },
+ {
+  "symbol": "ENVX",
+  "name": "Enovix Corporation",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 960963965,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -126627000,
+   "ttm_ocf": -111456000,
+   "ttm_capex": -15171000,
+   "ttm_ebitda": -109690000,
+   "ttm_revenue": 34323000,
+   "rev_yoy": 0.4988,
+   "cash_sti": 528736000,
+   "balance_date": "2026-04-05",
+   "balance_sheet_stale": false,
+   "monthly_burn": 10552250.0,
+   "runway_months": 50.1,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 8315391.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "EOSE",
+  "name": "Eos Energy Enterprises, Inc.",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 1233521143,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -385923000,
+   "ttm_ocf": -302000999,
+   "ttm_capex": -83922000,
+   "ttm_ebitda": -275410000,
+   "ttm_revenue": 160709000,
+   "rev_yoy": 7.2576,
+   "cash_sti": 450430000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 32160250.0,
+   "runway_months": 14.0,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 114156425.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "EROC",
+  "name": "ERock, Inc.",
+  "sector": "Industrials",
+  "industry": "Industrial - Machinery",
+  "mcap": 545329940,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "power_for_ai",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": null,
+   "ttm_ocf": null,
+   "ttm_capex": null,
+   "ttm_ebitda": null,
+   "ttm_revenue": null,
+   "rev_yoy": null,
+   "cash_sti": 300508000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": null,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 6905449.0,
+   "royalty_hint": false
+  }
+ }
+]

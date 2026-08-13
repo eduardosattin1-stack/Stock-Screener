@@ -1,0 +1,19 @@
+{
+ "symbol": "EMR",
+ "physical_anchor": "manufactures process automation instrumentation, control systems, and valves for factory and industrial process control",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.02,
+ "value_chain_position": "factory/process automation toll-taker — control systems, instrumentation, and software for industrial automation (electrical products business long since divested)",
+ "true_competitors": [
+  "ROK",
+  "HON",
+  "SIEGY",
+  "ABBNY",
+  "AME",
+  "DHR"
+ ],
+ "chain_fit_confidence": "high"
+}

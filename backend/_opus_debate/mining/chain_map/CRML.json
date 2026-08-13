@@ -1,0 +1,20 @@
+{
+ "symbol": "CRML",
+ "physical_anchor": "Rare-earth (Tanbreez, Greenland) and lithium (Wolfsberg, Austria) mineral deposits it is permitting and developing toward extraction",
+ "chains": [
+  "rare_earth_strategic"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.9,
+ "value_chain_position": "Pre-production developer of the Tanbreez REE-zirconium deposit and Wolfsberg lithium project; negligible current ore/concentrate sales",
+ "true_competitors": [
+  "MP",
+  "USAR",
+  "LYC.AX",
+  "ARU.AX",
+  "PEK.AX",
+  "TMRC",
+  "ILU.AX"
+ ],
+ "chain_fit_confidence": "high"
+}

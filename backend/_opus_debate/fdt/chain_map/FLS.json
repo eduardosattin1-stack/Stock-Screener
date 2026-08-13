@@ -1,0 +1,20 @@
+{
+ "symbol": "FLS",
+ "physical_anchor": "manufactures industrial pumps, valves, and seals for flow control in power generation (including nuclear-qualified equipment), chemical processing, and oil & gas",
+ "chains": [
+  "nuclear_smr",
+  "power_for_ai"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.02,
+ "value_chain_position": "flow-control equipment maker (nuclear-qualified pumps/valves) supplying power-generation and industrial process customers",
+ "true_competitors": [
+  "ITT",
+  "XYL",
+  "GTLS",
+  "DOV",
+  "CIRCOR (private)",
+  "SUL.MI"
+ ],
+ "chain_fit_confidence": "medium"
+}

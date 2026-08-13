@@ -1,0 +1,623 @@
+[
+ {
+  "symbol": "VRSN",
+  "name": "VeriSign, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 26504828000,
+  "lane": "a",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 1066100000,
+   "ttm_ocf": 1101300000,
+   "ttm_capex": -35200000,
+   "ttm_ebitda": 1202200000,
+   "ttm_revenue": 1707900000,
+   "rev_yoy": 0.0686,
+   "cash_sti": 1034100000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 81556679.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.113185235239463
+  }
+ },
+ {
+  "symbol": "VRT",
+  "name": "Vertiv Holdings Co",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 105232619920,
+  "lane": "a",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 2924000000,
+   "ttm_ocf": 3354200000,
+   "ttm_capex": -430200000,
+   "ttm_ebitda": 2523700000,
+   "ttm_revenue": 11479600000,
+   "rev_yoy": 0.2623,
+   "cash_sti": 3110600000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 879953075.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.44361190344416535
+  }
+ },
+ {
+  "symbol": "VSEC",
+  "name": "VSE Corporation",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 6050852226,
+  "lane": "a",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": -13505000,
+   "ttm_ocf": 11358000,
+   "ttm_capex": -24863000,
+   "ttm_ebitda": 141336000,
+   "ttm_revenue": 1180810000,
+   "rev_yoy": 0.241,
+   "cash_sti": 1239407000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1125417.0,
+   "runway_months": 1101.3,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 28832390.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -5.92117365710081
+  }
+ },
+ {
+  "symbol": "WDAY",
+  "name": "Workday, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 44097953713,
+  "lane": "a",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 2972000000,
+   "ttm_ocf": 3178000000,
+   "ttm_capex": -206000000,
+   "ttm_ebitda": 1674000000,
+   "ttm_revenue": 9854000000,
+   "rev_yoy": 0.1332,
+   "cash_sti": 4353000000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 202730599.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.939068100358423
+  }
+ },
+ {
+  "symbol": "WDC",
+  "name": "Western Digital Corporation",
+  "sector": "Technology",
+  "industry": "Computer Hardware",
+  "mcap": 190073165490,
+  "lane": "a",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 2905000000,
+   "ttm_ocf": 3286000000,
+   "ttm_capex": -381000000,
+   "ttm_ebitda": 7538000000,
+   "ttm_revenue": 11777000000,
+   "rev_yoy": 0.091,
+   "cash_sti": 3237000000,
+   "balance_date": "2026-04-03",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 2261468225.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.04324754576810825
+  }
+ },
+ {
+  "symbol": "WLDN",
+  "name": "Willdan Group, Inc.",
+  "sector": "Industrials",
+  "industry": "Engineering & Construction",
+  "mcap": 1153263658,
+  "lane": "a",
+  "chains_hint": [
+   "electrification_grid",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": 43307000,
+   "ttm_ocf": 52408000,
+   "ttm_capex": -9101000,
+   "ttm_ebitda": 64856000,
+   "ttm_revenue": 684280000,
+   "rev_yoy": 0.1487,
+   "cash_sti": 33566000,
+   "balance_date": "2026-04-03",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 11105958.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.5458611614002525
+  }
+ },
+ {
+  "symbol": "WST",
+  "name": "West Pharmaceutical Services, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Instruments & Supplies",
+  "mcap": 24397882344,
+  "lane": "a",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 436900000,
+   "ttm_ocf": 662200000,
+   "ttm_capex": -225300000,
+   "ttm_ebitda": 824200000,
+   "ttm_revenue": 3326500000,
+   "rev_yoy": 0.1239,
+   "cash_sti": 435800000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 55934391.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.2568210262828536
+  }
+ },
+ {
+  "symbol": "WWD",
+  "name": "Woodward, Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 22346101898,
+  "lane": "a",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": 376527000,
+   "ttm_ocf": 585255000,
+   "ttm_capex": -208728000,
+   "ttm_ebitda": 843260000,
+   "ttm_revenue": 4191991000,
+   "rev_yoy": 0.2235,
+   "cash_sti": 474851000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 119057063.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.8578953931379936
+  }
+ },
+ {
+  "symbol": "XYL",
+  "name": "Xylem Inc.",
+  "sector": "Industrials",
+  "industry": "Industrial - Machinery",
+  "mcap": 28312633620,
+  "lane": "a",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "power_for_ai",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 960000000,
+   "ttm_ocf": 1301000000,
+   "ttm_capex": -341000000,
+   "ttm_ebitda": 1860000000,
+   "ttm_revenue": 9126000000,
+   "rev_yoy": 0.0455,
+   "cash_sti": 1276000000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 64722525.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.695338512763596
+  }
+ },
+ {
+  "symbol": "XYZ",
+  "name": "Block, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 50227323155,
+  "lane": "a",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 3258243000,
+   "ttm_ocf": 3411973000,
+   "ttm_capex": -153730000,
+   "ttm_ebitda": 1612157000,
+   "ttm_revenue": 24478734000,
+   "rev_yoy": 0.0227,
+   "cash_sti": 13262148000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 155523136.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -2.8943496197950944
+  }
+ },
+ {
+  "symbol": "YMM",
+  "name": "Full Truck Alliance Co. Ltd.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 10045813570,
+  "lane": "a",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 1493789000,
+   "ttm_ocf": 1561958000,
+   "ttm_capex": -68169000,
+   "ttm_ebitda": 4369326000,
+   "ttm_revenue": 12638334000,
+   "rev_yoy": 0.083,
+   "cash_sti": 18474595420,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 32096145.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -1.533255338008654
+  }
+ },
+ {
+  "symbol": "YOU",
+  "name": "Clear Secure, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 5555820483,
+  "lane": "a",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 437332000,
+   "ttm_ocf": 464461000,
+   "ttm_capex": -27129000,
+   "ttm_ebitda": 267732000,
+   "ttm_revenue": 942414000,
+   "rev_yoy": 0.1739,
+   "cash_sti": 800076000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 34051855.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.6634906195818658
+  }
+ },
+ {
+  "symbol": "ZBH",
+  "name": "Zimmer Biomet Holdings, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 18500771060,
+  "lane": "a",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 1835500000,
+   "ttm_ocf": 1673399999,
+   "ttm_capex": 162100000,
+   "ttm_ebitda": 2206100000,
+   "ttm_revenue": 8409200000,
+   "rev_yoy": 0.0923,
+   "cash_sti": 424200000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 92155380.0,
+   "royalty_hint": false,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 3.1942341688953357
+  }
+ },
+ {
+  "symbol": "ZETA",
+  "name": "Zeta Global Holdings Corp.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 5940414327,
+  "lane": "a",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 199746000,
+   "ttm_ocf": 213837000,
+   "ttm_capex": -14091000,
+   "ttm_ebitda": 49907000,
+   "ttm_revenue": 1436553000,
+   "rev_yoy": 0.336,
+   "cash_sti": 288779000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 140493925.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.9668352232801025
+  }
+ },
+ {
+  "symbol": "ZM",
+  "name": "Zoom Communications, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 29795326179,
+  "lane": "a",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 1960733000,
+   "ttm_ocf": 2021397000,
+   "ttm_capex": -60664000,
+   "ttm_ebitda": 2785877000,
+   "ttm_revenue": 4933060000,
+   "rev_yoy": 0.0498,
+   "cash_sti": 7720975000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 156753747.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.29819191586706806
+  }
+ },
+ {
+  "symbol": "ZWS",
+  "name": "Zurn Elkay Water Solutions Corporation",
+  "sector": "Industrials",
+  "industry": "Industrial - Machinery",
+  "mcap": 8724451923,
+  "lane": "a",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "power_for_ai",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 375100000,
+   "ttm_ocf": 401400000,
+   "ttm_capex": -26300000,
+   "ttm_ebitda": 353900000,
+   "ttm_revenue": 1737800000,
+   "rev_yoy": 0.0767,
+   "cash_sti": 365000000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 10968362.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.5241593670528398
+  }
+ },
+ {
+  "symbol": "AADX",
+  "name": "Applied Aerospace & Defense, Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 3467104823,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": null,
+   "ttm_ocf": null,
+   "ttm_capex": null,
+   "ttm_ebitda": 21489000,
+   "ttm_revenue": 539722000,
+   "rev_yoy": null,
+   "cash_sti": 15923000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": null,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 8043786.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ACHR",
+  "name": "Archer Aviation Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 3968899550,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": -588800000,
+   "ttm_ocf": -487400000,
+   "ttm_capex": -101400000,
+   "ttm_ebitda": -667200000,
+   "ttm_revenue": 1900000,
+   "rev_yoy": null,
+   "cash_sti": 1775900000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 49066667.0,
+   "runway_months": 36.2,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 82507437.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ACMR",
+  "name": "ACM Research, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 5333308539,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -108702000,
+   "ttm_ocf": -45145000,
+   "ttm_capex": -63557000,
+   "ttm_ebitda": 164139000,
+   "ttm_revenue": 960225000,
+   "rev_yoy": 0.1969,
+   "cash_sti": 1287034000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 9058500.0,
+   "runway_months": 142.1,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 28515341.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "AEHR",
+  "name": "Aehr Test Systems",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 3579441979,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -5376000,
+   "ttm_ocf": -3310000,
+   "ttm_capex": -2066000,
+   "ttm_ebitda": -11736000,
+   "ttm_revenue": 50917000,
+   "rev_yoy": -0.1365,
+   "cash_sti": 116358000,
+   "balance_date": "2026-05-29",
+   "balance_sheet_stale": false,
+   "monthly_burn": 448000.0,
+   "runway_months": 259.7,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 232842671.0,
+   "royalty_hint": false
+  }
+ }
+]

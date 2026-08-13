@@ -1,0 +1,19 @@
+{
+ "symbol": "KEYS",
+ "physical_anchor": "Electronic test, measurement and control instrumentation — oscilloscopes, network/spectrum analyzers, and quantum-control-and-readout electronics racks that stimulate and read out qubit devices.",
+ "chains": [
+  "quantum"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Cryogenics & control electronics layer — sells dedicated quantum control/readout instrumentation plus general RF/microwave test gear to quantum-hardware developers, chipmakers and aerospace/defense labs.",
+ "true_competitors": [
+  "TER",
+  "ADTTF",
+  "EMR",
+  "FTV",
+  "MKSI",
+  "6754.T"
+ ],
+ "chain_fit_confidence": "medium"
+}

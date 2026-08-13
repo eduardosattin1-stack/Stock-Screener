@@ -1,0 +1,21 @@
+{
+ "symbol": "AUGO",
+ "physical_anchor": "Mines and pours gold doré plus copper-gold-silver concentrate (Aranzazu, Mexico) across Brazil, Honduras and Mexico.",
+ "chains": [
+  "precious_metals",
+  "copper_mining"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.9,
+ "value_chain_position": "Latin American multi-mine producer selling gold doré and copper concentrate.",
+ "true_competitors": [
+  "AGI",
+  "EGO",
+  "BTG",
+  "IAG",
+  "EQX",
+  "TXG.TO",
+  "LUG.TO"
+ ],
+ "chain_fit_confidence": "high"
+}

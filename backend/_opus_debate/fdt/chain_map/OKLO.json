@@ -1,0 +1,20 @@
+{
+ "symbol": "OKLO",
+ "physical_anchor": "Designs and is licensing a compact fission microreactor (Aurora powerhouse) for on-site deployment",
+ "chains": [
+  "nuclear_smr",
+  "power_for_ai"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Pre-revenue advanced-reactor developer progressing NRC dated milestones, with signed datacenter power-offtake agreements",
+ "true_competitors": [
+  "NNE",
+  "SMR",
+  "BWXT",
+  "LEU",
+  "USNC",
+  "KAIROSPOWER"
+ ],
+ "chain_fit_confidence": "high"
+}

@@ -1,0 +1,19 @@
+{
+ "symbol": "ECG",
+ "physical_anchor": "builds and maintains electric transmission & distribution lines, substations, and specialty electrical infrastructure for utilities and industrial customers",
+ "chains": [
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "electrical infrastructure services / grid EPC contractor building T&D lines and substations (spun off from MDU Resources)",
+ "true_competitors": [
+  "MYRG",
+  "PWR",
+  "MTZ",
+  "EME",
+  "IESC",
+  "AGX"
+ ],
+ "chain_fit_confidence": "high"
+}

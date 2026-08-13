@@ -1,0 +1,182 @@
+{
+ "SVCO": {
+  "physical_anchor": "none — sells TCAD/EDA simulation software and IP cores, does not make, move, or instrument any physical chain asset",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "semiconductor process/device simulation (TCAD) and IP-licensing software vendor, upstream of chip fabs, not a physical toll-taker in any FDT chain",
+  "true_competitors": ["SNPS", "CDNS", "ANSS", "SIEGY", "PTC", "ALTR"],
+  "chain_fit_confidence": "low"
+ },
+ "SWBI": {
+  "physical_anchor": "manufactures firearms (handguns, long guns) at its Springfield MA and Deep River CT plants",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "consumer/law-enforcement firearms OEM — real physical product, but no connection to grid, nuclear, AI-power, robotics or quantum chains; nuclear_smr hint is a false positive from the shared 'Aerospace & Defense' industry string",
+  "true_competitors": ["RGR", "VSTO", "AOUT", "OLN", "AXON"],
+  "chain_fit_confidence": "low"
+ },
+ "SWMR": {
+  "physical_anchor": "embedded flight-control/autonomy software (TRIDENT OS, STYX C2, MINAS) that directly pilots and coordinates physical drone and unmanned-vehicle swarms in the field",
+  "chains": ["robotics_automation"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "military autonomy/C2 software layer for drone and unmanned-systems swarms — pre-revenue developer, not the hardware OEM, but the embedded control layer physically instruments the robots it commands",
+  "true_competitors": ["AVAV", "KTOS", "PLTR", "RCAT", "ONDS"],
+  "chain_fit_confidence": "medium"
+ },
+ "SYNA": {
+  "physical_anchor": "designs and sells human-interface and IoT connectivity semiconductor chips (touch/display controllers, Wi-Fi/BT combo ICs)",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "mainstream consumer/IoT edge-AI chip vendor — real silicon, but generic interface/connectivity ICs, not quantum-specific hardware; the quantum hint is an artifact of the broad 'Semiconductors' industry filter",
+  "true_competitors": ["CRUS", "AMBA", "MXL", "QCOM", "603160.SS"],
+  "chain_fit_confidence": "low"
+ },
+ "TAC": {
+  "physical_anchor": "owns and operates natural-gas, hydro and wind power-generation plants (incl. the Keephills gas plant) that generate and deliver electricity",
+  "chains": ["power_for_ai"],
+  "business_model": "utility",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "merchant/contracted power generator (IPP); signed a Feb-2026 MOU with CPP Investments and Brookfield to be exclusive site/power provider for a datacenter build at Keephills, scaling toward 1 GW under a long-term PPA — direct AI-load power-delivery exposure",
+  "true_competitors": ["VST", "NRG", "CEG", "TLN", "CPX.TO"],
+  "chain_fit_confidence": "high"
+ },
+ "TDG": {
+  "physical_anchor": "manufactures proprietary aerospace aftermarket components (actuators, pumps, ignition systems) for commercial and military aircraft",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "aircraft-parts aftermarket monopolist — real hardware, but general aviation components, not reactor/SMR components; the nuclear_smr hint is a false positive from the shared 'Aerospace & Defense' industry string with BWXT",
+  "true_competitors": ["HEI", "MOG.A", "CW", "WWD", "TXT"],
+  "chain_fit_confidence": "low"
+ },
+ "TE": {
+  "physical_anchor": "manufactures crystalline-silicon PV solar modules and cells at its Wilmer, TX and Rockdale, TX (G2_Austin) factories",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "US utility-scale solar module/cell manufacturer (rebranded from FREYR Battery) — a genuine physical producer, but solar-panel manufacturing is not one of this taxonomy's five defined chains (electrification_grid/nuclear_smr/power_for_ai/robotics_automation/quantum); AI-power market narrative around the stock is not a chain match",
+  "true_competitors": ["FSLR", "CSIQ", "JKS", "MAXN", "DQ"],
+  "chain_fit_confidence": "low"
+ },
+ "TEAM": {
+  "physical_anchor": "none — sells cloud/on-prem collaboration and dev-tools software (Jira, Confluence)",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "enterprise SaaS vendor, no physical product in any chain",
+  "true_competitors": ["MSFT", "MNDY", "ASAN", "NOW", "SMAR"],
+  "chain_fit_confidence": "low"
+ },
+ "TENB": {
+  "physical_anchor": "none — sells cybersecurity vulnerability-management SaaS",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "cybersecurity software vendor, no physical anchor in any chain (quantum hint is a 'Software - Infrastructure' industry-filter artifact)",
+  "true_competitors": ["RPD", "QLYS", "CRWD", "PANW", "FTNT"],
+  "chain_fit_confidence": "low"
+ },
+ "TEX": {
+  "physical_anchor": "manufactures mobile cranes, aerial work platforms and materials-processing equipment",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "diversified heavy construction/industrial equipment OEM — real hardware, but general-purpose cranes/MEWPs, not transformer/switchgear, turbine, reactor or robotics-specific gear; caught by the broad 'Industrial - Machinery' filter across four chain hints simultaneously, which is itself the tell",
+  "true_competitors": ["MTW", "OSK", "CAT", "ASTE", "CNHI"],
+  "chain_fit_confidence": "low"
+ },
+ "TFX": {
+  "physical_anchor": "manufactures single-use medical devices and disposables (catheters, vascular/surgical access products)",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "medical-device disposables maker — real hardware, but not surgical-robotics platforms; the robotics_automation hint is a 'Medical - Instruments & Supplies' filter artifact",
+  "true_competitors": ["BDX", "BSX", "ICUI", "STE", "CNMD"],
+  "chain_fit_confidence": "low"
+ },
+ "TLN": {
+  "physical_anchor": "owns and operates the Susquehanna nuclear power station plus a merchant gas/power generation fleet, delivering electricity directly to a co-located Amazon AWS datacenter",
+  "chains": ["power_for_ai", "nuclear_smr"],
+  "business_model": "utility",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "nuclear-levered independent power producer with a signed behind-the-meter datacenter PPA — an explicit power_for_ai anchor example, and the 'nuclear-levered IPPs' layer of nuclear_smr even though Susquehanna is legacy large-reactor, not SMR",
+  "true_competitors": ["CEG", "VST", "NRG", "PEG", "TAC"],
+  "chain_fit_confidence": "high"
+ },
+ "TNDM": {
+  "physical_anchor": "manufactures insulin-pump medical devices",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "diabetes-device maker — real hardware, but not factory/warehouse/surgical robotics; robotics_automation hint is a 'Medical - Devices' filter artifact",
+  "true_competitors": ["PODD", "DXCM", "ABT", "MDT"],
+  "chain_fit_confidence": "low"
+ },
+ "TTAN": {
+  "physical_anchor": "none — sells field-service-management SaaS for trades businesses",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "vertical SaaS platform, no physical product in any chain",
+  "true_competitors": ["PCOR", "ADSK", "CSGP", "NICE", "VRNT"],
+  "chain_fit_confidence": "low"
+ },
+ "TWLO": {
+  "physical_anchor": "none — operates a cloud communications API network (SMS/voice/email) with no physical product; the anti-Visa rule applies directly",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "CPaaS network operator, no physical anchor in any chain",
+  "true_competitors": ["BAND", "RNG", "ZM", "EGHT", "SINCH.ST"],
+  "chain_fit_confidence": "low"
+ },
+ "U": {
+  "physical_anchor": "none — sells the Unity game/real-time-3D content-creation engine as software",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "game engine/digital-twin authoring software, no physical product; some industrial-simulation use cases but not a chain toll-taker",
+  "true_competitors": ["RBLX", "EA", "TTWO", "ADSK", "ADBE"],
+  "chain_fit_confidence": "low"
+ },
+ "UCTT": {
+  "physical_anchor": "manufactures precision gas-delivery systems and chamber subsystems that it contract-builds for semiconductor-fab equipment OEMs",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "semicap subsystem/contract manufacturer selling into Applied Materials/Lam Research-class fab-tool OEMs — a real physical toll-taker, but generic semicap supply chain, not quantum-hardware-specific; caught by the deliberately broad 'Semiconductors' quantum filter",
+  "true_competitors": ["ICHR", "FN", "BRKS", "COHU", "AEIS"],
+  "chain_fit_confidence": "low"
+ },
+ "UPBD": {
+  "physical_anchor": "none directly — operates rent-to-own retail stores/leasing of third-party furniture and electronics; does not itself make, move or power a chain asset",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "consumer lease-to-own retailer, no chain relevance; robotics_automation hint is a 'Software - Application' filter artifact from its LTO fintech platform",
+  "true_competitors": ["AAN", "PRG", "BBY", "TGT"],
+  "chain_fit_confidence": "low"
+ },
+ "VECO": {
+  "physical_anchor": "manufactures molecular-beam-epitaxy (MBE) and ion-beam-deposition systems used to fabricate quantum-dot photonic devices and compound-semiconductor wafers",
+  "chains": ["quantum"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "photonics & lasers / qubit-hardware-enablement layer — over 30 Veeco MBE systems deployed into quantum technology development globally (e.g. Innolume quantum-dot laser production, Sparrow Quantum single-photon emitters), a genuine toll-taker on the quantum photonics build-out",
+  "true_competitors": ["AMAT", "LRCX", "KLAC", "COHR", "IPGP", "FORM"],
+  "chain_fit_confidence": "high"
+ },
+ "VELO": {
+  "physical_anchor": "manufactures metal additive-manufacturing (3D-printing) systems that print titanium/aluminum aerospace and defense parts",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "horizontal metal-AM equipment OEM selling across aerospace, defense, energy and semiconductor end markets (Boom Supersonic, iRocket, US Army) — real hardware, but not specific to any single FDT chain's value-chain layer; the four simultaneous chain hints (electrification_grid/nuclear_smr/power_for_ai/robotics_automation) are themselves the 'Industrial - Machinery' filter artifact tell, and financials show acute distress (0-month runway)",
+  "true_competitors": ["DDD", "SSYS", "PRLB", "MKFG", "NNDM"],
+  "chain_fit_confidence": "low"
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "symbol": "CGAU",
+ "physical_anchor": "Operates open-pit and heap-leach mines producing gold doré (Öksüt, Goldfield) and copper-gold concentrate (Mount Milligan).",
+ "chains": [
+  "precious_metals",
+  "copper_mining"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.9,
+ "value_chain_position": "Mid-tier producer selling refined gold doré and copper-gold concentrate directly from its own mines — not a converter of purchased ore.",
+ "true_competitors": [
+  "AEM",
+  "EGO",
+  "IAG",
+  "BTG",
+  "AGI",
+  "HBM"
+ ],
+ "chain_fit_confidence": "high"
+}

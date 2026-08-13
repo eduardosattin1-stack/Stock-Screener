@@ -1,0 +1,19 @@
+{
+ "symbol": "VALE",
+ "physical_anchor": "Iron-ore fines and pellets mined in Brazil and shipped as bulk ore to steelmakers, plus nickel and copper concentrate.",
+ "chains": [
+  "diversified_miners"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.8,
+ "value_chain_position": "Bulk/base-metal major selling raw ore and concentrate (iron ore primary, nickel/copper secondary) — the one 'Steel'-classified name that actually belongs here.",
+ "true_competitors": [
+  "BHP",
+  "RIO",
+  "FMG.AX",
+  "MT",
+  "CLF",
+  "AAL.L"
+ ],
+ "chain_fit_confidence": "high"
+}

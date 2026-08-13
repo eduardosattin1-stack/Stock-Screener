@@ -1,0 +1,182 @@
+{
+ "ITGR": {
+  "physical_anchor": "manufactures implantable medical-device components (batteries, enclosures, electronics) for pacemakers, ICDs and neuromodulators",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "medtech contract manufacturer supplying components to CRM/neuromodulation OEMs — not a physical anchor into any FDT chain",
+  "true_competitors": ["TEL", "WST", "NDSN", "FLEX", "JBL", "AVTR"],
+  "chain_fit_confidence": "low"
+ },
+ "ITT": {
+  "physical_anchor": "manufactures industrial pumps, valves, friction/brake components and harsh-environment connectors",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "diversified industrial component maker across energy, auto and general industrial end markets — not specifically grid/nuclear/AI-power equipment",
+  "true_competitors": ["FLS", "XYL", "ROP", "DOV", "PH", "CW", "APH"],
+  "chain_fit_confidence": "low"
+ },
+ "J": {
+  "physical_anchor": "designs and builds physical infrastructure — grid interconnection, substations, data-center electrical/mechanical systems, water and advanced-facility construction — as engineer-of-record and construction manager",
+  "chains": ["electrification_grid", "power_for_ai"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.03,
+  "value_chain_position": "large-scale E&C / professional services toll-taker on grid interconnection, data-center EPC and advanced-facility build-out",
+  "true_competitors": ["AECOM", "FLR", "STN", "WSP.TO", "TTEK", "KBR", "ARCAD.AS"],
+  "chain_fit_confidence": "medium"
+ },
+ "KC": {
+  "physical_anchor": "operates cloud-computing data centers and sells IaaS/PaaS compute capacity in China",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "cloud/data-center infrastructure services provider — a compute marketplace, not a physical anchor into any FDT chain (the anti-Visa rule)",
+  "true_competitors": ["BABA", "0700.HK", "BIDU", "AMZN", "MSFT", "GDS"],
+  "chain_fit_confidence": "low"
+ },
+ "KDK": {
+  "physical_anchor": "builds the autonomous-driving sensor/compute hardware stack retrofitted onto Class-8 trucks for driverless freight and off-road hauling",
+  "chains": ["robotics_automation"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "pre-revenue autonomous-trucking (physical-AI) developer, milestone-driven (named freight lanes, first driverless deployments)",
+  "true_competitors": ["AUR", "PONY", "WRD", "CREV"],
+  "chain_fit_confidence": "medium"
+ },
+ "KMTS": {
+  "physical_anchor": "manufactures a wearable cardioverter defibrillator worn by cardiac patients",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "early-commercial wearable medical device — a cardiac device maker, not a robotics/automation physical anchor",
+  "true_competitors": ["MDT", "BSX", "ABT", "PHG", "IRTC"],
+  "chain_fit_confidence": "low"
+ },
+ "KODK": {
+  "physical_anchor": "manufactures printing equipment, industrial inkjet systems and specialty chemicals/materials",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "legacy imaging/print equipment and materials maker — no genuine electrification, nuclear, AI-power or robotics anchor",
+  "true_competitors": ["XRX", "HPQ", "CAJ", "4901.T", "HDD.DE", "RICOY"],
+  "chain_fit_confidence": "low"
+ },
+ "KOPN": {
+  "physical_anchor": "designs and manufactures microdisplays (OLED/LCD) and optical modules for AR/VR and defense/industrial wearables",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "display/optical-module component maker — display hardware, not qubit/cryo/photonics quantum-stack hardware (anti-Visa rule on the quantum hint)",
+  "true_competitors": ["HIMX", "VUZI", "MVIS", "SONY", "LITE"],
+  "chain_fit_confidence": "low"
+ },
+ "KRMN": {
+  "physical_anchor": "designs and manufactures precision-engineered structures and subsystems for missile defense, space launch and hypersonic systems",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "aerospace/defense precision structures maker — no reactor, fuel-cycle or grid-equipment anchor despite the nuclear_smr hint",
+  "true_competitors": ["KTOS", "MRCY", "MOG.A", "CW", "LDOS", "LHX", "RTX"],
+  "chain_fit_confidence": "low"
+ },
+ "KTOS": {
+  "physical_anchor": "manufactures unmanned aerial target drones, tactical UAS and satellite/microwave communications systems for defense customers",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "defense unmanned-systems and electronics maker — outside the taxonomy's nuclear and industrial/surgical robotics chain definitions",
+  "true_competitors": ["AVAV", "NOC", "LHX", "ESLT", "DRS", "TXT"],
+  "chain_fit_confidence": "low"
+ },
+ "KVYO": {
+  "physical_anchor": "none — a marketing-automation SaaS platform for email/SMS campaigns (software workflow automation, not physical robotics)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "cloud marketing-automation software vendor; the 'automation' keyword mismatched a non-physical SaaS product (anti-Visa rule)",
+  "true_competitors": ["HUBS", "CRM", "BRZE", "INTU"],
+  "chain_fit_confidence": "low"
+ },
+ "LAES": {
+  "physical_anchor": "designs and fabricates secure semiconductor microcontroller chips (post-quantum-cryptography ICs) for IoT/digital-identity authentication",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "fabless secure-chip supplier; post-quantum CRYPTOGRAPHY (classical chips resistant to future quantum attacks) is not qubit/cryo/photonics quantum-computing hardware — no genuine physical anchor to the quantum chain despite the branding",
+  "true_competitors": ["NXPI", "IFX.DE", "STM", "MCHP", "HO.PA"],
+  "chain_fit_confidence": "low"
+ },
+ "LGN": {
+  "physical_anchor": "installs and services electrical, mechanical and HVAC infrastructure — building electrification retrofits and data-center MEP systems",
+  "chains": ["electrification_grid", "power_for_ai"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.03,
+  "value_chain_position": "building/data-center electrical infrastructure services toll-taker (MEP contractor) on the electrification and AI-power build-out",
+  "true_competitors": ["EME", "FIX", "MYRG", "IESC", "LMB", "AGX", "PWR"],
+  "chain_fit_confidence": "medium"
+ },
+ "LMRI": {
+  "physical_anchor": "operates diagnostic medical-imaging services/equipment (limited disclosed financial data, recently listed)",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "medical-imaging services operator — no electrification, nuclear, AI-power, robotics or quantum physical anchor",
+  "true_competitors": ["RDNT", "GEHC"],
+  "chain_fit_confidence": "low"
+ },
+ "LPTH": {
+  "physical_anchor": "manufactures precision molded infrared/specialty-glass optics and photonic components used in defense, industrial-sensing and laser systems",
+  "chains": ["robotics_automation", "quantum"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "photonics/optics component supplier feeding machine-vision sensing and photonics-and-lasers hardware layers",
+  "true_competitors": ["COHR", "MKSI", "THORLABS", "EXCELITAS", "SUMITA"],
+  "chain_fit_confidence": "medium"
+ },
+ "LSPD": {
+  "physical_anchor": "none — provides cloud-based point-of-sale and e-commerce software for retail/restaurant merchants",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "POS/commerce software platform — a payments-adjacent software marketplace, not a physical anchor into any FDT chain",
+  "true_competitors": ["TOST", "XYZ", "SHOP", "VYX", "PAR", "FI"],
+  "chain_fit_confidence": "low"
+ },
+ "LTBR": {
+  "physical_anchor": "develops metallic nuclear fuel (Lightbridge Fuel) designed to boost power output and safety margins in existing and next-generation reactors",
+  "chains": ["nuclear_smr"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.1,
+  "value_chain_position": "pre-revenue advanced-reactor fuel developer, dated NRC/DOE test-reactor and licensing milestones",
+  "true_competitors": ["LEU", "BWXT", "XE", "OKLO", "SMR"],
+  "chain_fit_confidence": "high"
+ },
+ "LUNR": {
+  "physical_anchor": "designs and operates robotic lunar landers and space-delivery vehicles for NASA CLPS missions",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "space lunar-lander/delivery-services developer — no reactor or nuclear-fuel business despite the nuclear_smr hint",
+  "true_competitors": ["RKLB", "RDW", "SIDU"],
+  "chain_fit_confidence": "low"
+ },
+ "LYFT": {
+  "physical_anchor": "none — operates a ridesharing marketplace app matching drivers and riders; does not manufacture vehicles or robots",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "ridesharing platform/marketplace — a matching layer, the classic anti-Visa non-anchor even with AV-partnership headlines",
+  "true_competitors": ["UBER", "GRAB"],
+  "chain_fit_confidence": "low"
+ },
+ "LZ": {
+  "physical_anchor": "none — operates an online legal-document and small-business services platform",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "consumer/SMB legal-services software platform — no physical anchor into any FDT chain",
+  "true_competitors": ["WKL.AS", "TRI"],
+  "chain_fit_confidence": "low"
+ }
+}

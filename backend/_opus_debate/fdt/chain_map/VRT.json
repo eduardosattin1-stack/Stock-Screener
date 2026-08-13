@@ -1,0 +1,21 @@
+{
+ "symbol": "VRT",
+ "physical_anchor": "Manufactures UPS systems, switchgear, power distribution and liquid-cooling thermal-management equipment for data centers",
+ "chains": [
+  "power_for_ai",
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.03,
+ "value_chain_position": "Data-center power & thermal-management equipment maker — sells UPS systems, switchgear, power distribution and liquid-cooling gear to hyperscalers/colos, the equipment layer of grid + AI-power buildout.",
+ "true_competitors": [
+  "ETN",
+  "HUBB",
+  "NVT",
+  "ABB",
+  "SU.PA",
+  "CARR",
+  "JCI"
+ ],
+ "chain_fit_confidence": "high"
+}

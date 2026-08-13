@@ -1,0 +1,182 @@
+{
+ "BAND": {
+  "physical_anchor": "None identifiable — routes voice/SMS/messaging traffic over leased telecom carrier capacity via a cloud CPaaS platform it does not manufacture or physically operate",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Communications-Platform-as-a-Service (CPaaS) API layer for enterprise voice/messaging — a software toll on carrier networks, the anti-Visa case",
+  "true_competitors": ["TWLO", "RNG", "EGHT", "VG", "SINCH.ST"],
+  "chain_fit_confidence": "low"
+ },
+ "BAX": {
+  "physical_anchor": "Manufactures IV/infusion pumps, dialysis machines and renal-care fluid-management hardware",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Hospital-supply medtech maker of infusion, renal and surgical fluid-management equipment — general healthcare hardware, not a factory/warehouse/surgical-robotics chain layer",
+  "true_competitors": ["BDX", "ICUI", "FMS", "DVA", "MDT"],
+  "chain_fit_confidence": "low"
+ },
+ "BBNX": {
+  "physical_anchor": "Makes the iLet Bionic Pancreas, a wearable closed-loop automated insulin-delivery pump",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Diabetes-device maker selling an automated insulin pump — consumer medtech, not the industrial/surgical-robotics layers this chain scopes",
+  "true_competitors": ["TNDM", "DXCM", "MDT", "PODD", "ABT"],
+  "chain_fit_confidence": "low"
+ },
+ "BDX": {
+  "physical_anchor": "Manufactures syringes, IV catheters, and diagnostic/specimen-collection hardware",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Diversified medical-device and diagnostics maker (medication delivery, biosciences, diagnostics) — hospital consumables/instruments, not robotics",
+  "true_competitors": ["BAX", "ICUI", "ABT", "TFX", "STE", "DHR"],
+  "chain_fit_confidence": "low"
+ },
+ "BEP": {
+  "physical_anchor": "Owns and operates hydroelectric dams, wind farms and utility-scale solar plants generating electricity",
+  "chains": ["power_for_ai"],
+  "business_model": "utility",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Renewable-generation IPP selling firm power under long-dated PPAs, including large hyperscaler/datacenter supply deals (e.g. the Microsoft framework agreement) — the utility layer of power_for_ai",
+  "true_competitors": ["NEE", "AES", "CWEN", "ORA", "NRG", "VST"],
+  "chain_fit_confidence": "medium"
+ },
+ "BEPC": {
+  "physical_anchor": "Owns and operates hydroelectric dams, wind farms and utility-scale solar plants generating electricity (corporate share class of the same operating business as BEP)",
+  "chains": ["power_for_ai"],
+  "business_model": "utility",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Renewable-generation IPP selling firm power under long-dated PPAs, including hyperscaler/datacenter supply deals — same operating asset base and thesis as BEP, distinct listed share class",
+  "true_competitors": ["NEE", "AES", "CWEN", "ORA", "NRG", "VST"],
+  "chain_fit_confidence": "medium"
+ },
+ "BETA": {
+  "physical_anchor": "Designs and builds the ALIA electric vertical-takeoff (eVTOL) aircraft and its charging network",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Pre-revenue eVTOL aircraft OEM and charging-infrastructure developer — electric aviation, not a grid-equipment, nuclear or power-generation chain member",
+  "true_competitors": ["JOBY", "ACHR", "EH"],
+  "chain_fit_confidence": "low"
+ },
+ "BFLY": {
+  "physical_anchor": "Makes the handheld Butterfly iQ ultrasound-on-chip probe",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Point-of-care ultrasound imaging device maker — diagnostic medtech hardware, not a machine-vision/robotics chain layer",
+  "true_competitors": ["GEHC", "PHG"],
+  "chain_fit_confidence": "low"
+ },
+ "BILL": {
+  "physical_anchor": "None — cloud accounts-payable/receivable payments-automation platform",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "SMB financial-workflow SaaS routing B2B payments — the anti-Visa case, no physical product anywhere in the stack",
+  "true_competitors": ["INTU", "PYPL", "AVDX"],
+  "chain_fit_confidence": "low"
+ },
+ "BKKT": {
+  "physical_anchor": "None — operates a crypto custody/trading and loyalty-redemption software platform",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Crypto custody and loyalty-transaction platform — pure software rails, no physical anchor",
+  "true_competitors": ["COIN", "GLXY", "PYPL"],
+  "chain_fit_confidence": "low"
+ },
+ "BKSY": {
+  "physical_anchor": "Owns and operates a constellation of small earth-imaging satellites and ground-station hardware",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Geospatial-intelligence operator selling satellite imagery/analytics mainly to defense/government — a space-imaging chain not represented in this book's grid/nuclear/power/robotics/quantum taxonomy",
+  "true_competitors": ["PL", "RDW", "LUNR"],
+  "chain_fit_confidence": "low"
+ },
+ "BL": {
+  "physical_anchor": "None — cloud financial-close and accounting-automation software",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Enterprise finance-automation SaaS (close, reconciliation) — software-only, no physical product",
+  "true_competitors": ["WDAY", "SAP", "ORCL"],
+  "chain_fit_confidence": "low"
+ },
+ "BLDP": {
+  "physical_anchor": "Manufactures proton-exchange-membrane (PEM) hydrogen fuel-cell stacks and modules",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Fuel-cell hardware maker selling into bus/truck/rail/marine/stationary-power integrators — real physical hydrogen-conversion equipment, but not a grid-transformer, nuclear-SMR or AI-datacenter generation-equipment chain member as this taxonomy scopes it",
+  "true_competitors": ["PLUG", "BE", "FCEL", "CMI", "HYZN"],
+  "chain_fit_confidence": "low"
+ },
+ "BLFS": {
+  "physical_anchor": "Makes biopreservation media and cold-chain freezer/storage hardware for cell & gene therapy",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cell-and-gene-therapy tools/cold-chain vendor — biotech infrastructure, unrelated to grid/nuclear/power/robotics/quantum chains",
+  "true_competitors": ["CTLT", "AVTR", "TMO"],
+  "chain_fit_confidence": "low"
+ },
+ "BLKB": {
+  "physical_anchor": "None — cloud software for nonprofit/education fundraising and administration",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Vertical SaaS for nonprofits — no physical product",
+  "true_competitors": ["CRM"],
+  "chain_fit_confidence": "low"
+ },
+ "BLSH": {
+  "physical_anchor": "None — operates a crypto spot/derivatives exchange",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Digital-asset exchange venue — trading-platform software, no physical anchor (the anti-Visa case)",
+  "true_competitors": ["COIN", "GLXY"],
+  "chain_fit_confidence": "low"
+ },
+ "BLZE": {
+  "physical_anchor": "Operates cloud object-storage data centers (owns disk-drive storage pods) but sells storage-as-a-service, not chain hardware",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Low-cost cloud storage/backup provider — a datacenter tenant/storage operator, not a quantum, grid, nuclear, power or robotics chain participant despite the Software-Infrastructure industry tag",
+  "true_competitors": ["AMZN", "NTAP", "EQIX"],
+  "chain_fit_confidence": "low"
+ },
+ "BRKR": {
+  "physical_anchor": "Manufactures mass spectrometers, NMR/MRI systems and superconducting-magnet-based scientific instruments",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Life-science/analytical-instrument maker (mass spec, NMR, imaging) selling to pharma/biotech/academic labs — real physical hardware, but revenue is not meaningfully exposed to the robotics_automation chain's factory/warehouse/surgical layers despite the industry-code overlap",
+  "true_competitors": ["TMO", "A", "WAT", "DHR", "MTD"],
+  "chain_fit_confidence": "low"
+ },
+ "BRUN": {
+  "physical_anchor": "Unverifiable from available data — no identifiable physical product; filed under Software - Infrastructure with minimal disclosed history",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Insufficient public information to establish any physical value-chain position; treated as a generic software-infrastructure name with no chain anchor pending further diligence",
+  "true_competitors": ["DDOG", "ESTC", "FROG", "PD"],
+  "chain_fit_confidence": "low"
+ },
+ "BRZE": {
+  "physical_anchor": "None — cloud customer-engagement/marketing-automation software",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Customer-engagement SaaS (push/email/in-app messaging orchestration) — no physical product",
+  "true_competitors": ["CRM", "KVYO", "ADBE"],
+  "chain_fit_confidence": "low"
+ }
+}

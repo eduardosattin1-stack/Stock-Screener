@@ -1,0 +1,11 @@
+{
+ "ZS": {
+  "physical_anchor": "none — Zscaler sells a cloud-delivered SaaS security platform (Zero Trust Exchange) with no physical hardware, sensing, or infrastructure product; it is a subscription software network, not a maker or mover of anything physical",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "cloud cybersecurity SaaS — sells subscription access to a Zero Trust Exchange platform for network/application security, no physical layer",
+  "true_competitors": ["PANW", "CRWD", "NET", "FTNT", "OKTA", "CHKP", "S", "PING"],
+  "chain_fit_confidence": "low"
+ }
+}

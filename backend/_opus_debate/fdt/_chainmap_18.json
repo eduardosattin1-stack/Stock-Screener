@@ -1,0 +1,182 @@
+{
+ "BSP": {
+  "physical_anchor": "none identifiable - operates a portfolio of acquired consumer mobile/web apps (Evernote, WeTransfer, Remini, Meetup); no physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "consumer software roll-up monetizing acquired app subscriptions - not a value-chain participant in any FDT physical chain",
+  "true_competitors": ["IAC", "ZD", "PRX.AS", "MTCH", "BMBL", "ANGI"],
+  "chain_fit_confidence": "low"
+ },
+ "BTQ": {
+  "physical_anchor": "primarily a post-quantum cryptography software vendor; the claimed photonic quantum-computing R&D program (Quantum Silicon Valley) is pre-hardware and unproven at this mcap/liquidity",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "quantum-safe cryptographic software licensing, with a speculative unbuilt photonics hardware ambition - the anti-Visa trap the quantum industry filter is expected to catch",
+  "true_competitors": ["ARQQ", "IONQ", "QUBT", "QBTS", "RGTI", "LAES"],
+  "chain_fit_confidence": "low"
+ },
+ "BTDR": {
+  "physical_anchor": "self-designed ASIC mining chips and large-scale Bitcoin-mining/AI-hosting datacenters",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "compute-demand operator (crypto mining + AI cloud hosting) that BUYS power and hardware capacity - not a supplier of power, grid equipment, or generation assets into the FDT chains, so it sits on the wrong side of every chain in this book",
+  "true_competitors": ["MARA", "RIOT", "CLSK", "CORZ", "HUT", "WULF", "CIFR", "IREN"],
+  "chain_fit_confidence": "low"
+ },
+ "BULL": {
+  "physical_anchor": "none - online brokerage/trading app, pure fintech software",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "retail trading platform - a payments/brokerage app, textbook anti-Visa exclusion",
+  "true_competitors": ["HOOD", "IBKR", "SCHW", "FUTU", "TIGR", "SOFI"],
+  "chain_fit_confidence": "low"
+ },
+ "BVS": {
+  "physical_anchor": "injectable orthobiologics (viscosupplementation) and bone-growth-stimulation devices for orthopedic/pain indications",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "orthopedic/regenerative-medicine device maker - real physical product but no motion-control, automation or robotics layer; caught by the broad Medical-Devices filter",
+  "true_competitors": ["ZBH", "SYK", "ANIK", "ORGO", "IART", "SNN"],
+  "chain_fit_confidence": "low"
+ },
+ "BW": {
+  "physical_anchor": "utility-scale boilers, steam-generation systems and environmental/emissions-control equipment sold to power plants and industrial thermal customers",
+  "chains": ["power_for_ai"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "thermal generation-equipment maker (Thermal/Environmental/Renewable segments); NOT the nuclear-component business (that is BWXT, an unrelated separate company post-spinoff) despite the shared legacy name - nuclear_smr hint is a mapping error",
+  "true_competitors": ["GEV", "GTLS", "FTEK", "THR", "MHI:TYO", "DOOSANENB.NS"],
+  "chain_fit_confidence": "medium"
+ },
+ "CAMT": {
+  "physical_anchor": "optical inspection and metrology systems for semiconductor advanced packaging and wafer fabs",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "general semiconductor-capex inspection toolmaker (memory/logic/advanced packaging broadly) - not quantum-hardware specific; caught by the Semiconductors industry filter, not a real quantum-chain participant",
+  "true_competitors": ["KLAC", "ONTO", "NVMI", "AMAT", "ASM.AS", "6857.T"],
+  "chain_fit_confidence": "low"
+ },
+ "CARR": {
+  "physical_anchor": "HVAC, refrigeration, and fire & security systems, including datacenter cooling units",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "climate-control/cooling equipment maker adjacent to the AI-datacenter buildout, but no chain in this taxonomy covers thermal-management equipment - not grid, generation, nuclear, or robotics",
+  "true_competitors": ["TT", "JCI", "6367.T", "LII", "VRT"],
+  "chain_fit_confidence": "low"
+ },
+ "CATX": {
+  "physical_anchor": "none physical in the FDT sense - clinical-stage radiopharmaceutical (targeted alpha-particle cancer therapy) developer, essentially pre-revenue biotech",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "oncology drug developer misfiled as Medical-Devices; unrelated to any FDT physical chain",
+  "true_competitors": ["NVS", "LNTH", "TLX.AX", "BMY", "AZN"],
+  "chain_fit_confidence": "low"
+ },
+ "CBLL": {
+  "physical_anchor": "point-of-care EEG headband/monitor hardware for seizure detection",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "diagnostic neuro-monitoring device maker - a real physical product but a sensing/diagnostic device, not a factory, warehouse, motion-control, or surgical-robotics platform",
+  "true_competitors": ["NIHONKOHDEN:6849.T", "MASI", "CMP.AX", "SNN"],
+  "chain_fit_confidence": "low"
+ },
+ "CBRS": {
+  "physical_anchor": "wafer-scale AI training/inference compute chips and systems",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "classical AI-accelerator hardware maker - genuinely physical, but sells into AI compute/training, not quantum computing; the quantum chains_hint is a Semiconductors-filter mismatch",
+  "true_competitors": ["NVDA", "AMD", "INTC"],
+  "chain_fit_confidence": "low"
+ },
+ "CCC": {
+  "physical_anchor": "none - SaaS platform for auto-insurance claims and collision-repair estimating",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "insurtech claims-workflow software, no physical product",
+  "true_competitors": ["GWRE", "VRSK", "RELX"],
+  "chain_fit_confidence": "low"
+ },
+ "CDRE": {
+  "physical_anchor": "body armor, duty gear, restraints and ammunition for law enforcement/military (Safariland brand)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "public-safety hard-goods manufacturer, filed under Aerospace & Defense - has zero nuclear/SMR exposure; nuclear_smr hint is a mapping error from the broad defense industry filter",
+  "true_competitors": ["AXON", "ESLT", "BA.L"],
+  "chain_fit_confidence": "low"
+ },
+ "CERS": {
+  "physical_anchor": "INTERCEPT blood-treatment illumination/pathogen-reduction systems for blood banks",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "blood-safety device/consumables maker - real hardware, unrelated to any FDT chain layer",
+  "true_competitors": ["4543.T", "GRFS", "HAE", "FRE.DE"],
+  "chain_fit_confidence": "low"
+ },
+ "CEVA": {
+  "physical_anchor": "none - fabless semiconductor IP licensor; does not itself make, move, or power anything physical",
+  "chains": [],
+  "business_model": "royalty_streamer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "wireless/DSP IP core licensor collecting per-unit royalties on customers' chip shipments - a genuine royalty_streamer business model, which is NEVER legal in this equipment/utility book by the split rule regardless of the quantum-adjacent keyword hints",
+  "true_competitors": ["ARM", "SNPS", "CDNS"],
+  "chain_fit_confidence": "low"
+ },
+ "CGNT": {
+  "physical_anchor": "none - security/intelligence analytics software",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "government/enterprise surveillance analytics software, no physical product",
+  "true_competitors": ["VRNT", "NICE", "PLTR", "CLBT"],
+  "chain_fit_confidence": "low"
+ },
+ "CHKP": {
+  "physical_anchor": "none - cybersecurity software (network/cloud/endpoint security)",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "pure cybersecurity software vendor, no physical product; caught by the broad Software-Infrastructure/quantum keyword net on 'post-quantum' but sells no quantum hardware",
+  "true_competitors": ["PANW", "FTNT", "CRWD", "ZS", "CSCO"],
+  "chain_fit_confidence": "low"
+ },
+ "CLPT": {
+  "physical_anchor": "MRI-compatible neurosurgical navigation and stereotactic delivery hardware (SmartFrame/ClearPoint platform) for precision brain interventions",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "surgical-robotics-adjacent toll-taker: sells the image-guided delivery hardware and disposables/biologics-access services used in precision neurosurgical procedures",
+  "true_competitors": ["ISRG", "STXS", "MDT", "GMED"],
+  "chain_fit_confidence": "medium"
+ },
+ "CMCO": {
+  "physical_anchor": "hoists, cranes, rigging and automated motion-control/material-handling systems",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "industrial material-handling and motion-control equipment maker, increasingly marketed as intelligent/automated handling solutions for factories and warehouses",
+  "true_competitors": ["TEX", "KCR.HE", "ROK", "6383.T", "HON"],
+  "chain_fit_confidence": "medium"
+ },
+ "CNMD": {
+  "physical_anchor": "powered surgical instruments and consumables for orthopedic and general surgery",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "general surgical device/consumables maker - real physical products but not a robotics-platform or robotics-instrument-specific business; caught by the broad Medical-Devices filter",
+  "true_competitors": ["SYK", "ZBH", "SNN", "MDT", "IART"],
+  "chain_fit_confidence": "low"
+ }
+}

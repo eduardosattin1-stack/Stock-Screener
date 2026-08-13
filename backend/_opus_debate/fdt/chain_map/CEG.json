@@ -1,0 +1,22 @@
+{
+ "symbol": "CEG",
+ "physical_anchor": "Operates the largest US fleet of nuclear power plants, generating and selling firm electricity including dedicated AI-datacenter PPAs (e.g. Microsoft/Three Mile Island)",
+ "chains": [
+  "power_for_ai",
+  "nuclear_smr"
+ ],
+ "business_model": "utility",
+ "commodity_revenue_share": 0.1,
+ "value_chain_position": "Nuclear-levered independent power producer — sells firm baseload electricity under PPAs to hyperscalers and the grid; not a uranium commodity play",
+ "true_competitors": [
+  "VST",
+  "TLN",
+  "NRG",
+  "PEG",
+  "EXC",
+  "DUK",
+  "SO",
+  "NEE"
+ ],
+ "chain_fit_confidence": "high"
+}

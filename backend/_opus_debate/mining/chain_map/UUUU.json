@@ -1,0 +1,21 @@
+{
+ "symbol": "UUUU",
+ "physical_anchor": "Uranium concentrate (U3O8) milled at White Mesa, Utah, plus rare-earth oxide (NdPr) separation from monazite feed",
+ "chains": [
+  "uranium_fuel_cycle",
+  "rare_earth_strategic"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.65,
+ "value_chain_position": "Only operating conventional uranium mill in the US, co-producing rare-earth oxides and vanadium as alternate-feed byproducts",
+ "true_competitors": [
+  "UEC",
+  "URG",
+  "DNN",
+  "CCJ",
+  "MP",
+  "USAR",
+  "LYC.AX"
+ ],
+ "chain_fit_confidence": "high"
+}

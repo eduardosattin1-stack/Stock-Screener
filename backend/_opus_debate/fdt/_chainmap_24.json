@@ -1,0 +1,182 @@
+{
+ "NNDM": {
+  "physical_anchor": "Additive-manufacturing 3D printers for electronics (PCBs) and metal parts (post Desktop Metal/Markforged roll-up)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.1,
+  "value_chain_position": "Additive-manufacturing hardware vendor selling printers/consumables into aerospace, defense, medtech and electronics customers",
+  "true_competitors": ["SSYS", "DDD", "PRLB", "MTLS", "XMTR", "VLD"],
+  "chain_fit_confidence": "low"
+ },
+ "NNE": {
+  "physical_anchor": "Designs microreactor nuclear power systems (ZEUS/ODIN) and provides nuclear fuel transport/logistics services",
+  "chains": ["nuclear_smr"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Pre-revenue SMR/microreactor developer plus nuclear fuel-cycle logistics services layer",
+  "true_competitors": ["OKLO", "SMR", "BWXT", "LEU", "USNC", "KAIROSPOWER"],
+  "chain_fit_confidence": "high"
+ },
+ "NRG": {
+  "physical_anchor": "Owns and operates natural-gas and nuclear-stake power generation plants plus retail electricity supply",
+  "chains": ["power_for_ai"],
+  "business_model": "utility",
+  "commodity_revenue_share": 0.1,
+  "value_chain_position": "Independent power producer/retail electricity provider selling firm generation, increasingly under datacenter-linked PPAs",
+  "true_competitors": ["VST", "CEG", "TLN", "NEE", "PEG", "AES"],
+  "chain_fit_confidence": "high"
+ },
+ "NRGV": {
+  "physical_anchor": "Builds gravity-based and battery energy-storage systems (physical storage towers/battery installations) for grid customers",
+  "chains": ["electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Grid-scale energy-storage technology/EPC vendor selling and deploying storage systems",
+  "true_competitors": ["FLNC", "STEM", "EOSE", "GWH", "WRT1V.HE"],
+  "chain_fit_confidence": "high"
+ },
+ "NTSK": {
+  "physical_anchor": "None — pure cloud/network security (SASE) software, no physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cybersecurity SaaS (secure access service edge); not a chain participant",
+  "true_competitors": ["ZS", "PANW", "CRWD", "FTNT", "CHKP", "CYBR"],
+  "chain_fit_confidence": "low"
+ },
+ "NVCR": {
+  "physical_anchor": "Wearable transducer-array medical devices delivering Tumor Treating Fields (TTFields) to oncology patients",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Proprietary oncology medical-device maker (device rental/therapy), not a robotics/automation platform",
+  "true_competitors": ["MDT", "BSX", "ARAY", "EKTA-B.ST", "ISRG"],
+  "chain_fit_confidence": "low"
+ },
+ "NVMI": {
+  "physical_anchor": "Manufactures semiconductor-fab metrology and process-control instruments (optical/X-ray inspection tools)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Semiconductor process-control equipment vendor serving general chip fabs, not a quantum-specific toll-taker",
+  "true_competitors": ["KLAC", "AMAT", "ASML", "ONTO", "CAMT", "LRCX"],
+  "chain_fit_confidence": "low"
+ },
+ "NVTS": {
+  "physical_anchor": "Designs and sells gallium-nitride (GaN) and silicon-carbide (SiC) power semiconductor chips",
+  "chains": ["electrification_grid", "power_for_ai"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Power-semiconductor component maker; power-management layer for EV/grid/solar (electrification_grid) and next-gen AI-datacenter 800V power delivery (power_for_ai)",
+  "true_competitors": ["WOLF", "ON", "STM", "IFNNY", "POWI", "VICR", "MPWR"],
+  "chain_fit_confidence": "medium"
+ },
+ "OCTV": {
+  "physical_anchor": "None identifiable — application software company, no disclosed physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Application software/AI vendor; insufficient data to place in any physical-anchor chain",
+  "true_competitors": ["PLTR", "AI", "PATH", "BBAI", "SOUN"],
+  "chain_fit_confidence": "low"
+ },
+ "OKLO": {
+  "physical_anchor": "Designs and is licensing a compact fission microreactor (Aurora powerhouse) for on-site deployment",
+  "chains": ["nuclear_smr", "power_for_ai"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Pre-revenue advanced-reactor developer progressing NRC dated milestones, with signed datacenter power-offtake agreements",
+  "true_competitors": ["NNE", "SMR", "BWXT", "LEU", "USNC", "KAIROSPOWER"],
+  "chain_fit_confidence": "high"
+ },
+ "OPTX": {
+  "physical_anchor": "Manufactures precision optical components and lens assemblies for defense/medical/industrial customers",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Generalist precision-optics manufacturer; no confirmed dedicated quantum-photonics or robotics-vision customer concentration",
+  "true_competitors": ["COHR", "LITE", "MKSI", "JEN.DE"],
+  "chain_fit_confidence": "low"
+ },
+ "ORA": {
+  "physical_anchor": "Designs, builds and operates geothermal (and storage) power plants, including proprietary Ormat Energy Converter turbines",
+  "chains": ["power_for_ai"],
+  "business_model": "utility",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Geothermal IPP/equipment maker selling firm baseload power, increasingly pitched for datacenter PPAs",
+  "true_competitors": ["CEG", "VST", "TLN", "NEE", "NRG"],
+  "chain_fit_confidence": "medium"
+ },
+ "ORCL": {
+  "physical_anchor": "None as a chain participant — operates hyperscale datacenters as a massive power CONSUMER, does not make/move/power a physical chain product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cloud/enterprise software and hyperscale infrastructure operator; demand-side of the AI-power buildout, not a supply-side chain toll-taker",
+  "true_competitors": ["MSFT", "GOOGL", "AMZN", "CRM", "SAP", "IBM"],
+  "chain_fit_confidence": "low"
+ },
+ "ORN": {
+  "physical_anchor": "Marine and heavy-civil construction (dredging, waterfront structures) plus Texas ready-mix concrete — not grid/interconnection EPC",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Generalist marine/heavy-civil construction contractor; not a specialist grid-interconnection or power EPC player",
+  "true_competitors": ["MYRG", "IESC", "MTZ", "GVA", "EME"],
+  "chain_fit_confidence": "low"
+ },
+ "OSPN": {
+  "physical_anchor": "None — digital-identity/e-signature/authentication SOFTWARE (legacy hardware tokens are a shrinking minority of revenue)",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cybersecurity/digital-identity SaaS; general 'quantum-safe crypto readiness' messaging is not a genuine quantum-hardware chain tie",
+  "true_competitors": ["OKTA", "CYBR", "FFIV", "NET"],
+  "chain_fit_confidence": "low"
+ },
+ "OSS": {
+  "physical_anchor": "Manufactures rugged, high-performance GPU compute servers and expansion hardware for defense/edge-AI applications",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Rugged/embedded HPC hardware integrator; general AI-compute edge hardware, not quantum-specific",
+  "true_competitors": ["MRCY", "CW", "KTN.DE"],
+  "chain_fit_confidence": "low"
+ },
+ "OUST": {
+  "physical_anchor": "Manufactures LiDAR sensors (laser-based 3D imaging hardware)",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Machine-vision & sensing hardware supplier — LiDAR for AMRs, industrial automation and autonomous vehicles",
+  "true_competitors": ["LAZR", "CPTN", "INVZ", "HSAI", "LIDR"],
+  "chain_fit_confidence": "high"
+ },
+ "PACB": {
+  "physical_anchor": "Manufactures DNA sequencing instruments (HiFi long-read sequencers) — lab analytical hardware, not a chain-listed product",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Genomics sequencing-instrument maker; no taxonomy chain covers genomics tooling",
+  "true_competitors": ["ILMN", "TXG", "QGEN", "TWST"],
+  "chain_fit_confidence": "low"
+ },
+ "PAR": {
+  "physical_anchor": "Sells point-of-sale terminals/hardware and restaurant-operations software; not a chain-relevant physical product",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Restaurant POS hardware+software vendor; no motion-control/actuator or grid product",
+  "true_competitors": ["VYX", "TOST", "OLO", "SQ", "AGYS", "FOUR"],
+  "chain_fit_confidence": "low"
+ },
+ "PD": {
+  "physical_anchor": "None — IT incident-response/operations SaaS, no physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "IT operations/incident-management software; not a chain participant",
+  "true_competitors": ["DDOG", "NOW", "ESTC", "FROG"],
+  "chain_fit_confidence": "low"
+ }
+}

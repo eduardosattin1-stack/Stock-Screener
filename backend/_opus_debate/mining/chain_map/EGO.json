@@ -1,0 +1,19 @@
+{
+ "symbol": "EGO",
+ "physical_anchor": "Operates open-pit and underground mines producing gold doré (Kışladağ, Lamaque, Efemçukuru).",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.97,
+ "value_chain_position": "Mid-tier multi-country gold producer selling refined doré from company-operated mines.",
+ "true_competitors": [
+  "AGI",
+  "CGAU",
+  "IAG",
+  "BTG",
+  "EQX",
+  "KGC"
+ ],
+ "chain_fit_confidence": "high"
+}

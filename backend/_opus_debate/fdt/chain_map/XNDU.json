@@ -1,0 +1,19 @@
+{
+ "symbol": "XNDU",
+ "physical_anchor": "builds photonic quantum-computing hardware (photonic qubit chips and systems)",
+ "chains": [
+  "quantum"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "pre-revenue photonic qubit-hardware platform developer",
+ "true_competitors": [
+  "IONQ",
+  "RGTI",
+  "QBTS",
+  "QUBT",
+  "ARQQ",
+  "HON"
+ ],
+ "chain_fit_confidence": "high"
+}

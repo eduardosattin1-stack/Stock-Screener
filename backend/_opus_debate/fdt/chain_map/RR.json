@@ -1,0 +1,19 @@
+{
+ "symbol": "RR",
+ "physical_anchor": "manufactures and deploys autonomous service robots — robotic bartenders/kiosks and the ADAM robotic-arm platform for food and beverage service",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "warehouse/service-robotics deployer at the hospitality edge — sells and licenses AI-driven robotic arms and autonomous serving units, pre-FCF with a tiny revenue base",
+ "true_competitors": [
+  "SERV",
+  "KSCP",
+  "IRBT",
+  "SYM",
+  "ABB",
+  "FANUY"
+ ],
+ "chain_fit_confidence": "medium"
+}

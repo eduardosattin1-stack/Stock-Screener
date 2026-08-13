@@ -1,0 +1,20 @@
+{
+ "symbol": "ETN",
+ "physical_anchor": "manufactures electrical power management equipment — circuit breakers, switchgear, transformers, and power distribution systems",
+ "chains": [
+  "electrification_grid",
+  "nuclear_smr"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.03,
+ "value_chain_position": "electrical equipment & power management OEM — transformers/switchgear layer of the grid buildout; named taxonomy anchor example for electrification_grid",
+ "true_competitors": [
+  "HUBB",
+  "NVT",
+  "POWL",
+  "AZZ",
+  "SIEGY",
+  "ABBNY"
+ ],
+ "chain_fit_confidence": "high"
+}

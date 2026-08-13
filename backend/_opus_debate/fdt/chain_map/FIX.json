@@ -1,0 +1,20 @@
+{
+ "symbol": "FIX",
+ "physical_anchor": "installs mechanical and electrical building systems — HVAC, plumbing, and electrical power distribution — for commercial and data-center construction",
+ "chains": [
+  "power_for_ai",
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.03,
+ "value_chain_position": "mechanical/electrical construction contractor building out data-center power & cooling infrastructure",
+ "true_competitors": [
+  "EME",
+  "MTZ",
+  "PWR",
+  "IESC",
+  "SLND",
+  "APG"
+ ],
+ "chain_fit_confidence": "high"
+}

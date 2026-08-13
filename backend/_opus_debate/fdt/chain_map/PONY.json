@@ -1,0 +1,19 @@
+{
+ "symbol": "PONY",
+ "physical_anchor": "Designs, builds and operates a fleet of physical autonomous vehicles (robotaxis and robotrucks) fitted with lidar, radar and camera sensor stacks.",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Humanoid/autonomous-vehicle developer layer — operates the physical AV fleet and full-stack autonomy software, monetizing on dated robotaxi-permit and fleet-scale milestones ahead of profitability.",
+ "true_competitors": [
+  "WRD",
+  "BIDU Apollo Go",
+  "AUR",
+  "TSLA robotaxi",
+  "Waymo/Alphabet (private)",
+  "Zoox/Amazon (private)"
+ ],
+ "chain_fit_confidence": "high"
+}

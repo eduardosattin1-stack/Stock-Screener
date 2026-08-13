@@ -1,0 +1,19 @@
+{
+ "symbol": "NG",
+ "physical_anchor": "Co-develops (50% JV with Barrick) the Donlin Gold deposit in Alaska, a large permitted-but-unbuilt gold resource, pre-production.",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.9,
+ "value_chain_position": "Permitted/construction-stage gold developer — Donlin is fully permitted but awaiting a construction go-ahead and financing.",
+ "true_competitors": [
+  "Barrick Mining Corp (B)",
+  "Seabridge Gold (SA)",
+  "Contango Ore (CTGO)",
+  "Kinross Gold (KGC)",
+  "Agnico Eagle (AEM)",
+  "Northern Star Resources (NST.AX)"
+ ],
+ "chain_fit_confidence": "high"
+}

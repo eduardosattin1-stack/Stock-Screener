@@ -1,0 +1,17 @@
+{
+ "symbol": "INIO",
+ "physical_anchor": "manufactures large-bore reciprocating gas engines (Jenbacher/Waukesha) used as generator sets for distributed power generation",
+ "chains": [
+  "power_for_ai"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "distributed power-generation equipment OEM selling gas-engine gensets and services for backup/prime power, including datacenter and grid-support applications - the turbines & generation-equipment layer",
+ "true_competitors": [
+  "CAT",
+  "CMI",
+  "GEV",
+  "WWD"
+ ],
+ "chain_fit_confidence": "medium"
+}

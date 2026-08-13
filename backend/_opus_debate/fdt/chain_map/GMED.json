@@ -1,0 +1,18 @@
+{
+ "symbol": "GMED",
+ "physical_anchor": "Robotic-assisted spine/orthopedic surgical navigation platforms (ExcelsiusGPS) plus the spinal implant hardware delivered through them",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Surgical-robotics platform and implant maker — sells the robot and instrumentation into every spine-surgery deployment, the toll-taker of the surgical-robotics layer",
+ "true_competitors": [
+  "ISRG",
+  "SYK",
+  "MDT",
+  "ZBH",
+  "SNN"
+ ],
+ "chain_fit_confidence": "high"
+}

@@ -1,0 +1,591 @@
+[
+ {
+  "symbol": "SIBN",
+  "name": "SI-BONE, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 820018243,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -5545000,
+   "ttm_ocf": 1874000,
+   "ttm_capex": -7419000,
+   "ttm_ebitda": -8294000,
+   "ttm_revenue": 213604000,
+   "rev_yoy": 0.153,
+   "cash_sti": 145941000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 462083.0,
+   "runway_months": 315.8,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 10098258.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SIMO",
+  "name": "Silicon Motion Technology Corporation",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 8966301081,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -120450000,
+   "ttm_ocf": -66643000,
+   "ttm_capex": -53807000,
+   "ttm_ebitda": 290130000,
+   "ttm_revenue": 1313566000,
+   "rev_yoy": 0.7087,
+   "cash_sti": 74367000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 10037500.0,
+   "runway_months": 7.4,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 102380518.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SKYT",
+  "name": "SkyWater Technology, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 1597181284,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -76495000,
+   "ttm_ocf": -52216000,
+   "ttm_capex": -24279000,
+   "ttm_ebitda": 140146000,
+   "ttm_revenue": 541530000,
+   "rev_yoy": 0.6718,
+   "cash_sti": 22232000,
+   "balance_date": "2026-03-29",
+   "balance_sheet_stale": false,
+   "monthly_burn": 6374583.0,
+   "runway_months": 3.5,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 66011273.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SLNH",
+  "name": "Soluna Holdings, Inc.",
+  "sector": "Technology",
+  "industry": "Hardware, Equipment & Parts",
+  "mcap": 195606719,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation",
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -49999000,
+   "ttm_ocf": -15344000,
+   "ttm_capex": -34655000,
+   "ttm_ebitda": -46715000,
+   "ttm_revenue": 33174000,
+   "rev_yoy": 0.0562,
+   "cash_sti": 68572000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 4166583.0,
+   "runway_months": 16.5,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 7356970.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SMCI",
+  "name": "Super Micro Computer, Inc.",
+  "sector": "Technology",
+  "industry": "Computer Hardware",
+  "mcap": 20315046565,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -6849681000,
+   "ttm_ocf": -6693234000,
+   "ttm_capex": -156447000,
+   "ttm_ebitda": 1764099000,
+   "ttm_revenue": 33700206000,
+   "rev_yoy": 0.5624,
+   "cash_sti": 1290324000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 570806750.0,
+   "runway_months": 2.3,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 853705323.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SMR",
+  "name": "NuScale Power Corporation",
+  "sector": "Utilities",
+  "industry": "Renewable Utilities",
+  "mcap": 2853562867,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": -753464999,
+   "ttm_ocf": -751501999,
+   "ttm_capex": -1963000,
+   "ttm_ebitda": -679574999,
+   "ttm_revenue": 18669000,
+   "rev_yoy": -0.6193,
+   "cash_sti": 890129000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 62788750.0,
+   "runway_months": 14.2,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 117686635.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SMTI",
+  "name": "Sanara MedTech Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Instruments & Supplies",
+  "mcap": 313069658,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 3373333,
+   "ttm_ocf": 6320106,
+   "ttm_capex": -2946773,
+   "ttm_ebitda": 8329303,
+   "ttm_revenue": 107509002,
+   "rev_yoy": 0.1741,
+   "cash_sti": 13594459,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 4226642.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SNOW",
+  "name": "Snowflake Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 110568866000,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 1169702000,
+   "ttm_ocf": 1236792000,
+   "ttm_capex": -67090000,
+   "ttm_ebitda": -936796000,
+   "ttm_revenue": 5032823000,
+   "rev_yoy": 0.3107,
+   "cash_sti": 2954998000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 946839226.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SNPS",
+  "name": "Synopsys, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 76633740564,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 2675901000,
+   "ttm_ocf": 2838570000,
+   "ttm_capex": -162669000,
+   "ttm_ebitda": 2709819000,
+   "ttm_revenue": 8679380000,
+   "rev_yoy": 0.3951,
+   "cash_sti": 2484438000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 224355035.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.110719941073555
+  }
+ },
+ {
+  "symbol": "SOUN",
+  "name": "SoundHound AI, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 2803563271,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -108666000,
+   "ttm_ocf": -105295000,
+   "ttm_capex": -3371000,
+   "ttm_ebitda": -86713000,
+   "ttm_revenue": 183986000,
+   "rev_yoy": 0.7998,
+   "cash_sti": 215642000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 9055500.0,
+   "runway_months": 23.8,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 84828081.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SPCE",
+  "name": "Virgin Galactic Holdings, Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 183088094,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": -409530000,
+   "ttm_ocf": -217725000,
+   "ttm_capex": -191805000,
+   "ttm_ebitda": -231553000,
+   "ttm_revenue": 1310000,
+   "rev_yoy": -0.7623,
+   "cash_sti": 219891000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 34127500.0,
+   "runway_months": 6.4,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 18644080.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SPCX",
+  "name": "Space Exploration Technologies Corp.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 1589175306493,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": null,
+   "ttm_ocf": null,
+   "ttm_capex": null,
+   "ttm_ebitda": null,
+   "ttm_revenue": null,
+   "rev_yoy": null,
+   "cash_sti": 23675000000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": null,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 6540446739.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SPT",
+  "name": "Sprout Social, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 523218691,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 46691000,
+   "ttm_ocf": 50539000,
+   "ttm_capex": -3848000,
+   "ttm_ebitda": -21806000,
+   "ttm_revenue": 469755000,
+   "rev_yoy": 0.1227,
+   "cash_sti": 113557000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 3000370.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SSYS",
+  "name": "Stratasys Ltd.",
+  "sector": "Technology",
+  "industry": "Computer Hardware",
+  "mcap": 771776460,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -13959000,
+   "ttm_ocf": 12988000,
+   "ttm_capex": -26947000,
+   "ttm_ebitda": -66215000,
+   "ttm_revenue": 547753000,
+   "rev_yoy": -0.0296,
+   "cash_sti": 237789000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1163250.0,
+   "runway_months": 204.4,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 3536060.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ST",
+  "name": "Sensata Technologies Holding plc",
+  "sector": "Technology",
+  "industry": "Hardware, Equipment & Parts",
+  "mcap": 7009007114,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation",
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 571357330,
+   "ttm_ocf": 683860951,
+   "ttm_capex": -112503620,
+   "ttm_ebitda": 736516998,
+   "ttm_revenue": 3775277999,
+   "rev_yoy": 0.0065,
+   "cash_sti": 403300000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 16243405.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 2.87988269049031
+  }
+ },
+ {
+  "symbol": "STAA",
+  "name": "STAAR Surgical Company",
+  "sector": "Healthcare",
+  "industry": "Medical - Instruments & Supplies",
+  "mcap": 1190398106,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -54986000,
+   "ttm_ocf": -50191000,
+   "ttm_capex": -4795000,
+   "ttm_ebitda": -4106000,
+   "ttm_revenue": 290375000,
+   "rev_yoy": 0.0403,
+   "cash_sti": 163889000,
+   "balance_date": "2026-04-03",
+   "balance_sheet_stale": false,
+   "monthly_burn": 4582167.0,
+   "runway_months": 35.8,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 6965349.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "STIM",
+  "name": "Neuronetics, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 155876672,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -13581000,
+   "ttm_ocf": -12802000,
+   "ttm_capex": -779000,
+   "ttm_ebitda": -25704000,
+   "ttm_revenue": 151636000,
+   "rev_yoy": 0.6952,
+   "cash_sti": 13214000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1131750.0,
+   "runway_months": 11.7,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 2974467.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "STNE",
+  "name": "StoneCo Ltd.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 2715643020,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 2402575088,
+   "ttm_ocf": 3343445786,
+   "ttm_capex": -940870697,
+   "ttm_ebitda": 6481382000,
+   "ttm_revenue": 13970729000,
+   "rev_yoy": 0.1018,
+   "cash_sti": 10084768906,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 10453493.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 1.486673579955633
+  }
+ },
+ {
+  "symbol": "STRC",
+  "name": "Strategy Inc",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 32192663714,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 11340172000,
+   "ttm_ocf": -20089000,
+   "ttm_capex": 11360261000,
+   "ttm_ebitda": -21773758000,
+   "ttm_revenue": 498347000,
+   "rev_yoy": 0.0779,
+   "cash_sti": 2447982000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 104476346.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "STRD",
+  "name": "Strategy Inc",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 20261990000,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 7205394000,
+   "ttm_ocf": 1540000,
+   "ttm_capex": 7203854000,
+   "ttm_ebitda": -21719869000,
+   "ttm_revenue": 498348000,
+   "rev_yoy": 0.0779,
+   "cash_sti": 2449829000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 14452430.0,
+   "royalty_hint": false
+  }
+ }
+]

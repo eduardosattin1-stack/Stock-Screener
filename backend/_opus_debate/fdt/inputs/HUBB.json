@@ -1,0 +1,60 @@
+{
+  "symbol": "HUBB",
+  "sector": "Industrials",
+  "signal_type": "future_disruptive_tech",
+  "company": "Hubbell Incorporated",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Industrials\nValuation: Price 476.04 | Fair Value 557.04 | Margin of Safety 17% | P/FCF 29.2x\nRevenue growth: +3.8% YoY | 3-yr CAGR +5.7%\nMargins: Gross 35.5% (stable) | Net 15.2% | FCF 15.0%\nEPS / guidance delivery: 16.54 latest | +15.1% YoY | 3-yr CAGR +20.6% | beat 6/7 qtrs (86%)\nFCF growth: +7.9% YoY | 3-yr CAGR +24.4%\nReturns / leverage: ROE 22.9% | ROIC 13.2% | Net debt 2.11B\nForward / signals: Consensus fwd EPS growth +11.5% | Margin 1.81sigma vs hist. peak | Insider buy ratio 0.00\nValuation models (stock page): DCF fair value 211.6 | Buffett fair value 557.0\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -100% | EPV -100% | Graham +12% | OwnerErn -77% | IV15 -100%\nQuality / scores: Bull score 4 | Catalyst score 0.5 | Piotroski 6/9 | Altman-Z (solvency) 3.4 | Days to next earnings 84\nAnalyst consensus target: 551.33 (+16% upside)\nPositioning / smart money: Smart-money score 56/100 | Institutional flow 55/100 | Analyst-target velocity +5% (vs yr-ago avg PT)\nTechnical posture (timing context, not thesis): price -1% vs 200d SMA | 45% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2021: rev 4.19B, NI 400M, EPS 7.28\n  2022: rev 4.95B, NI 546M, EPS 9.43\n  2023: rev 5.37B, NI 760M, EPS 14.04\n  2024: rev 5.63B, NI 778M, EPS 14.37\n  2025: rev 5.84B, NI 887M, EPS 16.54\n  CAGRs: bvps_5y +15.2%, eps_5y +22.8%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-06-30 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 901M | TTM diluted EPS 16.88 | latest-Q EPS YoY -1%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-06-30): NET DEBT 4.98B (borrowings 5.37B + capitalized leases 0M, minus cash 395M; ex-lease net debt ≈ 4.98B — filings often quote the ex-lease figure; STATE which definition your SoP uses) — this is a LIABILITY; in any Sum-of-Parts SUBTRACT it from enterprise value, NEVER add it back as 'net cash'; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 13 sells (32,977sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 545.75 | median 540.00 | high 600.00 | low 503.00\nBreadth: last month: 0 PTs | last quarter: 1 PTs avg 515.00 | last year: 19 PTs avg 515.79\n[THIN CONSENSUS: only 1 price target(s) printed last quarter — this is NOT a street-wide view; weigh individual PTs below accordingly]\nNewest individual targets (dated — judge freshness yourself):\n  2026-06-16 Neal Burk: 515.00 (stock was 510.86)\n  2026-05-04 Stephens: 600.00 (stock was 508.43)\n  2026-05-04 Barclays: 503.00 (stock was 508.43)\n  2026-03-11 Morgan Stanley: 565.00 (stock was 477.97)\n  2026-02-05 Stephens: 550.00 (stock was 487.16)\nNewest PT is 49 day(s) old\n\n=== SEGMENT REVENUE (FMP, 2025-12-31 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nUtility Solutions Segment: 3.67B (63%) | Electrical Segment: 2.17B (37%)",
+  "dossier": "",
+  "chains": [
+    "electrification_grid"
+  ],
+  "business_model": "equipment_services",
+  "physical_anchor": "Electrical wiring devices/connectors plus transmission-and-distribution grid hardware -- transformers, protective devices and utility-grade connectors",
+  "commodity_revenue_share": 0.05,
+  "chain_regime": {
+    "electrification_grid": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "electrification_grid",
+    "torque_metrics": false,
+    "commodity_beta_2y": 0.92,
+    "beta_benchmark": "GRID",
+    "beta_is_proxy": true,
+    "ndebt_ebitda": 1.56,
+    "commodity_revenue_share": 0.05,
+    "as_of": "2026-08-04",
+    "gm_trajectory": {
+      "direction": "expanding",
+      "gm_recent_to_old": [
+        0.2974,
+        0.3514,
+        0.3383,
+        0.3546
+      ],
+      "delta_3y": 0.0572
+    },
+    "rev_yoy": 0.1061,
+    "fcf_margin": 0.1448,
+    "torque_note": "NON-COMMODITY chain (no spot to lever to): no torque metric. commodity_beta_2y is a PROXY factor-exposure read vs GRID, not a commodity torque."
+  },
+  "gates": {
+    "ttm_fcf": 901400000,
+    "ttm_ocf": 1068200000,
+    "ttm_capex": -166800000,
+    "ttm_ebitda": 1468300000,
+    "ttm_revenue": 6223600000,
+    "rev_yoy": 0.1061,
+    "cash_sti": 394700000,
+    "balance_date": "2026-06-30",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 107127995.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.557760601629413
+  }
+}

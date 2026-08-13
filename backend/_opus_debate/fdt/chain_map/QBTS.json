@@ -1,0 +1,20 @@
+{
+ "symbol": "QBTS",
+ "physical_anchor": "Designs, builds and operates physical quantum-annealing processors (the Advantage system) with dilution-refrigerator cryogenics.",
+ "chains": [
+  "quantum"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Qubit hardware platform layer — annealing-based quantum computer manufacturer selling cloud access (Leap) and hardware to government/enterprise customers ahead of a dated error-correction/commercial-advantage track.",
+ "true_competitors": [
+  "IONQ",
+  "RGTI",
+  "QNT",
+  "IBM",
+  "GOOGL Quantum AI",
+  "PsiQuantum (private)",
+  "Atom Computing (private)"
+ ],
+ "chain_fit_confidence": "high"
+}

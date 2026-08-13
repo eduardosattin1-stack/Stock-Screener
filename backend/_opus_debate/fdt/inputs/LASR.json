@@ -1,0 +1,60 @@
+{
+  "symbol": "LASR",
+  "sector": "Technology",
+  "signal_type": "future_disruptive_tech",
+  "company": "nLIGHT, Inc.",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Technology\nValuation: Price 51.005 | Fair Value 0.0 | Margin of Safety 0% | P/FCF 211.2x\nRevenue growth: +31.6% YoY | 3-yr CAGR +2.6%\nMargins: Gross 29.8% (expanding) | Net -9.0% | FCF 4.7%\nEPS / guidance delivery: -0.48 latest | +0.0% YoY | 3-yr CAGR +0.0% | beat 6/7 qtrs (86%)\nFCF growth: +0.0% YoY | 3-yr CAGR +0.0%\nReturns / leverage: ROE -17.0% | ROIC -16.2% | Net debt -97M\nForward / signals: Consensus fwd EPS growth +28.8% | Margin 0.05sigma vs hist. peak | Insider buy ratio 0.00\nValuation models (stock page): DCF fair value 2.5\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -100% | EPV -100% | Graham -100% | OwnerErn -100% | IV15 -100%\nQuality / scores: Bull score 1 | Catalyst score 0.6 | Piotroski 6/9 | Altman-Z (solvency) 22.7 | Days to next earnings 87\nAnalyst consensus target: 91.00 (+78% upside)\nPositioning / smart money: Smart-money score 64/100 | Institutional flow 54/100 | Analyst-target velocity +33% (vs yr-ago avg PT)\nTechnical posture (timing context, not thesis): price -9% vs 200d SMA | 42% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2021: rev 270M, NI -30M, EPS -0.7\n  2022: rev 242M, NI -55M, EPS -1.23\n  2023: rev 210M, NI -42M, EPS -0.9\n  2024: rev 199M, NI -61M, EPS -1.27\n  2025: rev 261M, NI -23M, EPS -0.48\n  CAGRs: bvps_5y -11.2%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-06-30 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 49M | TTM diluted EPS -0.25 | latest-Q EPS YoY +72%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-06-30): NET CASH 281M (cash 296M exceeds total debt 15M, incl. capitalized leases 15M) — a genuine SoP add-back; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 75 sells (717,360sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 91.00 | median 90.00 | high 100.00 | low 81.00\nBreadth: last month: 0 PTs | last quarter: 4 PTs avg 91.25 | last year: 16 PTs avg 68.84\nNewest individual targets (dated — judge freshness yourself):\n  2026-07-10 UBS: 90.00 (stock was 74.71)\n  2026-07-09 Needham: 90.00 (stock was 74.71)\n  2026-07-09 Craig-Hallum: 100.00 (stock was 74.56)\n  2026-05-21 Jonathan Siegmann: 85.00 (stock was 71.30)\n  2026-05-08 Raymond James: 100.00 (stock was 74.13)\nNewest PT is 32 day(s) old\n\n=== SEGMENT REVENUE (FMP, 2025-12-31 - build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nAerospace and Defense: 175M (67%) | Microfabrication: 47M (18%) | Industrial: 39M (15%)",
+  "dossier": "",
+  "chains": [
+    "quantum"
+  ],
+  "business_model": "equipment_services",
+  "physical_anchor": "High-power semiconductor and fiber lasers/laser diodes for industrial materials processing, aerospace/defense directed-energy systems, and photonics sensing.",
+  "commodity_revenue_share": 0.0,
+  "chain_regime": {
+    "quantum": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "quantum",
+    "torque_metrics": false,
+    "commodity_beta_2y": 0.77,
+    "beta_benchmark": "QTUM",
+    "beta_is_proxy": true,
+    "ndebt_ebitda": -659.87,
+    "commodity_revenue_share": 0.0,
+    "as_of": "2026-08-11",
+    "gm_trajectory": {
+      "direction": "expanding",
+      "gm_recent_to_old": [
+        0.21,
+        0.2197,
+        0.1663,
+        0.2983
+      ],
+      "delta_3y": 0.0883
+    },
+    "rev_yoy": 0.4091,
+    "fcf_margin": 0.0765,
+    "torque_note": "NON-COMMODITY chain (no spot to lever to): no torque metric. commodity_beta_2y is a PROXY factor-exposure read vs QTUM, not a commodity torque."
+  },
+  "gates": {
+    "ttm_fcf": 22169000,
+    "ttm_ocf": 31033000,
+    "ttm_capex": -8864000,
+    "ttm_ebitda": 1820000,
+    "ttm_revenue": 289843000,
+    "rev_yoy": 0.4091,
+    "cash_sti": 332594000,
+    "balance_date": "2026-03-31",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 44725997.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -659.8693467336683
+  }
+}

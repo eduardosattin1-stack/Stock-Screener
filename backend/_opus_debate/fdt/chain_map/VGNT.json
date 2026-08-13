@@ -1,0 +1,21 @@
+{
+ "symbol": "VGNT",
+ "physical_anchor": "manufactures electrical distribution and power-connection equipment (industry-classified Electrical Equipment & Parts) sold into grid and industrial electrification build-out",
+ "chains": [
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "electrical equipment manufacturer supplying components into grid/industrial power-distribution build-out",
+ "true_competitors": [
+  "ETN",
+  "HUBB",
+  "NVT",
+  "POWL",
+  "AZZ",
+  "ABB",
+  "SIEGY",
+  "SBGSY"
+ ],
+ "chain_fit_confidence": "medium"
+}

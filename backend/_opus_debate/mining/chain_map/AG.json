@@ -1,0 +1,20 @@
+{
+ "symbol": "AG",
+ "physical_anchor": "Mines and processes silver-gold ore into doré/concentrate at Mexican and US mines.",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.9,
+ "value_chain_position": "Silver-primary producer with gold byproduct; sells doré and concentrate.",
+ "true_competitors": [
+  "PAAS",
+  "HL",
+  "CDE",
+  "AYA",
+  "FSM",
+  "MAG",
+  "EXK"
+ ],
+ "chain_fit_confidence": "high"
+}

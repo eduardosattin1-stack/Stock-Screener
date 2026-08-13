@@ -1,0 +1,19 @@
+{
+ "symbol": "UAMY",
+ "physical_anchor": "Mined and smelted antimony (antimony metal/trisulfide) plus zeolite products from Montana smelting and Mexico mining operations",
+ "chains": [
+  "rare_earth_strategic"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.75,
+ "value_chain_position": "One of the only Western antimony miner-smelters, selling antimony products into the strategic-metals stockpile/defense chain",
+ "true_competitors": [
+  "PPTA",
+  "MND.TO",
+  "MP",
+  "USAR",
+  "METC",
+  "TRR.L"
+ ],
+ "chain_fit_confidence": "high"
+}

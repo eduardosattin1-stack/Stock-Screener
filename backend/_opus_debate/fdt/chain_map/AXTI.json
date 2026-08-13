@@ -1,0 +1,18 @@
+{
+ "symbol": "AXTI",
+ "physical_anchor": "Manufactures compound-semiconductor substrate wafers (indium phosphide, gallium arsenide, germanium) via proprietary vertical-gradient-freeze crystal growth.",
+ "chains": [
+  "quantum",
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.2,
+ "value_chain_position": "Upstream compound-semiconductor substrate producer (InP/GaAs/Ge wafers) feeding photonic-integrated-circuit, silicon-photonics and laser makers (photonics & lasers layer) as well as LiDAR/industrial-robotics sensor makers — a materials toll-taker one to two steps back from both chains, but revenue is diversified across 5G/datacenter-optics/solar rather than concentrated on quantum or robotics specifically.",
+ "true_competitors": [
+  "5802.T",
+  "IQE.L",
+  "COHR",
+  "5020.T"
+ ],
+ "chain_fit_confidence": "medium"
+}

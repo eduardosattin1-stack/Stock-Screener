@@ -1,0 +1,20 @@
+{
+ "symbol": "AAUC",
+ "physical_anchor": "Mines and pours gold doré at open-pit/underground operations in Cote d'Ivoire, Mali and Ethiopia.",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Emerging mid-tier gold producer selling doré/bullion from West/East Africa mines.",
+ "true_competitors": [
+  "AEM",
+  "KGC",
+  "EGO",
+  "B",
+  "BTG",
+  "EDVMF",
+  "PRU.AX"
+ ],
+ "chain_fit_confidence": "high"
+}

@@ -1,0 +1,33 @@
+[
+ {
+  "symbol": "ZS",
+  "name": "Zscaler, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 26158941312,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 960228000,
+   "ttm_ocf": 1100973000,
+   "ttm_capex": -140745000,
+   "ttm_ebitda": 121762999,
+   "ttm_revenue": 3173564000,
+   "rev_yoy": 0.2461,
+   "cash_sti": 3539107000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 195633455.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 12.726200311630672
+  }
+ }
+]

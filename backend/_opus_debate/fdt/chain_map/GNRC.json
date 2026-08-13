@@ -1,0 +1,20 @@
+{
+ "symbol": "GNRC",
+ "physical_anchor": "Backup/standby power generators and grid-connected microgrid/EPC systems (PowerSecure) delivering on-site firm power to residential, commercial, industrial and increasingly data-center customers",
+ "chains": [
+  "power_for_ai",
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.03,
+ "value_chain_position": "Generator OEM plus PowerSecure microgrid/grid-services EPC arm — still majority residential/light-commercial backup power, with a growing but minority C&I/data-center and grid-infrastructure business",
+ "true_competitors": [
+  "CAT",
+  "CMI",
+  "Kohler (private)",
+  "ETN",
+  "HUBB",
+  "ENR.DE"
+ ],
+ "chain_fit_confidence": "medium"
+}

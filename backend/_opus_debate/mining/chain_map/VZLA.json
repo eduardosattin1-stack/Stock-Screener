@@ -1,0 +1,21 @@
+{
+ "symbol": "VZLA",
+ "physical_anchor": "Panuco silver-gold ore deposit in Sinaloa, Mexico, being advanced toward mine construction and concentrate/doré production",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Developer layer — single-district pre-production silver-gold project (Panuco), zero current revenue, drilling/permitting toward a construction decision; chains_hint's copper_mining/rare_earth_strategic/diversified_miners tags are FMP industry-string artifacts ('Industrial Materials') and do not describe the actual business — this is a silver developer",
+ "true_competitors": [
+  "MAG",
+  "DSV.TO",
+  "GGD.TO",
+  "SVM",
+  "AG",
+  "PAAS",
+  "SSRM",
+  "HL"
+ ],
+ "chain_fit_confidence": "high"
+}

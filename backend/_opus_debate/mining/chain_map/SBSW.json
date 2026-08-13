@@ -1,0 +1,19 @@
+{
+ "symbol": "SBSW",
+ "physical_anchor": "mines and refines platinum-group metals (platinum, palladium, rhodium) and gold at South African and US operations",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.8,
+ "value_chain_position": "PGM-and-gold producer with a growing battery-metals recycling adjacency; 'Other Precious Metals' industry proven live in this chain",
+ "true_competitors": [
+  "IMPUY",
+  "AMS.JO",
+  "NPH.JO",
+  "NILSY",
+  "HMY",
+  "GFI"
+ ],
+ "chain_fit_confidence": "high"
+}

@@ -1,0 +1,20 @@
+{
+ "symbol": "QNT",
+ "physical_anchor": "Builds and operates trapped-ion quantum computers (the H-Series systems) — physical qubit hardware plus control-laser/optics stacks.",
+ "chains": [
+  "quantum"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Qubit hardware platform layer — trapped-ion quantum computing developer (Honeywell/Cambridge Quantum lineage) monetizing on dated government contracts and error-correction/logical-qubit milestones ahead of commercial-scale revenue.",
+ "true_competitors": [
+  "IONQ",
+  "RGTI",
+  "QBTS",
+  "IBM",
+  "GOOGL Quantum AI",
+  "PsiQuantum (private)",
+  "Pasqal (private)"
+ ],
+ "chain_fit_confidence": "high"
+}

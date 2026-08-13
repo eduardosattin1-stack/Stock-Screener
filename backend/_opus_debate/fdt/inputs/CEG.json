@@ -1,0 +1,58 @@
+{
+  "symbol": "CEG",
+  "sector": "Utilities",
+  "signal_type": "future_disruptive_tech",
+  "company": "Constellation Energy Corporation",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Utilities\nValuation: Price 273.71 | Fair Value 0.0 | Margin of Safety 0% | P/FCF 66.7x\nRevenue growth: +8.3% YoY | 3-yr CAGR +1.5%\nMargins: Gross 75.8% (expanding) | Net 9.1% | FCF 5.0%\nEPS / guidance delivery: 7.4 latest | -37.8% YoY | 3-yr CAGR +0.0% | beat 5/7 qtrs (71%)\nFCF growth: +0.0% YoY | 3-yr CAGR +0.0%\nReturns / leverage: ROE 11.2% | ROIC 2.9% | Net debt 5.24B\nForward / signals: Consensus fwd EPS growth +13.6% | Margin 1.12sigma vs hist. peak | Insider buy ratio 0.00\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -100% | EPV -100% | Graham -100% | OwnerErn -100% | IV15 -100%\nQuality / scores: Bull score 6 | Catalyst score 0.6 | Piotroski 5/9 | Altman-Z (solvency) 1.6 | Days to next earnings 3\nAnalyst consensus target: 352.89 (+29% upside)\nPositioning / smart money: Smart-money score 35/100 | Institutional flow 49/100 | Analyst-target velocity -10% (vs yr-ago avg PT)\nTechnical posture (timing context, not thesis): price -11% vs 200d SMA | 24% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2021: rev 19.65B, NI -205M, EPS -0.6276\n  2022: rev 24.44B, NI -160M, EPS -0.4878\n  2023: rev 24.92B, NI 1.62B, EPS 5.01\n  2024: rev 23.57B, NI 3.75B, EPS 11.9\n  2025: rev 25.53B, NI 2.32B, EPS 7.4\n  CAGRs: bvps_5y +7.7%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-03-31 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 1.14B | TTM diluted EPS 11.51 | latest-Q EPS YoY +1082%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-03-31): NET DEBT 21.30B (borrowings 22.47B + capitalized leases 0M, minus cash 1.17B; ex-lease net debt ≈ 21.30B — filings often quote the ex-lease figure; STATE which definition your SoP uses) — this is a LIABILITY; in any Sum-of-Parts SUBTRACT it from enterprise value, NEVER add it back as 'net cash'; use this, not the scan's net_debt above\nInsider (open-market, last ~100 filings): ZERO open-market purchases or sales — IGNORE any 'insider buy ratio' above (it counts grants/options/gifts, not real buys)\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 355.20 | median 364.00 | high 441.00 | low 296.00\nBreadth: last month: 5 PTs avg 361.60 | last quarter: 10 PTs avg 344.20 | last year: 24 PTs avg 378.21\nNewest individual targets (dated — judge freshness yourself):\n  2026-08-04 James Thalacker: 376.00 (stock was 273.71)\n  2026-07-28 UBS: 380.00 (stock was 265.28)\n  2026-07-28 Barclays: 324.00 (stock was 270.00)\n  2026-07-27 Wells Fargo: 362.00 (stock was 274.35)\n  2026-07-22 Morgan Stanley: 366.00 (stock was 271.40)\nNewest PT is 0 day(s) old\n\n=== SEGMENT REVENUE (FMP, 2025-12-31 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nConstellation Mid Atlantic: 6.49B (29%) | Constellation Midwest: 5.80B (26%) | Constellation Other Regions: 5.58B (25%) | Constellation New York: 2.39B (11%) | Constellation ERCOT: 1.90B (9%)",
+  "dossier": "",
+  "chains": [
+    "power_for_ai",
+    "nuclear_smr"
+  ],
+  "business_model": "utility",
+  "physical_anchor": "Operates the largest US fleet of nuclear power plants, generating and selling firm electricity including dedicated AI-datacenter PPAs (e.g. Microsoft/Three Mile Island)",
+  "commodity_revenue_share": 0.1,
+  "chain_regime": {
+    "power_for_ai": "NEUTRAL",
+    "nuclear_smr": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "power_for_ai",
+    "torque_metrics": true,
+    "commodity_beta_2y": 0.04,
+    "beta_benchmark": "NGUSD",
+    "beta_is_proxy": false,
+    "ndebt_ebitda": 2.58,
+    "commodity_revenue_share": 0.1,
+    "as_of": "2026-08-04",
+    "ebitda_margin_ttm": 0.2762,
+    "ebitda_margin_band": {
+      "band": "q1_low_cost",
+      "pct": 0.88,
+      "basis": "cohort_percentile",
+      "n_cohort": 8
+    },
+    "fcf_torque_10pct": 0.036,
+    "torque_note": "SYMMETRIC: fcf_torque_10pct is the +/-10% commodity move's % EBITDA swing (read the downside too). beta_is_proxy=False (proxy ETF regression where the spot is off-FMP)."
+  },
+  "gates": {
+    "ttm_fcf": 1137000000,
+    "ttm_ocf": 4555000000,
+    "ttm_capex": -3418000000,
+    "ttm_ebitda": 8250000000,
+    "ttm_revenue": 29867000000,
+    "rev_yoy": 0.2344,
+    "cash_sti": 1171000000,
+    "balance_date": "2026-03-31",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 466682446.0,
+    "royalty_hint": false,
+    "funded_solvency": "moderate",
+    "net_funded_debt_ebitda": 2.581212121212121
+  }
+}

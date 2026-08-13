@@ -1,0 +1,19 @@
+{
+ "symbol": "FCX",
+ "physical_anchor": "Operates large open-pit copper mines (Grasberg, Morenci, Cerro Verde) and an integrated smelter producing copper concentrate and cathode with gold/molybdenum byproducts.",
+ "chains": [
+  "copper_mining"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.85,
+ "value_chain_position": "Major vertically-integrated copper producer (mine through smelter) — sells copper concentrate, cathode, and byproduct gold/moly; not a diversified multi-commodity major.",
+ "true_competitors": [
+  "SCCO",
+  "BHP",
+  "RIO",
+  "ANTO.L",
+  "GLEN.L",
+  "TECK"
+ ],
+ "chain_fit_confidence": "high"
+}

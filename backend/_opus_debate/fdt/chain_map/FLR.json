@@ -1,0 +1,20 @@
+{
+ "symbol": "FLR",
+ "physical_anchor": "Engineering-procurement-construction (EPC) contractor that physically builds large energy, infrastructure and industrial projects.",
+ "chains": [
+  "power_for_ai",
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.02,
+ "value_chain_position": "Grid/power EPC & interconnection layer, same toll-taker role as anchor PWR, but revenue is diversified across energy, government, mining and industrial EPC rather than power-pure.",
+ "true_competitors": [
+  "J",
+  "ACM",
+  "KBR",
+  "MTZ",
+  "WOR.AX",
+  "PWR"
+ ],
+ "chain_fit_confidence": "medium"
+}

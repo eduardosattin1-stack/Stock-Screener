@@ -1,0 +1,19 @@
+{
+ "symbol": "ZBH",
+ "physical_anchor": "Manufactures the ROSA robotic-assisted surgical system used in joint-replacement surgery",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.1,
+ "value_chain_position": "Orthopedic implant manufacturer that also builds the ROSA robotic-assisted surgical system for joint-replacement procedures — the surgical-robotics layer of the robotics_automation chain; implants (non-chain) remain the revenue majority.",
+ "true_competitors": [
+  "SYK",
+  "MDT",
+  "ISRG",
+  "JNJ",
+  "GMED",
+  "RBOT"
+ ],
+ "chain_fit_confidence": "high"
+}

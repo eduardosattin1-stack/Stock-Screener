@@ -1,0 +1,1253 @@
+{
+ "apex_basket": [
+  {
+   "symbol": "CEG",
+   "sector": "Utilities",
+   "chains": [
+    "power_for_ai",
+    "nuclear_smr"
+   ],
+   "chain": "power_for_ai",
+   "business_model": "utility",
+   "rev_yoy": 0.2344,
+   "fcf_margin": null,
+   "ebitda_margin_ttm": 0.2762,
+   "ndebt_ebitda": 2.58,
+   "interest_coverage": 8.0,
+   "funded_solvency": "moderate",
+   "chain_regime": {
+    "power_for_ai": "NEUTRAL",
+    "nuclear_smr": "NEUTRAL"
+   },
+   "growth_capex_fcf_negative": false,
+   "headwind_justification": "",
+   "forensic_gate": "",
+   "whats_changed": "",
+   "value_chain_position": "Nuclear-levered independent power producer - sells firm baseload electricity under long-term contracts to hyperscalers, large corporates and the grid; not a uranium commodity play",
+   "physical_anchor": "Operates the largest US fleet of nuclear power plants, generating and selling firm electricity including dedicated AI-datacenter power purchase agreements (Microsoft/Three Mile Island, Meta/Clinton)",
+   "fr_score": 88,
+   "thesis": "Constellation owns the largest nuclear generating fleet in the United States and is now selling that firm, round-the-clock power under twenty-year contracts to named technology buyers, so the earnings base is becoming both larger and more contracted while the shares still sit below our reconciled value.",
+   "cost_curve": "Operating cash profit margin (earnings before interest, tax, depreciation and amortisation, divided by revenue) ran 31.8% in the first quarter of 2026 on $11.12 billion of revenue against 15.9% a year earlier, and the trailing-twelve-month figure of 27.6% sits in the 88th percentile of an eight-company peer group; margin widening on revenue up about 23% over the past year is pricing power, not share bought with discounts. The one cash-flow sensitivity worth naming cuts both ways: a 10% move in natural gas shifts free cash flow by roughly 3.6%, so the same tight gas market that lifts the spark spread (the gap between what power sells for and what the fuel to make it costs) takes it back when gas softens.",
+   "contracting_reserve": "The contracted book is named and dated rather than aspirational - a twenty-year agreement with Meta for more than 1,100 megawatts at Clinton, the Microsoft-linked Crane restart pulled forward to the second half of 2027, a federal government agreement, Comcast, and a 23 June 2026 Walmart agreement for roughly 176 megawatts from Dresden across two fifteen-year terms starting in 2029 and 2030; the next hard test is the regional capacity auction for the 2029/2030 delivery year, closing 15 December 2026.",
+   "capital_discipline": "No share issuance, a $5 billion buyback authority with $735 million actually spent, a stated double-digit unlevered return hurdle, and net debt at 2.58 times operating cash profit against peers at five to seven and a half times; interest is covered 8.0 times.",
+   "valuation_guard": "Reconciled value $300 a share against $268.73 - a margin of safety of about +11.6%, so the guard passes with no deduction.",
+   "gm_trajectory": "Expanding on rising revenue: operating cash profit margin 31.8% in the first quarter of 2026 against 15.9% a year earlier on revenue up 64%; trailing twelve months 27.6%, the 88th percentile of an eight-name cohort. The feed's reported gross-margin series is corrupted by an accounting-tagging artefact around the Calpine close and must not be used.",
+   "sop_mos_pct": 11.6,
+   "regime_fit": "Both chains this seat rides read neutral - neither a tailwind nor a headwind - so the position rests on its own signed contracts rather than on a cycle call, and its size is set by the concentration cap rather than by any macro tilt.",
+   "exposure_axes": [
+    "hyperscaler-ppa",
+    "datacenter-capex",
+    "power-price-and-capacity-auction"
+   ],
+   "size_units": 0.75,
+   "thesis_break_px": 205.0,
+   "bear_fv_px": 180.0,
+   "entry_posture": "on_confirmation: the regional capacity auction for the 2029/2030 delivery year, closing 15 December 2026",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 205.0,
+    "cc_strike": 300.0,
+    "tenor_days": 35,
+    "source": "qualitative",
+    "rationale": "Sell a put at the level where the thesis would be broken and, once assigned, sell a call at our reconciled value, collecting income while we wait for a price that pays us for the risk.",
+    "csp_premium": null,
+    "csp_yield_annualized": null,
+    "expiry": null,
+    "dte": null,
+    "delta": null,
+    "iv": null
+   },
+   "decision": "KEEP",
+   "decision_rationale": "Held since 4 August 2026 and nothing in this week's file breaks it: the named contract book is unchanged and still dated (Meta at Clinton for twenty years, Walmart signed 23 June 2026, the Crane restart guided to the second half of 2027), the shares at $268.73 sit far above the $205 break level, and the credibility and solvency reads are unmoved.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_kill_fact": "The adverse case is marked below the observed arms-length price of the very assets it stresses, and it uses a balance sheet that has since been superseded. The record values the Calpine gas and geothermal fleet at $20.4B in the adverse case, about $729 per kilowatt across roughly 28 gigawatts, on compressed spark spreads. On 6 August 2026 Constellation agreed to sell the Brazos Valley Energy Center to LS Power for $860M, about $1,420 per kilowatt, and disclosed that the full set of divestitures required by the Department of Justice should raise about $5.9B gross, roughly $1,200 per kilowatt, against the roughly $960 per kilowatt implied by what it paid for the Calpine assets. The finance chief made the point explicitly that this price was struck in spite of recent weakness in the Texas market - that is, inside the soft-power world the adverse case assumes. Marking the fleet at the lowest of those primary comparables, the $960 per kilowatt Constellation itself paid, adds $6.5B to adverse-case enterprise value. After also moving net debt to the $23.623B carried on the 30 June 2026 balance sheet, from the $21.30B March figure the record used, the adverse case moves from $180 to $194 a share. That is a repricing, not a kill: against a live price of $277.64 the ground to the downside is still roughly three and a half times the ground to fair value, so the record's finding - poor risk and reward at today's price, wait for a lower entry - survives intact and is if anything reinforced, because the price has risen since the record was written.",
+   "skeptic_corrections": "Four corrections, three of which moved a load-bearing number. First, net debt. The record uses $21.30B from the 31 March 2026 balance sheet. The 30 June 2026 balance sheet, filed 6 August 2026, carries total debt of $24.700B against cash of $1.077B, so net debt is $23.623B - $2.32B higher, largely because roughly $2.2B was spent on share repurchases. This flows through every scenario and is the one correction that works against the name. Second, the share count. The record divides by 359.1 million shares; the second-quarter filing reports 354.0 million weighted-average diluted shares. I have used 354.0 million, which is deliberately conservative, since shares actually outstanding at the end of the period are lower again after the buybacks. Third, the adverse-case gas mark, described in the kill fact: $20.4B re-marked to $26.9B on primary transaction evidence. Fourth, and this one is a change of fact rather than of arithmetic, the record's own confirming conditions for the bear case have largely resolved against it, two days after the record's as-of date. The record named four: a second-quarter miss or guidance trim on 6 August; another quarter with no large contract signed; PJM or the Federal Energy Regulatory Commission landing large-load rules that shift value to consumers; and free cash flow running near $1B annualised rather than tracking toward $4.2B. On 6 August adjusted operating earnings came in at $2.55 a share against a $2.36 consensus, up about 33% on the year, and full-year guidance was raised by $0.50 to $11.50-$12.50 - the opposite of a miss or a trim. Roughly 920 megawatts of long-term nuclear contracts were disclosed as signed since the prior call, averaging 18.5 years with investment-grade customers, taking contracted clean baseload output to about 30% - so the 'nothing signed' condition has failed, and the catalyst status of SOFT_EXTENDED is now stale, though the single very large transaction the market has been waiting on remains unannounced and 920 megawatts is not that deal. On regulation the movement was toward the company, not away: the Federal Energy Regulatory Commission ordered every regional operator to justify its large-load interconnection tariffs and pressed PJM on co-location, pulling expected rule clarity forward to the first or second quarter of 2027 from PJM's earlier 2029 target. The fourth condition, however, verifies and has got worse, and this is the part of the bear case that stands up: free cash flow over the twelve months to 30 June 2026 was $309M - operating cash flow of $4.206B less capital spending of $3.897B - down from the $1.14B the record cites, against a guided run-rate of roughly $4.2B a year. Capital spending is still climbing. Cash conversion remains the honest hole in this name and the number to re-check every quarter. Two further notes that carry no numeric correction: the administrative ceiling on the PJM capacity market is unchanged and the record's reading of it stands, and the record's caution on returns on invested capital is untested until the combined company has reported more quarters.",
+   "correction_severity": "material",
+   "skeptic_kill_scope": "numbers",
+   "torque_leverage_quadrant": false,
+   "hype_flag": false,
+   "headwind_chain": false,
+   "headwind_unjustified": false,
+   "stale_anchor": false,
+   "size_units_effective": 0.75,
+   "weight_pct": 14.29,
+   "weight_basis": "equal",
+   "corr_flag": false,
+   "entry_plan": "2 tranches / 2 wks",
+   "trim_at_px": null,
+   "exit_action": "HOLD",
+   "entry_price": 273.71,
+   "entry_date": "2026-08-04"
+  },
+  {
+   "symbol": "VRT",
+   "sector": "Industrials",
+   "chains": [
+    "power_for_ai",
+    "electrification_grid"
+   ],
+   "chain": "power_for_ai",
+   "business_model": "equipment_services",
+   "rev_yoy": 0.2623,
+   "fcf_margin": null,
+   "ebitda_margin_ttm": 0.2198,
+   "ndebt_ebitda": 0.44,
+   "interest_coverage": 33.1,
+   "funded_solvency": "strong",
+   "chain_regime": {
+    "power_for_ai": "NEUTRAL",
+    "electrification_grid": "NEUTRAL"
+   },
+   "growth_capex_fcf_negative": false,
+   "headwind_justification": "",
+   "forensic_gate": "",
+   "whats_changed": "",
+   "value_chain_position": "Data-center power and thermal-management equipment maker - sells uninterruptible power supplies, switchgear, power distribution and liquid-cooling gear to hyperscalers and colocation operators, the equipment layer of the grid and AI-power build-out.",
+   "physical_anchor": "Manufactures uninterruptible power supply systems, switchgear, power distribution units and liquid-cooling thermal-management equipment for data centers",
+   "fr_score": 86,
+   "thesis": "Vertiv makes the power and cooling hardware a data centre cannot be built without, and the June 2026 quarter showed margins widening while revenue grew fast - the honest signature of pricing power rather than share bought with discounts - though the shares already pay for a good deal of it.",
+   "cost_curve": "Gross margin widened about 550 basis points, from 32.2% to 37.7%, between the June 2025 and June 2026 quarters while revenue in those same quarters rose 24% to $3,274 million, and adjusted operating margin rose 410 basis points to 22.6%; the trailing operating cash profit margin of 22.0% sits in the 75th percentile of an eight-company peer group. A 10% move in natural gas shifts free cash flow only about 1.4%, so fuel is close to irrelevant here - the swing factor is customer capital spending, and if that pauses the same operating leverage runs in reverse.",
+   "contracting_reserve": "Backlog was last disclosed at $15.0 billion on 11 February 2026, more than double a year earlier and roughly one year of the guided 2026 revenue of about $14.0 billion, on orders up 252% and orders taken running at 2.9 times revenue billed. The company has since stopped publishing backlog every quarter, so the next figure it must file arrives with the annual report around February 2027, and the September-quarter revenue print in late October 2026 - guided to 34-36% organic growth - is the only interim proof the book is converting on schedule.",
+   "capital_discipline": "$599.9 million of stock repurchased in 2024 near the lows and nothing at all repurchased in 2025 or 2026 at three to five times the price, which is the clearest single piece of capital-discipline evidence in this book; net debt is 0.44 times operating cash profit, interest is covered 33 times, and capital spending is held to 3-4% of sales.",
+   "valuation_guard": "Reconciled value $315 a share against $273.35 - about +15.2%, so the guard passes clean; what it does not soften is the adverse case at $128.",
+   "gm_trajectory": "Expanding on rising revenue: gross margin 32.2% to 37.7% between the June 2025 and June 2026 quarters (about 550 basis points) while revenue in those quarters grew 24%, from $2,638 million to $3,274 million.",
+   "sop_mos_pct": 15.2,
+   "regime_fit": "Both chains read neutral, so nothing in the cycle read is doing the work; this seat is a company-specific judgement on an order book the company has chosen to stop disclosing quarterly, which is why the entry is staged rather than immediate.",
+   "exposure_axes": [
+    "hyperscaler-ppa",
+    "datacenter-capex",
+    "long-duration-multiple",
+    "global-growth-industrial-capex"
+   ],
+   "size_units": 0.5,
+   "thesis_break_px": 165.0,
+   "bear_fv_px": 128.0,
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 165.0,
+    "cc_strike": 315.0,
+    "tenor_days": 35,
+    "source": "qualitative",
+    "rationale": "The adverse case at $128 is the whole objection, so we would rather be paid to commit at $165 than pay $273.35 today.",
+    "csp_premium": null,
+    "csp_yield_annualized": null,
+    "expiry": null,
+    "dte": null,
+    "delta": null,
+    "iv": null
+   },
+   "decision": "KEEP",
+   "decision_rationale": "Held since 4 August 2026 and unbroken: the 29 July 2026 second-quarter report is still the latest evidence, gross margin widened 550 basis points year on year on revenue up 24%, and at $273.35 the shares sit 66% above the $165 break level - but the order book has still not been re-disclosed since 11 February 2026, which is why the half unit stands rather than grows.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_kill_fact": "The bear case's Europe pillar is already falsified by the very report the record is dated after. The record asserts Europe is 'the clearest instance of narrative running ahead of numbers', that a second-half return to growth 'has not yet appeared', and that it is 'the oldest unverified claim in the file'. On the 29 July 2026 second-quarter call - five days before the record's as_of date of 4 August 2026 - EMEA net sales were $484 million, UP 2% year on year and down only 2% organically, against down 29% organically in the March 2026 quarter and down 14% in the December 2025 quarter. That is a 27-point organic swing in one quarter, reported growth already positive, and the third-quarter guide sets EMEA at mid- to high-teens organic growth. The claim that 'the number went the other way' was true through March 2026 and is not true on the tape the record is built on.",
+   "skeptic_corrections": "(1) EUROPE - MATERIAL. Correct 'Europe has not returned to growth / the number went the other way' to: EMEA net sales $484m in Q2 2026, +2% reported and -2% organic (from -29% organic in Q1 2026), with Q3 2026 guided to mid- to high-teens organic growth and the full year to low-single-digit organic growth (Q2 2026 call, 29 July 2026). The claim is stale by one quarter relative to the record's own as_of date. (2) BACKLOG BLACKOUT - OVERSTATED, not wrong. The disclosure fact verifies exactly: on 11 February 2026 management said 'the best approach is to no longer report actual orders, orders forecast or backlog with quarterly earnings', with full-year backlog retained only in the Form 10-K; the 29 July 2026 call gave no backlog figure and no book-to-bill. But the bear's stronger claim - that the leading indicator is now 'visible once a year' and that every pipeline claim since February is 'unaudited management assertion' - does not survive. Deferred revenue is on the face of the filed quarterly balance sheet, management named it on 29 July 2026 as 'a read through in terms of those advanced deposits on orders', and it went from $1,814.7m at 31 December 2025 to $2,461.8m at 31 March 2026 to $3,633.7m at 30 June 2026 - a doubling in six months and +$1.17bn sequentially in Q2 alone. That is a filed, auditable, quarterly order-intake proxy, and it points up. (3) SOP_BEAR ARITHMETIC - MINOR. The adverse case's own parts are $41.20 (service) + $85.20 (product) - $0.40 (net debt) = $126.0 a share, not the $128 stated as the total; recomputed from the underlying blocks ($16.2bn + $33.5bn less $146m over 393m diluted shares) it is $125.8. bear_px corrected to 126.0. Also note the adverse case's own revenue base of $14.5bn ($2.7bn service + $11.8bn product) is described as 'roughly flat with 2026' but is 3.6% ABOVE the $14.0bn now guided for 2026 - the downside case is fractionally less adverse than it presents itself. (4) WHAT SURVIVES INTACT, verified against primary sources: gross margin 32.16% in Q2 2025 ($848.5m/$2,638.1m) to 37.71% in Q2 2026 ($1,234.9m/$3,274.3m) - the trajectory claim is exact, not asserted from a proxy; net debt $145.6m at 30 June 2026 (total debt $3,256.2m including $316.4m of finance leases, less $2,810.6m cash and $300.0m short-term investments) - the $146m figure is right and FMP's headline $445.6m is the version that omits short-term investments; the fiscal 2022 precedent is real (net income $76.6m, free cash flow -$263.8m); the $118.70 twelve-month low and $379.94 high are real; 41.9x trailing EV/EBITDA on $2.524bn TTM EBITDA is arithmetically correct at $273.35. No hidden funding disqualifier found: diluted shares 389.8m to 392.7m year on year (+0.7%, stock compensation only), no equity raised, capex funded inside a $2.5bn free-cash-flow guide.",
+   "correction_severity": "material",
+   "skeptic_kill_scope": "thesis",
+   "torque_leverage_quadrant": false,
+   "hype_flag": false,
+   "headwind_chain": false,
+   "headwind_unjustified": false,
+   "stale_anchor": false,
+   "size_units_effective": 0.5,
+   "weight_pct": 14.29,
+   "weight_basis": "equal",
+   "corr_flag": true,
+   "entry_plan": "2 tranches / 2 wks",
+   "trim_at_px": null,
+   "exit_action": "HOLD",
+   "entry_price": 263.05,
+   "entry_date": "2026-08-04"
+  },
+  {
+   "symbol": "GEV",
+   "sector": "Utilities",
+   "chains": [
+    "power_for_ai",
+    "electrification_grid"
+   ],
+   "chain": "power_for_ai",
+   "business_model": "equipment_services",
+   "rev_yoy": 0.1296,
+   "fcf_margin": null,
+   "ebitda_margin_ttm": 0.2094,
+   "ndebt_ebitda": -0.85,
+   "interest_coverage": 0,
+   "funded_solvency": "strong",
+   "chain_regime": {
+    "power_for_ai": "NEUTRAL",
+    "electrification_grid": "NEUTRAL"
+   },
+   "growth_capex_fcf_negative": false,
+   "headwind_justification": "",
+   "forensic_gate": "",
+   "whats_changed": "",
+   "value_chain_position": "Power-generation and grid-equipment maker (gas, steam and wind turbines plus high-voltage transmission equipment, transformers and switchgear); also co-developing a small modular reactor with Hitachi - it sells the hardware that delivers firm electricity and grid capacity, and is not itself a power producer",
+   "physical_anchor": "Gas and steam turbines, wind turbines, and grid transmission equipment - transformers, switchgear and high-voltage direct-current systems - that generate and move electricity",
+   "fr_score": 82,
+   "thesis": "GE Vernova sells the two scarcest physical things in the electricity build-out, heavy-duty gas turbines and grid equipment, into a three-firm field where it holds much the largest installed base - and it is now selling that scarcity at visibly rising prices.",
+   "cost_curve": "Gross margin widened about 100 basis points to 21.3% in the June 2026 quarter while revenue grew 21.9% to $11.10 billion, and management said in April 2026 that 2026 turbine orders are being priced 10 to 20 points higher per kilowatt than late-2025 orders. The honest caveat is the level rather than the direction: the trailing operating cash profit margin of 20.9% is only the 62nd percentile of an eight-company peer group, so this is scarcity pricing arriving rather than a top-band margin already earned. A 10% move in natural gas shifts free cash flow about 2.4%, and it works against the company when gas is dear and turbine buyers hesitate.",
+   "contracting_reserve": "Backlog reached $176 billion at 30 June 2026, up $13 billion in a single quarter and about 3.8 times expected 2026 revenue, with $24.2 billion of orders against $11.1 billion of revenue - orders taken at 2.2 times revenue billed. Gas turbines under contract went from 46 gigawatts entering 2025 to 83 leaving it, to 100 at the end of March 2026 and 116 at the end of June, with at least 125 targeted by the end of this year. This is the deepest and best-priced order book in the slate.",
+   "capital_discipline": "Net cash - borrowings sit 0.85 times operating cash profit below zero - and six points of margin were added to the equipment backlog during 2025, eleven of them in the power business, which is the discipline test that matters for an order book taken during a boom.",
+   "valuation_guard": "Reconciled value $880 a share against $1,019.74 - about -13.7%, so the guard takes a real deduction and this is deliberately the smallest position in the book at 0.30 units.",
+   "gm_trajectory": "Expanding on rising revenue: gross margin 20.3% in the second quarter of 2025 to 21.3% in the second quarter of 2026 (about 100 basis points) while revenue grew 21.9% to $11.10 billion; the company's own adjusted operating cash profit margin widened 340 basis points organically to 11.3% in the same quarter.",
+   "sop_mos_pct": -13.7,
+   "regime_fit": "Both chains read neutral. That matters here because the whole position is a bet on an order book already signed at fixed prices; a neutral cycle read means we are underwriting delivery and margin conversion, not a further upturn in ordering.",
+   "exposure_axes": [
+    "hyperscaler-ppa",
+    "datacenter-capex",
+    "global-growth-industrial-capex",
+    "long-duration-multiple"
+   ],
+   "size_units": 0.3,
+   "thesis_break_px": 690.0,
+   "bear_fv_px": 540.0,
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 690.0,
+    "cc_strike": 880.0,
+    "tenor_days": 40,
+    "source": "qualitative",
+    "rationale": "The gap between today's price and our reconciled value is the whole objection, so we would rather be paid to wait at $690 than pay $1,019.74 today.",
+    "csp_premium": null,
+    "csp_yield_annualized": null,
+    "expiry": null,
+    "dte": null,
+    "delta": null,
+    "iv": null
+   },
+   "decision": "KEEP",
+   "decision_rationale": "Held since 4 August 2026 and unbroken: the order book at $176 billion on 30 June 2026 and 116 gigawatts of gas turbines under contract are the same facts that earned the seat, and the price is still 48% above the $690 break level - the seat stays at the smallest size in the book because the shares remain about 16% above our reconciled $880.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_kill_fact": "No kill. The two load-bearing bear mechanics verify exactly against the 30 June 2026 filing: clean trailing EBITDA is $4,342m (TTM EBITDA $8,664m less the $3,992m Prolec revaluation gain and $330m Proficy disposal gain booked in Q1 2026), net cash is $9,160m ($13,120m cash less $3,960m total debt), contract liabilities are $39,944m, and trailing-four-quarter working capital supplied $12,493m against trailing free cash flow of $12,439m — more than 100% of it. Management confirmed the mechanic verbatim on 22 July 2026 (\"Working capital was a $6.4 billion cash benefit, driven primarily by higher down payments on increased orders and slot reservations at Power\") and guided H2 2026 free cash flow far below H1 (roughly $10bn generated year to date against a $11.5-12.5bn full-year guide, i.e. $1.5-2.5bn in H2). But two numbers the thesis leans on are wrong, and one of them re-prices the base case.",
+   "skeptic_corrections": "(1) MATERIAL - the December 2025 investor-update anchor is overstated. bear_thesis cites \"the company's own 2028 target of $11.2 billion\" from \"$56 billion of revenue at a 20% EBITDA margin.\" GE Vernova's own 9 December 2025 investor-update release states 2028 revenue of $52B at a 20% adjusted EBITDA margin - $10.4bn, not $11.2bn. This cuts two ways: on the multiple the thesis is too kind (EV of about $264bn is 25.4x the real 2028 plan, not 23.5x), but the base-case sum-of-the-parts was explicitly built as that plan \"largely delivered but a notch light\" at $10.0bn of 2028 EBITDA. The same 89.3% haircut applied to the correct $10.4bn plan gives $9.29bn, and carrying it pro-rata through the record's own schedule moves base fair value from $880 to about $810. Corrected in corrections_typed. (2) MATERIAL to the third leg - the backlog split is stale by a quarter. bear_thesis says \"of 116 gigawatts under contract only about 44 are in formal backlog; the rest are slot reservation agreements\" (implying ~72GW of SRAs). Those are the 31 March 2026 figures. On the 22 July 2026 call Ken Parks stated the 30 June position: \"Backlog grew from 44 to 53 gigawatts, and SRAs increased from 56 to 63 gigawatts.\" So 53 of 116GW is firm backlog (46%, not 38%), and Q2 already converted 9GW of SRAs into orders - the opposite of the \"slot reservations lapsing rather than converting\" confirmation the thesis waits for. Management further guided that backlog gigawatts exceed SRA gigawatts by year-end. The qualitative point survives (54% of gigawatts under contract is still deposit-secured rather than contracted) but the specific ratio must be restated. (3) MINOR - the multi-year free-cash-flow target is misquoted: the 9 December 2025 release says \"$22B+\" cumulative over 2025 to 2028, not \"at least $24 billion by 2028.\" On the correct four-year base, 2025 actual (about $3.9bn) plus the 2026 guide (about $12bn) already covers roughly 72% of the floor, leaving under $3bn a year implied for 2027-28 rather than the thesis's \"$6 billion a year.\" The direction of the argument holds and is in fact understated - but note this is a floor set when 2026 was guided at $4.5-5.0bn of free cash flow, so treating it as a forecast is the softest link in the thesis. (4) MINOR - \"roughly 92% above their 200-day average\" is a conflation: at $1,019.74 the shares were about 22% above the then 200-day average of $836.50; 92% is the premium to the 52-week low of $530.16. The 200-day has since risen to $848.41 (11 August 2026), so risk_reward's claim that the attractive entry, the 200-day average and the parts calculation all coincide near $836 no longer holds - the corrected parts land near $810 while the moving average sits at $848. (5) MINOR - the \"buying back stock at the top\" characterisation is weaker than stated at the program level: on 22 July 2026 Parks disclosed cumulative repurchases of \"approximately $7 billion ... representing 12.4 million shares at an average price of $560 per share\" against a live price near $1,015. The H1 2026 tranche ($3.67bn per the cash-flow statement) was indeed bought near highs, but the aggregate program has been accretive, not a top-of-cycle error.",
+   "correction_severity": "material",
+   "skeptic_kill_scope": "numbers",
+   "torque_leverage_quadrant": false,
+   "hype_flag": false,
+   "headwind_chain": false,
+   "headwind_unjustified": false,
+   "stale_anchor": false,
+   "size_units_effective": 0.3,
+   "weight_pct": 14.29,
+   "weight_basis": "equal",
+   "corr_flag": true,
+   "entry_plan": "2 tranches / 2 wks",
+   "trim_at_px": null,
+   "exit_action": "HOLD",
+   "entry_price": 1019.21,
+   "entry_date": "2026-08-04"
+  },
+  {
+   "symbol": "TEL",
+   "sector": "Technology",
+   "chains": [
+    "electrification_grid"
+   ],
+   "chain": "electrification_grid",
+   "business_model": "equipment_services",
+   "rev_yoy": 0.1549,
+   "fcf_margin": 0.19,
+   "ebitda_margin_ttm": null,
+   "ndebt_ebitda": 0.97,
+   "interest_coverage": 30.0,
+   "funded_solvency": "strong",
+   "chain_regime": {
+    "electrification_grid": "NEUTRAL"
+   },
+   "growth_capex_fcf_negative": false,
+   "headwind_justification": "",
+   "forensic_gate": "",
+   "whats_changed": "",
+   "value_chain_position": "Power-management and connectivity component maker - sells connectors, power-distribution components and sensors into grid power distribution, the data-center build-out and vehicle electrification; the data provider's 'Semiconductors' classification is a filing quirk, not the real business",
+   "physical_anchor": "Manufactures electrical and electronic connectors, power-distribution components and sensors used in grid, data-center and electric-vehicle power systems",
+   "fr_score": 83,
+   "thesis": "TE Connectivity has quietly become the second-largest supplier of the connectors and power hardware that data centres and modernised electricity grids cannot be built without, while still being priced largely as a car-parts business.",
+   "cost_curve": "Gross margin was 35.6% in the June 2026 quarter against 35.3% a year earlier on revenue up 14%, so the year-on-year direction is right, but it has slipped from 37.2% in the December 2025 quarter because copper is passed through to customers at no margin. The cleaner line is operating margin, which widened 90 basis points to 22.0%, with the industrial business at 22.8%. Copper here is an input cost and therefore a margin headwind - never a revenue tailwind - and it has already cost about 1.6 points of gross margin over two quarters.",
+   "contracting_reserve": "Orders have risen for five consecutive quarters, from $4.5 billion in the June 2025 quarter to a record $5.7 billion in the June 2026 quarter, up 27%, with orders taken at 1.1 times revenue billed and a record backlog management explicitly describes as giving visibility into fiscal 2027; data-network orders are up more than 70% year to date. The dated test is the fourth-quarter and full-year report due in late October 2026, which carries the fiscal-2027 outlook.",
+   "capital_discipline": "Free cash flow of $3.64 billion over the last twelve months, a 19% margin; net debt is below one times operating cash profit at 0.97 and interest is covered 30 times.",
+   "valuation_guard": "Reconciled value $244 a share against $215.87 - about +13.0%, so the guard passes clean.",
+   "gm_trajectory": "Expanding year on year but compressing over the last two quarters: 35.6% in the June 2026 quarter against 35.3% a year earlier on revenue up 14%, down from 37.2% in December 2025 as zero-margin copper pass-through entered the mix; operating margin expanded 90 basis points year on year to 22.0%.",
+   "sop_mos_pct": 13.0,
+   "regime_fit": "The grid chain reads neutral, which suits a name whose order book already covers the next fiscal year: we are underwriting a backlog that exists, not an acceleration that has to arrive.",
+   "exposure_axes": [
+    "global-growth-industrial-capex",
+    "datacenter-capex",
+    "auto-production-cycle",
+    "copper-input-cost"
+   ],
+   "size_units": 0.75,
+   "thesis_break_px": 165.0,
+   "bear_fv_px": 135.0,
+   "entry_posture": "on_confirmation: the fourth-quarter and full-year fiscal-2026 report in late October 2026, which carries the fiscal-2027 outlook",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 165.0,
+    "cc_strike": 244.0,
+    "tenor_days": 35,
+    "source": "qualitative",
+    "rationale": "A put at $165 sits just above the adverse case of $135 and below the level at which the peak-earnings argument would have won, so we are paid to wait at a price we would genuinely want.",
+    "csp_premium": null,
+    "csp_yield_annualized": null,
+    "expiry": null,
+    "dte": null,
+    "delta": null,
+    "iv": null
+   },
+   "decision": "KEEP",
+   "decision_rationale": "Held since 4 August 2026 and unbroken: the record $5.7 billion of orders in the June 2026 quarter and the fifth consecutive quarter of order growth stand, the shares at $215.87 remain 31% above the $165 break level, and the late-October fiscal-2027 outlook is still the dated test we are waiting on.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_kill_fact": "No kill. Every load-bearing bear fact verifies against primary sources, but the downside anchor does not match the record's own arithmetic: valuation_method is declared 'sop' and sop_bear computes $124 per share ($27.7B Industrial + $14.2B Transportation - $6.0B net debt = $35.9B on ~290M diluted shares = $123.9), yet bear_px is stamped 135. Nothing in the record derives 135 under the declared method - it is the midpoint of a second, undeclared earnings-multiple path ($8.95 adjusted EPS at 14-16x = $125-143). Under the record's own stated method the adverse case is $124, i.e. -42.6% from $215.87 rather than -37.5%, which deepens an asymmetry the record already flags as DISCOUNT_TOO_SMALL.",
+   "skeptic_corrections": "1) DOWNSIDE ANCHOR (material, typed): bear_px 135 -> 124, the record's own sop_bear output; the record's segment schedule and the $124 figure are internally consistent and I re-checked the arithmetic, so 135 is the outlier. 2) GM-TRAJECTORY TRUTH - the bear survives fully: gross margin computed from the filed statements is 37.25% (Q1 FY26, 1,739/4,669), 36.78% (Q2 FY26, 1,745/4,744) and 35.56% (Q3 FY26, 1,835/5,160), i.e. 1.7pp of compression in two quarters while revenue grew; the year-over-year comparison (Q3 FY25 1,600/4,534 = 35.29%) is +0.3pp, so any 'expanding margin' framing is true only at the operating line and only year over year. Confirmed, not corrected. 3) BACKLOG TRUTH - orders of $5.7B (+27% YoY), Industrial orders +36%, Transportation +19%, DDN orders +70% year-to-date and book-to-bill of 1.1 in-quarter and year-to-date are verbatim in the 22 July 2026 call, so the demand facts stand; but the 'record backlog' itself carries NO dollar figure on the call or in the 10-Q - it is a management adjective, and orders and book-to-bill are management-reported non-GAAP metrics that no filed statement corroborates. Consequence for the bear: its own named falsification tell, 'a single quarter of book-to-bill below 1.0 in Industrial', is not observable from any disclosure, because TE reports book-to-bill only at company level. The tell needs restating as company book-to-bill below 1.0 or a sequential decline in Industrial orders. 4) SELL-OFF SIZE (minor): 'shares fell 6.9% on 22 July 2026' is overstated - the close-to-close move was -4.18% ($209.01 to $200.28) on 8.79M shares versus roughly 3M normal. The direction of the claim holds (a large down day on a beat-and-raise) and the intraday low that day, $190.27, is the 52-week low the record cites as its entry level - so the named $185-195 entry window has already printed once and was bought back within days. No valuation field moves. 5) CONCENTRATION (minor, cuts against the bear): 'DDN and energy generated essentially all of the growth' overstates it. Energy contributed 'well over $100 million' of the company's roughly $600M of growth (Curtin, 22 July 2026) and DDN roughly $200M; ACL +16%, aerospace/defence +12% and commercial transportation +18% carried the rest. DDN plus energy is roughly two-thirds of Industrial's growth and about half of company growth - real concentration, narrower than claimed. 6) MARGIN LABEL (minor): adjusted operating margin was 21.9%, not 22.0% (Mitts, 22 July 2026). 7) COPPER (minor): COMEX copper settled $6.6435/lb on 4 August 2026, about $14,650 per tonne; the 'roughly $14,000 per tonne LME' reading is directionally correct given the COMEX premium - record-area copper confirmed. 8) Not disqualifying but noted: there is no dilution risk - diluted shares fell to 293M and net debt verifies at exactly $4,393M at 26 June 2026 ($5,632M debt less $1,239M cash), and Astrodyne is cash-funded; the acquisition's 'roughly 16-17x operating cash earnings' rests on a mid-30% cash margin never disclosed for Astrodyne, so that leg is an assumption, though management's failure to quantify synergies is confirmed (operational synergies were mentioned, never sized).",
+   "correction_severity": "material",
+   "skeptic_kill_scope": "numbers",
+   "torque_leverage_quadrant": false,
+   "hype_flag": false,
+   "headwind_chain": false,
+   "headwind_unjustified": false,
+   "stale_anchor": false,
+   "size_units_effective": 0.75,
+   "weight_pct": 14.29,
+   "weight_basis": "equal",
+   "corr_flag": false,
+   "entry_plan": "2 tranches / 2 wks",
+   "trim_at_px": null,
+   "exit_action": "HOLD",
+   "entry_price": 217.19,
+   "entry_date": "2026-08-04"
+  },
+  {
+   "symbol": "HII",
+   "sector": "Industrials",
+   "chains": [
+    "nuclear_smr"
+   ],
+   "chain": "nuclear_smr",
+   "business_model": "equipment_services",
+   "rev_yoy": 0.1397,
+   "fcf_margin": 0.0285,
+   "ebitda_margin_ttm": null,
+   "ndebt_ebitda": 2.26,
+   "interest_coverage": 6.3,
+   "funded_solvency": "moderate",
+   "chain_regime": {
+    "nuclear_smr": "NEUTRAL"
+   },
+   "growth_capex_fcf_negative": false,
+   "headwind_justification": "",
+   "forensic_gate": "",
+   "whats_changed": "",
+   "value_chain_position": "Prime shipbuilder and integrator for naval nuclear-propulsion vessels - it occupies the reactor-components and naval nuclear layer at the platform and construction level, not as a fuel or component sub-supplier",
+   "physical_anchor": "Nuclear-powered aircraft carriers and Virginia-class submarines, built and reactor-plant-integrated for the US Navy",
+   "fr_score": 78,
+   "thesis": "Huntington Ingalls is the only builder of nuclear-powered aircraft carriers in the United States and one of two builders of nuclear submarines, and after four years of delivering ships priced before the pandemic its margins are recovering on the schedule management published.",
+   "cost_curve": "Trailing gross margin is 12.56% against 12.38% a year earlier while revenue grew about 14% to $13.19 billion, and shipbuilding return on sales has marched from 5.2% in 2024 to 5.9% in 2025 to a guided 6.0-6.5% for 2026, with the quarterly sequence 5.8%, 6.0%, 6.3%. That is expansion, but from a very low base and driven by contract mix and incentive fees rather than price - the softest pricing-power evidence among the eight seats, and the reason this pillar does not carry the position.",
+   "contracting_reserve": "Backlog was $57.3 billion at 30 June 2026, about 4.3 times annual revenue, before the $76.6 billion Navy submarine award announced 29 July 2026 books roughly $25 billion of Newport News work in the third quarter and lifts it toward $80 billion, close to six times revenue - the deepest order book in the slate. The dated proof points: carrier CVN 79 preliminary acceptance guided for later this year with final delivery in 2027, submarine SSN 800 and ship LPD 30 deliveries both guided for late 2026, and unmanned surface vessel sea testing scheduled for September 2026.",
+   "capital_discipline": "Net debt of 2.26 times operating cash profit with interest covered 6.3 times, and free cash flow at only 2.85% of revenue - the thinnest cash conversion in the slate. Management has delivered all three of the operational commitments it set out in May 2025 and cut its own throughput target in public mid-year rather than restating the base later.",
+   "valuation_guard": "Reconciled value $370 a share against $324.21 - about +14.1%, so the guard passes clean. The input file's own figure of -92.6% is a text-parsing error, not a valuation: the parser read the '24-month horizon' wording as the fair value.",
+   "gm_trajectory": "Expanding modestly on strongly growing revenue: trailing gross margin 12.56% against 12.38% a year earlier on revenue up about 14% to $13.19 billion; second-quarter 2026 gross margin 13.2% against 12.8%, with segment operating margin up to 6.6% from 5.6%.",
+   "sop_mos_pct": 14.1,
+   "regime_fit": "The nuclear chain reads neutral, and this seat is deliberately the one that does not depend on that read at all: its funding comes from a multi-year defence appropriation, which is the main reason it earns a place beside three data-centre-levered names.",
+   "exposure_axes": [
+    "us-navy-single-customer",
+    "defense-appropriations"
+   ],
+   "size_units": 0.75,
+   "thesis_break_px": 235.0,
+   "bear_fv_px": 180.0,
+   "entry_posture": "on_confirmation: third-quarter 2026 results in late October 2026, the first print that books roughly $25 billion of Newport News submarine work into backlog",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 235.0,
+    "cc_strike": 370.0,
+    "tenor_days": 40,
+    "source": "qualitative",
+    "rationale": "The order book is contracted to 2038 but the cash conversion is not yet proven, so a put at $235 buys the franchise only at a price that already assumes the margin recovery stalls.",
+    "csp_premium": null,
+    "csp_yield_annualized": null,
+    "expiry": null,
+    "dte": null,
+    "delta": null,
+    "iv": null
+   },
+   "decision": "KEEP",
+   "decision_rationale": "Held since 4 August 2026 and unbroken: the $76.6 billion Navy submarine award of 29 July 2026 runs to July 2038 and has still not been booked into backlog, the shares at $324.21 sit 38% above the $235 break level, and the guided September 2026 unmanned-vessel sea testing and late-2026 SSN 800 delivery are both still ahead.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_kill_fact": "No kill. Every load-bearing number in the bear case verifies against primary sources. The Q4-2026 cash cliff is exact: on the 30 July 2026 call the CFO stated Q2 operating cash flow of -$31m and net capital expenditure of $119m (3.5% of revenue), a $12m quarter-end cash balance, ~$1.7bn of liquidity, no buyback, a Q3 free-cash-flow guide of ~$100m and a reiterated full-year $500-600m guide resting on 'meaningful positive cash impacts from contract advances and incentives as well as favorable cash tax impacts in the fourth quarter'. With Q1 at -$390m operating / $74m capex, first-half free cash flow is -$614m, so Q4 must produce $1.01-1.11bn against the $516m actually delivered in Q4 2025 ($650m operating less $134m capex). The estimate-at-completion precedent is also exact: 30 Oct 2024 close $250.49 to 31 Oct 2024 close $184.96 (-26.2%, volume 2.61m against a ~320k norm) and 5 Feb 2025 $195.58 to 6 Feb 2025 $159.75 (-18.3%, volume 2.39m), trough $160.82 on 13 Feb 2025. Balance sheet at 30 June 2026 confirms net debt $2,923m including $233m of finance leases ($2,690m excluding). The single strongest attack available - that the bear inflates the opacity of the Q2 margin - is a framing correction, not a kill.",
+   "skeptic_corrections": "1) THESIS-LAYER OVERSTATEMENT (the strongest finding). The bear asserts that because management twice refused to size the submarine-contract adjustment, 'investors cannot separate how much of the 6.6% segment margin was operational improvement and how much was a one-time credit'. The same call disclosed exactly that: net cumulative catch-up adjustments of +$8m at Newport News, -$2m at Ingalls and +$4m at Mission Technologies, i.e. net +$10m against segment operating income of $224m and a $52m year-on-year increase. Management declined to size only the submarine-specific slice, not the total. At most ~20% of the year-on-year margin improvement, and ~4% of segment profit, is net catch-up; the rest is volume and mix. The estimate-at-completion mechanism remains real and unretired - the two single-session collapses are verified above - but this particular inference is not supported by the disclosure.\n2) The bear's 'negative 13% net estimate adjustment' at Newport News in Q3 2025 could not be verified against any primary disclosure; HII reports net cumulative catch-up adjustments in dollars, not as a percentage. Treat as unsupported. Not load-bearing - the bear's case does not rest on it.\n3) 52-WEEK LOW IS WRONG BUT INERT. The record uses $259; the actual 52-week low is $262.66 (quote, 11 Aug 2026). So the shares sit 23.4% above the low, not 25%, and the twelve-month drawdown from the $460 high is -42.9%, not 44%. The sop_bear $180 is built bottom-up from segment EBITDA and net debt, not from the drawdown, so no valuation level moves - the drawdown line is only a calibration cross-check. No corrections_typed entry.\n4) LANE-FIT, not valuation. The record assigns HII to the nuclear_smr chain. HII has no commercial small-modular-reactor product, no NRC reactor-design position, and does not build the naval reactors themselves (that is BWXT, one layer down). Its verified position is platform integration of government-owned naval nuclear propulsion. This is not a broad-theme substitution - the demand is name-specific and contracted - but the SMR chain tag overstates the technology adjacency and should not be read as commercial-SMR exposure.\nVERIFIED AND UNMOVED: gross-margin trajectory taken from the reported series, not a proxy - Q2 2026 gross profit $452m on $3,418m revenue (13.2%) against $395m on $3,082m (12.8%); trailing-twelve-month 12.56% against 12.38%, on revenue up 14.0%. Backlog $57.3bn at 30 June 2026 with $6.7bn of Q2 awards, i.e. book-to-bill 1.96x, both from the 10-Q and the 30 July release - a single consolidated figure, not a cherry-picked or flattering segment aggregation. Catalyst FIRED is correct: the $76.6bn Block VI / Columbia Build II award was announced 29 July 2026 with ~$25bn to Newport News and ~$5.5bn on Columbia confirmed by the CFO the next morning; the shares closed $280.40 on 29 July and $319.90 on 30 July, +14.1% (the record's 'about 12%' is if anything understated).",
+   "correction_severity": "minor",
+   "skeptic_kill_scope": "thesis",
+   "torque_leverage_quadrant": false,
+   "hype_flag": false,
+   "headwind_chain": false,
+   "headwind_unjustified": false,
+   "stale_anchor": false,
+   "size_units_effective": 0.75,
+   "weight_pct": 14.29,
+   "weight_basis": "equal",
+   "corr_flag": false,
+   "entry_plan": "2 tranches / 2 wks",
+   "trim_at_px": null,
+   "exit_action": "HOLD",
+   "entry_price": 325.95,
+   "entry_date": "2026-08-04"
+  },
+  {
+   "symbol": "KEYS",
+   "sector": "Technology",
+   "chains": [
+    "quantum"
+   ],
+   "chain": "quantum",
+   "business_model": "equipment_services",
+   "rev_yoy": 0.1919,
+   "fcf_margin": 0.2377,
+   "ebitda_margin_ttm": null,
+   "ndebt_ebitda": 0.24,
+   "interest_coverage": 10.1,
+   "funded_solvency": "strong",
+   "chain_regime": {
+    "quantum": "NEUTRAL"
+   },
+   "growth_capex_fcf_negative": false,
+   "headwind_justification": "",
+   "forensic_gate": "",
+   "whats_changed": "",
+   "value_chain_position": "Cryogenics and control-electronics layer - sells dedicated quantum control and readout instrumentation plus general radio-frequency and microwave test equipment to quantum-hardware developers, chipmakers and aerospace and defence laboratories",
+   "physical_anchor": "Electronic test, measurement and control instrumentation - oscilloscopes, network and spectrum analysers, and the control-and-readout electronics racks that stimulate and read quantum devices",
+   "fr_score": 80,
+   "thesis": "Keysight makes the instruments that measure and control advanced electronics, including the racks that read out quantum devices, and it has been re-based on artificial-intelligence infrastructure spending with margins widening sharply as that happens.",
+   "cost_curve": "Gross margin on the company's adjusted basis widened 770 basis points to 72.3% in the quarter ended 30 April 2026 while revenue grew 31% to $1.717 billion; on the stricter accounting standard it was 68.6% against 62.3%, and the trailing-twelve-month figure 63.7% against 62.1%. Margin widening that hard on revenue growing that fast is pricing power in a supply-constrained niche, and it means the deterministic screen tag that reads this business as compressing is simply wrong.",
+   "contracting_reserve": "Orders exceeded $2.1 billion in the April 2026 quarter, up 56% (48% excluding acquisitions), running roughly 20% above revenue billed, and full-year guidance was raised to high-twenties percentage revenue growth against a long-term model framed at 5-7%. This is a real and rising order book, but a test-instrument book is measured in months rather than the years an equipment or power contract runs, and there is no dated contractual milestone behind it - the weakest of the four pillars for this seat and the reason it is not sized larger.",
+   "capital_discipline": "Net debt of 0.24 times operating cash profit, interest covered 10.1 times, free cash flow at 23.8% of revenue and a record $472 million in the April 2026 quarter.",
+   "valuation_guard": "Reconciled value $302 a share against $342.48 - about -11.8%, so the guard takes a deduction. The input file's -94.7% is a text-parsing error that read the '18-month horizon' wording as the fair value.",
+   "gm_trajectory": "Expanding hard on accelerating revenue: adjusted gross margin 72.3% in the April 2026 quarter against 64.6% a year earlier (770 basis points) on revenue up 31% to $1.717 billion; on the stricter accounting basis 68.6% against 62.3%, trailing twelve months 63.7% against 62.1%.",
+   "sop_mos_pct": -11.8,
+   "regime_fit": "The quantum chain reads neutral, which is the honest frame for this seat: it is bought as a profitable instrument maker levered to chip and network test today, with quantum-control hardware as unpaid-for optionality rather than as the thesis.",
+   "exposure_axes": [
+    "long-duration-multiple",
+    "semiconductor-capex",
+    "datacenter-capex"
+   ],
+   "size_units": 0.75,
+   "thesis_break_px": 205.0,
+   "bear_fv_px": 148.0,
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 205.0,
+    "cc_strike": 302.0,
+    "tenor_days": 35,
+    "source": "qualitative",
+    "rationale": "The business is excellent and the price is not, so we would rather be paid to commit at $205 - between the adverse case of $148 and our reconciled $302 - than pay $342.48 now.",
+    "csp_premium": null,
+    "csp_yield_annualized": null,
+    "expiry": null,
+    "dte": null,
+    "delta": null,
+    "iv": null
+   },
+   "decision": "KEEP",
+   "decision_rationale": "Held since 4 August 2026 and unbroken: the April 2026 quarter remains the best in the company's history with orders above $2.1 billion and record free cash flow of $472 million, the shares at $342.48 sit 67% above the $205 break level, and none of the four alternative quantum-chain names in this week's file - the two laser makers, the probe-card maker or the fibre supplier - offers a better order book.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_kill_fact": "The file's single most-cited number - non-GAAP gross margin of 72.3% in the quarter ended 30 April 2026, up 770 basis points, with non-GAAP EPS of $2.87 - is a one-off tariff-refund artifact, not pricing power, and the bear case's headline paradox built on it is arithmetically void. On the 19 May 2026 call CFO Neil Dougherty disclosed that following the U.S. Supreme Court decision invalidating the IEEPA tariffs, Q2 recognised tariff refunds and the refund of surcharges collected from customers: a $40 million reduction in revenue and a $97 million reduction in costs and expenses. His own clean figures: revenue $1.758 billion (up 35%), gross margin 67.6% (up 300 basis points, not 770), EPS $2.58 (up 52%). Two consequences. (1) The bear's central claim that the Q3 guide is 'more revenue producing less profit' and therefore 'an explicit statement that the 72.3% gross margin was flattered' is false: against the clean base the guide of $1.730-1.750 billion is slightly LOWER revenue than $1.758 billion, and Dougherty said so verbatim ('the Q3 revenues are - I would describe as in line with what we saw in Q2, slightly down'). There is no revenue-up/profit-down confession. (2) Management did not withdraw the margin - asked directly whether the level was durable, Dougherty answered 'post the acquisitions, which were accretive to our gross margins, I think that's the right level at these volumes' for the mid-67% figure. The claim is stated in cost_curve_verified, gm_trajectory, bull_thesis, bear_thesis, consensus_delta and moderator_conclusion, so the error propagates through the entire file. The thesis nevertheless survives, because the two facts that actually carry it verified cleanly against primary sources: the six-month order-acceptance window (confirmed twice on the same call, and explicitly 'no change to our backlog policy'), and the fiscal 2024 down-cycle precedent (revenue $5.464bn to $4.979bn, -8.9%; operating income $1.358bn to $833m, -38.7%; diluted EPS $5.91 to $3.51, -40.6% - genuine operating deleverage, not a tax artifact). Spot, share count, net debt and both consensus years also verified to the dollar.",
+   "skeptic_corrections": "1) GM-TRAJECTORY - MATERIAL. Replace '72.3% non-GAAP gross margin, up 770 basis points' and 'non-GAAP EPS $2.87' with the company's own one-time-adjusted figures: gross margin 67.6%, up 300 basis points; EPS $2.58, up 52%; revenue $1.758 billion, up 35%. The gap is the IEEPA tariff refund ($40m off revenue, $97m off costs), a net ~$57m pre-tax benefit worth roughly $0.29 of the reported $2.87. The direction of the trajectory (expanding) is confirmed; the magnitude is 300 basis points core, not 770, and it is attributable to acquisition mix being gross-margin accretive plus volume, not to a step-change in pricing power. 2) The bear's 'more revenue, less profit' inference and the consensus_delta pillar built on it must be struck - the Q3 guide is a slightly-down-sequential revenue guide off a clean $1.758bn base, which is ordinary, not a margin confession. 3) TARIFF INPUT - MATERIAL to the adverse case only. bear_thesis asserts tariffs 'stopped being discussed rather than stopped existing' and sop_bear capitalises '100 to 150 basis points of input-cost and tariff pressure' into the CSG margin. Tariffs stopped being discussed because the Supreme Court struck the IEEPA tariffs down and Keysight booked the refund. On the same call Dougherty also addressed input costs directly: memory is 'a pretty small portion of our overall BOM' with 'proportionately less exposure to the high bandwidth, leading-edge memory', and Keysight is vertically integrated - 'a significant portion of our highly specialized chips and assemblies are manufactured in-house'. The 100-150bp assumption is unsourced; only ~50bp of generic component-cost pressure survives. Carried through to bear_px below. 4) BUYBACK - MINOR but the framing dies with it. The record says '$204 million repurchased in the April 2026 quarter with the shares in the $300s... buying at the top'. Actual, per the CFO: approximately 780,000 shares at an average price of approximately $283, total consideration $220 million. Wrong amount and wrong price - $283 is BELOW the record's own $302 base fair value, so the 'classic late-cycle capital-allocation error' is refuted by the executed price. 5) SOFTWARE MIX - MINOR. 'Roughly 40% of revenue' (used in sop_bull and sop_breakdown to justify premium segment multiples) is overstated: 'Software and services accounted for approximately 36% of Keysight revenue, while annual recurring revenue was 27% of total mix'. 6) DISCLOSURE - MINOR, and it cuts against the bear. The claim that Keysight 'publishes no artificial-intelligence revenue figure' is stale as of 19 May 2026: the CEO sized it - the AI business 'finished the first half in the $500 million to $600 million range, almost in line with what we did the whole of last year'. Customer concentration remains genuinely undisclosed; that half of the bear pillar stands. 7) REVENUE BASE - the $40m tariff refund understates the reported fiscal 2026 revenue base by that amount, lifting the fiscal 2027 segment builds ~0.6%. Carried through to all three levels below. Note the SOP levels barely move because the SOP capitalises EBITDA margins, never the 72.3% gross margin - the margin error is evidentiary, not arithmetic, which is precisely why it must be corrected in the record the Director reads rather than left as a footnote.",
+   "correction_severity": "material",
+   "skeptic_kill_scope": "numbers",
+   "torque_leverage_quadrant": false,
+   "hype_flag": false,
+   "headwind_chain": false,
+   "headwind_unjustified": false,
+   "stale_anchor": false,
+   "size_units_effective": 0.75,
+   "weight_pct": 14.29,
+   "weight_basis": "equal",
+   "corr_flag": false,
+   "entry_plan": "2 tranches / 2 wks",
+   "trim_at_px": null,
+   "exit_action": "HOLD",
+   "entry_price": 321.89,
+   "entry_date": "2026-08-04"
+  },
+  {
+   "symbol": "ISRG",
+   "sector": "Healthcare",
+   "chains": [
+    "robotics_automation"
+   ],
+   "chain": "robotics_automation",
+   "business_model": "equipment_services",
+   "rev_yoy": 0.2066,
+   "fcf_margin": 0.2921,
+   "ebitda_margin_ttm": null,
+   "ndebt_ebitda": -0.54,
+   "interest_coverage": 0,
+   "funded_solvency": "strong",
+   "chain_regime": {
+    "robotics_automation": "NEUTRAL"
+   },
+   "growth_capex_fcf_negative": false,
+   "headwind_justification": "",
+   "forensic_gate": "",
+   "whats_changed": "",
+   "value_chain_position": "Surgical-robotics platform maker with capital-equipment placements plus recurring instrument and service revenue - an explicit anchor name for this chain",
+   "physical_anchor": "da Vinci robotic surgical systems - robotic arms, articulated instruments and three-dimensional vision consoles for minimally invasive surgery",
+   "fr_score": 77,
+   "thesis": "Intuitive Surgical sells surgical robots and then earns most of its money on the instruments and service each installed system consumes, and that installed fleet is still compounding while margins widen - the market has confused a slower growth rate with a broken franchise.",
+   "cost_curve": "Reported gross margin was 67.8% in the June 2026 quarter against 66.3% a year earlier, and 70.0% against 67.9% on the company's adjusted basis, on revenue up 19% to $2.89 billion; on 16 July 2026 management raised full-year adjusted gross-margin guidance to 68.0-69.0% while absorbing about a point of tariff cost it chose not to pass on. Margin widening on strong growth is the right answer, with the caveat that the competitive shelter here is wide but thinning as rival platforms arrive.",
+   "contracting_reserve": "There is no order book to grade in the ordinary sense, and it would be dishonest to invent one; the equivalent is a named, installed fleet - 11,710 systems at the end of the June 2026 quarter, up 12%, with 468 placed in the quarter against 395 a year earlier and procedures up about 16% worldwide, the lung-biopsy platform up 36%. Those are production deployments at scale rather than pilots, which is what this chain's test asks for, but there is no dated contractual milestone behind them and this pillar is scored accordingly.",
+   "capital_discipline": "$8.63 billion of cash and investments against no debt of any kind, 29% of revenue converted to free cash flow ($3.22 billion), and a 15.1% return on invested capital.",
+   "valuation_guard": "Reconciled value $310 a share against $365.33 - about -15.1%, so the guard takes a deduction and the position is sized below a full unit.",
+   "gm_trajectory": "Expanding on rising revenue: reported gross margin 67.8% in the June 2026 quarter against 66.3% a year earlier (up 1.5 percentage points), 70.0% against 67.9% adjusted, on revenue up 19% to $2.89 billion, with full-year margin guidance raised on 16 July 2026.",
+   "sop_mos_pct": -15.1,
+   "regime_fit": "The robotics chain reads neutral. This seat is the one in the book whose demand comes from hospital capital budgets and surgical procedure volumes rather than from any capital-spending cycle the other seven share, which is precisely the diversification it is here to provide.",
+   "exposure_axes": [
+    "long-duration-multiple",
+    "hospital-capital-budgets"
+   ],
+   "size_units": 0.7,
+   "thesis_break_px": 250.0,
+   "bear_fv_px": 205.0,
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 250.0,
+    "cc_strike": 310.0,
+    "tenor_days": 35,
+    "source": "qualitative",
+    "rationale": "With the price above our reconciled value and the competitive shelter thinning, being paid to buy at $250 is a better use of the position than owning it at $365.33.",
+    "csp_premium": null,
+    "csp_yield_annualized": null,
+    "expiry": null,
+    "dte": null,
+    "delta": null,
+    "iv": null
+   },
+   "decision": "KEEP",
+   "decision_rationale": "Held since 4 August 2026 and unbroken: the June 2026 quarter placed 468 systems against 395 a year earlier and lifted the installed fleet to 11,710, margin guidance was raised on 16 July 2026, and at $365.33 the shares sit 46% above the $250 break level - the arithmetic check that flags this record only objects to a 9% gap between two price snapshots, not to the business.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "skeptic_kill_fact": "No kill. Every load-bearing bear fact reproduces against primary sources: the J&J OTTAVA De Novo marketing authorisation is real and dated 2026-07-22 (J&J's own release, general-surgery procedure list as described); US da Vinci procedure growth did decelerate 14% (Q1) to 12% (Q2) with ACA-subsidy expiry and GLP-1 bariatric substitution named by management on the 2026-07-16 call; 2026 da Vinci procedure guidance is 13.5-15.5% with an expectation nearer the midpoint; the 10-Q for the quarter ended 2026-06-30 (accepted 2026-07-21) confirms revenue $2,892.3M, zero total debt, $8.626B of cash-plus-investments and 358.5M diluted shares; the 54% operating-lease share of da Vinci placements is management's own figure. The SoP arithmetic also reproduces exactly (bear 48.3+4.4+12.0=64.7 EV, +8.63 cash = 73.3 / 358.5 = $204.5; base 79.2+9.1+15.3=103.6, +8.63 = 112.2 / 358.5 = $313). What does NOT survive intact is the pricing-power pillar the record leans on hardest.",
+   "skeptic_corrections": "MATERIAL, and it hits the record's central 'the margin is expanding, therefore this is pricing power, therefore the scan's compressing label is stale' claim. On the 2026-07-16 call the CFO explicitly quantified the quarter: 'Non GAAP gross margin for the quarter was 70%, an increase from 67.9% in Q2 of last year. Excluding the $36 million benefit from IEPA tariff refunds, Q2 non GAAP gross margin would have been 68.7%.' So underlying adjusted expansion is +0.8pp, not the +2.1pp the record cites. Carrying the same $36M (1.24pp of $2,892.3M revenue) through the reported line, underlying reported gross margin is ~66.6% against 66.3% a year earlier -- roughly FLAT, not the '+1.5 percentage points' the gm_trajectory and cost_curve_verified fields both assert. Management attributed the improvement to 'product cost reductions, fixed overhead leverage, and the tariff refund' -- price is not among the three. The guide raise is the same artefact: the prior 67.5-68.5% range 'reflected 100 basis points of impact from tariffs', and the raise to 68-69% follows a refund of tariffs already paid, so it is a reversal of a cost, not evidence the company can price. The record's strongest sentence -- 'a company that absorbs an input-cost shock and still expands margin is not commoditising; it is exercising price' -- is not supported by the primary disclosure, and it is the same sentence that carries the WIDE moat grade and the rejection of the scan's compressing-margin flag. THREE SMALLER FIXES. (1) Live price is stale: $400.13 at 2026-08-11 against the record's $365.33 as-of 2026-08-04 (+9.5%), so the base case sits ~23% below spot, not ~15% -- the numeric_gate G1A flag is correct and the 'attractive near $300' entry is further away, not closer. (2) The June-quarter buyback was $379M at an average of $439 per share (management's figure), not '$380M at an average near $422' -- the timing point the record makes is understated, not overstated. (3) 'Bariatric volumes down roughly 10%' is management's 'declining high single digits'. FOOTNOTE THAT CUTS THE OTHER WAY, stated for completeness: the two placement-quality metrics the bear cites both moved in the company's favour in the same quarter -- leasing was 54% of da Vinci placements versus 56% in Q1 and 49% a year earlier, and the purchased-system ASP rose to $1.6M from $1.5M. The bear's -10% ASP and rising-lease-deferral assumptions remain scenario assumptions with no evidence yet in the tape. Segment levels check out and net to nothing: verified TTM Instruments & Accessories $6.598B (record $6.6B), Systems $2.712B (record $2.6B), Services $1.724B (record $1.8B); re-running the record's own multiples gives $312 against its $313, so base_fv_px does not move and I am not manufacturing a repricing.",
+   "correction_severity": "material",
+   "skeptic_kill_scope": "moat",
+   "torque_leverage_quadrant": false,
+   "hype_flag": false,
+   "headwind_chain": false,
+   "headwind_unjustified": false,
+   "stale_anchor": false,
+   "size_units_effective": 0.7,
+   "weight_pct": 14.29,
+   "weight_basis": "equal",
+   "corr_flag": false,
+   "entry_plan": "2 tranches / 2 wks",
+   "trim_at_px": null,
+   "exit_action": "HOLD",
+   "entry_price": 375.41,
+   "entry_date": "2026-08-04"
+  }
+ ],
+ "runner_ups": [
+  {
+   "symbol": "EMR",
+   "sector": "Industrials",
+   "chains": [
+    "robotics_automation"
+   ],
+   "chain": "robotics_automation",
+   "business_model": "equipment_services",
+   "rev_yoy": 0.0403,
+   "fcf_margin": 0.1701,
+   "ebitda_margin_ttm": null,
+   "ndebt_ebitda": 2.39,
+   "interest_coverage": 6.2,
+   "funded_solvency": "moderate",
+   "chain_regime": {
+    "robotics_automation": "NEUTRAL"
+   },
+   "growth_capex_fcf_negative": false,
+   "headwind_justification": "",
+   "forensic_gate": "",
+   "whats_changed": "",
+   "value_chain_position": "Factory and process automation toll-taker - control systems, instrumentation and valves for industrial automation, sold into a $155 billion installed base of which 62-65% of revenue is recurring maintenance",
+   "physical_anchor": "Manufactures process-automation instrumentation, distributed control systems and valves for factory and industrial process control",
+   "fr_score": 72,
+   "thesis": "Emerson is the toll collector on industrial process automation, earning roughly two thirds of its revenue from recurring maintenance on a $155 billion installed base, and its order book has run ahead of sales for five straight quarters - but the pricing-power test is the one thing it does not pass.",
+   "cost_curve": "This is the seat's weak point and it should be said plainly. Gross margin has stalled at 53.2% in the December 2025 quarter and 53.1% in the March 2026 quarter against 53.5% in both year-ago quarters, after a three-year expansion from 45.7% to 52.8% that came from selling a low-margin heating business and buying two software businesses rather than from price. Flat margin on revenue growing only about 4% is the softest pricing-power reading among these eight seats, and it caps both the score and the size.",
+   "contracting_reserve": "Underlying orders grew 4%, 4%, 6%, 9% and 5% against sales growth of 2%, 3%, 4%, 2% and 0.5% - five consecutive quarters of taking in more work than the company shipped - and management confirmed on 5 May 2026 that backlog is up 9% year on year. The franchise behind it is genuinely hard to displace: the Ovation control system runs about 30% of the world's power generation and its orders are up between 41% and 74%.",
+   "capital_discipline": "Net debt of 2.39 times operating cash profit with interest covered 6.2 times - the second most levered seat here - against free cash flow at 17.0% of revenue and recurring software revenue of $1.64 billion growing 9-10%.",
+   "valuation_guard": "Reconciled value $148 a share against $154.15 - about -4.0%, a small deduction rather than a veto.",
+   "gm_trajectory": "Stalled on slowly growing revenue: 53.2% in the December 2025 quarter and 53.1% in the March 2026 quarter against 53.5% in both year-ago quarters; the three-year expansion from 45.7% to 52.8% was portfolio change, not price, and that mix shift is finished.",
+   "sop_mos_pct": -4.0,
+   "regime_fit": "The robotics and automation chain reads neutral, and this seat is the least cycle-dependent expression of it: roughly two thirds of the revenue is maintenance on equipment already installed, so a flat order cycle still pays.",
+   "exposure_axes": [
+    "global-growth-industrial-capex",
+    "process-industry-capex"
+   ],
+   "size_units": 0.7,
+   "thesis_break_px": 118.0,
+   "bear_fv_px": 97.0,
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 118.0,
+    "cc_strike": 148.0,
+    "tenor_days": 35,
+    "rationale": "With the margin line flat and the price a little above our reconciled value, collecting a premium at $118 is a better risk than owning the shares at $154.15."
+   },
+   "decision": "KEEP",
+   "decision_rationale": "Held since 4 August 2026 and unbroken rather than merely tolerated: orders have still exceeded sales for five consecutive quarters with backlog up 9% year on year as confirmed on 5 May 2026, and the two robotics-chain names that could have taken the seat this week are both worse - the chip-test and cobot maker re-clusters on the same semiconductor-test factor as our quantum seat, and the factory-automation rival's revenue is falling 17% year on year.",
+   "skeptic_verdict": "REFUTED",
+   "skeptic_kill_fact": "The record was written on 4 August 2026 BEFORE Emerson's fiscal-Q3 2026 print, and it pre-registered its own falsification tests: 'What confirms the bear: gross margin down again year over year on tonight's print; a full-year underlying growth guide cut below 3%; ... or an order rate that falls below the sales rate.' The print landed that evening (10-Q accepted 2026-08-04 16:07) and failed all three. (1) GROSS MARGIN EXPANDED, not contracted: $2,655m on $4,873m = 54.48%, against $2,393m on $4,553m = 52.56% in the June-2025 quarter, +192bps; stripping the $82m of tariff refunds the CFO said were booked in cost of sales still leaves 52.80%, +24bps year over year. The pricing-power read is affirmatively positive, not neutral: price contributed 3 points to growth and the CFO stated 'price cost certainly remains green' with 'price cost and cost reductions more than offset inflation' - which directly refutes the bear's core inference that rising revenue on flat gross margin is 'volume sold at the market price, not pricing power.' (2) GUIDANCE WAS RAISED, not cut: full-year underlying growth to 3.5% (GAAP 5%), adjusted EPS to ~$6.55, free cash flow to ~$3.6bn. (3) ORDERS still led sales (+7% vs +6% underlying). Worse for the bear, its two most quantified pillars inverted. The Middle East was OVER-provisioned, not under-provisioned: against the one point of full-year sales provisioned in May 2026, the actual Q3 impact was '$25 million' with Q4 'similar' and the full-year effect 'approximately $100 million... approximately 0.5 point of revenue,' with field service engineers back 'at pre-conflict levels.' And the project funnel is not flat at $11.2bn 'consumed by conversions' - it 'grew $1.2 billion to $12.4 billion, up 8% year-over-year,' with the power funnel +$450m to $3.0bn and the LNG funnel +$350m to $2.2bn. Backlog is $8.2bn, up 7% (the record's $7.4bn is stale). Every one of the three deductions building the $97 adverse case is contradicted by dated primary evidence from the company itself.",
+   "skeptic_corrections": "FOUR corrections, three of which move numbers. (1) NET DEBT - load-bearing input to both valuation levels. The record subtracts $12.27bn 'at 31 March 2026'; that figure verifies exactly against the Q2 balance sheet ($14,057m total debt less $1,791m cash = $12,266m), but it is now stale. At 30 June 2026 total debt is $13,113m against $2,180m of cash = $10,933m, a $1.33bn reduction in one quarter on $1.3bn of Q3 free cash flow (+36% year over year, 27.1% margin). Carried through the record's own base bridge ($95.2bn enterprise value, 558m diluted shares), base fair value moves $148 -> $151. (2) ADVERSE CASE - the sop_bear takes EBITDA from $5.2bn to $4.75bn via three deductions, all three now falsified by the 4 Aug 2026 disclosure: -$180m for the Middle East running at 50% capacity (actual full-year impact ~$100m of revenue, ~$30m EBITDA at the record's own 30% incremental - restore $150m); -$188m for a one-point gross-margin give-back to copper and freight (price +3 points, price-cost 'green' - restore $188m); -$60m for a test-and-measurement reversion as a 'distributor restocking pulse' (T&M sales +23%, orders +19%, semiconductor orders +70%, full-year T&M guide RAISED to +14% - restore $60m). Adverse EBITDA becomes $5.15bn; holding the record's OWN 14.1x de-rate multiple gives an enterprise value of $72.6bn, and carrying the record's own +$0.33bn adverse net-debt premium over actual net debt gives $11.3bn, so equity is $61.3bn across 562m shares = $109. bear_px moves $97 -> $109. (3) STALE OPERATING FACTS, non-numeric: backlog is $8.2bn up 7% (record: '$7.4 billion... up 9%'); the funnel is $12.4bn up 8% (record: 'flat at about $11.2 billion across five quarters'); the '$350m of LNG in a $7.4bn backlog, under 5%' figure is a November-2025 datapoint the record applies to an August-2026 book in which the LNG funnel alone is $2.2bn and up 19%. (4) WHAT SURVIVES, and it is not nothing - the returns and balance-sheet critique verifies against the 30 June 2026 sheet and is untouched by one quarter: goodwill $18,122m plus intangibles $8,686m = $26,808m of $42,208m total assets (63.5%, the record's '64%' is right), tangible book value is negative $6.43bn, the current ratio is 0.90, and $5,587m of the debt is short-term. Two honest hedges on the print itself: the headline gross-margin expansion is flattered by the $82m tariff refund in cost of sales (management excluded it from adjusted), and the cash beat was helped by that refund plus tax payments the CFO said shifted from Q3 into Q4. Book-to-bill was exactly 1.0 in the quarter (not above 1) and backlog growth decelerated from 9% to 7% - the bear's only surviving score, and a thin one.",
+   "correction_severity": "material",
+   "skeptic_kill_scope": "numbers",
+   "skeptic_refuted": true
+  },
+  {
+   "symbol": "FIX",
+   "sector": "Industrials",
+   "chains": [
+    "power_for_ai",
+    "electrification_grid"
+   ],
+   "chain": "power_for_ai",
+   "business_model": "equipment_services",
+   "rev_yoy": 0.4611,
+   "fcf_margin": null,
+   "ebitda_margin_ttm": 0.1744,
+   "ndebt_ebitda": -0.41,
+   "interest_coverage": 166.2,
+   "funded_solvency": "strong",
+   "chain_regime": {
+    "power_for_ai": "NEUTRAL",
+    "electrification_grid": "NEUTRAL"
+   },
+   "growth_capex_fcf_negative": false,
+   "headwind_justification": "",
+   "forensic_gate": "",
+   "whats_changed": "",
+   "value_chain_position": "Mechanical and electrical construction contractor building out data-center power and cooling infrastructure",
+   "physical_anchor": "Installs mechanical and electrical building systems - heating, ventilation, air conditioning, piping and electrical power distribution - for commercial and data-center construction",
+   "fr_score": 85,
+   "thesis": "Comfort Systems has become the pre-eminent contractor for hyperscale data centres in the United States and its margin line proves the scarcity is real, but it is a labour business at a cyclical high and both of its chains are already full.",
+   "cost_curve": "Gross margin has expanded for five consecutive quarters, 23.5% to 25.9%, while quarterly revenue rose about 51% to $3.27 billion, and return on invested capital roughly doubled to 38.8%; the caution is that a 25.9% gross margin for a mechanical contractor is an all-time high and mean-reverting, and the trailing operating cash profit margin of 17.4% is only the 12th percentile of its eight-company peer group.",
+   "contracting_reserve": "Backlog reached $14.1 billion, up 73% year on year, on a strict definition - a binding legal commitment, a price and a scope - corroborated as $14.06 billion of remaining performance obligations in the quarterly filing, with 65-75% converting inside twelve months: about 1.26 years of contracted work and orders taken near 1.5 times revenue billed.",
+   "capital_discipline": "Net cash of about $1.8 billion against $54 million of funded borrowings, interest covered 166 times, and guidance beaten in seven of seven quarters.",
+   "valuation_guard": "Reconciled value $1,650 a share against $1,790.69 - about -7.9%, a modest deduction.",
+   "gm_trajectory": "Expanding on sharply rising revenue: 25.9% in the June 2026 quarter against 23.5% a year earlier on revenue up about 51% to $3.27 billion; five consecutive quarters of expansion.",
+   "sop_mos_pct": -7.9,
+   "regime_fit": "Both chains read neutral; the seat would be a pure company-specific bet on execution in a labour-constrained trade.",
+   "exposure_axes": [
+    "hyperscaler-ppa",
+    "datacenter-capex",
+    "global-growth-industrial-capex"
+   ],
+   "size_units": 0.6,
+   "thesis_break_px": 1050.0,
+   "bear_fv_px": 495.0,
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 1050.0,
+    "cc_strike": 1650.0,
+    "tenor_days": 35,
+    "rationale": "A very wide gap between the adverse case of $495 and the reconciled $1,650 argues for being paid to wait rather than owning the shares outright."
+   },
+   "decision": "",
+   "decision_rationale": "Still the highest-scoring name outside the book and still blocked by the same arithmetic: seating it would put a fourth name in both the power-for-AI and the grid chain, and on the toll-taker test a construction contractor at an all-time-high margin ranks behind the equipment makers it competes with for those seats.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS"
+  },
+  {
+   "symbol": "AME",
+   "sector": "Industrials",
+   "chains": [
+    "electrification_grid"
+   ],
+   "chain": "electrification_grid",
+   "business_model": "equipment_services",
+   "rev_yoy": 0.1266,
+   "fcf_margin": 0.2166,
+   "ebitda_margin_ttm": null,
+   "ndebt_ebitda": 0.72,
+   "interest_coverage": 23.9,
+   "funded_solvency": "strong",
+   "chain_regime": {
+    "electrification_grid": "NEUTRAL"
+   },
+   "growth_capex_fcf_negative": false,
+   "headwind_justification": "",
+   "forensic_gate": "",
+   "whats_changed": "",
+   "value_chain_position": "Diversified electronic-instruments and electromechanical manufacturer; power-quality, protection and precision-motion products touch grid and automation end markets, but no single chain dominates revenue",
+   "physical_anchor": "Manufactures precision electronic instruments, sensors, and electromechanical motion and power devices for aerospace, industrial and energy markets",
+   "fr_score": 84,
+   "thesis": "AMETEK expanded margins straight through a spike in copper and rare-earth costs while orders grew 28%, which is the single strongest pricing-power fact in the whole file - but its own chain mapping concedes that no one chain dominates its revenue.",
+   "cost_curve": "Gross margin of 36.58% for the twelve months to 30 June 2026 against 36.12% a year earlier on revenue up 12.7% to $7.86 billion, and the motor and magnet segment posted 290 basis points of core margin expansion to a record 26.3% operating margin - achieved while copper rose about 46% year on year and rare-earth magnet material 80-90%. Those commodities are input costs here and never revenue.",
+   "contracting_reserve": "Backlog is a company-disclosed $4.11 billion at the 4 August 2026 report, up 18% year on year and equal to roughly half a year of revenue, with orders taken at 1.14 then 1.12 times revenue billed and organic orders up 22% then 25%.",
+   "capital_discipline": "Net debt of 0.72 times operating cash profit, interest covered 23.9 times, free cash flow at 21.7% of revenue.",
+   "valuation_guard": "Reconciled value $255 a share against $246.69 - about +3.4%, the guard passes but leaves little for the buyer.",
+   "gm_trajectory": "Expanding on strongly growing revenue: 36.58% for the twelve months to 30 June 2026 against 36.12% a year earlier, on revenue up 12.7% to $7.86 billion, extending a three-year rise of roughly 1.5 percentage points.",
+   "sop_mos_pct": 3.4,
+   "regime_fit": "The grid chain reads neutral; the seat would be a quality-compounder holding rather than a chain expression, which is exactly the objection to it.",
+   "exposure_axes": [
+    "global-growth-industrial-capex",
+    "aerospace-aftermarket"
+   ],
+   "size_units": 0.6,
+   "thesis_break_px": 190.0,
+   "bear_fv_px": 168.0,
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 190.0,
+    "cc_strike": 255.0,
+    "tenor_days": 35,
+    "rationale": "At roughly fair value the honest expression is to be paid for the promise to buy lower rather than to pay up today."
+   },
+   "decision": "",
+   "decision_rationale": "Blocked by the grid chain cap at three names and unchanged this week; it still loses the last grid seat to TE Connectivity on chain-anchor purity, because its own mapping line concedes no single chain dominates its revenue whereas the connector business is explicitly the grid and data-centre power layer.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS"
+  },
+  {
+   "symbol": "POWL",
+   "sector": "Industrials",
+   "chains": [
+    "electrification_grid"
+   ],
+   "chain": "electrification_grid",
+   "business_model": "equipment_services",
+   "rev_yoy": 0.0704,
+   "fcf_margin": 0.2108,
+   "ebitda_margin_ttm": null,
+   "ndebt_ebitda": -2.27,
+   "interest_coverage": 0,
+   "funded_solvency": "strong",
+   "chain_regime": {
+    "electrification_grid": "NEUTRAL"
+   },
+   "growth_capex_fcf_negative": false,
+   "headwind_justification": "",
+   "forensic_gate": "",
+   "whats_changed": "",
+   "value_chain_position": "Transformers and switchgear layer of the grid chain - builds medium- and high-voltage switchgear, motor control centres and complete prefabricated power-control rooms for utilities, energy operators and data-centre developers",
+   "physical_anchor": "Manufactures medium- and high-voltage switchgear, motor control centres and integrated power-control room systems",
+   "fr_score": 79,
+   "thesis": "Powell books three dollars of work for every dollar it bills and holds the deepest order book relative to its size in the whole field, but its gross margin has stopped expanding and management now guides only to hold it.",
+   "cost_curve": "Annual gross margin rose from 15.96% in fiscal 2022 to 29.37% in fiscal 2025, an expansion of 1,341 basis points, but the June 2026 quarter printed 30.57% against 30.71% a year earlier on 9% revenue growth - the second consecutive quarter of slight year-on-year compression - and management now guides only to maintain about 30.1%.",
+   "contracting_reserve": "In the quarter ended 30 June 2026, reported 3 August, the company booked $934 million of new orders against $311.7 million of revenue - orders taken at 3.0 times revenue billed - lifting backlog to $2.4 billion, up 69% year on year and equal to 2.07 years of current revenue, including a disclosed data-centre campus order above $400 million.",
+   "capital_discipline": "Net cash of $631.0 million against $2.5 million of debt, and return on invested capital up from effectively zero in fiscal 2021 to 13.8% - better than Eaton, Hubbell or nVent.",
+   "valuation_guard": "Reconciled value $188 a share against $211.06 - about -10.9%, a real deduction.",
+   "gm_trajectory": "Expanding over three years but flat for two quarters: 30.57% in the June 2026 quarter against 30.71% a year earlier on 9% revenue growth, after rising 1,341 basis points from fiscal 2022 to fiscal 2025.",
+   "sop_mos_pct": -10.9,
+   "regime_fit": "The grid chain reads neutral; this seat would rest entirely on converting a two-year order book at a margin management has stopped promising to expand.",
+   "exposure_axes": [
+    "global-growth-industrial-capex",
+    "datacenter-capex"
+   ],
+   "size_units": 0.5,
+   "thesis_break_px": 130.0,
+   "bear_fv_px": 96.0,
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 130.0,
+    "cc_strike": 188.0,
+    "tenor_days": 35,
+    "rationale": "The order book is genuine but the price already pays for it, so the sensible exposure is a paid promise to buy at $130."
+   },
+   "decision": "",
+   "decision_rationale": "Blocked by the grid chain cap at three names and unchanged this week; it remains the first name to promote if a grid seat is vacated, but its pricing-power line has now been flat for two consecutive quarters just as the order book peaked.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS"
+  },
+  {
+   "symbol": "WWD",
+   "sector": "Industrials",
+   "chains": [
+    "power_for_ai"
+   ],
+   "chain": "power_for_ai",
+   "business_model": "equipment_services",
+   "rev_yoy": 0.2235,
+   "fcf_margin": null,
+   "ebitda_margin_ttm": 0.2012,
+   "ndebt_ebitda": 0.86,
+   "interest_coverage": 13.6,
+   "funded_solvency": "strong",
+   "chain_regime": {
+    "power_for_ai": "NEUTRAL"
+   },
+   "growth_capex_fcf_negative": false,
+   "headwind_justification": "",
+   "forensic_gate": "",
+   "whats_changed": "",
+   "value_chain_position": "Fuel systems, combustion and actuation controls for aircraft engines and industrial gas turbines - the industrial-turbine controls slice sells into power-generation equipment makers",
+   "physical_anchor": "Manufactures fuel-system and actuation and combustion controls for aircraft engines and industrial gas turbines",
+   "fr_score": 78,
+   "thesis": "Woodward is a certified, sole-source supplier of turbine-critical hardware sitting in front of two demand waves at once, and it has just proved it can convert that position into price.",
+   "cost_curve": "Gross margin rose to 31.5% in the June 2026 quarter from 27.2% a year earlier, up 430 basis points, while revenue grew 21.2% to $1,109.7 million; the trailing figure is 29.5% against 26.8% for fiscal 2025, and the operating cash profit margin of 20.1% sits at the 38th percentile of its eight-company peer group. Management's own qualification, given on 29 July 2026, is that company-wide price realisation was 10% in the quarter and about 8% for fiscal 2026 but is guided to 3-5% thereafter.",
+   "contracting_reserve": "The order evidence is sole-source qualification and named programme content rather than a disclosed backlog ratio, supported by dated plant milestones that have landed on schedule - the Glatten fuel-injection expansion inaugurated 21 July 2026 on time and on budget, with Spartanburg on track for 2027.",
+   "capital_discipline": "Net debt of 0.86 times operating cash profit with interest covered 13.6 times, and full-year guidance raised three times in one fiscal year.",
+   "valuation_guard": "Reconciled value $351 a share against $375.89 - about -6.6%, a modest deduction. The input file's -95.2% is a text-parsing error that read the '18-month horizon' wording as the fair value.",
+   "gm_trajectory": "Expanding hard on strongly growing revenue: 31.5% in the June 2026 quarter against 27.2% a year earlier (430 basis points) on revenue up 21.2% to $1,109.7 million.",
+   "sop_mos_pct": -6.6,
+   "regime_fit": "The power-for-AI chain reads neutral, and most of this company's revenue is the aircraft maintenance cycle, which is genuinely orthogonal to data-centre spending - the reason it is the first alternate rather than a lower-ranked name.",
+   "exposure_axes": [
+    "aerospace-aftermarket",
+    "global-growth-industrial-capex",
+    "datacenter-capex"
+   ],
+   "size_units": 0.5,
+   "thesis_break_px": 250.0,
+   "bear_fv_px": 195.0,
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 250.0,
+    "cc_strike": 351.0,
+    "tenor_days": 35,
+    "rationale": "An excellent business at a price that already reflects it: a paid promise to buy at $250 is the disciplined way to hold the option."
+   },
+   "decision": "",
+   "decision_rationale": "Blocked by the power-for-AI chain cap at three names and unchanged this week; it is still the best orthogonal swap available for any data-centre seat, because most of its revenue rides the aircraft maintenance cycle rather than data-centre capital spending.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS"
+  },
+  {
+   "symbol": "GD",
+   "sector": "Industrials",
+   "chains": [
+    "nuclear_smr"
+   ],
+   "chain": "nuclear_smr",
+   "business_model": "equipment_services",
+   "rev_yoy": 0.0913,
+   "fcf_margin": 0.1175,
+   "ebitda_margin_ttm": null,
+   "ndebt_ebitda": 0.8,
+   "interest_coverage": 22.2,
+   "funded_solvency": "strong",
+   "chain_regime": {
+    "nuclear_smr": "NEUTRAL"
+   },
+   "growth_capex_fcf_negative": false,
+   "headwind_justification": "",
+   "forensic_gate": "",
+   "whats_changed": "",
+   "value_chain_position": "Naval nuclear shipbuilder and integrator through its Electric Boat marine business - builds and delivers nuclear-propelled submarines, with reactor fuel and cores sourced from specialists, inside an otherwise diversified aerospace and defence group",
+   "physical_anchor": "Nuclear-powered submarines (Virginia-class and Columbia-class) built and integrated at Electric Boat, carrying naval nuclear propulsion systems",
+   "fr_score": 77,
+   "thesis": "General Dynamics holds a record $136.5 billion order book and shares the same July 2026 submarine award as our nuclear seat, which is precisely why it is an alternate rather than a second position.",
+   "cost_curve": "Trailing gross margin is 15.38% against 15.40% a year ago - flat rather than eroding - with both of the two most recent quarters beating their year-ago comparables on revenue growing 9.1%; the three-year decline the deterministic screen reports is a business-mix effect, not price erosion.",
+   "contracting_reserve": "Backlog reached a record $136.5 billion at the end of the second quarter of 2026, up 32% in a year, with total contract value including options at $186.9 billion and orders taken above one times revenue billed in all four segments. On 29 July 2026 Electric Boat was awarded $42.1 billion for nine Virginia-class and $29.5 billion for five Columbia-class submarines, work running to September 2035.",
+   "capital_discipline": "Net debt cut for four straight quarters to 0.8 times operating cash profit with interest covered 22.2 times, more than 150% of net earnings converted to cash in the first half, and the August maturity to be repaid with cash rather than refinanced.",
+   "valuation_guard": "Reconciled value $325 a share against $386.99 - about -16.0%, a real deduction. The input file's -95.3% is a text-parsing error that read the '18-month horizon' wording as the fair value.",
+   "gm_trajectory": "Flat on growing revenue: trailing gross margin 15.38% against 15.40% a year earlier, with the two most recent quarters (15.90% and 15.49%) both above their year-ago comparables, on revenue up 9.1%.",
+   "sop_mos_pct": -16.0,
+   "regime_fit": "The nuclear chain reads neutral; the funding here is a defence appropriation rather than a cycle, but the chain anchor is one segment of a four-segment group.",
+   "exposure_axes": [
+    "us-navy-single-customer",
+    "defense-appropriations",
+    "business-jet-cycle"
+   ],
+   "size_units": 0.5,
+   "thesis_break_px": 265.0,
+   "bear_fv_px": 220.0,
+   "entry_posture": "wait_for_weakness",
+   "wheel": {
+    "suits": true,
+    "csp_strike": 265.0,
+    "cc_strike": 325.0,
+    "tenor_days": 35,
+    "rationale": "The price already knows how good the business is, so a paid promise to buy at $265 is a better risk than owning it at $386.99."
+   },
+   "decision": "",
+   "decision_rationale": "Deliberately kept as the alternate rather than a second nuclear seat: it and Huntington Ingalls share the same $76.6 billion Navy award announced 29 July 2026, its shares sit about 16% above our reconciled value against Huntington Ingalls about 14% below, and its nuclear exposure is one segment of a diversified group rather than the whole company.",
+   "skeptic_verdict": "CONFIRMED_WITH_CORRECTIONS"
+  }
+ ],
+ "fdt_memo": "FUTURE DISRUPTIVE TECH - LANE A APEX MEMO, as of 11 August 2026.\n\nRubric And Weighting\nFour pillars carry roughly 25 points each, applied only to names that clear the gates: pricing power\nand margin direction; the order book and its dated milestones; capital discipline and the balance\nsheet; and a valuation guard. The guard is a guard only. It can cut a position's size or veto a name\noutright, but it was never allowed to lift one name above another that passed the first three pillars\ncleanly. Two seats are held despite the shares trading above our own reconciled value (GE Vernova\nabout 16% above, Intuitive Surgical about 18% above); in both cases the guard took its deduction in\nthe size, not in the ranking. There is no commodity tilt in this book and none was applied: where a\ncommodity appears - copper into connectors and grid gear, natural gas into power economics - it is an\ninput cost and therefore a margin headwind, never a revenue tailwind.\n\nData Quality - A Parsing Error You Should Know About\nThe input file's margin-of-safety number is wrong for six names, and the error is systematic rather\nthan random. The builder reads the fair value out of the analyst's prose before it reads the typed\nnumber, and the text pattern it uses grabs whatever digits follow the words \"base case\". So a fair\nvalue written as \"$370 per share (base case, 24-month horizon)\" is read as $24, and the file then\nreports a margin of safety of -92.6% for a name that is genuinely about 14% below our reconciled\nvalue. The six affected names in this file are Huntington Ingalls (file says -92.6%, true +14.1%),\nKeysight (-94.7%, true -11.8%), General Dynamics (-95.3%, true -16.0%), Woodward (-95.2%, true\n-6.6%), Crane (-92.0%, true -2.8%) and Leonardo DRS (+4,380.5%, true -16.0%); four more are distorted\nmore mildly where the parser averaged two unrelated numbers (Flowserve, Corning, Teradyne, Powell).\nEvery guard reading in this memo and in the published rows uses the typed reconciled fair value\nagainst the traded price, which is the number the analysts actually reached. Taken at face value the\nfile would have vetoed our best-value seat, so the correction matters: uncorrected, six of thirty-six\nnames would have been sent through a veto that none of them earns.\n\nNames Excluded Or Capped, With The Reason\n- Credibility check, excluded: Power Solutions International. The interrogator scored its management\n  credibility at the bottom of the scale and marked the trajectory as turning rather than improving;\n  a re-examination completed this week did not repair it. Its own margin line is fixed-cost absorption\n  recovering from a botched capacity ramp, not pricing power. It is not seatable at any size.\n- Credibility check, capped: none. No other name in the file carries a capped credibility read.\n- Solvency gate: no exclusions. Every one of the thirty-six names clears the funded-debt test; the\n  weakest readings are Zimmer Biomet at 3.19 times and Eaton at 3.41 times, and neither is seated.\n- Valuation guard, deductions taken: GE Vernova (-13.7%, cut to 0.30 units, the smallest seat in the\n  book), Intuitive Surgical (-15.1%, 0.70 units), Keysight (-11.8%, 0.75 units) and Emerson (-4.0%,\n  0.70 units). No seat is capped at the guard's half-unit floor.\n- Valuation guard, vetoes: none. Once the parsing error is corrected, not one name in the file sits\n  40% or more above our reconciled value. The deepest genuine gap is Argan at -38.7%, which is\n  correctly parsed, sits just inside the veto line, and is not seated for other reasons.\n- Cycle-read rule: not triggered. All five chains read neutral this week, so no seat needed a written\n  insulation argument to be sized above a half unit.\n- Mid-build cash-flow rule: not triggered. No name in the file is running positive operating cash flow\n  with negative free cash flow, so the three-quarter-unit clamp binds nothing.\n\nPer-Seat Order Book - What It Rests On And What Breaks It\n- Constellation Energy: not a backlog but a signed contract book - more than 1,100 megawatts to Meta\n  for twenty years at Clinton, roughly 176 megawatts to Walmart from Dresden signed 23 June 2026 for\n  fifteen-year terms starting 2029 and 2030, and the Crane restart guided to the second half of 2027.\n  Breaks if the regional capacity auction closing 15 December 2026 clears weakly or the Crane restart\n  date slips.\n- Vertiv: $15.0 billion of backlog disclosed 11 February 2026, about one year of guided 2026 revenue,\n  on orders taken at 2.9 times revenue billed. Breaks if the late-October 2026 revenue print misses\n  the guided 34-36% organic growth; the company no longer publishes the order book quarterly, so that\n  print is the only interim evidence.\n- GE Vernova: $176 billion of backlog at 30 June 2026, about 3.8 times expected 2026 revenue, orders\n  taken at 2.2 times revenue billed, and gas turbines under contract at 116 gigawatts against 46\n  entering 2025. Breaks if the 125-gigawatt year-end target is missed or backlog margin stops rising.\n- TE Connectivity: a record $5.7 billion of orders in the June 2026 quarter, up 27% and the fifth\n  consecutive quarterly increase, orders at 1.1 times revenue billed. Breaks at the late-October 2026\n  full-year report if the fiscal-2027 outlook does not confirm the visibility management claims.\n- Huntington Ingalls: $57.3 billion of backlog at 30 June 2026, about 4.3 times annual revenue,\n  rising toward roughly $80 billion - close to six times revenue - once the $76.6 billion Navy award\n  of 29 July 2026 books in the third quarter. Breaks if that booking slips or the carrier CVN 79\n  acceptance and the late-2026 SSN 800 and LPD 30 deliveries slide.\n- Keysight: orders above $2.1 billion in the April 2026 quarter, up 56% and running roughly 20% above\n  revenue billed. The weakest order book among the eight because it is measured in months and carries\n  no dated contractual milestone; breaks on a single quarter of test spending digesting.\n- Intuitive Surgical: no order book exists, and inventing one would be dishonest. The equivalent is an\n  installed fleet of 11,710 systems at the end of the June 2026 quarter, up 12%, with 468 placed in\n  the quarter against 395. Breaks if quarterly placements fall below the prior-year figure.\n- Emerson: five consecutive quarters of orders exceeding sales, with backlog up 9% year on year as\n  confirmed 5 May 2026. Breaks the first quarter orders fall below sales.\n\nShared-Axis Stress, Argued Against The Measured Correlations\nThe measured two-year weekly correlations for this slate average 0.36 across all pairs, with three\npairs at or above 0.60: Vertiv and GE Vernova at 0.67, TE Connectivity and Emerson at 0.61, and\nKeysight and Emerson at 0.61. Those are real numbers and the stress test is argued against them\nrather than asserted around them.\n- Data-centre power and hyperscaler contracts (three names: Constellation Energy, Vertiv, GE Vernova).\n  This is the book's genuine concentration and the measured tape agrees: Vertiv and GE Vernova are the\n  most correlated pair in the slate at 0.67. We kept all three rather than diversifying, because each\n  sits on a different rung - one sells the electrons under twenty-year contract, one sells the room\n  hardware, one sells the turbines and the grid gear - and because the alternates that would replace a\n  leg (Comfort Systems, Sterling Infrastructure) sit on the same rung as one we already hold and would\n  not reduce the exposure. Resolution: kept with a written cap of 1.55 combined units across the three,\n  which is where they are sized today and which the deterministic layer will hold.\n- The cross-chain pair the rules require us to check explicitly - power for artificial intelligence\n  together with nuclear and small modular reactors, which are the same bet on data-centre power demand\n  - is seated, and it meets inside a single name: Constellation Energy rides both chains. Huntington\n  Ingalls is the other nuclear seat, and it is deliberately not a data-centre bet at all: its revenue\n  is a multi-year defence appropriation. So the pair is flagged, and it is contained by the fact that\n  only one of the two nuclear seats touches data-centre demand. The 1.50-unit cap across Constellation\n  Energy and Huntington Ingalls records the chain concentration in numbers.\n- Global growth and industrial capital spending (two names: TE Connectivity, Emerson). Measured at\n  0.61, the second-highest pair in the book. Kept rather than diversified because roughly two thirds\n  of Emerson's revenue is maintenance on an installed base and TE Connectivity's order book already\n  covers the next fiscal year, so the two do not depend on the same incremental order. Resolution:\n  kept with a cap of 1.45 combined units.\n- Long-duration multiples and the rate axis (two names: Keysight, Intuitive Surgical). No measured\n  pair correlation is flagged between them; the interesting fact is that Keysight's strongest measured\n  link is to Emerson at 0.61, an industrial, not to any long-duration name. That is evidence Keysight\n  trades as an instrument maker levered to capital spending rather than as a rate-sensitive growth\n  multiple, which weakens rather than strengthens the case for treating this as a tight cluster. Kept\n  with a cap of 1.45 combined units on the grounds that a sharp rate move would still hit both.\n- Single-customer concentration: only Huntington Ingalls carries it, selling almost entirely to the US\n  Navy. This is exactly why General Dynamics stays an alternate: it shares the same 29 July 2026\n  submarine award, so seating both would have turned a one-name exposure into a two-name one.\n\nRise And Fall Against The Prior Slate\nThe prior slate, written 4 August 2026, was Constellation Energy, Vertiv, GE Vernova, TE Connectivity,\nHuntington Ingalls, Keysight, Intuitive Surgical and Emerson. It is unchanged, and the scores are\nunchanged: Constellation Energy 88, Vertiv 86, TE Connectivity 83, GE Vernova 82, Keysight 80,\nHuntington Ingalls 78, Intuitive Surgical 77, Emerson 72. That is a deliberate result, not inertia.\nOnly two of the thirty-six records in this file were re-examined this week - Power Solutions\nInternational and nLight - and neither produced a fact that displaces a seat: the first is excluded on\ncredibility, and the second is a laser maker whose operating profit is close to zero, which makes its\napparently strong balance-sheet grade an artefact of a near-zero profit denominator rather than\nstrength. Every other record carries the same evidence that produced last week's ranking, and\nre-shuffling a book on unchanged evidence is churn, not judgement. The alternate bench is also\nunchanged: Comfort Systems 85, AMETEK 84, Powell 79, Woodward 78, General Dynamics 77.\n\nRotation, Reconciled To The Ledger\nThe ledger records eight held names and no drops. Every one is kept and none is broken.\n- Constellation Energy: keep. Contract book unchanged and still dated; price $268.73 against a break\n  level of $205.\n- Vertiv: keep. Margin widened 550 basis points year on year on revenue up 24% in the June 2026\n  quarter; price $273.35 against a break level of $165.\n- GE Vernova: keep. Backlog $176 billion at 30 June 2026 and 116 gigawatts of gas turbines under\n  contract; price $1,019.74 against a break level of $690.\n- TE Connectivity: keep. Record $5.7 billion of orders in the June 2026 quarter; price $215.87 against\n  a break level of $165.\n- Huntington Ingalls: keep. The $76.6 billion Navy award of 29 July 2026 has still not booked; price\n  $324.21 against a break level of $235.\n- Keysight: keep. Best quarter in company history in April 2026, orders above $2.1 billion; price\n  $342.48 against a break level of $205.\n- Intuitive Surgical: keep. 468 systems placed in the June 2026 quarter against 395; margin guidance\n  raised 16 July 2026; price $365.33 against a break level of $250.\n- Emerson: keep, and on merit rather than tolerance. Five consecutive quarters of orders above sales;\n  price $154.15 against a break level of $118. The two robotics-chain names that could have taken the\n  seat are both worse: the chip-test and cobot maker would re-cluster on the same semiconductor-test\n  factor as our quantum seat, and the factory-automation rival's revenue is falling 17% year on year.\nNo name was dropped, so there is no broken-thesis line to write, and no name is re-added, so no\nstatement of what changed since a drop is required.\n\nBear Rebuttal - The Strongest Case Against Each Seat\n- Constellation Energy: if the capacity auction closing 15 December 2026 clears under its\n  administrative price ceiling and the Crane restart slips past 2027, the two nearest proof points\n  both fail and the shares re-rate toward the adverse case of $180.\n- Vertiv: the company stopped publishing its order book quarterly in February 2026, so a buyer today\n  is trusting a $15.0 billion figure that is six months old in the fastest-moving spending cycle in\n  the market.\n- GE Vernova: we would be paying about 16% more than our own reconciled value for an order book that\n  is already signed at fixed prices, so any slippage in delivery or margin conversion comes straight\n  out of the buyer's pocket.\n- TE Connectivity: roughly half the revenue still rides vehicle production, and a car cycle that rolls\n  over would swamp the data-centre and grid growth long before the fiscal-2027 outlook arrives.\n- Huntington Ingalls: cash conversion is the thinnest in the book at under 3% of revenue, and a\n  shipbuilder with a record order book that cannot turn it into cash is a company that has sold a\n  great deal of work at the wrong price.\n- Keysight: the order book is measured in months rather than years and carries no dated contractual\n  milestone, so one quarter of artificial-intelligence test spending digesting removes the whole\n  reason to own it.\n- Intuitive Surgical: the competitive shelter is wide but thinning, and rival platforms that lock\n  instrument choice at the point of purchase attack precisely the recurring revenue that is the entire\n  investment case.\n- Emerson: gross margin has stopped expanding, which means the toll collector is not taking price, and\n  if orders normalise from five quarters above sales the seat has neither growth nor pricing power to\n  fall back on.\n\nChain Coverage\nNo chain seated zero names this week. The count is three in power for artificial intelligence\n(Constellation Energy, Vertiv, GE Vernova), three in electrification and grid (Vertiv, GE Vernova, TE\nConnectivity - two of them two-chain names), two in nuclear and small modular reactors (Constellation\nEnergy, Huntington Ingalls), two in robotics and automation (Intuitive Surgical, Emerson) and one in\nquantum (Keysight). The single quantum seat is the honest read rather than a screen failure: the\nprofitable quantum-adjacent cohort in this file is five names, and of those, one has an operating\nprofit close to zero, one converts barely 1% of revenue to cash, one carries a material competitive\nthreat with almost no cash conversion, and the remaining two are a probe-card maker and a fibre\nsupplier whose order evidence is thinner than the instrument maker we hold. Padding the chain to look\ndiversified would be the failure; one seat is what the evidence supports.\n\nA Note On How Weight Is Published\nThis book publishes equal-weighted, so a chain's published share is simply its seat count: three of\neight is 37.5%, which is why power for artificial intelligence and electrification and grid both show\nabove the 30% guideline in the exposure table. That is arithmetic under equal weighting, not\nconcentration drift, and the constraint that actually binds the published book is the limit of three\nnames per chain, which is respected. Measured on the sizes recorded here - 5.20 units in total - every\nchain sits inside 30%: power for artificial intelligence 29.8%, electrification and grid 29.8%,\nnuclear 28.8%, robotics 26.9%, quantum 14.4%. Those sizes are the audit trail that would decide the\nbook if equal weighting were ever switched off.",
+ "fdt_tracking": {
+  "inception_date": "2026-08-04",
+  "since_inception_pct": 0.56,
+  "nav": 100.56,
+  "n_open": 7,
+  "n_closed": 1,
+  "win_rate": 100.0,
+  "history": [
+   {
+    "date": "2026-08-04",
+    "nav": 100.0,
+    "ret": 0.0,
+    "n": 8
+   },
+   {
+    "date": "2026-08-05",
+    "nav": 100.7268,
+    "ret": 0.007268,
+    "n": 8
+   },
+   {
+    "date": "2026-08-06",
+    "nav": 101.1834,
+    "ret": 0.004533,
+    "n": 8
+   },
+   {
+    "date": "2026-08-07",
+    "nav": 100.1924,
+    "ret": 0.0,
+    "n": 8
+   },
+   {
+    "date": "2026-08-09",
+    "nav": 100.1924,
+    "ret": 0.0,
+    "n": 8
+   },
+   {
+    "date": "2026-08-10",
+    "nav": 100.1924,
+    "ret": 0.0,
+    "n": 8
+   },
+   {
+    "date": "2026-08-11",
+    "nav": 100.5556,
+    "ret": 0.0,
+    "n": 7
+   }
+  ],
+  "closed": [
+   {
+    "symbol": "EMR",
+    "entry_date": "2026-08-04",
+    "exit_date": "2026-08-11",
+    "entry_price": 154.85,
+    "exit_price": 158.69,
+    "return_pct": 2.48,
+    "conviction": 72
+   }
+  ]
+ },
+ "fdt_tracking_weighted": {
+  "inception_date": "2026-08-04",
+  "since_inception_pct": 1.65,
+  "nav": 101.65,
+  "n_open": 7,
+  "n_closed": 1,
+  "win_rate": 100.0,
+  "history": [
+   {
+    "date": "2026-08-04",
+    "nav": 100.0,
+    "ret": 0.0,
+    "n": 8
+   },
+   {
+    "date": "2026-08-11",
+    "nav": 101.6467,
+    "ret": 0.016467,
+    "n": 7
+   }
+  ],
+  "closed": [
+   {
+    "symbol": "EMR",
+    "entry_date": "2026-08-04",
+    "exit_date": "2026-08-11",
+    "entry_price": 154.85,
+    "exit_price": 158.69,
+    "return_pct": 2.48,
+    "conviction": 72
+   }
+  ]
+ },
+ "weights": {
+  "CEG": 0.1429,
+  "VRT": 0.1429,
+  "GEV": 0.1429,
+  "TEL": 0.1429,
+  "HII": 0.1429,
+  "KEYS": 0.1429,
+  "ISRG": 0.1429
+ },
+ "stress_test": {
+  "asof": "2026-08-11",
+  "basket_to_52w_lows_pct": -32.7,
+  "recession_stress_pct": -42.8,
+  "cro_bear_weighted_pct": -46.4,
+  "bear_case_invalid": false,
+  "published_downside_pct": -46.4,
+  "per_name": [
+   {
+    "symbol": "CEG",
+    "price": 277.4271,
+    "yr_low": 228.63,
+    "to_52w_low_pct": -17.6,
+    "recession_pct": -30.0,
+    "cro_bear_pct": -35.1
+   },
+   {
+    "symbol": "VRT",
+    "price": 278.08,
+    "yr_low": 118.7,
+    "to_52w_low_pct": -57.3,
+    "recession_pct": -63.7,
+    "cro_bear_pct": -54.0
+   },
+   {
+    "symbol": "GEV",
+    "price": 1012.63,
+    "yr_low": 530.16,
+    "to_52w_low_pct": -47.6,
+    "recession_pct": -55.5,
+    "cro_bear_pct": -46.7
+   },
+   {
+    "symbol": "TEL",
+    "price": 218.37,
+    "yr_low": 190.27,
+    "to_52w_low_pct": -12.9,
+    "recession_pct": -25.9,
+    "cro_bear_pct": -38.2
+   },
+   {
+    "symbol": "HII",
+    "price": 328.735,
+    "yr_low": 262.66,
+    "to_52w_low_pct": -20.1,
+    "recession_pct": -32.1,
+    "cro_bear_pct": -45.2
+   },
+   {
+    "symbol": "KEYS",
+    "price": 342.12,
+    "yr_low": 152.846,
+    "to_52w_low_pct": -55.3,
+    "recession_pct": -62.0,
+    "cro_bear_pct": -56.7
+   },
+   {
+    "symbol": "ISRG",
+    "price": 400.15,
+    "yr_low": 328.57,
+    "to_52w_low_pct": -17.9,
+    "recession_pct": -30.2,
+    "cro_bear_pct": -48.8
+   }
+  ],
+  "note": "Market-based stress: weighted basket return to the 52-week lows, and to 52w-lows -15% (recession). cro_bear is the agents' own adverse SoP (bear_fv_px); when missing or implying upside it is flagged invalid and the published downside is the market-based recession stress."
+ },
+ "correlation": {
+  "window": "2y weekly log returns",
+  "avg_pairwise": 0.34,
+  "n_pairs": 21,
+  "max_pair": {
+   "a": "VRT",
+   "b": "GEV",
+   "corr": 0.67
+  },
+  "flagged_pairs": [
+   {
+    "a": "VRT",
+    "b": "GEV",
+    "corr": 0.67,
+    "combined_weight_pct": 28.6,
+    "breach": false
+   }
+  ],
+  "chain_beta": {
+   "CEG": {
+    "grid": 1.44,
+    "qqq": 1.18
+   },
+   "VRT": {
+    "grid": 2.07,
+    "qqq": 1.8
+   },
+   "GEV": {
+    "grid": 1.29,
+    "qqq": 0.93
+   },
+   "TEL": {
+    "grid": 1.07,
+    "qqq": 0.89
+   },
+   "HII": {
+    "grid": 0.53,
+    "qqq": 0.37
+   },
+   "KEYS": {
+    "grid": 1.41,
+    "qqq": 1.18
+   },
+   "ISRG": {
+    "grid": 0.59,
+    "qqq": 0.77
+   }
+  },
+  "correlation_breach": false,
+  "fx_note": "betas vs GRID (grid & electrification equipment) + QQQ (long-duration tech) — the 50/50 FDT benchmark and this book's systematic axes."
+ },
+ "exits": {
+  "CEG": {
+   "thesis_break_px": 205.0,
+   "valid": true,
+   "fair_value_px": null,
+   "trim_at_px": null,
+   "pct_of_fair_value": null,
+   "action": "HOLD",
+   "review_trigger": "weekly refresh OR close < thesis_break_px OR close >= trim_at_px"
+  },
+  "VRT": {
+   "thesis_break_px": 165.0,
+   "valid": true,
+   "fair_value_px": null,
+   "trim_at_px": null,
+   "pct_of_fair_value": null,
+   "action": "HOLD",
+   "review_trigger": "weekly refresh OR close < thesis_break_px OR close >= trim_at_px"
+  },
+  "GEV": {
+   "thesis_break_px": 690.0,
+   "valid": true,
+   "fair_value_px": null,
+   "trim_at_px": null,
+   "pct_of_fair_value": null,
+   "action": "HOLD",
+   "review_trigger": "weekly refresh OR close < thesis_break_px OR close >= trim_at_px"
+  },
+  "TEL": {
+   "thesis_break_px": 165.0,
+   "valid": true,
+   "fair_value_px": null,
+   "trim_at_px": null,
+   "pct_of_fair_value": null,
+   "action": "HOLD",
+   "review_trigger": "weekly refresh OR close < thesis_break_px OR close >= trim_at_px"
+  },
+  "HII": {
+   "thesis_break_px": 235.0,
+   "valid": true,
+   "fair_value_px": null,
+   "trim_at_px": null,
+   "pct_of_fair_value": null,
+   "action": "HOLD",
+   "review_trigger": "weekly refresh OR close < thesis_break_px OR close >= trim_at_px"
+  },
+  "KEYS": {
+   "thesis_break_px": 205.0,
+   "valid": true,
+   "fair_value_px": null,
+   "trim_at_px": null,
+   "pct_of_fair_value": null,
+   "action": "HOLD",
+   "review_trigger": "weekly refresh OR close < thesis_break_px OR close >= trim_at_px"
+  },
+  "ISRG": {
+   "thesis_break_px": 250.0,
+   "valid": true,
+   "fair_value_px": null,
+   "trim_at_px": null,
+   "pct_of_fair_value": null,
+   "action": "HOLD",
+   "review_trigger": "weekly refresh OR close < thesis_break_px OR close >= trim_at_px"
+  }
+ },
+ "combined_caps": [
+  {
+   "names": [
+    "CEG",
+    "VRT",
+    "GEV"
+   ],
+   "max_units": 1.55,
+   "axis": "hyperscaler-ppa / datacenter-capex (this cluster also contains the power_for_ai + nuclear_smr cross-chain pair, which meets inside CEG)"
+  },
+  {
+   "names": [
+    "TEL",
+    "EMR"
+   ],
+   "max_units": 1.45,
+   "axis": "global-growth / industrial-capex"
+  },
+  {
+   "names": [
+    "KEYS",
+    "ISRG"
+   ],
+   "max_units": 1.45,
+   "axis": "long-duration-multiple / rate"
+  },
+  {
+   "names": [
+    "CEG",
+    "HII"
+   ],
+   "max_units": 1.5,
+   "axis": "chain:nuclear_smr"
+  }
+ ],
+ "chain_caps": [
+  {
+   "names": [
+    "VRT",
+    "GEV",
+    "TEL"
+   ],
+   "max_units": 4.35,
+   "axis": "chain:electrification_grid"
+  },
+  {
+   "names": [
+    "CEG",
+    "HII"
+   ],
+   "max_units": 4.35,
+   "axis": "chain:nuclear_smr"
+  },
+  {
+   "names": [
+    "CEG",
+    "VRT",
+    "GEV"
+   ],
+   "max_units": 4.35,
+   "axis": "chain:power_for_ai"
+  }
+ ],
+ "chain_exposure": {
+  "power_for_ai": 42.87,
+  "nuclear_smr": 28.58,
+  "electrification_grid": 42.87,
+  "quantum": 14.29,
+  "robotics_automation": 14.29
+ },
+ "risk_stance": null,
+ "debt_cycle_phase": null,
+ "regime_quadrant": null,
+ "expected_horizon_months": null,
+ "pool_stats": {
+  "n_pool": 36,
+  "verdict_counts": {
+   "C": 2,
+   "B": 34
+  },
+  "chain_regime_counts": {
+   "NEUTRAL": 36
+  },
+  "taxonomy_version": "2.0",
+  "banner": "FUTURE DISRUPTIVE TECH sleeve (split from Future Resources 2026-07-27; fresh live-forward NAV, never back-filled). Lane A NAV steps weekly until the nightly mark ships. Lane B is an event tracker, not a NAV. US-listed names only. Never blended with any other book."
+ },
+ "benchmark": {
+  "blend": "50/50 GRID+QQQ",
+  "measured_from": "2026-08-04",
+  "benchmark_return_pct": -0.53,
+  "active_return_pct": 1.09
+ },
+ "generated_at": "2026-08-11",
+ "engine": "opus-5-debate-fdt-v1",
+ "universe": 36,
+ "taxonomy_version": "2.0"
+}

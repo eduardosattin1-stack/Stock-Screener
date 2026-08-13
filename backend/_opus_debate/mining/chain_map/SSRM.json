@@ -1,0 +1,21 @@
+{
+ "symbol": "SSRM",
+ "physical_anchor": "Doré gold bars and silver-lead-zinc concentrate poured/produced at its own open-pit and underground mines (Çöpler, Marigold, Seabee, Puna).",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.9,
+ "value_chain_position": "Mid-tier producer layer — mines and pours its own gold with silver/zinc/lead byproduct credits from Puna.",
+ "true_competitors": [
+  "AEM",
+  "NEM",
+  "KGC",
+  "EGO",
+  "IAG",
+  "CDE",
+  "HL",
+  "PAAS"
+ ],
+ "chain_fit_confidence": "high"
+}

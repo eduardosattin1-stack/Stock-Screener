@@ -1,0 +1,182 @@
+{
+ "KGC": {
+  "physical_anchor": "mines and pours gold doré/bullion at open-pit and underground operations across the Americas and West Africa",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.95,
+  "value_chain_position": "mid-tier/senior gold producer selling doré for refining; minimal byproduct diversification",
+  "true_competitors": ["NEM", "AEM", "B", "AU", "GFI", "HMY", "EGO", "IAG"],
+  "chain_fit_confidence": "high"
+ },
+ "LIN": {
+  "physical_anchor": "produces and distributes industrial gases (oxygen, nitrogen, argon, hydrogen, CO2) from air-separation and steam-methane-reforming plants",
+  "chains": [],
+  "business_model": "utility",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "industrial-gas supplier under long-term on-site/pipeline contracts; not a rare-earth or strategic-metal separator/processor despite the Chemicals-Specialty industry tag",
+  "true_competitors": ["APD", "AI.PA", "4091.T", "4088.T"],
+  "chain_fit_confidence": "low"
+ },
+ "MT": {
+  "physical_anchor": "manufactures finished flat and long steel products (slabs, coils, rebar) at integrated steelmaking plants",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "steel converter selling finished steel products, not iron-ore/concentrate; captive ore feeds its own mills rather than being sold merchant — fails the diversified_miners revenue-source test the taxonomy names it under",
+  "true_competitors": ["NUE", "STLD", "X", "CLF", "PKX", "GGB", "TX"],
+  "chain_fit_confidence": "low"
+ },
+ "MTRN": {
+  "physical_anchor": "mines beryllium ore at Spor Mountain, Utah and fabricates it (with copper, precious metals) into engineered alloys, clad strip and electronic coatings",
+  "chains": ["rare_earth_strategic"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.15,
+  "value_chain_position": "vertically-integrated beryllium miner/refiner that converts most output into value-added advanced materials sold to aerospace/defense/semiconductor customers — majority of revenue is fabrication, not raw strategic-metal sales",
+  "true_competitors": ["ATI", "CRS", "KALU", "HXL", "AME"],
+  "chain_fit_confidence": "medium"
+ },
+ "MTUS": {
+  "physical_anchor": "melts scrap steel in electric-arc furnaces into engineered specialty steel bars and billets",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "specialty steel converter selling finished bar/billet products, not ore/concentrate — explicitly one of the taxonomy's named converter exclusions",
+  "true_competitors": ["NUE", "STLD", "CMC", "CRS", "ATI", "X"],
+  "chain_fit_confidence": "low"
+ },
+ "NEM": {
+  "physical_anchor": "mines and pours gold doré, with meaningful copper concentrate byproduct, at open-pit and underground operations globally",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.85,
+  "value_chain_position": "world's largest gold producer by output; senior producer with copper byproduct credits",
+  "true_competitors": ["AEM", "B", "AU", "KGC", "GFI", "AGI"],
+  "chain_fit_confidence": "high"
+ },
+ "NUE": {
+  "physical_anchor": "melts scrap steel via electric-arc-furnace mini-mills into finished long and flat steel products",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "largest US steel producer selling finished steel, not iron ore/concentrate — explicitly named in the taxonomy as a converter to exclude from diversified_miners",
+  "true_competitors": ["STLD", "X", "CLF", "MT", "GGB", "PKX", "CMC"],
+  "chain_fit_confidence": "low"
+ },
+ "OR": {
+  "physical_anchor": "holds royalty and stream contracts entitling it to a fixed percentage of gold and silver ounces poured at partner mines",
+  "chains": ["precious_metals"],
+  "business_model": "royalty_streamer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "royalty/streaming pure-play — no operating costs, direct claim on physical ounces produced by third-party mines",
+  "true_competitors": ["WPM", "FNV", "RGLD", "SAND", "TFPM", "UROY"],
+  "chain_fit_confidence": "high"
+ },
+ "PAAS": {
+  "physical_anchor": "mines and produces silver/gold doré at primary-silver mines across the Americas",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.85,
+  "value_chain_position": "primary silver producer with significant gold byproduct credits; dominant_metal=silver",
+  "true_competitors": ["AG", "HL", "CDE", "MAG", "SVM", "FSM", "EXK"],
+  "chain_fit_confidence": "high"
+ },
+ "PPG": {
+  "physical_anchor": "manufactures paints, coatings and specialty chemical formulations at its own plants",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "coatings manufacturer with no rare-earth or strategic-metal separation/processing exposure — a chemical-company false positive from the Chemicals-Specialty industry string",
+  "true_competitors": ["SHW", "RPM", "AXTA", "AKZA.AS", "BASFY"],
+  "chain_fit_confidence": "low"
+ },
+ "RGLD": {
+  "physical_anchor": "holds royalty and stream contracts entitling it to a fixed percentage of gold (plus silver/copper) ounces produced at partner mines",
+  "chains": ["precious_metals"],
+  "business_model": "royalty_streamer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "royalty/streaming pure-play, anchor example for the chain; auto-passes Lane A cash/profit gates",
+  "true_competitors": ["WPM", "FNV", "OR", "SAND", "TFPM", "UROY"],
+  "chain_fit_confidence": "high"
+ },
+ "RIO": {
+  "physical_anchor": "mines and ships iron ore, copper concentrate/cathode, and bauxite/aluminum from operations on five continents",
+  "chains": ["copper_mining", "diversified_miners"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.9,
+  "value_chain_position": "diversified major (iron ore ~55% of revenue, copper, aluminum, minerals) — anchor example for both copper_mining and diversified_miners, legal two-chain membership within this book",
+  "true_competitors": ["BHP", "VALE", "GLEN", "FCX", "SCCO", "TECK", "S32"],
+  "chain_fit_confidence": "high"
+ },
+ "RPM": {
+  "physical_anchor": "manufactures specialty coatings, sealants and roofing/building products (Rust-Oleum, DAP) at its own plants",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "specialty coatings/sealants manufacturer with no rare-earth or strategic-metal exposure — a chemical-company false positive",
+  "true_competitors": ["PPG", "SHW", "AXTA", "FUL", "BASFY"],
+  "chain_fit_confidence": "low"
+ },
+ "RS": {
+  "physical_anchor": "buys finished steel and aluminum from mills, then cuts/processes to customer spec at its own service centers",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "metals distributor/processor (service center), not an ore/concentrate producer — explicitly named in the taxonomy as a converter to exclude",
+  "true_competitors": ["RYI", "WOR", "CMC", "NUE", "STLD", "GGB"],
+  "chain_fit_confidence": "low"
+ },
+ "SBSW": {
+  "physical_anchor": "mines and refines platinum-group metals (platinum, palladium, rhodium) and gold at South African and US operations",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.8,
+  "value_chain_position": "PGM-and-gold producer with a growing battery-metals recycling adjacency; 'Other Precious Metals' industry proven live in this chain",
+  "true_competitors": ["IMPUY", "AMS.JO", "NPH.JO", "NILSY", "HMY", "GFI"],
+  "chain_fit_confidence": "high"
+ },
+ "SCCO": {
+  "physical_anchor": "mines and produces copper cathode and concentrate (plus molybdenum, zinc, silver byproduct) in Peru and Mexico",
+  "chains": ["copper_mining"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.85,
+  "value_chain_position": "low-cost-quartile major copper producer, anchor example for the chain",
+  "true_competitors": ["FCX", "ERO", "HBM", "TECK", "GLEN", "ANTO", "CS.TO"],
+  "chain_fit_confidence": "high"
+ },
+ "SHW": {
+  "physical_anchor": "manufactures paints and architectural/industrial coatings at its own plants and sells through company-owned stores",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "paints/coatings manufacturer with no rare-earth or strategic-metal exposure — a chemical-company false positive",
+  "true_competitors": ["PPG", "RPM", "AXTA", "AKZA.AS", "BASFY"],
+  "chain_fit_confidence": "low"
+ },
+ "SOLS": {
+  "physical_anchor": "manufactures fluorochemical refrigerants, specialty resins and electronic/semiconductor materials at its own plants",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "advanced-materials/specialty-chemicals manufacturer (2026 Honeywell spinoff) with no rare-earth mining, separation or magnet exposure — a chemical-company false positive",
+  "true_competitors": ["DD", "CE", "EMN", "ASH", "LIN"],
+  "chain_fit_confidence": "low"
+ },
+ "SQM": {
+  "physical_anchor": "extracts lithium carbonate and iodine from Atacama Desert brine deposits, plus potassium nitrate specialty plant nutrients",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.6,
+  "value_chain_position": "brine-based lithium/iodine/potash producer — a genuine strategic-mineral miner, but lithium is outside this taxonomy's rare_earth_strategic thesis (rare earths, antimony, gallium, tungsten; no lithium chain exists in v2.0), so it doesn't ride a defined chain here",
+  "true_competitors": ["ALB", "LAC", "PLL", "MIN.AX", "IGO.AX"],
+  "chain_fit_confidence": "low"
+ },
+ "SSL": {
+  "physical_anchor": "converts mined coal and natural gas into synthetic fuels and chemicals via Fischer-Tropsch plants in South Africa",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "integrated energy/chemicals producer (coal/gas-to-liquids); captive coal mining feeds its own conversion plants, not a merchant mining-chain commodity seller",
+  "true_competitors": ["DOW", "LYB", "BASFY", "SHEL", "CVX"],
+  "chain_fit_confidence": "low"
+ }
+}

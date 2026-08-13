@@ -1,0 +1,590 @@
+[
+ {
+  "symbol": "PDYN",
+  "name": "Palladyne AI Corp.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 286536073,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -31007000,
+   "ttm_ocf": -30360000,
+   "ttm_capex": -647000,
+   "ttm_ebitda": -26284000,
+   "ttm_revenue": 7074000,
+   "rev_yoy": 0.1683,
+   "cash_sti": 43678000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 2583917.0,
+   "runway_months": 16.9,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 5255335.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "PENG",
+  "name": "Penguin Solutions, Inc.",
+  "sector": "Technology",
+  "industry": "Hardware, Equipment & Parts",
+  "mcap": 2985717407,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation",
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -66379270,
+   "ttm_ocf": -55843438,
+   "ttm_capex": -10535831,
+   "ttm_ebitda": 164416000,
+   "ttm_revenue": 1502705000,
+   "rev_yoy": 0.1197,
+   "cash_sti": 440301000,
+   "balance_date": "2026-05-29",
+   "balance_sheet_stale": false,
+   "monthly_burn": 5531606.0,
+   "runway_months": 79.6,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 60730211.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "PERF",
+  "name": "Perfect Corp.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 195549439,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 10207460,
+   "ttm_ocf": 10563584,
+   "ttm_capex": -356124,
+   "ttm_ebitda": 6343000,
+   "ttm_revenue": 71067999,
+   "rev_yoy": 0.1041,
+   "cash_sti": 162021000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 2390131.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "PGY",
+  "name": "Pagaya Technologies Ltd.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 1861230557,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 251779000,
+   "ttm_ocf": 264730000,
+   "ttm_capex": -12951000,
+   "ttm_ebitda": 121227000,
+   "ttm_revenue": 1325553000,
+   "rev_yoy": 0.1779,
+   "cash_sti": 1289375000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 63092033.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 4.7362844634873325
+  }
+ },
+ {
+  "symbol": "PI",
+  "name": "Impinj, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 5170415568,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 62989000,
+   "ttm_ocf": 71613000,
+   "ttm_capex": -8624000,
+   "ttm_ebitda": -8620000,
+   "ttm_revenue": 371525000,
+   "rev_yoy": 0.0351,
+   "cash_sti": 133016000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 43158376.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "PICS",
+  "name": "PicS N.V.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 1684638007,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 1551219144,
+   "ttm_ocf": 2084066194,
+   "ttm_capex": -532847044,
+   "ttm_ebitda": 914791465,
+   "ttm_revenue": 10359289190,
+   "rev_yoy": 0.6572,
+   "cash_sti": 8943402000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 2159560,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "PL",
+  "name": "Planet Labs PBC",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 7610293568,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": 47158000,
+   "ttm_ocf": 132456000,
+   "ttm_capex": -85298000,
+   "ttm_ebitda": -322377000,
+   "ttm_revenue": 335612000,
+   "rev_yoy": 0.3415,
+   "cash_sti": 731731000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 69490148.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "PLSE",
+  "name": "Pulse Biosciences, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Instruments & Supplies",
+  "mcap": 2629414922,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -55499000,
+   "ttm_ocf": -55196000,
+   "ttm_capex": -303000,
+   "ttm_ebitda": -74099000,
+   "ttm_revenue": 751000,
+   "rev_yoy": null,
+   "cash_sti": 68319000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 4624917.0,
+   "runway_months": 14.8,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 5284083.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "PLUG",
+  "name": "Plug Power Inc.",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 3032324152,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -666202000,
+   "ttm_ocf": -580308000,
+   "ttm_capex": -85894000,
+   "ttm_ebitda": -1633830001,
+   "ttm_revenue": 739758000,
+   "rev_yoy": 0.1519,
+   "cash_sti": 223189000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 55516833.0,
+   "runway_months": 4.0,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 56869316.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "POET",
+  "name": "POET Technologies Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 1129606819,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -35120470,
+   "ttm_ocf": -30908098,
+   "ttm_capex": -4171121,
+   "ttm_ebitda": -77944350,
+   "ttm_revenue": 1411494,
+   "rev_yoy": 6.076,
+   "cash_sti": 429136442,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 2923268.0,
+   "runway_months": 146.8,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 148645902.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "PONY",
+  "name": "Pony AI Inc. American Depositary Shares",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 2816846994,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -278537147,
+   "ttm_ocf": -184801407,
+   "ttm_capex": -93735740,
+   "ttm_ebitda": -78318971,
+   "ttm_revenue": 110399104,
+   "rev_yoy": 0.2408,
+   "cash_sti": 1067422000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 23211429.0,
+   "runway_months": 46.0,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 12228448.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "PRCT",
+  "name": "PROCEPT BioRobotics Corporation",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 1032223200,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -80566000,
+   "ttm_ocf": -70132000,
+   "ttm_capex": -10434000,
+   "ttm_ebitda": -92106000,
+   "ttm_revenue": 322024000,
+   "rev_yoy": 0.2926,
+   "cash_sti": 245641000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 6713833.0,
+   "runway_months": 36.6,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 24456714.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "PRGS",
+  "name": "Progress Software Corporation",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 1716092228,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 305221000,
+   "ttm_ocf": 313707000,
+   "ttm_capex": -8486000,
+   "ttm_ebitda": 287088000,
+   "ttm_revenue": 1003725000,
+   "rev_yoy": 0.155,
+   "cash_sti": 102978000,
+   "balance_date": "2026-05-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 10774991.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 4.327623885856817
+  }
+ },
+ {
+  "symbol": "PUBM",
+  "name": "PubMatic, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 625591574,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 42544000,
+   "ttm_ocf": 82733000,
+   "ttm_capex": -40189000,
+   "ttm_ebitda": 22340000,
+   "ttm_revenue": 281668000,
+   "rev_yoy": -0.0233,
+   "cash_sti": 144876000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 3025529.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "QBTS",
+  "name": "D-Wave Quantum Inc.",
+  "sector": "Technology",
+  "industry": "Computer Hardware",
+  "mcap": 7945866416,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -102168000,
+   "ttm_ocf": -97663000,
+   "ttm_capex": -4505000,
+   "ttm_ebitda": -386700000,
+   "ttm_revenue": 12444000,
+   "rev_yoy": -0.4175,
+   "cash_sti": 588395000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 8514000.0,
+   "runway_months": 69.1,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 24572946.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "QDEL",
+  "name": "QuidelOrtho Corporation",
+  "sector": "Healthcare",
+  "industry": "Medical - Instruments & Supplies",
+  "mcap": 1173839685,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -75200000,
+   "ttm_ocf": 6600000,
+   "ttm_capex": -81800000,
+   "ttm_ebitda": -548800000,
+   "ttm_revenue": 2657200000,
+   "rev_yoy": -0.0389,
+   "cash_sti": 140400000,
+   "balance_date": "2026-03-29",
+   "balance_sheet_stale": false,
+   "monthly_burn": 6266667.0,
+   "runway_months": 22.4,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 5606317.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "QNT",
+  "name": "Quantinuum Inc. Class A Common Stock",
+  "sector": "Technology",
+  "industry": "Computer Hardware",
+  "mcap": 1829711294,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": null,
+   "ttm_ocf": null,
+   "ttm_capex": null,
+   "ttm_ebitda": null,
+   "ttm_revenue": null,
+   "rev_yoy": null,
+   "cash_sti": 2268314000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": null,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 48426055.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "QUBT",
+  "name": "Quantum Computing, Inc.",
+  "sector": "Technology",
+  "industry": "Computer Hardware",
+  "mcap": 1274227500,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -42065000,
+   "ttm_ocf": -35286000,
+   "ttm_capex": -6779000,
+   "ttm_ebitda": -33342000,
+   "ttm_revenue": 4334000,
+   "rev_yoy": 10.2571,
+   "cash_sti": 986112000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 3505417.0,
+   "runway_months": 281.3,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 63053855.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "QUIK",
+  "name": "QuickLogic Corporation",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 257884200,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -3189000,
+   "ttm_ocf": -415000,
+   "ttm_capex": -2774000,
+   "ttm_ebitda": -5858000,
+   "ttm_revenue": 14500000,
+   "rev_yoy": -0.2119,
+   "cash_sti": 6047000,
+   "balance_date": "2026-03-29",
+   "balance_sheet_stale": false,
+   "monthly_burn": 265750.0,
+   "runway_months": 22.8,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 2205457.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "RAL",
+  "name": "Ralliant Corp",
+  "sector": "Technology",
+  "industry": "Hardware, Equipment & Parts",
+  "mcap": 7479264811,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation",
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 327700000,
+   "ttm_ocf": 364800000,
+   "ttm_capex": -37100000,
+   "ttm_ebitda": -1046700000,
+   "ttm_revenue": 2186100000,
+   "rev_yoy": 0.0587,
+   "cash_sti": 270900000,
+   "balance_date": "2026-07-03",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 63921005.0,
+   "royalty_hint": false
+  }
+ }
+]

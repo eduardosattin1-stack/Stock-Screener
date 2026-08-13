@@ -1,0 +1,182 @@
+{
+ "COHR": {
+  "physical_anchor": "Manufactures lasers, optical/photonic components and precision optics (incl. transceivers, specialty materials, cryo-compatible photonics) used in comms, industrial and quantum-sensing hardware stacks.",
+  "chains": ["quantum"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "Photonics & lasers layer of the quantum chain — supplies laser sources, optical components and specialty materials/optics that lab, testbed and comms-infrastructure builds consume regardless of which qubit modality wins.",
+  "true_competitors": ["IPGP", "LITE", "FN", "MKSI", "VIAV", "AMAT"],
+  "chain_fit_confidence": "high"
+ },
+ "COHU": {
+  "physical_anchor": "Makes semiconductor back-end test handlers, automated test equipment (ATE) and machine-vision chip inspection systems.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Back-end semiconductor test/handling equipment vendor serving the broad chip-manufacturing base — no demonstrated quantum-specific hardware exposure; generic Semiconductors industry filter catch.",
+  "true_competitors": ["TER", "ACLS", "AEIS", "ONTO", "KLAC", "FORM"],
+  "chain_fit_confidence": "low"
+ },
+ "CORZ": {
+  "physical_anchor": "Operates large-scale data-center/colocation facilities hosting GPU and (legacy) bitcoin-mining compute racks.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "GPU/HPC hosting operator — a demand-side consumer of grid power and datacenter buildout, not a supplier of generation, grid equipment, reactor components or quantum hardware into any FDT chain layer.",
+  "true_competitors": ["APLD", "IREN", "CIFR", "WULF", "HUT", "CLSK"],
+  "chain_fit_confidence": "low"
+ },
+ "CRNC": {
+  "physical_anchor": "No physical anchor — sells licensed in-car conversational-AI/voice-assistant software.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Automotive voice-AI software vendor — pure software, no physical thing made/moved/powered/instrumented; robotics_automation hint is a generic Software-Application catch.",
+  "true_competitors": ["SOUN", "MSFT", "GOOGL", "BIDU", "AMZN"],
+  "chain_fit_confidence": "low"
+ },
+ "CRWV": {
+  "physical_anchor": "Owns/leases and operates GPU-dense AI cloud data centers (physical facilities, GPU clusters, power draw).",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "AI cloud/GPU infrastructure provider — a power and compute DEMAND driver, not a supplier of turbines, grid equipment, IPP generation or reactor/quantum hardware as this book's chains require.",
+  "true_competitors": ["NBIS", "IREN", "APLD", "AMZN", "MSFT", "GOOGL", "ORCL"],
+  "chain_fit_confidence": "low"
+ },
+ "CWEN": {
+  "physical_anchor": "Owns and operates wind, solar and battery-storage generation assets that physically produce and sell electricity under long-term contracts.",
+  "chains": ["power_for_ai"],
+  "business_model": "utility",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "IPP/PPA and capacity-and-ancillary-markets layer — renewable+storage independent power producer selling firm electrons into grid and (increasingly) datacenter-adjacent demand; no nuclear assets, so nuclear_smr does not apply.",
+  "true_competitors": ["NEE", "AES", "NRG", "VST", "CEG", "ORA", "BEP"],
+  "chain_fit_confidence": "medium"
+ },
+ "CXM": {
+  "physical_anchor": "No physical anchor — sells cloud customer-experience-management (CXM) and social-media-management SaaS.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Customer-experience SaaS platform — pure software, no factory-automation, vision or actuator hardware; robotics_automation hint is a generic Software-Application catch.",
+  "true_competitors": ["HUBS", "CRM", "NICE", "VRNT", "FRSH"],
+  "chain_fit_confidence": "low"
+ },
+ "CXT": {
+  "physical_anchor": "Manufactures currency/banknote authentication sensors and security-validation hardware (Crane NXT currency & payment authentication instruments).",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Currency-authentication and security-instrumentation maker — no exposure to grid equipment, reactor components, IPP generation or robotics; generic Industrial - Machinery filter catch that fanned across four chain hints.",
+  "true_competitors": ["DLAR.L", "DBD", "VYX", "GD", "IDN"],
+  "chain_fit_confidence": "low"
+ },
+ "DCO": {
+  "physical_anchor": "Manufactures aerostructures and electronic-system assemblies for aerospace and defense primes.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Aerospace/defense structures and electronics supplier — no demonstrated reactor-component, naval-nuclear or HALEU/fuel-service business; Aerospace & Defense industry filter false-positive on nuclear_smr (BWXT-style, but no matching nuclear program disclosed).",
+  "true_competitors": ["HEI", "MOG-A", "TXT", "SPR", "CVU"],
+  "chain_fit_confidence": "low"
+ },
+ "DCTH": {
+  "physical_anchor": "Makes a catheter-based regional chemotherapy delivery device (the CHEMOSAT hepatic percutaneous perfusion system).",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Interventional-oncology medical device maker — an infusion/perfusion catheter system, not a robotic surgical platform; generic Medical - Devices filter catch on robotics_automation.",
+  "true_competitors": ["ISRG", "STAA", "ICUI", "ANGO", "BSX"],
+  "chain_fit_confidence": "low"
+ },
+ "DDD": {
+  "physical_anchor": "Manufactures industrial 3D printers, additive-manufacturing materials and print services.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Additive-manufacturing hardware/materials vendor — additive manufacturing is not a defined layer in any FDT chain; generic Computer Hardware filter catch on quantum.",
+  "true_competitors": ["SSYS", "DM", "PRLB", "MTLS"],
+  "chain_fit_confidence": "low"
+ },
+ "DDOG": {
+  "physical_anchor": "No physical anchor — sells cloud infrastructure monitoring/observability SaaS.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cloud observability software platform — pure software, no factory/robotics hardware; robotics_automation hint is a generic Software-Application catch.",
+  "true_competitors": ["DT", "ESTC", "CSCO", "NOW", "GTLB"],
+  "chain_fit_confidence": "low"
+ },
+ "DOMO": {
+  "physical_anchor": "No physical anchor — sells business-intelligence/analytics dashboard SaaS.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "BI/analytics SaaS platform — pure software; robotics_automation hint is a generic Software-Application catch.",
+  "true_competitors": ["CRM", "MSTR", "PLTR", "SNOW"],
+  "chain_fit_confidence": "low"
+ },
+ "ENLT": {
+  "physical_anchor": "Develops and operates wind, solar and battery-storage generation assets that physically produce and sell electricity under long-term PPAs.",
+  "chains": ["power_for_ai"],
+  "business_model": "utility",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "IPP/PPA layer — renewable generation and storage operator selling firm power into grid demand; no nuclear assets, so nuclear_smr does not apply.",
+  "true_competitors": ["NEE", "ORA", "BEP", "AES", "CWEN"],
+  "chain_fit_confidence": "medium"
+ },
+ "ENOV": {
+  "physical_anchor": "Manufactures orthopedic implants, surgical instruments and prevention/recovery medical devices.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Orthopedic medtech device maker — no surgical-robotics platform; generic Medical - Devices filter catch on robotics_automation.",
+  "true_competitors": ["ZBH", "SNN", "STAA", "JNJ"],
+  "chain_fit_confidence": "low"
+ },
+ "ENR": {
+  "physical_anchor": "Manufactures household batteries (Energizer/Eveready), portable lighting and personal/auto-care consumer products.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Consumer battery and personal-care products maker — not grid transformers/switchgear, not a reactor component, not robotics hardware; generic Electrical Equipment & Parts filter catch that fanned across three chain hints.",
+  "true_competitors": ["SPB", "6752.T", "300014.SZ", "CBAT"],
+  "chain_fit_confidence": "low"
+ },
+ "ENTG": {
+  "physical_anchor": "Manufactures specialty materials, filtration and contamination-control equipment for semiconductor fabs.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Broad semiconductor-fab materials/filtration supplier serving the entire chip-manufacturing base — not quantum-specific; generic Semiconductors filter catch, exactly the pattern the chain's notes warn will inflate the drop rate.",
+  "true_competitors": ["AMAT", "LRCX", "MKSI", "VECO", "ASML"],
+  "chain_fit_confidence": "low"
+ },
+ "ENVX": {
+  "physical_anchor": "Manufactures silicon-anode lithium-ion battery cells, currently sold into mobile/wearable devices.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Advanced battery-cell maker whose current revenue is consumer/mobile, not grid-scale storage or EV — stated EV/grid ambitions are not yet a revenue layer; premature fit for electrification_grid today.",
+  "true_competitors": ["QS", "SES", "SLDP", "6752.T", "EOSE"],
+  "chain_fit_confidence": "low"
+ },
+ "EOSE": {
+  "physical_anchor": "Manufactures zinc-based long-duration battery energy-storage systems sold to utilities and grid operators.",
+  "chains": ["electrification_grid", "power_for_ai"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Electrical-infrastructure-services / capacity-and-ancillary-markets layer — toll-taker manufacturing grid-scale storage hardware that firms up renewable and datacenter power demand.",
+  "true_competitors": ["FLNC", "STEM", "QS", "6752.T", "TSLA"],
+  "chain_fit_confidence": "medium"
+ },
+ "EROC": {
+  "physical_anchor": "Insufficient disclosed financial/business data to name a physical thing this company makes, moves, powers or instruments — every TTM gate is null with no reported revenue.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Unknown — an Industrial - Machinery label alone is not evidence of a value-chain layer; cannot verify without a disclosed operating business.",
+  "true_competitors": ["ETN", "HUBB", "AZZ", "POWL"],
+  "chain_fit_confidence": "low"
+ }
+}

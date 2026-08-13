@@ -1,0 +1,20 @@
+{
+ "symbol": "AMRC",
+ "physical_anchor": "designs, builds and operates energy-infrastructure projects (solar, storage, energy efficiency retrofits, RNG) under long-term contracts, and owns a fleet of revenue-generating energy assets",
+ "chains": [
+  "electrification_grid",
+  "power_for_ai"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Grid EPC & interconnection layer — EPC/ESCO delivering electrification and energy-efficiency infrastructure into the same interconnection-queue bottleneck as grid-equipment and datacenter-power names",
+ "true_competitors": [
+  "JCI",
+  "TT",
+  "HON",
+  "SU.PA",
+  "ENGI.PA",
+  "NEE"
+ ],
+ "chain_fit_confidence": "medium"
+}

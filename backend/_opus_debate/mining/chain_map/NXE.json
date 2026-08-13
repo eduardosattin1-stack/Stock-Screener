@@ -1,0 +1,19 @@
+{
+ "symbol": "NXE",
+ "physical_anchor": "Developing the Rook I high-grade uranium deposit in the Athabasca Basin, Saskatchewan — one of the largest undeveloped uranium resources globally, pre-production/permitted construction stage.",
+ "chains": [
+  "uranium_fuel_cycle"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Permitted/construction-stage uranium developer (mining & ISR/conventional production layer) — pure-play uranium, no byproducts.",
+ "true_competitors": [
+  "Denison Mines (DNN)",
+  "Fission Uranium (FCUUF)",
+  "Cameco (CCJ)",
+  "Paladin Energy (PDN.AX)",
+  "Global Atomic (GLATF)",
+  "IsoEnergy (ISENF)"
+ ],
+ "chain_fit_confidence": "high"
+}

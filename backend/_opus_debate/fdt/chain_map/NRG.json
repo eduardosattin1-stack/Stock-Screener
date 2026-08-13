@@ -1,0 +1,19 @@
+{
+ "symbol": "NRG",
+ "physical_anchor": "Owns and operates natural-gas and nuclear-stake power generation plants plus retail electricity supply",
+ "chains": [
+  "power_for_ai"
+ ],
+ "business_model": "utility",
+ "commodity_revenue_share": 0.1,
+ "value_chain_position": "Independent power producer/retail electricity provider selling firm generation, increasingly under datacenter-linked PPAs",
+ "true_competitors": [
+  "VST",
+  "CEG",
+  "TLN",
+  "NEE",
+  "PEG",
+  "AES"
+ ],
+ "chain_fit_confidence": "high"
+}

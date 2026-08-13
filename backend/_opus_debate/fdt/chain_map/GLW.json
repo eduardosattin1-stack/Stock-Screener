@@ -1,0 +1,20 @@
+{
+ "symbol": "GLW",
+ "physical_anchor": "Specialty optical fiber, cable and photonic/glass components used in datacenter and telecom interconnects, plus laser-optics and specialty-glass substrates",
+ "chains": [
+  "quantum"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.03,
+ "value_chain_position": "Optical fiber/photonics and specialty-glass component supplier — feeds the photonics & lasers layer of the quantum stack (and the broader datacenter interconnect build-out) as a component-level toll-taker, not a qubit-hardware platform",
+ "true_competitors": [
+  "COHR",
+  "LITE",
+  "5801.T",
+  "5802.T",
+  "PRY.MI",
+  "NOK",
+  "CIEN"
+ ],
+ "chain_fit_confidence": "medium"
+}

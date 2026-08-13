@@ -1,0 +1,20 @@
+{
+ "symbol": "AGI",
+ "physical_anchor": "Mines and pours gold doré/bullion at open-pit and underground mines in Canada, Mexico and Turkey.",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Mid-tier gold producer selling refined bullion.",
+ "true_competitors": [
+  "AEM",
+  "KGC",
+  "EGO",
+  "B",
+  "AUGO",
+  "CDE",
+  "IAG"
+ ],
+ "chain_fit_confidence": "high"
+}

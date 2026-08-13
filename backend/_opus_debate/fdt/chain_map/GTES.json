@@ -1,0 +1,20 @@
+{
+ "symbol": "GTES",
+ "physical_anchor": "Precision power-transmission belts, hydraulic hoses and fluid-power components used in industrial machinery, motion-control systems and vehicles",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.02,
+ "value_chain_position": "Motion-control/power-transmission component maker (belts, drives, hydraulics) — a component-level supplier into automation and industrial-machinery motion systems, alongside a large automotive-aftermarket business that sits outside any FDT chain",
+ "true_competitors": [
+  "TKR",
+  "RRX",
+  "PH",
+  "DOV",
+  "ITW",
+  "SKFB.ST",
+  "CON.DE"
+ ],
+ "chain_fit_confidence": "medium"
+}

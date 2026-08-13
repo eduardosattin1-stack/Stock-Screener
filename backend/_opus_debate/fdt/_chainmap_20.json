@@ -1,0 +1,182 @@
+{
+ "ESTA": {
+  "physical_anchor": "Manufactures silicone breast implant devices (Motiva) and related aesthetic/reconstructive surgical products.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Medical device manufacturer selling implants directly to surgeons/hospitals; no link to any FDT value chain.",
+  "true_competitors": ["ALGN", "SIEN", "PODD", "ICUI", "MENT.PA", "GKOS"],
+  "chain_fit_confidence": "low"
+ },
+ "EVEX": {
+  "physical_anchor": "Developing an electric vertical takeoff and landing (eVTOL) aircraft for urban air mobility.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Pre-revenue eVTOL airframe developer; the Aerospace & Defense industry tag falsely maps to nuclear_smr's anchor list (shared with BWXT) but eVTOL aircraft have no nuclear/SMR link.",
+  "true_competitors": ["JOBY", "ACHR", "LILM", "BLDE", "VRT.PA"],
+  "chain_fit_confidence": "low"
+ },
+ "EXPO": {
+  "physical_anchor": "None identifiable — Exponent is a scientific/engineering consulting and failure-analysis testing firm, not a physical maker or EPC contractor.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Sells expert-witness and engineering testing/consulting services across many industries; the Engineering & Construction industry tag is a mismatch (Exponent does not build or install grid/power infrastructure).",
+  "true_competitors": ["ICFI", "TTEK", "STN", "ACM", "J"],
+  "chain_fit_confidence": "low"
+ },
+ "FCEL": {
+  "physical_anchor": "Manufactures and operates stationary fuel-cell power-generation platforms (SureSource) that produce electricity and hydrogen on-site.",
+  "chains": ["power_for_ai"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Generation-equipment layer of power_for_ai: sells/services distributed fuel-cell generation platforms that can deliver firm behind-the-meter power, including to data-center-class loads.",
+  "true_competitors": ["BE", "PLUG", "BLDP", "CMI", "CWR.L", "ITM.L", "036200.KQ"],
+  "chain_fit_confidence": "medium"
+ },
+ "FER": {
+  "physical_anchor": "Builds and operates toll roads and airport infrastructure (Cintra concessions), plus a diversified construction arm (Webber, Budimex).",
+  "chains": [],
+  "business_model": "utility",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Toll-road/airport concession operator and general infrastructure builder; construction segment is diversified across transport, water and buildings, not specifically grid or power EPC.",
+  "true_competitors": ["ACS.MC", "VIE.PA", "ABE.MC", "GS.MC", "ACM", "MTZ"],
+  "chain_fit_confidence": "low"
+ },
+ "FIG": {
+  "physical_anchor": "None — Figma is a cloud-based collaborative design and prototyping software product.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Pure SaaS design tool; the Software - Application industry tag overlaps robotics_automation's filter list but Figma has no robotics/physical-AI business.",
+  "true_competitors": ["ADBE", "ADSK", "CRM", "TEAM", "NOW"],
+  "chain_fit_confidence": "low"
+ },
+ "FLNC": {
+  "physical_anchor": "Designs, manufactures and deploys containerized grid-scale battery energy storage systems (BESS) plus a storage-optimization software layer (Fluence IQ).",
+  "chains": ["electrification_grid", "power_for_ai"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Power management/grid-storage equipment layer: sells and installs storage hardware that firms up grid capacity and datacenter power reliability; lithium-cell content is an input cost, not a revenue driver.",
+  "true_competitors": ["TSLA", "WRT1V.HE", "373220.KS", "300274.SZ", "1211.HK", "NXT", "STEM"],
+  "chain_fit_confidence": "high"
+ },
+ "FLR": {
+  "physical_anchor": "Engineering-procurement-construction (EPC) contractor that physically builds large energy, infrastructure and industrial projects.",
+  "chains": ["power_for_ai", "electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "Grid/power EPC & interconnection layer, same toll-taker role as anchor PWR, but revenue is diversified across energy, government, mining and industrial EPC rather than power-pure.",
+  "true_competitors": ["J", "ACM", "KBR", "MTZ", "WOR.AX", "PWR"],
+  "chain_fit_confidence": "medium"
+ },
+ "FLY": {
+  "physical_anchor": "Designs and builds orbital launch vehicles (Alpha rocket) and lunar landers (Blue Ghost).",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Space-launch and lunar-lander developer; Aerospace & Defense tag falsely overlaps nuclear_smr's anchor list (shared with BWXT) but rockets/landers carry no nuclear or grid exposure.",
+  "true_competitors": ["RKLB", "ASTS", "SPCE", "LUNR", "RDW"],
+  "chain_fit_confidence": "low"
+ },
+ "FOUR": {
+  "physical_anchor": "None — Shift4 operates a payments-processing network and point-of-sale software stack.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Payments network; explicitly excluded by the anti-Visa rule (a payments network never counts as a physical anchor). quantum hint is a false positive from Software - Infrastructure industry overlap.",
+  "true_competitors": ["GPN", "FIS", "TOST", "PAYX", "FI"],
+  "chain_fit_confidence": "low"
+ },
+ "FPS": {
+  "physical_anchor": "Manufactures electrical power equipment (power distribution / transformer-class hardware) sold into grid and industrial electrification build-outs.",
+  "chains": ["electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Transformers & switchgear / power-management equipment layer, comparable to the chain's ETN/HUBB/NVT/POWL/AZZ anchor cohort by industry classification and name; exact product mix unverified beyond FMP tags.",
+  "true_competitors": ["ETN", "HUBB", "NVT", "POWL", "AZZ", "ABB", "ENR.DE", "SU.PA"],
+  "chain_fit_confidence": "medium"
+ },
+ "FROG": {
+  "physical_anchor": "None — JFrog is a DevOps/software-supply-chain platform (artifact management, CI/CD).",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Pure enterprise software vendor; robotics_automation hint is a false positive from Software - Application industry overlap, no physical robotics/automation product.",
+  "true_competitors": ["GTLB", "TEAM", "ESTC", "DDOG", "MDB"],
+  "chain_fit_confidence": "low"
+ },
+ "FRVO": {
+  "physical_anchor": "Drills and operates enhanced geothermal system (EGS) wells and power plants that deliver firm, 24/7 baseload electricity under long-term PPAs (e.g., Google, utilities).",
+  "chains": ["power_for_ai"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Nuclear-levered-IPP-adjacent firm-power developer layer of power_for_ai: a next-gen firm-generation asset developer competing for the same datacenter-PPA queue as gas turbines and SMRs; pre-commercial-scale, null trailing financials reflect early-stage development.",
+  "true_competitors": ["ORA", "VST", "CEG", "TLN", "NEE", "036460.KS"],
+  "chain_fit_confidence": "high"
+ },
+ "FSLY": {
+  "physical_anchor": "None — Fastly operates a content-delivery / edge-compute network built on leased/colocated servers, not owned physical infrastructure it manufactures or instruments for a chain.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Edge cloud/CDN service; robotics_automation hint is a false positive from Software - Application industry overlap.",
+  "true_competitors": ["AKAM", "NET", "CFLT", "DDOG"],
+  "chain_fit_confidence": "low"
+ },
+ "FTAI": {
+  "physical_anchor": "Overhauls, leases and sells aftermarket parts/modules for commercial jet engines (CFM56/V2500-class).",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Aircraft-engine MRO and parts business; Aerospace & Defense tag falsely overlaps nuclear_smr's anchor list (shared with BWXT) but jet-engine aftermarket has no nuclear or grid exposure.",
+  "true_competitors": ["HEICO", "GE", "RTX", "TDG", "AER"],
+  "chain_fit_confidence": "low"
+ },
+ "GEMI": {
+  "physical_anchor": "None — Gemini Space Station operates a crypto asset exchange and custody platform.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Digital-asset exchange/financial platform; robotics_automation hint is a false positive from Software - Application industry overlap, no physical product.",
+  "true_competitors": ["COIN", "HOOD", "BKKT", "GLXY.TO"],
+  "chain_fit_confidence": "low"
+ },
+ "GKOS": {
+  "physical_anchor": "Manufactures ophthalmic implants and devices (iStent, iDose) for glaucoma and corneal health.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Medical device manufacturer; Medical - Devices industry tag overlaps robotics_automation's filter list but Glaukos makes implants, not surgical robotics or motion-control platforms.",
+  "true_competitors": ["ALCO.MI", "BSX", "ALGN", "ICUI", "IRD"],
+  "chain_fit_confidence": "low"
+ },
+ "GRRR": {
+  "physical_anchor": "None reliably identifiable — Gorilla Technology is an AI video-analytics/smart-city systems integrator; any proprietary edge-AI hardware manufacturing is not clearly disclosed at scale.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Security/surveillance and smart-city AI software-plus-integration business; quantum hint is a false positive from Software - Infrastructure industry overlap, no quantum computing product.",
+  "true_competitors": ["AXON", "HXGCF", "MSI", "IDN.AX", "002415.SZ"],
+  "chain_fit_confidence": "low"
+ },
+ "GSIT": {
+  "physical_anchor": "Fabricates SRAM memory chips and an Associative Processing Unit (APU) compute-in-memory silicon product.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Specialty semiconductor (classical memory/compute silicon); quantum hint is a false positive from Semiconductors industry overlap — GSI Technology does not build qubit hardware, cryogenics, or photonics.",
+  "true_competitors": ["CEVA", "AEIS", "SITM", "AMBA", "QUIK"],
+  "chain_fit_confidence": "low"
+ },
+ "GTLB": {
+  "physical_anchor": "None — GitLab is a cloud/self-hosted DevOps software platform.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Pure enterprise software vendor; robotics_automation hint is a false positive from Software - Application industry overlap, no physical robotics/automation product.",
+  "true_competitors": ["FROG", "TEAM", "MSFT", "DDOG", "ESTC"],
+  "chain_fit_confidence": "low"
+ }
+}

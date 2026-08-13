@@ -1,0 +1,19 @@
+{
+ "symbol": "RGLD",
+ "physical_anchor": "holds royalty and stream contracts entitling it to a fixed percentage of gold (plus silver/copper) ounces produced at partner mines",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "royalty_streamer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "royalty/streaming pure-play, anchor example for the chain; auto-passes Lane A cash/profit gates",
+ "true_competitors": [
+  "WPM",
+  "FNV",
+  "OR",
+  "SAND",
+  "TFPM",
+  "UROY"
+ ],
+ "chain_fit_confidence": "high"
+}

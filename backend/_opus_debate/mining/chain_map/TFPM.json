@@ -1,0 +1,21 @@
+{
+ "symbol": "TFPM",
+ "physical_anchor": "Portfolio of gold and silver streams/royalties entitling delivery of physical metal from producing and development mines",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "royalty_streamer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Streaming and royalty company monetizing upfront capital for a fixed share of future gold/silver production, carrying no operating or capex exposure",
+ "true_competitors": [
+  "WPM",
+  "FNV",
+  "RGLD",
+  "OR",
+  "SAND",
+  "MTA",
+  "GROY",
+  "ELE.V"
+ ],
+ "chain_fit_confidence": "high"
+}

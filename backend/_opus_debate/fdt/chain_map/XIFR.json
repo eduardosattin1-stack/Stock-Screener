@@ -1,0 +1,19 @@
+{
+ "symbol": "XIFR",
+ "physical_anchor": "owns and operates wind, solar and natural-gas-pipeline assets that deliver power/throughput under long-term contracts",
+ "chains": [
+  "power_for_ai"
+ ],
+ "business_model": "utility",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "renewable-power and pipeline yieldco selling contracted capacity (PPAs) into the grid",
+ "true_competitors": [
+  "CWEN",
+  "AY",
+  "BEP",
+  "ORA",
+  "NEE",
+  "AES"
+ ],
+ "chain_fit_confidence": "high"
+}

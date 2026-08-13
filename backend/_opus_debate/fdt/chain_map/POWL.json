@@ -1,0 +1,19 @@
+{
+ "symbol": "POWL",
+ "physical_anchor": "manufactures medium/high-voltage switchgear, motor control centers, and integrated power-control room systems",
+ "chains": [
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.07,
+ "value_chain_position": "transformers & switchgear layer — a named taxonomy anchor_example; sells electrical distribution/protection equipment into utility, industrial, and datacenter customers.",
+ "true_competitors": [
+  "ETN",
+  "HUBB",
+  "NVT",
+  "ABBN.SW",
+  "SU.PA",
+  "ENR.DE"
+ ],
+ "chain_fit_confidence": "high"
+}

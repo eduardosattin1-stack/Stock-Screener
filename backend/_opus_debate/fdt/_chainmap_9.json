@@ -1,0 +1,182 @@
+{
+ "NOW": {
+  "physical_anchor": "None — cloud workflow/ITSM software platform; no physical product manufactured or moved.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Enterprise SaaS workflow/ITSM platform — pure software subscription business with no layer in any FDT physical value chain.",
+  "true_competitors": ["CRM", "WDAY", "SAP", "TEAM", "MSFT", "IBM", "PEGA"],
+  "chain_fit_confidence": "low"
+ },
+ "NPO": {
+  "physical_anchor": "Mechanical seals, gaskets, and semiconductor-fab cleaning/coating/refurbishment components for industrial, aerospace and chip-equipment customers.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.03,
+  "value_chain_position": "Diversified industrial sealing (Garlock) and semiconductor-process-equipment component supplier (Technetics/NxEdge) — a generic multi-industry toll-taker that matches several keyword filters by breadth, not by genuine chain participation.",
+  "true_competitors": ["IEX", "ROP", "FLS", "CR", "AOS", "ITT", "MKSI"],
+  "chain_fit_confidence": "low"
+ },
+ "NTAP": {
+  "physical_anchor": "Enterprise data-storage arrays and hybrid-cloud storage hardware/software systems.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "General enterprise data-storage vendor — no qubit hardware, cryogenics, photonics or quantum-networking product; caught only by the 'Computer Hardware' industry string.",
+  "true_competitors": ["PSTG", "DELL", "HPE", "IBM", "WDC", "STX"],
+  "chain_fit_confidence": "low"
+ },
+ "NTCT": {
+  "physical_anchor": "None — network performance and cybersecurity monitoring software/appliances for enterprise IT visibility.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Network/security monitoring software vendor; no quantum-stack product.",
+  "true_competitors": ["CSCO", "GEN", "FTNT", "DDOG"],
+  "chain_fit_confidence": "low"
+ },
+ "NTNX": {
+  "physical_anchor": "None — hyperconverged-infrastructure virtualization software running on commodity server hardware.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Software-defined infrastructure vendor; not a quantum-stack participant.",
+  "true_competitors": ["DELL", "HPE", "SMCI", "IBM"],
+  "chain_fit_confidence": "low"
+ },
+ "NVDA": {
+  "physical_anchor": "AI/datacenter GPU and accelerator silicon.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Dominant AI-accelerator chipmaker; markets a quantum-simulation SDK (cuQuantum) and hybrid quantum-classical control hardware (NVQLink), but that revenue is immaterial against a >$250B AI-compute base — this is an AI-compute name, not a genuine quantum-chain participant.",
+  "true_competitors": ["AMD", "AVGO", "INTC", "TSM", "MRVL"],
+  "chain_fit_confidence": "low"
+ },
+ "NVEC": {
+  "physical_anchor": "Spintronic (spin-dependent-tunneling) sensor and digital-isolator chips.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Niche spintronic-sensor/isolator chipmaker selling into industrial and medical markets — spintronics is quantum-mechanical in origin, but the company carries no exposure to the dated, government-funded quantum-computing catalyst story this chain is built on.",
+  "true_competitors": ["ADI", "TXN", "ALGM", "MPWR", "STM"],
+  "chain_fit_confidence": "low"
+ },
+ "NVST": {
+  "physical_anchor": "Dental implants, orthodontic appliances, and digital dental-imaging/CAD-CAM equipment.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Dental consumables/equipment maker — digital dentistry workflow tools are not surgical robotics, so it does not genuinely ride the robotics_automation chain.",
+  "true_competitors": ["ALGN", "XRAY", "DHR", "ZIMV"],
+  "chain_fit_confidence": "low"
+ },
+ "NVT": {
+  "physical_anchor": "Electrical enclosures, connectors, cable-management and thermal-management hardware that protects and connects electrical/electronic equipment.",
+  "chains": ["electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Power-management & connectors / protective-enclosures layer of the grid build-out — supplies electrical connection, protection and thermal-management products into data-center, industrial and grid-electrification projects; a named electrification_grid anchor example.",
+  "true_competitors": ["ETN", "HUBB", "ABB", "LR.PA", "APH", "POWL", "AZZ", "EMR"],
+  "chain_fit_confidence": "high"
+ },
+ "NXPI": {
+  "physical_anchor": "Automotive and industrial analog/mixed-signal semiconductor chips.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Automotive-focused semiconductor maker; not a quantum-stack or grid-equipment participant despite the broad Semiconductors industry filter.",
+  "true_competitors": ["TXN", "ADI", "ON", "STM", "MCHP"],
+  "chain_fit_confidence": "low"
+ },
+ "OKTA": {
+  "physical_anchor": "None — cloud identity and access-management (IAM) software.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Pure-play identity/access SaaS vendor; no physical product.",
+  "true_competitors": ["MSFT", "CYBR", "FTNT", "CRWD"],
+  "chain_fit_confidence": "low"
+ },
+ "OLED": {
+  "physical_anchor": "Phosphorescent OLED emitter materials and associated display-chemistry IP.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "OLED display-materials and IP-licensing company selling into consumer-electronics display makers — not a quantum-hardware or robotics participant despite its Hardware, Equipment & Parts classification.",
+  "true_competitors": ["DOW", "006400.KS", "IFX.DE"],
+  "chain_fit_confidence": "low"
+ },
+ "ON": {
+  "physical_anchor": "Silicon-carbide and analog power-semiconductor chips for automotive and industrial power conversion.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Automotive/industrial power-semiconductor supplier — components feed EV and grid-inverter systems downstream, but the company itself is not a transformer/switchgear/connector maker in the electrification_grid value chain.",
+  "true_competitors": ["STM", "IFX.DE", "WOLF", "NXPI", "TXN"],
+  "chain_fit_confidence": "low"
+ },
+ "ONTO": {
+  "physical_anchor": "Semiconductor process-control and metrology/inspection systems used in chip fabrication and advanced packaging.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "General semiconductor-fab metrology equipment maker — serves the broad chip-capex cycle, not the quantum-computing chain specifically.",
+  "true_competitors": ["KLAC", "LRCX", "AMAT", "CAMT", "ASML"],
+  "chain_fit_confidence": "low"
+ },
+ "OSK": {
+  "physical_anchor": "Specialty trucks — fire apparatus, defense tactical vehicles, refuse trucks, and JLG aerial work platforms.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Specialty-vehicle manufacturer across access equipment, defense and fire/emergency segments — no genuine grid, nuclear, power-generation or robotics chain exposure.",
+  "true_competitors": ["TEX", "CAT", "PCAR", "REVG"],
+  "chain_fit_confidence": "low"
+ },
+ "OTEX": {
+  "physical_anchor": "None — enterprise content/information-management software.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Enterprise information-management software vendor; no physical product.",
+  "true_competitors": ["MSFT", "IBM", "BOX", "ADBE"],
+  "chain_fit_confidence": "low"
+ },
+ "OTIS": {
+  "physical_anchor": "Elevators, escalators, and moving-walkway systems.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Vertical-transportation equipment manufacturer and service provider — mechanical building infrastructure, not a genuine grid, nuclear, power-generation or robotics-automation chain participant.",
+  "true_competitors": ["KNEBV.HE", "SCHP.SW", "6503.T"],
+  "chain_fit_confidence": "low"
+ },
+ "P": {
+  "physical_anchor": "Water filtration, treatment and pump systems for residential, commercial and pool applications (Everpure brand).",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Water-treatment and pump equipment manufacturer — not an electrification, nuclear, power-generation or robotics chain participant despite its Industrial-Machinery classification.",
+  "true_competitors": ["XYL", "AOS", "FELE", "ROP", "WTS"],
+  "chain_fit_confidence": "low"
+ },
+ "PANW": {
+  "physical_anchor": "None — cybersecurity software and security-appliance hardware for network protection.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cybersecurity platform vendor; post-quantum-cryptography research is a minor initiative, not a revenue line, so it does not genuinely ride the quantum chain.",
+  "true_competitors": ["FTNT", "CRWD", "ZS", "CHKP"],
+  "chain_fit_confidence": "low"
+ },
+ "PATH": {
+  "physical_anchor": "None — robotic process automation (RPA) software that automates digital/software workflows, not physical robots.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Software RPA vendor automating back-office digital tasks; builds no physical robots or instruments, so it fails the robotics_automation chain's physical-anchor test directly.",
+  "true_competitors": ["MSFT", "IBM", "SAP", "WDAY", "PEGA"],
+  "chain_fit_confidence": "low"
+ }
+}

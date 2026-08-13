@@ -1,0 +1,20 @@
+{
+ "symbol": "PRCT",
+ "physical_anchor": "Manufactures the AquaBeam Robotic System — a physical robotic console and handpiece for image-guided urologic (BPH) surgery.",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Surgical-robotics capital-equipment maker selling console placements plus per-procedure disposable handpieces — a razor/razorblade toll-taker on urology surgical volume.",
+ "true_competitors": [
+  "ISRG",
+  "SYK",
+  "MDT",
+  "JNJ",
+  "GMED",
+  "BSX",
+  "CNMD"
+ ],
+ "chain_fit_confidence": "high"
+}

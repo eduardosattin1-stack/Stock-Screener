@@ -1,0 +1,60 @@
+{
+  "symbol": "CR",
+  "sector": "Industrials",
+  "signal_type": "future_disruptive_tech",
+  "company": "Crane Company",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Industrials\nValuation: Price 219.32 | Fair Value 112.44 | Margin of Safety -49% | P/FCF 37.7x\nRevenue growth: +8.2% YoY | 3-yr CAGR +9.1%\nMargins: Gross 42.2% (stable) | Net 15.9% | FCF 14.8%\nEPS / guidance delivery: 6.26 latest | +24.0% YoY | 3-yr CAGR -3.7% | beat 7/7 qtrs (100%)\nFCF growth: +44.5% YoY | 3-yr CAGR +0.0%\nReturns / leverage: ROE 19.9% | ROIC 7.6% | Net debt -514M\nForward / signals: Consensus fwd EPS growth +12.4% | Margin 1.46sigma vs hist. peak | Insider buy ratio 0.06\nValuation models (stock page): DCF fair value 78.0 | Buffett fair value 112.4\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -100% | EPV -100% | Graham -100% | OwnerErn -100% | IV15 -100%\nQuality / scores: Bull score 9 | Catalyst score 0.5 | Piotroski 4/9 | Altman-Z (solvency) 6.0 | Days to next earnings 83\nAnalyst consensus target: 246.67 (+12% upside)\nPositioning / smart money: Smart-money score 59/100 | Institutional flow 50/100 | Analyst-target velocity +10% (vs yr-ago avg PT)\nTechnical posture (timing context, not thesis): price +14% vs 200d SMA | 84% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2021: rev 2.06B, NI 435M, EPS 7.35\n  2022: rev 1.78B, NI 401M, EPS 7.01\n  2023: rev 1.86B, NI 256M, EPS 4.45\n  2024: rev 2.13B, NI 295M, EPS 5.05\n  2025: rev 2.31B, NI 367M, EPS 6.26\n  CAGRs: bvps_5y +3.2%, eps_5y -3.9%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-06-30 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 280M | TTM diluted EPS 5.73 | latest-Q EPS YoY +20%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-06-30): NET DEBT 765M (borrowings 1.10B + capitalized leases 17M, minus cash 350M; ex-lease net debt ≈ 748M — filings often quote the ex-lease figure; STATE which definition your SoP uses) — this is a LIABILITY; in any Sum-of-Parts SUBTRACT it from enterprise value, NEVER add it back as 'net cash'; use this, not the scan's net_debt above\nInsider (open-market only): 1 buys (150sh) vs 1 sells (2,693sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 246.67 | median 245.00 | high 253.00 | low 242.00\nBreadth: last month: 3 PTs avg 246.67 | last quarter: 3 PTs avg 246.67 | last year: 11 PTs avg 225.09\nNewest individual targets (dated — judge freshness yourself):\n  2026-07-30 D.A. Davidson: 245.00 (stock was 212.48)\n  2026-07-20 Nathan Jones: 242.00 (stock was 217.49)\n  2026-07-20 Daniel DiCicco: 253.00 (stock was 217.49)\n  2026-04-29 Nathan Jones: 215.00 (stock was 177.93)\n  2026-01-29 Deutsche Bank: 238.00 (stock was 178.01)\nNewest PT is 5 day(s) old",
+  "dossier": "",
+  "chains": [
+    "nuclear_smr"
+  ],
+  "business_model": "equipment_services",
+  "physical_anchor": "Manufactures engineered valves, seals and instrumentation used in nuclear power-plant primary/secondary fluid systems (Crane Nuclear, within Process Flow Technologies)",
+  "commodity_revenue_share": 0.05,
+  "chain_regime": {
+    "nuclear_smr": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "nuclear_smr",
+    "torque_metrics": false,
+    "commodity_beta_2y": 0.33,
+    "beta_benchmark": "NLR",
+    "beta_is_proxy": true,
+    "ndebt_ebitda": 1.69,
+    "commodity_revenue_share": 0.05,
+    "as_of": "2026-08-04",
+    "gm_trajectory": {
+      "direction": "expanding",
+      "gm_recent_to_old": [
+        0.3722,
+        0.4033,
+        0.4072,
+        0.422
+      ],
+      "delta_3y": 0.0498
+    },
+    "rev_yoy": 0.1385,
+    "fcf_margin": 0.1082,
+    "torque_note": "NON-COMMODITY chain (no spot to lever to): no torque metric. commodity_beta_2y is a PROXY factor-exposure read vs NLR, not a commodity torque."
+  },
+  "gates": {
+    "ttm_fcf": 280400000,
+    "ttm_ocf": 328900001,
+    "ttm_capex": -48500000,
+    "ttm_ebitda": 558200000,
+    "ttm_revenue": 2591300000,
+    "rev_yoy": 0.1385,
+    "cash_sti": 350400000,
+    "balance_date": "2026-06-30",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 27725918.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.6902654867256637
+  }
+}

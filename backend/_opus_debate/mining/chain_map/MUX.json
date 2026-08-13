@@ -1,0 +1,19 @@
+{
+ "symbol": "MUX",
+ "physical_anchor": "Operates underground/open-pit gold-silver mines (Fox Complex Canada, Gold Bar Nevada, El Gallo Mexico) producing doré bars.",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.85,
+ "value_chain_position": "Mid-tier/emerging gold-silver producer selling doré; separately holds a majority stake in the pre-production Los Azules copper project (McEwen Copper), which is not yet revenue-generating and is excluded from the current commodity mix.",
+ "true_competitors": [
+  "Hecla Mining (HL)",
+  "Coeur Mining (CDE)",
+  "Alamos Gold (AGI)",
+  "Equinox Gold (EQX)",
+  "New Gold (NGD)",
+  "Fortuna Mining (FSM)"
+ ],
+ "chain_fit_confidence": "high"
+}

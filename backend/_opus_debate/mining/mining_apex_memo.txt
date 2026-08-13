@@ -1,0 +1,269 @@
+MINING BOOK, LANE A - DIRECTOR'S MEMO, 11 AUGUST 2026
+
+(a) How the names were scored, and what valuation was allowed to do
+
+Four pillars of twenty-five points each, applied only to names that cleared the gates. First,
+cost-curve position and the quality of the torque - how much cash profit moves for a 10% move in
+the commodity, and whether that swing is taken from a low-cost or a marginal position. Second, the
+contracting cycle and reserve life, which for a royalty company means the paying-asset book. Third,
+capital discipline and the balance sheet - this sector's besetting sin is building at the top, so
+last-cycle behaviour is scored, not just today's leverage. Fourth, a valuation guard.
+
+The guard is a guard, not a ranking pillar. Every name starts with full marks and loses them only
+for danger: a price well above the reconciled value of the parts, or earnings struck on a peak
+commodity price that must be normalised before any cheapness is credited. It vetoed one name, capped
+several, and in no case lifted a name above another that passed clean. Teck is the clearest
+illustration - it carries the largest discount in the universe, about 29%, and it is a runner-up, not
+a seat, because a discount cannot buy rank.
+
+Catalysts played no part. This book has the event overlay fully removed: a live catalyst is neither
+a plus nor a requirement, and the dated-event book is elsewhere.
+
+One methodological point that changed several rankings materially. Where the debate verified
+company-reported cost and margin figures against the automated screen and the two disagreed, the
+company figure won, as the rubric requires. That correction cut Hudbay (the screened 66.5% margin
+embeds a $322M non-cash impairment reversal; the honest figure is 51%), cut Southern Copper's
+cost-curve credit (the near-zero cash cost is a by-product credit, not a mining achievement), and
+lifted Rio Tinto by roughly ten points of margin (the screen summed four half-year periods instead of
+two) and Vale (the screened 25% margin and 1.5 times net debt are both corrupted by December 2025
+non-cash charges; the true figures are about 42% and 0.97 times).
+
+(b) Excluded and capped
+
+By the credibility gate:
+  - Alamos Gold - excluded outright, credibility scored two out of five with a turning trajectory.
+    Its own 29 July 2026 revision lifted 2026 all-in sustaining cost guidance 18% at the midpoint to
+    $1,775-1,875 an ounce while the screen still filed it in the high-margin cohort. Not eligible at
+    any price. No other name in the universe was gated, and none was capped for a worsening
+    trajectory.
+
+By the solvency gate:
+  - No eligible name reads weak on funded debt, so the gate excluded nobody. Alcoa and Teck read
+    moderate, which passes; Teck's own 30 June 2026 balance sheet in fact shows net cash of C$1,244
+    million, which the screen missed entirely.
+
+By the valuation guard:
+  - Franco-Nevada - vetoed. A reconciled margin-of-safety reading of about minus 53%, past the level
+    at which the reconciled fair value cannot reach the price. A superb business - a cash cost of $341
+    per gold-equivalent ounce, roughly a fifth of a typical producer's all-in cost - at a price this
+    book will not pay.
+  - Wheaton Precious Metals - capped out at about minus 26%, and blocked independently by the
+    three-name limit on the precious-metals chain.
+  - Southern Copper - seated but cut to 0.40 units, the smallest seat, on a guard reading of about
+    minus 10% and a price roughly 20% above the reconciled value of the parts.
+  - Cameco - seated at 0.50 units on a guard reading of about minus 21%; kept for its contract book
+    and because it is the only separate risk in the basket, with fresh money held back for evidence.
+  - Agnico Eagle - trimmed to 0.50 units on a guard reading of about minus 10%, with earnings struck
+    at a gold price that has already begun to fall.
+  - Freeport-McMoRan, Ero Copper, Buenaventura and Fortuna Mining - all deducted for a price above
+    the reconciled value or for a cost position their own disclosures show to be mid-curve; none
+    seated.
+  - Alcoa - not seated. Worst cost position in its cohort, an alumina business losing $96M a quarter,
+    interest cover of 3.5 times. A taxonomy note for the map while we are here: it is a metal
+    converter filed in the copper chain and benchmarked against orebody miners whose margins are
+    structurally far higher, so its bottom-of-cohort band overstates the case against it - it is not
+    seated on the merits either way.
+
+By the headwind rule:
+  - Nobody. Every chain reads neutral in the cycle sidecar, so no seat is clamped by the headwind
+    rule and no headwind justification is required or given. The macro note's separate view that
+    monetary metals are currently out of favour is a macro read; by this book's rules it cannot move
+    a size, and it has not.
+
+Split rule and physical anchors: every name in the input is a producer or a royalty company. No
+equipment, services or utility name reached this desk, so there is nothing to report as a
+map-merge failure, and every seat carries a specific physical anchor - ore mined, metal poured, or a
+contractual claim on ounces produced by a named third party.
+
+(c) Downside torque, seat by seat
+
+Torque cuts both ways, and every seat whose case cites it carries the downside number here.
+
+  - OR Royalties: plus-or-minus 9.7% cash profit per 10% gold move. Downside minus 9.7%, taken from
+    a 96.8% cash margin - the lowest-cost position in the book, so the swing is survivable.
+  - Rio Tinto: plus-or-minus 24.9%. Downside minus 24.9%, driven by iron ore rather than copper, and
+    part of the recent copper cost cut is a gold by-product credit that reverses with the metal.
+  - Royal Gold: plus-or-minus 12.7%. Downside minus 12.7% with no cost to cut - a royalty book has
+    no operating lever.
+  - Hudbay: plus-or-minus 11.3%. Downside minus 11.3%, absorbed from a verified negative cash cost
+    per pound - the reason this torque is compounding leverage rather than a coin flip.
+  - Agnico Eagle: plus-or-minus 13.2%. Downside minus 13.2%, and it is already happening: the
+    realised price fell from about $4,900 to $4,483 between the March and June 2026 quarters.
+  - Vale: plus-or-minus 31.9%. Downside minus 31.9% - the largest in the book - with no contracted
+    book beneath it, and the beta behind it is an index regression, so read it softly.
+  - Cameco: plus-or-minus 30.2%. Downside minus 30.2%, bounded only by roughly 230 million pounds of
+    committed long-term contracts; the beta is an exchange-traded-fund regression, so read it softly.
+  - Southern Copper: plus-or-minus 13.5%. Downside minus 13.5%, and it understates the true risk,
+    because a copper fall would most likely arrive with a fall in the silver and molybdenum credits
+    now producing the near-zero headline cost.
+
+(d) Shared commodity factors, and how each was resolved
+
+The shared global-growth and China-demand axis, decomposed first as required. Four of the eight seats
+ride it: Hudbay and Southern Copper through copper, Rio Tinto and Vale through seaborne iron ore into
+Chinese steel. The measured two-year weekly correlations say these are not four independent bets -
+Hudbay against Southern Copper is 0.82, Vale against Southern Copper 0.74, Hudbay against Vale 0.61,
+against a book-wide average pairwise figure of 0.57. A China demand shock or a global-growth
+downgrade hits all four in the same week. Resolved by keeping with an explicit cap rather than by
+diversifying, for the arithmetic reason set out below, and the cap is numeric: the four names are
+capped at 2.25 units combined and the two copper names at 1.05 units combined. Southern Copper - the
+lowest-scoring seat in the book and the name appearing in both measured breaches - is cut from 0.6 to
+0.4 units, the smallest position here.
+
+The gold and real-rate axis. Three of the eight seats ride it: Royal Gold, OR Royalties and Agnico
+Eagle. These are the most damning numbers on the page - Royal Gold against Agnico Eagle 0.86, OR
+against Agnico Eagle 0.86, Royal Gold against OR 0.84. Two of them are one bet, and the royalties are
+emphatically not a diversifier of the producer; all three de-rate together on a real-rate move.
+Resolved by keeping with a cap of 2.00 units combined, achieved by cutting Agnico Eagle - the
+lowest-scoring of the three, the only one whose price sits above the reconciled value of its parts,
+and the only one with no moat in its file - from 0.7 to 0.5 units.
+
+Why diversification was not available on either axis. After the credibility exclusion, seventeen
+names remain and they occupy only four chains: precious metals, copper, diversified miners and the
+uranium fuel cycle. There is not one rare-earth or strategic-metals name in the input, and exactly one
+uranium name, which is already seated. With a limit of three names per chain, and with the only
+diversified-miners name that is not also a copper name being Vale, the arithmetic closes: the maximum
+number of distinct seats reachable without a fourth copper name is seven, unless the precious-metals
+chain carries three. An eight-name slate therefore forces a three-plus-three-plus-two-plus-one shape,
+and no swap inside that shape removes an axis - it only exchanges one name on the axis for another.
+That is why both resolutions are caps rather than swaps, and it is stated rather than glossed.
+
+The uranium contracting cycle. One seat, Cameco, so no action is required; it is named because the
+instruction requires every chain-specific axis to be reported. It is the one genuinely separate risk
+in this basket, and the reason its size went up rather than down.
+
+Export controls and rare earths. Zero seats, because the eligible universe contains no rare-earth or
+strategic-metals name at all. Reported for completeness; no action is possible.
+
+One standing note on gold. This system does not score the gold price anywhere, by design - the
+momentum guard exists because a price-following rule would have bought the January 2026 top. Nothing
+above ranks a seat because gold rose.
+
+(e) Rise and fall against the prior slate
+
+The prior apex, dated 4 August 2026, carried seven seats: Royal Gold 80, Hudbay 78, OR Royalties 77,
+Agnico Eagle 76, Vale 70, Southern Copper 66, Cameco 60, with Teck 74, Rio Tinto 68, Fortuna 66,
+Wheaton 65, Buenaventura 63 and Ero 60 in reserve. This run:
+
+  - OR Royalties 77 to 83. Up six: the 8 July 2026 disclosure confirmed a 96.8% cash margin and 2030
+    volumes contracted, and the correction to the impossible screened margin left the conclusion
+    intact.
+  - Rio Tinto 68 to 82, promoted from reserve. Up fourteen, almost all of it a data correction - the
+    screen had summed four half-year periods instead of two, understating the trailing margin by
+    about ten points - plus verified first-quartile costs on both legs and a 28 July 2026 result
+    showing cash profit up 28% and free cash flow up 75%.
+  - Royal Gold 80 to 81. Up one: the 21 July 2026 disclosure of $871 per gold-equivalent ounce
+    against $4,506 realised confirmed the widest cash spread in the book.
+  - Hudbay 78 to 76. Down two: the cost claim was verified and improved, but the screened margin
+    proved about fifteen points too high once the September 2025 impairment reversal is stripped, and
+    the stock is 8.6 rather than 6.6 times cash profit.
+  - Agnico Eagle 76 to 73. Down three: the cost position is still the best in the senior tier, but the
+    advantage over Newmont is about $220 an ounce rather than the hundreds management claims, margin
+    rolled over 4.2 points in the June quarter, and the price sits above the reconciled value.
+  - Vale 70 to 73. Up three on net: the corrected margin (42%, not 25%) and net debt (0.97 times, not
+    1.5) are materially better than the screen showed, partly offset by the 31 July 2026 increase in
+    both cash and all-in cost guidance.
+  - Cameco 60 to 67. Up seven: the contract book at roughly 230 million pounds is the strongest
+    contracted position in the slate and the adjusted margin is 54% rather than the screened 24.9%;
+    held back by unit cost of sales up 36% year over year.
+  - Southern Copper 66 to 65. Down one, and the composition changed more than the number: the reserve
+    life and return on capital still score well, but the near-zero cash cost turned out to be a $2.24
+    by-product credit while the underlying mining cost rose from $2.05 to $2.29 a pound.
+
+Reserve list changes: Teck 74 to 77 and Rio Tinto promoted out of it; BHP added at 72 (the 16 July
+2026 operational review confirmed a sixth consecutive year as lowest-cost iron-ore major); Wheaton 65
+to 70; Ero 60 to 63; Freeport enters at 58. Fortuna and Buenaventura drop off the reserve list -
+both were shown by their own disclosures to be mid- or high-cost operators enjoying a high metal
+price, Fortuna at $2,157 per gold-equivalent ounce against guidance of $1,830-1,975.
+
+(f) Rotation, reconciled to the ledger
+
+The ledger records seven held names and no drops this year. This run drops nothing, re-adds nothing,
+adds one, and re-sizes six.
+
+  - OR Royalties - KEEP at 0.75 units. Thesis untouched; 96.8% cash margin confirmed 8 July 2026.
+  - Royal Gold - KEEP at 0.75 units, which is also the ceiling the mid-build cash-flow flag imposes.
+    $871 per gold-equivalent ounce disclosed 21 July 2026.
+  - Hudbay - KEEP, trimmed 0.8 to 0.65. Cost guidance improved 29 July 2026 to a negative cost per
+    pound; the trim is for the fifteen-point margin overstatement, not for the thesis.
+  - Agnico Eagle - KEEP, trimmed 0.7 to 0.5. Still the lowest-cost senior, but it is the cut leg of
+    the gold cap and its realised price has turned.
+  - Vale - KEEP, trimmed 0.6 to 0.55. Cost guidance raised 31 July 2026; thesis intact, trend adverse.
+  - Southern Copper - KEEP, cut 0.6 to 0.4. Not broken - the price is nowhere near the level that
+    would break it, the credibility and solvency files are clean, and the reserve life stands - but it
+    is the weakest seat on the rubric and the one in both measured correlation breaches. Teck was
+    considered as the strictly-better replacement for this seat and rejected: it scores higher, but it
+    sits on the same global-growth and China-demand axis, so the swap would buy quality without
+    buying orthogonality, and the discount that makes it attractive is anchored to a pending merger,
+    which is not a reason this book owns anything. Teck stays first in reserve.
+  - Cameco - KEEP, raised 0.4 to 0.5. Raised because it is the only seat not on a shared axis, not
+    because anything in its own numbers improved - its unit cost of sales is going the wrong way.
+  - Rio Tinto - ADD at 0.65 units. The eighth seat, required because the slate must carry exactly
+    eight. Added on the verified margin correction and the 28 July 2026 half-year result, not on the
+    capital-release programme, which remains unsigned and carries no weight in this book.
+
+(g) Bear rebuttal - the strongest reason each seat is wrong, written before final sizing
+
+  - OR Royalties: cleaning the impossible screened margin lifts the multiple from about 16 to about
+    20 times cash earnings, so the cheapest-looking royalty in the book is not actually cheap.
+  - Rio Tinto: it is a 55%-iron-ore company being seated in the copper chain, and its own valuation
+    discounts Chinese steel structurally - if that discount is too small, the largest part of the
+    business is worth less than the base case says.
+  - Royal Gold: it is the only royalty here carrying debt, it bought the Sandstorm book at a high gold
+    price, and the two valuation readings on file disagree with each other.
+  - Hudbay: the high-grade Pampacancha ore that supplied the gold credits behind the negative cash
+    cost is depleted, so the first-quartile position may already be historical.
+  - Agnico Eagle: the shares trade above the reconciled value of the parts on earnings struck at a
+    gold price that has fallen 8% in a quarter, and the file records no moat.
+  - Vale: cost guidance has now been raised twice in a year while margin compresses on rising revenue,
+    and it carries the book's largest downside torque with no contracted cushion.
+  - Cameco: unit cost of sales rose 36% year over year, guidance was raised, and the reconciled value
+    sits about a third below the market price - the contract book is bounding a thesis that the
+    numbers are currently working against.
+  - Southern Copper: strip the silver and molybdenum credit and the mining cost rose 12%; the market
+    is paying 20% above the reconciled value for a cost position that is borrowed from other metals.
+
+(h) Macro - what it changed, and what it did not
+
+The cited block reads a debt-cycle phase in which the bond market is imposing positive real rates, a
+growth-rising and inflation-cooling quadrant, and a neutral risk regime, with a winner scoreboard
+placing strategic metals first and the uranium fuel cycle last. It also carries an explicit warning
+that the macro layer is degraded - the phase is a seeded prior, not yet earned by the state machine.
+That warning is honoured here: unnamed families are treated as neutral, no headwind is read into the
+gap, and because a data gap must never tighten the book, nothing was cut on the strength of it.
+
+What it changed. Three things, all of them the sanctioned channels. First, posture: the stance for
+this run is cautious, which reflects the phase read alongside the fact that six of the eight seats
+trade at or above the reconciled value of their parts. Second, the entry bar: in this quadrant a
+fresh entry wants a discount of at least 20% to reconciled value, and no seat in this book clears
+that - which is why five of the eight are marked to wait for weakness, two to scale in, and Cameco
+to wait for a specific piece of evidence rather than a price. Third, the horizon: eighteen months
+rather than twelve, because a phase in which real rates are being imposed lengthens the time a
+cost-curve advantage needs to show up in cash rather than in the multiple. Fourth, the per-seat
+phase commentary, which is judgement and nothing more - Rio Tinto's Simandou and lithium builds and
+Cameco's raised unit costs are both named there as sitting against the phase, and both seats were
+taken anyway.
+
+What it did not change. Membership: no name is in or out of this book because of the phase, the
+quadrant, or its rank on the scoreboard - the seats were chosen on the four pillars and the gates,
+and the shape was forced by the chain caps and the eligible universe. Conviction: no score moved on a
+macro citation, and no decision rationale above cites one. Sizing: not one unit was set or moved by
+the macro read - the only things that moved sizes were name-specific dated facts (Hudbay's margin
+correction, Agnico's falling realised price, Vale's raised cost guidance, Southern Copper's
+by-product credit) and the two correlation caps. The clearest test of this is precious metals: the
+macro block calls it a headwind family and ranks it second on the scoreboard, and neither fact
+touched a single unit - the gold cluster was cut on measured correlation and on Agnico's own price
+against its own value, not on the phase. Copper is the mirror image: the block calls it a tailwind
+and the top-confidence family, and Southern Copper was still cut to the smallest seat in the book.
+
+Sizing note for the audit trail. This book publishes equal-weighted, so the eight seats each carry
+12.5% of published weight regardless of the units above. The chain exposure reported alongside this
+memo is therefore the published one: precious metals and copper each carry three of eight seats and
+so 37.5%, diversified miners two seats and 25%, the uranium fuel cycle one seat and 12.5%. Both
+three-seat chains sit above the 30% weight bound by arithmetic rather than by drift - under equal
+weighting three of eight seats is always 37.5% - and both are inside the three-name limit that
+actually binds. Measured on the size units instead, precious metals is 42.1%, copper 35.8%,
+diversified miners 25.3% and the uranium fuel cycle 10.5%. Those two breaches are stated rather than
+engineered away: bringing them under 30% would require sizing Vale and Cameco at roughly double every
+other seat, which would misrepresent conviction in the very record that is meant to decide whether
+equal weighting is ever switched off.

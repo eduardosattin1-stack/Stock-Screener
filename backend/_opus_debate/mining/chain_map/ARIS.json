@@ -1,0 +1,20 @@
+{
+ "symbol": "ARIS",
+ "physical_anchor": "Mines and pours gold doré at Segovia and Marmato underground mines in Colombia.",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Latin America-focused underground gold producer selling doré.",
+ "true_competitors": [
+  "EGO",
+  "AGI",
+  "IAG",
+  "CDE",
+  "BTG",
+  "LUG.TO",
+  "EDVMF"
+ ],
+ "chain_fit_confidence": "high"
+}

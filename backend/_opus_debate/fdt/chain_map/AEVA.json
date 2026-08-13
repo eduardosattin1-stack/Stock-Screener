@@ -1,0 +1,19 @@
+{
+ "symbol": "AEVA",
+ "physical_anchor": "FMCW 4D LiDAR-on-chip sensors for autonomous vehicles, industrial automation and robotics",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Machine vision & sensing layer — designs and sells silicon-photonics FMCW LiDAR sensor modules to auto and industrial customers",
+ "true_competitors": [
+  "LAZR",
+  "OUST",
+  "INVZ",
+  "MVIS",
+  "CPTN",
+  "HSAI"
+ ],
+ "chain_fit_confidence": "medium"
+}

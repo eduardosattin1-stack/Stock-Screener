@@ -1,0 +1,20 @@
+{
+ "symbol": "TER",
+ "physical_anchor": "Collaborative robot arms and autonomous mobile robots (Universal Robots / MiR) plus semiconductor and systems automated test equipment hardware",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Motion control & automation equipment toll-taker — sells cobots, AMRs, and chip/system ATE hardware into every factory-automation and chip-test buildout",
+ "true_competitors": [
+  "ABB Ltd (ABBN.SW)",
+  "FANUC Corp (6954.T)",
+  "Yaskawa Electric (6506.T)",
+  "Zebra Technologies (ZBRA)",
+  "Cohu Inc (COHU)",
+  "Advantest Corp (6857.T)",
+  "ATS Corp (ATS)"
+ ],
+ "chain_fit_confidence": "high"
+}

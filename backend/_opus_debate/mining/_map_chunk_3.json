@@ -1,0 +1,612 @@
+[
+ {
+  "symbol": "SSRM",
+  "name": "SSR Mining Inc.",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 5687328310,
+  "lane": "a",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": 482307514,
+   "ttm_ocf": 650669718,
+   "ttm_capex": -168362204,
+   "ttm_ebitda": 814218000,
+   "ttm_revenue": 1894797000,
+   "rev_yoy": 0.7512,
+   "cash_sti": 674356000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 51488068.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.6947365447582834
+  }
+ },
+ {
+  "symbol": "STLD",
+  "name": "Steel Dynamics, Inc.",
+  "sector": "Basic Materials",
+  "industry": "Steel",
+  "mcap": 38160389186,
+  "lane": "a",
+  "chains_hint": [
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": 955563000,
+   "ttm_ocf": 1571572000,
+   "ttm_capex": -616009000,
+   "ttm_ebitda": 2968899000,
+   "ttm_revenue": 20538678000,
+   "rev_yoy": 0.1977,
+   "cash_sti": 567708000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 213040688.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.2174324556005442
+  }
+ },
+ {
+  "symbol": "SVM",
+  "name": "Silvercorp Metals Inc.",
+  "sector": "Basic Materials",
+  "industry": "Silver",
+  "mcap": 2256270600,
+  "lane": "a",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": 91460550,
+   "ttm_ocf": 307972758,
+   "ttm_capex": -216512206,
+   "ttm_ebitda": 129915792,
+   "ttm_revenue": 437108519,
+   "rev_yoy": 0.4624,
+   "cash_sti": 422335000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 15572177.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -2.3368675611045036
+  }
+ },
+ {
+  "symbol": "TECK",
+  "name": "Teck Resources Limited",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 31419150000,
+  "lane": "a",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": 1523074970,
+   "ttm_ocf": 4197816725,
+   "ttm_capex": -2674741755,
+   "ttm_ebitda": 6469660052,
+   "ttm_revenue": 13990069905,
+   "rev_yoy": 0.405,
+   "cash_sti": 6054622209,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 157016194.0,
+   "royalty_hint": false,
+   "funded_solvency": "moderate",
+   "net_funded_debt_ebitda": 0.8309038320449424
+  }
+ },
+ {
+  "symbol": "TX",
+  "name": "Ternium S.A.",
+  "sector": "Basic Materials",
+  "industry": "Steel",
+  "mcap": 9977337684,
+  "lane": "a",
+  "chains_hint": [
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -64717000,
+   "ttm_ocf": 2324389000,
+   "ttm_capex": -2389106000,
+   "ttm_ebitda": 1618609135,
+   "ttm_revenue": 15578472827,
+   "rev_yoy": -0.0729,
+   "cash_sti": 3142220000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 5393083.0,
+   "runway_months": 582.6,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 31987374.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 0.8607865666098566
+  }
+ },
+ {
+  "symbol": "VALE",
+  "name": "Vale S.A.",
+  "sector": "Basic Materials",
+  "industry": "Steel",
+  "mcap": 63520233945,
+  "lane": "a",
+  "chains_hint": [
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": 3351978890,
+   "ttm_ocf": 9289638102,
+   "ttm_capex": -5937659212,
+   "ttm_ebitda": 9898812091,
+   "ttm_revenue": 39533207477,
+   "rev_yoy": 0.0628,
+   "cash_sti": 5276190000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 165339043.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": 1.5040395947553686
+  }
+ },
+ {
+  "symbol": "WPM",
+  "name": "Wheaton Precious Metals Corp.",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 52619463750,
+  "lane": "a",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": 992158682,
+   "ttm_ocf": 2308922437,
+   "ttm_capex": -1316763755,
+   "ttm_ebitda": 2402983634,
+   "ttm_revenue": 2746462847,
+   "rev_yoy": 0.8834,
+   "cash_sti": 2171623637,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 125560787.0,
+   "royalty_hint": false,
+   "funded_solvency": "strong",
+   "net_funded_debt_ebitda": -0.9005206728761266
+  }
+ },
+ {
+  "symbol": "ABAT",
+  "name": "American Battery Technology Company Common Stock",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 317258040,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -36221488,
+   "ttm_ocf": -25841267,
+   "ttm_capex": -10380221,
+   "ttm_ebitda": -60334084,
+   "ttm_revenue": 16284496,
+   "rev_yoy": 7.7651,
+   "cash_sti": 37685027,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 3018457.0,
+   "runway_months": 12.5,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 4171308.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ALB",
+  "name": "Albemarle Corporation",
+  "sector": "Basic Materials",
+  "industry": "Chemicals - Specialty",
+  "mcap": 14331418790,
+  "lane": "b",
+  "chains_hint": [
+   "rare_earth_strategic"
+  ],
+  "gates": {
+   "ttm_fcf": 577275000,
+   "ttm_ocf": 1083128000,
+   "ttm_capex": -505853000,
+   "ttm_ebitda": 747070000,
+   "ttm_revenue": 5494583000,
+   "rev_yoy": 0.0787,
+   "cash_sti": 1089809000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 126760307.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 1.0601710683068521
+  }
+ },
+ {
+  "symbol": "ALM",
+  "name": "Almonty Industries Inc.",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 3817748610,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -79883000,
+   "ttm_ocf": -5057000,
+   "ttm_capex": -74826000,
+   "ttm_ebitda": -125101000,
+   "ttm_revenue": 50006000,
+   "rev_yoy": null,
+   "cash_sti": 259853000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 6656917.0,
+   "runway_months": 39.0,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 38247479.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ALOY",
+  "name": "REalloys Inc.",
+  "sector": "Basic Materials",
+  "industry": "Other Precious Metals",
+  "mcap": 717933805,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": -13068399,
+   "ttm_ocf": -13066402,
+   "ttm_capex": -1997,
+   "ttm_ebitda": -100412996,
+   "ttm_revenue": 2550155,
+   "rev_yoy": 0.3299,
+   "cash_sti": 50048000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1089033.0,
+   "runway_months": 46.0,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 22011918.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ALTO",
+  "name": "Alto Ingredients, Inc.",
+  "sector": "Basic Materials",
+  "industry": "Chemicals - Specialty",
+  "mcap": 407184479,
+  "lane": "b",
+  "chains_hint": [
+   "rare_earth_strategic"
+  ],
+  "gates": {
+   "ttm_fcf": 30711000,
+   "ttm_ocf": 35685000,
+   "ttm_capex": -4974000,
+   "ttm_ebitda": 64217000,
+   "ttm_revenue": 916067000,
+   "rev_yoy": -0.0369,
+   "cash_sti": 20309000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 4962419.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "APD",
+  "name": "Air Products and Chemicals, Inc.",
+  "sector": "Basic Materials",
+  "industry": "Chemicals - Specialty",
+  "mcap": 66007331375,
+  "lane": "b",
+  "chains_hint": [
+   "rare_earth_strategic"
+  ],
+  "gates": {
+   "ttm_fcf": 2057400000,
+   "ttm_ocf": 4570800000,
+   "ttm_capex": -2513400000,
+   "ttm_ebitda": 1297600000,
+   "ttm_revenue": 12602200000,
+   "rev_yoy": 0.0451,
+   "cash_sti": 980500000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 99663319.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.834879161067172
+  }
+ },
+ {
+  "symbol": "ASH",
+  "name": "Ashland Inc.",
+  "sector": "Basic Materials",
+  "industry": "Chemicals - Specialty",
+  "mcap": 3307654898,
+  "lane": "b",
+  "chains_hint": [
+   "rare_earth_strategic"
+  ],
+  "gates": {
+   "ttm_fcf": 323000000,
+   "ttm_ocf": 394000000,
+   "ttm_capex": -71000000,
+   "ttm_ebitda": 358000000,
+   "ttm_revenue": 1843000000,
+   "rev_yoy": -0.0139,
+   "cash_sti": 440000000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 9678748.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 2.893854748603352
+  }
+ },
+ {
+  "symbol": "ASPN",
+  "name": "Aspen Aerogels, Inc.",
+  "sector": "Basic Materials",
+  "industry": "Chemicals - Specialty",
+  "mcap": 417287976,
+  "lane": "b",
+  "chains_hint": [
+   "rare_earth_strategic"
+  ],
+  "gates": {
+   "ttm_fcf": 35567000,
+   "ttm_ocf": 61385000,
+   "ttm_capex": -25818000,
+   "ttm_ebitda": -59506000,
+   "ttm_revenue": 230264000,
+   "rev_yoy": -0.473,
+   "cash_sti": 175583000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 3020572.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ASTL",
+  "name": "Algoma Steel Group Inc.",
+  "sector": "Basic Materials",
+  "industry": "Steel",
+  "mcap": 448428574,
+  "lane": "b",
+  "chains_hint": [
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -365400000,
+   "ttm_ocf": -211900000,
+   "ttm_capex": -153500000,
+   "ttm_ebitda": -520548180,
+   "ttm_revenue": 1543415900,
+   "rev_yoy": -0.271,
+   "cash_sti": 62627123,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 30450000.0,
+   "runway_months": 2.1,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 3248009.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "CC",
+  "name": "The Chemours Company",
+  "sector": "Basic Materials",
+  "industry": "Chemicals - Specialty",
+  "mcap": 2680482663,
+  "lane": "b",
+  "chains_hint": [
+   "rare_earth_strategic"
+  ],
+  "gates": {
+   "ttm_fcf": 154000000,
+   "ttm_ocf": 332000000,
+   "ttm_capex": -178000000,
+   "ttm_ebitda": 132000000,
+   "ttm_revenue": 5821000000,
+   "rev_yoy": 0.0007,
+   "cash_sti": 563000000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 17234975.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 29
+  }
+ },
+ {
+  "symbol": "CLF",
+  "name": "Cleveland-Cliffs Inc.",
+  "sector": "Basic Materials",
+  "industry": "Steel",
+  "mcap": 6929208300,
+  "lane": "b",
+  "chains_hint": [
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -857000000,
+   "ttm_ocf": -251000000,
+   "ttm_capex": -606000000,
+   "ttm_ebitda": 622000000,
+   "ttm_revenue": 19195000000,
+   "rev_yoy": 0.04,
+   "cash_sti": 70000000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 71416667.0,
+   "runway_months": 1.0,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 113336897.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "CLMT",
+  "name": "Calumet Inc.",
+  "sector": "Basic Materials",
+  "industry": "Chemicals - Specialty",
+  "mcap": 3641600402,
+  "lane": "b",
+  "chains_hint": [
+   "rare_earth_strategic"
+  ],
+  "gates": {
+   "ttm_fcf": 85400000,
+   "ttm_ocf": 133300000,
+   "ttm_capex": -47900000,
+   "ttm_ebitda": -43700000,
+   "ttm_revenue": 4172899999,
+   "rev_yoy": -0.0011,
+   "cash_sti": 138600000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 14098037.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "CMP",
+  "name": "Compass Minerals International, Inc.",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 1269238575,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": 100400000,
+   "ttm_ocf": 175300000,
+   "ttm_capex": -74900000,
+   "ttm_ebitda": 201600000,
+   "ttm_revenue": 1291400000,
+   "rev_yoy": 0.0642,
+   "cash_sti": 74100000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 4673716.0,
+   "royalty_hint": false
+  }
+ }
+]

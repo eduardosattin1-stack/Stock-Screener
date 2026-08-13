@@ -1,0 +1,19 @@
+{
+ "symbol": "AMBA",
+ "physical_anchor": "designs edge-AI computer-vision processor SoCs embedded in cameras for autonomous vehicles, robotics and security/industrial vision systems",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Machine vision & sensing layer — vision-processing silicon that goes into every camera-equipped robot/AMR/ADAS deployment",
+ "true_competitors": [
+  "NVDA",
+  "QCOM",
+  "MBLY",
+  "SYNA",
+  "CEVA",
+  "ON"
+ ],
+ "chain_fit_confidence": "high"
+}

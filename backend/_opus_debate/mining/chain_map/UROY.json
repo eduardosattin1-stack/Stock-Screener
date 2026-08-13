@@ -1,0 +1,19 @@
+{
+ "symbol": "UROY",
+ "physical_anchor": "Royalty and streaming interests plus physical uranium holdings entitling delivery of U3O8 from uranium mines/projects",
+ "chains": [
+  "uranium_fuel_cycle"
+ ],
+ "business_model": "royalty_streamer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Uranium royalty/streaming pure-play holding physical U3O8 and royalty interests across producing and development projects; auto-passes cash/profit gates",
+ "true_competitors": [
+  "YCA.L",
+  "CCJ",
+  "U.UN",
+  "DNN",
+  "BOE.AX",
+  "DYL.AX"
+ ],
+ "chain_fit_confidence": "high"
+}

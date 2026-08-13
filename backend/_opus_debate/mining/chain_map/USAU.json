@@ -1,0 +1,20 @@
+{
+ "symbol": "USAU",
+ "physical_anchor": "CK Gold-Copper deposit under development in Wyoming",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.8,
+ "value_chain_position": "Pre-revenue developer advancing the CK Gold-Copper project toward construction financing",
+ "true_competitors": [
+  "SA",
+  "NG",
+  "CTGO",
+  "NAK",
+  "IAUX",
+  "GATO",
+  "VZLA"
+ ],
+ "chain_fit_confidence": "high"
+}

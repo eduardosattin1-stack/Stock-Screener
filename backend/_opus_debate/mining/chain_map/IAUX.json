@@ -1,0 +1,20 @@
+{
+ "symbol": "IAUX",
+ "physical_anchor": "Gold-silver ore mined and processed at Ruby Hill, Granite Creek and McCoy-Cove, Nevada",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Multi-mine Nevada gold-silver producer/developer with active production plus growth projects funded by production cash flow",
+ "true_competitors": [
+  "HYMC",
+  "DC",
+  "GAU",
+  "CDE",
+  "HL",
+  "AG",
+  "PAAS"
+ ],
+ "chain_fit_confidence": "high"
+}

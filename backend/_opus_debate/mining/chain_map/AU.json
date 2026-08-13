@@ -1,0 +1,20 @@
+{
+ "symbol": "AU",
+ "physical_anchor": "Mines and pours gold doré at mines across South Africa, Ghana, Guinea, Tanzania, DRC and Egypt.",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Senior African-focused gold producer selling refined bullion.",
+ "true_competitors": [
+  "NEM",
+  "B",
+  "KGC",
+  "GFI",
+  "HMY",
+  "SBSW",
+  "AEM"
+ ],
+ "chain_fit_confidence": "high"
+}

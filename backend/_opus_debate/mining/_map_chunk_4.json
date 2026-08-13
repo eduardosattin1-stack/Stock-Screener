@@ -1,0 +1,592 @@
+[
+ {
+  "symbol": "CRML",
+  "name": "Critical Metals Corp.",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 635839915,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -32300704,
+   "ttm_ocf": -31071170,
+   "ttm_capex": -1229534,
+   "ttm_ebitda": -51798968,
+   "ttm_revenue": 768574,
+   "rev_yoy": 0.6095,
+   "cash_sti": 80923699,
+   "balance_date": "2025-12-31",
+   "balance_sheet_stale": true,
+   "monthly_burn": 2691725.0,
+   "runway_months": 30.1,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 37990416.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "CTGO",
+  "name": "Contango Ore, Inc.",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 205416151,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": 25571562,
+   "ttm_ocf": 25734054,
+   "ttm_capex": -162492,
+   "ttm_ebitda": -28044114,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 97450405,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 2998737.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "DC",
+  "name": "Dakota Gold Corp.",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 672988687,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": -30988025,
+   "ttm_ocf": -29778260,
+   "ttm_capex": -1209764,
+   "ttm_ebitda": -34650520,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 106905440,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 2582335.0,
+   "runway_months": 41.4,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 3464692.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "DNN",
+  "name": "Denison Mines Corp.",
+  "sector": "Energy",
+  "industry": "Uranium",
+  "mcap": 2733151225,
+  "lane": "b",
+  "chains_hint": [
+   "uranium_fuel_cycle"
+  ],
+  "gates": {
+   "ttm_fcf": -145469952,
+   "ttm_ocf": -86863883,
+   "ttm_capex": -58606068,
+   "ttm_ebitda": -246081000,
+   "ttm_revenue": 4649000,
+   "rev_yoy": 0.0182,
+   "cash_sti": 562844789,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 12122496.0,
+   "runway_months": 46.4,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 40117046.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "DRD",
+  "name": "DRDGOLD Limited",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 1892948372,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": 1080518865,
+   "ttm_ocf": 6819443842,
+   "ttm_capex": -5738924977,
+   "ttm_ebitda": 7172592697,
+   "ttm_revenue": 15957367809,
+   "rev_yoy": 0.4388,
+   "cash_sti": 1732699089,
+   "balance_date": "2025-12-31",
+   "balance_sheet_stale": true,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 3936088.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ECVT",
+  "name": "Ecovyst Inc.",
+  "sector": "Basic Materials",
+  "industry": "Chemicals - Specialty",
+  "mcap": 1332596168,
+  "lane": "b",
+  "chains_hint": [
+   "rare_earth_strategic"
+  ],
+  "gates": {
+   "ttm_fcf": 86693000,
+   "ttm_ocf": 146987000,
+   "ttm_capex": -60284000,
+   "ttm_ebitda": 151689000,
+   "ttm_revenue": 819420000,
+   "rev_yoy": 0.1926,
+   "cash_sti": 162600000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 4064283.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ELE",
+  "name": "Elemental Royalty Corporation Common Stock",
+  "sector": "Basic Materials",
+  "industry": "Other Precious Metals",
+  "mcap": 1074874686,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": -24284192,
+   "ttm_ocf": 44471975,
+   "ttm_capex": -68756166.83499932,
+   "ttm_ebitda": 25423006,
+   "ttm_revenue": 56249916,
+   "rev_yoy": 1.2984,
+   "cash_sti": 86183511,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 2023683.0,
+   "runway_months": 42.6,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 2045569.0,
+   "royalty_hint": true
+  }
+ },
+ {
+  "symbol": "EMN",
+  "name": "Eastman Chemical Company",
+  "sector": "Basic Materials",
+  "industry": "Chemicals - Specialty",
+  "mcap": 8372135250,
+  "lane": "b",
+  "chains_hint": [
+   "rare_earth_strategic"
+  ],
+  "gates": {
+   "ttm_fcf": 539000000,
+   "ttm_ocf": 991000000,
+   "ttm_capex": -452000000,
+   "ttm_ebitda": 1272000000,
+   "ttm_revenue": 8865000000,
+   "rev_yoy": -0.0453,
+   "cash_sti": 691000000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 33660669.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.558176100628931
+  }
+ },
+ {
+  "symbol": "ESI",
+  "name": "Element Solutions Inc",
+  "sector": "Basic Materials",
+  "industry": "Chemicals - Specialty",
+  "mcap": 9491761100,
+  "lane": "b",
+  "chains_hint": [
+   "rare_earth_strategic"
+  ],
+  "gates": {
+   "ttm_fcf": 131600000,
+   "ttm_ocf": 218100001,
+   "ttm_capex": -86500000,
+   "ttm_ebitda": 379800000,
+   "ttm_revenue": 3150200000,
+   "rev_yoy": 0.2661,
+   "cash_sti": 189600000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 50613772.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 5.894282310899345
+  }
+ },
+ {
+  "symbol": "EU",
+  "name": "enCore Energy Corp.",
+  "sector": "Energy",
+  "industry": "Uranium",
+  "mcap": 233069216,
+  "lane": "b",
+  "chains_hint": [
+   "uranium_fuel_cycle"
+  ],
+  "gates": {
+   "ttm_fcf": -56711000,
+   "ttm_ocf": -38683000,
+   "ttm_capex": -18028000,
+   "ttm_ebitda": -20335000,
+   "ttm_revenue": 43216000,
+   "rev_yoy": -0.0642,
+   "cash_sti": 111679000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 4725917.0,
+   "runway_months": 23.6,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 2879214.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "FUL",
+  "name": "H.B. Fuller Company",
+  "sector": "Basic Materials",
+  "industry": "Chemicals - Specialty",
+  "mcap": 3156783152,
+  "lane": "b",
+  "chains_hint": [
+   "rare_earth_strategic"
+  ],
+  "gates": {
+   "ttm_fcf": 140772000,
+   "ttm_ocf": 322893000,
+   "ttm_capex": -182121000,
+   "ttm_ebitda": 511878000,
+   "ttm_revenue": 3507946000,
+   "rev_yoy": -0.0057,
+   "cash_sti": 114102000,
+   "balance_date": "2026-05-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 7094858.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.8252259307881955
+  }
+ },
+ {
+  "symbol": "GAU",
+  "name": "Galiano Gold Inc.",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 477733853,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": 50753879,
+   "ttm_ocf": 178689616,
+   "ttm_capex": -127935737,
+   "ttm_ebitda": 213854013,
+   "ttm_revenue": 535394354,
+   "rev_yoy": 0.9382,
+   "cash_sti": 115314000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 2656485.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "GEVO",
+  "name": "Gevo, Inc.",
+  "sector": "Basic Materials",
+  "industry": "Chemicals - Specialty",
+  "mcap": 384589380,
+  "lane": "b",
+  "chains_hint": [
+   "rare_earth_strategic"
+  ],
+  "gates": {
+   "ttm_fcf": -43518000,
+   "ttm_ocf": -10493000,
+   "ttm_capex": -33025000,
+   "ttm_ebitda": 15992000,
+   "ttm_revenue": 174419000,
+   "rev_yoy": 3.1495,
+   "cash_sti": 78902000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 3626500.0,
+   "runway_months": 21.8,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 2588932.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "GMTL",
+  "name": "Guardian Metal Resources PLC Sponsored ADR",
+  "sector": "Basic Materials",
+  "industry": "Other Precious Metals",
+  "mcap": 435395835,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": -3867960,
+   "ttm_ocf": -3867955,
+   "ttm_capex": -7,
+   "ttm_ebitda": -8386425,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 10578882,
+   "balance_date": "2025-12-31",
+   "balance_sheet_stale": true,
+   "monthly_burn": 322330.0,
+   "runway_months": 32.8,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 2560718.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "GROY",
+  "name": "Gold Royalty Corp.",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 510144229,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": -92922000,
+   "ttm_ocf": 8157000,
+   "ttm_capex": -101079000,
+   "ttm_ebitda": 9722000,
+   "ttm_revenue": 19650000,
+   "rev_yoy": 0.8991,
+   "cash_sti": 16199000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 7743500.0,
+   "runway_months": 2.1,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 4803160.0,
+   "royalty_hint": true
+  }
+ },
+ {
+  "symbol": "GSM",
+  "name": "Ferroglobe PLC",
+  "sector": "Basic Materials",
+  "industry": "Industrial Materials",
+  "mcap": 641232797,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining",
+   "rare_earth_strategic",
+   "diversified_miners"
+  ],
+  "gates": {
+   "ttm_fcf": -38868000,
+   "ttm_ocf": 19420000,
+   "ttm_capex": -58288000,
+   "ttm_ebitda": -58278000,
+   "ttm_revenue": 1375687000,
+   "rev_yoy": -0.0281,
+   "cash_sti": 96396000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 3239000.0,
+   "runway_months": 29.8,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 4832384.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "HYMC",
+  "name": "Hycroft Mining Holding Corporation",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 2070487634,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": -109233000,
+   "ttm_ocf": -108219000,
+   "ttm_capex": -1014000,
+   "ttm_ebitda": -79798000,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 220549000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 9102750.0,
+   "runway_months": 24.2,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 13275768.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "IAUX",
+  "name": "i-80 Gold Corp.",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 1219802372,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": -135765790,
+   "ttm_ocf": -115982075,
+   "ttm_capex": -19783714,
+   "ttm_ebitda": -206473000,
+   "ttm_revenue": 133535000,
+   "rev_yoy": 1.3859,
+   "cash_sti": 513506000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 11313816.0,
+   "runway_months": 45.4,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 8386903.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "IDR",
+  "name": "Idaho Strategic Resources, Inc.",
+  "sector": "Basic Materials",
+  "industry": "Gold",
+  "mcap": 486461457,
+  "lane": "b",
+  "chains_hint": [
+   "precious_metals"
+  ],
+  "gates": {
+   "ttm_fcf": 7324709,
+   "ttm_ocf": 25478299,
+   "ttm_capex": -18153590,
+   "ttm_ebitda": 24609132,
+   "ttm_revenue": 49610003,
+   "rev_yoy": 0.8276,
+   "cash_sti": 48557050,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 3686094.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "IE",
+  "name": "Ivanhoe Electric Inc.",
+  "sector": "Basic Materials",
+  "industry": "Copper",
+  "mcap": 1669976306,
+  "lane": "b",
+  "chains_hint": [
+   "copper_mining"
+  ],
+  "gates": {
+   "ttm_fcf": -126593000,
+   "ttm_ocf": -120320000,
+   "ttm_capex": -6273000,
+   "ttm_ebitda": 12392000,
+   "ttm_revenue": 3367000,
+   "rev_yoy": 0.0278,
+   "cash_sti": 291820000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 10549417.0,
+   "runway_months": 27.7,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 15147521.0,
+   "royalty_hint": false
+  }
+ }
+]

@@ -1,0 +1,21 @@
+{
+ "symbol": "KGC",
+ "physical_anchor": "mines and pours gold doré/bullion at open-pit and underground operations across the Americas and West Africa",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.95,
+ "value_chain_position": "mid-tier/senior gold producer selling doré for refining; minimal byproduct diversification",
+ "true_competitors": [
+  "NEM",
+  "AEM",
+  "B",
+  "AU",
+  "GFI",
+  "HMY",
+  "EGO",
+  "IAG"
+ ],
+ "chain_fit_confidence": "high"
+}

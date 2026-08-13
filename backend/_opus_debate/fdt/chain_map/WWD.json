@@ -1,0 +1,20 @@
+{
+ "symbol": "WWD",
+ "physical_anchor": "Manufactures fuel-system and actuation/combustion controls for aircraft engines and industrial gas turbines",
+ "chains": [
+  "power_for_ai"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Fuel systems, combustion and actuation controls for aerospace engines and industrial gas turbines — the industrial-turbine controls slice sells into power-generation OEMs (GE Vernova-class); aerospace majority of revenue is out of scope for this book.",
+ "true_competitors": [
+  "HON",
+  "MOG.A",
+  "ETN",
+  "PH",
+  "CW",
+  "TDG",
+  "GE"
+ ],
+ "chain_fit_confidence": "medium"
+}

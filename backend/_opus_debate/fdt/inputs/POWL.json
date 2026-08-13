@@ -1,0 +1,60 @@
+{
+  "symbol": "POWL",
+  "sector": "Industrials",
+  "signal_type": "future_disruptive_tech",
+  "company": "Powell Industries, Inc.",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Industrials\nValuation: Price 219.72 | Fair Value 128.27 | Margin of Safety -42% | P/FCF 51.8x\nRevenue growth: +9.1% YoY | 3-yr CAGR +27.5%\nMargins: Gross 29.4% (expanding) | Net 16.4% | FCF 14.0%\nEPS / guidance delivery: 4.953333333333333 latest | +20.9% YoY | 3-yr CAGR +134.7% | beat 6/8 qtrs (75%)\nFCF growth: +60.1% YoY | 3-yr CAGR +0.0%\nReturns / leverage: ROE 16.0% | ROIC 13.8% | Net debt -474M\nForward / signals: Consensus fwd EPS growth +25.8% | Margin 1.92sigma vs hist. peak | Insider buy ratio 0.00\nValuation models (stock page): DCF fair value 72.3 | Buffett fair value 128.3\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -100% | EPV -100% | Graham -100% | OwnerErn -100% | IV15 -49%\nQuality / scores: Bull score 4 | Catalyst score 0.7 | Piotroski 4/9 | Altman-Z (solvency) 13.3 | Days to next earnings 0\nAnalyst consensus target: 333.00 (+52% upside)\nPositioning / smart money: Smart-money score 55/100 | Institutional flow 50/100\nTechnical posture (timing context, not thesis): price +15% vs 200d SMA | 58% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2021: rev 471M, NI 631000, EPS 0.017833333333333333\n  2022: rev 533M, NI 14M, EPS 0.38333333333333336\n  2023: rev 699M, NI 55M, EPS 1.5\n  2024: rev 1.01B, NI 150M, EPS 4.096666666666667\n  2025: rev 1.10B, NI 181M, EPS 4.953333333333333\n  CAGRs: bvps_5y +19.8%, eps_5y +308.2%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-06-30 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 244M | TTM diluted EPS 5.22 | latest-Q EPS YoY +8%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-06-30): NET CASH 631M (cash 634M exceeds total debt 3M, incl. capitalized leases 0M) — a genuine SoP add-back; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 67 sells (157,234sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 333.00 | median 333.00 | high 333.00 | low 333.00\nBreadth: last month: 0 PTs | last quarter: 1 PTs avg 333.00 | last year: 5 PTs avg 221.07\n[THIN CONSENSUS: only 1 price target(s) printed last quarter — this is NOT a street-wide view; weigh individual PTs below accordingly]\nNewest individual targets (dated — judge freshness yourself):\n  2026-05-06 Chip Moore: 333.00 (stock was 317.01)\n  2026-04-29 Roth Capital: 285.00 (stock was 259.50)\n  2026-02-05 Roth Capital: 585.00 (stock was 176.33)\n  2026-01-23 Cantor Fitzgerald: 427.00 (stock was 142.29)\n  2026-01-16 Chip Moore: 450.00 (stock was 145.77)\nNewest PT is 90 day(s) old\n\n=== SEGMENT REVENUE (FMP, 2025-09-30 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nOil and Gas Service: 407M (37%) | Electricity: 279M (25%) | Commercial and Other Industrial: 178M (16%) | Petrochemical: 151M (14%) | Other, Customers: 48M (4%) | Light Rail Traction Power Customer: 41M (4%)",
+  "dossier": "",
+  "chains": [
+    "electrification_grid"
+  ],
+  "business_model": "equipment_services",
+  "physical_anchor": "manufactures medium/high-voltage switchgear, motor control centers, and integrated power-control room systems",
+  "commodity_revenue_share": 0.07,
+  "chain_regime": {
+    "electrification_grid": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "electrification_grid",
+    "torque_metrics": false,
+    "commodity_beta_2y": 1.96,
+    "beta_benchmark": "GRID",
+    "beta_is_proxy": true,
+    "ndebt_ebitda": -2.27,
+    "commodity_revenue_share": 0.07,
+    "as_of": "2026-08-04",
+    "gm_trajectory": {
+      "direction": "expanding",
+      "gm_recent_to_old": [
+        0.1596,
+        0.211,
+        0.2698,
+        0.2937
+      ],
+      "delta_3y": 0.1341
+    },
+    "rev_yoy": 0.0704,
+    "fcf_margin": 0.2108,
+    "torque_note": "NON-COMMODITY chain (no spot to lever to): no torque metric. commodity_beta_2y is a PROXY factor-exposure read vs GRID, not a commodity torque."
+  },
+  "gates": {
+    "ttm_fcf": 243958000,
+    "ttm_ocf": 256113000,
+    "ttm_capex": -12155000,
+    "ttm_ebitda": 248979999,
+    "ttm_revenue": 1157522000,
+    "rev_yoy": 0.0704,
+    "cash_sti": 633561000,
+    "balance_date": "2026-06-30",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 199680721.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -2.269108759090081
+  }
+}

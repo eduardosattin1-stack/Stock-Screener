@@ -1,0 +1,20 @@
+{
+ "symbol": "MP",
+ "physical_anchor": "Mines and separates rare-earth ore (bastnaesite) into NdPr oxide concentrate at Mountain Pass, California, and is scaling downstream into sintered NdFeB magnet manufacturing (incl. DoD-backed capacity).",
+ "chains": [
+  "rare_earth_strategic"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.9,
+ "value_chain_position": "Mining and separation layer plus emerging magnet-alloy production — sells rare-earth concentrate/oxide and, increasingly, finished NdFeB magnets.",
+ "true_competitors": [
+  "Lynas Rare Earths (LYC.AX)",
+  "Iluka Resources (ILU.AX)",
+  "Energy Fuels (UUUU)",
+  "USA Rare Earth (USAR)",
+  "Australian Strategic Materials (ASM.AX)",
+  "Neo Performance Materials (NEO.TO)",
+  "Arafura Rare Earths (ARU.AX)"
+ ],
+ "chain_fit_confidence": "high"
+}

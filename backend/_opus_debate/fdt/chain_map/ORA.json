@@ -1,0 +1,18 @@
+{
+ "symbol": "ORA",
+ "physical_anchor": "Designs, builds and operates geothermal (and storage) power plants, including proprietary Ormat Energy Converter turbines",
+ "chains": [
+  "power_for_ai"
+ ],
+ "business_model": "utility",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Geothermal IPP/equipment maker selling firm baseload power, increasingly pitched for datacenter PPAs",
+ "true_competitors": [
+  "CEG",
+  "VST",
+  "TLN",
+  "NEE",
+  "NRG"
+ ],
+ "chain_fit_confidence": "medium"
+}

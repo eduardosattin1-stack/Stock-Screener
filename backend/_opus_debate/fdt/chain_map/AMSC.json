@@ -1,0 +1,20 @@
+{
+ "symbol": "AMSC",
+ "physical_anchor": "Makes grid-interconnection power electronics (D-VAR reactive power compensators, superconductor cable systems) and licensed wind-turbine electrical control systems.",
+ "chains": [
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.03,
+ "value_chain_position": "Power management & connectors / protective grid-interconnection equipment layer — sells reactive-power compensation and superconductor-based grid hardware plus licensed wind ECS.",
+ "true_competitors": [
+  "HUBB",
+  "POWL",
+  "NVT",
+  "ETN",
+  "ABB",
+  "GEV",
+  "AZZ"
+ ],
+ "chain_fit_confidence": "high"
+}

@@ -1,0 +1,20 @@
+{
+ "symbol": "SKE",
+ "physical_anchor": "Eskay Creek high-grade gold-silver deposit under construction/redevelopment in British Columbia",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.75,
+ "value_chain_position": "Construction-stage developer redeveloping the past-producing Eskay Creek gold-silver mine, targeting near-term first production",
+ "true_competitors": [
+  "NG",
+  "ARTG.TO",
+  "OSK.TO",
+  "IAUX",
+  "MOZ",
+  "NGD",
+  "GATO"
+ ],
+ "chain_fit_confidence": "high"
+}

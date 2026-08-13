@@ -1,0 +1,182 @@
+{
+ "PDYN": {
+  "physical_anchor": "None nameable — Palladyne AI licenses a perception/motion-planning software platform (Sensei) to third-party robot and drone integrators; it builds no physical hardware itself since divesting the Guardian XO exoskeleton line to Sarcos Defense in 2024.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "AI software layer licensed into third-party robotic/autonomous systems; owns no hardware, so it fails the physical-anchor test despite the robotics-adjacent keyword hints.",
+  "true_competitors": ["ROK", "CGNX", "ISRG", "NVDA", "Covariant (private)", "Intrinsic/Alphabet (private)", "Osaro (private)"],
+  "chain_fit_confidence": "low"
+ },
+ "PENG": {
+  "physical_anchor": "Manufactures physical data-center hardware — specialty DRAM/memory modules and Penguin Computing-branded HPC/AI servers, including liquid-cooled racks — boxes it actually builds and ships.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.1,
+  "value_chain_position": "OEM manufacturer of memory modules and HPC/AI server systems for hyperscale and enterprise data centers; a real physical-hardware maker, but its AI-compute-hardware chain has no member id in this book (not grid equipment, not nuclear, not a robotics- or quantum-specific toll-taker).",
+  "true_competitors": ["SMCI", "DELL", "HPE", "Celestica (CLS)", "Sanmina (SANM)", "Lenovo (0992.HK)", "Micron (MU)"],
+  "chain_fit_confidence": "low"
+ },
+ "PERF": {
+  "physical_anchor": "None — AR/AI virtual try-on and skin-diagnostic software (YouCam apps) licensed to beauty brands and retailers; no physical product.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "SaaS/AR software vendor for beauty e-commerce; no chain participation.",
+  "true_competitors": ["ADBE", "SNAP", "META", "L'Oreal ModiFace (internal)", "Revieve (private)", "Holition (private)"],
+  "chain_fit_confidence": "low"
+ },
+ "PGY": {
+  "physical_anchor": "None — an AI credit-underwriting network that prices and funds consumer loans for bank/fintech lending partners; a financial network, the textbook anti-Visa case, not a physical product.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "AI credit-decisioning marketplace connecting lenders to institutional capital; no physical or chain tie.",
+  "true_competitors": ["UPST", "AFRM", "SOFI", "LC", "Zest AI (private)", "GS Marcus (GS)"],
+  "chain_fit_confidence": "low"
+ },
+ "PI": {
+  "physical_anchor": "Designs and sells RAIN RFID chips, readers and antennas — physical silicon and radio hardware embedded in tags for item-level asset tracking.",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Sensing/identification layer feeding warehouse and supply-chain automation — RFID ICs and readers give automated logistics systems real-time inventory visibility.",
+  "true_competitors": ["NXPI", "STM", "ZBRA", "AVY", "Alien Technology (private)", "CCL Industries (CCL.TO)"],
+  "chain_fit_confidence": "medium"
+ },
+ "PICS": {
+  "physical_anchor": "Unverifiable — company identity and product cannot be confirmed from available data; its financials are internally inconsistent with a $1.7B-mcap software microcap ($10.4B TTM revenue, $8.9B cash, $915M EBITDA), which reads as a data-quality artifact rather than a real operating profile.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Unknown — flag for data-quality review, not a genuine chain member.",
+  "true_competitors": [],
+  "chain_fit_confidence": "low"
+ },
+ "PL": {
+  "physical_anchor": "Owns and operates a fleet of 200+ Earth-imaging satellites (Dove/SuperDove/Pelican) that physically capture and downlink daily imagery.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Satellite Earth-observation operator selling imagery/analytics subscriptions; the Aerospace & Defense industry tag pulled it into the nuclear_smr screen (reactor components & naval/defense nuclear layer), but Planet Labs has no nuclear, grid, robotics-automation, or quantum tie.",
+  "true_competitors": ["BKSY", "SATL", "SPIR", "Maxar Technologies (private)", "ICEYE (private)", "Airbus Defence & Space (AIR.PA)"],
+  "chain_fit_confidence": "low"
+ },
+ "PLSE": {
+  "physical_anchor": "Manufactures the CellFX nanosecond pulsed-field ablation console and handpieces — physical energy-delivery medical devices.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Capital-equipment medical device maker (dermatology/cardiac ablation); no robotic arm or manipulator, so it misses the robotics_automation chain's surgical-robotics layer despite the Medical Instruments industry tag.",
+  "true_competitors": ["ISRG", "MDT", "BSX", "CUTR", "Candela (private)", "ANGO"],
+  "chain_fit_confidence": "low"
+ },
+ "PLUG": {
+  "physical_anchor": "Manufactures hydrogen fuel cells, electrolyzers and hydrogen fueling/production equipment — physical hardware it builds and installs.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Hydrogen fuel-cell and electrolyzer maker serving material-handling and industrial hydrogen markets; a distinct hydrogen-economy value chain not represented by any of this book's five chains (not grid-transformer equipment, not nuclear, not a robotics or quantum toll-taker).",
+  "true_competitors": ["BE", "FCEL", "BLDP", "Nel ASA (NEL.OL)", "ITM Power (ITM.L)", "APD"],
+  "chain_fit_confidence": "low"
+ },
+ "POET": {
+  "physical_anchor": "Designs and fabricates photonic integrated circuits and optical-engine chips — physical semiconductor components for high-speed data-center/AI-cluster optical interconnects.",
+  "chains": ["quantum"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Photonics & lasers component layer (the same layer anchored by COHR in this chain) — supplies optical-engine chips whose core market is AI-datacenter interconnect but which can also serve quantum-networking/photonic-qubit hardware.",
+  "true_competitors": ["COHR", "LITE", "MRVL", "CIEN", "AAOI", "Ayar Labs (private)"],
+  "chain_fit_confidence": "medium"
+ },
+ "PONY": {
+  "physical_anchor": "Designs, builds and operates a fleet of physical autonomous vehicles (robotaxis and robotrucks) fitted with lidar, radar and camera sensor stacks.",
+  "chains": ["robotics_automation"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Humanoid/autonomous-vehicle developer layer — operates the physical AV fleet and full-stack autonomy software, monetizing on dated robotaxi-permit and fleet-scale milestones ahead of profitability.",
+  "true_competitors": ["WRD", "BIDU Apollo Go", "AUR", "TSLA robotaxi", "Waymo/Alphabet (private)", "Zoox/Amazon (private)"],
+  "chain_fit_confidence": "high"
+ },
+ "PRCT": {
+  "physical_anchor": "Manufactures the AquaBeam Robotic System — a physical robotic console and handpiece for image-guided urologic (BPH) surgery.",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Surgical-robotics capital-equipment maker selling console placements plus per-procedure disposable handpieces — a razor/razorblade toll-taker on urology surgical volume.",
+  "true_competitors": ["ISRG", "SYK", "MDT", "JNJ", "GMED", "BSX", "CNMD"],
+  "chain_fit_confidence": "high"
+ },
+ "PRGS": {
+  "physical_anchor": "None — enterprise application-infrastructure and data-connectivity software (OpenEdge, MOVEit, Chef); no physical product.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Horizontal enterprise software vendor; no chain tie in this book.",
+  "true_competitors": ["MSTR", "INFA", "CRM", "OTEX", "Software AG (private)", "TIBCO (private)"],
+  "chain_fit_confidence": "low"
+ },
+ "PUBM": {
+  "physical_anchor": "None — programmatic digital-advertising exchange (sell-side platform) software; no physical product.",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Ad-tech SSP; no chain tie.",
+  "true_competitors": ["TTD", "MGNI", "CRTO", "APP", "GOOGL DV360", "Index Exchange (private)"],
+  "chain_fit_confidence": "low"
+ },
+ "QBTS": {
+  "physical_anchor": "Designs, builds and operates physical quantum-annealing processors (the Advantage system) with dilution-refrigerator cryogenics.",
+  "chains": ["quantum"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Qubit hardware platform layer — annealing-based quantum computer manufacturer selling cloud access (Leap) and hardware to government/enterprise customers ahead of a dated error-correction/commercial-advantage track.",
+  "true_competitors": ["IONQ", "RGTI", "QNT", "IBM", "GOOGL Quantum AI", "PsiQuantum (private)", "Atom Computing (private)"],
+  "chain_fit_confidence": "high"
+ },
+ "QDEL": {
+  "physical_anchor": "Manufactures clinical diagnostic instruments and rapid-test hardware (immunoassay/clinical-chemistry analyzers) — real physical instruments, but for clinical diagnostics, not factory/warehouse/surgical robotics or humanoid automation.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "IVD instrument and reagent maker; caught by the Healthcare/Medical-Instruments industry filter but outside this chain's automation thesis.",
+  "true_competitors": ["ABT", "BDX", "DHR", "HOLX", "Roche Diagnostics (RHHBY)", "Siemens Healthineers (SHL.DE)"],
+  "chain_fit_confidence": "low"
+ },
+ "QNT": {
+  "physical_anchor": "Builds and operates trapped-ion quantum computers (the H-Series systems) — physical qubit hardware plus control-laser/optics stacks.",
+  "chains": ["quantum"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Qubit hardware platform layer — trapped-ion quantum computing developer (Honeywell/Cambridge Quantum lineage) monetizing on dated government contracts and error-correction/logical-qubit milestones ahead of commercial-scale revenue.",
+  "true_competitors": ["IONQ", "RGTI", "QBTS", "IBM", "GOOGL Quantum AI", "PsiQuantum (private)", "Pasqal (private)"],
+  "chain_fit_confidence": "high"
+ },
+ "QUBT": {
+  "physical_anchor": "Manufactures photonic quantum-computing systems (the Dirac series) built on its own thin-film lithium-niobate (TFLN) photonic-chip foundry — physical hardware.",
+  "chains": ["quantum"],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Qubit hardware platform layer (photonic) plus an in-house TFLN photonic-chip foundry — a vertically-integrated small-cap spanning the photonics and qubit-hardware layers, pre-commercial revenue funded by dated program/pilot contracts.",
+  "true_competitors": ["IONQ", "RGTI", "QBTS", "QNT", "PsiQuantum (private)", "Xanadu Quantum (private)", "ORCA Computing (private)"],
+  "chain_fit_confidence": "high"
+ },
+ "QUIK": {
+  "physical_anchor": "Designs and sells low-power eFPGA IP and embedded FPGA/AI-accelerator semiconductor chips (EOS S3, ArcticPro) — real physical silicon, but generic edge-sensor/IoT processing, not tied to grid, nuclear, robotics-specific, or quantum-hardware chains.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Fabless semiconductor IP/chip vendor for always-on sensor-fusion and edge-AI applications across consumer/industrial IoT; caught by the broad Semiconductors industry filter, not a genuine chain rider.",
+  "true_competitors": ["LSCC", "INTC Altera", "AMD Xilinx", "Achronix (private)", "Flex Logix (private)", "Ambiq Micro (private)"],
+  "chain_fit_confidence": "low"
+ },
+ "RAL": {
+  "physical_anchor": "Manufactures precision test-and-measurement and sensing instruments (Tektronix oscilloscopes, Keithley source-meters, industrial sensors) — physical bench and embedded instrumentation.",
+  "chains": ["robotics_automation", "quantum"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.03,
+  "value_chain_position": "Instrumentation toll-taker layer selling measurement, control-electronics and sensing gear used both on automation/robotics test benches (machine-vision & motion-control validation) and in quantum-lab cryogenics & control-electronics setups (source-meters, oscilloscopes) — broad diversified exposure rather than a pure-play.",
+  "true_competitors": ["KEYS", "FTV", "TDY", "AME", "MKSI", "Advantest (6857.T)", "EMR"],
+  "chain_fit_confidence": "medium"
+ }
+}

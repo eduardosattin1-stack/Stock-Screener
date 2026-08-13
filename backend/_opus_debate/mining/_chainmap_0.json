@@ -1,0 +1,182 @@
+{
+ "AA": {
+  "physical_anchor": "Mines bauxite and refines/smelts it into alumina and aluminum ingot/billet.",
+  "chains": ["copper_mining"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.95,
+  "value_chain_position": "Vertically integrated bauxite mining -> alumina refining -> aluminum smelting; sells alumina and primary aluminum.",
+  "true_competitors": ["RIO", "CENX", "KALU", "NHYDY", "SOUHY", "ACH", "601600.SS"],
+  "chain_fit_confidence": "high"
+ },
+ "AAUC": {
+  "physical_anchor": "Mines and pours gold doré at open-pit/underground operations in Cote d'Ivoire, Mali and Ethiopia.",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Emerging mid-tier gold producer selling doré/bullion from West/East Africa mines.",
+  "true_competitors": ["AEM", "KGC", "EGO", "B", "BTG", "EDVMF", "PRU.AX"],
+  "chain_fit_confidence": "high"
+ },
+ "AEM": {
+  "physical_anchor": "Mines and pours gold (with silver/copper/zinc byproduct) at Canadian, Mexican and Finnish mines.",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.95,
+  "value_chain_position": "Senior gold producer selling refined bullion plus byproduct base metals.",
+  "true_competitors": ["NEM", "B", "KGC", "AU", "GFI", "AGI", "BTG"],
+  "chain_fit_confidence": "high"
+ },
+ "AG": {
+  "physical_anchor": "Mines and processes silver-gold ore into doré/concentrate at Mexican and US mines.",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.9,
+  "value_chain_position": "Silver-primary producer with gold byproduct; sells doré and concentrate.",
+  "true_competitors": ["PAAS", "HL", "CDE", "AYA", "FSM", "MAG", "EXK"],
+  "chain_fit_confidence": "high"
+ },
+ "AGI": {
+  "physical_anchor": "Mines and pours gold doré/bullion at open-pit and underground mines in Canada, Mexico and Turkey.",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Mid-tier gold producer selling refined bullion.",
+  "true_competitors": ["AEM", "KGC", "EGO", "B", "AUGO", "CDE", "IAG"],
+  "chain_fit_confidence": "high"
+ },
+ "ARIS": {
+  "physical_anchor": "Mines and pours gold doré at Segovia and Marmato underground mines in Colombia.",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Latin America-focused underground gold producer selling doré.",
+  "true_competitors": ["EGO", "AGI", "IAG", "CDE", "BTG", "LUG.TO", "EDVMF"],
+  "chain_fit_confidence": "high"
+ },
+ "ASM": {
+  "physical_anchor": "Mines and processes silver-gold-copper-lead-zinc ore into concentrate/doré at Mexican mines.",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.8,
+  "value_chain_position": "Small-cap silver-gold producer selling concentrate and doré.",
+  "true_competitors": ["AG", "EXK", "MAG", "SVM", "GATO", "CDE", "HL"],
+  "chain_fit_confidence": "high"
+ },
+ "AU": {
+  "physical_anchor": "Mines and pours gold doré at mines across South Africa, Ghana, Guinea, Tanzania, DRC and Egypt.",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Senior African-focused gold producer selling refined bullion.",
+  "true_competitors": ["NEM", "B", "KGC", "GFI", "HMY", "SBSW", "AEM"],
+  "chain_fit_confidence": "high"
+ },
+ "AUGO": {
+  "physical_anchor": "Mines and pours gold doré plus copper-gold-silver concentrate (Aranzazu, Mexico) across Brazil, Honduras and Mexico.",
+  "chains": ["precious_metals", "copper_mining"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.9,
+  "value_chain_position": "Latin American multi-mine producer selling gold doré and copper concentrate.",
+  "true_competitors": ["AGI", "EGO", "BTG", "IAG", "EQX", "TXG.TO", "LUG.TO"],
+  "chain_fit_confidence": "high"
+ },
+ "AVNT": {
+  "physical_anchor": "None identifiable — compounds and colors plastic resins into engineered polymer formulations; does not mine, refine or move any chain commodity.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Specialty polymer formulator/colorant supplier (ex-PolyOne); caught by the 'Chemicals - Specialty' industry string, not a rare-earth/strategic-metals name.",
+  "true_competitors": ["CE", "ASH", "TSE", "EMN", "FUL", "RPM"],
+  "chain_fit_confidence": "low"
+ },
+ "AXTA": {
+  "physical_anchor": "None identifiable — formulates and sells liquid and powder coatings (automotive refinish/OEM, industrial paint); no mined-commodity link.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Global coatings/paint formulator; caught by the 'Chemicals - Specialty' industry string, not a rare-earth/strategic-metals name.",
+  "true_competitors": ["PPG", "SHW", "RPM", "AKZA.AS", "BASFY"],
+  "chain_fit_confidence": "low"
+ },
+ "AYA": {
+  "physical_anchor": "Mines and processes silver ore into concentrate/doré at the Zgounder and Boumadine mines in Morocco.",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.9,
+  "value_chain_position": "Silver-primary producer selling concentrate/doré from Moroccan mines.",
+  "true_competitors": ["PAAS", "AG", "EXK", "MAG", "HL", "FRES.L"],
+  "chain_fit_confidence": "high"
+ },
+ "B": {
+  "physical_anchor": "Mines and pours gold doré plus copper concentrate/cathode at mines including Lumwana (Zambia) and Zaldívar (Chile).",
+  "chains": ["precious_metals", "copper_mining"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.9,
+  "value_chain_position": "Senior gold producer with a growing copper segment; sells bullion and copper concentrate/cathode.",
+  "true_competitors": ["NEM", "AEM", "AU", "KGC", "GFI", "FCX", "TECK"],
+  "chain_fit_confidence": "high"
+ },
+ "BCPC": {
+  "physical_anchor": "None identifiable — manufactures choline chloride, encapsulated micronutrients and specialty performance ingredients for feed/food/industrial customers; no mined-commodity link.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Specialty nutrition/performance-ingredients chemicals maker; caught by the 'Chemicals - Specialty' industry string, not a rare-earth/strategic-metals name.",
+  "true_competitors": ["IFF", "DSFIR.AS", "KYGA.L", "SXT", "ASH"],
+  "chain_fit_confidence": "low"
+ },
+ "BHP": {
+  "physical_anchor": "Mines and ships copper concentrate/cathode (Escondida) and iron ore, met coal and potash from operations across Australia, Chile and Canada.",
+  "chains": ["copper_mining", "diversified_miners"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.85,
+  "value_chain_position": "Multi-commodity major (copper, iron ore, met coal, potash) selling raw ore/concentrate; no rare-earth production despite the industry-filter hint.",
+  "true_competitors": ["RIO", "VALE", "GLEN.L", "FCX", "TECK", "S32.AX", "AAL.L"],
+  "chain_fit_confidence": "high"
+ },
+ "BTG": {
+  "physical_anchor": "Mines and pours gold doré at open-pit mines in Mali, Namibia and the Philippines.",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Mid-tier gold producer selling refined bullion from a globally diversified mine portfolio.",
+  "true_competitors": ["AEM", "AGI", "EGO", "KGC", "B", "EDVMF", "PRU.AX"],
+  "chain_fit_confidence": "high"
+ },
+ "BVN": {
+  "physical_anchor": "Mines and processes silver-gold ore into concentrate/doré at Peruvian mines, plus a 19.3% equity stake in the Cerro Verde copper mine.",
+  "chains": ["precious_metals", "copper_mining"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.65,
+  "value_chain_position": "Peruvian precious/base-metals producer; consolidated revenue is mostly silver/gold, with copper exposure carried as an equity-method affiliate (Cerro Verde), not consolidated sales.",
+  "true_competitors": ["PAAS", "HL", "FCX", "SCCO", "AG", "CDE", "HOC.L"],
+  "chain_fit_confidence": "medium"
+ },
+ "CBT": {
+  "physical_anchor": "None identifiable — manufactures carbon black and fumed metal-oxide specialty chemicals for rubber/coatings customers; no mined-commodity link.",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Carbon black / specialty chemicals producer; caught by the 'Chemicals - Specialty' industry string, not a rare-earth/strategic-metals name.",
+  "true_competitors": ["OEC", "5301.T", "SOLB.BR", "HUN", "ASH"],
+  "chain_fit_confidence": "low"
+ },
+ "CCJ": {
+  "physical_anchor": "Mines uranium ore, mills/converts it into U3O8 and UF6, and fabricates nuclear fuel at Canadian and US facilities.",
+  "chains": ["uranium_fuel_cycle"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.75,
+  "value_chain_position": "Vertically integrated uranium miner/converter/fuel-services provider; also holds a 49% Westinghouse nuclear-services equity stake that dilutes pure uranium revenue share.",
+  "true_competitors": ["UEC", "UUUU", "DNN", "NXE", "KAP.L", "PDN.AX", "UROY"],
+  "chain_fit_confidence": "high"
+ },
+ "CDE": {
+  "physical_anchor": "Mines and processes silver-gold ore into doré/concentrate at US and Mexican mines.",
+  "chains": ["precious_metals"],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.9,
+  "value_chain_position": "US-focused silver-gold producer selling doré and concentrate.",
+  "true_competitors": ["HL", "PAAS", "AG", "AYA", "ASM", "MAG", "FSM"],
+  "chain_fit_confidence": "high"
+ }
+}

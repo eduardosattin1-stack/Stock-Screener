@@ -1,0 +1,21 @@
+{
+ "symbol": "LGN",
+ "physical_anchor": "installs and services electrical, mechanical and HVAC infrastructure — building electrification retrofits and data-center MEP systems",
+ "chains": [
+  "electrification_grid",
+  "power_for_ai"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.03,
+ "value_chain_position": "building/data-center electrical infrastructure services toll-taker (MEP contractor) on the electrification and AI-power build-out",
+ "true_competitors": [
+  "EME",
+  "FIX",
+  "MYRG",
+  "IESC",
+  "LMB",
+  "AGX",
+  "PWR"
+ ],
+ "chain_fit_confidence": "medium"
+}

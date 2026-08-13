@@ -1,0 +1,20 @@
+{
+ "symbol": "VST",
+ "physical_anchor": "owns and dispatches power-generation plants (nuclear, gas, coal) that deliver electrons onto the grid, including datacenter PPAs",
+ "chains": [
+  "power_for_ai",
+  "nuclear_smr"
+ ],
+ "business_model": "utility",
+ "commodity_revenue_share": 0.15,
+ "value_chain_position": "independent power producer selling firm generation (incl. nuclear-levered baseload) under wholesale and datacenter PPA contracts",
+ "true_competitors": [
+  "NRG",
+  "CEG",
+  "TLN",
+  "PPL",
+  "NEE",
+  "EXC"
+ ],
+ "chain_fit_confidence": "high"
+}

@@ -1,0 +1,18 @@
+{
+ "symbol": "LTBR",
+ "physical_anchor": "develops metallic nuclear fuel (Lightbridge Fuel) designed to boost power output and safety margins in existing and next-generation reactors",
+ "chains": [
+  "nuclear_smr"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.1,
+ "value_chain_position": "pre-revenue advanced-reactor fuel developer, dated NRC/DOE test-reactor and licensing milestones",
+ "true_competitors": [
+  "LEU",
+  "BWXT",
+  "XE",
+  "OKLO",
+  "SMR"
+ ],
+ "chain_fit_confidence": "high"
+}

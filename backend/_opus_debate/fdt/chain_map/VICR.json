@@ -1,0 +1,19 @@
+{
+ "symbol": "VICR",
+ "physical_anchor": "High-density power-conversion modules (DC-DC / AC-DC converters) that deliver and manage electrical power to servers, data centers, defense, and industrial systems",
+ "chains": [
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Power management & connectors layer — sells power-delivery modules feeding AI/data-center racks and industrial electrification build-outs",
+ "true_competitors": [
+  "Delta Electronics (2308.TW)",
+  "Bel Fuse (BELFA)",
+  "Monolithic Power Systems (MPWR)",
+  "Infineon Technologies (IFX.DE)",
+  "Advanced Energy Industries (AEIS)",
+  "Flex Power Modules (private)"
+ ],
+ "chain_fit_confidence": "medium"
+}

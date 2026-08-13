@@ -1,0 +1,19 @@
+{
+ "symbol": "IPGP",
+ "physical_anchor": "High-power fiber lasers and photonic/laser subsystems used in industrial cutting/welding, medical and precision-optics applications",
+ "chains": [
+  "quantum"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.02,
+ "value_chain_position": "Laser/photonics component maker occupying the quantum stack's photonics & lasers layer, though the bulk of revenue is industrial materials-processing rather than quantum-lab sales; direct comp to the chain's COHR anchor.",
+ "true_competitors": [
+  "COHR",
+  "LASR",
+  "NOVT",
+  "LITE",
+  "002008.SZ",
+  "JEN.DE"
+ ],
+ "chain_fit_confidence": "medium"
+}

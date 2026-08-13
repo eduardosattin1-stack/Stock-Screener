@@ -1,0 +1,19 @@
+{
+ "symbol": "GROY",
+ "physical_anchor": "Royalty and stream interests over gold (and some silver/copper) production at third-party mines",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "royalty_streamer",
+ "commodity_revenue_share": 0.9,
+ "value_chain_position": "Gold-focused royalty/streaming company collecting NSR/stream payments across a diversified portfolio of producing and development-stage mines",
+ "true_competitors": [
+  "WPM",
+  "FNV",
+  "RGLD",
+  "OR",
+  "ELE",
+  "SAND.TO"
+ ],
+ "chain_fit_confidence": "high"
+}

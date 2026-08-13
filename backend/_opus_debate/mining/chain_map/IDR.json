@@ -1,0 +1,19 @@
+{
+ "symbol": "IDR",
+ "physical_anchor": "Gold ore mined and milled at the Golden Chest mine, Idaho, alongside a rare-earth-bearing (monazite) tailings stockpile",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Underground gold producer in Idaho's Coeur d'Alene district; monazite/REE by-product recovery from tailings is an unmonetized optionality",
+ "true_competitors": [
+  "HL",
+  "CDE",
+  "AG",
+  "GAU",
+  "IAUX",
+  "PAAS"
+ ],
+ "chain_fit_confidence": "high"
+}

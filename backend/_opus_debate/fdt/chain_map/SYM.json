@@ -1,0 +1,19 @@
+{
+ "symbol": "SYM",
+ "physical_anchor": "Designs, manufactures and deploys autonomous robots and automated storage/retrieval structures inside warehouse fulfillment centers — genuine physical robotics hardware.",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Warehouse-robotics/automation systems integrator — builds and licenses robotic fulfillment-center hardware+software (Walmart flagship customer); the electrification/power/nuclear hints on this name are keyword noise, not a genuine second chain.",
+ "true_competitors": [
+  "OCDO.L",
+  "KGX.DE",
+  "HON",
+  "ABBN.SW",
+  "AUTO.OL",
+  "6954.T"
+ ],
+ "chain_fit_confidence": "high"
+}

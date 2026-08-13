@@ -1,0 +1,19 @@
+{
+ "symbol": "CR",
+ "physical_anchor": "Manufactures engineered valves, seals and instrumentation used in nuclear power-plant primary/secondary fluid systems (Crane Nuclear, within Process Flow Technologies)",
+ "chains": [
+  "nuclear_smr"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Reactor-components layer — safety-related valves/instrumentation into nuclear plant fluid handling; nuclear is a minority of a diversified industrial portfolio (Aerospace & Electronics, Process Flow, Engineered Materials)",
+ "true_competitors": [
+  "FLS",
+  "CIR",
+  "IEX",
+  "DOV",
+  "EMR",
+  "ITT"
+ ],
+ "chain_fit_confidence": "medium"
+}

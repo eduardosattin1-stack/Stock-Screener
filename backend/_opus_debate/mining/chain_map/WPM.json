@@ -1,0 +1,19 @@
+{
+ "symbol": "WPM",
+ "physical_anchor": "Streamed gold, silver and palladium bullion delivered under long-term offtake/streaming agreements with third-party mine operators.",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "royalty_streamer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Royalty & streaming layer — funds mine capex for a fixed share of metal output, no operating costs carried.",
+ "true_competitors": [
+  "FNV",
+  "RGLD",
+  "OR",
+  "SAND",
+  "TFPM",
+  "MTA"
+ ],
+ "chain_fit_confidence": "high"
+}

@@ -1,0 +1,19 @@
+{
+ "symbol": "NEXA",
+ "physical_anchor": "Mines and smelts zinc, copper, and lead concentrates (with silver byproduct) at integrated operations and refineries in Peru and Brazil.",
+ "chains": [
+  "diversified_miners"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.95,
+ "value_chain_position": "Base-metal mid-tier producer with own smelting/refining — zinc-dominant multi-metal book (zinc/copper/lead/silver), fits the diversified-miners 'base-metal mid-tiers' layer better than the single-commodity copper chain.",
+ "true_competitors": [
+  "Teck Resources (TECK)",
+  "Boliden AB (BOL.ST)",
+  "Hudbay Minerals (HBM)",
+  "South32 (S32.AX)",
+  "Glencore (GLEN.L)",
+  "Hindustan Zinc (HZINDIA.NS)"
+ ],
+ "chain_fit_confidence": "high"
+}

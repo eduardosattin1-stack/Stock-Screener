@@ -1,0 +1,182 @@
+{
+ "DY": {
+  "physical_anchor": "installs and maintains underground/aerial fiber-optic and telecom network cable for broadband and wireless carriers",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "specialty telecom construction contractor (fiber/broadband/5G buildout) — not a grid or power infrastructure contractor despite the Engineering & Construction industry filter",
+  "true_competitors": ["MTZ", "PWR", "MYRG", "IESC", "GV", "VIE.PA"],
+  "chain_fit_confidence": "low"
+ },
+ "ECG": {
+  "physical_anchor": "builds and maintains electric transmission & distribution lines, substations, and specialty electrical infrastructure for utilities and industrial customers",
+  "chains": ["electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "electrical infrastructure services / grid EPC contractor building T&D lines and substations (spun off from MDU Resources)",
+  "true_competitors": ["MYRG", "PWR", "MTZ", "EME", "IESC", "AGX"],
+  "chain_fit_confidence": "high"
+ },
+ "EEFT": {
+  "physical_anchor": "none identifiable — operates ATM and payment-processing networks (a financial network, not a physical chain anchor; the anti-Visa rule)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "global payments network operator (ATMs, money transfer, ePay) mapped here only by a generic Software - Infrastructure industry filter",
+  "true_competitors": ["FIS", "FI", "WU", "PYPL", "GPN", "MA"],
+  "chain_fit_confidence": "low"
+ },
+ "EMBJ": {
+  "physical_anchor": "manufactures commercial regional jets, executive jets, and military/defense aircraft",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "commercial/business/defense aircraft OEM — no nuclear, grid, robotics, or quantum chain exposure despite the Aerospace & Defense filter shared with BWXT",
+  "true_competitors": ["BA", "AIR.PA", "BBD-B.TO", "TXT", "LMT", "GD"],
+  "chain_fit_confidence": "low"
+ },
+ "EME": {
+  "physical_anchor": "installs and maintains electrical power distribution, switchgear, and mechanical/HVAC systems for buildings and data centers",
+  "chains": ["electrification_grid", "power_for_ai"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "electrical & mechanical infrastructure services contractor building data-center and grid-connected electrical systems",
+  "true_competitors": ["FIX", "MTZ", "PWR", "ACM", "J", "MYRG"],
+  "chain_fit_confidence": "high"
+ },
+ "EMR": {
+  "physical_anchor": "manufactures process automation instrumentation, control systems, and valves for factory and industrial process control",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "factory/process automation toll-taker — control systems, instrumentation, and software for industrial automation (electrical products business long since divested)",
+  "true_competitors": ["ROK", "HON", "SIEGY", "ABBNY", "AME", "DHR"],
+  "chain_fit_confidence": "high"
+ },
+ "ENS": {
+  "physical_anchor": "manufactures industrial stored-energy batteries for motive power, utility/telecom reserve power, and data-center backup power",
+  "chains": ["electrification_grid", "power_for_ai"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.1,
+  "value_chain_position": "industrial battery/energy-storage equipment maker supplying grid reserve power and data-center backup power systems",
+  "true_competitors": ["EOSE", "FLNC", "VRT", "CBAT", "HON", "GTLS"],
+  "chain_fit_confidence": "medium"
+ },
+ "ESAB": {
+  "physical_anchor": "manufactures welding and cutting equipment and consumables for industrial fabrication",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "generic welding/fabrication equipment supplier — a horizontal industrial tool maker used across many end markets, not a specific FDT chain participant",
+  "true_competitors": ["LECO", "ITW", "IR", "DOV", "SWK", "Voestalpine Bohler Welding (private)"],
+  "chain_fit_confidence": "low"
+ },
+ "ESTC": {
+  "physical_anchor": "none identifiable — enterprise search and observability SaaS software, no physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "enterprise search & observability software vendor — no physical chain anchor despite the robotics_automation software keyword overlap",
+  "true_competitors": ["SPLK", "DDOG", "MDB", "SNOW", "PLTR"],
+  "chain_fit_confidence": "low"
+ },
+ "ETN": {
+  "physical_anchor": "manufactures electrical power management equipment — circuit breakers, switchgear, transformers, and power distribution systems",
+  "chains": ["electrification_grid", "nuclear_smr"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.03,
+  "value_chain_position": "electrical equipment & power management OEM — transformers/switchgear layer of the grid buildout; named taxonomy anchor example for electrification_grid",
+  "true_competitors": ["HUBB", "NVT", "POWL", "AZZ", "SIEGY", "ABBNY"],
+  "chain_fit_confidence": "high"
+ },
+ "EW": {
+  "physical_anchor": "manufactures structural heart devices — transcatheter and surgical heart valves",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "heart-valve medical device maker — a device implant company, not a surgical robotics platform; no FDT chain anchor",
+  "true_competitors": ["ISRG", "MDT", "ABT", "BSX", "JNJ"],
+  "chain_fit_confidence": "low"
+ },
+ "FFIV": {
+  "physical_anchor": "none identifiable — application delivery controller and network security software/appliances",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "application delivery & network security software/hardware vendor — no quantum or FDT chain exposure",
+  "true_competitors": ["CSCO", "JNPR", "AKAM", "RDWR", "Citrix (private)"],
+  "chain_fit_confidence": "low"
+ },
+ "FICO": {
+  "physical_anchor": "none identifiable — credit-scoring and decisioning analytics software",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "credit-scoring analytics software vendor — no physical anchor, no FDT chain",
+  "true_competitors": ["MCO", "SPGI", "EFX", "TRU", "VRSK"],
+  "chain_fit_confidence": "low"
+ },
+ "FIVN": {
+  "physical_anchor": "none identifiable — cloud contact-center-as-a-service software",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "cloud contact-center software vendor — AI agent software with no physical robot or automation hardware",
+  "true_competitors": ["NICE", "RNG", "TWLO", "EGHT", "Genesys (private)"],
+  "chain_fit_confidence": "low"
+ },
+ "FIX": {
+  "physical_anchor": "installs mechanical and electrical building systems — HVAC, plumbing, and electrical power distribution — for commercial and data-center construction",
+  "chains": ["power_for_ai", "electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.03,
+  "value_chain_position": "mechanical/electrical construction contractor building out data-center power & cooling infrastructure",
+  "true_competitors": ["EME", "MTZ", "PWR", "IESC", "SLND", "APG"],
+  "chain_fit_confidence": "high"
+ },
+ "FLEX": {
+  "physical_anchor": "contract manufacturer of power-delivery and liquid-cooling hardware plus diversified electronics assembly for data centers and industrial customers",
+  "chains": ["power_for_ai"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "diversified electronics manufacturing services (EMS) provider with a growing data-center power/cooling hardware segment",
+  "true_competitors": ["CLS", "JBL", "SANM", "FN", "VRT"],
+  "chain_fit_confidence": "medium"
+ },
+ "FLS": {
+  "physical_anchor": "manufactures industrial pumps, valves, and seals for flow control in power generation (including nuclear-qualified equipment), chemical processing, and oil & gas",
+  "chains": ["nuclear_smr", "power_for_ai"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "flow-control equipment maker (nuclear-qualified pumps/valves) supplying power-generation and industrial process customers",
+  "true_competitors": ["ITT", "XYL", "GTLS", "DOV", "CIRCOR (private)", "SUL.MI"],
+  "chain_fit_confidence": "medium"
+ },
+ "FN": {
+  "physical_anchor": "contract manufacturer of precision optical and photonic components — transceivers, lasers, sensors — for networking, datacom, and photonics equipment makers",
+  "chains": ["quantum"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "optical/photonics contract manufacturer (photonics & lasers layer) serving networking customers and some photonics/quantum equipment makers",
+  "true_competitors": ["COHR", "LITE", "JBL", "CLS", "FLEX"],
+  "chain_fit_confidence": "medium"
+ },
+ "FORM": {
+  "physical_anchor": "manufactures semiconductor wafer probe cards and cryogenic probe-station test systems used to test chips including quantum devices",
+  "chains": ["quantum"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "semiconductor test/probe equipment maker — cryogenics & control-electronics/probing layer of the quantum stack; named taxonomy anchor example",
+  "true_competitors": ["COHR", "TER", "KLAC", "LRCX", "AMAT", "Bluefors (private)"],
+  "chain_fit_confidence": "high"
+ },
+ "FRSH": {
+  "physical_anchor": "none identifiable — CRM and customer-engagement SaaS software",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "cloud CRM/customer-engagement software vendor — no physical chain anchor",
+  "true_competitors": ["CRM", "HUBS", "NICE", "MSFT", "ZETA"],
+  "chain_fit_confidence": "low"
+ }
+}

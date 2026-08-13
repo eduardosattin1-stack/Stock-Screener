@@ -1,0 +1,18 @@
+{
+ "symbol": "NOVT",
+ "physical_anchor": "Manufactures precision photonics (lasers, optical components), motion-control systems (encoders, servo drives), and machine-vision components used in industrial and medical robotics",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Motion-control & machine-vision layer: Novanta's Precision Motion, Vision and Photonics segments are component-level toll-takers into robotics, automation and medical-device OEMs",
+ "true_competitors": [
+  "COHR",
+  "IPGP",
+  "MKSI",
+  "CGNX",
+  "FARO"
+ ],
+ "chain_fit_confidence": "medium"
+}

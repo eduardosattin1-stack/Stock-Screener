@@ -1,0 +1,19 @@
+{
+ "symbol": "NAK",
+ "physical_anchor": "Holds and is permitting the Pebble copper-gold-molybdenum porphyry deposit in Alaska; no mine built, permit denied by the Army Corps with ongoing litigation/appeals.",
+ "chains": [
+  "copper_mining"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.6,
+ "value_chain_position": "Pre-permit copper-gold-moly developer — a genuine copper deposit, but the project sits well outside the taxonomy's 'permitted/FID-stage' developer bar given the permit denial and litigation overhang.",
+ "true_competitors": [
+  "Western Copper and Gold (WRN)",
+  "Trilogy Metals (TMQ)",
+  "Taseko Mines (TGB)",
+  "Hudbay Minerals (HBM)",
+  "Ivanhoe Electric (IE)",
+  "Solaris Resources (SLS)"
+ ],
+ "chain_fit_confidence": "medium"
+}

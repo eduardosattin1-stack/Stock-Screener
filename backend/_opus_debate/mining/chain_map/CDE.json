@@ -1,0 +1,20 @@
+{
+ "symbol": "CDE",
+ "physical_anchor": "Mines and processes silver-gold ore into doré/concentrate at US and Mexican mines.",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.9,
+ "value_chain_position": "US-focused silver-gold producer selling doré and concentrate.",
+ "true_competitors": [
+  "HL",
+  "PAAS",
+  "AG",
+  "AYA",
+  "ASM",
+  "MAG",
+  "FSM"
+ ],
+ "chain_fit_confidence": "high"
+}

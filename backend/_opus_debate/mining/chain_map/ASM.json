@@ -1,0 +1,20 @@
+{
+ "symbol": "ASM",
+ "physical_anchor": "Mines and processes silver-gold-copper-lead-zinc ore into concentrate/doré at Mexican mines.",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.8,
+ "value_chain_position": "Small-cap silver-gold producer selling concentrate and doré.",
+ "true_competitors": [
+  "AG",
+  "EXK",
+  "MAG",
+  "SVM",
+  "GATO",
+  "CDE",
+  "HL"
+ ],
+ "chain_fit_confidence": "high"
+}

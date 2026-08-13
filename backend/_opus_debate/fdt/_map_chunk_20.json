@@ -1,0 +1,599 @@
+[
+ {
+  "symbol": "ESTA",
+  "name": "Establishment Labs Holdings Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 2772931346,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -42226410,
+   "ttm_ocf": -34813892,
+   "ttm_capex": -7412517,
+   "ttm_ebitda": -14383000,
+   "ttm_revenue": 229576000,
+   "rev_yoy": 0.3486,
+   "cash_sti": 68101000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 3518867.0,
+   "runway_months": 19.4,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 12028884.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "EVEX",
+  "name": "Eve Holding, Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 966546375,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": -202435000,
+   "ttm_ocf": -195239000,
+   "ttm_capex": -7196000,
+   "ttm_ebitda": -167101000,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 52210000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 16869583.0,
+   "runway_months": 3.1,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 3195132.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "EXPO",
+  "name": "Exponent, Inc.",
+  "sector": "Industrials",
+  "industry": "Engineering & Construction",
+  "mcap": 3300959242,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": 79444000,
+   "ttm_ocf": 87259000,
+   "ttm_capex": -7815000,
+   "ttm_ebitda": 153347000,
+   "ttm_revenue": 632460000,
+   "rev_yoy": 0.1284,
+   "cash_sti": 66629000,
+   "balance_date": "2026-07-03",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 7707016.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 0.09189615708165141
+  }
+ },
+ {
+  "symbol": "FCEL",
+  "name": "FuelCell Energy, Inc.",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 1214783247,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -123383000,
+   "ttm_ocf": -110929000,
+   "ttm_capex": -12454000,
+   "ttm_ebitda": -176009000,
+   "ttm_revenue": 167879000,
+   "rev_yoy": 0.2971,
+   "cash_sti": 373167000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 10281917.0,
+   "runway_months": 36.3,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 90078189.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "FER",
+  "name": "Ferrovial SE",
+  "sector": "Industrials",
+  "industry": "Engineering & Construction",
+  "mcap": 48147523756,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": 2260000000,
+   "ttm_ocf": 2808000000,
+   "ttm_capex": -548000000,
+   "ttm_ebitda": 1731000000,
+   "ttm_revenue": 12346500000,
+   "rev_yoy": 0.3206,
+   "cash_sti": 3864000000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 45470831.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.3908045977011496
+  }
+ },
+ {
+  "symbol": "FIG",
+  "name": "Figma, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 13044453764,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 237410000,
+   "ttm_ocf": 250812000,
+   "ttm_capex": -13402000,
+   "ttm_ebitda": -1394218000,
+   "ttm_revenue": 1161028000,
+   "rev_yoy": 0.4142,
+   "cash_sti": 1638464000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 397755368.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "FLNC",
+  "name": "Fluence Energy, Inc.",
+  "sector": "Utilities",
+  "industry": "Renewable Utilities",
+  "mcap": 2873080096,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": -270645000,
+   "ttm_ocf": -237500000,
+   "ttm_capex": -33145000,
+   "ttm_ebitda": -10854000,
+   "ttm_revenue": 2584549000,
+   "rev_yoy": 0.1093,
+   "cash_sti": 412889000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 22553750.0,
+   "runway_months": 18.3,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 85253535.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "FLR",
+  "name": "Fluor Corporation",
+  "sector": "Industrials",
+  "industry": "Engineering & Construction",
+  "mcap": 7211162100,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": -41000000,
+   "ttm_ocf": 9000000,
+   "ttm_capex": -50000000,
+   "ttm_ebitda": -184000000,
+   "ttm_revenue": 15185000000,
+   "rev_yoy": -0.0832,
+   "cash_sti": 3672000000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 3416667.0,
+   "runway_months": 1074.7,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 44705772.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "FLY",
+  "name": "Firefly Aerospace Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 3774125126,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": -257449000,
+   "ttm_ocf": -210932000,
+   "ttm_capex": -46517000,
+   "ttm_ebitda": -323057000,
+   "ttm_revenue": 184879000,
+   "rev_yoy": null,
+   "cash_sti": 551626000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 21454083.0,
+   "runway_months": 25.7,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 36750834.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "FOUR",
+  "name": "Shift4 Payments, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 4915683950,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 615500000,
+   "ttm_ocf": 671700000,
+   "ttm_capex": -56200000,
+   "ttm_ebitda": 855400000,
+   "ttm_revenue": 4453100000,
+   "rev_yoy": 0.2828,
+   "cash_sti": 1229000000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 25434188.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 4.7646103896103895
+  }
+ },
+ {
+  "symbol": "FPS",
+  "name": "Forgent Power Solutions, Inc.",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 10172671843,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -94396000,
+   "ttm_ocf": 31235000,
+   "ttm_capex": -125631000,
+   "ttm_ebitda": 131994999,
+   "ttm_revenue": 1196000000,
+   "rev_yoy": null,
+   "cash_sti": 93831000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 7866333.0,
+   "runway_months": 11.9,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 196821826.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 4.649630703054136
+  }
+ },
+ {
+  "symbol": "FROG",
+  "name": "JFrog Ltd.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 10295805600,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 151410000,
+   "ttm_ocf": 155293000,
+   "ttm_capex": -3883000,
+   "ttm_ebitda": -31461000,
+   "ttm_revenue": 563410000,
+   "rev_yoy": 0.2504,
+   "cash_sti": 741955000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 48842003.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "FRVO",
+  "name": "Fervo Energy Company",
+  "sector": "Utilities",
+  "industry": "Renewable Utilities",
+  "mcap": 6577689757,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": null,
+   "ttm_ocf": null,
+   "ttm_capex": null,
+   "ttm_ebitda": null,
+   "ttm_revenue": null,
+   "rev_yoy": null,
+   "cash_sti": 280776000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": null,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 21749930.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "FSLY",
+  "name": "Fastly, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 3835815000,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 54730000,
+   "ttm_ocf": 105520000,
+   "ttm_capex": -50790000,
+   "ttm_ebitda": -1348000,
+   "ttm_revenue": 652565000,
+   "rev_yoy": 0.1766,
+   "cash_sti": 330489000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 78199382.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "FTAI",
+  "name": "FTAI Aviation Ltd.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 22496451900,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": -1227054000,
+   "ttm_ocf": -439764000,
+   "ttm_capex": -787290000,
+   "ttm_ebitda": 1021355000,
+   "ttm_revenue": 3112874000,
+   "rev_yoy": 0.4473,
+   "cash_sti": 337195000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 102254500.0,
+   "runway_months": 3.3,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 147709675.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "GEMI",
+  "name": "Gemini Space Station, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 501110877,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -260853000,
+   "ttm_ocf": -254440000,
+   "ttm_capex": -6413000,
+   "ttm_ebitda": -402967500,
+   "ttm_revenue": 151718500,
+   "rev_yoy": 0.0891,
+   "cash_sti": 504103000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 21737750.0,
+   "runway_months": 23.2,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 3299188.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "GKOS",
+  "name": "Glaukos Corporation",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 9926400531,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -12196000,
+   "ttm_ocf": -950000,
+   "ttm_capex": -11246000,
+   "ttm_ebitda": -151630000,
+   "ttm_revenue": 612839000,
+   "rev_yoy": 0.4155,
+   "cash_sti": 286226000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1016333.0,
+   "runway_months": 281.6,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 58365665.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "GRRR",
+  "name": "Gorilla Technology Group Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 307431948,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -11791486,
+   "ttm_ocf": -11357936,
+   "ttm_capex": -433550,
+   "ttm_ebitda": -45622136,
+   "ttm_revenue": 111331680,
+   "rev_yoy": 0.3223,
+   "cash_sti": 103520639,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 982624.0,
+   "runway_months": 105.4,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 6100292.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "GSIT",
+  "name": "GSI Technology, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 213807641,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -16409000,
+   "ttm_ocf": -15923000,
+   "ttm_capex": -486000,
+   "ttm_ebitda": -16529000,
+   "ttm_revenue": 25151000,
+   "rev_yoy": 0.1365,
+   "cash_sti": 77045000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1367417.0,
+   "runway_months": 56.3,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 3862374.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "GTLB",
+  "name": "GitLab Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 6156405036,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 263443000,
+   "ttm_ocf": 275751000,
+   "ttm_capex": -12308000,
+   "ttm_ebitda": -5817000,
+   "ttm_revenue": 1004873000,
+   "rev_yoy": 0.249,
+   "cash_sti": 1357512000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 51477797.0,
+   "royalty_hint": false
+  }
+ }
+]

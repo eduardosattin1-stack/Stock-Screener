@@ -1,0 +1,21 @@
+{
+ "symbol": "HUBB",
+ "physical_anchor": "Electrical wiring devices/connectors plus transmission-and-distribution grid hardware -- transformers, protective devices and utility-grade connectors",
+ "chains": [
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "T&D and wiring-device equipment maker selling into utility grid build-out and electrification -- an explicit anchor name for this chain.",
+ "true_competitors": [
+  "ETN",
+  "NVT",
+  "POWL",
+  "AZZ",
+  "EMR",
+  "ABB",
+  "SU.PA",
+  "LR.PA"
+ ],
+ "chain_fit_confidence": "high"
+}

@@ -1,0 +1,21 @@
+{
+ "symbol": "VGZ",
+ "physical_anchor": "Mt Todd gold ore deposit in the Northern Territory, Australia, being advanced toward mine construction and gold doré production",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Developer layer — single-asset pre-production gold project (Mt Todd), zero current revenue, advancing permits/financing toward construction decision",
+ "true_competitors": [
+  "NG",
+  "SKE",
+  "IAUX",
+  "INTX",
+  "MOZ.TO",
+  "PPTA",
+  "CTGO",
+  "GATO"
+ ],
+ "chain_fit_confidence": "high"
+}

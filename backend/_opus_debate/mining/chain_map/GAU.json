@@ -1,0 +1,20 @@
+{
+ "symbol": "GAU",
+ "physical_anchor": "Gold ore mined and processed (CIL) at the Asanko Gold Mine, Ghana",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Sole owner-operator gold producer at the Asanko mine in Ghana following the 2023-24 JV buyout",
+ "true_competitors": [
+  "AEM",
+  "NEM",
+  "B",
+  "GOLD.TO",
+  "AU",
+  "IAG",
+  "EGO"
+ ],
+ "chain_fit_confidence": "high"
+}

@@ -1,0 +1,610 @@
+[
+ {
+  "symbol": "SVCO",
+  "name": "Silvaco Group, Inc. Common Stock",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 289185149,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -44315000,
+   "ttm_ocf": -43793000,
+   "ttm_capex": -522000,
+   "ttm_ebitda": -26434000,
+   "ttm_revenue": 66727000,
+   "rev_yoy": 0.1528,
+   "cash_sti": 10925000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 3692917.0,
+   "runway_months": 3.0,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 2017361.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SWBI",
+  "name": "Smith & Wesson Brands, Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 666209678,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": 90354000,
+   "ttm_ocf": 114195000,
+   "ttm_capex": -23841000,
+   "ttm_ebitda": 60542000,
+   "ttm_revenue": 523845000,
+   "rev_yoy": 0.1036,
+   "cash_sti": 33352000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 2071994.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SWMR",
+  "name": "Swarmer, Inc Common Stock",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 413671245,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": null,
+   "ttm_ocf": null,
+   "ttm_capex": null,
+   "ttm_ebitda": null,
+   "ttm_revenue": null,
+   "rev_yoy": null,
+   "cash_sti": 23472156,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": null,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 5320709.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "SYNA",
+  "name": "Synaptics Incorporated",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 4169550036,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 96700000,
+   "ttm_ocf": 139000000,
+   "ttm_capex": -42300000,
+   "ttm_ebitda": 81500000,
+   "ttm_revenue": 1172000000,
+   "rev_yoy": 0.1281,
+   "cash_sti": 404400000,
+   "balance_date": "2026-03-28",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 34152997.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 9.423954193460947
+  }
+ },
+ {
+  "symbol": "TAC",
+  "name": "TransAlta Corporation",
+  "sector": "Utilities",
+  "industry": "Independent Power Producers",
+  "mcap": 3780646602,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": 453120540,
+   "ttm_ocf": 671116156,
+   "ttm_capex": -217995616,
+   "ttm_ebitda": 822390303,
+   "ttm_revenue": 2266971963,
+   "rev_yoy": -0.0957,
+   "cash_sti": 302000000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 8440045.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 5.958152958152958
+  }
+ },
+ {
+  "symbol": "TDG",
+  "name": "TransDigm Group Incorporated",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 70236101188,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": 1850000000,
+   "ttm_ocf": 2105000000,
+   "ttm_capex": -255000000,
+   "ttm_ebitda": 4887000000,
+   "ttm_revenue": 10007000000,
+   "rev_yoy": 0.1665,
+   "cash_sti": 2773000000,
+   "balance_date": "2026-06-27",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 531713214.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 5.88509836751779
+  }
+ },
+ {
+  "symbol": "TE",
+  "name": "T1 Energy Inc",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 947157258,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -42979000,
+   "ttm_ocf": 67403000,
+   "ttm_capex": -110382000,
+   "ttm_ebitda": -199225000,
+   "ttm_revenue": 879490000,
+   "rev_yoy": 14.5955,
+   "cash_sti": 116545000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 3581583.0,
+   "runway_months": 32.5,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 165355396.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "TEAM",
+  "name": "Atlassian Corporation",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 28699795657,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 1204701000,
+   "ttm_ocf": 1249310000,
+   "ttm_capex": -44609000,
+   "ttm_ebitda": -19559999,
+   "ttm_revenue": 6190183000,
+   "rev_yoy": 0.2474,
+   "cash_sti": 1136342000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 220042926.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "TENB",
+  "name": "Tenable Holdings, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 3901346170,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 268411000,
+   "ttm_ocf": 270896000,
+   "ttm_capex": -2485000,
+   "ttm_ebitda": 120305000,
+   "ttm_revenue": 1043539000,
+   "rev_yoy": 0.0993,
+   "cash_sti": 298209000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 34008446.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 2.454877664049355
+  }
+ },
+ {
+  "symbol": "TEX",
+  "name": "Terex Corporation",
+  "sector": "Industrials",
+  "industry": "Industrial - Machinery",
+  "mcap": 4881381533,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "power_for_ai",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 339000000,
+   "ttm_ocf": 456000000,
+   "ttm_capex": -117000000,
+   "ttm_ebitda": 443000000,
+   "ttm_revenue": 6677000000,
+   "rev_yoy": 0.2917,
+   "cash_sti": 407000000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 25719575.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 5.146726862302483
+  }
+ },
+ {
+  "symbol": "TFX",
+  "name": "Teleflex Incorporated",
+  "sector": "Healthcare",
+  "industry": "Medical - Instruments & Supplies",
+  "mcap": 6213101219,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 249020000,
+   "ttm_ocf": 314245000,
+   "ttm_capex": -65225000,
+   "ttm_ebitda": -88473000,
+   "ttm_revenue": 2811156000,
+   "rev_yoy": -0.0661,
+   "cash_sti": 309411000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 29864995.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "TLN",
+  "name": "Talen Energy Corporation",
+  "sector": "Utilities",
+  "industry": "Independent Power Producers",
+  "mcap": 15540981443,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": 835000000,
+   "ttm_ocf": 1046000000,
+   "ttm_capex": -211000000,
+   "ttm_ebitda": 817000000,
+   "ttm_revenue": 3236000000,
+   "rev_yoy": 0.5506,
+   "cash_sti": 1027000000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 173571797.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 7.074663402692779
+  }
+ },
+ {
+  "symbol": "TNDM",
+  "name": "Tandem Diabetes Care, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 1407587488,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -3640001,
+   "ttm_ocf": 19609999,
+   "ttm_capex": -23250999,
+   "ttm_ebitda": -71896000,
+   "ttm_revenue": 1027535000,
+   "rev_yoy": -0.0678,
+   "cash_sti": 570256000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 303417.0,
+   "runway_months": 1879.4,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 30042054.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "TTAN",
+  "name": "ServiceTitan, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 8100969289,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 97827000,
+   "ttm_ocf": 123136000,
+   "ttm_capex": -25309000,
+   "ttm_ebitda": -44685000,
+   "ttm_revenue": 1014097000,
+   "rev_yoy": 0.2409,
+   "cash_sti": 421531000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 27235183.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "TWLO",
+  "name": "Twilio Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 30125593471,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 987018000,
+   "ttm_ocf": 1001000000,
+   "ttm_capex": -13981999,
+   "ttm_ebitda": 310788000,
+   "ttm_revenue": 5301664000,
+   "rev_yoy": 0.1567,
+   "cash_sti": 2346262000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 249878466.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 1.1976822797517022
+  }
+ },
+ {
+  "symbol": "U",
+  "name": "Unity Software Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 15337657120,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 463079999,
+   "ttm_ocf": 481215000,
+   "ttm_capex": -18135000,
+   "ttm_ebitda": -157334000,
+   "ttm_revenue": 1922886000,
+   "rev_yoy": 0.0755,
+   "cash_sti": 2140861000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 344621753.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "UCTT",
+  "name": "Ultra Clean Holdings, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 3916653114,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -113700000,
+   "ttm_ocf": -66799999,
+   "ttm_capex": -46900000,
+   "ttm_ebitda": 81800000,
+   "ttm_revenue": 2195300000,
+   "rev_yoy": 0.0253,
+   "cash_sti": 255900000,
+   "balance_date": "2026-06-26",
+   "balance_sheet_stale": false,
+   "monthly_burn": 9475000.0,
+   "runway_months": 27.0,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 176505022.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "UPBD",
+  "name": "Upbound Group, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 1212217492,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 355952000,
+   "ttm_ocf": 425454000,
+   "ttm_capex": -69502000,
+   "ttm_ebitda": 1757606000,
+   "ttm_revenue": 4744317000,
+   "rev_yoy": 0.0585,
+   "cash_sti": 105302000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 6726975.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 1.5355838169460927
+  }
+ },
+ {
+  "symbol": "VECO",
+  "name": "Veeco Instruments Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 3298249529,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 42888000,
+   "ttm_ocf": 57436000,
+   "ttm_capex": -14548000,
+   "ttm_ebitda": 56765000,
+   "ttm_revenue": 655343000,
+   "rev_yoy": -0.0771,
+   "cash_sti": 383331000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 15904242.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 1.4438122082269005
+  }
+ },
+ {
+  "symbol": "VELO",
+  "name": "Velo3D, Inc.",
+  "sector": "Industrials",
+  "industry": "Industrial - Machinery",
+  "mcap": 251763104,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "power_for_ai",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -36931353000,
+   "ttm_ocf": -33274241000,
+   "ttm_capex": -3657112000,
+   "ttm_ebitda": 2552481000,
+   "ttm_revenue": 50469000,
+   "rev_yoy": 0.245,
+   "cash_sti": 16564000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 3077612750.0,
+   "runway_months": 0.0,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 18949905.0,
+   "royalty_hint": false
+  }
+ }
+]

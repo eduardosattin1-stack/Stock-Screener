@@ -1,0 +1,56 @@
+{
+  "symbol": "FNV",
+  "sector": "Basic Materials",
+  "signal_type": "mining",
+  "company": "Franco-Nevada Corporation",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Basic Materials\nRevenue growth: +71.8% YoY\nReturns / leverage: Net debt -0\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-03-31 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 1.78B | TTM diluted EPS 7.10 | latest-Q EPS YoY +119%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-03-31): NET CASH 717M (cash 717M exceeds total debt 0M, incl. capitalized leases 0M) — a genuine SoP add-back; use this, not the scan's net_debt above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 280.00 | median 282.50 | high 305.00 | low 245.00\nBreadth: last month: 3 PTs avg 268.00 | last quarter: 6 PTs avg 277.50 | last year: 19 PTs avg 262.79\nNewest individual targets (dated — judge freshness yourself):\n  2026-07-14 Tanya Jakusconek: 274.00 (stock was 202.32)\n  2026-07-09 RBC Capital: 285.00 (stock was 207.50)\n  2026-07-06 Jefferies: 245.00 (stock was 217.58)\n  2026-06-30 Daniel Major: 280.00 (stock was 204.50)\n  2026-05-20 TD Securities: 291.00 (stock was 222.74)\nNewest PT is 21 day(s) old\n\n=== SEGMENT REVENUE (FMP, 2025-12-31 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nMining: 1.82B (34%) | Precious metals: 1.55B (29%) | Gold: 1.28B (24%) | Silver: 236M (4%) | Energy: 204M (4%) | Oil: 119M (2%) | Gas: 65M (1%) | Iron Ore: 44M (1%)",
+  "dossier": "",
+  "chains": [
+    "precious_metals"
+  ],
+  "business_model": "royalty_streamer",
+  "physical_anchor": "Holds royalty and streaming contracts entitling it to a percentage of gold, PGM and copper output/revenue from mines it does not operate (e.g., Cobre Panama, Candelaria, Antamina).",
+  "commodity_revenue_share": 0.8,
+  "chain_regime": {
+    "precious_metals": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "precious_metals",
+    "torque_metrics": true,
+    "commodity_beta_2y": 1.02,
+    "beta_benchmark": "GCUSD",
+    "beta_is_proxy": false,
+    "ndebt_ebitda": -0.19,
+    "commodity_revenue_share": 0.8,
+    "as_of": "2026-08-04",
+    "ebitda_margin_ttm": 0.9776,
+    "ebitda_margin_band": {
+      "band": "q1_low_cost",
+      "pct": 0.75,
+      "basis": "cohort_percentile",
+      "n_cohort": 8
+    },
+    "fcf_torque_10pct": 0.082,
+    "torque_note": "SYMMETRIC: fcf_torque_10pct is the +/-10% commodity move's % EBITDA swing (read the downside too). beta_is_proxy=False (proxy ETF regression where the spot is off-FMP)."
+  },
+  "gates": {
+    "ttm_fcf": 1777623453,
+    "ttm_ocf": 1717991559,
+    "ttm_capex": 59631894,
+    "ttm_ebitda": 2057900000,
+    "ttm_revenue": 2105100000,
+    "rev_yoy": 0.7182,
+    "cash_sti": 717050509,
+    "balance_date": "2026-03-31",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 73626382.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.18623661159434374
+  }
+}

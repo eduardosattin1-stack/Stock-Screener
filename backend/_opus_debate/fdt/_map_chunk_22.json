@@ -1,0 +1,607 @@
+[
+ {
+  "symbol": "ITGR",
+  "name": "Integer Holdings Corporation",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 4228905423,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 158627000,
+   "ttm_ocf": 205440000,
+   "ttm_capex": -46813000,
+   "ttm_ebitda": 279593000,
+   "ttm_revenue": 1841158000,
+   "rev_yoy": 0.0286,
+   "cash_sti": 21375000,
+   "balance_date": "2026-07-03",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 138558430.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 4.129476111867842
+  }
+ },
+ {
+  "symbol": "ITT",
+  "name": "ITT Inc.",
+  "sector": "Industrials",
+  "industry": "Industrial - Machinery",
+  "mcap": 18162130173,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "power_for_ai",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 484700000,
+   "ttm_ocf": 595300000,
+   "ttm_capex": -110600000,
+   "ttm_ebitda": 859700000,
+   "ttm_revenue": 4237400000,
+   "rev_yoy": 0.1663,
+   "cash_sti": 600800000,
+   "balance_date": "2026-04-04",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 211476310.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.913225543794347
+  }
+ },
+ {
+  "symbol": "J",
+  "name": "Jacobs Solutions Inc.",
+  "sector": "Industrials",
+  "industry": "Engineering & Construction",
+  "mcap": 16808517923,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": 484092000,
+   "ttm_ocf": 572318000,
+   "ttm_capex": -88226000,
+   "ttm_ebitda": 893635000,
+   "ttm_revenue": 13171974000,
+   "rev_yoy": 0.741,
+   "cash_sti": 1371912000,
+   "balance_date": "2026-03-27",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 70352405.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.5654086959440936
+  }
+ },
+ {
+  "symbol": "KC",
+  "name": "Kingsoft Cloud Holdings Limited",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 3829362754,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 11030999,
+   "ttm_ocf": 4753395999,
+   "ttm_capex": -4742365000,
+   "ttm_ebitda": 2069445000,
+   "ttm_revenue": 10292374000,
+   "rev_yoy": 0.2899,
+   "cash_sti": 4903797000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 26081961.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 1.011611325741926
+  }
+ },
+ {
+  "symbol": "KDK",
+  "name": "Kodiak AI, Inc. Common Stock",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 885595785,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -172694870,
+   "ttm_ocf": -142221870,
+   "ttm_capex": -30473000,
+   "ttm_ebitda": -422972000,
+   "ttm_revenue": 4156000,
+   "rev_yoy": -0.74,
+   "cash_sti": 90792000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 14391239.0,
+   "runway_months": 6.3,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 3028863.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "KMTS",
+  "name": "Kestra Medical Technologies, Ltd.",
+  "sector": "Healthcare",
+  "industry": "Medical - Instruments & Supplies",
+  "mcap": 1440025191,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -116595000,
+   "ttm_ocf": -81703000,
+   "ttm_capex": -34892000,
+   "ttm_ebitda": -130719000,
+   "ttm_revenue": 95126000,
+   "rev_yoy": 0.5903,
+   "cash_sti": 196434000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 9716250.0,
+   "runway_months": 20.2,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 6462822.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "KODK",
+  "name": "Eastman Kodak Company",
+  "sector": "Industrials",
+  "industry": "Industrial - Machinery",
+  "mcap": 888015365,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "power_for_ai",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 460000000,
+   "ttm_ocf": 488000000,
+   "ttm_capex": -28000000,
+   "ttm_ebitda": -27000000,
+   "ttm_revenue": 1087000000,
+   "rev_yoy": 0.0442,
+   "cash_sti": 299000000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 5493091.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "KOPN",
+  "name": "Kopin Corp.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 782896725,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -15173232,
+   "ttm_ocf": -12935031,
+   "ttm_capex": -2238201,
+   "ttm_ebitda": 3038139,
+   "ttm_revenue": 39336609,
+   "rev_yoy": -0.2263,
+   "cash_sti": 59486936,
+   "balance_date": "2026-03-28",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1264436.0,
+   "runway_months": 47.0,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 11430376.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "KRMN",
+  "name": "Karman Holdings Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 7072928578,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": -30995000,
+   "ttm_ocf": -8326000,
+   "ttm_capex": -22669000,
+   "ttm_ebitda": 138399000,
+   "ttm_revenue": 522586000,
+   "rev_yoy": 0.4421,
+   "cash_sti": 73798000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 2582917.0,
+   "runway_months": 28.6,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 84916900.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "KTOS",
+  "name": "Kratos Defense & Security Solutions, Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 9745413568,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": -134000000,
+   "ttm_ocf": -41400000,
+   "ttm_capex": -92600000,
+   "ttm_ebitda": 109000000,
+   "ttm_revenue": 1415200000,
+   "rev_yoy": 0.2182,
+   "cash_sti": 1464300000,
+   "balance_date": "2026-03-29",
+   "balance_sheet_stale": false,
+   "monthly_burn": 11166667.0,
+   "runway_months": 131.1,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 143460586.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "KVYO",
+  "name": "Klaviyo, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 5556129728,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 223587000,
+   "ttm_ocf": 237924000,
+   "ttm_capex": -14337000,
+   "ttm_ebitda": 15510000,
+   "ttm_revenue": 1312197000,
+   "rev_yoy": 0.3027,
+   "cash_sti": 984590000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 54302841.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 39.23034825870647
+  }
+ },
+ {
+  "symbol": "LAES",
+  "name": "SEALSQ Corp",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 367891875,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -53518518,
+   "ttm_ocf": -51934584,
+   "ttm_capex": -1583933,
+   "ttm_ebitda": -47854996,
+   "ttm_revenue": 30735938,
+   "rev_yoy": -0.4542,
+   "cash_sti": 427689000,
+   "balance_date": "2025-12-31",
+   "balance_sheet_stale": true,
+   "monthly_burn": 4459876.0,
+   "runway_months": 95.9,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 15758213.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "LGN",
+  "name": "Legence Corp. Class A Common stock",
+  "sector": "Industrials",
+  "industry": "Engineering & Construction",
+  "mcap": 8077023138,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": 297126000,
+   "ttm_ocf": 347524000,
+   "ttm_capex": -50398000,
+   "ttm_ebitda": 174874000,
+   "ttm_revenue": 3082431000,
+   "rev_yoy": null,
+   "cash_sti": 244620000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 19234214.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 5.335830369294463
+  }
+ },
+ {
+  "symbol": "LMRI",
+  "name": "Lumexa Imaging Holdings, Inc. Common Stock",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 1104928453,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": null,
+   "ttm_ocf": null,
+   "ttm_capex": null,
+   "ttm_ebitda": null,
+   "ttm_revenue": null,
+   "rev_yoy": null,
+   "cash_sti": 51226000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": null,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 4103549.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "LPTH",
+  "name": "LightPath Technologies, Inc.",
+  "sector": "Technology",
+  "industry": "Hardware, Equipment & Parts",
+  "mcap": 602798247,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation",
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -10292496,
+   "ttm_ocf": -7766522,
+   "ttm_capex": -2525974,
+   "ttm_ebitda": -9940743,
+   "ttm_revenue": 62769540,
+   "rev_yoy": 0.8666,
+   "cash_sti": 55235181,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 857708.0,
+   "runway_months": 64.4,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 14165840.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "LSPD",
+  "name": "Lightspeed Commerce Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 1414260375,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 42982931,
+   "ttm_ocf": 90603495,
+   "ttm_capex": -47620564,
+   "ttm_ebitda": 14810000,
+   "ttm_revenue": 1244808000,
+   "rev_yoy": 0.1157,
+   "cash_sti": 373205615,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 3822296.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "LTBR",
+  "name": "Lightbridge Corporation",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 314918016,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -15762558,
+   "ttm_ocf": -15752033,
+   "ttm_capex": -4409,
+   "ttm_ebitda": -15949968,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 215671445,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1313037.0,
+   "runway_months": 164.3,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 2337013.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "LUNR",
+  "name": "Intuitive Machines, Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 2243965743,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": -133956000,
+   "ttm_ocf": -88505000,
+   "ttm_capex": -45451000,
+   "ttm_ebitda": -131399000,
+   "ttm_revenue": 334265000,
+   "rev_yoy": 0.5372,
+   "cash_sti": 231624000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 11163000.0,
+   "runway_months": 20.7,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 118972536.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "LYFT",
+  "name": "Lyft, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 6274261575,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 1155373999,
+   "ttm_ocf": 1222119000,
+   "ttm_capex": -66745000,
+   "ttm_ebitda": 118714000,
+   "ttm_revenue": 6516578000,
+   "rev_yoy": 0.0936,
+   "cash_sti": 1720935000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 50041464.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 4.278897239234173
+  }
+ },
+ {
+  "symbol": "LZ",
+  "name": "LegalZoom.com, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 1425176179,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 147569000,
+   "ttm_ocf": 174776000,
+   "ttm_capex": -27207000,
+   "ttm_ebitda": 75034000,
+   "ttm_revenue": 779714000,
+   "rev_yoy": 0.1287,
+   "cash_sti": 183152000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 3974490.0,
+   "royalty_hint": false
+  }
+ }
+]

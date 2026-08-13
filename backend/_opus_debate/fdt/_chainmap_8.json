@@ -1,0 +1,182 @@
+{
+ "MDA": {
+  "physical_anchor": "Builds and sells satellites, robotic arms (Canadarm), and radar-imaging spacecraft to government and commercial customers",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Space-systems manufacturer (satellites, space robotics, geointelligence) - no genuine tie to the FDT electrification/nuclear/power/robotics/quantum chains despite the nuclear_smr hint",
+  "true_competitors": ["RKT", "ASTS", "IRDM", "LHX", "BA", "AIR.PA", "HO.PA"],
+  "chain_fit_confidence": "low"
+ },
+ "MDT": {
+  "physical_anchor": "Manufactures and sells the Hugo surgical robotic system (arms, console, instruments) alongside cardiac, diabetes and neuro implantable devices",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Surgical-robotics layer of a diversified medtech: Hugo RAS platform competes in minimally invasive robotic surgery, a small but growing slice of total device sales",
+  "true_competitors": ["ISRG", "SYK", "ZBH", "JNJ", "BSX", "ABT"],
+  "chain_fit_confidence": "medium"
+ },
+ "MMSI": {
+  "physical_anchor": "Manufactures disposable cardiovascular and endovascular devices (catheters, embolization coils, access products)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Disposable interventional-cardiology/endovascular device maker - not a robotics platform despite the hint; no motion-control, vision or surgical-robot product line",
+  "true_competitors": ["TFX", "ANGO", "ATRC", "PEN", "BSX", "ICUI"],
+  "chain_fit_confidence": "low"
+ },
+ "MNDY": {
+  "physical_anchor": "None - monday.com sells a work-management SaaS platform, no physical product (anti-Visa rule)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Pure cloud-software subscription business - no physical anchor to any FDT chain despite the robotics_automation industry-filter hint",
+  "true_competitors": ["ASAN", "SMAR", "TEAM", "NOW", "WK"],
+  "chain_fit_confidence": "low"
+ },
+ "MNTN": {
+  "physical_anchor": "None - MNTN sells connected-TV/performance advertising software, no physical product (anti-Visa rule)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Adtech SaaS platform for connected-TV advertising - no physical anchor to any FDT chain despite the robotics_automation industry-filter hint",
+  "true_competitors": ["TTD", "ROKU", "PUBM", "MGNI", "CRTO"],
+  "chain_fit_confidence": "low"
+ },
+ "MOD": {
+  "physical_anchor": "Manufactures heat exchangers and liquid-cooling systems (CDUs) installed in AI/data-center server racks, plus EV and industrial thermal-management hardware",
+  "chains": ["electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Data Center Cooling segment sells physical thermal-management/liquid-cooling hardware into the same datacenter power buildout as grid-equipment peers (Vertiv-style); legacy Vehicular/Industrial thermal segments are non-chain",
+  "true_competitors": ["VRT", "NVT", "AAON", "LII", "BWA", "DAN"],
+  "chain_fit_confidence": "medium"
+ },
+ "MOG-A": {
+  "physical_anchor": "Manufactures precision motion-control systems and actuators (hydraulic, electromechanical) for aircraft flight controls, space, and industrial/robotic applications",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.1,
+  "value_chain_position": "Motion-control & actuators layer: Moog's Industrial Systems segment sells actuation/motion-control components into factory-automation and robotic end markets, alongside its larger aerospace/defense actuation business (nuclear_smr hint is a mismatch - no reactor-component business)",
+  "true_competitors": ["HON", "PH", "ETN", "CW", "TDG", "HEI"],
+  "chain_fit_confidence": "medium"
+ },
+ "MPWR": {
+  "physical_anchor": "Designs and manufactures power-management semiconductor chips (DC-DC converters, voltage regulators) sold broadly into computing, auto, industrial and communications markets",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Generic analog power-semiconductor company caught by the broad quantum industry filter - no quantum-specific hardware or lab/government-contract exposure",
+  "true_competitors": ["TXN", "ADI", "ON", "NXPI", "VSH", "ALGM"],
+  "chain_fit_confidence": "low"
+ },
+ "MQ": {
+  "physical_anchor": "None - Marqeta is a card-issuing and payment-processing API/BaaS platform, not a maker of physical or quantum hardware (anti-Visa rule)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Payments/card-issuing software platform - textbook anti-Visa exclusion despite the quantum industry-filter hint",
+  "true_competitors": ["FIS", "GPN", "FI", "PAYO", "GDOT"],
+  "chain_fit_confidence": "low"
+ },
+ "MRVL": {
+  "physical_anchor": "Designs custom ASICs, networking silicon, and optical-interconnect chips for datacenter/AI infrastructure providers",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Generic data-infrastructure semiconductor company caught by the broad quantum industry filter - no quantum-specific hardware (cryo/control electronics) business",
+  "true_competitors": ["AVGO", "ALAB", "CRDO", "COHR", "LSCC"],
+  "chain_fit_confidence": "low"
+ },
+ "MSFT": {
+  "physical_anchor": "Operates Azure cloud datacenters and, via Azure Quantum, has built an experimental topological-qubit chip (Majorana 1) - but this is a negligible sliver of a trillion-dollar software/cloud business",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Diversified cloud/software hyperscaler with an R&D-stage quantum-hardware program too immaterial to genuinely ride the quantum chain's dated-milestone repricing dynamic",
+  "true_competitors": ["GOOGL", "AMZN", "ORCL", "IBM", "META"],
+  "chain_fit_confidence": "low"
+ },
+ "MTSI": {
+  "physical_anchor": "Designs and manufactures RF/microwave and photonic semiconductor components (amplifiers, lasers, optical ICs) for telecom, defense and datacenter-interconnect markets",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Broad RF/microwave and photonics component supplier with no demonstrated quantum-lab or cryogenics/control-electronics business, unlike named quantum-chain anchor COHR",
+  "true_competitors": ["QRVO", "SWKS", "ADI", "COHR", "LITE", "WOLF"],
+  "chain_fit_confidence": "low"
+ },
+ "MTZ": {
+  "physical_anchor": "Builds and installs physical electric transmission lines, distribution systems, substations, and pipeline/telecom infrastructure as a specialty EPC contractor",
+  "chains": ["electrification_grid", "power_for_ai"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.03,
+  "value_chain_position": "Grid EPC & interconnection layer: Power Delivery/Clean Energy & Infrastructure segments build the physical grid and datacenter-adjacent power infrastructure - the direct construction-services analog to anchor name PWR",
+  "true_competitors": ["PWR", "EME", "MYRG", "DY", "IESC", "GVA"],
+  "chain_fit_confidence": "high"
+ },
+ "MU": {
+  "physical_anchor": "Manufactures DRAM and NAND memory chips, including HBM for AI accelerators",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Generic memory semiconductor manufacturer caught by the broad quantum industry filter - no quantum-specific hardware business",
+  "true_competitors": ["000660.KS", "005930.KS", "WDC", "STX", "SNDK"],
+  "chain_fit_confidence": "low"
+ },
+ "MWA": {
+  "physical_anchor": "Manufactures water-infrastructure hardware: iron gate valves, fire hydrants, and pipe-condition/leak-detection sensors for municipal water utilities",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Water-system equipment maker - not power/grid/nuclear/robotics/quantum despite the broad industry-filter hints on all four chains",
+  "true_competitors": ["WTS", "XYL", "AOS", "FELE", "CIR"],
+  "chain_fit_confidence": "low"
+ },
+ "MYRG": {
+  "physical_anchor": "Builds and maintains electric transmission & distribution lines and substations as a specialty electrical contractor for utilities",
+  "chains": ["electrification_grid", "power_for_ai"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "Grid EPC & interconnection layer: T&D line and substation construction/maintenance directly for utility and datacenter-driven grid capex - a pure-play analog to PWR/MTZ",
+  "true_competitors": ["PWR", "EME", "MTZ", "DY", "IESC"],
+  "chain_fit_confidence": "high"
+ },
+ "NDSN": {
+  "physical_anchor": "Manufactures precision adhesive/fluid-dispensing and coating equipment used in electronics assembly, medical-device manufacturing, and industrial processes",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Precision dispensing/process-equipment maker - not a grid, nuclear, power-generation, or robotics/motion-control name despite the broad industry-filter hints on all four chains",
+  "true_competitors": ["GGG", "ITW", "DOV", "IEX", "PH"],
+  "chain_fit_confidence": "low"
+ },
+ "NICE": {
+  "physical_anchor": "None - NICE sells contact-center and financial-crime-compliance software, including software-only robotic process automation bots, not physical robots (anti-Visa rule)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Pure enterprise-software company - RPA offering is software bots, not physical robotics, so no genuine tie to robotics_automation despite the hint",
+  "true_competitors": ["VRNT", "FIVN", "TWLO", "EGHT"],
+  "chain_fit_confidence": "low"
+ },
+ "NOC": {
+  "physical_anchor": "Manufactures military aircraft (B-21), missiles/strategic-deterrence systems, and space systems - not a civilian SMR/reactor-component supplier",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Defense-prime aerospace/space/strategic-systems manufacturer; the nuclear_smr hint conflates defense-nuclear deterrence work with the civilian SMR/reactor-component chain",
+  "true_competitors": ["LMT", "RTX", "GD", "BA", "LHX", "HII"],
+  "chain_fit_confidence": "low"
+ },
+ "NOVT": {
+  "physical_anchor": "Manufactures precision photonics (lasers, optical components), motion-control systems (encoders, servo drives), and machine-vision components used in industrial and medical robotics",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Motion-control & machine-vision layer: Novanta's Precision Motion, Vision and Photonics segments are component-level toll-takers into robotics, automation and medical-device OEMs",
+  "true_competitors": ["COHR", "IPGP", "MKSI", "CGNX", "FARO"],
+  "chain_fit_confidence": "medium"
+ }
+}

@@ -1,0 +1,21 @@
+{
+ "symbol": "NVTS",
+ "physical_anchor": "Designs and sells gallium-nitride (GaN) and silicon-carbide (SiC) power semiconductor chips",
+ "chains": [
+  "electrification_grid",
+  "power_for_ai"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Power-semiconductor component maker; power-management layer for EV/grid/solar (electrification_grid) and next-gen AI-datacenter 800V power delivery (power_for_ai)",
+ "true_competitors": [
+  "WOLF",
+  "ON",
+  "STM",
+  "IFNNY",
+  "POWI",
+  "VICR",
+  "MPWR"
+ ],
+ "chain_fit_confidence": "medium"
+}

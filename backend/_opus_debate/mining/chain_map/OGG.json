@@ -1,0 +1,19 @@
+{
+ "symbol": "OGG",
+ "physical_anchor": "Ramping gold production from a construction-stage mine complex (large ongoing growth capex against small but fast-growing revenue), explicitly flagged royalty_hint=false distinguishing it from the Osisko royalty vehicle.",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.9,
+ "value_chain_position": "Construction/early-production-stage gold developer (permitted/construction-stage layer); the revenue-ramp-against-heavy-capex pattern is the classic transitional producer profile, not an established miner.",
+ "true_competitors": [
+  "Osisko Development Corp (ODV)",
+  "Skeena Resources (SKE)",
+  "i-80 Gold (IAUX)",
+  "Marathon Gold (MOZYF)",
+  "Artemis Gold (ARTGF)",
+  "Torex Gold (TORXF)"
+ ],
+ "chain_fit_confidence": "medium"
+}

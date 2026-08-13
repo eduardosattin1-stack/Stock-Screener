@@ -1,0 +1,60 @@
+{
+  "symbol": "VICR",
+  "sector": "Technology",
+  "signal_type": "future_disruptive_tech",
+  "company": "Vicor Corporation",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Technology\nValuation: Price 213.54 | Fair Value 139.71 | Margin of Safety -35% | P/FCF 80.5x\nRevenue growth: +13.5% YoY | 3-yr CAGR +0.7%\nMargins: Gross 52.6% (expanding) | Net 29.1% | FCF 29.2%\nEPS / guidance delivery: 2.61 latest | +1764.3% YoY | 3-yr CAGR +66.1% | beat 6/7 qtrs (86%)\nFCF growth: +337.7% YoY | 3-yr CAGR +0.0%\nReturns / leverage: ROE 9.3% | ROIC 6.2% | Net debt -390M\nForward / signals: Consensus fwd EPS growth +73.2% | Margin 0.49sigma vs hist. peak | Insider buy ratio 0.00\nValuation models (stock page): DCF fair value 28.3 | Buffett fair value 139.7\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -100% | EPV -100% | Graham -100% | OwnerErn -100% | IV15 -100%\nQuality / scores: Bull score 4 | Catalyst score 0.5 | Piotroski 4/9 | Altman-Z (solvency) 100.1 | Days to next earnings 78\nAnalyst consensus target: 347.50 (+63% upside)\nPositioning / smart money: Smart-money score 63/100 | Institutional flow 50/100 | Analyst-target velocity +51% (vs yr-ago avg PT)\nTechnical posture (timing context, not thesis): price +14% vs 200d SMA | 50% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2021: rev 359M, NI 57M, EPS 1.26\n  2022: rev 399M, NI 25M, EPS 0.57\n  2023: rev 405M, NI 54M, EPS 1.19\n  2024: rev 359M, NI 6M, EPS 0.14\n  2025: rev 408M, NI 119M, EPS 2.61\n  CAGRs: bvps_5y +13.9%, eps_5y +20.0%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-06-30 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 51M | TTM diluted EPS 3.12 | latest-Q EPS YoY +14%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-06-30): NET CASH 446M (cash 454M exceeds total debt 8M, incl. capitalized leases 6M) — a genuine SoP add-back; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 86 sells (76,049sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 347.50 | median 347.50 | high 375.00 | low 320.00\nBreadth: last month: 1 PTs avg 320.00 | last quarter: 4 PTs avg 361.25 | last year: 9 PTs avg 240.00\nNewest individual targets (dated — judge freshness yourself):\n  2026-07-21 Quinn Bolton: 320.00 (stock was 214.70)\n  2026-06-22 Roth Capital: 375.00 (stock was 362.03)\n  2026-06-22 Quinn Bolton: 400.00 (stock was 331.18)\n  2026-05-26 Quinn Bolton: 350.00 (stock was 332.95)\n  2026-04-20 Roth Capital: 245.00 (stock was 221.72)\nNewest PT is 14 day(s) old\n\n=== SEGMENT REVENUE (FMP, 2025-12-31 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nAdvancedProducts: 249M (61%) | BrickProducts: 159M (39%)",
+  "dossier": "",
+  "chains": [
+    "electrification_grid"
+  ],
+  "business_model": "equipment_services",
+  "physical_anchor": "High-density power-conversion modules (DC-DC / AC-DC converters) that deliver and manage electrical power to servers, data centers, defense, and industrial systems",
+  "commodity_revenue_share": 0.05,
+  "chain_regime": {
+    "electrification_grid": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "electrification_grid",
+    "torque_metrics": false,
+    "commodity_beta_2y": 1.74,
+    "beta_benchmark": "GRID",
+    "beta_is_proxy": true,
+    "ndebt_ebitda": -2.78,
+    "commodity_revenue_share": 0.05,
+    "as_of": "2026-08-04",
+    "gm_trajectory": {
+      "direction": "expanding",
+      "gm_recent_to_old": [
+        0.4524,
+        0.5059,
+        0.5124,
+        0.5259
+      ],
+      "delta_3y": 0.0735
+    },
+    "rev_yoy": 0.117,
+    "fcf_margin": 0.1082,
+    "torque_note": "NON-COMMODITY chain (no spot to lever to): no torque metric. commodity_beta_2y is a PROXY factor-exposure read vs GRID, not a commodity torque."
+  },
+  "gates": {
+    "ttm_fcf": 51268000,
+    "ttm_ocf": 84392000,
+    "ttm_capex": -33124000,
+    "ttm_ebitda": 127589999,
+    "ttm_revenue": 474008000,
+    "rev_yoy": 0.117,
+    "cash_sti": 453582000,
+    "balance_date": "2026-06-30",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 69483879.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -2.778878807961419
+  }
+}

@@ -1,0 +1,18 @@
+{
+ "symbol": "ALM",
+ "physical_anchor": "Tungsten concentrate mined and processed at Sangdong (South Korea) and Panasqueira (Portugal).",
+ "chains": [
+  "rare_earth_strategic"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Pure-play tungsten miner — the strategic-metal chokepoint the chain thesis is built on.",
+ "true_competitors": [
+  "EMX",
+  "THR.AX",
+  "000657.SZ",
+  "MHC",
+  "NCF.V"
+ ],
+ "chain_fit_confidence": "high"
+}

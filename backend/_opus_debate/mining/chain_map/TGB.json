@@ -1,0 +1,21 @@
+{
+ "symbol": "TGB",
+ "physical_anchor": "Copper concentrate and cathode produced from an operating open-pit copper mine (BC) and a low-cost ISR copper project (Arizona)",
+ "chains": [
+  "copper_mining"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.85,
+ "value_chain_position": "Mid-tier copper producer running an operating open-pit mine while ramping a low-cost in-situ-recovery copper project",
+ "true_competitors": [
+  "FCX",
+  "SCCO",
+  "HBM",
+  "ERO",
+  "CS.TO",
+  "LUN.TO",
+  "TECK",
+  "FM.TO"
+ ],
+ "chain_fit_confidence": "high"
+}

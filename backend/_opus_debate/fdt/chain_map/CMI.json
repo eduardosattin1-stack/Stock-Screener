@@ -1,0 +1,18 @@
+{
+ "symbol": "CMI",
+ "physical_anchor": "Manufactures diesel/natural-gas engines and generator sets, including prime/backup power gensets sold for datacenter power",
+ "chains": [
+  "power_for_ai"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.15,
+ "value_chain_position": "Generation-equipment layer — reciprocating-engine gensets for prime/backup datacenter and industrial power; Power Systems is a minority segment of a diversified engine maker",
+ "true_competitors": [
+  "CAT",
+  "GEV",
+  "GNRC",
+  "RR.L",
+  "WRT1V.HE"
+ ],
+ "chain_fit_confidence": "medium"
+}

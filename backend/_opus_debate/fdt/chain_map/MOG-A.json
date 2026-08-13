@@ -1,0 +1,19 @@
+{
+ "symbol": "MOG-A",
+ "physical_anchor": "Manufactures precision motion-control systems and actuators (hydraulic, electromechanical) for aircraft flight controls, space, and industrial/robotic applications",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.1,
+ "value_chain_position": "Motion-control & actuators layer: Moog's Industrial Systems segment sells actuation/motion-control components into factory-automation and robotic end markets, alongside its larger aerospace/defense actuation business (nuclear_smr hint is a mismatch - no reactor-component business)",
+ "true_competitors": [
+  "HON",
+  "PH",
+  "ETN",
+  "CW",
+  "TDG",
+  "HEI"
+ ],
+ "chain_fit_confidence": "medium"
+}

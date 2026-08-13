@@ -1,0 +1,19 @@
+{
+ "symbol": "FNV",
+ "physical_anchor": "Holds royalty and streaming contracts entitling it to a percentage of gold, PGM and copper output/revenue from mines it does not operate (e.g., Cobre Panama, Candelaria, Antamina).",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "royalty_streamer",
+ "commodity_revenue_share": 0.8,
+ "value_chain_position": "Royalty/streaming layer — no operating or capex exposure, collects contractual metal-linked payment streams across a diversified portfolio; some non-metal energy royalties dilute the pure-gold mix.",
+ "true_competitors": [
+  "WPM",
+  "RGLD",
+  "OR",
+  "SAND",
+  "TFPM",
+  "MTA"
+ ],
+ "chain_fit_confidence": "high"
+}

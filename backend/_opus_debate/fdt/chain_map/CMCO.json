@@ -1,0 +1,18 @@
+{
+ "symbol": "CMCO",
+ "physical_anchor": "hoists, cranes, rigging and automated motion-control/material-handling systems",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "industrial material-handling and motion-control equipment maker, increasingly marketed as intelligent/automated handling solutions for factories and warehouses",
+ "true_competitors": [
+  "TEX",
+  "KCR.HE",
+  "ROK",
+  "6383.T",
+  "HON"
+ ],
+ "chain_fit_confidence": "medium"
+}

@@ -1,0 +1,21 @@
+{
+ "symbol": "FLNC",
+ "physical_anchor": "Designs, manufactures and deploys containerized grid-scale battery energy storage systems (BESS) plus a storage-optimization software layer (Fluence IQ).",
+ "chains": [
+  "electrification_grid",
+  "power_for_ai"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Power management/grid-storage equipment layer: sells and installs storage hardware that firms up grid capacity and datacenter power reliability; lithium-cell content is an input cost, not a revenue driver.",
+ "true_competitors": [
+  "TSLA",
+  "WRT1V.HE",
+  "373220.KS",
+  "300274.SZ",
+  "1211.HK",
+  "NXT",
+  "STEM"
+ ],
+ "chain_fit_confidence": "high"
+}

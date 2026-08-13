@@ -1,0 +1,18 @@
+{
+ "symbol": "SMR",
+ "physical_anchor": "Factory-built VOYGR small modular nuclear reactor modules it is commercializing",
+ "chains": [
+  "nuclear_smr"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "SMR & advanced-reactor developer layer — NRC-design-approved 77MWe module, monetizing on dated NRC/COL/first-concrete milestones ahead of revenue.",
+ "true_competitors": [
+  "OKLO",
+  "BWXT",
+  "NNE",
+  "GEV",
+  "3350.T"
+ ],
+ "chain_fit_confidence": "high"
+}

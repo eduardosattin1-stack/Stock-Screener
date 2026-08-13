@@ -1,0 +1,19 @@
+{
+ "symbol": "SNN",
+ "physical_anchor": "Makes the CORI robotic-assisted surgical system for knee/hip procedures plus orthopedic implants and surgical instruments — a real robotic-surgery platform.",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Surgical robotics & orthopedic device maker — CORI robotic platform drives implant pull-through, alongside wound-care/sports-medicine franchises unrelated to the chain.",
+ "true_competitors": [
+  "SYK",
+  "ZBH",
+  "ISRG",
+  "MDT",
+  "GMED",
+  "JNJ"
+ ],
+ "chain_fit_confidence": "medium"
+}

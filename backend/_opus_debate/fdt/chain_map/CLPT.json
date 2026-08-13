@@ -1,0 +1,17 @@
+{
+ "symbol": "CLPT",
+ "physical_anchor": "MRI-compatible neurosurgical navigation and stereotactic delivery hardware (SmartFrame/ClearPoint platform) for precision brain interventions",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "surgical-robotics-adjacent toll-taker: sells the image-guided delivery hardware and disposables/biologics-access services used in precision neurosurgical procedures",
+ "true_competitors": [
+  "ISRG",
+  "STXS",
+  "MDT",
+  "GMED"
+ ],
+ "chain_fit_confidence": "medium"
+}

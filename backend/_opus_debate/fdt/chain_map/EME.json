@@ -1,0 +1,20 @@
+{
+ "symbol": "EME",
+ "physical_anchor": "installs and maintains electrical power distribution, switchgear, and mechanical/HVAC systems for buildings and data centers",
+ "chains": [
+  "electrification_grid",
+  "power_for_ai"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "electrical & mechanical infrastructure services contractor building data-center and grid-connected electrical systems",
+ "true_competitors": [
+  "FIX",
+  "MTZ",
+  "PWR",
+  "ACM",
+  "J",
+  "MYRG"
+ ],
+ "chain_fit_confidence": "high"
+}

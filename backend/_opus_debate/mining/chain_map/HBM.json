@@ -1,0 +1,19 @@
+{
+ "symbol": "HBM",
+ "physical_anchor": "Operates open-pit/underground mines (Constancia Peru, Manitoba, Copper World Arizona) producing copper concentrate with zinc, gold and silver byproducts.",
+ "chains": [
+  "copper_mining"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.75,
+ "value_chain_position": "Polymetallic base-metal producer — sells copper concentrate as the dominant product with meaningful zinc/gold/silver byproduct credits.",
+ "true_competitors": [
+  "ERO",
+  "LUN.TO",
+  "CS.TO",
+  "TECK",
+  "TGB",
+  "FM.TO"
+ ],
+ "chain_fit_confidence": "high"
+}

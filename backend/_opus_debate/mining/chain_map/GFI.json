@@ -1,0 +1,19 @@
+{
+ "symbol": "GFI",
+ "physical_anchor": "Operates deep-level and open-pit mines in South Africa, Australia, Ghana and Peru producing gold doré/bullion.",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.95,
+ "value_chain_position": "Senior multi-country gold producer selling refined gold from company-operated mines.",
+ "true_competitors": [
+  "AU",
+  "HMY",
+  "NEM",
+  "B",
+  "KGC",
+  "AEM"
+ ],
+ "chain_fit_confidence": "high"
+}

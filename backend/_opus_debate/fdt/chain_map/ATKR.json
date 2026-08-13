@@ -1,0 +1,19 @@
+{
+ "symbol": "ATKR",
+ "physical_anchor": "Manufactures electrical conduit, armored cable, wire and cable-management products for electrical construction and utility infrastructure.",
+ "chains": [
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Electrical-infrastructure toll-taker — conduit, cable and cable-management for grid, datacenter and construction electrical build-out (power management & connectors layer).",
+ "true_competitors": [
+  "HUBB",
+  "NVT",
+  "ETN",
+  "AZZ",
+  "PRY.MI",
+  "LR.PA"
+ ],
+ "chain_fit_confidence": "high"
+}

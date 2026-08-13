@@ -1,0 +1,60 @@
+{
+  "symbol": "TER",
+  "sector": "Technology",
+  "signal_type": "future_disruptive_tech",
+  "company": "Teradyne, Inc.",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Technology\nValuation: Price 365.8 | Fair Value 88.1 | Margin of Safety -76% | P/FCF 128.0x\nRevenue growth: +13.1% YoY | 3-yr CAGR +0.4%\nMargins: Gross 58.6% (stable) | Net 17.4% | FCF 14.1%\nEPS / guidance delivery: 3.48 latest | +4.8% YoY | 3-yr CAGR -6.2% | beat 7/7 qtrs (100%)\nFCF growth: -5.0% YoY | 3-yr CAGR +2.8%\nReturns / leverage: ROE 25.1% | ROIC 22.1% | Net debt 25M\nForward / signals: Consensus fwd EPS growth +27.6% | Margin -0.00sigma vs hist. peak | Insider buy ratio 0.00\nValuation models (stock page): DCF fair value 45.7 | Buffett fair value 88.1\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -100% | EPV -100% | Graham -100% | OwnerErn -100% | IV15 -100%\nQuality / scores: Bull score 5 | Catalyst score 0.7 | Piotroski 7/9 | Altman-Z (solvency) 26.2 | Days to next earnings 85\nAnalyst consensus target: 440.22 (+20% upside)\nPositioning / smart money: Smart-money score 74/100 | Institutional flow 52/100 | Analyst-target velocity +54% (vs yr-ago avg PT)\nTechnical posture (timing context, not thesis): price +26% vs 200d SMA | 68% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2021: rev 3.70B, NI 1.01B, EPS 5.53\n  2022: rev 3.16B, NI 716M, EPS 4.22\n  2023: rev 2.68B, NI 449M, EPS 2.73\n  2024: rev 2.82B, NI 542M, EPS 3.32\n  2025: rev 3.19B, NI 554M, EPS 3.48\n  CAGRs: bvps_5y +6.2%, eps_5y -10.9%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-06-28 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 800M | TTM diluted EPS 7.29 | latest-Q EPS YoY +386%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-06-28): NET CASH 255M (cash 355M exceeds total debt 100M, incl. capitalized leases 83M) — a genuine SoP add-back; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 32 sells (36,970sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 461.50 | median 442.50 | high 550.00 | low 390.00\nBreadth: last month: 5 PTs avg 440.40 | last quarter: 8 PTs avg 468.50 | last year: 47 PTs avg 304.77\nNewest individual targets (dated — judge freshness yourself):\n  2026-07-30 Morgan Stanley: 397.00 (stock was 361.79)\n  2026-07-30 Quinn Fredrickson: 420.00 (stock was 359.71)\n  2026-07-30 Vedvati Shrotre: 420.00 (stock was 357.42)\n  2026-07-28 Goldman Sachs: 465.00 (stock was 320.65)\n  2026-07-20 Timothy Arcuri: 500.00 (stock was 340.06)\nNewest PT is 5 day(s) old\n\n=== SEGMENT REVENUE (FMP, 2025-12-31 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nProduct: 2.66B (83%) | Service: 530M (17%)",
+  "dossier": "",
+  "chains": [
+    "robotics_automation"
+  ],
+  "business_model": "equipment_services",
+  "physical_anchor": "Collaborative robot arms and autonomous mobile robots (Universal Robots / MiR) plus semiconductor and systems automated test equipment hardware",
+  "commodity_revenue_share": 0.05,
+  "chain_regime": {
+    "robotics_automation": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "robotics_automation",
+    "torque_metrics": false,
+    "commodity_beta_2y": 1.01,
+    "beta_benchmark": "BOTZ",
+    "beta_is_proxy": true,
+    "ndebt_ebitda": -0.14,
+    "commodity_revenue_share": 0.05,
+    "as_of": "2026-08-04",
+    "gm_trajectory": {
+      "direction": "flat",
+      "gm_recent_to_old": [
+        0.5918,
+        0.5742,
+        0.5848,
+        0.5855
+      ],
+      "delta_3y": -0.0063
+    },
+    "rev_yoy": 0.5787,
+    "fcf_margin": 0.1792,
+    "torque_note": "NON-COMMODITY chain (no spot to lever to): no torque metric. commodity_beta_2y is a PROXY factor-exposure read vs BOTZ, not a commodity torque."
+  },
+  "gates": {
+    "ttm_fcf": 799932000,
+    "ttm_ocf": 1064951000,
+    "ttm_capex": -265019000,
+    "ttm_ebitda": 1453454000,
+    "ttm_revenue": 4464031000,
+    "rev_yoy": 0.5787,
+    "cash_sti": 354829000,
+    "balance_date": "2026-06-28",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 688481125.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": -0.14435299195023021
+  }
+}

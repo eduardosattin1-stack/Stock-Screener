@@ -1,0 +1,19 @@
+{
+ "symbol": "BEP",
+ "physical_anchor": "Owns and operates hydroelectric dams, wind farms and utility-scale solar plants generating electricity",
+ "chains": [
+  "power_for_ai"
+ ],
+ "business_model": "utility",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Renewable-generation IPP selling firm power under long-dated PPAs, including large hyperscaler/datacenter supply deals (e.g. the Microsoft framework agreement) — the utility layer of power_for_ai",
+ "true_competitors": [
+  "NEE",
+  "AES",
+  "CWEN",
+  "ORA",
+  "NRG",
+  "VST"
+ ],
+ "chain_fit_confidence": "medium"
+}

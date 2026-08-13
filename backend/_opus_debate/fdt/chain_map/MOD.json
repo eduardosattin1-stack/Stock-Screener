@@ -1,0 +1,19 @@
+{
+ "symbol": "MOD",
+ "physical_anchor": "Manufactures heat exchangers and liquid-cooling systems (CDUs) installed in AI/data-center server racks, plus EV and industrial thermal-management hardware",
+ "chains": [
+  "electrification_grid"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Data Center Cooling segment sells physical thermal-management/liquid-cooling hardware into the same datacenter power buildout as grid-equipment peers (Vertiv-style); legacy Vehicular/Industrial thermal segments are non-chain",
+ "true_competitors": [
+  "VRT",
+  "NVT",
+  "AAON",
+  "LII",
+  "BWA",
+  "DAN"
+ ],
+ "chain_fit_confidence": "medium"
+}

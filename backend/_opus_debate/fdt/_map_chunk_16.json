@@ -1,0 +1,604 @@
+[
+ {
+  "symbol": "APPN",
+  "name": "Appian Corporation",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 2074114106,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 63880000,
+   "ttm_ocf": 66735000,
+   "ttm_capex": -2855000,
+   "ttm_ebitda": 35184000,
+   "ttm_revenue": 762691000,
+   "rev_yoy": 0.2037,
+   "cash_sti": 205988000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 5769379.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 4.126506366530241
+  }
+ },
+ {
+  "symbol": "APPS",
+  "name": "Digital Turbine, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 1171869840,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 11186000,
+   "ttm_ocf": 41805000,
+   "ttm_capex": -30619000,
+   "ttm_ebitda": 52841000,
+   "ttm_revenue": 565251000,
+   "rev_yoy": 0.1524,
+   "cash_sti": 37960000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 28798583.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 6.26222062413656
+  }
+ },
+ {
+  "symbol": "ARQQ",
+  "name": "Arqit Quantum Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 366320520,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -69002000,
+   "ttm_ocf": -65616000,
+   "ttm_capex": -3385999,
+   "ttm_ebitda": -66577000,
+   "ttm_revenue": 1327000,
+   "rev_yoy": null,
+   "cash_sti": 28860000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 5750167.0,
+   "runway_months": 5.0,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 8183749.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ARXS",
+  "name": "Arxis, Inc. Class A Common Stock",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 2311760250,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": null,
+   "ttm_ocf": null,
+   "ttm_capex": null,
+   "ttm_ebitda": null,
+   "ttm_revenue": null,
+   "rev_yoy": null,
+   "cash_sti": 238918000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": null,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 32056039.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ASAN",
+  "name": "Asana, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 2049505758,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 112649000,
+   "ttm_ocf": 123841000,
+   "ttm_capex": -11192000,
+   "ttm_ebitda": -129383000,
+   "ttm_revenue": 808634000,
+   "rev_yoy": 0.0947,
+   "cash_sti": 424640000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 12962418.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ASTE",
+  "name": "Astec Industries, Inc.",
+  "sector": "Industrials",
+  "industry": "Industrial - Machinery",
+  "mcap": 1239762610,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "power_for_ai",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 37200000,
+   "ttm_ocf": 82100000,
+   "ttm_capex": -44900000,
+   "ttm_ebitda": 104200000,
+   "ttm_revenue": 1477300000,
+   "rev_yoy": 0.1147,
+   "cash_sti": 76900000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 6492085.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.0508637236084453
+  }
+ },
+ {
+  "symbol": "ASYS",
+  "name": "Amtech Systems, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 247500511,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 9723000,
+   "ttm_ocf": 10996000,
+   "ttm_capex": -1273000,
+   "ttm_ebitda": 7128000,
+   "ttm_revenue": 78840000,
+   "rev_yoy": -0.132,
+   "cash_sti": 24417000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 3028660.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ATEC",
+  "name": "Alphatec Holdings, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 1550839034,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 6949000,
+   "ttm_ocf": 51561000,
+   "ttm_capex": -44612000,
+   "ttm_ebitda": -1355000,
+   "ttm_revenue": 787083000,
+   "rev_yoy": 0.2255,
+   "cash_sti": 139912000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 10360472.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "ATKR",
+  "name": "Atkore Inc.",
+  "sector": "Industrials",
+  "industry": "Electrical Equipment & Parts",
+  "mcap": 3154541166,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 57481000,
+   "ttm_ocf": 120068000,
+   "ttm_capex": -62587000,
+   "ttm_ebitda": 34824001,
+   "ttm_revenue": 2933736000,
+   "rev_yoy": 0.0163,
+   "cash_sti": 346218000,
+   "balance_date": "2026-06-26",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 214640639.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 12.12613842622682
+  }
+ },
+ {
+  "symbol": "ATOM",
+  "name": "Atomera Incorporated",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 220490468,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -14729000,
+   "ttm_ocf": -14696000,
+   "ttm_capex": -33000,
+   "ttm_ebitda": -20375000,
+   "ttm_revenue": 72000,
+   "rev_yoy": -0.405,
+   "cash_sti": 41090000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 1227417.0,
+   "runway_months": 33.5,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 3220790.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "AVAV",
+  "name": "AeroVironment, Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 8568946560,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": -123069000,
+   "ttm_ocf": -78404000,
+   "ttm_capex": -44665000,
+   "ttm_ebitda": -310995000,
+   "ttm_revenue": 1976845000,
+   "rev_yoy": 1.4089,
+   "cash_sti": 632297000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 10255750.0,
+   "runway_months": 61.7,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 141335129.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "AVEX",
+  "name": "Aevex Corp.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 1075195140,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": null,
+   "ttm_ocf": null,
+   "ttm_capex": null,
+   "ttm_ebitda": 78775000,
+   "ttm_revenue": 596368000,
+   "rev_yoy": null,
+   "cash_sti": 27449000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": null,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 12808018.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "AVR",
+  "name": "Anteris Technologies Global Corp.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 304608457,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": -86687999,
+   "ttm_ocf": -84994000,
+   "ttm_capex": -1694000,
+   "ttm_ebitda": -92939000,
+   "ttm_revenue": 1851000,
+   "rev_yoy": -0.2574,
+   "cash_sti": 283210000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 7224000.0,
+   "runway_months": 39.2,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 4576276.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "AVTR",
+  "name": "Avantor, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Instruments & Supplies",
+  "mcap": 9188337015,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 454700000,
+   "ttm_ocf": 597000000,
+   "ttm_capex": -142300000,
+   "ttm_ebitda": 19700000,
+   "ttm_revenue": 6561100000,
+   "rev_yoy": -0.0157,
+   "cash_sti": 306800000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 66547006.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 27.872340425531913
+  }
+ },
+ {
+  "symbol": "AXGN",
+  "name": "AxoGen, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Devices",
+  "mcap": 2440497916,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 2526000,
+   "ttm_ocf": 9320000,
+   "ttm_capex": -6794000,
+   "ttm_ebitda": -14771000,
+   "ttm_revenue": 251174000,
+   "rev_yoy": 0.2357,
+   "cash_sti": 94572000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 18008607.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "AXIA",
+  "name": "AXIA Energia S.A.",
+  "sector": "Utilities",
+  "industry": "Renewable Utilities",
+  "mcap": 23985739787,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": 11428584000,
+   "ttm_ocf": 14081183000,
+   "ttm_capex": -2652599000,
+   "ttm_ebitda": 6888599000,
+   "ttm_revenue": 43341104000,
+   "rev_yoy": 0.035,
+   "cash_sti": 27677203000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 8830001.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 8.946620060189307
+  }
+ },
+ {
+  "symbol": "AXON",
+  "name": "Axon Enterprise, Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 48152486821,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": 19507000,
+   "ttm_ocf": 154028000,
+   "ttm_capex": -134521000,
+   "ttm_ebitda": 386224999,
+   "ttm_revenue": 2983248000,
+   "rev_yoy": 0.34,
+   "cash_sti": 718921000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 215159477.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 7.109135880402982
+  }
+ },
+ {
+  "symbol": "AXTI",
+  "name": "AXT, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 3333880355,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -27978000,
+   "ttm_ocf": -21121000,
+   "ttm_capex": -6857000,
+   "ttm_ebitda": 12177000,
+   "ttm_revenue": 125509000,
+   "rev_yoy": 0.4581,
+   "cash_sti": 417198000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 2331500.0,
+   "runway_months": 178.9,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": true,
+   "adv_usd": 1177299070.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "AZTA",
+  "name": "Azenta, Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Instruments & Supplies",
+  "mcap": 1379327160,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 28717000,
+   "ttm_ocf": 61011000,
+   "ttm_capex": -32294000,
+   "ttm_ebitda": -92885000,
+   "ttm_revenue": 596571000,
+   "rev_yoy": 0.0185,
+   "cash_sti": 380517000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 8992424.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "BA",
+  "name": "The Boeing Company",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 187436245500,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": 245000000,
+   "ttm_ocf": 2086000000,
+   "ttm_capex": -1841000000,
+   "ttm_ebitda": 6950000000,
+   "ttm_revenue": 93995000000,
+   "rev_yoy": 0.2478,
+   "cash_sti": 20022000000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 859298559.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 5.561294964028777
+  }
+ }
+]

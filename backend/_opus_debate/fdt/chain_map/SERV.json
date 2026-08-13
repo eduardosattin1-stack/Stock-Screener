@@ -1,0 +1,19 @@
+{
+ "symbol": "SERV",
+ "physical_anchor": "designs, manufactures and operates autonomous sidewalk delivery robots (Uber/Nvidia-backed last-mile fleet)",
+ "chains": [
+  "robotics_automation"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "physical-AI/mobile-robotics deployer at the last-mile delivery edge — builds and operates its own autonomous robot fleet, pre-FCF with fast-growing but tiny revenue",
+ "true_competitors": [
+  "RR",
+  "KSCP",
+  "IRBT",
+  "SYM",
+  "DPRO",
+  "ONDS"
+ ],
+ "chain_fit_confidence": "high"
+}

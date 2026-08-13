@@ -1,0 +1,20 @@
+{
+ "symbol": "DNN",
+ "physical_anchor": "Uranium ore and yellowcake (U3O8) from the Wheeler River ISR project and McClean Lake mill toll-processing, Saskatchewan",
+ "chains": [
+  "uranium_fuel_cycle"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.95,
+ "value_chain_position": "ISR-stage uranium developer/near-producer (Phoenix deposit at Wheeler River) plus a toll-milling revenue stream via the McClean Lake JV",
+ "true_competitors": [
+  "CCJ",
+  "UEC",
+  "UUUU",
+  "NXE",
+  "EU",
+  "UROY",
+  "LEU"
+ ],
+ "chain_fit_confidence": "high"
+}

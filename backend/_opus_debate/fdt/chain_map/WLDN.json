@@ -1,0 +1,22 @@
+{
+ "symbol": "WLDN",
+ "physical_anchor": "Delivers grid-modernization and interconnection engineering studies and energy-efficiency program implementation for utilities/public agencies",
+ "chains": [
+  "electrification_grid",
+  "power_for_ai"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Energy-efficiency and grid-engineering consulting/EPC-adjacent services firm — designs interconnection and grid-modernization programs for utilities and public agencies.",
+ "true_competitors": [
+  "ICFI",
+  "NVEE",
+  "MYRG",
+  "TTEK",
+  "IESC",
+  "MTZ",
+  "PWR",
+  "AECOM"
+ ],
+ "chain_fit_confidence": "medium"
+}

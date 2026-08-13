@@ -1,0 +1,20 @@
+{
+ "symbol": "BWXT",
+ "physical_anchor": "Manufactures naval nuclear reactor cores/components and commercial nuclear fuel assemblies/reactor pressure vessels",
+ "chains": [
+  "nuclear_smr"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "Reactor components & fuel-services layer — precision manufacturer of nuclear reactor components and fuel for Navy and commercial/SMR customers",
+ "true_competitors": [
+  "CW",
+  "GEV",
+  "CCJ",
+  "RR.L",
+  "7011.T",
+  "NNE",
+  "SMR"
+ ],
+ "chain_fit_confidence": "high"
+}

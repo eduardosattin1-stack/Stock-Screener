@@ -1,0 +1,21 @@
+{
+ "symbol": "RAL",
+ "physical_anchor": "Manufactures precision test-and-measurement and sensing instruments (Tektronix oscilloscopes, Keithley source-meters, industrial sensors) — physical bench and embedded instrumentation.",
+ "chains": [
+  "robotics_automation",
+  "quantum"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.03,
+ "value_chain_position": "Instrumentation toll-taker layer selling measurement, control-electronics and sensing gear used both on automation/robotics test benches (machine-vision & motion-control validation) and in quantum-lab cryogenics & control-electronics setups (source-meters, oscilloscopes) — broad diversified exposure rather than a pure-play.",
+ "true_competitors": [
+  "KEYS",
+  "FTV",
+  "TDY",
+  "AME",
+  "MKSI",
+  "Advantest (6857.T)",
+  "EMR"
+ ],
+ "chain_fit_confidence": "medium"
+}

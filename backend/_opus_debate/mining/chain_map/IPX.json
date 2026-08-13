@@ -1,0 +1,20 @@
+{
+ "symbol": "IPX",
+ "physical_anchor": "Produces titanium metal powder and sponge from mineral-sand ore via a hydrogen-based (HAMR) reduction process at its Titan Valley, Virginia facility; also holds a Tennessee critical-minerals project targeting rare-earth/titanium byproduct extraction.",
+ "chains": [
+  "rare_earth_strategic"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.9,
+ "value_chain_position": "Pre-commercial titanium-metal producer (mine-to-metal), DPA Title III / DoD-funded strategic-metal build-out, not yet at nameplate revenue.",
+ "true_competitors": [
+  "ATI",
+  "VSMPO-AVISMA (MCX: VSMO)",
+  "Toho Titanium (5727.T)",
+  "Osaka Titanium Technologies (5726.T)",
+  "TIMET (Precision Castparts, private)",
+  "MP",
+  "USAR"
+ ],
+ "chain_fit_confidence": "high"
+}

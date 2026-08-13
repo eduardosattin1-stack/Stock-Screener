@@ -1,0 +1,20 @@
+{
+ "symbol": "CWEN",
+ "physical_anchor": "Owns and operates wind, solar and battery-storage generation assets that physically produce and sell electricity under long-term contracts.",
+ "chains": [
+  "power_for_ai"
+ ],
+ "business_model": "utility",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "IPP/PPA and capacity-and-ancillary-markets layer — renewable+storage independent power producer selling firm electrons into grid and (increasingly) datacenter-adjacent demand; no nuclear assets, so nuclear_smr does not apply.",
+ "true_competitors": [
+  "NEE",
+  "AES",
+  "NRG",
+  "VST",
+  "CEG",
+  "ORA",
+  "BEP"
+ ],
+ "chain_fit_confidence": "medium"
+}

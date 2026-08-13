@@ -1,0 +1,20 @@
+{
+ "symbol": "HII",
+ "physical_anchor": "Nuclear-powered aircraft carriers (Ford/Nimitz-class) and Virginia-class submarines built and reactor-plant-integrated for the US Navy",
+ "chains": [
+  "nuclear_smr"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.03,
+ "value_chain_position": "Prime shipbuilder/integrator for naval nuclear-propulsion vessels -- occupies the chain's 'reactor components & naval/defense nuclear' layer at the platform-EPC level, not as a fuel or component sub-supplier.",
+ "true_competitors": [
+  "GD",
+  "BWXT",
+  "BAB.L",
+  "FCT.MI",
+  "7011.T",
+  "7012.T",
+  "ASB.AX"
+ ],
+ "chain_fit_confidence": "high"
+}

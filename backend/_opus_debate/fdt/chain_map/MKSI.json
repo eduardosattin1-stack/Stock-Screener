@@ -1,0 +1,20 @@
+{
+ "symbol": "MKSI",
+ "physical_anchor": "Manufactures vacuum systems, laser/photonics subsystems and precision motion-control components sold into semiconductor, advanced-manufacturing and lab/testbed hardware",
+ "chains": [
+  "quantum",
+  "robotics_automation"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.03,
+ "value_chain_position": "Vacuum, photonics/laser and precision motion-control toll-taker — instruments the cryogenics/photonics layer of quantum-hardware build-outs (via its laser/vacuum subsystems) and the motion-control/actuator layer of factory automation (via its motion segment); genuinely dual-chain within this book",
+ "true_competitors": [
+  "COHR",
+  "AEIS",
+  "ICHR",
+  "ENTG",
+  "UCTT",
+  "AZTA"
+ ],
+ "chain_fit_confidence": "high"
+}

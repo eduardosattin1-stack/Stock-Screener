@@ -1,0 +1,182 @@
+{
+ "VRSN": {
+  "physical_anchor": "None — operates the .com/.net domain-name registry, a DNS/network service with no physical product",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Domain-name registry operator (.com/.net) — network/DNS infrastructure service, no physical product tied to any FDT chain.",
+  "true_competitors": ["GDDY", "TCX", "CNIC.L", "TIG.L", "NIC"],
+  "chain_fit_confidence": "low"
+ },
+ "VRT": {
+  "physical_anchor": "Manufactures UPS systems, switchgear, power distribution and liquid-cooling thermal-management equipment for data centers",
+  "chains": ["power_for_ai", "electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.03,
+  "value_chain_position": "Data-center power & thermal-management equipment maker — sells UPS systems, switchgear, power distribution and liquid-cooling gear to hyperscalers/colos, the equipment layer of grid + AI-power buildout.",
+  "true_competitors": ["ETN", "HUBB", "NVT", "ABB", "SU.PA", "CARR", "JCI"],
+  "chain_fit_confidence": "high"
+ },
+ "VSEC": {
+  "physical_anchor": "Distributes aviation aftermarket parts and performs MRO on commercial/government aircraft fleets",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Aviation aftermarket parts distribution & MRO services for commercial/government fleets — no nuclear/SMR tie despite Aerospace & Defense industry classification.",
+  "true_competitors": ["HEI", "TDG", "AIR", "TGI", "DCO", "ATRO"],
+  "chain_fit_confidence": "low"
+ },
+ "WDAY": {
+  "physical_anchor": "None — HR/Finance SaaS, pure software",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Enterprise HR/Finance SaaS — pure software, no physical product.",
+  "true_competitors": ["SAP", "ORCL", "CRM", "NOW", "ADP", "PAYC"],
+  "chain_fit_confidence": "low"
+ },
+ "WDC": {
+  "physical_anchor": "Manufactures hard-disk-drive and NAND flash storage devices",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Hard-disk-drive and NAND flash storage device manufacturer — physical hardware, but for datacenter/consumer storage, not the quantum-computing stack.",
+  "true_competitors": ["STX", "MU", "005930.KS", "000660.KS", "NTAP"],
+  "chain_fit_confidence": "low"
+ },
+ "WLDN": {
+  "physical_anchor": "Delivers grid-modernization and interconnection engineering studies and energy-efficiency program implementation for utilities/public agencies",
+  "chains": ["electrification_grid", "power_for_ai"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Energy-efficiency and grid-engineering consulting/EPC-adjacent services firm — designs interconnection and grid-modernization programs for utilities and public agencies.",
+  "true_competitors": ["ICFI", "NVEE", "MYRG", "TTEK", "IESC", "MTZ", "PWR", "AECOM"],
+  "chain_fit_confidence": "medium"
+ },
+ "WST": {
+  "physical_anchor": "Manufactures elastomer stoppers, syringe components and drug-delivery/packaging systems for injectable pharmaceuticals",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Elastomer components and drug-delivery/packaging systems for injectable pharmaceuticals — physical product, unrelated to robotics/automation chain.",
+  "true_competitors": ["CTLT", "GXI.DE", "1SXP.DE", "8086.T", "BERY", "ATR"],
+  "chain_fit_confidence": "low"
+ },
+ "WWD": {
+  "physical_anchor": "Manufactures fuel-system and actuation/combustion controls for aircraft engines and industrial gas turbines",
+  "chains": ["power_for_ai"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Fuel systems, combustion and actuation controls for aerospace engines and industrial gas turbines — the industrial-turbine controls slice sells into power-generation OEMs (GE Vernova-class); aerospace majority of revenue is out of scope for this book.",
+  "true_competitors": ["HON", "MOG.A", "ETN", "PH", "CW", "TDG", "GE"],
+  "chain_fit_confidence": "medium"
+ },
+ "XYL": {
+  "physical_anchor": "Manufactures water pumps, treatment and metering equipment for municipal/industrial water infrastructure",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Water pumps, treatment and metering equipment for municipal/industrial water infrastructure — no genuine tie to electrification, nuclear, AI-power or robotics chains despite Industrial-Machinery industry overlap.",
+  "true_competitors": ["PNR", "IEX", "ROP", "AOS", "FELE", "VLTO"],
+  "chain_fit_confidence": "low"
+ },
+ "XYZ": {
+  "physical_anchor": "None — payments/fintech platform (Cash App, Square, Afterpay), the canonical anti-Visa non-anchor",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Payments and fintech platform (Cash App, Square, Afterpay) — a payments network, exactly the case the physical-anchor rule is written to exclude.",
+  "true_competitors": ["PYPL", "ADYEN.AS", "MA", "V", "FOUR", "TOST"],
+  "chain_fit_confidence": "low"
+ },
+ "YMM": {
+  "physical_anchor": "None — digital freight-matching marketplace, does not build or operate physical trucks/robotics",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Digital freight-matching marketplace connecting shippers and truckers in China — software platform, does not build or operate physical freight/robotics assets.",
+  "true_competitors": ["UBER", "XPO", "JBHT", "CHRW", "MTZ"],
+  "chain_fit_confidence": "low"
+ },
+ "YOU": {
+  "physical_anchor": "Operates biometric identity-verification kiosks (facial/fingerprint scanners) at airports and venues",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Operates biometric identity-verification kiosks (CLEAR) at airports/venues — physical scanners exist but the business is a travel-security subscription service, not an industrial machine-vision/robotics chain participant.",
+  "true_competitors": ["HO.PA", "6701.T", "FING-B.ST", "IDEX.OL"],
+  "chain_fit_confidence": "low"
+ },
+ "ZBH": {
+  "physical_anchor": "Manufactures the ROSA robotic-assisted surgical system used in joint-replacement surgery",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.1,
+  "value_chain_position": "Orthopedic implant manufacturer that also builds the ROSA robotic-assisted surgical system for joint-replacement procedures — the surgical-robotics layer of the robotics_automation chain; implants (non-chain) remain the revenue majority.",
+  "true_competitors": ["SYK", "MDT", "ISRG", "JNJ", "GMED", "RBOT"],
+  "chain_fit_confidence": "high"
+ },
+ "ZETA": {
+  "physical_anchor": "None — marketing/customer-data cloud software",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Marketing/customer-data cloud software — no physical product.",
+  "true_competitors": ["HUBS", "BRZE", "CDR", "CRM", "DV", "TTD"],
+  "chain_fit_confidence": "low"
+ },
+ "ZM": {
+  "physical_anchor": "None — video-conferencing SaaS platform",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Video-conferencing SaaS platform — no physical product.",
+  "true_competitors": ["RNG", "MSFT", "CSCO", "EGHT", "FIVN"],
+  "chain_fit_confidence": "low"
+ },
+ "ZWS": {
+  "physical_anchor": "Manufactures plumbing, drainage and water-safety fixtures for commercial/residential buildings",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Plumbing, drainage and water-safety product manufacturer for commercial/residential buildings — building-products company, not a grid/nuclear/AI-power/robotics chain participant.",
+  "true_competitors": ["AOS", "MAS", "FELE", "WTS", "PNR", "LII"],
+  "chain_fit_confidence": "low"
+ },
+ "AADX": {
+  "physical_anchor": "Aerospace & defense company; specific product line not verifiable from available data — no confirmed physical tie to SMR/reactor components",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Aerospace & defense company; specific product lines not verifiable from available data — no confirmed physical tie to SMR/reactor components.",
+  "true_competitors": ["LMT", "NOC", "GD", "LHX", "HII", "KTOS"],
+  "chain_fit_confidence": "low"
+ },
+ "ACHR": {
+  "physical_anchor": "Designs and manufactures electric vertical-takeoff-and-landing (eVTOL) aircraft",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Designs and manufactures electric vertical-takeoff-and-landing (eVTOL) aircraft for urban air mobility — real physical aircraft, but advanced air mobility is not a chain in this taxonomy (nuclear_smr hint is a bad Aerospace & Defense industry-string match).",
+  "true_competitors": ["JOBY", "EH", "EVEX", "EVTL", "BLDE"],
+  "chain_fit_confidence": "low"
+ },
+ "ACMR": {
+  "physical_anchor": "Manufactures wafer cleaning and electroplating equipment for semiconductor fabs",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Wafer cleaning and electroplating equipment for general semiconductor fabs — real fab equipment, but serves logic/memory manufacturing broadly, not specifically the quantum qubit-hardware stack.",
+  "true_competitors": ["AMAT", "LRCX", "KLAC", "ASML", "8035.T", "UCTT", "ACLS"],
+  "chain_fit_confidence": "low"
+ },
+ "AEHR": {
+  "physical_anchor": "Manufactures wafer-level burn-in and test systems, primarily for silicon-carbide power semiconductors",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Wafer-level burn-in and test systems, primarily for silicon-carbide power semiconductors used in EV/industrial power electronics — real test equipment, but not tied to quantum computing.",
+  "true_competitors": ["TER", "COHU", "FORM", "ONTO"],
+  "chain_fit_confidence": "low"
+ }
+}

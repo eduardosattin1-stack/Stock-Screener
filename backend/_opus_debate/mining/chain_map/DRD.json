@@ -1,0 +1,19 @@
+{
+ "symbol": "DRD",
+ "physical_anchor": "Gold recovered by reprocessing surface mine-tailings dumps around Johannesburg and the West Rand",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 1.0,
+ "value_chain_position": "Producer extracting gold from historical tailings retreatment (surface operations only, no underground mining)",
+ "true_competitors": [
+  "AU",
+  "HMY",
+  "GFI",
+  "B",
+  "NEM",
+  "AEM"
+ ],
+ "chain_fit_confidence": "high"
+}

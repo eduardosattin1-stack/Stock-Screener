@@ -1,0 +1,56 @@
+{
+  "symbol": "HBM",
+  "sector": "Basic Materials",
+  "signal_type": "mining",
+  "company": "Hudbay Minerals Inc.",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Basic Materials\nRevenue growth: +13.0% YoY\nReturns / leverage: Net debt 0\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-06-30 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 246M | TTM diluted EPS 1.69 | latest-Q EPS YoY +10%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-06-30): NET CASH 28M (cash 940M exceeds total debt 912M, incl. capitalized leases 26M) — a genuine SoP add-back; use this, not the scan's net_debt above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 32.00 | median 32.00 | high 32.00 | low 32.00\nBreadth: last month: 1 PTs avg 32.00 | last quarter: 2 PTs avg 31.00 | last year: 2 PTs avg 31.00\n[THIN CONSENSUS: only 2 price target(s) printed last quarter — this is NOT a street-wide view; weigh individual PTs below accordingly]\nNewest individual targets (dated — judge freshness yourself):\n  2026-07-15 Barclays: 32.00 (stock was 22.13)\n  2026-05-21 Richard Garchitorena: 30.00 (stock was 24.74)\n  2021-11-22 Greg Barnes: 13.00 (stock was 6.91)\nNewest PT is 20 day(s) old",
+  "dossier": "",
+  "chains": [
+    "copper_mining"
+  ],
+  "business_model": "producer",
+  "physical_anchor": "Operates open-pit/underground mines (Constancia Peru, Manitoba, Copper World Arizona) producing copper concentrate with zinc, gold and silver byproducts.",
+  "commodity_revenue_share": 0.75,
+  "chain_regime": {
+    "copper_mining": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "copper_mining",
+    "torque_metrics": true,
+    "commodity_beta_2y": 1.01,
+    "beta_benchmark": "HGUSD",
+    "beta_is_proxy": false,
+    "ndebt_ebitda": 0.04,
+    "commodity_revenue_share": 0.75,
+    "as_of": "2026-08-04",
+    "ebitda_margin_ttm": 0.665,
+    "ebitda_margin_band": {
+      "band": "q1_low_cost",
+      "pct": 0.88,
+      "basis": "cohort_percentile",
+      "n_cohort": 8
+    },
+    "fcf_torque_10pct": 0.113,
+    "torque_note": "SYMMETRIC: fcf_torque_10pct is the +/-10% commodity move's % EBITDA swing (read the downside too). beta_is_proxy=False (proxy ETF regression where the spot is off-FMP)."
+  },
+  "gates": {
+    "ttm_fcf": 246423600,
+    "ttm_ocf": 787421945,
+    "ttm_capex": -540998344,
+    "ttm_ebitda": 1654500761,
+    "ttm_revenue": 2488037075,
+    "rev_yoy": 0.1299,
+    "cash_sti": 939870800,
+    "balance_date": "2026-06-30",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 72582067.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.03828198651095985
+  }
+}

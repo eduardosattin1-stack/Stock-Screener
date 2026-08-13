@@ -1,0 +1,21 @@
+{
+ "symbol": "TECK",
+ "physical_anchor": "Copper concentrate (QB2, Highland Valley) and zinc concentrate (Red Dog) shipped from its own mines.",
+ "chains": [
+  "copper_mining",
+  "diversified_miners"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.65,
+ "value_chain_position": "Diversified base-metal major transitioning to a copper-weighted mix, still carrying a large zinc business.",
+ "true_competitors": [
+  "FCX",
+  "SCCO",
+  "HBM",
+  "ERO",
+  "ANTO.L",
+  "IVN.TO",
+  "GLEN.L"
+ ],
+ "chain_fit_confidence": "high"
+}

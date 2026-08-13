@@ -1,0 +1,615 @@
+[
+ {
+  "symbol": "MAIR",
+  "name": "Madison Air Solutions Corporation",
+  "sector": "Industrials",
+  "industry": "Industrial - Machinery",
+  "mcap": 15954835857,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "power_for_ai",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": null,
+   "ttm_ocf": null,
+   "ttm_capex": null,
+   "ttm_ebitda": null,
+   "ttm_revenue": null,
+   "rev_yoy": null,
+   "cash_sti": 228600000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": null,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 45849282.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "MBGL",
+  "name": "Mobility Global Inc",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 6257022356,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": null,
+   "ttm_ocf": null,
+   "ttm_capex": null,
+   "ttm_ebitda": null,
+   "ttm_revenue": null,
+   "rev_yoy": null,
+   "cash_sti": null,
+   "balance_date": null,
+   "balance_sheet_stale": null,
+   "monthly_burn": null,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 23585974.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "MCHP",
+  "name": "Microchip Technology Incorporated",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 43579107040,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 871000000,
+   "ttm_ocf": 962100000,
+   "ttm_capex": -91100000,
+   "ttm_ebitda": 1400700000,
+   "ttm_revenue": 4713100000,
+   "rev_yoy": 0.0708,
+   "cash_sti": 240300000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 378370705.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.7801813379024773
+  }
+ },
+ {
+  "symbol": "MDB",
+  "name": "MongoDB, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 30131408493,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 599503000,
+   "ttm_ocf": 605171000,
+   "ttm_capex": -5668000,
+   "ttm_ebitda": 23686000,
+   "ttm_revenue": 2602399000,
+   "rev_yoy": 0.2364,
+   "cash_sti": 2427153000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 416065709.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 93.44421737111008
+  }
+ },
+ {
+  "symbol": "MDLN",
+  "name": "Medline Inc.",
+  "sector": "Healthcare",
+  "industry": "Medical - Instruments & Supplies",
+  "mcap": 34822062781,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 1525000000,
+   "ttm_ocf": 1520000000,
+   "ttm_capex": 5000000,
+   "ttm_ebitda": 2731000000,
+   "ttm_revenue": 29140000000,
+   "rev_yoy": null,
+   "cash_sti": 2236000000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 92708122.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.808495056755767
+  }
+ },
+ {
+  "symbol": "MIDD",
+  "name": "The Middleby Corporation",
+  "sector": "Industrials",
+  "industry": "Industrial - Machinery",
+  "mcap": 6260851815,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "power_for_ai",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 502464000,
+   "ttm_ocf": 554669000,
+   "ttm_capex": -52205000,
+   "ttm_ebitda": 1183000,
+   "ttm_revenue": 3666323000,
+   "rev_yoy": -0.0489,
+   "cash_sti": 177065000,
+   "balance_date": "2026-04-04",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 24928182.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 1452.3161453930684
+  }
+ },
+ {
+  "symbol": "MIR",
+  "name": "Mirion Technologies, Inc.",
+  "sector": "Industrials",
+  "industry": "Industrial - Machinery",
+  "mcap": 3987892800,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "nuclear_smr",
+   "power_for_ai",
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 136800000,
+   "ttm_ocf": 175800000,
+   "ttm_capex": -39000000,
+   "ttm_ebitda": 213400000,
+   "ttm_revenue": 1024900000,
+   "rev_yoy": 0.1568,
+   "cash_sti": 428100000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 28093327.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 4.163346613545817
+  }
+ },
+ {
+  "symbol": "MITK",
+  "name": "Mitek Systems, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 807440256,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 44539000,
+   "ttm_ocf": 48105000,
+   "ttm_capex": -3566000,
+   "ttm_ebitda": 48102000,
+   "ttm_revenue": 189593000,
+   "rev_yoy": 0.0688,
+   "cash_sti": 77587000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 4619326.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "MKSI",
+  "name": "MKS Inc.",
+  "sector": "Technology",
+  "industry": "Hardware, Equipment & Parts",
+  "mcap": 22095025992,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation",
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 401000000,
+   "ttm_ocf": 557000000,
+   "ttm_capex": -156000000,
+   "ttm_ebitda": 898000000,
+   "ttm_revenue": 4072000000,
+   "rev_yoy": 0.1147,
+   "cash_sti": 569000000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 428458840.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 4.145879732739421
+  }
+ },
+ {
+  "symbol": "MRAM",
+  "name": "Everspin Technologies, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 413272924,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -1190000,
+   "ttm_ocf": 9090000,
+   "ttm_capex": -10280000,
+   "ttm_ebitda": 3451000,
+   "ttm_revenue": 56936000,
+   "rev_yoy": 0.1594,
+   "cash_sti": 40494000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 99167.0,
+   "runway_months": 408.3,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 26651519.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "MRCY",
+  "name": "Mercury Systems, Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 6678314152,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": 70343000,
+   "ttm_ocf": 95154000,
+   "ttm_capex": -24811000,
+   "ttm_ebitda": 88365000,
+   "ttm_revenue": 966946000,
+   "rev_yoy": 0.0895,
+   "cash_sti": 331800000,
+   "balance_date": "2026-03-27",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 33282351.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.6456741922706954
+  }
+ },
+ {
+  "symbol": "MRLN",
+  "name": "Merlin, Inc.",
+  "sector": "Industrials",
+  "industry": "Aerospace & Defense",
+  "mcap": 422775348,
+  "lane": "b",
+  "chains_hint": [
+   "nuclear_smr"
+  ],
+  "gates": {
+   "ttm_fcf": null,
+   "ttm_ocf": null,
+   "ttm_capex": null,
+   "ttm_ebitda": -86144372,
+   "ttm_revenue": 1002000,
+   "rev_yoy": null,
+   "cash_sti": 123102000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": null,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 5043654.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "MSTR",
+  "name": "Strategy Inc",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 31870075801,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 11340172000,
+   "ttm_ocf": -20089000,
+   "ttm_capex": 11360261000,
+   "ttm_ebitda": -21773758000,
+   "ttm_revenue": 498347000,
+   "rev_yoy": 0.0779,
+   "cash_sti": 2447982000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 684129258.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "MXL",
+  "name": "MaxLinear, Inc.",
+  "sector": "Technology",
+  "industry": "Semiconductors",
+  "mcap": 6581604871,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 3308000,
+   "ttm_ocf": 16467000,
+   "ttm_capex": -13159000,
+   "ttm_ebitda": -40102000,
+   "ttm_revenue": 568930000,
+   "rev_yoy": 0.505,
+   "cash_sti": 64814000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 129402298.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "NATL",
+  "name": "NCR Atleos Corporation",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 3450789804,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 82000000,
+   "ttm_ocf": 224000000,
+   "ttm_capex": -142000000,
+   "ttm_ebitda": 754000000,
+   "ttm_revenue": 4420000000,
+   "rev_yoy": 0.041,
+   "cash_sti": 433000000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 5062070.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.310344827586207
+  }
+ },
+ {
+  "symbol": "NAVN",
+  "name": "Navan, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 6667359227,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 7327000,
+   "ttm_ocf": 22322000,
+   "ttm_capex": -14995000,
+   "ttm_ebitda": -261029000,
+   "ttm_revenue": 765035000,
+   "rev_yoy": 0.3343,
+   "cash_sti": 802254000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": false,
+   "adv_usd": 39846112.0,
+   "royalty_hint": false
+  }
+ },
+ {
+  "symbol": "NBIS",
+  "name": "Nebius Group N.V.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 54004800000,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": -2472500000,
+   "ttm_ocf": 3011900000,
+   "ttm_capex": -5484400000,
+   "ttm_ebitda": 1399625000,
+   "ttm_revenue": 877900000,
+   "rev_yoy": 4.9084,
+   "cash_sti": 9298200000,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 206041667.0,
+   "runway_months": 45.1,
+   "growth_capex_fcf_negative": true,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 3018246579.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 0.20877020630526033
+  }
+ },
+ {
+  "symbol": "NCNO",
+  "name": "nCino, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Application",
+  "mcap": 2106988066,
+  "lane": "b",
+  "chains_hint": [
+   "robotics_automation"
+  ],
+  "gates": {
+   "ttm_fcf": 110753000,
+   "ttm_ocf": 117150000,
+   "ttm_capex": -6397000,
+   "ttm_ebitda": 71948000,
+   "ttm_revenue": 610058000,
+   "rev_yoy": 0.0958,
+   "cash_sti": 102813000,
+   "balance_date": "2026-04-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 14439543.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 3.111955857007839
+  }
+ },
+ {
+  "symbol": "NET",
+  "name": "Cloudflare, Inc.",
+  "sector": "Technology",
+  "industry": "Software - Infrastructure",
+  "mcap": 106410872893,
+  "lane": "b",
+  "chains_hint": [
+   "quantum"
+  ],
+  "gates": {
+   "ttm_fcf": 355526000,
+   "ttm_ocf": 679417000,
+   "ttm_capex": -323891000,
+   "ttm_ebitda": 137887000,
+   "ttm_revenue": 2328605000,
+   "rev_yoy": 0.3155,
+   "cash_sti": 4174832999,
+   "balance_date": "2026-03-31",
+   "balance_sheet_stale": false,
+   "monthly_burn": 0.0,
+   "runway_months": null,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": true,
+   "pass_profit": true,
+   "adv_usd": 813132250.0,
+   "royalty_hint": false,
+   "funded_solvency": "weak",
+   "net_funded_debt_ebitda": 18.72080036551669
+  }
+ },
+ {
+  "symbol": "NEXT",
+  "name": "Nextdecade Corp",
+  "sector": "Industrials",
+  "industry": "Engineering & Construction",
+  "mcap": 1779446725,
+  "lane": "b",
+  "chains_hint": [
+   "electrification_grid",
+   "power_for_ai"
+  ],
+  "gates": {
+   "ttm_fcf": -3853143000,
+   "ttm_ocf": -223834000,
+   "ttm_capex": -3629309000,
+   "ttm_ebitda": -350022000,
+   "ttm_revenue": 0,
+   "rev_yoy": null,
+   "cash_sti": 83678000,
+   "balance_date": "2026-06-30",
+   "balance_sheet_stale": false,
+   "monthly_burn": 321095250.0,
+   "runway_months": 0.3,
+   "growth_capex_fcf_negative": false,
+   "pass_cash": false,
+   "pass_profit": false,
+   "adv_usd": 6197026.0,
+   "royalty_hint": false
+  }
+ }
+]

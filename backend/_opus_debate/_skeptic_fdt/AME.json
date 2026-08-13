@@ -1,0 +1,35 @@
+{
+  "symbol": "AME",
+  "verdict": "CONFIRMED_WITH_CORRECTIONS",
+  "kill_fact": "The net-debt bridge that converts enterprise value into per-share value in every one of the record's three cases is wrong by roughly $1.06bn because it counts only ONE of the two borrowing lines on the balance sheet. The record states net debt of $485m as 'borrowings of $981m less $495m of cash at 30 June 2026'. The $981m is the SHORT-TERM debt line alone. AMETEK's Q2 2026 balance sheet, filed with the 4 August 2026 release, also carries long-term debt of $1,055,541 thousand, plus finance-lease obligations of $274,770 thousand (current $61,826k + non-current $212,944k). On the record's own stated ex-lease definition net debt at 30 June 2026 is $980,633k + $1,055,541k - $495,446k = $1,540.7m, not $485m; including finance leases it is $1,815.5m. That is 3.2x the figure subtracted. The bear thesis itself SURVIVES this - it is the bear's own arithmetic that was too generous, and correcting it lowers every level by ~$6-7 per share and makes the risk/reward worse, not better. So this is a repricing, not a thesis kill: bear $168 -> $162, base $255 -> $250, bull $300 -> $295. It also reverses a claim the record makes elsewhere: the record declared the scan's net-debt-to-earnings figure of 0.72x 'stale' and 'roughly three times too high'; on the filed balance sheet actual net debt of $1.82bn against ~$2.5bn trailing EBITDA is ~0.73x, so the scan was right and the analyst was wrong. AMETEK is not a 0.2x-levered business.",
+  "corrections": "(1) MATERIAL - net debt at 30 June 2026 is $1,540.7m ex-lease (or $1,815.5m including finance leases), not $485m. The record dropped the $1,055.5m long-term debt line. Carried through to all three levels on the record's own segment-EBITDA schedule and its own 229.845m diluted share count (which IS correct - filed Q2 2026 weighted-average diluted shares are 229,845 thousand): bear EV $38.8bn -> $162.1/sh; base EV $59.0bn -> $250.0/sh; bull EV $67.7bn + $1.6bn acquisition overlay = $69.3bn -> $294.8/sh. (2) MATERIAL CONSEQUENCE - at the live price of $255.15 on 11 August 2026 the stock now trades ABOVE the corrected base fair value of $250.0. The record's expected_return_pct of +3.37% (computed off $246.69 vs $255) becomes approximately -2.0%. The bear's central claim - 'the base case sits barely above the current price... the asymmetry currently points the wrong way' - is not merely intact but has crossed over: there is now no positive expected return to the base case at all. (3) MATERIAL - the bear's analyst-positioning evidence is stale. The bear asserts 'the freshest analyst target on file - Morgan Stanley at $245.00, dated 10 July 2026 - is below where the stock trades today' and 'the whole street range is $230 to $303'. Six houses refreshed post-print on 5-6 August 2026 (Truist, Citigroup, KeyBanc, RBC, DA Davidson, BNP Paribas). Current consensus price target is $273.00, median $272.50, range $230 to $316. Coverage did NOT stay stale through the print; the freshest targets are above the price, not below. This cuts AGAINST the bear's 'the market has finished looking' framing and is corrected here for the file. (4) MINOR - the record's non-bear-side claim that trailing free-cash margin and gross-margin expansion verify does hold: TTM to 30 June 2026 gross profit $2,876.7m on revenue $7,863.9m = 36.58%, and Q2 2026 revenue of $2,044,397k is +15.0% on $1,778,056k a year earlier. No compression finding; the GM-trajectory attack fails. (5) MINOR - the 4 August 2026 press release does NOT disclose the $4.11bn backlog figure or the 1.12 book-to-bill ratio; those are call/IR-deck figures, not press-release-verifiable. Orders growth of 28% IS in the release verbatim. The bear's adverse assumption (backlog plateauing at $4.1bn) is therefore built on a number I could not confirm from the wire release, though it does not move the arithmetic.",
+  "correction_severity": "material",
+  "kill_scope": "numbers",
+  "revised_fv_px": 250.0,
+  "corrections_typed": [
+    {
+      "field": "bear_px",
+      "from": 168.0,
+      "to": 162.1,
+      "basis": "Q2 2026 balance sheet filed 2026-08-04: net debt ex-lease = short-term debt $980,633k + long-term debt $1,055,541k - cash $495,446k = $1,540,728k, not the $485m used. Record's own adverse EV of $38.8bn less $1.5407bn = $37.2593bn over 229,845k diluted shares (filed Q2 2026) = $162.10."
+    },
+    {
+      "field": "base_fv_px",
+      "from": 255.0,
+      "to": 250.0,
+      "basis": "Same 2026-08-04 filed balance sheet. Record's own base EV of $59.0bn less corrected ex-lease net debt of $1.5407bn = $57.4593bn over 229,845k diluted shares = $249.99. Including the $274,770k of finance leases it would be $248.7."
+    },
+    {
+      "field": "bull_px",
+      "from": 300.0,
+      "to": 294.8,
+      "basis": "Same 2026-08-04 filed balance sheet. Record's own favourable EV of $67.7bn plus its $1.6bn acquisition-engine overlay = $69.3bn, less corrected ex-lease net debt of $1.5407bn = $67.7593bn over 229,845k diluted shares = $294.80."
+    }
+  ],
+  "evidence": [
+    "AMETEK Q2 2026 balance sheet, filed 2026-08-04 (10-Q, accepted 2026-08-04 14:40:26, CIK 0001037868): cash and equivalents $495,446k; short-term debt $980,633k; long-term debt $1,055,541k; finance-lease obligations $61,826k current + $212,944k non-current; total debt $2,310,944k; reported net debt $1,815,498k. Ex-lease net debt = $1,540,728k. The record's $485m counts only the short-term line.",
+    "AMETEK press release 'AMETEK Announces Record Second Quarter 2026 Results and Raises Full Year Guidance', PRNewswire, 2026-08-04 06:55 ET: Q2 2026 sales $2,044,397k; adjusted EPS $2.09; FY2026 adjusted EPS guidance $8.20-$8.30; 'orders were exceptional, growing 28% in the quarter'; balance sheet shows short-term debt $980,633k AND long-term debt $1,055,541k against cash $495,446k. Backlog of $4.11bn and book-to-bill of 1.12 are NOT stated in the release.",
+    "AMETEK Q2 2026 income statement, filed 2026-08-04: weighted-average diluted shares 229,845k (confirms the record's 229.85m divisor); revenue $2,044,397k vs $1,778,056k in Q2 2025 (+15.0%). TTM to 2026-06-30 revenue $7,863.9m, gross profit $2,876.7m = 36.58% gross margin, up from the FY2025 36.38% - gross-margin trajectory is expanding, not compressing.",
+    "Analyst grade actions and price-target consensus as of 2026-08-11: Truist (2026-08-06), Citigroup, KeyBanc, RBC Capital, DA Davidson and BNP Paribas all refreshed 2026-08-05 post-print; consensus target $273.00, median $272.50, high $316, low $230. Live quote 2026-08-11 $255.15 (52-week range $179.24-$257.95). The bear's 'freshest target is Morgan Stanley $245 dated 2026-07-10' and 'street range $230 to $303' are both superseded."
+  ]
+}

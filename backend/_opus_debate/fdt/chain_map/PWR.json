@@ -1,0 +1,20 @@
+{
+ "symbol": "PWR",
+ "physical_anchor": "builds and maintains physical electric transmission/distribution lines, substations and interconnection infrastructure",
+ "chains": [
+  "electrification_grid",
+  "power_for_ai"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "Grid/utility EPC — designs, constructs and maintains electrical transmission & distribution networks, substations and renewables/pipeline infrastructure; sells construction and interconnection services into both grid buildout and datacenter power delivery.",
+ "true_competitors": [
+  "MYRG",
+  "MTZ",
+  "EME",
+  "DY",
+  "PRIM",
+  "AGX"
+ ],
+ "chain_fit_confidence": "high"
+}

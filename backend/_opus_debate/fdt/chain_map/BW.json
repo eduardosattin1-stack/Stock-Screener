@@ -1,0 +1,19 @@
+{
+ "symbol": "BW",
+ "physical_anchor": "utility-scale boilers, steam-generation systems and environmental/emissions-control equipment sold to power plants and industrial thermal customers",
+ "chains": [
+  "power_for_ai"
+ ],
+ "business_model": "equipment_services",
+ "commodity_revenue_share": 0.05,
+ "value_chain_position": "thermal generation-equipment maker (Thermal/Environmental/Renewable segments); NOT the nuclear-component business (that is BWXT, an unrelated separate company post-spinoff) despite the shared legacy name - nuclear_smr hint is a mapping error",
+ "true_competitors": [
+  "GEV",
+  "GTLS",
+  "FTEK",
+  "THR",
+  "MHI:TYO",
+  "DOOSANENB.NS"
+ ],
+ "chain_fit_confidence": "medium"
+}

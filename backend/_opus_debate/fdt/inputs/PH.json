@@ -1,0 +1,60 @@
+{
+  "symbol": "PH",
+  "sector": "Industrials",
+  "signal_type": "future_disruptive_tech",
+  "company": "Parker-Hannifin Corporation",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Industrials\nValuation: Price 997.52 | Fair Value 749.18 | Margin of Safety -25% | P/FCF 38.9x\nRevenue growth: -0.4% YoY | 3-yr CAGR +7.8%\nMargins: Gross 36.9% (expanding) | Net 17.8% | FCF 16.8%\nEPS / guidance delivery: 27.12 latest | +24.2% YoY | 3-yr CAGR +39.0% | beat 7/7 qtrs (100%)\nFCF growth: +12.0% YoY | 3-yr CAGR +14.7%\nReturns / leverage: ROE 21.0% | ROIC 11.3% | Net debt 9.17B\nForward / signals: Consensus fwd EPS growth +10.4% | Margin 1.63sigma vs hist. peak | Insider buy ratio 0.00\nValuation models (stock page): DCF fair value 301.8 | Buffett fair value 749.2\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -100% | EPV -100% | Graham -13% | OwnerErn -100% | IV15 -100%\nQuality / scores: Bull score 6 | Catalyst score 0.8 | Piotroski 7/9 | Altman-Z (solvency) 7.0 | Days to next earnings 3\nAnalyst consensus target: 1062.25 (+6% upside)\nPositioning / smart money: Smart-money score 64/100 | Institutional flow 50/100 | Analyst-target velocity +8% (vs yr-ago avg PT)\nTechnical posture (timing context, not thesis): price +10% vs 200d SMA | 89% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2021: rev 14.35B, NI 1.75B, EPS 13.35\n  2022: rev 15.86B, NI 1.32B, EPS 10.09\n  2023: rev 19.07B, NI 2.08B, EPS 16.04\n  2024: rev 19.93B, NI 2.84B, EPS 21.84\n  2025: rev 19.85B, NI 3.53B, EPS 27.12\n  CAGRs: bvps_5y +13.1%, eps_5y +19.4%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-03-31 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 3.68B | TTM diluted EPS 27.10 | latest-Q EPS YoY -4%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-03-31): NET DEBT 9.11B (borrowings 9.58B + capitalized leases 0M, minus cash 476M; ex-lease net debt ≈ 9.11B — filings often quote the ex-lease figure; STATE which definition your SoP uses) — this is a LIABILITY; in any Sum-of-Parts SUBTRACT it from enterprise value, NEVER add it back as 'net cash'; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 37 sells (22,031sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 1062.25 | median 1044.00 | high 1269.00 | low 950.00\nBreadth: last month: 1 PTs avg 1037.00 | last quarter: 5 PTs avg 1069.20 | last year: 35 PTs avg 990.40\nNewest individual targets (dated — judge freshness yourself):\n  2026-07-16 Varun Govindaraj: 1037.00 (stock was 973.10)\n  2026-07-02 Jamie Cook: 1269.00 (stock was 963.81)\n  2026-06-09 Varun Govindaraj: 1026.00 (stock was 905.53)\n  2026-05-26 Joseph O&#039;Dea: 950.00 (stock was 866.96)\n  2026-05-11 Evercore ISI: 1064.00 (stock was 870.10)\nNewest PT is 19 day(s) old\n\n=== SEGMENT REVENUE (FMP, 2025-06-30 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nDiversified Industrial Segment: 13.66B (69%) | Aerospace Systems Segment: 6.18B (31%)",
+  "dossier": "",
+  "chains": [
+    "robotics_automation"
+  ],
+  "business_model": "equipment_services",
+  "physical_anchor": "manufactures precision motion-control and fluid-power components — hydraulics, pneumatics, electromechanical actuators, and filtration systems",
+  "commodity_revenue_share": 0.03,
+  "chain_regime": {
+    "robotics_automation": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "robotics_automation",
+    "torque_metrics": false,
+    "commodity_beta_2y": 0.57,
+    "beta_benchmark": "BOTZ",
+    "beta_is_proxy": true,
+    "ndebt_ebitda": 1.62,
+    "commodity_revenue_share": 0.03,
+    "as_of": "2026-08-04",
+    "gm_trajectory": {
+      "direction": "expanding",
+      "gm_recent_to_old": [
+        0.2765,
+        0.3388,
+        0.3591,
+        0.3685
+      ],
+      "delta_3y": 0.092
+    },
+    "rev_yoy": 0.0603,
+    "fcf_margin": 0.1753,
+    "torque_note": "NON-COMMODITY chain (no spot to lever to): no torque metric. commodity_beta_2y is a PROXY factor-exposure read vs BOTZ, not a commodity torque."
+  },
+  "gates": {
+    "ttm_fcf": 3678392000,
+    "ttm_ocf": 4095239000,
+    "ttm_capex": -416847000,
+    "ttm_ebitda": 5628643000,
+    "ttm_revenue": 20987074000,
+    "rev_yoy": 0.0603,
+    "cash_sti": 476000000,
+    "balance_date": "2026-03-31",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 348884219.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 1.6177966874076042
+  }
+}

@@ -1,0 +1,29 @@
+{
+ "VGZ": {
+  "physical_anchor": "Mt Todd gold ore deposit in the Northern Territory, Australia, being advanced toward mine construction and gold doré production",
+  "chains": ["precious_metals"],
+  "business_model": "developer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Developer layer — single-asset pre-production gold project (Mt Todd), zero current revenue, advancing permits/financing toward construction decision",
+  "true_competitors": ["NG", "SKE", "IAUX", "INTX", "MOZ.TO", "PPTA", "CTGO", "GATO"],
+  "chain_fit_confidence": "high"
+ },
+ "VZLA": {
+  "physical_anchor": "Panuco silver-gold ore deposit in Sinaloa, Mexico, being advanced toward mine construction and concentrate/doré production",
+  "chains": ["precious_metals"],
+  "business_model": "developer",
+  "commodity_revenue_share": 1.0,
+  "value_chain_position": "Developer layer — single-district pre-production silver-gold project (Panuco), zero current revenue, drilling/permitting toward a construction decision; chains_hint's copper_mining/rare_earth_strategic/diversified_miners tags are FMP industry-string artifacts ('Industrial Materials') and do not describe the actual business — this is a silver developer",
+  "true_competitors": ["MAG", "DSV.TO", "GGD.TO", "SVM", "AG", "PAAS", "SSRM", "HL"],
+  "chain_fit_confidence": "high"
+ },
+ "WLK": {
+  "physical_anchor": "PVC resin, caustic soda/chlorine and polyethylene manufactured at petrochemical plants — a bulk commodity chemicals producer, not a mining-chain participant",
+  "chains": [],
+  "business_model": "producer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Not part of the mining value chain — large-cap diversified petrochemicals/plastics producer (PVC, caustic soda, polyethylene, building products); FMP's 'Chemicals - Specialty' industry string is shared with rare-earth separators/processors but Westlake does none of that — no rare earth, antimony, gallium or tungsten exposure anywhere in its business",
+  "true_competitors": ["DOW", "LYB", "OLN", "HUN", "CE", "EMN", "ORBIA.MX"],
+  "chain_fit_confidence": "low"
+ }
+}

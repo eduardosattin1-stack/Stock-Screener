@@ -1,0 +1,20 @@
+{
+ "symbol": "AEM",
+ "physical_anchor": "Mines and pours gold (with silver/copper/zinc byproduct) at Canadian, Mexican and Finnish mines.",
+ "chains": [
+  "precious_metals"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.95,
+ "value_chain_position": "Senior gold producer selling refined bullion plus byproduct base metals.",
+ "true_competitors": [
+  "NEM",
+  "B",
+  "KGC",
+  "AU",
+  "GFI",
+  "AGI",
+  "BTG"
+ ],
+ "chain_fit_confidence": "high"
+}

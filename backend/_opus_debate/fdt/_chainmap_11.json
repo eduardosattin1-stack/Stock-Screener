@@ -1,0 +1,182 @@
+{
+ "PTC": {
+  "physical_anchor": "none — PLM/CAD/IoT design software (Creo, Windchill, ThingWorx), no physical product",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Engineering/PLM & IoT software vendor selling design and asset-management software licenses/subscriptions — not a physical maker tied to any FDT chain.",
+  "true_competitors": ["ANSS", "ADSK", "DSY.PA", "SIEGY", "CDNS", "SNPS"],
+  "chain_fit_confidence": "low"
+ },
+ "PTRN": {
+  "physical_anchor": "none — e-commerce brand-accelerator software/services (marketplace management), no physical product",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Amazon/marketplace brand-management software and services platform — no physical anchor, no FDT chain nexus (robotics_automation hint is a false industry-string match).",
+  "true_competitors": ["Trellis (private)", "CommerceIQ (private)", "Ideoclick (private)", "Buy Box Experts (private)", "Pacvue (private)", "Thrasio (private)"],
+  "chain_fit_confidence": "low"
+ },
+ "PWR": {
+  "physical_anchor": "builds and maintains physical electric transmission/distribution lines, substations and interconnection infrastructure",
+  "chains": ["electrification_grid", "power_for_ai"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Grid/utility EPC — designs, constructs and maintains electrical transmission & distribution networks, substations and renewables/pipeline infrastructure; sells construction and interconnection services into both grid buildout and datacenter power delivery.",
+  "true_competitors": ["MYRG", "MTZ", "EME", "DY", "PRIM", "AGX"],
+  "chain_fit_confidence": "high"
+ },
+ "Q": {
+  "physical_anchor": "manufactures physical semiconductor process materials (CMP slurries/pads, photoresists, dielectric films)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Semiconductor fabrication-materials supplier (ex-DuPont Electronics & Imaging spin-off) sold broadly across chip manufacturing — a generic industry materials supplier, not specifically anchored to quantum-computing hardware.",
+  "true_competitors": ["ENTG", "4185.T", "4063.T", "4901.T", "MRK.DE", "APD"],
+  "chain_fit_confidence": "low"
+ },
+ "QCOM": {
+  "physical_anchor": "designs and sells physical mobile/wireless SoCs (Snapdragon chips)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Mobile/wireless semiconductor and IP licensor — general smartphone and connectivity chips; no quantum-computing hardware exposure despite the industry-string 'quantum' hint.",
+  "true_competitors": ["2454.TW", "AVGO", "MRVL", "TXN", "NXPI"],
+  "chain_fit_confidence": "low"
+ },
+ "QLYS": {
+  "physical_anchor": "none — cloud vulnerability-management/cybersecurity SaaS",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cybersecurity SaaS platform (vulnerability and compliance scanning) — pure software, no physical product, no FDT chain nexus.",
+  "true_competitors": ["TENB", "RPD", "CRWD", "PANW", "CHKP"],
+  "chain_fit_confidence": "low"
+ },
+ "QRVO": {
+  "physical_anchor": "manufactures physical RF front-end semiconductor chips for mobile/wireless devices",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "RF front-end chipmaker for smartphones/wireless devices — general wireless semiconductors, not quantum-computing hardware (control electronics, photonics, or qubit platforms).",
+  "true_competitors": ["SWKS", "AVGO", "6981.T", "QCOM", "ADI"],
+  "chain_fit_confidence": "low"
+ },
+ "QTWO": {
+  "physical_anchor": "none — digital banking SaaS platform",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cloud digital-banking software for banks/credit unions — pure software, no physical anchor.",
+  "true_competitors": ["JKHY", "FI", "VYX", "TEMN.SW", "Backbase (private)"],
+  "chain_fit_confidence": "low"
+ },
+ "RAMP": {
+  "physical_anchor": "none — data connectivity/identity-resolution SaaS (data clean room)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Data collaboration/identity-resolution software platform — pure software, no physical product tied to any FDT chain.",
+  "true_competitors": ["SNOW", "CRM", "EXPN.L", "Acxiom (private)", "Epsilon (private)"],
+  "chain_fit_confidence": "low"
+ },
+ "RELY": {
+  "physical_anchor": "none — digital remittance/money-transfer app (a payments network, excluded by the anti-Visa rule)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cross-border digital remittance app — a payments network, never a physical-chain participant.",
+  "true_competitors": ["WISE.L", "WU", "MGI", "PYPL", "PAYO"],
+  "chain_fit_confidence": "low"
+ },
+ "RMBS": {
+  "physical_anchor": "designs physical memory-interface and security silicon chips, but licensed broadly across the chip industry (not quantum-specific)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Semiconductor IP licensor and memory-interface/security chipmaker — the quantum-safe cryptography IP line is a software/algorithm product, not quantum-computing hardware, so no genuine quantum chain nexus.",
+  "true_competitors": ["SNPS", "CDNS", "ARM", "CEVA", "AWE.L"],
+  "chain_fit_confidence": "low"
+ },
+ "RMD": {
+  "physical_anchor": "manufactures physical CPAP/PAP sleep-apnea and respiratory therapy devices",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Sleep-apnea/respiratory medical device maker — a genuine physical-hardware maker, but respiratory therapy devices are not robotics/automation or physical-AI products, so no real chain fit.",
+  "true_competitors": ["PHG", "FPH.AX", "INSP", "MASI", "6849.T"],
+  "chain_fit_confidence": "low"
+ },
+ "RNG": {
+  "physical_anchor": "none — cloud unified-communications (UCaaS) SaaS",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Cloud business-communications platform — pure software, no physical product.",
+  "true_competitors": ["ZM", "MSFT", "EGHT", "FIVN", "Vonage (Ericsson)"],
+  "chain_fit_confidence": "low"
+ },
+ "ROG": {
+  "physical_anchor": "manufactures physical advanced materials — ceramic/curamik power-electronics substrates, elastomeric sealing materials, RF/radar laminates",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Advanced-materials manufacturer supplying ceramic power-electronics substrates and RF/radar laminates to EV, industrial and telecom OEMs — a real physical-anchor materials maker, but not a robotics motion-control/actuator supplier nor a quantum-hardware component maker; the robotics/quantum hints are industry-string false positives.",
+  "true_competitors": ["DD", "MMM", "600183.SS", "6981.T", "VSH", "Isola Group (private)"],
+  "chain_fit_confidence": "low"
+ },
+ "ROK": {
+  "physical_anchor": "manufactures physical factory-automation hardware — PLCs, motor control centers, industrial safety and control systems",
+  "chains": ["robotics_automation"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Factory/industrial automation equipment and software — PLCs, motor control centers and safety systems sold directly into factory and warehouse automation buildouts; the electrification_grid/nuclear_smr/power_for_ai hints are secondary/overlapping industry noise, robotics_automation is the genuine primary chain.",
+  "true_competitors": ["SIEGY", "ABB", "SU.PA", "HON", "EMR", "6503.T"],
+  "chain_fit_confidence": "high"
+ },
+ "ROP": {
+  "physical_anchor": "none as a single anchor — diversified vertical-software holding company with mostly SaaS subsidiaries (a few niche instrument units, e.g. Neptune water meters)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Diversified software/technology conglomerate (Deltek, Vertafore, iTrade, plus scattered niche hardware units) — too diversified and software-dominated to anchor to any single FDT physical chain.",
+  "true_competitors": ["CSU.TO", "DHR", "AME", "IEX", "FTV"],
+  "chain_fit_confidence": "low"
+ },
+ "RTX": {
+  "physical_anchor": "manufactures physical jet engines, missiles and avionics (Pratt & Whitney, Raytheon, Collins Aerospace) — not nuclear reactor components",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Aerospace & defense OEM — commercial/military jet engines, missile systems and avionics; no naval/defense nuclear reactor components, SMR, or fuel-cycle exposure, so the nuclear_smr hint (an Aerospace & Defense industry-string false positive) does not hold.",
+  "true_competitors": ["BA", "LMT", "NOC", "GE", "SAF.PA", "GD", "LHX"],
+  "chain_fit_confidence": "low"
+ },
+ "SANM": {
+  "physical_anchor": "manufactures physical electronics assemblies (PCBAs, enclosures) as a contract manufacturer across many end-markets",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Electronics manufacturing services (EMS) contract manufacturer — builds hardware for a broad customer base spanning industrial, communications, medical and defense; too generic and end-market-agnostic to anchor to a single FDT chain (robotics/quantum hints are industry-string false positives).",
+  "true_competitors": ["JBL", "FLEX", "CLS", "BHE", "FN", "PLXS"],
+  "chain_fit_confidence": "low"
+ },
+ "SAP": {
+  "physical_anchor": "none — enterprise resource-planning (ERP) software",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Enterprise software (ERP/cloud applications) vendor — pure software, no physical product.",
+  "true_competitors": ["ORCL", "MSFT", "WDAY", "Infor (private)"],
+  "chain_fit_confidence": "low"
+ },
+ "SARO": {
+  "physical_anchor": "performs physical maintenance/repair/overhaul of aircraft gas-turbine engines — not nuclear reactor MRO",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Independent aircraft (jet/helicopter) engine MRO provider — turbine maintenance for commercial and military aviation; no nuclear reactor, SMR, or naval-nuclear component/fuel-service exposure, so the nuclear_smr hint (an Aerospace & Defense industry-string false positive) does not hold.",
+  "true_competitors": ["AIR", "MTX.DE", "GE", "SAF.PA", "HEI", "Lufthansa Technik (private)"],
+  "chain_fit_confidence": "low"
+ }
+}

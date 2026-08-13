@@ -1,0 +1,19 @@
+{
+ "symbol": "RGTI",
+ "physical_anchor": "designs and fabricates superconducting-qubit quantum processors and full-stack quantum computing systems in its own Fab-1 facility",
+ "chains": [
+  "quantum"
+ ],
+ "business_model": "developer",
+ "commodity_revenue_share": 0.0,
+ "value_chain_position": "qubit hardware platform layer — builds and operates superconducting quantum computers, monetized via government/enterprise cloud-access contracts and named research awards years ahead of commercial breakeven",
+ "true_competitors": [
+  "IONQ",
+  "QBTS",
+  "IBM",
+  "GOOGL",
+  "HON",
+  "MSFT"
+ ],
+ "chain_fit_confidence": "high"
+}

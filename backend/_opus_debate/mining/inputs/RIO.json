@@ -1,0 +1,58 @@
+{
+  "symbol": "RIO",
+  "sector": "Basic Materials",
+  "signal_type": "mining",
+  "company": "Rio Tinto Group",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Basic Materials\nRevenue growth: +7.4% YoY\nReturns / leverage: Net debt 1\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-06-30 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 10.97B | TTM diluted EPS 13.67 | latest-Q EPS YoY +14%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-06-30): NET DEBT 13.35B (borrowings 21.92B + capitalized leases 936M, minus cash 9.51B; ex-lease net debt ≈ 12.41B — filings often quote the ex-lease figure; STATE which definition your SoP uses) — this is a LIABILITY; in any Sum-of-Parts SUBTRACT it from enterprise value, NEVER add it back as 'net cash'; use this, not the scan's net_debt above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 105.50 | median 113.00 | high 120.00 | low 83.50\nBreadth: last month: 1 PTs avg 113.00 | last quarter: 1 PTs avg 113.00 | last year: 5 PTs avg 95.70\n[THIN CONSENSUS: only 1 price target(s) printed last quarter — this is NOT a street-wide view; weigh individual PTs below accordingly]\nNewest individual targets (dated — judge freshness yourself):\n  2026-07-30 Richard Hatch: 113.00 (stock was 93.66)\n  2026-04-27 Argus Research: 120.00 (stock was 99.51)\n  2026-04-27 Bernstein: 83.50 (stock was 99.61)\n  2026-03-09 Bernstein: 77.00 (stock was 90.35)\n  2025-12-11 John Eade: 85.00 (stock was 76.23)\nNewest PT is 5 day(s) old\n\n=== SEGMENT REVENUE (FMP, 2025-12-31 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nIron Ore: 28.53B (60%) | Aluminium, Alumina And Bauxite: 15.39B (33%) | Industrial Minerals: 2.37B (5%) | Lithium: 944M (2%)",
+  "dossier": "",
+  "chains": [
+    "copper_mining",
+    "diversified_miners"
+  ],
+  "business_model": "producer",
+  "physical_anchor": "mines and ships iron ore, copper concentrate/cathode, and bauxite/aluminum from operations on five continents",
+  "commodity_revenue_share": 0.9,
+  "chain_regime": {
+    "copper_mining": "NEUTRAL",
+    "diversified_miners": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "copper_mining",
+    "torque_metrics": true,
+    "commodity_beta_2y": 0.5,
+    "beta_benchmark": "HGUSD",
+    "beta_is_proxy": false,
+    "ndebt_ebitda": 0.69,
+    "commodity_revenue_share": 0.9,
+    "as_of": "2026-08-04",
+    "ebitda_margin_ttm": 0.3619,
+    "ebitda_margin_band": {
+      "band": "q3_above_median",
+      "pct": 0.25,
+      "basis": "cohort_percentile",
+      "n_cohort": 8
+    },
+    "fcf_torque_10pct": 0.249,
+    "torque_note": "SYMMETRIC: fcf_torque_10pct is the +/-10% commodity move's % EBITDA swing (read the downside too). beta_is_proxy=False (proxy ETF regression where the spot is off-FMP)."
+  },
+  "gates": {
+    "ttm_fcf": 10965352190,
+    "ttm_ocf": 34802980375,
+    "ttm_capex": -23837628185,
+    "ttm_ebitda": 41849698000,
+    "ttm_revenue": 115631794010,
+    "rev_yoy": 0.074,
+    "cash_sti": 9507000000,
+    "balance_date": "2026-06-30",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 137612567.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.6916331194756868
+  }
+}

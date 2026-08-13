@@ -1,0 +1,20 @@
+{
+ "symbol": "LEU",
+ "physical_anchor": "Enriches uranium (SWU) into low-enriched uranium (LEU) and HALEU fuel via centrifuge cascades at its Piketon, Ohio plant, and fabricates related nuclear fuel components under DOE/commercial contracts.",
+ "chains": [
+  "uranium_fuel_cycle"
+ ],
+ "business_model": "producer",
+ "commodity_revenue_share": 0.95,
+ "value_chain_position": "Conversion & enrichment layer — sells enriched uranium product (SWU/LEU/HALEU) and technical fuel services directly into the reactor fuel-cycle chain.",
+ "true_competitors": [
+  "Cameco (CCJ)",
+  "BWX Technologies (BWXT)",
+  "Orano (ORAAF)",
+  "Urenco (private consortium)",
+  "Silex Systems (SLX.AX)",
+  "Lightbridge (LTBR)",
+  "NANO Nuclear Energy (NNE)"
+ ],
+ "chain_fit_confidence": "high"
+}

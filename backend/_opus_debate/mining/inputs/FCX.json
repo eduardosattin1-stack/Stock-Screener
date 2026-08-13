@@ -1,0 +1,56 @@
+{
+  "symbol": "FCX",
+  "sector": "Basic Materials",
+  "signal_type": "mining",
+  "company": "Freeport-McMoRan Inc.",
+  "metrics_str": "=== FUNDAMENTALS (screener scan, latest fiscal year unless noted) ===\nSector: Basic Materials\nValuation: Price 63.64 | Fair Value 30.29 | Margin of Safety -52% | P/FCF 82.3x\nRevenue growth: +1.1% YoY | 3-yr CAGR +3.3%\nMargins: Gross 27.0% (contracting) | Net 8.6% | FCF 4.3%\nEPS / guidance delivery: 1.52 latest | +16.9% YoY | 3-yr CAGR -14.0% | beat 6/7 qtrs (86%)\nFCF growth: -52.6% YoY | 3-yr CAGR -12.6%\nReturns / leverage: ROE 17.3% | ROIC 9.7% | Net debt 7.45B\nForward / signals: Consensus fwd EPS growth +36.2% | Margin 0.26sigma vs hist. peak | Insider buy ratio 0.00\nValuation models (stock page): DCF fair value 7.9 | Buffett fair value 30.3\nPer-method margin-of-safety (where models agree = higher-confidence): DCF -100% | EPV -100% | Graham -100% | OwnerErn -100% | IV15 -100%\nQuality / scores: Bull score 8 | Catalyst score 0.5 | Piotroski 6/9 | Altman-Z (solvency) 3.0 | Days to next earnings 80\nAnalyst consensus target: 72.41 (+14% upside)\nPositioning / smart money: Smart-money score 70/100 | Institutional flow 50/100 | Analyst-target velocity +18% (vs yr-ago avg PT)\nTechnical posture (timing context, not thesis): price +11% vs 200d SMA | 77% up the 52-wk range\nMulti-year trajectory (fiscal yr - revenue / net income / EPS):\n  2021: rev 22.36B, NI 4.30B, EPS 2.9\n  2022: rev 23.33B, NI 3.46B, EPS 2.39\n  2023: rev 22.71B, NI 1.84B, EPS 1.28\n  2024: rev 25.45B, NI 1.88B, EPS 1.3\n  2025: rev 25.74B, NI 2.20B, EPS 1.52\n  CAGRs: bvps_5y +8.6%, eps_5y -14.9%\n\n=== TTM / LATEST QUARTER (FMP, as of 2026-06-30 — USE THESE OVER THE FISCAL-YEAR-ANNUAL FCF/EPS ABOVE WHEN THEY DIFFER) ===\nTTM FCF 5.92B | TTM diluted EPS 2.04 | latest-Q EPS YoY +28%\n\n=== LIVE CORRECTIONS (override the scan's net-debt and insider fields above) ===\nNet debt/cash (recomputed from the balance sheet, 2026-06-30): NET DEBT 6.28B (borrowings 9.39B + capitalized leases 973M, minus cash 4.08B; ex-lease net debt ≈ 5.31B — filings often quote the ex-lease figure; STATE which definition your SoP uses) — this is a LIABILITY; in any Sum-of-Parts SUBTRACT it from enterprise value, NEVER add it back as 'net cash'; use this, not the scan's net_debt above\nInsider (open-market only): 0 buys (0sh) vs 12 sells (632,274sh) — this is the REAL conviction signal, NOT the grant-inflated buy_ratio above\n\n=== ANALYST PRICE TARGETS (FMP, as-of dated — an anchor to BEAT or FADE, not to defer to) ===\nStreet targets: consensus 72.41 | median 73.00 | high 82.00 | low 58.50\nBreadth: last month: 6 PTs avg 76.17 | last quarter: 10 PTs avg 74.45 | last year: 39 PTs avg 62.83\nNewest individual targets (dated — judge freshness yourself):\n  2026-07-27 Richard Garchitorena: 82.00 (stock was 62.62)\n  2026-07-24 RBC Capital: 73.00 (stock was 61.87)\n  2026-07-24 Timna Tanners: 70.00 (stock was 63.53)\n  2026-07-23 Katja Jancic: 78.00 (stock was 62.46)\n  2026-07-15 Barclays: 80.00 (stock was 60.89)\nNewest PT is 8 day(s) old\n\n=== SEGMENT REVENUE (FMP, 2025-12-31 — build a TRUE segment Sum-of-Parts: value each segment by its peer multiple, then sum) ===\nCopper Cathode: 8.15B (31%) | Copper In Concentrates: 6.31B (24%) | Refined Copper Products: 4.42B (17%) | Gold: 3.90B (15%) | Molybdenum: 1.97B (8%) | Other Products Or Services: 749M (3%) | Purchased Copper: 449M (2%)",
+  "dossier": "",
+  "chains": [
+    "copper_mining"
+  ],
+  "business_model": "producer",
+  "physical_anchor": "Operates large open-pit copper mines (Grasberg, Morenci, Cerro Verde) and an integrated smelter producing copper concentrate and cathode with gold/molybdenum byproducts.",
+  "commodity_revenue_share": 0.85,
+  "chain_regime": {
+    "copper_mining": "NEUTRAL"
+  },
+  "resource_metrics": {
+    "chain": "copper_mining",
+    "torque_metrics": true,
+    "commodity_beta_2y": 0.91,
+    "beta_benchmark": "HGUSD",
+    "beta_is_proxy": false,
+    "ndebt_ebitda": 0.67,
+    "commodity_revenue_share": 0.85,
+    "as_of": "2026-08-04",
+    "ebitda_margin_ttm": 0.3479,
+    "ebitda_margin_band": {
+      "band": "q4_high_cost",
+      "pct": 0.12,
+      "basis": "cohort_percentile",
+      "n_cohort": 8
+    },
+    "fcf_torque_10pct": 0.244,
+    "torque_note": "SYMMETRIC: fcf_torque_10pct is the +/-10% commodity move's % EBITDA swing (read the downside too). beta_is_proxy=False (proxy ETF regression where the spot is off-FMP)."
+  },
+  "gates": {
+    "ttm_fcf": 5919000000,
+    "ttm_ocf": 5919000000,
+    "ttm_capex": 0,
+    "ttm_ebitda": 8999000000,
+    "ttm_revenue": 25868000000,
+    "rev_yoy": 0.0067,
+    "cash_sti": 4080000000,
+    "balance_date": "2026-06-30",
+    "balance_sheet_stale": false,
+    "monthly_burn": 0.0,
+    "runway_months": null,
+    "growth_capex_fcf_negative": false,
+    "pass_cash": true,
+    "pass_profit": true,
+    "adv_usd": 491160198.0,
+    "royalty_hint": false,
+    "funded_solvency": "strong",
+    "net_funded_debt_ebitda": 0.6655546288573811
+  }
+}

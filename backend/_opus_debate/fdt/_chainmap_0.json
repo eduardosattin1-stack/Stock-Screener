@@ -1,0 +1,182 @@
+{
+ "AAON": {
+  "physical_anchor": "Manufactures packaged rooftop HVAC units, chillers, and data-center liquid-cooling systems",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "HVAC/cooling equipment OEM selling packaged units and data-center cooling gear to commercial, industrial and datacenter customers",
+  "true_competitors": ["CARR", "LII", "JCI", "TT", "MOD", "VRT"],
+  "chain_fit_confidence": "low"
+ },
+ "ABT": {
+  "physical_anchor": "Manufactures diagnostic instruments, cardiac/vascular and other medical devices, and nutrition/pharma products",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Diversified medical devices & diagnostics maker; not a robotics-platform vendor despite Medical - Devices classification",
+  "true_competitors": ["MDT", "JNJ", "BSX", "SYK", "BDX", "DHR"],
+  "chain_fit_confidence": "low"
+ },
+ "ACIW": {
+  "physical_anchor": "none - real-time payments processing software, no physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Payments-processing software platform; the textbook anti-Visa case, no physical anchor to any FDT chain",
+  "true_competitors": ["FIS", "FISV", "GPN", "JKHY", "NCR", "TEMN.SW"],
+  "chain_fit_confidence": "low"
+ },
+ "ACLS": {
+  "physical_anchor": "Manufactures ion implantation and other semiconductor front-end fabrication equipment",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Semiconductor capital-equipment OEM (ion implant) serving general chip fabs (power/analog nodes); not quantum-hardware-specific",
+  "true_competitors": ["AMAT", "LRCX", "KLAC", "ASML", "8035.T", "ENTG"],
+  "chain_fit_confidence": "low"
+ },
+ "ACM": {
+  "physical_anchor": "Designs and manages construction of infrastructure projects including power/grid interconnection alongside transportation, water and environmental work",
+  "chains": ["electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "Global diversified engineering & construction management firm; grid/power EPC is a minority slice of a much broader infrastructure book",
+  "true_competitors": ["J", "MTZ", "PWR", "FLR", "TTEK", "STN"],
+  "chain_fit_confidence": "medium"
+ },
+ "ADBE": {
+  "physical_anchor": "none - creative, marketing and document software suite, no physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Creative/marketing/document cloud software; no physical anchor, robotics_automation hint is a keyword-only false positive",
+  "true_competitors": ["MSFT", "ADSK", "CRM", "NOW", "INTU", "SAP"],
+  "chain_fit_confidence": "low"
+ },
+ "ADEA": {
+  "physical_anchor": "none - semiconductor and media patent portfolio licensing, no physical product manufactured",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "IP licensing company monetizing semiconductor/media patents; not a commodity royalty streamer and not a robotics vendor",
+  "true_competitors": ["IDCC", "RMBS", "XPER", "WISA", "INVT"],
+  "chain_fit_confidence": "low"
+ },
+ "ADI": {
+  "physical_anchor": "Manufactures analog and mixed-signal semiconductor chips (data converters, amplifiers, sensors)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Broad-line analog semiconductor maker sold across industrial/auto/comms end markets; general-purpose, not quantum-specific",
+  "true_competitors": ["TXN", "MCHP", "NXPI", "ON", "SLAB", "STM"],
+  "chain_fit_confidence": "low"
+ },
+ "ADP": {
+  "physical_anchor": "none - payroll, HR and workforce-management outsourcing/software, no physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Payroll/HR BPO and software; no physical anchor, not a robotics company despite generic software classification",
+  "true_competitors": ["PAYX", "WDAY", "PCTY", "TNET", "INSP"],
+  "chain_fit_confidence": "low"
+ },
+ "ADSK": {
+  "physical_anchor": "none - CAD/BIM/CAM design and engineering software, no physical product",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Design/engineering software used by manufacturing and robotics customers, but Autodesk itself sells no physical product",
+  "true_competitors": ["ADBE", "PTC", "ANSS", "DSY.PA", "BSY", "CDNS"],
+  "chain_fit_confidence": "low"
+ },
+ "AEIS": {
+  "physical_anchor": "Manufactures precision power conversion and RF power-delivery systems for semiconductor fabrication and industrial equipment",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Power-electronics/power-supply OEM into semiconductor capital equipment, industrial and medical markets; not quantum- or robotics-chain specific",
+  "true_competitors": ["MKSI", "COHU", "UCTT", "ONTO", "ICHR", "PLAB"],
+  "chain_fit_confidence": "low"
+ },
+ "AGX": {
+  "physical_anchor": "Engineers, procures and constructs gas-fired power generation plants and grid interconnection infrastructure (Gemma Power Services)",
+  "chains": ["power_for_ai"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.03,
+  "value_chain_position": "Power-plant EPC contractor building/commissioning generation capacity into utility and datacenter-driven demand queues",
+  "true_competitors": ["PWR", "MYRG", "MTZ", "IESC", "FLR", "ACM"],
+  "chain_fit_confidence": "high"
+ },
+ "AIR": {
+  "physical_anchor": "Distributes aircraft parts and provides MRO and logistics services for commercial and government aviation",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Aviation aftermarket parts distribution and MRO; no nuclear/SMR exposure despite Aerospace & Defense classification",
+  "true_competitors": ["HEI", "TDG", "MOG.A", "WWD", "SPR"],
+  "chain_fit_confidence": "low"
+ },
+ "ALAB": {
+  "physical_anchor": "Designs semiconductor connectivity chips (PCIe/CXL retimers and switches) for AI-server interconnect",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "AI-datacenter connectivity/interconnect chipmaker; general compute-fabric silicon, not a quantum-hardware supplier",
+  "true_competitors": ["MRVL", "CRDO", "AVGO", "NVDA", "PXLW"],
+  "chain_fit_confidence": "low"
+ },
+ "ALGN": {
+  "physical_anchor": "Manufactures clear dental aligners (Invisalign) and intraoral scanners",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "Direct-to-dental-practice orthodontic products and scanning hardware; not a robotics/automation platform vendor",
+  "true_competitors": ["XRAY", "STMN.SW", "NVST", "3M", "SDC"],
+  "chain_fit_confidence": "low"
+ },
+ "ALRM": {
+  "physical_anchor": "none for Alarm.com itself - software platform for smart-home/security monitoring; hardware sold through third-party partners",
+  "chains": [],
+  "business_model": "developer",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "SaaS platform layer sitting over partner-built smart-home/security hardware; weak/indirect physical anchor",
+  "true_competitors": ["ADT", "VVNT", "SMRT", "JCI", "RESI"],
+  "chain_fit_confidence": "low"
+ },
+ "AMAT": {
+  "physical_anchor": "Manufactures semiconductor wafer fabrication equipment (deposition, etch, ion implant, inspection)",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.03,
+  "value_chain_position": "Broad-line semiconductor capital-equipment OEM serving the entire chip industry; generic exposure, not quantum-specific",
+  "true_competitors": ["LRCX", "KLAC", "ASML", "8035.T", "ACLS", "ENTG"],
+  "chain_fit_confidence": "low"
+ },
+ "AMD": {
+  "physical_anchor": "Designs classical CPU/GPU semiconductor chips for computing, gaming and datacenter servers",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.0,
+  "value_chain_position": "General-purpose compute silicon design house; no quantum-computing hardware product",
+  "true_competitors": ["NVDA", "INTC", "QCOM", "MRVL", "AVGO"],
+  "chain_fit_confidence": "low"
+ },
+ "AME": {
+  "physical_anchor": "Manufactures precision electronic instruments, sensors, and electromechanical motion/power devices for aerospace, industrial and energy markets",
+  "chains": ["electrification_grid"],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.05,
+  "value_chain_position": "Diversified electronic-instruments/electromechanical conglomerate; power-quality/protection and precision-motion products touch grid and automation end markets but no single chain dominates revenue",
+  "true_competitors": ["ETN", "HUBB", "ROP", "DOV", "ITW", "FLS"],
+  "chain_fit_confidence": "medium"
+ },
+ "AMKR": {
+  "physical_anchor": "Provides outsourced semiconductor assembly, packaging and test (OSAT) services",
+  "chains": [],
+  "business_model": "equipment_services",
+  "commodity_revenue_share": 0.02,
+  "value_chain_position": "Generic semiconductor packaging/test service provider across mobile, auto and computing markets; not quantum-specific",
+  "true_competitors": ["3711.TW", "JCET", "SPIL", "TSEM", "UMC"],
+  "chain_fit_confidence": "low"
+ }
+}
