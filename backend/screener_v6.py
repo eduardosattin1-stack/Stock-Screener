@@ -1206,18 +1206,43 @@ REGIONS = {
     ],
     "midcap_nyse":   [("NYSE",   "US", 2_000_000_000, 10_000_000_000, 300)],
     "midcap_nasdaq": [("NASDAQ", "US", 2_000_000_000, 10_000_000_000, 300)],
+    # 2026-08-13: Europe widened to every FMP-supported European venue, and two
+    # long-standing bugs fixed. Previously this list covered 11 exchanges and
+    # produced ~450 names; it now covers 18 and produces ~950.
+    #
+    #   1. LSE was passed country="UK" — the code FMP uses in available-exchanges
+    #      for the *venue*. The company-screener `country` filter matches the
+    #      *issuer* country, which FMP reports as ISO-2 "GB". So every LSE call
+    #      returned 0 rows and the entire UK market has been silently absent
+    #      (the 2026-08-10 scan has 5 GB names, all cross-listings, and no .L
+    #      suffix at all). Fixed to "GB" → 62 names.
+    #   2. Brussels (BRU), Lisbon (LIS), Dublin (DUB), Vienna (VIE), Warsaw
+    #      (WSE), Athens (ATH) and Iceland (ICE) were never configured, so
+    #      Euronext Brussels large caps (ABI.BR/AB InBev, KBC, UCB, Ageas,
+    #      Solvay, Umicore) could not appear in any scan. Prague (PRA) is
+    #      supported by FMP but returns 0 names ≥$1B, so it is left out.
+    #
+    # Limits are set well above the observed row counts so the liquidity floor
+    # in EXCHANGE_MIN_VOLUME does the filtering rather than an arbitrary cap.
     "europe": [
-        ("XETRA", "DE", 1_000_000_000, 100), # Lowered floor, higher stock limit (DHER)
-        ("PAR", "FR", 1_000_000_000, 100),
-        ("LSE", "UK", 1_000_000_000, 100),
-        ("AMS", "NL", 1_000_000_000, 50),    # Raised from 500M — filters illiquid B-shares
-        ("STO", "SE", 1_000_000_000, 50),    # Raised from 500M
-        ("HEL", "FI", 1_000_000_000, 50),    # Raised from 500M
-        ("OSL", "NO", 1_000_000_000, 50),    # Raised from 500M
-        ("CPH", "DK", 1_000_000_000, 50),    # Raised from 500M
-        ("MIL", "IT", 1_000_000_000, 50),
-        ("SIX", "CH", 1_000_000_000, 50),
-        ("BME", "ES", 1_000_000_000, 50),
+        ("LSE", "GB", 1_000_000_000, 300),   # was country="UK" → 0 rows
+        ("XETRA", "DE", 1_000_000_000, 300), # Lowered floor, higher stock limit (DHER)
+        ("PAR", "FR", 1_000_000_000, 300),
+        ("AMS", "NL", 1_000_000_000, 100),   # Raised from 500M — filters illiquid B-shares
+        ("BRU", "BE", 1_000_000_000, 100),   # NEW — Euronext Brussels
+        ("MIL", "IT", 1_000_000_000, 100),
+        ("BME", "ES", 1_000_000_000, 100),
+        ("SIX", "CH", 1_000_000_000, 100),
+        ("STO", "SE", 1_000_000_000, 300),   # Raised from 500M
+        ("OSL", "NO", 1_000_000_000, 150),   # Raised from 500M
+        ("CPH", "DK", 1_000_000_000, 100),   # Raised from 500M
+        ("HEL", "FI", 1_000_000_000, 100),   # Raised from 500M
+        ("LIS", "PT", 1_000_000_000, 50),    # NEW — Euronext Lisbon
+        ("DUB", "IE", 1_000_000_000, 50),    # NEW — Euronext Dublin
+        ("VIE", "AT", 1_000_000_000, 100),   # NEW — Vienna
+        ("WSE", "PL", 1_000_000_000, 100),   # NEW — Warsaw
+        ("ATH", "GR", 1_000_000_000, 50),    # NEW — Athens
+        ("ICE", "IS", 1_000_000_000, 50),    # NEW — Iceland
     ],
     "asia": [
         ("JPX", "JP", 5_000_000_000, 100),
@@ -1231,6 +1256,35 @@ REGIONS = {
     "brazil": [("SAO", "BR", 1_000_000_000, 50)],
     "global": None,  # Will now include EVERY region above
 }
+
+# 2026-08-13: per-exchange share-volume floor for the universe screen.
+#
+# The flat 100k-shares/day floor was calibrated on US tickers and is far too
+# high for European venues, where higher unit prices mean far fewer shares
+# change hands for the same traded value. At 100k it was cutting genuine
+# large caps: Vienna kept 1 name of 27 (no OMV, no Erste, no Verbund),
+# Brussels 3 of 39 (no UCB, no Ageas, no Solvay), Switzerland 25 of 117.
+# Measured 2026-08-13 across all 18 EU venues: 542 names survive at 100k,
+# 950 at 20k, 1525 with no floor at all.
+#
+# 20k keeps the illiquidity screen meaningful — combined with the ≥$1B market
+# cap and >$1 price gates already in params — without excluding index
+# constituents. US/Asia/Brazil keep the 100k floor via the default.
+DEFAULT_MIN_VOLUME = 100_000
+EXCHANGE_MIN_VOLUME = {
+    ex: 20_000 for ex in (
+        "XETRA", "PAR", "AMS", "BRU", "MIL", "BME", "SIX",
+        "STO", "OSL", "CPH", "HEL", "LIS", "DUB", "VIE", "WSE", "ATH", "ICE",
+    )
+}
+# LSE gets NO volume floor (0 disables the filter). FMP reports volume=0 for
+# 119 of 197 UK issuers ≥$1B — including every megacap: HSBA.L, AZN.L, SHEL.L,
+# RR.L, RIO.L, ULVR.L. Any floor at all deletes the FTSE's largest names while
+# keeping mid-caps whose volume happens to be populated, which is worse than no
+# filter. Measured across all 24 venues on 2026-08-13, LSE is the only one with
+# this defect (every other venue reports ≤2% falsy volume). The ≥$1B market cap
+# and country=GB gates carry the liquidity screen there instead.
+EXCHANGE_MIN_VOLUME["LSE"] = 0
 
 # v7.2: module-level caches for sector data (populated at scan start, read many times)
 SECTOR_MAP: dict[str, str] = {}           # {sym: "Technology"}  from company-screener
@@ -1300,11 +1354,15 @@ def get_symbols(region: str) -> list[str]:
             max_cap = None
         params = {
             "exchange": exchange, "marketCapMoreThan": min_cap,
-            "volumeMoreThan": 100_000,     # filter illiquid stocks
             "priceMoreThan": 1,            # filter penny stocks
             "isActivelyTrading": "true", "isEtf": "false", "isFund": "false",
             "limit": limit,
         }
+        # Per-venue liquidity floor — see EXCHANGE_MIN_VOLUME. 0 omits the
+        # filter entirely (LSE, where FMP's volume field is unusable).
+        min_vol = EXCHANGE_MIN_VOLUME.get(exchange, DEFAULT_MIN_VOLUME)
+        if min_vol:
+            params["volumeMoreThan"] = min_vol
         if max_cap is not None:
             params["marketCapLowerThan"] = max_cap
         if country: params["country"] = country
@@ -1315,7 +1373,30 @@ def get_symbols(region: str) -> list[str]:
         if region == "sp500":
             params["country"] = "US"
             params["includeAllShareClasses"] = "false"
+        # 2026-08-13: retry implausibly-thin pulls.
+        #
+        # FMP's company-screener intermittently answers HTTP 200 with a near-empty
+        # list — no 429, no error body, nothing fmp() can flag. It hit 3 of the
+        # last 24 nightly runs (08-07, 08-11, 08-12), collapsing the universe from
+        # ~2500 to 54/173/75 and publishing that over a good scan. Diagnostics:
+        # the same key and params returned 1036 NASDAQ rows at midday, and two
+        # identical back-to-back calls during the 08-12 run returned 3 then 4
+        # rows — a transient upstream fault, not a filter or credential problem.
+        #
+        # A retry can't fix FMP, but the fault is brief, so re-asking usually
+        # lands on a healthy response. The publish guard in save_scan_to_gcs is
+        # the real backstop for when it doesn't.
+        MIN_PLAUSIBLE = 5
         data = fmp("company-screener", params)
+        for attempt in range(2):
+            if data and len(data) >= MIN_PLAUSIBLE:
+                break
+            log.warning(
+                f"  {exchange}/{country or 'all'}: {len(data) if data else 0} rows "
+                f"— implausibly thin, retrying ({attempt + 1}/2)"
+            )
+            time.sleep(2 ** attempt)
+            data = fmp("company-screener", params)
         if data:
             batch = []
             for d in data:
@@ -5659,8 +5740,51 @@ def gcs_download(blob_path: str) -> Optional[dict]:
         return None
 
 
+# 2026-08-13: publish guard. A scan whose universe collapsed must not overwrite
+# a good one — the site, the monitor and signal_tracker all read latest_*.json.
+#
+# On 08-11 and 08-12 a 173- and a 75-name scan replaced a 2500-name scan and
+# the job still reported EXECUTION_SUCCEEDED, because nothing downstream of
+# get_symbols knows how big the universe is supposed to be. This is the same
+# fail-open principle the debt-cycle layer already follows: an upstream data
+# outage must degrade loudly, never silently.
+#
+# The watermark is a tiny sidecar rather than a read of latest_{region}.json,
+# which is ~28MB and would cost a full download per scan just to read one int.
+UNIVERSE_COLLAPSE_RATIO = 0.6   # publish blocked below 60% of the last good count
+
+
+def _watermark_path(region: str) -> str:
+    return f"scans/_universe_watermark_{region}.json"
+
+
+def _check_universe_watermark(stocks: list, region: str) -> bool:
+    """True if this scan may publish. Fail-open: no watermark yet → allow."""
+    if os.environ.get("SCAN_FORCE_PUBLISH", "").lower() in ("1", "true", "yes"):
+        log.warning(f"Publish guard BYPASSED via SCAN_FORCE_PUBLISH ({len(stocks)} stocks)")
+        return True
+    mark = gcs_download(_watermark_path(region))
+    prev = (mark or {}).get("stock_count")
+    if not prev:
+        log.info(f"Publish guard: no watermark for {region} yet — allowing {len(stocks)} stocks")
+        return True
+    floor = int(prev * UNIVERSE_COLLAPSE_RATIO)
+    if len(stocks) < floor:
+        log.error(
+            f"PUBLISH BLOCKED: {region} scan has {len(stocks)} stocks, below {floor} "
+            f"({UNIVERSE_COLLAPSE_RATIO:.0%} of last good {prev} on {(mark or {}).get('scan_date')}). "
+            f"This is the FMP company-screener returning near-empty 200s again — check the "
+            f"'implausibly thin, retrying' warnings above. latest_{region}.json left untouched. "
+            f"Re-run, or set SCAN_FORCE_PUBLISH=1 if the universe really did shrink this much."
+        )
+        return False
+    return True
+
+
 def save_scan_to_gcs(stocks: list[Stock], region: str = "global", macro: dict = None):
     """Save scan results to GCS — both as latest_{region} and dated archive."""
+    if not _check_universe_watermark(stocks, region):
+        return
     # 2026-05-05: scan_date is a full tz-aware ISO timestamp again. Frontend
     # parses this with `new Date(...).toLocaleString(...)` to render the
     # "last scan" label; if it's a date-only string (YYYY-MM-DD) JS interprets
@@ -5710,6 +5834,12 @@ def save_scan_to_gcs(stocks: list[Stock], region: str = "global", macro: dict = 
     if region in ("nasdaq100", "sp500"):
         gcs_upload("scans/latest.json", payload)
     log.info(f"GCS upload complete: scans/latest_{region}.json + dated archive")
+
+    # Advance the collapse-guard watermark only after a successful publish.
+    gcs_upload(_watermark_path(region), {
+        "stock_count": len(stocks),
+        "scan_date": payload["scan_date"],
+    })
 
     # Post-scan hook: update P20 cycles, rolling health, and history
     try:
