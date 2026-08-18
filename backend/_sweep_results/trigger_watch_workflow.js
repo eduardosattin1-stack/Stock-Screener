@@ -5,22 +5,6 @@ export const meta = {
 }
 const DUE = [
  {
-  "symbol": "CCC",
-  "catalyst": "CCC Intelligent Solutions is running a live sale process (Reuters, three sources, 2026-07-09) with Elliott Investment Management having built a large stake reported 2026-07-10, and the stock has retained only ~15% of the move with no deal price yet struck.",
-  "milestone": "Process reported 2026-07-09; Elliott stake reported 2026-07-10; Q2 results 2026-07-30 passed with no company confirmation or process update. Next dates: a definitive-agreement announcement plausible Sept-Nov 2026 on a typical 3-5 month banked process, with Q3 2026 earnings (~late Oct 2026) the next ",
-  "score": 6.5,
-  "tier": "ACTIVE",
-  "trigger": "2026-07-30"
- },
- {
-  "symbol": "CLPT",
-  "catalyst": "Partner uniQure submits the AMT-130 Huntington's BLA in Q3 2026 with four-year Phase I/II topline in September 2026, and ClearPoint's MRI-guided navigation and SmartFlow cannula is the delivery platform used in the trial \u2014 first-ever commercial cell/gene-therapy delivery revenue for CLPT, explicitly",
-  "milestone": "2026-09 (four-year AMT-130 topline, uniQure-guided) and Q3 2026 US/UK regulatory submissions; near-term CLPT Q2 print tonight 2026-08-03 after close",
-  "score": 6,
-  "tier": "WATCH",
-  "trigger": "2026-08-03"
- },
- {
   "symbol": "GERN",
   "catalyst": "Protocol-specified interim analysis of the registrational Phase 3 IMpactMF trial (imetelstat, overall-survival primary endpoint, relapsed/refractory myelofibrosis), company-guided to 2H 2026.",
   "milestone": "IMpactMF interim analysis guided to 2H 2026 (Geron FY2025 release, 2026-02-25, reiterated 2026-05-06); next hard date Q2 2026 results 2026-08-05, where the window is likely refined.",
@@ -37,12 +21,12 @@ const DUE = [
   "trigger": "2026-08-10"
  },
  {
-  "symbol": "AQST",
-  "catalyst": "Aquestive resubmits the Anaphylm (sublingual epinephrine film) NDA in Q3-2026 after a Jan-30-2026 CRL whose deficiencies were limited to a human-factors validation study and a PK study \u2014 no CMC findings and no challenge to the auto-injector comparability data \u2014 starting a ~6-month Class 2 review clo",
-  "milestone": "Q2-2026 results after close Tue 2026-08-11 (call 08-12, 8:00am ET) = next hard date and the checkpoint on HF/PK study completion; NDA resubmission guided by 2026-09-30 (Q3-2026); FDA action guided \"approval in 2027\" (~Q1-Q2 2027 on a 6-month Class 2 clock).",
+  "symbol": "ZIM",
+  "catalyst": "Signed all-cash merger at $35.00/sh with Hapag-Lloyd (announced Feb-16-2026, ~$4.2B), shareholder-approved, now hostage to the State of Israel's decision on transferring the Special State Share to FIMI's \"New ZIM\" \u2014 stock at $26.07 leaves a 34.3% gross spread into a guided late-2026 close.",
+  "milestone": "State-of-Israel / Special State Share decision on the FIMI \"New ZIM\" transfer (undated \u2014 Defense Ministry opposed as of Jul-6-2026; Netanyahu said the sale is not on the cabinet agenda). Company continues to guide close by late 2026 (Q4). Next hard date: Q2-2026 results Wed 2026-08-19 pre-market, fi",
   "score": 5.5,
   "tier": "ACTIVE",
-  "trigger": "2026-08-11"
+  "trigger": "2026-08-19"
  },
  {
   "symbol": "AVIR",
@@ -53,36 +37,20 @@ const DUE = [
   "trigger": "2026-08-12"
  },
  {
-  "symbol": "DMAC",
-  "catalyst": "Pre-specified interim analysis of the pivotal Phase 2/3 ReMEDy2 trial of DM199 in acute ischemic stroke, triggered once 200 patients are enrolled \u2014 75% of that threshold was reached as of 2026-05-20 and the trial has not read out.",
-  "milestone": "2026-05-20 confirmed 75% of the 200-patient interim threshold (Business Wire); next knowable step is completion of the 200-patient interim cohort, guided by the company but with no verbatim date I could confirm \u2014 nearest scheduled disclosure is the Q2-2026 results call (~2026-08-05, by the Q1 cadenc",
-  "score": 5,
-  "tier": "WATCH",
-  "trigger": "2026-08-05"
- },
- {
-  "symbol": "LXRX",
-  "catalyst": "Pivotal Phase 3 SONATA-HCM (sotagliflozin in symptomatic obstructive AND non-obstructive HCM) completed randomization on 2026-07-27 having overshot its 500-patient target across 130+ sites in 20 countries, with company-committed topline in Q1 2027.",
-  "milestone": "SONATA-HCM topline Q1 2027 (company-guided); next hard date Q2 2026 results + business update 2026-08-06 (cash/runway reset and any raise signal).",
-  "score": 5,
-  "tier": "WATCH",
-  "trigger": "2026-08-06"
- },
- {
-  "symbol": "AAUC",
-  "catalyst": "Zijin walked from the C$44 all-cash arrangement on 29-Jul-26 and instead signed a US$295m subscription for ~12.8m new Allied Gold shares at C$32.55 (a 9.2% strategic stake), leaving a broken-deal tape at C$25.44 with the strategic buyer still in the name.",
-  "milestone": "Private placement closing on or about 10-Aug-2026 (closing date as flagged in triage - NOT independently confirmed in my sources); Kurmuk (Ethiopia) first gold guided H2-2026.",
-  "score": 4,
-  "tier": "WATCH",
-  "trigger": "2026-08-10"
- },
- {
   "symbol": "AHCO",
   "catalyst": "AdaptHealth signed a definitive agreement on 2026-07-19 (announced 2026-07-20 post-close) to sell its Diabetes Health business to Cardinal Health for $235mm cash, with the close and the debt paydown still ahead and the Aug 4 Q2 print the first read on pro-forma guidance.",
   "milestone": "2026-08-04 (Q2 2026 results BMO, 8:30am ET call - first management read on pro-forma guidance, use of proceeds and leverage target; confirmed by Business Wire 2026-07-14). Deal close: expected but no company-confirmed date verified.",
   "score": 4,
   "tier": "WATCH",
   "trigger": "2026-08-04"
+ },
+ {
+  "symbol": "ATII",
+  "catalyst": "Archimedes Tech SPAC Partners II (ATII) must get its Forge Nano S-4 (File 333-295563, amended 24-Jul-2026) declared effective and win a shareholder vote before the Nov-2026 outside date to close the ~$1.2bn ALD-semis / defense-battery combination.",
+  "milestone": "S-4 amendment #2 filed 24-Jul-2026, still not effective; Forge Nano Morrisville NC gigafactory groundbreaking 19-Aug-2026; SEC effectiveness -> DEFM14A -> vote expected Q3/Q4-2026; merger outside date Nov-2026.",
+  "score": 4,
+  "tier": "WATCH",
+  "trigger": "2026-08-19"
  },
  {
   "symbol": "BLTE",
@@ -109,28 +77,12 @@ const DUE = [
   "trigger": "2026-08-05"
  },
  {
-  "symbol": "CNNE",
-  "catalyst": "Holdco discount-closure via non-core monetization plus buyback, with the next disclosure point the Q2-2026 release and capital-plan commentary on 10-Aug-2026.",
-  "milestone": "10-Aug-2026 Q2 2026 results after close + 5:00pm ET call (announced 27-Jul-2026); prior legs already fired: Watkins sale to KDSA 31-Jul-2026, Brasada agreement 01-Jul-2026.",
+  "symbol": "COTY",
+  "catalyst": "Coty's long-running strategic review of Consumer Beauty (CoverGirl/Rimmel/Sally Hansen/Max Factor + Brazil, ~$1.6B sales) remains unresolved with no committed decision date, while the one hard leg of the flagged thesis - the $400M Gucci licence hand-back to Kering - already fired on 2026-07-07.",
+  "milestone": "FY26 Q4/full-year results 2026-08-19 (confirmed on the earnings calendar, consensus EPS -$0.007 on $1.194B revenue) - a venue where management may update the review, not a committed decision date; the separation itself carries no deadline and has slipped for ~18 months.",
   "score": 4,
   "tier": "WATCH",
-  "trigger": "2026-08-10"
- },
- {
-  "symbol": "EQH",
-  "catalyst": "Closing of the all-stock Corebridge/Equitable merger of equals at a fixed 1.55516 new-parent shares per EQH share, with both shareholder votes passed 2026-07-30 and only insurance-regulatory approvals left.",
-  "milestone": "2026-07-30 both stockholder bases approved (8-K + 425, CIK 1333986); next dated item = EQH Q2 2026 results, early Aug 2026 (scheduled per 2026-07-01 PR). No publicly confirmed closing DATE could be verified in this pass - only \"pending insurance-regulatory approvals\".",
-  "score": 4,
-  "tier": "WATCH",
-  "trigger": "2026-07-30"
- },
- {
-  "symbol": "FLEX",
-  "catalyst": "Flex will separate its Cloud and Power Infrastructure segment (\"SpinCo\") into an independent public company via pro-rata tax-free distribution, targeted for Q1 calendar 2027, with both CEO/leadership slates now named.",
-  "milestone": "2026-07-29 leadership teams named (Advaithi to SpinCo, Hartung to Flex); next dated markers = Form 10 registration statement (not yet filed as of 2026-08-03) and Q2 FY27 earnings (~late Oct 2026); spin completion targeted Q1 CY2027.",
-  "score": 4,
-  "tier": "WATCH",
-  "trigger": "2026-07-29"
+  "trigger": "2026-08-19"
  },
  {
   "symbol": "GILT",
@@ -165,28 +117,12 @@ const DUE = [
   "trigger": "2026-08-06"
  },
  {
-  "symbol": "SATS",
-  "catalyst": "Close of the signed SpaceX spectrum sale ($17B: $8.5B cash + $8.5B SpaceX stock + ~$2B funded interest, plus a follow-on $2.6B S-band leg for a larger SpaceX stake), the last unfired leg after AT&T's $23B closed 7/28/26.",
-  "milestone": "AT&T $23B closed 2026-07-28 (fired); DISH DBS prepackaged Ch11 filed 2026-06-30/07-01 with 88%+ noteholder support; Hughes Network Systems filed Ch11 2026-08-02 after the $1.5B bond matured 8/1 unpaid. SpaceX close still pending FCC with NO company-confirmed date in the 8/3/26 Q2 release; next hard ",
-  "score": 4,
-  "tier": "WATCH",
-  "trigger": "2026-07-28"
- },
- {
   "symbol": "SID",
   "catalyst": "CSN Inova Ventures' any-and-all exchange of US$1.3bn 6.750% 2028 notes into 11.000% 2030 notes plus cash expires 10-Aug-2026 (70% / US$910mn minimum tender), running alongside an unsigned CSN Cimentos control sale plus CSN Infra Newco stake targeted to sign Q3/Q4-2026 for R$15-18bn against R$38.2bn ",
   "milestone": "2026-08-10 \u2014 exchange offer expiration, 5:00pm NY (consideration US$746.15 new 11% 2030s + US$253.85 cash per US$1,000; 70%/US$910mn minimum tender condition). Next equity-relevant date: unsigned CSN Cimentos control sale + Infra Newco stake, company-targeted to sign Q3/Q4-2026 \u2014 a target, not a sch",
   "score": 4,
   "tier": "WATCH",
   "trigger": "2026-08-10"
- },
- {
-  "symbol": "PBI",
-  "catalyst": "Pitney Bowes opened Phase 2 of its strategic review on 2026-06-30, with a newly formed board-level Strategic Review Committee and independent advisors evaluating value-realization alternatives up to a whole-company sale.",
-  "milestone": "Phase 2 initiated 2026-06-30 (Business Wire PR); company gave NO outcome date or deadline. Next scheduled disclosure = Q3 2026 results + CEO shareholder letter, ~late Oct 2026 (Q2 was 2026-07-29). Any Phase-2 outcome is unscheduled/announce-when-ready.",
-  "score": 4,
-  "tier": "WATCH",
-  "trigger": "2026-07-29"
  },
  {
   "symbol": "RDN",
@@ -205,14 +141,6 @@ const DUE = [
   "trigger": "2026-08-14"
  },
  {
-  "symbol": "WHR",
-  "catalyst": "Company-committed forced de-lever to net debt below $5.0B by year-end 2026 (from $6.82B at Q2), funded by suspended common dividend, ~$1.08B of fresh equity/mandatory-convertible issuance, and residual asset monetization.",
-  "milestone": "Q3-2026 earnings (~late Oct 2026) is the first checkpoint on the guided YE-2026 net-debt-below-$5.0B commitment; note the stated H1-2026 target to further cut the Whirlpool of India stake LAPSED with no replacement date \u2014 the 2026-08-03 Q2 release announces no further India sale timeline.",
-  "score": 4,
-  "tier": "WATCH",
-  "trigger": "2026-08-03"
- },
- {
   "symbol": "NAMS",
   "catalyst": "European Commission formal adoption of marketing authorization for Ubeslo (obicetrapib) and Evlarco (obicetrapib+ezetimibe FDC) in 2H-2026, following the CHMP positive opinion of 2026-07-24, with Menarini leading EU commercialization.",
   "milestone": "EC decision expected 2H-2026 (standard ~67 days post-CHMP, i.e. ~late Sept/Oct 2026); RUBENS topline year-end 2026; PREVAIL CVOT interim analysis Q4-2026 with results 1Q-2027; Investor Day 2026-08-05",
@@ -224,7 +152,7 @@ const DUE = [
 const SCHEMA = { type:'object', properties:{ symbol:{type:'string'}, still_forward:{type:'boolean'}, fired:{type:'boolean'}, outcome:{type:'string', enum:['FORWARD','FIRED_GOOD','FIRED_BAD','SLIPPED','RESOLVED_OTHER','UNCLEAR']}, new_date:{type:'string'}, note:{type:'string'} }, required:['symbol','still_forward','fired','outcome','note'] }
 phase('Check')
 const results = (await parallel(DUE.map(n => () =>
-  agent(`Today is 2026-08-11. TRIGGER CHECK (fast, <=3 lookups via WebSearch/WebFetch + FMP MCP via ToolSearch). Board name ${n.symbol} carries: catalyst "${n.catalyst}" / milestone "${n.milestone}" (score ${n.score}, tier ${n.tier}). The milestone date ${n.trigger} is imminent or just passed. Determine ONLY: did the event FIRE (and favorably or adversely), SLIP (new date?), or is it still FORWARD? Do not re-underwrite the thesis. OUTCOME RULES: FIRED_GOOD/FIRED_BAD are TERMINAL only (deal closed/broke, approval/CRL issued, verdict entered, tender settled); if the situation CONTINUES with a new date -- even after an adverse interim event (TRO granted, extension, second request) -- use SLIPPED with new_date and describe the tilt in the note. Deliverable = a SINGLE StructuredOutput call: {symbol, still_forward, fired, outcome (FORWARD/FIRED_GOOD/FIRED_BAD/SLIPPED/RESOLVED_OTHER/UNCLEAR), new_date (ISO or empty), note (1-2 sentences, cite source+date)}.`,
+  agent(`Today is 2026-08-18. TRIGGER CHECK (fast, <=3 lookups via WebSearch/WebFetch + FMP MCP via ToolSearch). Board name ${n.symbol} carries: catalyst "${n.catalyst}" / milestone "${n.milestone}" (score ${n.score}, tier ${n.tier}). The milestone date ${n.trigger} is imminent or just passed. Determine ONLY: did the event FIRE (and favorably or adversely), SLIP (new date?), or is it still FORWARD? Do not re-underwrite the thesis. OUTCOME RULES: FIRED_GOOD/FIRED_BAD are TERMINAL only (deal closed/broke, approval/CRL issued, verdict entered, tender settled); if the situation CONTINUES with a new date -- even after an adverse interim event (TRO granted, extension, second request) -- use SLIPPED with new_date and describe the tilt in the note. Deliverable = a SINGLE StructuredOutput call: {symbol, still_forward, fired, outcome (FORWARD/FIRED_GOOD/FIRED_BAD/SLIPPED/RESOLVED_OTHER/UNCLEAR), new_date (ISO or empty), note (1-2 sentences, cite source+date)}.`,
     { label: `trig:${n.symbol}`, phase: 'Check', schema: SCHEMA })
 ))).filter(Boolean)
 return { checked: results.length, results }
