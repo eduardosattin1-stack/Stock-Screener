@@ -1603,10 +1603,15 @@ def compute_macd(closes: list) -> dict:
     return {"signal": sig, "histogram": hist_now}
 
 def compute_adx(highs, lows, closes, period=14):
-    if len(closes) < period * 2:
+    # Clamp to the shortest series before indexing — compute_obv_trend already
+    # does this and compute_adx did not, which is why ragged inputs crashed
+    # here rather than degrading. Callers should pass aligned lists; this is
+    # the backstop that keeps one malformed symbol from killing a whole scan.
+    n = min(len(highs), len(lows), len(closes))
+    if n < period * 2:
         return 0.0
     tr_list, plus_dm, minus_dm = [], [], []
-    for i in range(1, len(closes)):
+    for i in range(1, n):
         h, l, pc = highs[i], lows[i], closes[i-1]
         tr_list.append(max(h - l, abs(h - pc), abs(l - pc)))
         up = highs[i] - highs[i-1]
@@ -1701,10 +1706,19 @@ def get_technicals(sym: str, quote: dict) -> Optional[dict]:
     if ML_MODEL_VERSION == "v4":
         _v3_start = (datetime.now() - timedelta(days=200 + 30)).strftime("%Y-%m-%d")
         bars = [d for d in chart if str(d.get("date", "")) >= _v3_start]
-    closes = [float(d.get("close", 0)) for d in bars if d.get("close")]
-    highs = [float(d.get("high", 0)) for d in bars if d.get("high")]
-    lows = [float(d.get("low", 0)) for d in bars if d.get("low")]
-    volumes = [int(d.get("volume", 0)) for d in bars if d.get("volume")]
+    # 2026-08-18: build all five series from ONE filtered bar list so they stay
+    # index-aligned. They used to be filtered independently (`for d in bars if
+    # d.get("high")`), so a bar with a present close but a missing/zero high,
+    # low or volume made `highs` shorter than `closes` — and compute_adx walks
+    # `range(1, len(closes))` indexing highs[i], so it raised IndexError and
+    # killed the entire scan. Surfaced when LSE joined the universe: FMP's UK
+    # data carries zeroed OHLCV fields (the same defect that makes its volume
+    # field unusable, see EXCHANGE_MIN_VOLUME), so .L names hit it immediately.
+    ohlc = [d for d in bars if d.get("close") and d.get("high") and d.get("low")]
+    closes = [float(d["close"]) for d in ohlc]
+    highs = [float(d["high"]) for d in ohlc]
+    lows = [float(d["low"]) for d in ohlc]
+    volumes = [int(d.get("volume") or 0) for d in ohlc]
     if len(closes) < 30:
         return None
 
@@ -5069,7 +5083,18 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
             continue
 
         # Pass 1: cheap data only
-        tech = get_technicals(sym, q)
+        # 2026-08-18: contain per-symbol failures. A single IndexError in
+        # get_technicals (ragged OHLCV from one bad LSE listing) propagated out
+        # of screen() and aborted the whole run — and run_scan_job swallows the
+        # exception and exits 0, so the job reported EXECUTION_SUCCEEDED while
+        # publishing nothing for five nights. One unusable symbol must cost us
+        # that symbol's technicals, not the scan. None falls through to the
+        # neutral defaults already defined below.
+        try:
+            tech = get_technicals(sym, q)
+        except Exception as e:
+            log.warning(f"  {sym}: technicals failed ({type(e).__name__}: {e}) — neutral defaults")
+            tech = None
         if not tech:
             tech = {
                 "rsi": 50.0, "macd_signal": "neutral", "adx": 0.0, "bb_pct": 0.5,

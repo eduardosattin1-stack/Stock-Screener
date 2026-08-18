@@ -74,6 +74,11 @@ def main():
     import calibration_tracker
 
     theta_down = False  # set if any region reports CALIBRATION_THETA_DOWN -> fail the job loudly after the loop
+    # 2026-08-18: a screener crash used to be logged and swallowed, and with one
+    # region the job then exited 0 — so Cloud Run reported EXECUTION_SUCCEEDED
+    # for five consecutive nights (08-13..08-17) while publishing nothing at all.
+    # Track it and fail the job at the end, same pattern as theta_down.
+    screener_failed = []
     for region in REGIONS_TO_SCAN:
         log.info(f"═══ Processing region={region} ═══")
 
@@ -83,6 +88,7 @@ def main():
             screener_v6.main()
         except Exception as e:
             log.error(f"[{region}] Screener failed: {e}", exc_info=True)
+            screener_failed.append(region)
             continue # Skip to the next region if this one crashes
 
         # ─── 1b. v2 calibration tracker (calibration_tracking/v2/) ───
@@ -129,6 +135,13 @@ def main():
         log.info(f"═══ Completed processing region={region} ═══")
 
     log.info(f"═══ Consolidated Scan job complete ═══")
+    if screener_failed:
+        log.critical(
+            f"🚨 SCREENER_FAILED for {screener_failed} — the scan raised and published NOTHING "
+            f"(no scans/latest_*.json, no dated archive, no calibration fills). Failing the job so "
+            f"this is visible in the executions list instead of exiting 0 with no output."
+        )
+        sys.exit(1)
     if theta_down:
         # Scan + NAV already saved above; fail the JOB now so the Cloud Run execution shows FAILED
         # (visible in the executions list + alertable) instead of silently exiting 0 with no fills.
