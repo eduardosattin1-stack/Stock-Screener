@@ -1222,8 +1222,8 @@ REGIONS = {
     #      Solvay, Umicore) could not appear in any scan. Prague (PRA) is
     #      supported by FMP but returns 0 names ≥$1B, so it is left out.
     #
-    # Limits are set well above the observed row counts so the liquidity floor
-    # in EXCHANGE_MIN_VOLUME does the filtering rather than an arbitrary cap.
+    # Limits are set well above the observed row counts so they never bind —
+    # market cap is the real gate (there is deliberately no volume filter).
     "europe": [
         ("LSE", "GB", 1_000_000_000, 300),   # was country="UK" → 0 rows
         ("XETRA", "DE", 1_000_000_000, 300), # Lowered floor, higher stock limit (DHER)
@@ -1257,34 +1257,29 @@ REGIONS = {
     "global": None,  # Will now include EVERY region above
 }
 
-# 2026-08-13: per-exchange share-volume floor for the universe screen.
+# 2026-08-18: THERE IS NO VOLUME FILTER ON THE UNIVERSE QUERY. Do not add one.
 #
-# The flat 100k-shares/day floor was calibrated on US tickers and is far too
-# high for European venues, where higher unit prices mean far fewer shares
-# change hands for the same traded value. At 100k it was cutting genuine
-# large caps: Vienna kept 1 name of 27 (no OMV, no Erste, no Verbund),
-# Brussels 3 of 39 (no UCB, no Ageas, no Solvay), Switzerland 25 of 117.
-# Measured 2026-08-13 across all 18 EU venues: 542 names survive at 100k,
-# 950 at 20k, 1525 with no floor at all.
+# FMP's `volume` field is a live intraday counter that it ZEROES after the
+# session. The nightly runs at 22:00 UTC, squarely inside that dead window, so
+# `volumeMoreThan` rejected almost the entire universe — this is what collapsed
+# the scan to 54/75/173/429/521 names on 08-07, 08-11, 08-12, 08-13 and 08-18,
+# and it was misdiagnosed for days as FMP flakiness or a lapsed subscription.
 #
-# 20k keeps the illiquidity screen meaningful — combined with the ≥$1B market
-# cap and >$1 price gates already in params — without excluding index
-# constituents. US/Asia/Brazil keep the 100k floor via the default.
-DEFAULT_MIN_VOLUME = 100_000
-EXCHANGE_MIN_VOLUME = {
-    ex: 20_000 for ex in (
-        "XETRA", "PAR", "AMS", "BRU", "MIL", "BME", "SIX",
-        "STO", "OSL", "CPH", "HEL", "LIS", "DUB", "VIE", "WSE", "ATH", "ICE",
-    )
-}
-# LSE gets NO volume floor (0 disables the filter). FMP reports volume=0 for
-# 119 of 197 UK issuers ≥$1B — including every megacap: HSBA.L, AZN.L, SHEL.L,
-# RR.L, RIO.L, ULVR.L. Any floor at all deletes the FTSE's largest names while
-# keeping mid-caps whose volume happens to be populated, which is worse than no
-# filter. Measured across all 24 venues on 2026-08-13, LSE is the only one with
-# this defect (every other venue reports ≤2% falsy volume). The ≥$1B market cap
-# and country=GB gates carry the liquidity screen there instead.
-EXCHANGE_MIN_VOLUME["LSE"] = 0
+# Measured at 22:13 UTC on 2026-08-18, same key, same endpoint, same instant:
+#   NVDA / AAPL / GOOGL / GOOGL all report  volume = 0
+#   NASDAQ/US  volumeMoreThan=100k ->    4 names     no filter ->  917
+#   NYSE/US    volumeMoreThan=100k ->   62 names     no filter -> 1189
+#   XETRA/DE   volumeMoreThan=20k  ->   12 names     no filter ->  135
+#   LSE/GB     (already floor-less) -> 194 names     no filter ->  194  <-- control
+# LSE was the accidental control: its floor was set to 0 back on 08-13 for an
+# unrelated data defect, and it was the ONLY venue that stayed healthy that
+# night. That is the proof — the filter is the cause, not the tape.
+#
+# batch-quote is zeroed in the same window and exposes no avgVolume, so NO
+# live-volume liquidity screen is possible at scan time. Liquidity is carried
+# instead by the gates that use STABLE fields: marketCap >= $1B, price > $1,
+# isActivelyTrading. Cost of dropping it: universe 3063 -> 3586 (+17%), and it
+# now builds identically at any hour of the day.
 
 # v7.2: module-level caches for sector data (populated at scan start, read many times)
 SECTOR_MAP: dict[str, str] = {}           # {sym: "Technology"}  from company-screener
@@ -1358,11 +1353,6 @@ def get_symbols(region: str) -> list[str]:
             "isActivelyTrading": "true", "isEtf": "false", "isFund": "false",
             "limit": limit,
         }
-        # Per-venue liquidity floor — see EXCHANGE_MIN_VOLUME. 0 omits the
-        # filter entirely (LSE, where FMP's volume field is unusable).
-        min_vol = EXCHANGE_MIN_VOLUME.get(exchange, DEFAULT_MIN_VOLUME)
-        if min_vol:
-            params["volumeMoreThan"] = min_vol
         if max_cap is not None:
             params["marketCapLowerThan"] = max_cap
         if country: params["country"] = country
@@ -1712,8 +1702,8 @@ def get_technicals(sym: str, quote: dict) -> Optional[dict]:
     # low or volume made `highs` shorter than `closes` — and compute_adx walks
     # `range(1, len(closes))` indexing highs[i], so it raised IndexError and
     # killed the entire scan. Surfaced when LSE joined the universe: FMP's UK
-    # data carries zeroed OHLCV fields (the same defect that makes its volume
-    # field unusable, see EXCHANGE_MIN_VOLUME), so .L names hit it immediately.
+    # data carries zeroed OHLCV fields (the same defect that makes FMP's volume
+    # surface unusable), so .L names hit it immediately.
     ohlc = [d for d in bars if d.get("close") and d.get("high") and d.get("low")]
     closes = [float(d["close"]) for d in ohlc]
     highs = [float(d["high"]) for d in ohlc]
@@ -5792,6 +5782,9 @@ def _watermark_path(region: str) -> str:
     return f"scans/_universe_watermark_{region}.json"
 
 
+PUBLISH_BLOCKED: list[str] = []   # regions the guard refused to publish; run_scan_job exits 1 on these
+
+
 def _check_universe_watermark(stocks: list, region: str) -> bool:
     """True if this scan may publish. Fail-open: no watermark yet → allow."""
     if os.environ.get("SCAN_FORCE_PUBLISH", "").lower() in ("1", "true", "yes"):
@@ -5811,6 +5804,7 @@ def _check_universe_watermark(stocks: list, region: str) -> bool:
             f"'implausibly thin, retrying' warnings above. latest_{region}.json left untouched. "
             f"Re-run, or set SCAN_FORCE_PUBLISH=1 if the universe really did shrink this much."
         )
+        PUBLISH_BLOCKED.append(region)
         return False
     return True
 

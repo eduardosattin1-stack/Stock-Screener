@@ -135,6 +135,14 @@ def main():
         log.info(f"═══ Completed processing region={region} ═══")
 
     log.info(f"═══ Consolidated Scan job complete ═══")
+    blocked = list(getattr(screener_v6, "PUBLISH_BLOCKED", []))
+    if blocked:
+        log.critical(
+            f"🚨 PUBLISH_BLOCKED for {blocked} — the universe collapsed and the guard refused to "
+            f"overwrite the last good scan. Nothing was published. Failing the job so a night that "
+            f"produced no output cannot look like a success."
+        )
+        sys.exit(1)
     if screener_failed:
         log.critical(
             f"🚨 SCREENER_FAILED for {screener_failed} — the scan raised and published NOTHING "
