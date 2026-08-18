@@ -5800,8 +5800,10 @@ def _check_universe_watermark(stocks: list, region: str) -> bool:
         log.error(
             f"PUBLISH BLOCKED: {region} scan has {len(stocks)} stocks, below {floor} "
             f"({UNIVERSE_COLLAPSE_RATIO:.0%} of last good {prev} on {(mark or {}).get('scan_date')}). "
-            f"This is the FMP company-screener returning near-empty 200s again — check the "
-            f"'implausibly thin, retrying' warnings above. latest_{region}.json left untouched. "
+            f"First thing to check: a volumeMoreThan filter must NOT be in the universe query — "
+            f"FMP zeroes its volume field after the session and the nightly runs inside that "
+            f"window, which caused every collapse up to 2026-08-18. latest_{region}.json left "
+            f"untouched. "
             f"Re-run, or set SCAN_FORCE_PUBLISH=1 if the universe really did shrink this much."
         )
         PUBLISH_BLOCKED.append(region)
