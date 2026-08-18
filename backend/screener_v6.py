@@ -5732,17 +5732,26 @@ def log_signals(stocks: list[Stock], path: str = SIGNAL_LOG):
 GCS_BUCKET = os.environ.get("GCS_BUCKET", "screener-signals-carbonbridge")
 
 
-def gcs_upload(blob_path: str, payload: dict) -> bool:
-    """Upload JSON payload to GCS. Returns True on success."""
+def gcs_upload(blob_path: str, payload: dict, compact: bool = False) -> bool:
+    """Upload JSON payload to GCS. Returns True on success.
+
+    compact=True drops indentation — use it for the big machine-read payloads
+    (the scan blobs). 2026-08-18: the 3063-stock scan OOM-killed the container
+    here. upload_from_string materialises the WHOLE serialised document in
+    memory on top of the payload dict, and indent=2 on ~3000 objects x ~200
+    fields was inflating that string to ~35MB of mostly whitespace. Nothing
+    reads these files by eye, and the frontend downloads latest_global.json
+    whole, so compact is smaller AND faster for every consumer.
+    """
     try:
         from google.cloud import storage
         client = storage.Client()
         bucket = client.bucket(GCS_BUCKET)
         blob = bucket.blob(blob_path)
-        blob.upload_from_string(
-            json.dumps(payload, default=str, indent=2),
-            content_type="application/json",
-        )
+        dumped = (json.dumps(payload, default=str, separators=(",", ":"))
+                  if compact else json.dumps(payload, default=str, indent=2))
+        blob.upload_from_string(dumped, content_type="application/json")
+        del dumped
         return True
     except Exception as e:
         log.warning(f"GCS upload failed ({blob_path}): {e}")
@@ -5852,12 +5861,12 @@ def save_scan_to_gcs(stocks: list[Stock], region: str = "global", macro: dict = 
         log.error(f"Failed to write local scan JSON files: {e}")
 
     # Latest
-    gcs_upload(f"scans/latest_{region}.json", payload)
+    gcs_upload(f"scans/latest_{region}.json", payload, compact=True)
     # Dated archive
-    gcs_upload(f"scans/{today}_{region}.json", payload)
+    gcs_upload(f"scans/{today}_{region}.json", payload, compact=True)
     # Legacy "latest.json" pointer (keeps older frontend versions working)
     if region in ("nasdaq100", "sp500"):
-        gcs_upload("scans/latest.json", payload)
+        gcs_upload("scans/latest.json", payload, compact=True)
     log.info(f"GCS upload complete: scans/latest_{region}.json + dated archive")
 
     # Advance the collapse-guard watermark only after a successful publish.
