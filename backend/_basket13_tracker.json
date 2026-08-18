@@ -85,8 +85,8 @@
    },
    "weight_basis": "equal",
    "resolution_due": {
-    "date": "2026-08-10",
-    "reason": "weekly diagnosis: catalyst_status=FIRED; weekly diagnosis: verdict=REFUTED"
+    "date": "2026-08-18",
+    "reason": "milestone 2026-08-07 final extended-lockup tranche (~77.7M Class A sh) releases at commencement of trading, 2nd trading day after the 2026-08-05 AMC Q2 earnings (company-confirmed 07-15); contractual backstop 2026-08-31; review 2026-08-21 post-absorption passed +11d; weekly diagnosis: catalyst_status=FIRED; weekly diagnosis: verdict=REFUTED"
    }
   },
   {
@@ -164,7 +164,7 @@
    },
    "weight_basis": "equal",
    "resolution_due": {
-    "date": "2026-08-10",
+    "date": "2026-08-18",
     "reason": "weekly diagnosis: verdict=REFUTED"
    }
   },
@@ -253,8 +253,8 @@
    },
    "weight_basis": "equal",
    "resolution_due": {
-    "date": "2026-08-10",
-    "reason": "milestone 2026-07-31 passed +10d; dossier edge-gone: EV 5.74 <= live 6.07 (p=0.45, fv=7.75, floor=4.1); weekly diagnosis: verdict=REFUTED"
+    "date": "2026-08-18",
+    "reason": "milestone 2026-07-31 passed +18d; weekly diagnosis: verdict=REFUTED"
    }
   },
   {
@@ -368,6 +368,16 @@
      "date": "2026-08-10",
      "price": 22.67,
      "since_exit_pct": 12.39
+    },
+    {
+     "date": "2026-08-11",
+     "price": 23.63,
+     "since_exit_pct": 17.15
+    },
+    {
+     "date": "2026-08-18",
+     "price": 21.43,
+     "since_exit_pct": 6.25
     }
    ],
    "post_track_status": "TRACKING"
@@ -485,6 +495,16 @@
      "date": "2026-08-10",
      "price": 22.22,
      "since_exit_pct": 15.31
+    },
+    {
+     "date": "2026-08-11",
+     "price": 22.19,
+     "since_exit_pct": 15.15
+    },
+    {
+     "date": "2026-08-18",
+     "price": 22.37,
+     "since_exit_pct": 16.09
     }
    ],
    "post_track_status": "TRACKING"
@@ -573,7 +593,7 @@
    },
    "weight_basis": "equal",
    "resolution_due": {
-    "date": "2026-08-10",
+    "date": "2026-08-18",
     "reason": "weekly diagnosis: verdict=REFUTED"
    }
   },
@@ -682,6 +702,16 @@
      "date": "2026-08-10",
      "price": 2.37,
      "since_exit_pct": -4.44
+    },
+    {
+     "date": "2026-08-11",
+     "price": 2.31,
+     "since_exit_pct": -6.85
+    },
+    {
+     "date": "2026-08-18",
+     "price": 2.29,
+     "since_exit_pct": -7.66
     }
    ],
    "post_track_status": "TRACKING"
@@ -849,8 +879,8 @@
    },
    "weight_basis": "equal",
    "resolution_due": {
-    "date": "2026-08-10",
-    "reason": "dossier edge-gone: EV 11.30 <= live 11.94 (p=0.6, fv=16, floor=4.25); weekly diagnosis: verdict=REFUTED"
+    "date": "2026-08-18",
+    "reason": "weekly diagnosis: verdict=REFUTED"
    }
   },
   {
@@ -939,8 +969,8 @@
    },
    "weight_basis": "equal",
    "resolution_due": {
-    "date": "2026-08-10",
-    "reason": "dossier edge-gone: rr 0.35 < 1.0 (fv 6, floor 2.2, live 5.02); weekly diagnosis: catalyst_status=FIRED; weekly diagnosis: verdict=REFUTED"
+    "date": "2026-08-18",
+    "reason": "weekly diagnosis: catalyst_status=FIRED; weekly diagnosis: verdict=REFUTED"
    }
   },
   {
@@ -1192,7 +1222,7 @@
    },
    "win_prob": 0.7,
    "resolution_due": {
-    "date": "2026-08-10",
+    "date": "2026-08-18",
     "reason": "weekly diagnosis: verdict=REFUTED"
    }
   }
@@ -1210,11 +1240,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 22.67,
-   "since_pass_pct": 68.42,
-   "spy_since_pass_pct": 6.57,
-   "alpha_pp": 61.85,
-   "cf_marked": "2026-08-10"
+   "last_price": 21.43,
+   "since_pass_pct": 59.21,
+   "spy_since_pass_pct": 6.51,
+   "alpha_pp": 52.7,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "ZYME",
@@ -1228,11 +1258,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 24.16,
-   "since_pass_pct": 5.73,
-   "spy_since_pass_pct": 6.57,
-   "alpha_pp": -0.84,
-   "cf_marked": "2026-08-10"
+   "last_price": 25.31,
+   "since_pass_pct": 10.77,
+   "spy_since_pass_pct": 6.51,
+   "alpha_pp": 4.26,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "BBIO",
@@ -1246,11 +1276,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 84.67,
-   "since_pass_pct": 25.6,
-   "spy_since_pass_pct": 6.57,
-   "alpha_pp": 19.03,
-   "cf_marked": "2026-08-10"
+   "last_price": 79.89,
+   "since_pass_pct": 18.51,
+   "spy_since_pass_pct": 6.51,
+   "alpha_pp": 12.0,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "VIR",
@@ -1264,11 +1294,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 8.89,
-   "since_pass_pct": 7.76,
-   "spy_since_pass_pct": 6.57,
-   "alpha_pp": 1.19,
-   "cf_marked": "2026-08-10"
+   "last_price": 9.39,
+   "since_pass_pct": 13.82,
+   "spy_since_pass_pct": 6.51,
+   "alpha_pp": 7.31,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "RARE",
@@ -1282,11 +1312,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 26.8,
-   "since_pass_pct": 16.67,
-   "spy_since_pass_pct": 6.57,
-   "alpha_pp": 10.1,
-   "cf_marked": "2026-08-10"
+   "last_price": 26.13,
+   "since_pass_pct": 13.76,
+   "spy_since_pass_pct": 6.51,
+   "alpha_pp": 7.25,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "MGNI",
@@ -1300,11 +1330,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 24.21,
-   "since_pass_pct": 54.5,
-   "spy_since_pass_pct": 6.57,
-   "alpha_pp": 47.93,
-   "cf_marked": "2026-08-10"
+   "last_price": 24.19,
+   "since_pass_pct": 54.37,
+   "spy_since_pass_pct": 6.51,
+   "alpha_pp": 47.86,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "ANNX",
@@ -1318,11 +1348,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 5.39,
-   "since_pass_pct": 14.19,
-   "spy_since_pass_pct": 6.57,
-   "alpha_pp": 7.62,
-   "cf_marked": "2026-08-10"
+   "last_price": 5.13,
+   "since_pass_pct": 8.69,
+   "spy_since_pass_pct": 6.51,
+   "alpha_pp": 2.18,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "OLMA",
@@ -1336,11 +1366,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 11.94,
-   "since_pass_pct": 21.59,
-   "spy_since_pass_pct": 6.57,
-   "alpha_pp": 15.02,
-   "cf_marked": "2026-08-10"
+   "last_price": 10.77,
+   "since_pass_pct": 9.67,
+   "spy_since_pass_pct": 6.51,
+   "alpha_pp": 3.16,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "RLMD",
@@ -1354,11 +1384,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 4.54,
-   "since_pass_pct": -28.84,
-   "spy_since_pass_pct": 6.57,
-   "alpha_pp": -35.41,
-   "cf_marked": "2026-08-10"
+   "last_price": 4.77,
+   "since_pass_pct": -25.24,
+   "spy_since_pass_pct": 6.51,
+   "alpha_pp": -31.75,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "CLVT",
@@ -1374,9 +1404,9 @@
    "backfilled": true,
    "last_price": 1.89,
    "since_pass_pct": -16.74,
-   "spy_since_pass_pct": 6.57,
-   "alpha_pp": -23.31,
-   "cf_marked": "2026-08-10"
+   "spy_since_pass_pct": 6.51,
+   "alpha_pp": -23.25,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "DBVT",
@@ -1390,11 +1420,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 14.27,
-   "since_pass_pct": -11.03,
-   "spy_since_pass_pct": 6.57,
-   "alpha_pp": -17.6,
-   "cf_marked": "2026-08-10"
+   "last_price": 14.67,
+   "since_pass_pct": -8.54,
+   "spy_since_pass_pct": 6.51,
+   "alpha_pp": -15.05,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "GLUE",
@@ -1408,11 +1438,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 15.82,
-   "since_pass_pct": -4.24,
-   "spy_since_pass_pct": 6.57,
-   "alpha_pp": -10.81,
-   "cf_marked": "2026-08-10"
+   "last_price": 15.38,
+   "since_pass_pct": -6.9,
+   "spy_since_pass_pct": 6.51,
+   "alpha_pp": -13.41,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "PVLA",
@@ -1426,11 +1456,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 152.22,
-   "since_pass_pct": 48.96,
-   "spy_since_pass_pct": 6.57,
-   "alpha_pp": 42.39,
-   "cf_marked": "2026-08-10"
+   "last_price": 153.52,
+   "since_pass_pct": 50.23,
+   "spy_since_pass_pct": 6.51,
+   "alpha_pp": 43.72,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "CERS",
@@ -1444,11 +1474,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 2.52,
-   "since_pass_pct": -1.56,
-   "spy_since_pass_pct": 6.57,
-   "alpha_pp": -8.13,
-   "cf_marked": "2026-08-10"
+   "last_price": 2.97,
+   "since_pass_pct": 16.02,
+   "spy_since_pass_pct": 6.51,
+   "alpha_pp": 9.51,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "NKTR",
@@ -1462,11 +1492,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 74.86,
-   "since_pass_pct": 31.84,
-   "spy_since_pass_pct": 6.57,
-   "alpha_pp": 25.27,
-   "cf_marked": "2026-08-10"
+   "last_price": 72.67,
+   "since_pass_pct": 27.99,
+   "spy_since_pass_pct": 6.51,
+   "alpha_pp": 21.48,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "EYPT",
@@ -1480,11 +1510,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 13.07,
-   "since_pass_pct": 6.0,
-   "spy_since_pass_pct": 6.57,
-   "alpha_pp": -0.57,
-   "cf_marked": "2026-08-10"
+   "last_price": 4.87,
+   "since_pass_pct": -60.5,
+   "spy_since_pass_pct": 6.51,
+   "alpha_pp": -67.01,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "EYPT",
@@ -1498,11 +1528,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 13.07,
-   "since_pass_pct": 0.31,
-   "spy_since_pass_pct": 4.22,
-   "alpha_pp": -3.91,
-   "cf_marked": "2026-08-10"
+   "last_price": 4.87,
+   "since_pass_pct": -62.62,
+   "spy_since_pass_pct": 4.17,
+   "alpha_pp": -66.79,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "AMLX_note",
@@ -1525,11 +1555,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 5.39,
-   "since_pass_pct": 14.44,
-   "spy_since_pass_pct": 4.22,
-   "alpha_pp": 10.22,
-   "cf_marked": "2026-08-10"
+   "last_price": 5.13,
+   "since_pass_pct": 8.92,
+   "spy_since_pass_pct": 4.17,
+   "alpha_pp": 4.75,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "OLMA",
@@ -1543,11 +1573,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 11.94,
-   "since_pass_pct": 20.97,
-   "spy_since_pass_pct": 4.22,
-   "alpha_pp": 16.75,
-   "cf_marked": "2026-08-10"
+   "last_price": 10.77,
+   "since_pass_pct": 9.12,
+   "spy_since_pass_pct": 4.17,
+   "alpha_pp": 4.95,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "RLMD",
@@ -1561,11 +1591,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 4.54,
-   "since_pass_pct": -31.73,
-   "spy_since_pass_pct": 4.22,
-   "alpha_pp": -35.95,
-   "cf_marked": "2026-08-10"
+   "last_price": 4.77,
+   "since_pass_pct": -28.27,
+   "spy_since_pass_pct": 4.17,
+   "alpha_pp": -32.44,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "AVIR",
@@ -1579,11 +1609,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 5.02,
-   "since_pass_pct": 11.8,
-   "spy_since_pass_pct": 4.22,
-   "alpha_pp": 7.58,
-   "cf_marked": "2026-08-10"
+   "last_price": 5.22,
+   "since_pass_pct": 16.26,
+   "spy_since_pass_pct": 4.17,
+   "alpha_pp": 12.09,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "GLUE",
@@ -1597,11 +1627,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 15.82,
-   "since_pass_pct": -13.27,
-   "spy_since_pass_pct": 4.22,
-   "alpha_pp": -17.49,
-   "cf_marked": "2026-08-10"
+   "last_price": 15.38,
+   "since_pass_pct": -15.68,
+   "spy_since_pass_pct": 4.17,
+   "alpha_pp": -19.85,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "PVLA",
@@ -1615,11 +1645,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 152.22,
-   "since_pass_pct": 39.9,
-   "spy_since_pass_pct": 4.22,
-   "alpha_pp": 35.68,
-   "cf_marked": "2026-08-10"
+   "last_price": 153.52,
+   "since_pass_pct": 41.09,
+   "spy_since_pass_pct": 4.17,
+   "alpha_pp": 36.92,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "ZYME",
@@ -1633,11 +1663,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 24.16,
-   "since_pass_pct": 5.59,
-   "spy_since_pass_pct": 4.22,
-   "alpha_pp": 1.37,
-   "cf_marked": "2026-08-10"
+   "last_price": 25.31,
+   "since_pass_pct": 10.62,
+   "spy_since_pass_pct": 4.17,
+   "alpha_pp": 6.45,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "BBIO",
@@ -1651,11 +1681,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 84.67,
-   "since_pass_pct": 26.75,
-   "spy_since_pass_pct": 4.22,
-   "alpha_pp": 22.53,
-   "cf_marked": "2026-08-10"
+   "last_price": 79.89,
+   "since_pass_pct": 19.6,
+   "spy_since_pass_pct": 4.17,
+   "alpha_pp": 15.43,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "CERS",
@@ -1669,11 +1699,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 2.52,
-   "since_pass_pct": -1.56,
-   "spy_since_pass_pct": 4.22,
-   "alpha_pp": -5.78,
-   "cf_marked": "2026-08-10"
+   "last_price": 2.97,
+   "since_pass_pct": 16.02,
+   "spy_since_pass_pct": 4.17,
+   "alpha_pp": 11.85,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "MGNI",
@@ -1687,11 +1717,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 24.21,
-   "since_pass_pct": 48.98,
-   "spy_since_pass_pct": 4.22,
-   "alpha_pp": 44.76,
-   "cf_marked": "2026-08-10"
+   "last_price": 24.19,
+   "since_pass_pct": 48.86,
+   "spy_since_pass_pct": 4.17,
+   "alpha_pp": 44.69,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "CLVT",
@@ -1707,9 +1737,9 @@
    "backfilled": true,
    "last_price": 1.89,
    "since_pass_pct": -14.48,
-   "spy_since_pass_pct": 4.22,
-   "alpha_pp": -18.7,
-   "cf_marked": "2026-08-10"
+   "spy_since_pass_pct": 4.17,
+   "alpha_pp": -18.65,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "DFTX",
@@ -1723,11 +1753,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 45.15,
-   "since_pass_pct": 82.42,
-   "spy_since_pass_pct": 4.22,
-   "alpha_pp": 78.2,
-   "cf_marked": "2026-08-10"
+   "last_price": 45.26,
+   "since_pass_pct": 82.87,
+   "spy_since_pass_pct": 4.17,
+   "alpha_pp": 78.7,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "RARE",
@@ -1741,11 +1771,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 26.8,
-   "since_pass_pct": 10.06,
-   "spy_since_pass_pct": 4.22,
-   "alpha_pp": 5.84,
-   "cf_marked": "2026-08-10"
+   "last_price": 26.13,
+   "since_pass_pct": 7.31,
+   "spy_since_pass_pct": 4.17,
+   "alpha_pp": 3.14,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "ANNX",
@@ -1759,11 +1789,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 5.39,
-   "since_pass_pct": 14.44,
-   "spy_since_pass_pct": 4.22,
-   "alpha_pp": 10.22,
-   "cf_marked": "2026-08-10"
+   "last_price": 5.13,
+   "since_pass_pct": 8.92,
+   "spy_since_pass_pct": 4.17,
+   "alpha_pp": 4.75,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "OLMA",
@@ -1777,11 +1807,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 11.94,
-   "since_pass_pct": 20.97,
-   "spy_since_pass_pct": 4.22,
-   "alpha_pp": 16.75,
-   "cf_marked": "2026-08-10"
+   "last_price": 10.77,
+   "since_pass_pct": 9.12,
+   "spy_since_pass_pct": 4.17,
+   "alpha_pp": 4.95,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "RLMD",
@@ -1795,11 +1825,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 4.54,
-   "since_pass_pct": -31.73,
-   "spy_since_pass_pct": 4.22,
-   "alpha_pp": -35.95,
-   "cf_marked": "2026-08-10"
+   "last_price": 4.77,
+   "since_pass_pct": -28.27,
+   "spy_since_pass_pct": 4.17,
+   "alpha_pp": -32.44,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "CERS",
@@ -1813,11 +1843,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 2.52,
-   "since_pass_pct": -1.56,
-   "spy_since_pass_pct": 4.22,
-   "alpha_pp": -5.78,
-   "cf_marked": "2026-08-10"
+   "last_price": 2.97,
+   "since_pass_pct": 16.02,
+   "spy_since_pass_pct": 4.17,
+   "alpha_pp": 11.85,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "NKTR",
@@ -1831,11 +1861,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 74.86,
-   "since_pass_pct": 26.07,
-   "spy_since_pass_pct": 4.22,
-   "alpha_pp": 21.85,
-   "cf_marked": "2026-08-10"
+   "last_price": 72.67,
+   "since_pass_pct": 22.38,
+   "spy_since_pass_pct": 4.17,
+   "alpha_pp": 18.21,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "ZYME",
@@ -1849,11 +1879,11 @@
    "spy0": 746.77,
    "price0_date": "2026-06-30",
    "backfilled": true,
-   "last_price": 24.16,
-   "since_pass_pct": -7.57,
-   "spy_since_pass_pct": 3.52,
-   "alpha_pp": -11.09,
-   "cf_marked": "2026-08-10"
+   "last_price": 25.31,
+   "since_pass_pct": -3.18,
+   "spy_since_pass_pct": 3.47,
+   "alpha_pp": -6.65,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "IMCR",
@@ -1867,11 +1897,11 @@
    "spy0": 746.77,
    "price0_date": "2026-06-30",
    "backfilled": true,
-   "last_price": 33.98,
-   "since_pass_pct": 7.02,
-   "spy_since_pass_pct": 3.52,
-   "alpha_pp": 3.5,
-   "cf_marked": "2026-08-10"
+   "last_price": 35.05,
+   "since_pass_pct": 10.39,
+   "spy_since_pass_pct": 3.47,
+   "alpha_pp": 6.92,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "DBVT",
@@ -1885,11 +1915,11 @@
    "spy0": 746.77,
    "price0_date": "2026-06-30",
    "backfilled": true,
-   "last_price": 14.27,
-   "since_pass_pct": -12.99,
-   "spy_since_pass_pct": 3.52,
-   "alpha_pp": -16.51,
-   "cf_marked": "2026-08-10"
+   "last_price": 14.67,
+   "since_pass_pct": -10.55,
+   "spy_since_pass_pct": 3.47,
+   "alpha_pp": -14.02,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "ANNX",
@@ -1903,11 +1933,11 @@
    "spy0": 744.78,
    "price0_date": "2026-07-02",
    "backfilled": true,
-   "last_price": 5.39,
-   "since_pass_pct": -1.28,
-   "spy_since_pass_pct": 3.8,
-   "alpha_pp": -5.08,
-   "cf_marked": "2026-08-10"
+   "last_price": 5.13,
+   "since_pass_pct": -6.04,
+   "spy_since_pass_pct": 3.74,
+   "alpha_pp": -9.78,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "ALTI",
@@ -1921,11 +1951,11 @@
    "spy0": 744.78,
    "price0_date": "2026-07-02",
    "backfilled": true,
-   "last_price": 4.3,
-   "since_pass_pct": 16.22,
-   "spy_since_pass_pct": 3.8,
-   "alpha_pp": 12.42,
-   "cf_marked": "2026-08-10"
+   "last_price": 3.99,
+   "since_pass_pct": 7.84,
+   "spy_since_pass_pct": 3.74,
+   "alpha_pp": 4.1,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "AXTA",
@@ -1939,11 +1969,11 @@
    "spy0": 742.09,
    "price0_date": "2026-07-20",
    "backfilled": true,
-   "last_price": 37.44,
-   "since_pass_pct": 16.56,
-   "spy_since_pass_pct": 4.17,
-   "alpha_pp": 12.39,
-   "cf_marked": "2026-08-10"
+   "last_price": 36.11,
+   "since_pass_pct": 12.42,
+   "spy_since_pass_pct": 4.12,
+   "alpha_pp": 8.3,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "MP",
@@ -1957,11 +1987,11 @@
    "spy0": 742.09,
    "price0_date": "2026-07-20",
    "backfilled": true,
-   "last_price": 54.66,
-   "since_pass_pct": 19.61,
-   "spy_since_pass_pct": 4.17,
-   "alpha_pp": 15.44,
-   "cf_marked": "2026-08-10"
+   "last_price": 58.51,
+   "since_pass_pct": 28.03,
+   "spy_since_pass_pct": 4.12,
+   "alpha_pp": 23.91,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "KDP",
@@ -1975,11 +2005,11 @@
    "spy0": 742.09,
    "price0_date": "2026-07-20",
    "backfilled": true,
-   "last_price": 29.3,
-   "since_pass_pct": -3.75,
-   "spy_since_pass_pct": 4.17,
-   "alpha_pp": -7.92,
-   "cf_marked": "2026-08-10"
+   "last_price": 30.28,
+   "since_pass_pct": -0.53,
+   "spy_since_pass_pct": 4.12,
+   "alpha_pp": -4.65,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "OLMA",
@@ -1993,11 +2023,11 @@
    "spy0": 742.09,
    "price0_date": "2026-07-20",
    "backfilled": true,
-   "last_price": 11.94,
-   "since_pass_pct": 5.2,
-   "spy_since_pass_pct": 4.17,
-   "alpha_pp": 1.03,
-   "cf_marked": "2026-08-10"
+   "last_price": 10.77,
+   "since_pass_pct": -5.11,
+   "spy_since_pass_pct": 4.12,
+   "alpha_pp": -9.23,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "KDP",
@@ -2011,11 +2041,11 @@
    "spy0": 742.09,
    "price0_date": "2026-07-20",
    "backfilled": true,
-   "last_price": 29.3,
-   "since_pass_pct": -3.75,
-   "spy_since_pass_pct": 4.17,
-   "alpha_pp": -7.92,
-   "cf_marked": "2026-08-10"
+   "last_price": 30.28,
+   "since_pass_pct": -0.53,
+   "spy_since_pass_pct": 4.12,
+   "alpha_pp": -4.65,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "BBIO",
@@ -2029,11 +2059,11 @@
    "spy0": 748.28,
    "price0_date": "2026-07-21",
    "backfilled": true,
-   "last_price": 84.67,
-   "since_pass_pct": 2.69,
-   "spy_since_pass_pct": 3.31,
-   "alpha_pp": -0.62,
-   "cf_marked": "2026-08-10"
+   "last_price": 79.89,
+   "since_pass_pct": -3.1,
+   "spy_since_pass_pct": 3.26,
+   "alpha_pp": -6.36,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "DBVT",
@@ -2047,11 +2077,11 @@
    "spy0": 748.28,
    "price0_date": "2026-07-21",
    "backfilled": true,
-   "last_price": 14.27,
-   "since_pass_pct": 0.35,
-   "spy_since_pass_pct": 3.31,
-   "alpha_pp": -2.96,
-   "cf_marked": "2026-08-10"
+   "last_price": 14.67,
+   "since_pass_pct": 3.16,
+   "spy_since_pass_pct": 3.26,
+   "alpha_pp": -0.1,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "GERN",
@@ -2065,11 +2095,11 @@
    "spy0": 748.28,
    "price0_date": "2026-07-21",
    "backfilled": true,
-   "last_price": 1.48,
-   "since_pass_pct": 2.78,
-   "spy_since_pass_pct": 3.31,
-   "alpha_pp": -0.53,
-   "cf_marked": "2026-08-10"
+   "last_price": 1.53,
+   "since_pass_pct": 6.25,
+   "spy_since_pass_pct": 3.26,
+   "alpha_pp": 2.99,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "CLVT",
@@ -2085,9 +2115,9 @@
    "backfilled": true,
    "last_price": 1.89,
    "since_pass_pct": -16.0,
-   "spy_since_pass_pct": 3.31,
-   "alpha_pp": -19.31,
-   "cf_marked": "2026-08-10"
+   "spy_since_pass_pct": 3.26,
+   "alpha_pp": -19.26,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "MLYS",
@@ -2101,11 +2131,11 @@
    "price0": 27.21,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 27.38,
-   "since_pass_pct": 0.62,
-   "spy_since_pass_pct": 4.6,
-   "alpha_pp": -3.98,
-   "cf_marked": "2026-08-10"
+   "last_price": 26.05,
+   "since_pass_pct": -4.26,
+   "spy_since_pass_pct": 4.54,
+   "alpha_pp": -8.8,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "LBTYK",
@@ -2119,11 +2149,11 @@
    "price0": 9.59,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 9.99,
-   "since_pass_pct": 4.17,
-   "spy_since_pass_pct": 4.6,
-   "alpha_pp": -0.43,
-   "cf_marked": "2026-08-10"
+   "last_price": 10.1,
+   "since_pass_pct": 5.32,
+   "spy_since_pass_pct": 4.54,
+   "alpha_pp": 0.78,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "SRRK",
@@ -2137,11 +2167,11 @@
    "price0": 48.93,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 51.89,
-   "since_pass_pct": 6.05,
-   "spy_since_pass_pct": 4.6,
-   "alpha_pp": 1.45,
-   "cf_marked": "2026-08-10"
+   "last_price": 52.05,
+   "since_pass_pct": 6.38,
+   "spy_since_pass_pct": 4.54,
+   "alpha_pp": 1.84,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "EYPT",
@@ -2155,11 +2185,11 @@
    "price0": 12.41,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 13.07,
-   "since_pass_pct": 5.32,
-   "spy_since_pass_pct": 4.6,
-   "alpha_pp": 0.72,
-   "cf_marked": "2026-08-10"
+   "last_price": 4.87,
+   "since_pass_pct": -60.76,
+   "spy_since_pass_pct": 4.54,
+   "alpha_pp": -65.3,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "GDOT",
@@ -2173,11 +2203,11 @@
    "price0": 13.16,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 13.26,
-   "since_pass_pct": 0.76,
-   "spy_since_pass_pct": 4.6,
-   "alpha_pp": -3.84,
-   "cf_marked": "2026-08-10"
+   "last_price": 13.45,
+   "since_pass_pct": 2.2,
+   "spy_since_pass_pct": 4.54,
+   "alpha_pp": -2.34,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "DBVT",
@@ -2191,11 +2221,11 @@
    "price0": 13.9,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 14.27,
-   "since_pass_pct": 2.66,
-   "spy_since_pass_pct": 4.6,
-   "alpha_pp": -1.94,
-   "cf_marked": "2026-08-10"
+   "last_price": 14.67,
+   "since_pass_pct": 5.54,
+   "spy_since_pass_pct": 4.54,
+   "alpha_pp": 1.0,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "UNF",
@@ -2209,11 +2239,11 @@
    "price0": 297.46,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 289.64,
-   "since_pass_pct": -2.63,
-   "spy_since_pass_pct": 4.6,
-   "alpha_pp": -7.23,
-   "cf_marked": "2026-08-10"
+   "last_price": 286.47,
+   "since_pass_pct": -3.69,
+   "spy_since_pass_pct": 4.54,
+   "alpha_pp": -8.23,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "MP",
@@ -2227,11 +2257,11 @@
    "price0": 43.13,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 54.66,
-   "since_pass_pct": 26.73,
-   "spy_since_pass_pct": 4.6,
-   "alpha_pp": 22.13,
-   "cf_marked": "2026-08-10"
+   "last_price": 58.51,
+   "since_pass_pct": 35.66,
+   "spy_since_pass_pct": 4.54,
+   "alpha_pp": 31.12,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "KDP",
@@ -2245,11 +2275,11 @@
    "price0": 30.12,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 29.3,
-   "since_pass_pct": -2.72,
-   "spy_since_pass_pct": 4.6,
-   "alpha_pp": -7.32,
-   "cf_marked": "2026-08-10"
+   "last_price": 30.28,
+   "since_pass_pct": 0.53,
+   "spy_since_pass_pct": 4.54,
+   "alpha_pp": -4.01,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "CELC",
@@ -2263,11 +2293,11 @@
    "price0": 82.27,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 90.79,
-   "since_pass_pct": 10.36,
-   "spy_since_pass_pct": 4.6,
-   "alpha_pp": 5.76,
-   "cf_marked": "2026-08-10"
+   "last_price": 92.44,
+   "since_pass_pct": 12.36,
+   "spy_since_pass_pct": 4.54,
+   "alpha_pp": 7.82,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "AXTA",
@@ -2281,11 +2311,11 @@
    "price0": 33.74,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 37.44,
-   "since_pass_pct": 10.97,
-   "spy_since_pass_pct": 4.6,
-   "alpha_pp": 6.37,
-   "cf_marked": "2026-08-10"
+   "last_price": 36.11,
+   "since_pass_pct": 7.02,
+   "spy_since_pass_pct": 4.54,
+   "alpha_pp": 2.48,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "VRDN",
@@ -2299,11 +2329,11 @@
    "price0": 19.7,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 23.06,
-   "since_pass_pct": 17.06,
-   "spy_since_pass_pct": 4.6,
-   "alpha_pp": 12.46,
-   "cf_marked": "2026-08-10"
+   "last_price": 23.09,
+   "since_pass_pct": 17.21,
+   "spy_since_pass_pct": 4.54,
+   "alpha_pp": 12.67,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "BLCO",
@@ -2317,11 +2347,11 @@
    "price0": 16.28,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 16.83,
-   "since_pass_pct": 3.38,
-   "spy_since_pass_pct": 4.6,
-   "alpha_pp": -1.22,
-   "cf_marked": "2026-08-10"
+   "last_price": 17.0,
+   "since_pass_pct": 4.42,
+   "spy_since_pass_pct": 4.54,
+   "alpha_pp": -0.12,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "PRX.AS",
@@ -2335,11 +2365,11 @@
    "price0": 38.465,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 42.145,
-   "since_pass_pct": 9.57,
-   "spy_since_pass_pct": 4.6,
-   "alpha_pp": 4.97,
-   "cf_marked": "2026-08-10"
+   "last_price": 37.055,
+   "since_pass_pct": -3.67,
+   "spy_since_pass_pct": 4.54,
+   "alpha_pp": -8.21,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "FUN",
@@ -2353,11 +2383,11 @@
    "price0": 17.59,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 15.85,
-   "since_pass_pct": -9.89,
-   "spy_since_pass_pct": 4.6,
-   "alpha_pp": -14.49,
-   "cf_marked": "2026-08-10"
+   "last_price": 15.6,
+   "since_pass_pct": -11.31,
+   "spy_since_pass_pct": 4.54,
+   "alpha_pp": -15.85,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "LZM",
@@ -2371,11 +2401,11 @@
    "price0": 3.31,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 4.05,
-   "since_pass_pct": 22.36,
-   "spy_since_pass_pct": 4.6,
-   "alpha_pp": 17.76,
-   "cf_marked": "2026-08-10"
+   "last_price": 4.0,
+   "since_pass_pct": 20.85,
+   "spy_since_pass_pct": 4.54,
+   "alpha_pp": 16.31,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "THRM",
@@ -2389,11 +2419,11 @@
    "price0": 42.07,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 41.52,
-   "since_pass_pct": -1.31,
-   "spy_since_pass_pct": 4.6,
-   "alpha_pp": -5.91,
-   "cf_marked": "2026-08-10"
+   "last_price": 43.34,
+   "since_pass_pct": 3.02,
+   "spy_since_pass_pct": 4.54,
+   "alpha_pp": -1.52,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "SVRA",
@@ -2405,11 +2435,11 @@
    "resolution_driver": "FDA_approval_decision",
    "price0": 5.33,
    "spy0": 757.67,
-   "last_price": 5.73,
-   "since_pass_pct": 7.5,
-   "spy_since_pass_pct": 2.03,
-   "alpha_pp": 5.47,
-   "cf_marked": "2026-08-10"
+   "last_price": 5.37,
+   "since_pass_pct": 0.75,
+   "spy_since_pass_pct": 1.98,
+   "alpha_pp": -1.23,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "VNDA",
@@ -2421,11 +2451,11 @@
    "resolution_driver": "FDA_approval_decision",
    "price0": 5.23,
    "spy0": 757.67,
-   "last_price": 5.02,
-   "since_pass_pct": -4.02,
-   "spy_since_pass_pct": 2.03,
-   "alpha_pp": -6.05,
-   "cf_marked": "2026-08-10"
+   "last_price": 5.26,
+   "since_pass_pct": 0.57,
+   "spy_since_pass_pct": 1.98,
+   "alpha_pp": -1.41,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "ALVO",
@@ -2437,11 +2467,11 @@
    "resolution_driver": "FDA_approval_decision",
    "price0": 3.79,
    "spy0": 757.67,
-   "last_price": 3.77,
-   "since_pass_pct": -0.53,
-   "spy_since_pass_pct": 2.03,
-   "alpha_pp": -2.56,
-   "cf_marked": "2026-08-10"
+   "last_price": 3.88,
+   "since_pass_pct": 2.37,
+   "spy_since_pass_pct": 1.98,
+   "alpha_pp": 0.39,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "IMMX",
@@ -2453,11 +2483,11 @@
    "resolution_driver": "FDA_clinical_readout",
    "price0": 8.42,
    "spy0": 757.67,
-   "last_price": 10.13,
-   "since_pass_pct": 20.31,
-   "spy_since_pass_pct": 2.03,
-   "alpha_pp": 18.28,
-   "cf_marked": "2026-08-10"
+   "last_price": 11.34,
+   "since_pass_pct": 34.68,
+   "spy_since_pass_pct": 1.98,
+   "alpha_pp": 32.7,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "IMTX",
@@ -2469,11 +2499,11 @@
    "resolution_driver": "FDA_clinical_readout",
    "price0": 9.02,
    "spy0": 757.67,
-   "last_price": 9.72,
-   "since_pass_pct": 7.76,
-   "spy_since_pass_pct": 2.03,
-   "alpha_pp": 5.73,
-   "cf_marked": "2026-08-10"
+   "last_price": 9.25,
+   "since_pass_pct": 2.55,
+   "spy_since_pass_pct": 1.98,
+   "alpha_pp": 0.57,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "NAMS",
@@ -2485,11 +2515,11 @@
    "resolution_driver": "FDA_clinical_readout",
    "price0": 27.49,
    "spy0": 757.67,
-   "last_price": 27.98,
-   "since_pass_pct": 1.78,
-   "spy_since_pass_pct": 2.03,
-   "alpha_pp": -0.25,
-   "cf_marked": "2026-08-10"
+   "last_price": 26.9,
+   "since_pass_pct": -2.15,
+   "spy_since_pass_pct": 1.98,
+   "alpha_pp": -4.13,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "CMCSA",
@@ -2501,11 +2531,11 @@
    "resolution_driver": "Spin_index_flow",
    "price0": 24.56,
    "spy0": 757.67,
-   "last_price": 25.2,
-   "since_pass_pct": 2.61,
-   "spy_since_pass_pct": 2.03,
-   "alpha_pp": 0.58,
-   "cf_marked": "2026-08-10"
+   "last_price": 25.57,
+   "since_pass_pct": 4.11,
+   "spy_since_pass_pct": 1.98,
+   "alpha_pp": 2.13,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "LBTYK",
@@ -2517,11 +2547,11 @@
    "resolution_driver": "Spin_index_flow",
    "price0": 10.64,
    "spy0": 757.67,
-   "last_price": 9.99,
-   "since_pass_pct": -6.11,
-   "spy_since_pass_pct": 2.03,
-   "alpha_pp": -8.14,
-   "cf_marked": "2026-08-10"
+   "last_price": 10.1,
+   "since_pass_pct": -5.08,
+   "spy_since_pass_pct": 1.98,
+   "alpha_pp": -7.06,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "IFF",
@@ -2533,11 +2563,11 @@
    "resolution_driver": "Deal_close_generic",
    "price0": 80.58,
    "spy0": 757.67,
-   "last_price": 85.09,
-   "since_pass_pct": 5.6,
-   "spy_since_pass_pct": 2.03,
-   "alpha_pp": 3.57,
-   "cf_marked": "2026-08-10"
+   "last_price": 81.83,
+   "since_pass_pct": 1.55,
+   "spy_since_pass_pct": 1.98,
+   "alpha_pp": -0.43,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "XRN",
@@ -2549,11 +2579,11 @@
    "resolution_driver": "Refi_restructuring",
    "price0": 35.27,
    "spy0": 757.67,
-   "last_price": 35.86,
-   "since_pass_pct": 1.67,
-   "spy_since_pass_pct": 2.03,
-   "alpha_pp": -0.36,
-   "cf_marked": "2026-08-10"
+   "last_price": 36.37,
+   "since_pass_pct": 3.12,
+   "spy_since_pass_pct": 1.98,
+   "alpha_pp": 1.14,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "MGNI",
@@ -2565,11 +2595,11 @@
    "resolution_driver": null,
    "price0": 19.57,
    "spy0": 757.67,
-   "last_price": 24.21,
-   "since_pass_pct": 23.71,
-   "spy_since_pass_pct": 2.03,
-   "alpha_pp": 21.68,
-   "cf_marked": "2026-08-10"
+   "last_price": 24.19,
+   "since_pass_pct": 23.61,
+   "spy_since_pass_pct": 1.98,
+   "alpha_pp": 21.63,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "CLVT",
@@ -2583,9 +2613,9 @@
    "spy0": 757.67,
    "last_price": 1.89,
    "since_pass_pct": -2.58,
-   "spy_since_pass_pct": 2.03,
-   "alpha_pp": -4.61,
-   "cf_marked": "2026-08-10"
+   "spy_since_pass_pct": 1.98,
+   "alpha_pp": -4.56,
+   "cf_marked": "2026-08-18"
   },
   {
    "symbol": "PVLA",
@@ -2597,11 +2627,11 @@
    "resolution_driver": "FDA_approval_decision",
    "price0": 118.84,
    "spy0": 757.67,
-   "last_price": 152.22,
-   "since_pass_pct": 28.09,
-   "spy_since_pass_pct": 2.03,
-   "alpha_pp": 26.06,
-   "cf_marked": "2026-08-10"
+   "last_price": 153.52,
+   "since_pass_pct": 29.18,
+   "spy_since_pass_pct": 1.98,
+   "alpha_pp": 27.2,
+   "cf_marked": "2026-08-18"
   }
  ],
  "runs": [
@@ -3048,6 +3078,124 @@
     "AGIO": {
      "price": 32.59,
      "ret_pct": 6.71
+    }
+   }
+  },
+  {
+   "date": "2026-08-11",
+   "nav": 101.226,
+   "basket_ret_pct": 1.226,
+   "seats": {
+    "FIG": {
+     "price": 24.87,
+     "ret_pct": 1.74
+    },
+    "AQST": {
+     "price": 4.41,
+     "ret_pct": 20.66
+    },
+    "WVE": {
+     "price": 5.045,
+     "ret_pct": -13.69
+    },
+    "AMLX": {
+     "price": 20.17,
+     "ret_pct": 4.56
+    },
+    "AAUC": {
+     "price": 19.27,
+     "ret_pct": -10.37
+    },
+    "ZYME": {
+     "price": 24.32,
+     "ret_pct": 7.85
+    },
+    "DDL": {
+     "price": 2.48,
+     "ret_pct": 2.27
+    },
+    "VIR": {
+     "price": 8.93,
+     "ret_pct": 3.0
+    },
+    "OLMA": {
+     "price": 10.43,
+     "ret_pct": -7.86
+    },
+    "AVIR": {
+     "price": 5.05,
+     "ret_pct": 30.49
+    },
+    "CAPR": {
+     "price": 3.99,
+     "ret_pct": -31.68
+    },
+    "FIP": {
+     "price": 3.555,
+     "ret_pct": -10.57
+    },
+    "AGIO": {
+     "price": 32.69,
+     "ret_pct": 7.04
+    }
+   }
+  },
+  {
+   "date": "2026-08-18",
+   "nav": 102.36,
+   "basket_ret_pct": 2.36,
+   "seats": {
+    "FIG": {
+     "price": 24.99,
+     "ret_pct": 2.23
+    },
+    "AQST": {
+     "price": 4.29,
+     "ret_pct": 17.37
+    },
+    "WVE": {
+     "price": 5.09,
+     "ret_pct": -12.92
+    },
+    "AMLX": {
+     "price": 20.17,
+     "ret_pct": 4.56
+    },
+    "AAUC": {
+     "price": 19.27,
+     "ret_pct": -10.37
+    },
+    "ZYME": {
+     "price": 25.31,
+     "ret_pct": 12.24
+    },
+    "DDL": {
+     "price": 2.48,
+     "ret_pct": 2.27
+    },
+    "VIR": {
+     "price": 9.39,
+     "ret_pct": 8.3
+    },
+    "OLMA": {
+     "price": 10.77,
+     "ret_pct": -4.86
+    },
+    "AVIR": {
+     "price": 5.22,
+     "ret_pct": 34.88
+    },
+    "CAPR": {
+     "price": 3.99,
+     "ret_pct": -31.68
+    },
+    "FIP": {
+     "price": 3.555,
+     "ret_pct": -10.57
+    },
+    "AGIO": {
+     "price": 33.63,
+     "ret_pct": 10.12
     }
    }
   }
@@ -4287,6 +4435,78 @@
     "GERN": {
      "price": 1.48,
      "ret_pct": 15.62
+    }
+   }
+  },
+  {
+   "date": "2026-08-11",
+   "nav": 114.009,
+   "ret_pct": 14.009,
+   "n": 7,
+   "seats": {
+    "CLVT": {
+     "price": 1.91,
+     "ret_pct": -13.57
+    },
+    "BBIO": {
+     "price": 83.7,
+     "ret_pct": 25.3
+    },
+    "EYPT": {
+     "price": 13.05,
+     "ret_pct": 0.15
+    },
+    "PVLA": {
+     "price": 154.3,
+     "ret_pct": 29.84
+    },
+    "DBVT": {
+     "price": 14.09,
+     "ret_pct": -10.25
+    },
+    "MGNI": {
+     "price": 24.3,
+     "ret_pct": 39.26
+    },
+    "GERN": {
+     "price": 1.63,
+     "ret_pct": 27.34
+    }
+   }
+  },
+  {
+   "date": "2026-08-18",
+   "nav": 103.324,
+   "ret_pct": 3.324,
+   "n": 7,
+   "seats": {
+    "CLVT": {
+     "price": 1.89,
+     "ret_pct": -14.48
+    },
+    "BBIO": {
+     "price": 79.89,
+     "ret_pct": 19.6
+    },
+    "EYPT": {
+     "price": 4.87,
+     "ret_pct": -62.62
+    },
+    "PVLA": {
+     "price": 153.52,
+     "ret_pct": 29.18
+    },
+    "DBVT": {
+     "price": 14.67,
+     "ret_pct": -6.56
+    },
+    "MGNI": {
+     "price": 24.19,
+     "ret_pct": 38.62
+    },
+    "GERN": {
+     "price": 1.53,
+     "ret_pct": 19.53
     }
    }
   }
