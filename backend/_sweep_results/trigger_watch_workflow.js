@@ -21,6 +21,14 @@ const DUE = [
   "trigger": "2026-08-10"
  },
  {
+  "symbol": "SVRA",
+  "catalyst": "FDA decision on the MOLBREEVI (molgramostim inhalation) BLA for autoimmune pulmonary alveolar proteinosis, a would-be first-in-class orphan approval, at a PDUFA goal date of Nov 22 2026.",
+  "milestone": "PDUFA goal date Nov 22 2026 (extended Apr 15 2026 from Aug 22 2026 on a three-month major-amendment clock reset); ~110 days forward as of 2026-08-03.",
+  "score": 5.5,
+  "tier": "ACTIVE",
+  "trigger": "2026-08-22"
+ },
+ {
   "symbol": "ZIM",
   "catalyst": "Signed all-cash merger at $35.00/sh with Hapag-Lloyd (announced Feb-16-2026, ~$4.2B), shareholder-approved, now hostage to the State of Israel's decision on transferring the Special State Share to FIMI's \"New ZIM\" \u2014 stock at $26.07 leaves a 34.3% gross spread into a guided late-2026 close.",
   "milestone": "State-of-Israel / Special State Share decision on the FIMI \"New ZIM\" transfer (undated \u2014 Defense Ministry opposed as of Jul-6-2026; Netanyahu said the sale is not on the cabinet agenda). Company continues to guide close by late 2026 (Q4). Next hard date: Q2-2026 results Wed 2026-08-19 pre-market, fi",
@@ -35,14 +43,6 @@ const DUE = [
   "score": 5,
   "tier": "WATCH",
   "trigger": "2026-08-12"
- },
- {
-  "symbol": "AHCO",
-  "catalyst": "AdaptHealth signed a definitive agreement on 2026-07-19 (announced 2026-07-20 post-close) to sell its Diabetes Health business to Cardinal Health for $235mm cash, with the close and the debt paydown still ahead and the Aug 4 Q2 print the first read on pro-forma guidance.",
-  "milestone": "2026-08-04 (Q2 2026 results BMO, 8:30am ET call - first management read on pro-forma guidance, use of proceeds and leverage target; confirmed by Business Wire 2026-07-14). Deal close: expected but no company-confirmed date verified.",
-  "score": 4,
-  "tier": "WATCH",
-  "trigger": "2026-08-04"
  },
  {
   "symbol": "ATII",
@@ -152,7 +152,7 @@ const DUE = [
 const SCHEMA = { type:'object', properties:{ symbol:{type:'string'}, still_forward:{type:'boolean'}, fired:{type:'boolean'}, outcome:{type:'string', enum:['FORWARD','FIRED_GOOD','FIRED_BAD','SLIPPED','RESOLVED_OTHER','UNCLEAR']}, new_date:{type:'string'}, note:{type:'string'} }, required:['symbol','still_forward','fired','outcome','note'] }
 phase('Check')
 const results = (await parallel(DUE.map(n => () =>
-  agent(`Today is 2026-08-18. TRIGGER CHECK (fast, <=3 lookups via WebSearch/WebFetch + FMP MCP via ToolSearch). Board name ${n.symbol} carries: catalyst "${n.catalyst}" / milestone "${n.milestone}" (score ${n.score}, tier ${n.tier}). The milestone date ${n.trigger} is imminent or just passed. Determine ONLY: did the event FIRE (and favorably or adversely), SLIP (new date?), or is it still FORWARD? Do not re-underwrite the thesis. OUTCOME RULES: FIRED_GOOD/FIRED_BAD are TERMINAL only (deal closed/broke, approval/CRL issued, verdict entered, tender settled); if the situation CONTINUES with a new date -- even after an adverse interim event (TRO granted, extension, second request) -- use SLIPPED with new_date and describe the tilt in the note. Deliverable = a SINGLE StructuredOutput call: {symbol, still_forward, fired, outcome (FORWARD/FIRED_GOOD/FIRED_BAD/SLIPPED/RESOLVED_OTHER/UNCLEAR), new_date (ISO or empty), note (1-2 sentences, cite source+date)}.`,
+  agent(`Today is 2026-08-19. TRIGGER CHECK (fast, <=3 lookups via WebSearch/WebFetch + FMP MCP via ToolSearch). Board name ${n.symbol} carries: catalyst "${n.catalyst}" / milestone "${n.milestone}" (score ${n.score}, tier ${n.tier}). The milestone date ${n.trigger} is imminent or just passed. Determine ONLY: did the event FIRE (and favorably or adversely), SLIP (new date?), or is it still FORWARD? Do not re-underwrite the thesis. OUTCOME RULES: FIRED_GOOD/FIRED_BAD are TERMINAL only (deal closed/broke, approval/CRL issued, verdict entered, tender settled); if the situation CONTINUES with a new date -- even after an adverse interim event (TRO granted, extension, second request) -- use SLIPPED with new_date and describe the tilt in the note. Deliverable = a SINGLE StructuredOutput call: {symbol, still_forward, fired, outcome (FORWARD/FIRED_GOOD/FIRED_BAD/SLIPPED/RESOLVED_OTHER/UNCLEAR), new_date (ISO or empty), note (1-2 sentences, cite source+date)}.`,
     { label: `trig:${n.symbol}`, phase: 'Check', schema: SCHEMA })
 ))).filter(Boolean)
 return { checked: results.length, results }
