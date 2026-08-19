@@ -5806,7 +5806,8 @@ def _check_universe_watermark(stocks: list, region: str) -> bool:
             f"untouched. "
             f"Re-run, or set SCAN_FORCE_PUBLISH=1 if the universe really did shrink this much."
         )
-        PUBLISH_BLOCKED.append(region)
+        if region not in PUBLISH_BLOCKED:
+            PUBLISH_BLOCKED.append(region)
         return False
     return True
 
@@ -7189,9 +7190,26 @@ def main():
 
     log_signals(stocks)
 
-    save_methodology_picks(stocks, args.no_gcs)
+    # 2026-08-19: check the universe BEFORE anything reaches GCS.
+    #
+    # The guard used to live only inside save_scan_to_gcs, which runs AFTER
+    # save_methodology_picks has already uploaded scans/methodology_picks.json
+    # and scans/methodology_tracking.json. So on the 08-18 collapse the guard
+    # correctly refused to publish latest_global.json — three seconds after a
+    # 521-name universe had rebuilt the 12 methodology baskets in GCS and
+    # gutted three of them (fundamental_momentum 0 picks, iv15_deep_value 1,
+    # convergence 1). Protecting the scan blob alone is not protecting the data.
+    #
+    # save_methodology_picks still RUNS when blocked — it assigns the dynamic
+    # convergence/fundamental-momentum attrs the Stock rows need (see the note
+    # on consensus_fv) — but with GCS writes suppressed. The NAV mark is gated
+    # too: it prices off scans/latest_global.json, which a blocked publish
+    # leaves stale, so marking would stamp today's point at stale prices.
+    publish_ok = args.no_gcs or _check_universe_watermark(stocks, args.region)
 
-    if not args.no_gcs:
+    save_methodology_picks(stocks, args.no_gcs or not publish_ok)
+
+    if not args.no_gcs and publish_ok:
         save_scan_to_gcs(stocks, region=args.region, macro=macro)
 
     # Nightly mark-to-market of the Speculair Apex + Value books — the daily NAV mark so the
@@ -7200,7 +7218,7 @@ def main():
     # region=global; it prices the held names off scans/latest_global.json (the freshest full
     # cross-market set, incl. European legs) and is idempotent within a day, so extra region runs
     # just re-stamp the same day's point. Best-effort — never breaks the scan.
-    if not args.no_gcs:
+    if not args.no_gcs and publish_ok:
         _mark_speculair_nav()
 
 
