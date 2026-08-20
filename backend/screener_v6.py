@@ -136,7 +136,67 @@ _FX_TO_USD = {
     "THB": 0.029, "IDR": 0.000063, "MYR": 0.22, "PHP": 0.018,
     "PLN": 0.25, "CZK": 0.043, "ILS": 0.28, "SAR": 0.27,
     "AED": 0.27, "TRY": 0.031, "HUF": 0.0027,
+    # 2026-08-20: minor units and gaps found while auditing non-US valuations.
+    # GBp (pence) is what FMP reports for UK issuers on LSE — HSBA.L quotes
+    # 1497.2 GBp, i.e. £14.97. Without this the pence figure was compared
+    # against a dollar fair value and every UK name scored ~-0.99 MoS.
+    # ISK was absent entirely, so 19 Iceland names hit the "unknown currency,
+    # using 1.0" fallback. ZAc/ILA are the same minor-unit trap, pre-emptively.
+    "GBp": 0.013643, "ISK": 0.008222, "ZAc": 0.00055, "ILA": 0.0028,
 }
+
+# These are seed values only. refresh_fx_rates() overwrites them from FMP at
+# scan start — the hardcoded table had drifted badly (NOK +15.4%, CHF +12.1%,
+# SEK +8.9%, EUR +8.3%, GBP +7.4% vs live on 2026-08-20), and that error lands
+# directly on every non-US margin-of-safety.
+FX_REFRESHED = False
+
+
+def refresh_fx_rates() -> bool:
+    """Refresh _FX_TO_USD from FMP's batch-forex-quotes. One call, ~1550 pairs.
+
+    Fail-open by design: on any error the seeded table stays in place, so a
+    forex outage degrades accuracy rather than breaking the scan.
+    """
+    global FX_REFRESHED
+    data = fmp("batch-forex-quotes", {})
+    if not data:
+        log.warning("FX refresh FAILED — falling back to the seeded table (rates may be stale)")
+        return False
+    live = {}
+    for row in data:
+        if not isinstance(row, dict):
+            continue
+        sym, px = row.get("symbol") or "", row.get("price")
+        if len(sym) == 6 and sym.endswith("USD") and px:
+            try:
+                live[sym[:3]] = float(px)
+            except (TypeError, ValueError):
+                continue
+    if not live:
+        log.warning("FX refresh returned no usable USD pairs — keeping seeded table")
+        return False
+    moved = []
+    for ccy in list(_FX_TO_USD):
+        if ccy in ("USD", "GBp", "ZAc", "ILA"):
+            continue                       # minor units derived below, not quoted directly
+        new_rate = live.get(ccy)
+        if not new_rate:
+            continue
+        old_rate = _FX_TO_USD[ccy]
+        if old_rate and abs(new_rate - old_rate) / old_rate > 0.02:
+            moved.append(f"{ccy} {old_rate:g}->{new_rate:.5g}")
+        _FX_TO_USD[ccy] = new_rate
+    if live.get("GBP"):
+        _FX_TO_USD["GBp"] = live["GBP"] / 100.0   # pence
+    if live.get("ZAR"):
+        _FX_TO_USD["ZAc"] = live["ZAR"] / 100.0   # cents
+    if live.get("ILS"):
+        _FX_TO_USD["ILA"] = live["ILS"] / 100.0   # agorot
+    FX_REFRESHED = True
+    log.info(f"FX refreshed from FMP: {len(live)} pairs"
+             + (f" | >2% moves: {', '.join(moved[:8])}" if moved else ""))
+    return True
 
 def get_fx_rate(from_ccy: str, to_ccy: str) -> float:
     """Get exchange rate using fallback table only."""
@@ -2057,6 +2117,7 @@ def get_value(sym: str, price: float, price_currency: str = "USD", forward_eps_g
         "eps_latest": 0.0,
         "fx_to_report": 1.0,
         "fx_to_price": 1.0,
+        "price_currency": price_currency,
     }
     if price <= 0:
         return v
@@ -2083,6 +2144,36 @@ def get_value(sym: str, price: float, price_currency: str = "USD", forward_eps_g
         log.info(f"  {sym}: insufficient history ({len(inc) if inc else 0} years "
                  f"< {MIN_YEARS_HISTORY} required) — skipping")
         return v
+
+    # 2026-08-20: resolve the TRUE price currency before any FX math.
+    #
+    # price_currency arrives from q.get("currency", "USD"), but FMP's
+    # batch-quote payload carries NO currency field — so every stock on earth
+    # was silently treated as USD-priced. Consequences measured on the
+    # 2026-08-20 scan: 814 of 1881 non-US names (43.3%) had margin_of_safety
+    # pinned <= -0.95, against 0.4% of US names. Tokyo 92%, Sao Paulo 88%,
+    # London 73%, Stockholm 69%. HSBA.L quotes 1497.2 GBp (£14.97 ~ $19) and
+    # was compared against a $20 EPV as though it were $1497. Toyota was worse:
+    # reported_ccy JPY vs an assumed-USD price made fx_to_report 149.25, which
+    # multiplied an already-JPY price and drove its intrinsic values negative.
+    #
+    # The profile endpoint has the field and get_value ALREADY fetches profile
+    # further down (for ipoDate/sector/industry) through cached_fmp — so
+    # pulling it up here is a cache hit, not a new call.
+    #
+    # This must be per-symbol, never a venue->currency map: LSE mixes them.
+    # HSBA.L is GBp while 0LQQ.L (a US cross-listing) is USD.
+    try:
+        _prof = cached_fmp("profile", sym, lambda: fmp("profile", {"symbol": sym}))
+        _pc = (_prof[0].get("currency") if _prof and isinstance(_prof, list) and _prof else None)
+        if _pc and _pc in _FX_TO_USD:
+            price_currency = _pc
+        elif _pc:
+            log.warning(f"  {sym}: profile currency {_pc!r} not in the FX table — "
+                        f"treating price as {price_currency}")
+    except Exception as e:
+        log.warning(f"  {sym}: could not resolve price currency ({e}) — assuming {price_currency}")
+    v["price_currency"] = price_currency
 
     # Detect reporting currency early
     reported_ccy = price_currency
@@ -2382,8 +2473,18 @@ def get_value(sym: str, price: float, price_currency: str = "USD", forward_eps_g
     # Now points to Buffett fair_value so anything reading intrinsic_avg
     # gets the new methodology automatically.
     v["intrinsic_avg"] = v["buffett_fair_value"] if buf["_evaluated"] else 0
-    if v["intrinsic_avg"] > 0 and local_price > 0:
-        v["margin_of_safety"] = (v["intrinsic_avg"] - local_price) / local_price
+    # 2026-08-20: compare against `price`, NOT `local_price`. intrinsic_avg is
+    # buffett_fair_value, which was just converted INTO the price currency
+    # (~L2456), while local_price is in the REPORTED currency. Mixing them made
+    # HSBA.L read +500% (capped) once the currency fix gave it a real GBp price.
+    # Invisible until now because price == local_price whenever the two
+    # currencies match, which was every US name and — before the currency
+    # resolution landed — every name, since price_currency always defaulted USD.
+    # Every OTHER local_price use is a ratio of two reported-currency figures
+    # (p_s, p_fcf, pb_compounder, earnings_yield, owner_earnings_yield) and is
+    # correct as written; this was the only mismatch.
+    if v["intrinsic_avg"] > 0 and price > 0:
+        v["margin_of_safety"] = (v["intrinsic_avg"] - price) / price
     else:
         v["margin_of_safety"] = 0
 
@@ -5273,6 +5374,11 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         s.eps_latest = value.get("eps_latest", 0.0)
         s.fx_to_report = value.get("fx_to_report", 1.0)
         s.fx_to_price = value.get("fx_to_price", 1.0)
+        # The quote payload has no currency field, so Stock.currency was "USD"
+        # on all 3589 rows (including pence-quoted LSE names). Use the value
+        # resolved from the profile instead, so the UI can render the right
+        # unit and downstream consumers can convert.
+        s.currency = value.get("price_currency", s.currency)
       
         # Override method label when upside used the analyst fallback
         if upside.get("_valuation_method") == "fallback_analyst":
@@ -7162,6 +7268,10 @@ def main():
 
     # Preload sector performance (one-time, used by compute_sector_momentum)
     preload_sector_performance(days=60)
+
+    # Live FX before any valuation math — the seeded table had drifted up to
+    # 15% and that error lands straight on every non-US margin-of-safety.
+    refresh_fx_rates()
 
     # v8 Compounder v1.1 (May 11 2026): SP500 preload removed — US cohort now
     # uses country=='US' + mcap>=$2B gate, no external membership list needed.
