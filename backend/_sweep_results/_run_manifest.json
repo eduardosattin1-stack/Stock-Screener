@@ -1,0 +1,148 @@
+{
+ "run_date": "2026-08-19",
+ "universe": 2961,
+ "expected": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20
+ ],
+ "harvested": {
+  "1": {
+   "scanned": 150,
+   "flagged": 9,
+   "verified": 9,
+   "kept": 5
+  },
+  "2": {
+   "scanned": 150,
+   "flagged": 10,
+   "verified": 10,
+   "kept": 9
+  },
+  "3": {
+   "scanned": 150,
+   "flagged": 13,
+   "verified": 13,
+   "kept": 9
+  },
+  "4": {
+   "scanned": 150,
+   "flagged": 4,
+   "verified": 4,
+   "kept": 2
+  },
+  "5": {
+   "scanned": 150,
+   "flagged": 9,
+   "verified": 9,
+   "kept": 5
+  },
+  "6": {
+   "scanned": 150,
+   "flagged": 9,
+   "verified": 9,
+   "kept": 4
+  },
+  "7": {
+   "scanned": 150,
+   "flagged": 4,
+   "verified": 4,
+   "kept": 3
+  },
+  "8": {
+   "scanned": 150,
+   "flagged": 10,
+   "verified": 10,
+   "kept": 6
+  },
+  "9": {
+   "scanned": 150,
+   "flagged": 8,
+   "verified": 8,
+   "kept": 5
+  },
+  "10": {
+   "scanned": 151,
+   "flagged": 7,
+   "verified": 7,
+   "kept": 6
+  },
+  "11": {
+   "scanned": 150,
+   "flagged": 8,
+   "verified": 8,
+   "kept": 2
+  },
+  "12": {
+   "scanned": 150,
+   "flagged": 12,
+   "verified": 12,
+   "kept": 8
+  },
+  "13": {
+   "scanned": 150,
+   "flagged": 8,
+   "verified": 8,
+   "kept": 5
+  },
+  "14": {
+   "scanned": 150,
+   "flagged": 8,
+   "verified": 8,
+   "kept": 6
+  },
+  "15": {
+   "scanned": 150,
+   "flagged": 9,
+   "verified": 9,
+   "kept": 7
+  },
+  "16": {
+   "scanned": 150,
+   "flagged": 6,
+   "verified": 6,
+   "kept": 4
+  },
+  "17": {
+   "scanned": 150,
+   "flagged": 11,
+   "verified": 11,
+   "kept": 6
+  },
+  "18": {
+   "scanned": 151,
+   "flagged": 7,
+   "verified": 7,
+   "kept": 5
+  },
+  "19": {
+   "scanned": 150,
+   "flagged": 8,
+   "verified": 8,
+   "kept": 6
+  },
+  "20": {
+   "scanned": 111,
+   "flagged": 5,
+   "verified": 5,
+   "kept": 4
+  }
+ }
+}

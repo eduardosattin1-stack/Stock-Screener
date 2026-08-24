@@ -1,0 +1,25 @@
+{
+  "as_of": "2026-08-18",
+  "source": "CATALYST_WATCH_REGIME.md §3/§4-D (v6 instance, 2026-08-18 bi-weekly refresh)",
+  "written_by": "catalyst-watch-regime-refresh Phase 1b — regenerate this file whenever §3's lane ranking changes; _post_board.py reads it at import and WARNs if it is missing or drifts from the canon lane set",
+  "lane_priority": {
+    "fresh_crash": 1,
+    "forced_seller": 2,
+    "spinoff": 2,
+    "distressed": 3,
+    "merger_arb": 4,
+    "activist": 5,
+    "capital_return": 6,
+    "supply_timing": 7,
+    "index_flow": 8,
+    "bio_convergence": 9,
+    "unknown": 9
+  },
+  "notes": [
+    "fresh_crash #1 and the spins/forced-sellers demotion are PROVISIONAL per the verification layer — re-test at SUI (Aug 19-20) and FDXF (Sept 8) before hardening.",
+    "forced_seller and spinoff share rank 2 deliberately: the 2026-08-18 read SPLIT that lane — the mechanical index print is dead (RDDT gave back 68% ON the print day; ADIG print-day volume 157,030 shares), while lock-up capitulation lows and the first standalone earnings print 4-8 weeks post-spin remain alive.",
+    "index_flow demoted 4 -> 8: the headline index print is now negative-expectancy; the surviving edge lives in displaced/beneficiary names, which land in other lanes.",
+    "distressed promoted 5 -> 3 on corrected evidence (distress ratio 6.89% near a three-year HIGH, not the 'three-year low' the 2026-08-03 run carried).",
+    "bio_convergence stays thinnest a 5th run; its tradeable object is the adcomm briefing-document release, never the PDUFA date."
+  ]
+}

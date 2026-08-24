@@ -222,7 +222,9 @@ DEEP_VAL = {"epv", "graham_revised", "iv15_deep_value", "acquirers_multiple",
 VALUE_SIGNAL_METHS = DEEP_VAL | {"convergence", "ev_gp", "value_drawdown", "neglect_orphan",
                                  "quality_discount", "fresh_crash"}
 
-REGIME_FILE = "CATALYST_WATCH_REGIME.md"  # repo root; read live each run for the current regime
+# (REGIME_FILE constant removed 2026-08-19: it was defined here but never referenced — the regime
+# doc reaches the debate through the BRIEF prompt telling agents to read it, not through code.
+# A defined-but-unused constant implying live loading was worse than none.)
 
 
 def _ttm_cash_block(sym):
@@ -5952,7 +5954,9 @@ def catalyst_prep():
             json.dumps(_cat_ctx(c))))
     names_js = "const NAMES = [\n" + "\n".join(rows) + "\n]"
     tmpl = (ROOT / "_catalyst_debate.mjs").read_text(encoding="utf-8")
-    new = re.sub(r"const NAMES = \[.*?\n\]", names_js, tmpl, count=1, flags=re.DOTALL)
+    # lambda replacement: names_js carries json \uXXXX escapes, which re.sub would parse as
+    # backreference escapes ("bad escape \u") if passed as a template string.
+    new = re.sub(r"const NAMES = \[.*?\n\]", lambda _m: names_js, tmpl, count=1, flags=re.DOTALL)
     out = ROOT / "_catalyst_weekly.mjs"
     out.write_text(new, encoding="utf-8")
     print(f"catalyst-prep: {len(uni)} B13 names (full book: candidates + held seats) -> {[c['symbol'] for c in uni]}")
@@ -6371,6 +6375,61 @@ def lane_stamp():
     print(f"lane-stamp: {n} results_regime record(s) stamped with an intake lane")
 
 
+# ── PLAIN-LANGUAGE CHECK (2026-08-11) ────────────────────────────────────────
+# The publish step already translates machine tokens into plain words on the DISPLAY copy
+# (backend/plain_language.py, wired into publish_to_frontend). This verb is the visibility
+# half: it reports (a) how much of this run's prose the translator will touch and (b) the
+# code-speak it does NOT know how to translate yet, so the glossary grows from evidence
+# instead of guesswork. Report-only by default — it never edits a record.
+_PL_DIRS = ("results_regime", "_catalyst_results", "_skeptic_regime", "_catalyst_skeptic")
+
+
+def plain_language_check(strict=False):
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import plain_language as pl
+
+    # Scope to THIS run where we can: the prep marker stamps when the cycle started, and
+    # records written before it belong to an earlier week (already published as they were).
+    since = None
+    try:
+        _m = json.load(open(ROOT / "_last_debate_run.json", encoding="utf-8"))
+        since = datetime.fromisoformat(_m["prep_at"]).timestamp()
+    except Exception:
+        pass
+
+    scanned = touched = 0
+    residual = {}
+    examples = {}
+    for d in _PL_DIRS:
+        for f in sorted((ROOT / d).glob("*.json")):
+            if since and f.stat().st_mtime < since:
+                continue
+            try:
+                rec = json.load(open(f, encoding="utf-8"))
+            except Exception:
+                continue
+            if not isinstance(rec, dict):
+                continue
+            scanned += 1
+            out = pl.plainify_display(rec)
+            if any(k in pl.PROSE_FIELDS and isinstance(v, str) and out[k] != v for k, v in rec.items()):
+                touched += 1
+            for tok, fields in pl.residual_tokens(rec).items():
+                residual[tok] = residual.get(tok, 0) + 1
+                examples.setdefault(tok, f"{f.stem}.{fields[0]}")
+
+    scope = "this run" if since else "ALL records (no run marker — unscoped)"
+    print(f"PLAIN-LANGUAGE: {scanned} record(s) scanned ({scope}) | "
+          f"{touched} will be translated on publish | {len(residual)} untranslated token(s)")
+    for tok, n in sorted(residual.items(), key=lambda kv: -kv[1])[:15]:
+        print(f"  untranslated  {tok:<34} x{n:<4} e.g. {examples[tok]}")
+    if residual:
+        print("  -> add the unambiguous ones to plain_language.FIELD_GLOSSARY / TOKEN_GLOSSARY, "
+              "and the recurring ones to agent_voice.AGENT_VOICE so the agents stop emitting them")
+    if strict and residual:
+        sys.exit(1)
+
+
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "prep"
     # DISRUPTOR LENS retired 2026-07-02 (FUTURE_RESOURCES_SPEC.md Sec.10); its code was DELETED 2026-07-10
@@ -6523,6 +6582,8 @@ if __name__ == "__main__":
         recovery_sleeve("--gcs" in sys.argv)
     elif mode == "value-publish":
         value_publish(push_gcs=("--gcs" in sys.argv))
+    elif mode in ("plain-language", "plain_language"):
+        plain_language_check(strict=("--strict" in sys.argv))
     else:
         print(f"unknown mode: {mode}")
         sys.exit(1)

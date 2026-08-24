@@ -53,26 +53,60 @@ COINFLIP_CAP = 6.0           # lane-9 (bio-as-convergence) that is a 50/50 canno
 
 # ---------------------------------------------------------------------------
 # §3 canonical lanes + priority (1 = highest structural asymmetry / edge-richness)
+# The dict below is the FALLBACK ONLY. The live ranking comes from backend/_regime_lanes.json,
+# written by the bi-weekly regime refresh (Phase 1b) — before 2026-08-19 this dict was the
+# whole mechanism, which silently pinned the board to the June-2026 lane read while the
+# regime doc moved on (index_flow was still rank 4 after the 08-18 run declared the index
+# print dead). A missing/drifted file WARNs loudly; it must never fail silent again.
 # ---------------------------------------------------------------------------
 LANE_PRIORITY = {
-    "forced_seller":   1,
+    "fresh_crash":     1,
+    "forced_seller":   2,
     "spinoff":         2,
     "distressed":      3,
-    "index_flow":      4,
+    "merger_arb":      4,
     "activist":        5,
-    "merger_arb":      6,
-    "capital_return":  7,
-    "supply_timing":   8,
+    "capital_return":  6,
+    "supply_timing":   7,
+    "index_flow":      8,
     "bio_convergence": 9,
     "unknown":         9,   # unmapped → treated as lowest-priority, and counted/warned
 }
 
+_REGIME_LANES_F = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_regime_lanes.json")
+def _apply_regime_lanes():
+    """Overlay LANE_PRIORITY from _regime_lanes.json (the §3 ranking, machine-readable).
+    Fail-open with a loud WARN: a missing or malformed file keeps the fallback dict."""
+    try:
+        with open(_REGIME_LANES_F, encoding="utf-8") as fh:
+            rl = json.load(fh)
+        lp = {str(k): int(v) for k, v in (rl.get("lane_priority") or {}).items()}
+    except FileNotFoundError:
+        print("WARN: backend/_regime_lanes.json MISSING — lane priorities falling back to "
+              "hardcoded defaults; the §3 regime tilt is NOT being applied to board_priority")
+        return None
+    except (ValueError, TypeError) as e:
+        print(f"WARN: backend/_regime_lanes.json unreadable ({e}) — hardcoded defaults kept")
+        return None
+    extra   = sorted(set(lp) - set(LANE_PRIORITY))
+    missing = sorted(set(LANE_PRIORITY) - set(lp))
+    if extra:
+        print(f"WARN: _regime_lanes.json carries lanes canon_lane() cannot produce (ignored): {extra} "
+              "— if the regime added a lane, teach canon_lane() the new pattern too")
+    if missing:
+        print(f"WARN: _regime_lanes.json missing canon lanes (fallback rank kept for): {missing}")
+    LANE_PRIORITY.update({k: v for k, v in lp.items() if k in LANE_PRIORITY})
+    print(f"lane priorities: regime read {rl.get('as_of', '?')} via _regime_lanes.json")
+    return rl.get("as_of")
+REGIME_LANES_AS_OF = _apply_regime_lanes()
+
 def canon_lane(raw: str) -> str:
-    """Collapse the 105 free-text lane strings to the 9 §3 canon lanes."""
+    """Collapse the free-text lane strings to the §3 canon lanes."""
     s = ("" if raw is None else str(raw)).lower()
     if not s.strip():
         return "unknown"
     # order matters: most specific structural lane wins before generic merger/arb
+    if re.search(r"fresh.?crash|dislocat", s):                                       return "fresh_crash"
     if re.search(r"forced[- ]?sell|forced.?divest|divestit|forced[- ]?seller", s):  return "forced_seller"
     if re.search(r"spin[- ]?off|spinoff|spin_", s) and "rmt merger" not in s:        return "spinoff"
     if re.search(r"distress|restructur|\blme\b|refi|in-court|deleverag|litigation", s): return "distressed"
@@ -102,6 +136,7 @@ def resolution_driver(lane_c: str, text: str) -> str:
         if re.search(r"\bdoj\b|\bftc\b|\bhsr\b|second request|antitrust", s):                       return "US_antitrust"
         if re.search(r"shareholder vote|written consent|proxy advisor", s):                          return "Shareholder_vote"
         return "Deal_close_generic"
+    if lane_c == "fresh_crash":                   return "Dislocation_reversion"
     if lane_c == "spinoff":                       return "Spin_index_flow"
     if lane_c == "index_flow":                    return "Spin_index_flow"
     if lane_c == "forced_seller":                 return "Forced_divest_flow"

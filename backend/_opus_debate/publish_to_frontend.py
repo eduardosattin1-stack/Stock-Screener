@@ -29,6 +29,7 @@ sys.path.insert(0, str(BACKEND / "alpha_compounder"))
 
 import gcs_io  # noqa: E402
 import live_debate_engine as E  # noqa: E402
+import plain_language  # noqa: E402  display-layer translation of machine tokens (prose only)
 from _ledger import append_decision_history  # noqa: E402  shared with weekly_opus_refresh.py (2026-07-10)
 sys.path.insert(0, str(BK))  # so the sibling _wheel module resolves
 from _wheel import stamp_wheel  # noqa: E402  CSP->CC wheel suggestion
@@ -317,9 +318,13 @@ for p in picks:
     interro = max(1, min(5, int(m.group(1)))) if m else (rec.get("interrogator_score") or 3)
     mt = re.search(r"TRAJECTORY:\s*([A-Z]+)", doss)
     traj = mt.group(1) if mt else rec.get("trajectory", "")
+    # Display copy for the seated name — after the CREDIBILITY_SCORE/TRAJECTORY regexes have
+    # read the raw dossier. Structured fields (computed, numeric_gate, catalyst_status,
+    # sop_fair_value, live_price) pass through untouched; only prose is translated.
+    rec, doss = plain_language.plainify_display(rec), plain_language.plainify_text(doss)
     mos_d, fv_d, meth_app, meths = mos_fv(sc)
     prior = prior_apex.get(sym, {})
-    rationale = p.get("thesis", "")
+    rationale = plain_language.plainify_text(p.get("thesis", ""))
     if p.get("lane"):
         rationale += f"  ·  Lane: {p['lane']}"
     if p.get("regime_fit"):
@@ -344,8 +349,8 @@ for p in picks:
         "director_rationale": rationale,
         # rotation-discipline (continuity): the Director's per-name call + why, vs the prior-decision ledger
         "decision": p.get("decision"),
-        "decision_rationale": p.get("decision_rationale"),
-        "whats_changed": p.get("whats_changed"),
+        "decision_rationale": plain_language.plainify_text(p.get("decision_rationale")),
+        "whats_changed": plain_language.plainify_text(p.get("whats_changed")),
         "consensus_delta": rec.get("consensus_delta", ""),
         "forcing_function": rec.get("forcing_function", "") or p.get("forcing_function", ""),
         "valley_of_death": rec.get("valley_of_death", ""),
@@ -369,6 +374,9 @@ for p in picks:
         "sop_bull": rec.get("sop_bull", ""), "sop_bear": rec.get("sop_bear", ""),
         "risk_reward": rec.get("risk_reward", ""),
         "catalyst_status": rec.get("catalyst_status", "") or p.get("catalyst_status", ""),
+        # plain captions beside the machine enums (the enums themselves stay exact)
+        "catalyst_status_plain": plain_language.status_plain(
+            rec.get("catalyst_status", "") or p.get("catalyst_status", "")),
         "peer_comps_note": rec.get("peer_comps_note", ""),
         "sector": p.get("sector") or rec.get("sector") or sc.get("sector", ""),
         "mos": mos_d, "fair_value": fv_d,
@@ -390,6 +398,7 @@ for p in picks:
         # VISIBLE on the pick, not inferred from weights.
         "phase_fit": p.get("phase_fit", ""),
         "duration_bucket": p.get("duration_bucket", ""),
+        "duration_bucket_plain": plain_language.bucket_plain(p.get("duration_bucket", "")),
         "duration_bucket_source": p.get("duration_bucket_source", ""),
         "duration_bucket_override_reason": p.get("duration_bucket_override_reason", ""),
         "cycle_capped": bool(p.get("cycle_capped")),
@@ -397,6 +406,12 @@ for p in picks:
         # "advisory" while the book publishes equal weight — the trim lives in the audit
         # trail (size_units_effective), NOT in this seat's published weight.
         "cycle_cap_effect": p.get("cycle_cap_effect", "advisory"),
+        # cycle_fit{} stamped by _regime_post.stamp_cycle_fit — which phase this payoff needs,
+        # how far that is from where we are, and whether the stated horizon survives the wait.
+        # This entries dict is a WHITELIST, so the field has to be named here or the stock
+        # page's "Where this sits in the debt cycle" card never receives it. `or None` so an
+        # empty stamp publishes as null and the card stays hidden rather than half-empty.
+        "cycle_fit": p.get("cycle_fit") or None,
         "size_units": p.get("size_units"),
         "size_units_effective": p.get("size_units_effective"),
         # equity special-sit lane (catalyst-framed B13 non-binaries): downside floor for risk-to-floor
@@ -545,7 +560,13 @@ baskets["runner_ups_as_of"] = TODAY
 if director.get("exits"):
     baskets["exits"] = director["exits"]
 baskets["regime_changes"] = director.get("regime_changes", "")
-baskets["regime_basis"] = "CATALYST_WATCH_REGIME.md (2026-06-05 baseline)"
+# regime_basis: derive the read date from the doc itself (newest "### YYYY-MM-DD" §4 instance).
+# Was a literal frozen at "2026-06-05 baseline" — four refreshes stale by the time it was caught.
+try:
+    _rm = re.search(r"^### (20\d\d-\d\d-\d\d)", (ROOT / "CATALYST_WATCH_REGIME.md").read_text(encoding="utf-8"), re.M)
+    baskets["regime_basis"] = f"CATALYST_WATCH_REGIME.md ({_rm.group(1)} read)" if _rm else "CATALYST_WATCH_REGIME.md (date unparsed)"
+except OSError:
+    baskets["regime_basis"] = "CATALYST_WATCH_REGIME.md (unreadable at publish time)"
 baskets["engine"] = "opus-5"  # Fable retired from the Director/Skeptic seats 2026-07-10 (pipeline-v3 Week 1) -- all-Opus again
 if track_summary:
     baskets["apex_tracking"] = track_summary
@@ -698,6 +719,11 @@ def _opus_overlay(sym):
     mm = re.search(r"CREDIBILITY_SCORE:\s*(\d+)", d)
     sc_i = max(1, min(5, int(mm.group(1)))) if mm else (rec.get("interrogator_score") or 3)
     tj = re.search(r"TRAJECTORY:\s*([A-Z]+)", d)
+    badge = risk_badge(rec, skeptic_shard(sym))  # off the RAW record (gate/skeptic fields)
+    # Plain-language display copy — AFTER the two regexes above have taken their numbers
+    # off the raw dossier. rec/dossier on disk stay in the machine contract; only what the
+    # UI reads is translated (see backend/plain_language.py).
+    rec, d = plain_language.plainify_display(rec), plain_language.plainify_text(d)
     return {
         "bull_thesis": rec.get("bull_thesis", ""), "bear_thesis": rec.get("bear_thesis", ""),
         "consensus_delta": rec.get("consensus_delta", ""), "valley_of_death": rec.get("valley_of_death", ""),
@@ -709,10 +735,13 @@ def _opus_overlay(sym):
         "sop_fair_value": rec.get("sop_fair_value", ""), "sop_breakdown": rec.get("sop_breakdown", ""),
         "sop_bull": rec.get("sop_bull", ""), "sop_bear": rec.get("sop_bear", ""),
         "risk_reward": rec.get("risk_reward", ""), "catalyst_status": rec.get("catalyst_status", ""),
+        # plain caption alongside the enum — the enum itself stays exact (the briefing route
+        # and the catalyst gates compare it with ==/startswith)
+        "catalyst_status_plain": rec.get("catalyst_status_plain", ""),
         "peer_comps_note": rec.get("peer_comps_note", ""),
         # badge for debated-but-not-seated names: skeptic joined from the raw shard
         # (Director-pick skeptic fields don't exist off-board)
-        "risk_badge": risk_badge(rec, skeptic_shard(sym)),
+        "risk_badge": badge,
     }
 
 overlaid, pm_missing = 0, []
@@ -762,6 +791,11 @@ RUN_TS = datetime.now(timezone.utc).isoformat()
 
 
 def _hist_entry(rec, dossier, date_str, ts):
+    # Same display-copy translation as the overlay. Only THIS run's new dated entry is built
+    # here — entries already stored from prior runs are read back and re-written verbatim, so
+    # nothing historical is retro-edited.
+    _badge = risk_badge(rec, skeptic_shard(rec.get("symbol") or ""))  # off the raw record
+    rec, dossier = plain_language.plainify_display(rec), plain_language.plainify_text(dossier)
     e = {
         "date": date_str, "timestamp": ts,
         "verdict": rec.get("verdict", ""), "conviction": int(rec.get("conviction", 0) or 0),
@@ -775,9 +809,10 @@ def _hist_entry(rec, dossier, date_str, ts):
         "moderator_conclusion": rec.get("moderator_conclusion", ""),
         "sop_fair_value": rec.get("sop_fair_value", ""), "sop_breakdown": rec.get("sop_breakdown", ""),
         "risk_reward": rec.get("risk_reward", ""), "catalyst_status": rec.get("catalyst_status", ""),
+        "catalyst_status_plain": rec.get("catalyst_status_plain", ""),
         "peer_comps_note": rec.get("peer_comps_note", ""),
         "interrogator_dossier": dossier, "engine": "opus-5-regime",
-        "risk_badge": risk_badge(rec, skeptic_shard(rec.get("symbol") or "")),
+        "risk_badge": _badge,
     }
     # Passthrough tags (when the engine stamped them): lane + carry provenance for the history view.
     # Additive only — dedup key (date) and entry ordering are untouched.
