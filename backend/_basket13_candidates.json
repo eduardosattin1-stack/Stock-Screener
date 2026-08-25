@@ -1,8 +1,8 @@
 {
- "generated": "2026-08-24",
+ "generated": "2026-08-25",
  "source": "catalyst_candidates_231.json",
  "source_generated": "2026-08-24",
- "source_age_days": 0,
+ "source_age_days": 1,
  "count": 10,
  "entry_count": 2,
  "staging_count": 8,
@@ -32,7 +32,7 @@
    "score": 5.5,
    "live_price": 25.83,
    "dated_milestone": "2026-09-19",
-   "days_to_milestone": 26,
+   "days_to_milestone": 25,
    "valuation_asof": "2026-06-08",
    "super_cluster": "FDA/biotech",
    "staging": false
@@ -58,7 +58,7 @@
    "score": 5.0,
    "live_price": null,
    "dated_milestone": "2026-11-01",
-   "days_to_milestone": 69,
+   "days_to_milestone": 68,
    "valuation_asof": null,
    "super_cluster": "Idiosyncratic",
    "staging": false
@@ -110,7 +110,7 @@
    "score": 5.0,
    "live_price": 5.07,
    "dated_milestone": "2026-12-31",
-   "days_to_milestone": 129,
+   "days_to_milestone": 128,
    "valuation_asof": "2026-06-08",
    "super_cluster": "FDA/biotech",
    "staging": true
@@ -138,7 +138,7 @@
    "score": 5.0,
    "live_price": 5.32,
    "dated_milestone": "2026-07-31",
-   "days_to_milestone": -24,
+   "days_to_milestone": -25,
    "valuation_asof": "2026-06-08",
    "super_cluster": "FDA/biotech",
    "staging": true
@@ -218,7 +218,7 @@
    "score": 4.0,
    "live_price": 4.0,
    "dated_milestone": "2026-09-30",
-   "days_to_milestone": 37,
+   "days_to_milestone": 36,
    "valuation_asof": "2026-06-08",
    "super_cluster": "Idiosyncratic",
    "staging": true
