@@ -700,6 +700,10 @@ export async function GET(req: Request) {
         // later than the 30d cutoff, the window is coverage-truncated (House volume
         // can exceed the 400-row pull) — the card shows it as "since <date>".
         coverage_from: trades.reduce((m, t) => (t.filed < m ? t.filed : m), "9999-12-31"),
+        // Newest filed date in the window. The `top` list is ranked by SIZE, not
+        // recency, so a single big disclosure batch can hold every slot for weeks —
+        // this stamp is the only way to tell "current, quiet window" from "feed died".
+        coverage_to: trades.reduce((m, t) => (t.filed > m ? t.filed : m), "0000-01-01"),
       }
     : null;
 
@@ -753,6 +757,10 @@ export async function GET(req: Request) {
         // Oldest published date actually fetched — if later than the 30d cutoff,
         // the window is truncated by feed depth (8×1000 rows) and the card says so.
         coverage_from: tRows.reduce((m, t) => (t.date < m ? t.date : m), "9999-12-31"),
+        // Newest published date in the window — same "is the feed alive?" role as
+        // congress.coverage_to; the raises/cuts lists are ranked by magnitude, so
+        // 30d-old outliers stay pinned and the card can look frozen while it isn't.
+        coverage_to: tRows.reduce((m, t) => (t.date > m ? t.date : m), "0000-01-01"),
       }
     : null;
 

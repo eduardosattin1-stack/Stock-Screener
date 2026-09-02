@@ -524,6 +524,7 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
             </div>
             <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)" }}>
               {congress.big_count} big of {congress.total} filings · since {congress.coverage_from}
+              {congress.coverage_to && <> · <span title="Newest disclosure in the window. The list below is ranked by trade size, not recency, so a big filing batch can hold the top slots for weeks — this is the feed's actual freshness." style={{ cursor: "help" }}>as of {congress.coverage_to}</span></>}
             </span>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 28px" }}>
@@ -578,6 +579,7 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
             </div>
             <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-light)" }}>
               {target_watch.raises_count} raises · {target_watch.cuts_count} cuts · since {target_watch.coverage_from}
+              {target_watch.coverage_to && <> · <span title="Newest target change in the window. The lists below are ranked by size of move, not recency, so 30d-old outliers stay pinned — this is the feed's actual freshness." style={{ cursor: "help" }}>as of {target_watch.coverage_to}</span></>}
             </span>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 28px" }}>
