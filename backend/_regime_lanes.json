@@ -1,11 +1,11 @@
 {
-  "as_of": "2026-08-18",
-  "source": "CATALYST_WATCH_REGIME.md §3/§4-D (v6 instance, 2026-08-18 bi-weekly refresh)",
+  "as_of": "2026-09-06",
+  "source": "CATALYST_WATCH_REGIME.md §3/§4-D (v7 instance, 2026-09-06 bi-weekly refresh)",
   "written_by": "catalyst-watch-regime-refresh Phase 1b — regenerate this file whenever §3's lane ranking changes; _post_board.py reads it at import and WARNs if it is missing or drifts from the canon lane set",
   "lane_priority": {
-    "fresh_crash": 1,
-    "forced_seller": 2,
-    "spinoff": 2,
+    "spinoff": 1,
+    "forced_seller": 1,
+    "fresh_crash": 2,
     "distressed": 3,
     "merger_arb": 4,
     "activist": 5,
@@ -16,10 +16,14 @@
     "unknown": 9
   },
   "notes": [
-    "fresh_crash #1 and the spins/forced-sellers demotion are PROVISIONAL per the verification layer — re-test at SUI (Aug 19-20) and FDXF (Sept 8) before hardening.",
-    "forced_seller and spinoff share rank 2 deliberately: the 2026-08-18 read SPLIT that lane — the mechanical index print is dead (RDDT gave back 68% ON the print day; ADIG print-day volume 157,030 shares), while lock-up capitulation lows and the first standalone earnings print 4-8 weeks post-spin remain alive.",
-    "index_flow demoted 4 -> 8: the headline index print is now negative-expectancy; the surviving edge lives in displaced/beneficiary names, which land in other lanes.",
-    "distressed promoted 5 -> 3 on corrected evidence (distress ratio 6.89% near a three-year HIGH, not the 'three-year low' the 2026-08-03 run carried).",
-    "bio_convergence stays thinnest a 5th run; its tradeable object is the adcomm briefing-document release, never the PDUFA date."
+    "REVERSION vs 2026-08-18: spinoff/forced_seller 2 -> 1 and fresh_crash 1 -> 2. The prior run's fresh-crash promotion was flagged PROVISIONAL pending SUI and FDXF; the verification layer withdrew it on evidence, and this is the ONLY rank change this run.",
+    "Why fresh_crash fell: CAPR crashed -64.5% on its adcomm briefing-document release on 2026-07-27, ONE CALENDAR DAY before REPL on the identical mechanism, lost its panel vote and sits -52.3%. Across 2026 the non-REPL FDA-crash cohort is 0 of 6 recovered above pre-crash (mean -29.3% at 60d). The trade also halts through the event (REPL's Jul 30 bar shows volume = 0) and gaps past the fill (CAPR closed $19.70, opened $5.87).",
+    "Why spinoff/forced_seller rose: 'buy the lock-up capitulation low' went 7 of 7, INCLUDING the three names the research scored as failures (HONA +7.3%, ADIG +3.8%, FDXF +5.0% off their lows). Uncounted spin winners: SOLS +30.8%, MMED +25.9%, Q +24.2%. Honeywell spun both the best (SOLS) and worst (HONA) name in the cohort, so 'spinoff' is not the explanatory variable — the three apparent failures are simply the three newest listings.",
+    "The demotion this file previously encoded rested on two data errors the verification layer caught: FDXF NEVER REPORTED (fiscal year ends May 31; Q1 FY27 closed Aug 31; the 2026-09-02 8-K was an Item 8.01 executive termination; FMP's earnings-company endpoint is corrupt), and HONA's 'new low' was a close substituted for a low (the Aug 6 intraday low $150.03 was never breached).",
+    "forced_seller and spinoff still share rank 1 deliberately: the lane stays SPLIT. The mechanical index print remains dead, but note SUI is NOT the washout it looked — it beat ELS by +3.3pp and VNQ by +2.3pp Aug 12 -> Sept 4; the apparent round trip was a REIT/rates drawdown, not index-print decay.",
+    "index_flow stays 8: the headline index print is still negative-expectancy; the surviving edge lives in displaced/beneficiary names, which land in other lanes.",
+    "distressed holds 3: CCC-BB at 899bp is the 99.9th percentile of three years and has widened monotonically for eight months, but the loan distress ratio was UNVERIFIABLE this run (PitchBook and S&P Global 403'd two independent verifiers) and the lane's binding constraint is unchanged — an equity book cannot cleanly express a credit signal.",
+    "merger_arb holds 4: broken-deal direction is UNADJUDICATED in both directions this run; completion risk has migrated wholly from funding to state-AG legal risk (~$117B frozen across Paramount/WBD and Nexstar/Tegna).",
+    "bio_convergence stays thinnest a SIXTH run and the research's proposed promotion from #6 to #1 was REJECTED. XBI sits 21.0% ABOVE its 200-DMA (163.81 vs 135.37) near a 52-week high — nothing is dislocated. Its tradeable object remains the adcomm briefing-document release, never the PDUFA date, but that object is n=3 and 1-for-3."
   ]
 }

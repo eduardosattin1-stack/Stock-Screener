@@ -2,100 +2,166 @@
  "chunk": "4 (BTBT-CLPT)",
  "scanned": 150,
  "scan_distribution": {
-  "active": 1,
-  "watch": 11,
-  "none": 138
+  "active": 2,
+  "watch": 8,
+  "none": 140
  },
  "survivors_flagged": [
   {
-   "symbol": "CADL",
+   "symbol": "BWMN",
    "score": 5,
    "tier": "WATCH",
-   "lane": "binary_regulatory",
-   "one_line": "CAN-2409 prostate BLA submission guided Q4 2026 with RMAT + Fast Track behind SPA-run Ph3 (HR 0.61); dated and forward, but a filing is a soft catalyst and the stock at $12.16 is at its 52wk high, ~80% above the 200dma - the data re-rate already happened."
+   "lane": "merger-arb",
+   "one_line": "Definitive all-cash $43.00 takeout by Bernhard Capital (8/10/26), go-shop ends 9/13/26, then vote + HSR; but at $42.43 the gross spread is ~1.3% and the 58% premium already re-rated — real dated deal, late-arc, thin reward."
   },
   {
-   "symbol": "CBRL",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "activist_structural",
-   "one_line": "Biglari's multi-round proxy pressure has hardened into real structural action - Deno in as CEO 2026-08-10, $77m sale-leaseback of 26 stores, Maple Street exited - with the ~Nov annual meeting and further owned-real-estate monetization still ahead, though four straight up months means much of the easy re-rate is behind it."
+   "symbol": "CAPR",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "binary-regulatory",
+   "one_line": "Hard PDUFA on 22 Nov 2026 for deramiocel in DMD after the FDA took the upper-limb refiled indication as a major amendment - and the stock is $9.40 against a $23.37 200dma and a $40 high, so the sentiment reset is done while the dated event is still forward and unpriced."
   },
   {
    "symbol": "CCO",
-   "score": 7,
-   "tier": "ACTIVE",
-   "lane": "merger-arb",
-   "one_line": "Mubadala Capital take-private at $2.43/sh cash vs $2.32 (~4.7% gross); stockholder vote passed 2026-05-12, only CFIUS/regulatory conditions outstanding, close guided by end Q3 2026 — spread persists because a UAE sovereign is buying US billboard and airport concessions."
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "one_line": "Live Mubadala/TWG take-private at $2.43 cash vs $2.38 tape (~2.1% gross); holders approved 05-12, HSR expired 04-09, CFIUS the sole remaining gate, close guided by end-Q3 2026 - real arb but late-arc, a residual-risk stub not an early entry."
   },
   {
-   "symbol": "CHTR",
+   "symbol": "CCOI",
    "score": 5,
    "tier": "WATCH",
-   "lane": "merger",
-   "one_line": "The $34.5B Cox combination cleared its last regulatory hurdle (California) and must close before the HSR clearance lapses 15 Sep 2026 — real and hard-dated, but this is late-arc, 15 months known, and CHTR is the acquirer, so the deal itself is not the mispricing."
+   "lane": "deleveraging",
+   "one_line": "Phased monetization of the remaining 14 converted Sprint data centers after the first 10 fetched $225M cash / $130.7M gain on 06-29, plus 2027 unsecured notes refi guided for Q3 2026 - each tranche relieves a 6.23x net-lev overhang, but the milestones are programmatic rather than hard-dated."
+  },
+  {
+   "symbol": "CGEM",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "one_line": "Zipalertinib PDUFA 27-Feb-2027 with Ph3 REZILIENT3 already positive — real, dated, months out, but approval is near-consensus so the asymmetry is thin and CGEM only holds a US economics share."
+  },
+  {
+   "symbol": "CGON",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "one_line": "Rolling BLA for cretostimogene completes 4Q26 — dated and forward, but a submission is a soft milestone and the stock already ran hard on BOND-003."
+  },
+  {
+   "symbol": "CLDX",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary",
+   "one_line": "EMBARQ-CSU1/2 Phase 3 topline for barzolvolimab is hard-dated to Q4 2026 (Sept/Oct), enrollment completed six months early — a genuine dated binary, but it is a crowded, heavily covered late-arc event with the stock near its 52wk high, so asymmetry is thin."
   }
  ],
  "verified": [
   {
-   "symbol": "CADL",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "binary_regulatory",
-   "catalyst": "Candel plans a Q4 2026 BLA submission for CAN-2409 (aglatimagene besadenovec) in intermediate- to high-risk localized prostate cancer, targeting a 2027 US launch into a ~65,000 patient/yr eligible population.",
-   "dated_milestone": "BLA submission guided Q4 2026 (Q2 PR, 2026-08-13); nearest hard date ASTRO poster 2026-09-29 (extended Ph3 data); FDA 60-day filing/acceptance decision ~Q1 2027; approval decision 2027-28",
-   "instrument": "Common equity (CADL, NASDAQ, $12.16). No structural edge in the flagged event; a 2027-28 approval binary with an intervening financing argues for small size or long-dated calls rather than common at the 52wk high.",
-   "bloom_gates": "G2 partial only. G1 FAILS - no value-transferring named counterparty; EVERSANA and IDEA Pharma are launch-services vendors, and there is no pharma partner or licensing deal. G2 partial - the Q4-2026 BLA submission is a company self-guidance on an SPA-run Ph3, not a binding third-party commitment; Fast Track is confirmed only for the AURORA NSCLC trial, not the prostate filing (the triage's RMAT claim went unverified in reachable sources). G3 FAILS - the ~65k US eligible-patient TAM, the Ph3 DFS result and the 2027 launch target are all fully public (Ph3 topline Dec-2024, Lancet Oncology 2026-06-02) and sell-side covered; no currently-unpriced specific figure.",
-   "edge": "L - RESIDUAL CAPTURE: run-up +79% from the $6.80 200dma and +180% from the $4.35 52wk low into today's $12.16, one cent under the $12.48 52wk high (50dma $9.67), i.e. the de-risking leg is largely harvested. Remaining to a favorable-resolution ~$25-40/sh approval case is nominally +105% to +230%, but that resolves at PDUFA in 2027-28, not at the flagged filing; the filing itself has ~0% remaining delta if on time (an on-schedule submission is fully expected) and is asymmetric to the downside if it slips. Reference R:R ~0.95x against a $6 CRL/slip floor.",
-   "primary_source": "Candel Therapeutics Q2 2026 results PR, GlobeNewswire 2026-08-13 (BLA submission planned Q4 2026; $201.6M cash funding operations into Q1 2028); Lancet Oncology publication PR 2026-06-02; AURORA Ph3 initiation PR 2026-06-30 (Fast Track, NSCLC); FMP quote and Q2-2026 balance sheet 2026-08-18.",
+   "symbol": "BWMN",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "merger-arb",
+   "catalyst": "Definitive all-cash merger agreement (8/10/26) for Bernhard Capital Partners affiliates (Prive Parent / Prive Merger Sub) to acquire Bowman Consulting at $43.00/share, ~$1.0B EV, with a 35-day go-shop and a Q4-26/Q1-27 expected close.",
+   "dated_milestone": "Go-shop expires 5:00pm ET 2026-09-13 (next hard date); then DEFM14A/special-meeting vote and HSR clearance, close guided Q4 CY2026-Q1 CY2027.",
+   "instrument": "common equity (merger-arb long)",
+   "bloom_gates": "G1 PASS (named counterparty: Bernhard Capital Partners, signed merger agreement); G2 PASS (concrete contractual commitment: $43.00 cash/share, board-approved, definitive); G3 FAIL (no specific currently-unpriced figure - the $43.00 is contractual and ~96% embedded in the $42.43 tape).",
+   "edge": "L - RESIDUAL CAPTURE: unaffected close 8/7/26 was ~$27.22 (implied by the disclosed 58% premium to $43.00); today $42.43 = run-up of +55.9% already harvested. Remaining capture to the contractual $43.00 is +1.34% gross, ~2.7-5.4% annualized over a 3-6 month close window - below the arb hurdle for a non-levered book. Break risk snaps back toward the ~$27 unaffected level (~-30%), so reward/risk is ~0.04:1. The only unpriced optionality is a go-shop topping bid by 9/13, and none has surfaced in the tape or filings.",
+   "primary_source": "Bowman Consulting 8-K / DEFA14A press release, \"Bowman Consulting Group Enters into Definitive Agreement to be Acquired by Bernhard Capital Partners for $43.00 Per Share in Cash\" (SEC EDGAR CIK 0001847590, filed 2026-08-10; go-shop expiry 2026-09-13); price from FMP quote 2026-09-05.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The catalyst is real, dated and technically unfired - Candel reaffirmed on 2026-08-13 that the CAN-2409 prostate BLA goes in during Q4 2026 - but it is a self-guided administrative filing, the weakest kind of regulatory event: an on-time submission delivers almost no delta while a slip is a clean downside surprise. The value-bearing binary (FDA approval) sits in 2027-28, past a runway that only reaches Q1 2028, so the approval case is pre-dilution and the shareholder does not get paid on the flagged milestone. Residual capture is the disqualifier: the actual re-rate ran on the Dec-2024 Ph3 topline and the 2026-06-02 Lancet Oncology publication, leaving the stock at $12.16 versus a $12.48 52wk high and a $6.80 200dma (+79%), with a ~0.95x reference R:R. Bloom gates are thin - no named value-transferring counterparty and no unpriced specific figure - so this caps at 4 and stays WATCH; the honest re-look is on an FDA filing-acceptance/priority-review decision in ~Q1 2027 or on a pullback toward the $8-9 50dma zone. Verification gap: the triage's RMAT designation and HR 0.61 could not be confirmed in the sources reached (web-search budget was exhausted; company sources cite 30% DFS / 39% prostate-cancer-specific DFS improvement and Fast Track only on the NSCLC AURORA trial)."
+   "analysis": "The event is real, dated, contractual and forward - a signed all-cash $43.00 takeout by a named sponsor, unanimously board-approved, with the go-shop running to 9/13/26 and close guided to Q4-26/Q1-27 - so it clears G1 and G2 cleanly and is not \"fired\" in the sense of being closed. But it fails the capture test that matters: the 58% premium re-rated on announcement day, the stock now sits at $42.43 against a $43.00 contractual ceiling, and 55.9 of the 58 premium points are already in the price. Buying here is buying the receipt: +1.34% of remaining spread against a ~30% break-back to the ~$27 unaffected level, with the only genuine upside being a go-shop topping bid that has not appeared with one week left. Late-arc, mostly-harvested, negatively skewed - capped at 4 by the residual-capture rule and marked down to 3 for a reward/risk of roughly 0.04:1. Gap noted: no DEFM14A/special-meeting date or HSR-timing disclosure located in the two searches, so the vote date and any second-request risk remain unverified."
   },
   {
-   "symbol": "CBRL",
-   "score": 2,
-   "tier": "NONE",
-   "lane": "activist_structural",
-   "catalyst": "All three flagged \"structural actions\" have already fired (sale-leaseback closed and Maple Street sold 2026-07-20; Deno CEO effective 2026-08-10), the activist premise is refuted (Biglari Capital cut its CBRL stake 93.9% to 35,859 shares per its Q1 13F), and the only forward item — \"further owned-real-estate monetization\" — has no company commitment behind it.",
-   "dated_milestone": "FY2026 year-end 2026-07-31, Q4/FY results ~late Sept 2026 (first Deno print); annual meeting ~Nov 2026 — but with Biglari at ~0.16% of shares outstanding there is no proxy contest pending. No dated forward commitment on further real-estate sales exists.",
-   "instrument": "common equity (none recommended)",
-   "bloom_gates": "NONE pass on a forward basis. G1: the only named counterparty, Biscuit Belly LLC (Maple Street buyer), is a CLOSED transaction. G2: the 2026-07-20 8-K/PR contains no commitment to further real-estate monetization — that leg is analyst inference, not company language. G3: the $77m proceeds, the Maple Street $37-39m non-cash / $6-8m cash charges, and the raised FY26 guidance (revenue at/above the high end of $3.27-3.30B, adj EBITDA above $120-125m) were all published 2026-07-20 and are fully priced.",
-   "edge": "L. RESIDUAL CAPTURE: run-up = +137% from the 52wk low of $24.85, +68% vs the 200d avg of $35.14, and roughly +16-20% from the ~$49-51 pre-announcement base (50d avg $50.80) to today's $59.04 — four straight up months, +110% YTD as of 2026-07-28. Remaining to a provenance-checked favorable value = zero or negative: at $59.04 the equity is $1.32B, net debt $1.07B (incl. $608m capital-lease obligations), so EV ~$2.39B on FY26 adj EBITDA of ~$125m = ~19x — and that EBITDA is BEFORE the incremental rent the 26-store sale-leaseback adds. The re-rate is the trade, and it is behind us.",
-   "primary_source": "Cracker Barrel 8-K and \"CRACKER BARREL ANNOUNCES STRATEGIC ACTIONS\" PR, 2026-07-20 (sale-leaseback of 26 stores, ~$77m, proceeds to debt reduction; Maple Street sold to Biscuit Belly; FY26 guidance raise) + 8-K 2026-07-27 (CEO succession, Deno effective 2026-08-10) + CBRL Q3 FY26 10-Q filed 2026-06-09 for the capital structure + Biglari Capital Q1 2026 13F (stake cut 93.9% to 35,859 shares, reported 2026-07-28) + FMP quote 2026-08-18 ($59.04, 52wk 24.85-63.15, 200d avg 35.14).",
+   "symbol": "CAPR",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "binary-regulatory",
+   "catalyst": "FDA PDUFA target action date of 22 Nov 2026 on Capricor's deramiocel BLA in Duchenne muscular dystrophy, extended three months on 24 Aug 2026 after the agency took as a major amendment a refiled, narrowed upper-limb-function indication plus 24-month HOPE-3 open-label extension data.",
+   "dated_milestone": "PDUFA target action date 22 Nov 2026 (extended from 22 Aug 2026 by FDA major-amendment classification announced 24 Aug 2026)",
+   "instrument": "common equity (NASDAQ: CAPR); the binary skew argues for defined-risk Dec-2026 calls over stock if expressed at all",
+   "bloom_gates": "G1 PASS (named counterparty = FDA CBER, with a statutory action date on a specific BLA). G2 PASS (concrete commitment: FDA formally accepted the major amendment and reset the PDUFA goal date to 22 Nov 2026). G3 FAIL - there is no specific currently-unpriced figure: the stock has already re-rated +123% off the post-AdComm base on exactly this news, and $9.40 vs a ~$4.10/sh net-cash floor and a ~$20 approval case implies the market is already carrying ~33% approval odds.",
+   "edge": "L. Run-up from the pre-catalyst base: $4.21 close on 13 Aug 2026 (the clearing price after the 29 Jul AdComm voted 3-9 against) to $9.40 on 4 Sep = +123% already harvested, essentially all of it in the 14 Aug (66.3M shares) through 27 Aug window as the refiled indication and PDUFA extension became public. Remaining from $9.40 to the favorable-resolution value (~$20, the 24 Jul 2026 pre-briefing-document price, haircut for a narrower upper-limb-only label) = ~+113%, against a ~-51% move to the $4.60 cash-plus-residual floor. Event is 100% forward but roughly half-harvested, and the residual R:R of ~2.2:1 is close to fairly priced against a post-negative-AdComm approval probability that historically sits well under 50%.",
+   "primary_source": "Capricor press release via GlobeNewswire, \"Capricor Therapeutics Announces Extension of PDUFA Target Action Date as FDA Continues Review of Deramiocel BLA,\" 24 Aug 2026 (PDUFA moved to 22 Nov 2026, major amendment, refined upper-limb indication); AdComm 3-9 vote against, 29 Jul 2026 (AJMC / BioSpace / NeurologyLive coverage); Capricor Q2 2026 results press release, 13 Aug 2026 ($237.9M cash/equivalents/marketable securities at 30 Jun 2026, 58.1M shares, no debt or preferred, $40.7M quarterly net loss, 12-month runway); FMP EOD price series 20 Jul - 4 Sep 2026 for the run-up measurement.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The triage narrative has a factual break at its core: it credits Biglari's proxy pressure for hardening into structural action, but Biglari Capital reduced its CBRL position by 93.9% in Q1 2026 — selling 549,141 shares down to 35,859, about 0.16% of the ~22.35m shares out — so the activist is essentially gone and the ~Nov annual meeting carries no contest. The three concrete events cited are all in the past: the 26-store, $77m sale-leaseback closed and Maple Street was sold to Biscuit Belly on 2026-07-20, and David Deno replaced Julie Masino effective 2026-08-10; the company's own release makes no forward statement about additional owned-real-estate sales, so the remaining leg is inference rather than a dated commitment and clears none of G1/G2/G3 prospectively. On the numbers the setup is worse than merely late — the equity re-rated +137% off the 52wk low to ~19x EV/EBITDA on raised-but-modest FY26 adj EBITDA of ~$125m, with $1.07B of net debt including $608m of lease obligations, and every incremental sale-leaseback swaps owned property for rent that shrinks that same EBITDA base. Real event, real filings, but fully fired and fully harvested; the only unverified gap is whether a fresh Biglari 13D/A or a Q4 call comment reopens the real-estate leg, which I could not check because the session's WebSearch budget was exhausted before this ticker."
+   "analysis": "The dated forward event is real and verified - FDA reset the deramiocel PDUFA to 22 Nov 2026 on 24 Aug 2026 after accepting a major amendment that narrows the sought indication to upper-limb function, the HOPE-3 endpoint that actually hit (PUL 2.0, p=0.029, Lancet July 2026) - and the FDA choosing to extend rather than simply issue a CRL on the 22 Aug date is a genuine, if thin, positive tell. But the triage flag omits the decisive fact and mis-frames the price: the Cell, Tissue and Gene Therapies Advisory Committee voted 3-9 AGAINST effectiveness on 29 July 2026 (missing-data handling and a disputed SAP v3.0 on the LVEF endpoint), which is why the stock is below the 200dma - the drawdown from $19.70 to $3.85 was a correct repricing of a failed panel, not an unearned sentiment reset, and FDA follows negative AdComm recommendations the large majority of the time. Most damaging to the thesis, the event is already substantially priced: CAPR has run +123% from its $4.21 post-AdComm base on 13 Aug to $9.40 today, entirely on this refile-and-extension news, so at ~33% market-implied approval odds against a $4.09/sh net-cash floor (clean capital structure, no debt, no preferred, so no waterfall issue) the residual is a near-fairly-priced coin flip, not an edge. WATCH not ACTIVE; the only re-entry that would earn a seat is a pullback toward the $5-6 area before 22 Nov, or a concrete signal (labeling-discussion or late-cycle-meeting disclosure) that the FDA is working the narrowed label rather than papering a CRL."
   },
   {
    "symbol": "CCO",
-   "score": 4,
+   "score": 3,
    "tier": "WATCH",
-   "lane": "merger-arb",
-   "catalyst": "CFIUS/regulatory clearance of the Mubadala Capital consortium take-private of Clear Channel Outdoor at $2.43/share cash (merger agreement 2026-02-09; stockholders approved 2026-05-12), with closing guided by end of Q3 2026.",
-   "dated_milestone": "Company reiterated 2026-08-05 that closing is expected by end of Q3 2026 (next hard date: 2026-09-30); only CFIUS/other regulatory approvals plus customary conditions remain.",
-   "instrument": "common equity (NYSE: CCO); listed options on a $2.32 stock into a ~6-week deal close are not usable",
-   "bloom_gates": "G1 (named counterparty: Mubadala Capital consortium) and G2 (concrete commitment: signed definitive merger agreement, $2.43 cash, shareholder vote already passed). G3 FAILS - the $2.43 is contractual and ~95% priced; there is no specific currently-unpriced figure.",
-   "edge": "L - RESIDUAL CAPTURE: pre-catalyst base $2.19 (close 2026-02-09, day before the deal pop on 64.4M shares) / ~$2.10 late-Jan base; today $2.32 = run-up +5.9% (+10.5% off the January base). Remaining to the contractual $2.43 = +4.74% gross, ~6 weeks, ~40% annualized. So roughly 55-65% of a thin ~11-16% total premium is already harvested and the residual is a pure carry clip, not a re-rating.",
-   "primary_source": "Clear Channel Outdoor Holdings Q2 2026 results press release (PRNewswire, 2026-08-05) and the 10-Q filed 2026-08-05 (SEC CIK 0001334978); merger-vote 8-K filed 2026-05-12; price/volume history from FMP EOD (2026-01-20 to 2026-08-18) and live quote $2.32 (2026-08-18).",
+   "lane": "merger_arb",
+   "catalyst": "CFIUS clearance and closing of the signed $2.43/share all-cash take-private of Clear Channel Outdoor by Mubadala Capital in partnership with TWG Global ($6.2B EV), the last open condition after the 05-12-2026 holder vote.",
+   "dated_milestone": "Company reaffirmed close \"by the end of the third quarter of 2026\" in its 2026-08-05 Q2 release; next date = 2026-09-30 (guided close) / CFIUS decision, draft notice filed 2026-03-10.",
+   "instrument": "common equity (NYSE: CCO) — deal-spread stub",
+   "bloom_gates": "G1 (named counterparty: Mubadala Capital / TWG Global, definitive merger agreement 2026-02-09) + G2 (concrete commitment: $2.43 cash, holder approval 05-12, HSR expired, conditional redemption notices issued on senior notes contingent on completion). G3 FAILS — there is no unpriced figure; the 2.1% residual IS the market-quoted spread.",
+   "edge": "L — RESIDUAL CAPTURE: run-up from the pre-catalyst base of ~$1.42 (unaffected, back-solved from the stated 71% premium to $2.43) to $2.38 today = +67.6% already harvested; remaining capture from $2.38 to the contractual $2.43 = +2.10%. ~97% of the event value is gone. Asymmetry is 2.1% up vs ~-40% to the unaffected level on a CFIUS block, so it needs >95% close probability just to break even — a residual-risk stub, not an entry.",
+   "primary_source": "Clear Channel Outdoor Q2 2026 results, Form 8-K Ex-99.1, SEC EDGAR, 2026-08-05 (merger status + end-Q3 close reaffirmation); corroborated by the DEFM14A merger proxy (CFIUS condition, 2026-03-10 draft notice) and the 2026-02-09 company press release ($2.43 cash, 71% premium, $6.2B EV); price $2.38 via FMP quote 2026-09-06.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The event is real, contractual and fully forward: definitive agreement with the Mubadala Capital consortium at $2.43/share cash signed 2026-02-09, stockholder approval obtained 2026-05-12, and the 2026-08-05 Q2 release states only customary conditions plus regulatory approvals \"such as review by the Committee on Foreign Investment in the United States\" remain, with closing expected by end of Q3 2026 - so no numerator-provenance work is required (a cash deal price is contractual, not derived). The problem is capture and asymmetry: only +4.74% is left to the deal price against a break downside to roughly $1.90-2.19 (undisturbed), i.e. reference RR ~0.26, and the spread has visibly WIDENED from ~1% (50-day average price $2.41, and $2.4150 as recently as 2026-07-23) to 4.7% today, which is the market repricing close probability down to ~79-89% implied rather than an inefficiency being handed over. GAP: web-search budget was exhausted before I could confirm what caused the early-August spread widening or whether CFIUS has formally moved to a second-stage investigation - a UAE sovereign buying US billboard inventory near federal sites and airport advertising concessions is precisely the fact pattern that draws a 45-day investigation and mitigation conditions, so the widening should be treated as informative, not noise. Real, dated and unfired, but mostly harvested with poor RR: WATCH, not a seat."
+   "analysis": "Triage is factually confirmed on every point: $2.43 cash vs $2.38 tape (2.10% gross), stockholders approved 2026-05-12, CFIUS is the sole named remaining gate (draft notice filed 2026-03-10; closing conditioned on CFIUS approval \"without a burdensome condition\"), and the 2026-08-05 Q2 release reaffirms an end-Q3 close while disclosing conditional redemption notices on the senior notes — real evidence the buyer is staging financing for an imminent close. Numerator provenance is EXEMPT here: $2.43 is a contractual cash price in a signed merger agreement, not a derived SoP or an inherited analyst target, so no capital-structure re-derivation is required. The binding constraint is not deal quality but harvest: the event is genuinely forward (CFIUS undecided) yet ~97% priced, which caps the score at 4 under the residual-capture rule, and I take it to 3 because the 18:1 loss/gain asymmetry against a sovereign-wealth-fund review of US airport and billboard infrastructure is not an equity-book position. Gap: no public CFIUS status update since the 2026-03-10 draft notice, and the merger-agreement outside date is not in the sources I pulled — a spread blowout on a CFIUS extension, not today's 2.1%, would be the actual entry."
   },
   {
-   "symbol": "CHTR",
-   "score": 3,
-   "tier": "NONE",
-   "lane": "merger",
-   "catalyst": "The $34.5B Cox Communications combination has cleared its final state hurdle and must close before HSR clearance lapses 15 Sep 2026 — but Charter is the ACQUIRER, so closing pays the common nothing contractual and instead adds ~$12B assumed Cox debt plus ~$10B of Cox Enterprises partnership/convertible-preferred units ranking ahead of the common.",
-   "dated_milestone": "Cox combination must close on or before 2026-09-15 (HSR clearance expiry); next hard date 2026-09-15, then Q3 2026 results late Oct 2026 (first quarter with Cox consolidated).",
-   "instrument": "none recommended (common equity CHTR only if expressed; no arb leg exists for the acquirer)",
-   "bloom_gates": "G1 PASS (named counterparty Cox Enterprises, hard-dated 15 Sep 2026 HSR-lapse deadline). G2 PASS-weak (definitive agreement, but the commitment runs to Cox, not to CHTR common). G3 FAIL — no specific currently-unpriced figure accrues to CHTR common at close; the only quantified deal effects (dilution + leverage) are adverse.",
-   "edge": "L — RESIDUAL CAPTURE: (a) run-up from the pre-catalyst base is NEGATIVE, not harvested-positive: the deal became publicly knowable 16 May 2025 with CHTR near $390-400; today $144.10, i.e. roughly -63% over the 15 months the event has been fully public, and -6.6% on 2026-08-18 alone on broadband, not deal, news. (b) Remaining % to a provenance-checked favorable-resolution value for the COMMON is ~0%: closing transfers no cash to CHTR holders, so the event cannot re-rate the stub. Any upside from here (~+21% to a $175 fundamental mark) is a broadband/leverage re-rating, not a catalyst payoff — the wrong denominator entirely.",
-   "primary_source": "Charter Communications \"Charter Announces Second Quarter 2026 Results\", PRNewswire, 2026-07-24 (total debt principal $93.8B at 6/30/26; 120.1M basic shares; 1H26 FCF $2.341B; Cox transaction still pending, proxy filed 2025-07-02); FMP quote 2026-08-18 ($144.10, -6.59%, 52w $111.55-$285.82, 200d avg $187.36); MarketBeat via Defense World 2026-07-26 (consensus \"Reduce\", $249.12 target — cited as the advocacy number, explicitly NOT used as the numerator).",
+   "symbol": "CCOI",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "deleveraging",
+   "catalyst": "Cogent monetizes the remaining 14 converted Sprint data centers (~55MW) and refinances the $750M 2027 unsecured notes with a smaller, secured issue, each tranche cutting the 6.23x net-leverage overhang on a $503M equity stub.",
+   "dated_milestone": "2027 unsecured notes refi guided to close in Q3 2026 (i.e. by 2026-09-30, ~24 days out; not yet launched or priced as of 2026-09-06); next tranche update at Q3 earnings, early Nov 2026. The remaining-14 data-center leg has NO date — management said \"over the next several quarters.\"",
+   "instrument": "Common equity (NASDAQ: CCOI), starter/half size only — book equity is negative (-$34.1M at 6/30/26), so this is a levered stub; the 2032 secured / 2027 unsecured notes are the better risk-adjusted claim on the same deleveraging.",
+   "bloom_gates": "G3 PASS (weak): the $225M cash / $130.7M GAAP gain / ~$168M after-tax proceeds and the $750M 2027 maturity are hard, quantified figures that a $10.05 stub at the 52-week low does not price. G2 PARTIAL: the refi is a bounded, management-committed Q3 2026 close backed by a concrete enabling step (verbal consent from a majority of 2032 secured holders to amend the indenture to allow pari-passu/junior secured debt) — but nothing is signed. G1 FAIL for the forward leg: I Squared Capital is the counterparty on the tranche that ALREADY closed; the remaining 14 have unnamed LOI parties on four facilities at prices management publicly called unacceptable and is renegotiating, and ten with no firm offer at all.",
+   "edge": "M — genuinely unharvested but poor geometry. RESIDUAL CAPTURE: (a) run-up from the pre-catalyst base is NEGATIVE ~-45%: the definitive agreement was announced 2026-05-26 and closed 06-29, yet CCOI trades $10.05 vs a $18.24 200-dma, $11.56 50-dma and $45.69 52-week high (the ~98% dividend cut de-rated the yield holder base straight through the deleveraging news) — 0% of this event is harvested. (b) remaining to provenance-checked favorable resolution: +59% to a $16 mechanical fair value and ~+120% to a $22 clean-execution case. But the downside floor is ~$4 (equity value goes to roughly zero at 8x EV/EBITDA), so reference R:R is only ~0.98 — the capture is available precisely because the failure branch is severe, not because the market missed the filing.",
+   "primary_source": "Cogent 8-K/press release 2026-06-29 (close of 10-facility sale to an I Squared Capital-sponsored entity for $225M cash, $130.7M GAAP gain, ~$168.0M after-tax proceeds; sec.gov Archives/edgar/data/1158324, tm2619124d1_ex99-1.htm) + Q2 2026 earnings call and 10-Q filed 2026-08-06 (net leverage 6.23x from 6.79x; Q2 adj EBITDA $71.1M, 30.2% margin; cash+restricted $369.7M; 14 facilities ~55MW remain, LOIs on 4 rejected on price; 2027 notes refi \"expected to close in the third quarter of 2026,\" likely secured, sized below $750M using data-center cash; verbal majority consent to amend the 2032 secured indenture; ~98% dividend reduction) + FMP quote 2026-09-05 close $10.05 and balance sheet 6/30/26 (total debt $2,635.9M, net debt $2,452.2M, preferred $0, total equity -$34.1M).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The milestone is real, hard-dated and forward (deal not closed as of the Q2 release; HSR clearance lapses 2026-09-15), but it is the wrong side of the trade: Charter is the acquirer, so closing delivers no contractual consideration to CHTR common and instead adds ~$12B of assumed Cox debt and ~$10B of Cox Enterprises units senior to or alongside the public equity on top of an already $93.8B debt principal against a ~$17B equity stub. Re-deriving from the capital structure rather than the $249 consensus target, there is no unpriced figure that resolves favorably for the common at close — and the price action confirms it: the event has been public since 16 May 2025 during which CHTR fell ~63% to $144.10 (-6.6% on 2026-08-18, 12-year lows, 200d avg $187), every point of it driven by broadband subscriber erosion versus fiber and fixed wireless, not by deal risk. What is left is a cheap, highly levered secular-decline equity with ~27% FCF-to-equity yield; that is a value/leverage thesis whose resolution has no date, which is exactly what this lane must exclude. GAP: web-search budget was exhausted, so the California CPUC approval and the 15 Sep HSR deadline could not be independently re-confirmed this session — but the conclusion does not turn on them, since deal certainty is not the binding constraint on the common."
+   "analysis": "The flagged item is half-fired and half-undated: the $225M/$130.7M leg closed 2026-06-29 with I Squared Capital and is spent, while the forward leg — the remaining 14 facilities — has no signed buyer, no date, and management on the Q2 call (2026-08-06) said it rejected the LOI prices on four of them as unacceptable and has no firm offer on the other ten, which is exactly the \"programmatic, not hard-dated\" pattern the triage flagged. The one genuinely dated forward milestone is the $750M 2027 unsecured refi guided to close in Q3 2026 (unlaunched as of 2026-09-06), enabled by a majority-holder verbal consent to amend the 2032 indenture — but a refi is a survival event, not a value event: clean execution is roughly neutral-to-mildly-positive for the common while failure is existential, so the near-dated leg is asymmetric the wrong way. Numerator provenance clears cleanly (zero preferred, no external manager, common is first behind funded debt) and the residual is genuinely unharvested (-45% run-up, not +55%), so this is not a VISN/SLS receipt-buying case and not a FIP waterfall trap; what caps it is that the ~$250M of further monetization is a half-turn of discretionary paydown against $2.45B of net debt and negative book equity, giving a reference R:R under 1. WATCH at 5 — re-rate to ACTIVE on a signed definitive agreement with a named buyer for a second tranche at pricing at or above the ~$22.5M/facility first-tranche mark, or on the refi actually pricing at a coupon that leaves cash interest below ~50% of EBITDA; cut to NONE if the Q3 refi window closes without a launch."
+  },
+  {
+   "symbol": "CGEM",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "catalyst": "FDA action date of 27-Feb-2027 on the Taiho/Cullinan zipalertinib NDA in 2L EGFR ex20ins NSCLC, with Taiho's pivotal 1L REZILIENT3 topline guided \"by the end of 2026\" as the nearer and larger binary.",
+   "dated_milestone": "REZILIENT3 (1L) topline by end-2026 (Taiho guide, enrollment completed Feb-2026); PDUFA action date 27-Feb-2027",
+   "instrument": "CGEM common (Nasdaq)",
+   "bloom_gates": "G1 PASS - named counterparty Taiho Pharmaceutical/Taiho Oncology, contractual 50/50 US profit share plus $30M on 2L US approval and up to $100M on 1L. G2 PASS - concrete commitment: FDA-accepted NDA with a statutory PDUFA target action date of 27-Feb-2027 (accepted 27-Apr-2026). G3 FAIL - no specific currently-unpriced figure: the approval-linked contractual cash is $30M, 2.2% of the $1.36B market cap, and approval is near-consensus off positive REZILIENT1 Ph2b.",
+   "edge": "L - approval is near-consensus and the event is demonstrably already in the price: the NDA-acceptance print on 27-Apr-2026 moved the stock +0.2% ($13.22 -> $13.25). Numerator check (contractual, so exempt from waterfall re-derivation but re-derived anyway): CGEM's mechanical take on the flagged event is a $30M milestone = 2.2% of cap, plus 50% of US profit on a small 2L ex20ins franchise net of 50% of US commercialization spend - ex-US economics are Taiho's entirely. RESIDUAL CAPTURE: run-up from the pre-catalyst base (24-Apr-2026 close $13.22, day before NDA acceptance) to $22.09 today = +67%; stock is at 95% of its 52-wk high ($23.19), +51% over the 200d ($14.62) and +83% off the 10-Jun low ($12.05) - though that June-onward leg is autoimmune/CLN-978-driven, not zipalertinib. Remaining capture to a provenance-checked favorable-resolution value is roughly +10-15% (to ~$25), i.e. RR ~0.33 against the $13.22 base. Mostly-harvested/thin -> capped at 4.",
+   "primary_source": "Taiho Oncology / Taiho Pharmaceutical / Cullinan Therapeutics press release, \"FDA Accepts New Drug Application for Zipalertinib...\", 27-Apr-2026 (businesswire.com/news/home/20260427550531); corroborated by Cullinan Q1-2026 8-K EX-99.1, 07-May-2026 (sec.gov/Archives/edgar/data/1789972/000119312526210290/cgem-ex99_1.htm) for the 50/50 US profit share, $30M 2L / up to $100M 1L approval milestones, $393.3M cash at 31-Mar-2026 and runway into 2029; price data FMP quote/EOD as of 04-Sep-2026 close $22.09.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The flagged catalyst is real, dated, forward and non-macro, but the triage description has a factual error worth correcting: the NDA is supported by the Phase 2b portion of REZILIENT1, not REZILIENT3 - REZILIENT3 is the separate pivotal 1L study whose topline Taiho guides to end-2026. Triage's core reservation is confirmed and is the binding one: approval is near-consensus, the acceptance itself was a zero-move event, and CGEM's contractual take on approval is a $30M milestone (2.2% of a $1.36B cap) plus a 50% share of US profit on a narrow 2L ex20ins population, with nothing ex-US. G3 fails - I cannot name a specific unpriced figure - and residual capture is thin at $22.09 (95% of the 52-wk high, +67% since the event became publicly knowable), so this scores as the equity, not the event. The genuinely more interesting variant is REZILIENT3 1L topline by year-end 2026 (multi-fold population expansion, up to $100M in 1L milestones), but it is Taiho-controlled with a soft \"by end of 2026\" guide rather than a hard date, so it stays WATCH rather than ACTIVE; a hard REZILIENT3 readout date would justify a re-look."
+  },
+  {
+   "symbol": "CGON",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "dated_binary",
+   "catalyst": "CG Oncology expects to complete its rolling BLA submission for cretostimogene monotherapy in high-risk BCG-unresponsive NMIBC with CIS in 4Q26 — a self-controlled filing milestone, not an FDA decision.",
+   "dated_milestone": "Rolling BLA completion guided for 4Q26 (reaffirmed in the 2026-08-06 Q2 release); an FDA decision would only follow ~6-8 months later, i.e. mid-to-late 2027 — outside this milestone's window.",
+   "instrument": "common equity (NASDAQ: CGON)",
+   "bloom_gates": "NONE PASS. G1 fails — the FDA is a regulator, not a named commercial counterparty; there is no partner, licensee or acquirer attached to the event. G2 fails — the company's own guidance to finish a submission it controls is a plan, not a third-party concrete commitment, and it carries no consideration. G3 fails — no specific currently-unpriced figure exists: the only number in circulation is an inherited sell-side $100 target, and the EV already capitalizes approval (see analysis). Not a macro bet, but that is the only screen it clears.",
+   "edge": "L. RESIDUAL CAPTURE: run-up from the pre-catalyst base of ~$41.5 (2026-11/12-2025, i.e. after the Q3-2025 release had already disclosed the rolling-BLA initiation and the 4Q26 completion plan) to $74.67 today = +80%; even from the post-JPM $54 re-rate of 2026-01-09 the run is +38%, and the stock sits at 92% of its 52-week high ($80.97) having near-doubled off the $32.08 low. REMAINING to the favorable-resolution value: only +34% to the inherited $100 sell-side target, and that target prices approval AND launch, not a submission — the submission itself releases no value and mechanically resolves nothing before mid-2027. This is the VISN pattern: 100% forward, ~80% harvested. Buying the receipt, not the gain.",
+   "primary_source": "CG Oncology Q2 2026 results, 2026-08-06 (ir.cgoncology.com / GlobeNewswire): BLA completion for HR BCG-unresponsive NMIBC expected 4Q26, ~$1.0B cash into 2029, Q2 net loss $79.1M. Corroborated by the Q3-2025 release (rolling BLA initiated) and FDA approval of J&J Inlexzo/TAR-200 on 2025-09-09 (OncLive / FiercePharma). Price $74.67 as of 2026-09-04 close (FMP quote).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The milestone is genuine, dated (4Q26) and unfired, but it is the weakest species of event: a filing the company controls, guided since the Q3-2025 update, that starts a review clock rather than resolving anything — the actual binary (FDA decision) lands mid-to-late 2027. It clears none of the three Bloom gates: no named counterparty, no third-party commitment, and no unpriced figure, since at ~$5.6B EV ex-$1.0B cash the stock already prices approval and launch of an asset whose label J&J's Inlexzo (approved 2025-09-09, 82% CR vs creto's 46%/12mo) reached first. Residual capture is the disqualifier: +80% off the $41.5 pre-guidance base, at 92% of the 52-week high, with only ~34% left to an inherited target that itself assumes a 2027 approval — the run-up has been harvested by the BOND-003 durability and Lancet Oncology publication flow, exactly as triage suspected. Gap to note: I did not pull the 10-Q directly (cash and share count taken from the 2026-08-06 Q2 release and the live quote), but with no preferred or debt in the stack the waterfall is clean and the conclusion is insensitive to that detail. Score 3 / NONE — a good company on a fully-priced event, not a catalyst trade."
+  },
+  {
+   "symbol": "CLDX",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary",
+   "catalyst": "Topline results from the twin global Phase 3 EMBARQ-CSU1/CSU2 trials of barzolvolimab in antihistamine-refractory chronic spontaneous urticaria (~1,939 patients, 43 countries, >500 sites), company-guided to September/October 2026 after enrollment closed six months early.",
+   "dated_milestone": "EMBARQ-CSU1/CSU2 Phase 3 topline: guided Sept/Oct 2026 (Celldex Q2 release, 2026-08-06) — the window is ALREADY OPEN as of 2026-09-06, so the readout can land any day; BLA submission guided 2027.",
+   "instrument": "Common equity, but only at defined-risk/small size — this is an unhedgeable single-day binary with a ~-65% failure gap; the rational expression is a defined-risk options structure, not a full-weight common seat.",
+   "bloom_gates": "G2 only — concrete, company-issued dated commitment (topline Sept/Oct 2026, BLA 2027, enrollment closed 2026-02-25). G1 fails: no named counterparty, this is a self-run trial not a contracted transaction. G3 FAILS: there is no specific currently-unpriced figure — Barclays already carries an 85% probability-of-success and consensus PT $62.63 (high $100, low $40) is explicitly success-weighted, so the favorable number is the published number.",
+   "edge": "L — RESIDUAL CAPTURE: run-up from the pre-catalyst base is +59.7% ($24.84 close 2026-02-24, the day before the enrollment-complete PR that hard-dated the readout, to $39.68 on 2026-09-06; +79.5% off the $22.10 52wk low, +25.7% above the $31.56 200d average, and only 12% below the $45.14 52wk high). Remaining to the provenance-checked favorable value is +52.5% to consensus median $60.50 (+57.8% to mean $62.63). So roughly half the move is already harvested and, critically, the un-harvested half is not free: against a ~$13 failure floor (cash $9.14/sh plus residual pipeline that shares the same molecule and mechanism), reference R:R is 0.78x — you are paid less on success than you lose on failure, precisely because the Street already prices ~85% PoS. No informational edge exists on a blinded 1,939-patient trial covered by every derm-biotech desk; we would be renting consensus, not front-running it.",
+   "primary_source": "Celldex Q2 2026 results / corporate update, 2026-08-06 (topline \"anticipated in September/October 2026\", $717.6M cash, 78.5M shares, runway through 2028, BLA 2027); Celldex enrollment-completion PR 2026-02-25 (1,939 patients, 43 countries, six months early); FMP quote 2026-09-06 ($39.68, 52wk $22.10-$45.14) and price-target consensus ($62.63 mean / $60.50 median / $40-$100 range); Barclays 85% PoS upgrade and Wells Fargo Underweight commentary via press summaries 2026.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The event is genuinely real, specifically dated, forward (unfired), company-committed and non-macro, so it clears the structural gates — but it fails the part that matters: it is a crowded, fully-anticipated late-arc binary where the market already carries an ~85% probability of success, leaving reference R:R at 0.78x against a ~$13 cash-plus-residual failure floor. Nearly 60% of the move has already been harvested since the 2026-02-25 enrollment-complete PR hard-dated the readout, the stock sits 12% off its 52wk high and 26% above its 200d average, and the only remaining upside is the +52% walk to a sell-side target that is itself already success-weighted — buying that is closer to buying the receipt than the gain. Capital structure is clean (no preferred, no debt, $9.14/sh cash on 78.5M shares) so the equity does capture the outcome, which is why this is a WATCH at 5 rather than a NONE — but with the readout window already open as of today and no differentiated view available on a blinded 1,939-patient trial, there is no edge to underwrite and it should not take an ACTIVE seat."
   }
  ]
 }
