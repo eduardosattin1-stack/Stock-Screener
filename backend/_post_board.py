@@ -70,6 +70,9 @@ LANE_PRIORITY = {
     "supply_timing":   7,
     "index_flow":      8,
     "bio_convergence": 9,
+    "briefing_doc":    9,   # 2026-09-21: FDA adcomm briefing-document release (~2 business days
+                            # before a panel), split out of bio_convergence so the cohort is
+                            # tracked on its own; ranked with PDUFA until it earns ~3-of-5
     "unknown":         9,   # unmapped → treated as lowest-priority, and counted/warned
 }
 
@@ -114,6 +117,9 @@ def canon_lane(raw: str) -> str:
     if re.search(r"activist|cooperation|proxy|sotp|structural|simplif|strategic-review", s): return "activist"
     if re.search(r"capital[-_ ]?return|capital[-_ ]?milestone|forced_capital|buyback|special[-_ ]?div|tender|mandatory tender", s): return "capital_return"
     if re.search(r"supply|shortage|moat|timing|project sanction|\bjv\b|index inclusion", s): return "supply_timing"
+    # briefing-doc release is the only product-specific FDA object that has moved reliably
+    # (REPL/CAPR 2026-07, GRAIL +33.8% 2026-09-21) -- it must win before the generic bio match
+    if re.search(r"briefing[- _]?doc|briefing[- _]?(book|materials?|package)|adcomm briefing|panel briefing", s): return "briefing_doc"
     if re.search(r"pdufa|clinical|biotech|\bbio\b|readout|\bfda\b|\bpma\b|vrbpac|adcomm|binary", s): return "bio_convergence"
     if re.search(r"merger|\barb\b|m&a|\bma\b|take[- ]?private|squeeze|de-?spac|spac|cash event|distribution", s): return "merger_arb"
     return "unknown"
@@ -124,6 +130,8 @@ def canon_lane(raw: str) -> str:
 # ---------------------------------------------------------------------------
 def resolution_driver(lane_c: str, text: str) -> str:
     s = text.lower()
+    if lane_c == "briefing_doc":
+        return "FDA_briefing_doc"
     if lane_c == "bio_convergence":
         if re.search(r"pdufa|approval|crl|adcomm|vrbpac|\bbla\b|label|resubmiss", s) \
            and not re.search(r"topline|efficacy data|readout (met|positive)|interim (look|analysis)", s):
@@ -149,6 +157,7 @@ def resolution_driver(lane_c: str, text: str) -> str:
 # super-cluster rollup for the §3 #5 "hidden common factor" view
 SUPER = {
     "FDA_approval_decision": "FDA/biotech", "FDA_clinical_readout": "FDA/biotech",
+    "FDA_briefing_doc": "FDA/biotech",
     "US_antitrust": "Deal-completion", "US_sector_regulator": "Deal-completion",
     "CFIUS_FDI": "Deal-completion", "Foreign_regulator": "Deal-completion",
     "Deal_close_generic": "Deal-completion", "Shareholder_vote": "Deal-completion",
@@ -192,7 +201,7 @@ RATIO_METHODS = ("sop", "recovery", "capital_return")
 METHOD_FOR_LANE = {
     "forced_seller": "sop", "spinoff": "sop", "activist": "sop",
     "merger_arb": "spread", "capital_return": "capital_return",
-    "bio_convergence": "binary_prob", "distressed": "recovery",
+    "bio_convergence": "binary_prob", "briefing_doc": "binary_prob", "distressed": "recovery",
 }
 
 # 2026-07-10: fetch_live_quotes / _vf / rr_ratio_lane / grade_from_measure / MULT_BAND / _n /
@@ -240,7 +249,7 @@ def process(df: pd.DataFrame, tilt: float, live_prices=None):
 
         # (1) lane-9 coin-flip cap — score VALIDITY fix (a 50/50 fails the §3 lane-9
         #     "mispriced asymmetry, not a coin-flip" qualifier, so it cannot be a 7-8).
-        if lane_c == "bio_convergence" and score > COINFLIP_CAP and _COINFLIP.search(_txt.iloc[df.index.get_loc(i)]):
+        if lane_c in ("bio_convergence", "briefing_doc") and score > COINFLIP_CAP and _COINFLIP.search(_txt.iloc[df.index.get_loc(i)]):
             log(i, "score", score, COINFLIP_CAP, "COINFLIP_NOT_ASYMMETRIC (lane-9 qualifier)")
             score = COINFLIP_CAP
             df.at[i, c["score"]] = score

@@ -66,6 +66,7 @@ export const VOICE: Record<string, Term> = {
   spinoff:         { label: "Spin-off", tip: "Post-spin orphan selling, sum-of-parts unlock, and RemainCo re-rating. The 'actually read the Form 10' edge." },
   distressed:      { label: "Distressed / restructuring", tip: "A dated balance-sheet milestone — refinancing, asset sale, deleveraging trigger, or bankruptcy emergence." },
   index_flow:      { label: "Index flow", tip: "Forced index rebalancing — buys/sells that must happen on a known date." },
+  briefing_doc:    { label: "FDA briefing doc", tip: "The FDA posts its staff review about two business days before an advisory panel — the document, not the vote, is what moves the stock." },
   activist:        { label: "Activist + structural", tip: "An activist hardening a trigger toward a sale, split, or board change." },
   merger_arb:      { label: "Merger-arb", tip: "A deal where the spread reflects real, analyzable risk (antitrust, cross-border, contested vote) — not a clean 1% cash arb that's already priced." },
   capital_return:  { label: "Capital return", tip: "A tender, special dividend, or dated debt paydown." },
