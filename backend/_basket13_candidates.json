@@ -1,11 +1,11 @@
 {
- "generated": "2026-09-08",
+ "generated": "2026-09-30",
  "source": "catalyst_candidates_231.json",
  "source_generated": "2026-09-07",
- "source_age_days": 1,
- "count": 13,
+ "source_age_days": 23,
+ "count": 12,
  "entry_count": 4,
- "staging_count": 9,
+ "staging_count": 8,
  "milestone_window_months": 6,
  "tightened": false,
  "candidates": [
@@ -30,7 +30,7 @@
    "score": 6.0,
    "live_price": 4.87,
    "dated_milestone": "2026-12-31",
-   "days_to_milestone": 114,
+   "days_to_milestone": 92,
    "valuation_asof": "2026-06-08",
    "super_cluster": "FDA/biotech",
    "staging": false
@@ -58,7 +58,7 @@
    "score": 6.0,
    "live_price": 53.58,
    "dated_milestone": "2026-12-31",
-   "days_to_milestone": 114,
+   "days_to_milestone": 92,
    "valuation_asof": "2026-06-08",
    "super_cluster": "Deal-completion",
    "staging": false
@@ -84,7 +84,7 @@
    "score": 6.0,
    "live_price": 2.26,
    "dated_milestone": "2026-12-31",
-   "days_to_milestone": 114,
+   "days_to_milestone": 92,
    "valuation_asof": "2026-06-08",
    "super_cluster": "Deal-completion",
    "staging": false
@@ -110,7 +110,7 @@
    "score": 6.0,
    "live_price": 5.37,
    "dated_milestone": "2026-11-22",
-   "days_to_milestone": 75,
+   "days_to_milestone": 53,
    "valuation_asof": "2026-06-08",
    "super_cluster": "FDA/biotech",
    "staging": false
@@ -139,34 +139,6 @@
    "live_price": 13.84,
    "dated_milestone": null,
    "days_to_milestone": null,
-   "valuation_asof": "2026-06-08",
-   "super_cluster": "FDA/biotech",
-   "staging": true
-  },
-  {
-   "symbol": "RARE",
-   "company_name": "Ultragenyx Pharmaceutical Inc.",
-   "board_priority": 5.04,
-   "tier": "WATCH",
-   "lane_canon": "bio_convergence",
-   "lane_priority": 9,
-   "resolution_driver": "FDA_approval_decision",
-   "edge_grade": "H",
-   "computed_rr": null,
-   "ev_pct": 0.7412,
-   "payoff": 14700000000.0,
-   "win_prob": 0.72,
-   "valuation_method": "binary_prob",
-   "fair_value_target": 30.0,
-   "downside_floor": 18.0,
-   "instrument": "common equity (RARE, NASDAQ)",
-   "edge_flags": [
-    "RE_DOSSIER"
-   ],
-   "score": 6.0,
-   "live_price": 15.3,
-   "dated_milestone": "2026-09-19",
-   "days_to_milestone": 11,
    "valuation_asof": "2026-06-08",
    "super_cluster": "FDA/biotech",
    "staging": true
@@ -220,7 +192,7 @@
    "score": 5.0,
    "live_price": 25.4,
    "dated_milestone": "2026-12-31",
-   "days_to_milestone": 114,
+   "days_to_milestone": 92,
    "valuation_asof": "2026-06-08",
    "super_cluster": "FDA/biotech",
    "staging": true
