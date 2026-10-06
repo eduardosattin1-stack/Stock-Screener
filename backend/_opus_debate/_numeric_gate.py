@@ -130,7 +130,7 @@ def check_record(rec, live_quotes=None, scan_by=None):
 
     # G1b — currency implied by the exchange suffix vs what the record states
     implied = _nc.implied_currency(sym)
-    if ccy and ccy != implied:
+    if ccy and _nc.normalize_currency(ccy) != _nc.normalize_currency(implied):
         return {"gate": "REJECT", "reasons": reasons + [f"G1B_CURRENCY_MISMATCH(stated={ccy},implied={implied})"],
                 "computed": computed}
     if not ccy and implied != "USD":

@@ -95,16 +95,12 @@ def resolve_transcript(symbol: str, before_date: str = None) -> Optional[dict]:
     """Resolve latest earnings call transcript for symbol.
     
     Returns dict with keys: date, content, filename, source
-    First checks local cache, then fetches from FMP API.
+    Listing-driven like resolve_transcripts (the old cache-first path returned whatever stale
+    call was cached and never asked FMP for a newer one).
     If before_date is given, only transcripts dated <= before_date qualify.
     """
-    # 1. Check local cache
-    cached = _resolve_from_cache(symbol, before_date)
-    if cached:
-        return cached
-    
-    # 2. Fetch from FMP
-    return _fetch_from_fmp(symbol, before_date)
+    got = resolve_transcripts(symbol, before_date, max_transcripts=1)["all_transcripts"]
+    return got[0] if got else None
 
 
 def resolve_transcripts(symbol: str, before_date: str = None,
@@ -117,74 +113,43 @@ def resolve_transcripts(symbol: str, before_date: str = None,
         all_transcripts   (list) : list of transcript dicts (date, content,
                                    filename, source), sorted descending by date
 
-    Strategy:
-        1. Read ALL matching files from local cache.
-        2. Determine which (year, quarter) pairs we already have.
-        3. Fetch missing quarters from FMP until we reach *max_transcripts*.
+    Strategy (2026-10-06 - listing-driven; the old version stopped asking FMP once 8 calls were
+    cached and only probed fiscal years now..now-2, so 43 universe names sat on May transcripts
+    while FMP held their August calls, and FY2027 reporters (8725.T, NKE, JD.L...) were missed):
+        1. Ask FMP which calls exist (earning-call-transcript-dates: fiscalYear/quarter/date).
+        2. Take the newest *max_transcripts* (respecting before_date); serve each from the cache
+           when a VALID file exists, else fetch it - overwriting an empty placeholder.
+        3. Listing unavailable (no key / HTTP error) -> fail open to the cache as before.
         4. Sort descending by date, trim to *max_transcripts*.
     """
     # ── 1. Gather everything already in the local cache ─────────────────
     cached = _resolve_all_from_cache(symbol, before_date)
-    cached_keys: set[str] = set()
-    for t in cached:
-        # Derive a "YYYY-QN" key from filename (e.g. AAPL_2025Q3.json)
-        fn = t.get("filename", "")
-        if "Q" in fn:
-            key_part = fn.replace(".json", "").split("_", 1)[-1]  # "2025Q3"
-            cached_keys.add(key_part)
+    by_key = {_transcript_cache_key(t.get("filename", "")): t for t in cached}
 
-    all_transcripts: list[dict] = list(cached)
+    all_transcripts: list[dict] = []
+    fmp_key = get_key("FMP_API_KEY")
+    listing = _transcript_listing(symbol, fmp_key) if fmp_key else None
 
-    # ── 2. Fetch missing quarters from FMP ──────────────────────────────
-    if len(all_transcripts) < max_transcripts:
-        fmp_key = get_key("FMP_API_KEY")
-        if fmp_key:
-            now = datetime.now()
-            url = "https://financialmodelingprep.com/stable/earning-call-transcript"
-            # Scan current year back to (current-2), all 4 quarters
-            for y in range(now.year, now.year - 3, -1):
-                for q in [4, 3, 2, 1]:
-                    yq_key = f"{y}Q{q}"
-                    if yq_key in cached_keys:
-                        continue  # already have this quarter
-                    if len(all_transcripts) >= max_transcripts:
-                        break
-                    try:
-                        r = requests.get(
-                            url,
-                            params={"symbol": symbol, "year": y,
-                                    "quarter": q, "apikey": fmp_key},
-                            timeout=20,
-                        )
-                        if r.status_code != 200:
-                            continue
-                        data = r.json()
-                        if not isinstance(data, list) or not data:
-                            continue
-                        entry = data[0]
-                        t_date = entry.get("date", "")
-                        t_content = entry.get("content", "")
-                        if not (t_date and t_content and len(t_content) > 100):
-                            continue
-                        if before_date and t_date[:10] > before_date:
-                            continue
-                        # Cache the fetched transcript
-                        cache_name = f"{symbol}_{y}Q{q}.json"
-                        cache_path = TRANSCRIPT_CACHE_DIR / cache_name
-                        if not cache_path.exists():
-                            TRANSCRIPT_CACHE_DIR.mkdir(parents=True, exist_ok=True)
-                            with open(cache_path, "w", encoding="utf-8") as fh:
-                                json.dump({"payload": [entry]}, fh)
-                        all_transcripts.append({
-                            "date": t_date[:10],
-                            "content": t_content,
-                            "filename": cache_name,
-                            "source": "fmp_api",
-                        })
-                    except Exception:
-                        pass  # best-effort; skip failed quarters
-                if len(all_transcripts) >= max_transcripts:
-                    break
+    # ── 2. Newest calls per FMP's own listing; fetch what the cache lacks ─
+    if listing is not None:
+        wanted = [(d, fy, q) for d, fy, q in listing if not before_date or d <= before_date]
+        for d, fy, q in wanted[:max_transcripts]:
+            hit = by_key.get(f"{fy}Q{q}")
+            if hit:
+                all_transcripts.append(hit)
+                continue
+            fetched = _fetch_transcript_quarter(symbol, fy, q, fmp_key, before_date)
+            if fetched:
+                all_transcripts.append(fetched)
+        # FMP listings can omit old calls we still hold - top up from the cache
+        have = {t["filename"] for t in all_transcripts}
+        for t in sorted(cached, key=lambda x: x["date"], reverse=True):
+            if len(all_transcripts) >= max_transcripts:
+                break
+            if t["filename"] not in have:
+                all_transcripts.append(t)
+    else:
+        all_transcripts = list(cached)
 
     # ── 3. Sort descending by date and trim ─────────────────────────────
     all_transcripts.sort(key=lambda x: x["date"], reverse=True)
@@ -206,6 +171,63 @@ def resolve_transcripts(symbol: str, before_date: str = None,
         "transcript_dates": transcript_dates,
         "all_transcripts": all_transcripts,
     }
+
+
+def _transcript_cache_key(filename: str) -> str:
+    """'MMS_2026Q3.json' -> '2026Q3' (the FMP fiscalYear + quarter the file was fetched under)."""
+    return filename.replace(".json", "").rsplit("_", 1)[-1] if "Q" in filename else ""
+
+
+def _transcript_listing(symbol: str, fmp_key: str) -> Optional[list]:
+    """FMP's own list of available calls as [(date, fiscalYear, quarter)], newest first.
+    [] = FMP has none for this symbol; None = the listing call itself failed (caller fails open)."""
+    try:
+        r = requests.get("https://financialmodelingprep.com/stable/earning-call-transcript-dates",
+                         params={"symbol": symbol, "apikey": fmp_key}, timeout=20)
+        if r.status_code != 200:
+            return None
+        rows = r.json()
+        if not isinstance(rows, list):
+            return None
+        out = []
+        for row in rows:
+            d = str(row.get("date") or "")[:10]
+            fy, q = row.get("fiscalYear"), row.get("quarter")
+            if d and fy and q:
+                out.append((d, int(fy), int(q)))
+        out.sort(reverse=True)
+        return out
+    except Exception:
+        return None
+
+
+def _fetch_transcript_quarter(symbol: str, fy: int, q: int, fmp_key: str,
+                              before_date: str = None) -> Optional[dict]:
+    """Fetch one listed call and cache it. Overwrites an EMPTY placeholder file (written when a
+    quarter was probed before its call happened) - the old code never replaced those."""
+    try:
+        r = requests.get("https://financialmodelingprep.com/stable/earning-call-transcript",
+                         params={"symbol": symbol, "year": fy, "quarter": q, "apikey": fmp_key},
+                         timeout=20)
+        if r.status_code != 200:
+            return None
+        data = r.json()
+        if not isinstance(data, list) or not data:
+            return None
+        entry = data[0]
+        t_date, t_content = entry.get("date", ""), entry.get("content", "")
+        if not (t_date and t_content and len(t_content) > 100):
+            return None
+        if before_date and t_date[:10] > before_date:
+            return None
+        cache_name = f"{symbol}_{fy}Q{q}.json"
+        TRANSCRIPT_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        with open(TRANSCRIPT_CACHE_DIR / cache_name, "w", encoding="utf-8") as fh:
+            json.dump({"payload": [entry]}, fh)
+        return {"date": t_date[:10], "content": t_content,
+                "filename": cache_name, "source": "fmp_api"}
+    except Exception:
+        return None
 
 
 def _resolve_all_from_cache(symbol: str,
@@ -233,65 +255,6 @@ def _resolve_all_from_cache(symbol: str,
         except Exception:
             pass
     return results
-
-
-def _resolve_from_cache(symbol: str, before_date: str = None) -> Optional[dict]:
-    """Find latest cached transcript for symbol, optionally before a date."""
-    all_cached = _resolve_all_from_cache(symbol, before_date)
-    if all_cached:
-        all_cached.sort(key=lambda x: x["date"], reverse=True)
-        return all_cached[0]
-    return None
-
-
-def _fetch_from_fmp(symbol: str, before_date: str = None) -> Optional[dict]:
-    """Fetch latest transcript from FMP API and cache it."""
-    fmp_key = get_key("FMP_API_KEY")
-    if not fmp_key:
-        log.warning(f"FMP_API_KEY not set — cannot fetch transcript for {symbol}")
-        return None
-    
-    try:
-        now = datetime.now()
-        year = now.year
-        url = f"https://financialmodelingprep.com/stable/earning-call-transcript"
-        
-        # Try current year and previous year quarters
-        for q in [4, 3, 2, 1]:
-            for y in [year, year - 1]:
-                r = requests.get(url, params={"symbol": symbol, "year": y, "quarter": q, "apikey": fmp_key}, timeout=20)
-                if r.status_code != 200:
-                    continue
-                data = r.json()
-                if not isinstance(data, list) or not data:
-                    continue
-                
-                entry = data[0]
-                t_date = entry.get("date", "")
-                t_content = entry.get("content", "")
-                if t_date and t_content and len(t_content) > 100:
-                    if before_date is None or t_date[:10] <= before_date:
-                        # Cache it
-                        quarter = entry.get("quarter", "")
-                        year_val = entry.get("year", "")
-                        cache_name = f"{symbol}_{year_val}Q{quarter}.json"
-                        cache_path = TRANSCRIPT_CACHE_DIR / cache_name
-                        if not cache_path.exists():
-                            TRANSCRIPT_CACHE_DIR.mkdir(parents=True, exist_ok=True)
-                            with open(cache_path, "w", encoding="utf-8") as fh:
-                                json.dump({"payload": [entry]}, fh)
-                        
-                        return {
-                            "date": t_date[:10],
-                            "content": t_content,
-                            "filename": cache_name,
-                            "source": "fmp_api"
-                        }
-        return None
-    except Exception as e:
-        log.warning(f"FMP transcript fetch for {symbol} failed: {e}")
-        return None
-
 
 
 # ── Debate Cache ─────────────────────────────────────────────────────────
@@ -2397,9 +2360,12 @@ def _update_apex_tracking(apex_basket: list, push_gcs: bool = True,
         history.append(point)
     history = history[-400:]
 
+    # closed: the FULL realized-trade list (2026-10-06). It used to be cut to the last 80 here, so
+    # the regime book permanently lost its oldest legs (25 had to be recovered from git for the
+    # 2026-10 audit) - a track record must not forget trades. ~150 bytes/leg, so size is a non-issue.
     state = {"inception_date": inception, "nav": round(nav, 4), "last_date": today,
              "last_prices": new_last, "positions": positions,
-             "history": history, "closed": closed[-80:]}
+             "history": history, "closed": closed}
     try:
         (FRONTEND_DIR / "public" / local_name).write_text(
             json.dumps(state, indent=2), encoding="utf-8")

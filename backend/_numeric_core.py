@@ -180,6 +180,9 @@ def fetch_live_quotes(symbols, batch=80, fmp_key=None, fmp_base=DEFAULT_FMP_BASE
 EXCHANGE_CURRENCY = {
     ".DE": "EUR", ".PA": "EUR", ".MI": "EUR", ".AS": "EUR", ".MC": "EUR", ".HE": "EUR",
     ".BR": "EUR", ".LS": "EUR", ".VI": "EUR", ".IR": "EUR",
+    ".AT": "EUR",         # Athens - missing until 2026-10-06: KARE.AT read as USD -> false price-check REJECT
+    ".WA": "PLN",         # Warsaw (80 scan names) - same gap
+    ".IC": "ISK",         # Reykjavik (18 scan names) - same gap
     ".L": "GBp",          # LSE quotes in pence, not pounds — a frequent x100 trap
     ".SW": "CHF",
     ".T": "JPY",
@@ -225,6 +228,17 @@ def parse_money_prose(s):
     if len(vals) >= 2 and vals[1] <= vals[0] * 3:   # 'lo-hi' range -> midpoint
         return round((vals[0] + vals[1]) / 2, 2)
     return vals[0]
+
+
+def normalize_currency(code):
+    """Canonical form for currency COMPARISONS. GBX is the ISO-style alias of GBp (pence) - must
+    never be upper-cased into GBP (pounds), which is the x100 trap. Other codes are upper-cased."""
+    if not code:
+        return code
+    s = str(code).strip()
+    if s in ("GBp", "GBX", "GBx", "gbx", "GBPENCE"):
+        return "GBp"
+    return s.upper()
 
 
 def implied_currency(symbol: str) -> str:

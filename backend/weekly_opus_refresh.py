@@ -606,6 +606,7 @@ VALUE_DIRECTOR_PROMPT = AGENT_VOICE + """You are the SPECULAIR VALUE DIRECTOR (C
 SYSTEM OF RECORD (decisive - read FIRST). The multi-agent DEBATE already ran on each name. When the debate conflicts with the raw scan factors, THE DEBATE WINS:
   - `sop_mos_pct` (the CRO's reconciled sop_fair_value expressed as MoS vs price) is the SYSTEM-OF-RECORD margin of safety, NOT the 5-method `mos_spread` (that is the RAW scan MoS and can be built on stale/peak inputs). Where sop_mos_pct sits FAR BELOW the raw scan MoS (see `scan_headline_mos_pct`), the raw MoS is an ARTIFACT - trust sop_mos_pct.
   - `forensic_gate`: "EXCLUDE" => INELIGIBLE for the apex (interrogator credibility<=2 - a forensic red flag the factors miss). "CAP" => value_score capped at ~50 (DETERIORATING trajectory: credible but worsening). These are regime-INDEPENDENT forensics; a factor-cheap name NEVER overrides them.
+  - `numeric_gate` + `numeric_gate_reasons` (2026-10-06 - the deterministic price/arithmetic check on the debate's OWN numbers, run before you): "REJECT" => INELIGIBLE - the record does not reconcile (price or currency mismatch vs the live quote, a fair value implausible vs the price, or bear/base/bull out of order); do not seat it, held or not, and name it in the memo with its reason. "EXCLUDE_ELIGIBILITY" with TINY_FLOOR / THIN_FLOOR => the CRO's bear price sits within 5% / 15% of today's price, so its downside case is not a real floor and any risk/reward built on it is inflated: you MAY seat it ONLY on the margin-of-safety case (never cite its risk/reward), at size_units <= 0.5, and you MUST name it in the memo with that reason. "EXCLUDE_ELIGIBILITY" for any other reason => treat as REJECT. "WARN" / "PASS" => no restriction (read the reasons).
   - `debate_verdict` letter: set partly under the (now-removed) catalyst regime, so it is NOT a blanket cap. BUT a verdict-C name is eligible ONLY if its CRO-normalized `sop_mos_pct` is genuinely positive AND it clears the forensic gate AND it is not a peak/stale artifact - otherwise the C is just confirming the raw MoS is fake. Name in the value_memo every verdict-C name you keep and justify it on pure-value grounds.
   - `value_conviction` (1-5, when present): the CRO's CATALYST-BLIND value score - judged on valuation + forensics with the regime overlay explicitly ignored. PREFER it over `debate_conviction` everywhere in this rubric (debate_conviction is regime-tilted and collapses to a constant in catalyst-light pools). Where value_conviction is null (older results), fall back to debate_conviction but say so.
 
@@ -640,6 +641,7 @@ FR_DIRECTOR_PROMPT = AGENT_VOICE + """You are the FUTURE RESOURCES DIRECTOR (Cla
 
 SYSTEM OF RECORD (decisive - read FIRST). The multi-agent DEBATE already ran on each name. When the debate conflicts with the raw screen factors, THE DEBATE WINS:
   - `forensic_gate`: "EXCLUDE" => INELIGIBLE (interrogator credibility<=2 - mining is where promoters live; this gate is worth more here than in any other book). "CAP" => fr_score capped at ~50 (DETERIORATING trajectory: credible but worsening). A great cost-curve story NEVER overrides the forensic gate.
+  - `numeric_gate` + `numeric_gate_reasons` (2026-10-06 - the deterministic price/arithmetic check on the debate's OWN numbers, from fr-numeric-gate): "REJECT" => INELIGIBLE - the record does not reconcile with the live quote (price or currency mismatch, implausible fair value, bear/base/bull out of order); do not seat it, held or not, and name it in the memo with its reason. "EXCLUDE_ELIGIBILITY" whose ONLY reason is GQ_NO_QUANT_COVERAGE => INFORMATIONAL: the name sits outside the nightly scan (common for US-listed foreign producers and royalty names), so the scan-based checks could not run - it does not block a seat, but say so in the memo. "EXCLUDE_ELIGIBILITY" with TINY_FLOOR / THIN_FLOOR => the bear price sits within 5% / 15% of the price, so the downside case is not a real floor: seat only on the fair-value case (never on risk/reward), at size_units <= 0.5, named in the memo. Any other "EXCLUDE_ELIGIBILITY" => treat as REJECT. "WARN" / "PASS" => no restriction.
   - `sop_mos_pct` (the CRO's reconciled fair value vs price) is a GUARD input (pillar 4), not a ranking input: a deeply negative sop_mos_pct is a SIZE-CAP or VETO signal; a positive one is NOT extra score. Abnormal cheapness on a producer usually means the market is pricing the cost curve or the commodity leg against it - investigate, never bank it.
   - `physical_anchor` (from the chain map): every pick must have one - a name whose anchor line is empty or hand-wavy is a mapping error, not a seat (the anti-Visa rule, Do-NOT #11).
 
@@ -807,6 +809,10 @@ def value_input():
             "value_conviction": r.get("value_conviction"),
             "interrogator_score": iscore, "trajectory": r.get("trajectory", ""),
             "forensic_gate": gate,
+            # 2026-10-06: the deterministic price/arithmetic check was invisible to this Director
+            # (1698.HK/2020.HK seated while stamped EXCLUDE) - the rubric now reads it
+            "numeric_gate": r.get("numeric_gate", ""),
+            "numeric_gate_reasons": r.get("numeric_gate_reasons") or [],
             # cyclical-peak / extrapolation normalization (ahead of trusting MoS)
             "eps_history": eps_hist[-5:], "eps_normalized": eps_norm, "eps_peak_ratio": eps_peak_ratio,
             "fcf_cagr_3y": fcf_cagr_3y, "peak_flag": peak_flag,
@@ -2650,6 +2656,7 @@ def fr_input():
             "interrogator_score": iscore, "trajectory": r.get("trajectory", ""),
             "forensic_gate": gate,
             "numeric_gate": r.get("numeric_gate", ""),
+            "numeric_gate_reasons": r.get("numeric_gate_reasons") or [],   # the FR rubric splits on the reason
             "catalyst_status": r.get("catalyst_status", ""),
         }
         out.append(row)
@@ -4353,6 +4360,7 @@ def book_input(bk):
             "interrogator_score": iscore, "trajectory": r.get("trajectory", ""),
             "forensic_gate": gate,
             "numeric_gate": r.get("numeric_gate", ""),
+            "numeric_gate_reasons": r.get("numeric_gate_reasons") or [],   # the FR rubric splits on the reason
             "catalyst_status": r.get("catalyst_status", ""),
         }
         out.append(row)
@@ -4885,12 +4893,57 @@ def export_debate_csv():
 # finalists (apex + runners, both books) ALWAYS re-debate, and both skeptic kill-tiers run fresh.
 CARRY_MAX_AGE_D = 21          # hard staleness ceiling (synthesis tightened the audit's 28d)
 CARRY_PRICE_MOVE = 0.10       # |move| beyond this since the prior debate -> re-debate
+# AGE_U_CAP (2026-10-06): the ceiling above was DEAD until today - records carried no debated_at, so
+# the age fell back to the file mtime, which every run rewrites (~7d, never > 21). With real dates,
+# ~100 of 193 carried records were past it at once; re-debating them all in one run would 3-4x the
+# Opus spend. So at most AGE_U_CAP age-triggered names per run (oldest first) re-debate; the rest
+# carry with reason "age ceiling deferred" and queue for the next run. Specific triggers (new
+# transcript, price move, PENDING_HARD, escalation) are NOT metered.
+AGE_U_CAP = 20
 
 
 FULL_REFRESH_D = 91           # T4: a seat gets a full re-underwrite at least quarterly (last_full_debate)
 
 
-def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant):
+def _record_age_days(pr, pf):
+    """Days since this record was last DEBATED (full/delta - stamped `debated_at` by lane-stamp from
+    2026-10-06). Fallbacks: `date`, then `last_full_debate` (a carried record is at least that old),
+    then the file mtime - the mtime is the weakest, since every run rewrites carried files."""
+    import time as _t
+    for k in ("debated_at", "date", "last_full_debate"):
+        v = pr.get(k)
+        if v:
+            try:
+                return (_t.time() - datetime.fromisoformat(str(v)[:19]).timestamp()) / 86400
+            except Exception:
+                pass
+    return (_t.time() - pf.stat().st_mtime) / 86400
+
+
+def _age_allowed(universe, prior_dir, seat_relevant, cap=AGE_U_CAP):
+    """The oldest `cap` non-seat names past CARRY_MAX_AGE_D - the only ones the age ceiling may
+    trigger this run (see AGE_U_CAP). Seats re-debate weekly (delta/full) so they never need it."""
+    aged = []
+    for sym in universe:
+        if sym in seat_relevant:
+            continue
+        pf = prior_dir / f"{sym}.json"
+        if not pf.exists():
+            continue
+        try:
+            age = _record_age_days(json.load(open(pf, encoding="utf-8")), pf)
+        except Exception:
+            continue
+        if age > CARRY_MAX_AGE_D:
+            aged.append((-age, sym))
+    aged.sort()
+    if len(aged) > cap:
+        print(f"age ceiling: {len(aged)} record(s) older than {CARRY_MAX_AGE_D}d - re-debating the "
+              f"oldest {cap} this run, {len(aged) - cap} deferred (AGE_U_CAP)")
+    return {s for _, s in aged[:cap]}
+
+
+def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant, age_allowed=None):
     """Return ("debate", reason, prior_record_or_None) or ("carry", reason, prior_record).
     The prior record rides along on the DEBATE branch too (2026-07-08 continuity fix) so prep can
     embed it in the input bundle - a re-debated name must know what it said last week.
@@ -4916,19 +4969,7 @@ def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant):
     # coverage refresh that found something material) forces the full debate it asked for.
     if pr.get("escalate_full_debate") or (pr.get("coverage_update") or {}).get("escalate"):
         return "debate", "escalated last cycle (delta/coverage flagged a material change)", pr
-    # age ceiling: prior debated_at (fallback: file mtime)
     import time as _t
-    age_d = None
-    da = pr.get("debated_at") or pr.get("date")
-    if da:
-        try:
-            age_d = ( _t.time() - datetime.fromisoformat(str(da)[:19]).timestamp() ) / 86400
-        except Exception:
-            age_d = None
-    if age_d is None:
-        age_d = (_t.time() - pf.stat().st_mtime) / 86400
-    if age_d > CARRY_MAX_AGE_D:
-        return "debate", f"record {age_d:.0f}d old (> {CARRY_MAX_AGE_D}d ceiling)", pr
     # T4 - quarterly full refresh for seats: delta mode restamps the record weekly so the age ceiling
     # never fires on a held name; last_full_debate (stamped by every FULL underwrite) is the honest
     # age of the actual thesis work. Absent on pre-two-tier records -> skipped gracefully (the first
@@ -4946,6 +4987,10 @@ def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant):
     # `latest > prior_tx=""` comparison fired for EVERY name with any transcript at all - spurious
     # full re-debates that defeated delta mode on its maiden run. Correct semantic: a transcript is
     # only NEW if it postdates the prior DEBATE - the prior debate already read anything older.
+    # 2026-10-06: lane-stamp now writes `transcript_date` (the newest call the debate was GIVEN) onto
+    # every full/delta/refresh record and carries preserve it, so the first branch below finally
+    # fires. The date fallbacks are restamped every run (carry rewrites as_of), so on their own a
+    # call missed once was never picked up again.
     if real_tx:
         latest = max((t.get("date") or "") for t in real_tx)
         prior_ref = str(pr.get("transcript_date") or "")[:10] \
@@ -4966,6 +5011,12 @@ def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant):
             return "debate", f"price moved {mv * 100:.0f}% (> {CARRY_PRICE_MOVE * 100:.0f}%)", pr
     if is_seat:
         return "debate", "seat-relevant-only", pr    # no real trigger -> DELTA mode under tiering
+    # age ceiling LAST, so a name with a specific trigger is labelled by it (and is never metered)
+    age_d = _record_age_days(pr, pf)
+    if age_d > CARRY_MAX_AGE_D:
+        if age_allowed is None or sym in age_allowed:
+            return "debate", f"record {age_d:.0f}d old (> {CARRY_MAX_AGE_D}d ceiling)", pr
+        return "carry", f"age ceiling deferred ({age_d:.0f}d old; AGE_U_CAP={AGE_U_CAP}/run)", pr
     return "carry", "no debate-relevant change", pr
 
 
@@ -5325,6 +5376,8 @@ def prep():
             pass
 
     syms, no_tx, radar_universe, carried, _no_price = [], [], [], [], []
+    _age_ok = _age_allowed(sorted(sym_meths), prior_res_dir, seat_relevant)
+    _run_date = datetime.now().strftime("%Y-%m-%d")
     for sym in sorted(sym_meths):
         sc = scan_by_sym.get(sym, {})
         scan_fin = {k: sc.get(k) for k in E._SCAN_FIN_FIELDS if sc.get(k) is not None}
@@ -5360,7 +5413,8 @@ def prep():
         # debate-relevant changed. Carried records get a deterministic freshness restamp
         # (live price + as_of + provenance) - downstream (Director/skeptic/value re-grade/
         # publish) consumes results_regime/ unchanged; the value rubric sees `carried`.
-        _decision, _reason, _prior = _carry_or_debate(sym, sc, real, prior_res_dir, seat_relevant)
+        _decision, _reason, _prior = _carry_or_debate(sym, sc, real, prior_res_dir, seat_relevant,
+                                                      age_allowed=_age_ok)
         # B13 TIER EXCLUSION: a Basket-13 name never debates in this lane. With a prior record it
         # carries (restamped, so the stock page keeps a dated record); brand-new B13 names are
         # skipped outright - their underwriting lives in _catalyst_weekly.mjs, and their stock-page
@@ -5393,7 +5447,11 @@ def prep():
             "symbol": sym, "sector": sc.get("sector", ""), "signal_type": signal,
             "company": sc.get("name") or sc.get("companyName") or "",
             "metrics_str": metrics, "dossier": "", "methodologies": meths,
-            "prior_record": _prior_compact}, ensure_ascii=False, indent=2), encoding="utf-8")
+            "prior_record": _prior_compact,
+            # read by lane-stamp after the debate (carried names get neither - their prior stamps ride along)
+            "transcript_date": (max(t["date"] for t in real) if real and _decision == "debate" else ""),
+            "debate_run": (_run_date if _decision == "debate" else "")},
+            ensure_ascii=False, indent=2), encoding="utf-8")
         if _decision == "carry":
             _pr = _prior
             _pr["carried"] = True
@@ -6353,16 +6411,20 @@ def lane_stamp():
     a lane tag (first match in _INTAKE_LANE_TAGS priority order when a name qualified for more
     than one). Zero prompt changes: value_input() and skeptic_gen() read the stamped field, and
     carries preserve it automatically (the carry-restamp copies the whole prior record).
-    Idempotent; runs in the Gates phase alongside coverage-merge/continuity-gate."""
-    n = 0
+    Idempotent; runs in the Gates phase alongside coverage-merge/continuity-gate.
+
+    2026-10-06 - also stamps the two dates the change-detection gate keys on, from the prep bundle:
+      transcript_date - newest call the debate was GIVEN (full/delta/refresh records), so a call
+                        published later re-triggers next run instead of being masked by the as_of
+                        restamp every carry writes;
+      debated_at      - the run date, on full/delta records only (a Sonnet refresh inherits its
+                        grades, so it must not reset the age ceiling).
+    Carried records are never touched - their prior stamps ride along in the copied record."""
+    n = n_tx = n_da = 0
     for f in sorted(INP.glob("*.json")):
         try:
             b = json.load(open(f, encoding="utf-8"))
         except Exception:
-            continue
-        _meths = b.get("methodologies") or []
-        _tag = next((t for t in _INTAKE_LANE_TAGS if t in _meths), None)
-        if not _tag:
             continue
         rp = RES / f"{b.get('symbol')}.json"
         if not rp.exists():
@@ -6371,11 +6433,25 @@ def lane_stamp():
             rec = json.load(open(rp, encoding="utf-8"))
         except Exception:
             continue
-        if rec.get("lane") != _tag:
+        changed = False
+        _meths = b.get("methodologies") or []
+        _tag = next((t for t in _INTAKE_LANE_TAGS if t in _meths), None)
+        if _tag and rec.get("lane") != _tag:
             rec["lane"] = _tag
+            changed, n = True, n + 1
+        mode = rec.get("update_mode")
+        if mode in ("full", "delta", "refresh") and b.get("debate_run"):
+            tx = b.get("transcript_date") or ""
+            if tx and str(rec.get("transcript_date") or "") < tx:
+                rec["transcript_date"] = tx
+                changed, n_tx = True, n_tx + 1
+            if mode in ("full", "delta") and rec.get("debated_at") != b["debate_run"]:
+                rec["debated_at"] = b["debate_run"]
+                changed, n_da = True, n_da + 1
+        if changed:
             rp.write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
-            n += 1
-    print(f"lane-stamp: {n} results_regime record(s) stamped with an intake lane")
+    print(f"lane-stamp: {n} results_regime record(s) stamped with an intake lane | "
+          f"{n_tx} transcript_date + {n_da} debated_at stamp(s) for the change-detection gate")
 
 
 # ── PLAIN-LANGUAGE CHECK (2026-08-11) ────────────────────────────────────────
