@@ -5531,6 +5531,11 @@ def prep():
               f"| debate reasons: {_carry_reasons}")
         if carried:
             print(f"  carried ({len(carried)}): {carried}")
+    _ls = getattr(E, "TRANSCRIPT_LISTING_STATS", None) or {}
+    if _ls.get("failed") or _ls.get("no_key"):
+        print(f"WARN transcript listing: {_ls.get('failed', 0)}/{_ls.get('calls', 0)} name(s) failed "
+              f"(+{_ls.get('no_key', 0)} with no FMP key) - served from cache, so a NEW earnings call "
+              f"cannot trigger a re-debate for them this run: {(_ls.get('failed_syms') or [])[:12]}")
     if _no_price:
         print(f"GUARD price-blind bundles ({len(_no_price)}): {_no_price} - off-scan names with NO "
               f"price in the input; the debate prompt REQUIRES these agents to fetch the FMP quote "
