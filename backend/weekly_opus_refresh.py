@@ -571,7 +571,9 @@ def _funded_leverage(symbols):
             pass
         return sym, {"net_funded_debt_ebitda": nd, "interest_coverage": ic}
 
-    if todo:
+    if todo and not key:
+        print(f"WARN funded_leverage: no FMP key - {len(todo)} name(s) left uncached (solvency reads unknown this run)")
+    if todo and key:          # no key -> no fetch, no cache write (a blank row would stick: the cache has no TTL)
         with concurrent.futures.ThreadPoolExecutor(max_workers=8) as ex:
             for sym, v in ex.map(one, todo):
                 cache[sym] = v

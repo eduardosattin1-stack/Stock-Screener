@@ -18,8 +18,7 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-os.environ.setdefault("THETA_EMAIL", "carbonbridge.tech@gmail.com")
-os.environ.setdefault("THETA_PASSWORD", "$ccp1985R")
+# THETA_EMAIL / THETA_PASSWORD must come from the environment - never hardcode credentials.
 
 from google.cloud import storage
 import calibration_tracker as ct
