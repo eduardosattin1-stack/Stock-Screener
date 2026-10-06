@@ -1,0 +1,101 @@
+{
+  "checked": 12,
+  "results": [
+    {
+      "symbol": "ARI",
+      "still_forward": false,
+      "fired": true,
+      "outcome": "FIRED_GOOD",
+      "new_date": "2026-10-29",
+      "note": "Shareholders approved the Plan of Complete Liquidation at the 2026-09-29 special meeting: 72.2M votes for, 0.8M against, with 57.1% of shares represented. On the same day the manager signed a termination agreement and waived its termination fee (Investing.com/GuruFocus/Benzinga 8-K coverage, Sept 29-30, 2026). The next leg is the initial $3.70-4.00/sh cash distribution, due within about 30 days, i.e. around late Oct 2026. The estimated $7.75-8.50/sh total remaining is unchanged."
+    },
+    {
+      "symbol": "GPCR",
+      "still_forward": false,
+      "fired": true,
+      "outcome": "FIRED_GOOD",
+      "new_date": "",
+      "note": "Structure reported the 72-week ACCESS OLE topline on 2026-09-08 (GlobeNewswire). Mean weight loss reached 16.2% with no plateau at the higher doses, and fewer than 5% of participants stopped the drug because of side effects, so the Q3 milestone landed on time and favorably. The Q4 2026 readouts (body composition, T2D/obesity, SWITCH) are still ahead; I did not check how the stock reacted."
+    },
+    {
+      "symbol": "IRDM",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "SLIPPED",
+      "new_date": "2027-06-30",
+      "note": "Iridium holders approved the Rocket Lab merger at the 2026-09-24 special meeting: about 99.6% of votes cast were in favour, with about 81% of shares represented (TipRanks/GovConWire, 2026-09-24/25). The interim step went favourably, but the deal is not terminal: FCC license-transfer and CFIUS clearance are still outstanding, and close is still targeted for mid-2027 (set here as 2027-06-30, my placeholder; no exact date was given). The next gate is the FCC docket, where SpaceX filed opposition."
+    },
+    {
+      "symbol": "VERA",
+      "still_forward": false,
+      "fired": true,
+      "outcome": "FIRED_GOOD",
+      "new_date": "",
+      "note": "Vera reported the ORIGIN 3 final efficacy analysis on 2026-09-15 (GlobeNewswire), ahead of the 09-30 deadline. It said TRUTAKNA stabilized eGFR and prevented kidney disease progression through two years, so the readout was favorable. A 2026-10-02 release says the full data will be a late-breaking plenary talk at ASN Kidney Week 2026. The sBLA (Q4'26) and full approval (2027) are follow-on milestones, not this event."
+    },
+    {
+      "symbol": "CCOI",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "SLIPPED",
+      "new_date": "2026-11-06",
+      "note": "FMP news and press releases for 2026-09-01 to 10-06 show no launch, pricing or close of a secured refinancing of the $750M 7% 2027 notes. The only items are class-action lead-plaintiff notices (deadline 09-21) and a Zacks piece on 09-25. A web search also found no such deal. The Q3-2026 window guided in the Q2 10-Q has passed with nothing done, which tilts mildly adverse. The next checkpoint is Q3 earnings in early November (approximate date). The notes mature in 2027, so the refi is late, not broken. The data-center sale leg still has no date."
+    },
+    {
+      "symbol": "EVMN",
+      "still_forward": false,
+      "fired": true,
+      "outcome": "FIRED_BAD",
+      "new_date": "",
+      "note": "On 2026-09-08 (Business Wire, via the FMP press-release feed), Evommune reported that the EVO756 Phase 2b AD trial (N=121) missed both its primary endpoint (12-week EASI percent change) and its secondary endpoints at every dose. The company will not advance EVO756 in AD. Development continues only in migraine, and EVO301 is the remaining AD asset (Phase 2b planned for mid-2027)."
+    },
+    {
+      "symbol": "GRAL",
+      "still_forward": false,
+      "fired": true,
+      "outcome": "FIRED_GOOD",
+      "new_date": "",
+      "note": "The FDA Molecular and Clinical Genetics panel voted on schedule on 2026-09-23 and came out in favour of Galleri: 7-2 with 1 abstention that benefits outweigh risks, unanimous on safety, and a narrower 6-4 on effectiveness (ASCO Post / Benzinga / Quartz, Sept 2026). This was an advisory vote, not an approval. The binding PMA decision is still undated, and GRAIL says to expect it \"within the next few months\". The close effectiveness vote is a risk for that decision. If the board treats the PMA decision as the catalyst, this name is SLIPPED to an undated date rather than resolved."
+    },
+    {
+      "symbol": "ABUS",
+      "still_forward": false,
+      "fired": true,
+      "outcome": "FIRED_GOOD",
+      "new_date": "",
+      "note": "Arbutus's tender expired on schedule 2026-09-29. Per its final-results release (GlobeNewswire, 2026-10-01), it bought the full $230M (46.0M shares, about 23% of the share count) at the $5.00 floor, and the oversubscribed tender was prorated at about 55.6%. That counts as accretive for holders who kept their shares, though clearing at the floor shows heavy selling demand. The separate Moderna contingent payment of up to $1.3B is still undated and waits on the appeal."
+    },
+    {
+      "symbol": "DBVT",
+      "still_forward": true,
+      "fired": true,
+      "outcome": "SLIPPED",
+      "new_date": "2026-11-28",
+      "note": "The BLA milestone happened on time and in the company's favour: DBV filed the VIASKIN Peanut BLA for ages 4-7 on 2026-09-29, backed by the 654-child Phase 3 VITESSE trial, and asked for Priority Review (GlobeNewswire press release, 2026-09-29; also on FMP press releases). A filing is not an approval or CRL, so under the terminal-only rule the item rolls forward to the FDA's 60-day filing/acceptance decision (about 2026-11-28, estimated from the submission date). The tilt is favourable, and the 1-3yr toddler BLA guided for 2H-2026 is still pending."
+    },
+    {
+      "symbol": "FIP",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "SLIPPED",
+      "new_date": "2026-12-31",
+      "note": "I found no closing announcement for the Long Ridge sale to MARA through 2026-10-06 (FMP FIP news Aug 15 to Oct 6). The latest FIP news is the unrelated $255M Jefferson/USD Group crude-asset deal (GlobeNewswire, 2026-09-28). A Citizens analyst note (Investing.com) says the close is slipping into Q4 2026 and assumes Long Ridge stays on FIP's books through October, with FERC change-of-control approval still pending. The tilt is mildly adverse: the deal is not broken, but it is late, the debt paydown is pushed back, and the PJM market monitor has asked FERC to attach a condition requiring Long Ridge to keep selling into PJM, which MARA says it already plans to do."
+    },
+    {
+      "symbol": "GDOT",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "SLIPPED",
+      "new_date": "2026-12-31",
+      "note": "Three searches on 2026-10-06 found no announcement that the deal closed or that the Fed, Alabama or Utah approved it. The latest sources (the GDOT/CommerceOne joint release of 2026-06-23 on ir.greendot.com and the 8-K covered by stocktitan) still give a Q3 2026 close pending those three regulators, so the 2026-09-30 target appears to have passed unclosed. The company has published no new date: 2026-12-31 is my end-of-Q4 placeholder, and I found no sign of an adverse regulatory action or of the deal breaking."
+    },
+    {
+      "symbol": "KDP",
+      "still_forward": true,
+      "fired": true,
+      "outcome": "FORWARD",
+      "new_date": "2026-11-03",
+      "note": "The interim milestone was met on schedule and went well. KDP closed the $925M Chobani deals on 2026-09-28 ($800M stake redemption: $400M cash plus a $400M note due 2026-12-26; $125M for the Allentown facilities) per its 8-K and Investing.com, and named Russ Torres CEO of the future Global Coffee Co (PRNewswire 2026-10-01). The main catalyst, the Beverage Co / Global Coffee Co split, is still forward for early 2027. Next checkpoint is Q3 results on 2026-11-03 (PRNewswire 2026-10-01); the JDE Peet's squeeze-out judgment came on 2026-09-29."
+    }
+  ]
+}
