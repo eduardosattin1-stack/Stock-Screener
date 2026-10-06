@@ -85,12 +85,16 @@ def check_record(rec, live_quotes=None, scan_by=None):
     # scan_by) and this symbol is genuinely missing from it. With no scan at all — GCS down, mirror
     # absent — every name would otherwise be excluded at once, and a data outage must never empty the
     # book (the standing invariant). Absence of evidence is not evidence of absence.
-    if scan_by and len(scan_by) > 200 and sym not in scan_by:
-        return {"gate": "EXCLUDE_ELIGIBILITY",
-                "reasons": ["GQ_NO_QUANT_COVERAGE(absent from the nightly scan — no p_fcf/ROIC/"
-                            "Piotroski/Altman-Z/multi-model MoS; moat, duration and floor checks "
-                            "cannot evaluate it)"],
-                "computed": {"quant_coverage": False}}
+    # 2026-10-06: no early return. The GQ stamp used to short-circuit EVERY check, so an off-scan
+    # record skipped the price/currency/ordering/plausibility checks too (CCJ/RIO held FR seats on
+    # 10%-stale prices that an on-scan name would have been rejected for). Now GQ is recorded and
+    # the remaining checks still run; a hard failure still returns REJECT, otherwise the result is
+    # EXCLUDE_ELIGIBILITY carrying GQ plus any other reasons (see the end of this function).
+    gq = bool(scan_by and len(scan_by) > 200 and sym not in scan_by)
+    if gq:
+        reasons.append("GQ_NO_QUANT_COVERAGE(absent from the nightly scan — no p_fcf/ROIC/"
+                       "Piotroski/Altman-Z/multi-model MoS; moat, duration and floor checks "
+                       "cannot evaluate it)")
 
     # G0 — schema presence, with a FETCH RESCUE before rejecting. A record missing live_price is not
     # necessarily a bad pick — the debate agent may simply have skipped the quote step (the exact
@@ -129,7 +133,10 @@ def check_record(rec, live_quotes=None, scan_by=None):
             reasons.append(f"G1A_PRICE_DRIFT({drift*100:.0f}%)")
 
     # G1b — currency implied by the exchange suffix vs what the record states
-    implied = _nc.implied_currency(sym)
+    # expected currency: the scan's PER-SYMBOL currency (FMP /profile - knows HKEX RMB counters like
+    # 81810.HK = CNY and USD-quoted LSE lines) when the name is on the scan; else the suffix map.
+    implied = (scan_row.get("currency") if isinstance(scan_row, dict) and scan_row.get("currency")
+               else _nc.implied_currency(sym))
     if ccy and _nc.normalize_currency(ccy) != _nc.normalize_currency(implied):
         return {"gate": "REJECT", "reasons": reasons + [f"G1B_CURRENCY_MISMATCH(stated={ccy},implied={implied})"],
                 "computed": computed}
@@ -239,7 +246,9 @@ def check_record(rec, live_quotes=None, scan_by=None):
     catalyst = str(rec.get("catalyst_status") or "").upper()
     tiny = any("TINY_FLOOR" in f for f in rr_flags)
     thin_soft = any("THIN_FLOOR" in f for f in rr_flags) and catalyst.startswith(("SOFT_EXTENDED", "FIRED", "UNVERIFIABLE"))
-    if tiny or thin_soft:
+    if gq:
+        computed["quant_coverage"] = False
+    if tiny or thin_soft or gq:
         return {"gate": "EXCLUDE_ELIGIBILITY", "reasons": reasons, "computed": computed}
 
     if any(r.startswith("REJECT") or "MISMATCH" in r for r in reasons if r.startswith("G")):

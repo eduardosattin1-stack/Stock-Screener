@@ -131,27 +131,58 @@ def resolve_transcripts(symbol: str, before_date: str = None,
     listing = _transcript_listing(symbol, fmp_key) if fmp_key else None
 
     # ── 2. Newest calls per FMP's own listing; fetch what the cache lacks ─
+    TRANSCRIPT_LISTING_STATS["calls"] += 1
     if listing is not None:
-        wanted = [(d, fy, q) for d, fy, q in listing if not before_date or d <= before_date]
+        # one row per CALL DATE: FMP sometimes lists the same call under two fiscal years
+        # (BBWI/CHWY 2026: FY2027 Q2 and FY2026 Q2) - prefer the label we already hold
+        by_date: dict = {}
+        for d, fy, q in listing:
+            if before_date and d > before_date:
+                continue
+            by_date.setdefault(d, []).append((fy, q))
+        wanted = []
+        for d in sorted(by_date, reverse=True):
+            keys = by_date[d]
+            fy, q = next(((f, qq) for f, qq in keys if f"{f}Q{qq}" in by_key), keys[0])
+            wanted.append((d, fy, q))
         for d, fy, q in wanted[:max_transcripts]:
             hit = by_key.get(f"{fy}Q{q}")
-            if hit:
+            # a cache hit counts only when it holds THIS call: older blind probes saved FMP's
+            # year-echoed answers under future keys (CHWY_2026Q4 = the March-2026 call)
+            if hit and _days_apart(hit["date"], d) <= 10:
                 all_transcripts.append(hit)
                 continue
             fetched = _fetch_transcript_quarter(symbol, fy, q, fmp_key, before_date)
             if fetched:
                 all_transcripts.append(fetched)
-        # FMP listings can omit old calls we still hold - top up from the cache
-        have = {t["filename"] for t in all_transcripts}
+        # FMP listings can omit old calls we still hold - top up from the cache (by date, so a
+        # mis-keyed duplicate of a call already included never sneaks back in)
+        have = {t["date"] for t in all_transcripts}
         for t in sorted(cached, key=lambda x: x["date"], reverse=True):
             if len(all_transcripts) >= max_transcripts:
                 break
-            if t["filename"] not in have:
+            if t["date"] not in have:
                 all_transcripts.append(t)
+                have.add(t["date"])
     else:
-        all_transcripts = list(cached)
+        if fmp_key:
+            TRANSCRIPT_LISTING_STATS["failed"] += 1
+            TRANSCRIPT_LISTING_STATS["failed_syms"].append(symbol)
+            log.warning(f"transcript listing unavailable for {symbol} - serving the cache "
+                        f"(new calls cannot be detected for this name this run)")
+        else:
+            TRANSCRIPT_LISTING_STATS["no_key"] += 1
+        # same backstop as above: never hand a debate the same call twice
+        seen = set()
+        for t in sorted(cached, key=lambda x: x["date"], reverse=True):
+            if t["date"] not in seen:
+                all_transcripts.append(t)
+                seen.add(t["date"])
 
-    # ── 3. Sort descending by date and trim ─────────────────────────────
+    # ── 3. Sort descending by date and trim (one entry per call date) ──
+    _seen_dates: set = set()
+    all_transcripts = [t for t in all_transcripts
+                       if not (t["date"] in _seen_dates or _seen_dates.add(t["date"]))]
     all_transcripts.sort(key=lambda x: x["date"], reverse=True)
     all_transcripts = all_transcripts[:max_transcripts]
 
@@ -171,6 +202,18 @@ def resolve_transcripts(symbol: str, before_date: str = None,
         "transcript_dates": transcript_dates,
         "all_transcripts": all_transcripts,
     }
+
+
+# Per-process counters for resolve_transcripts - prep prints them, so a listing outage (e.g. a key
+# that 401s after rotation) is visible instead of silently serving stale transcripts to every name.
+TRANSCRIPT_LISTING_STATS = {"calls": 0, "failed": 0, "no_key": 0, "failed_syms": []}
+
+
+def _days_apart(a: str, b: str) -> int:
+    try:
+        return abs((datetime.fromisoformat(a[:10]) - datetime.fromisoformat(b[:10])).days)
+    except Exception:
+        return 10**6
 
 
 def _transcript_cache_key(filename: str) -> str:
@@ -2301,6 +2344,22 @@ def _update_apex_tracking(apex_basket: list, push_gcs: bool = True,
     positions = dict(tr.get("positions") or {})
     history = list(tr.get("history") or [])
     closed = list(tr.get("closed") or [])
+    # SURVIVE THE RE-CUT (2026-10-06): the Saturday Cloud Run scan job marks NAV with main's older
+    # copy of this function, which still writes closed[-80:] into the same GCS state. The local file
+    # is written only by local runs (full list), so union its legs back in on every local run.
+    # Dedup on (symbol, entry_date, exit_date); order stays chronological by exit date.
+    try:
+        _lp = FRONTEND_DIR / "public" / local_name
+        if _lp.exists():
+            _lc = (json.loads(_lp.read_text(encoding="utf-8")) or {}).get("closed") or []
+            _k = lambda c: (c.get("symbol"), c.get("entry_date"), c.get("exit_date"))
+            _have = {_k(c) for c in closed}
+            _extra = [c for c in _lc if isinstance(c, dict) and _k(c) not in _have]
+            if _extra:
+                closed = sorted(_extra + closed, key=lambda c: (c.get("exit_date") or "", c.get("symbol") or ""))
+                log.info(f"tracking {local_name}: restored {len(_extra)} closed leg(s) a truncating writer dropped")
+    except Exception as e:
+        log.debug(f"tracking local closed-merge skipped: {e}")
     prices = _current_prices(syms | set(last_prices.keys()))
     period_ret = 0.0
 

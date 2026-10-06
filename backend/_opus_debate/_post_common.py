@@ -151,6 +151,18 @@ def apply_skeptic_corrections(shards_dir, records_dir, quadrant=None, revise_cap
         if _ng is not None:
             try:
                 res = _ng.check_record(rec)
+                # NEVER UPGRADE (2026-10-06): this recompute has no live quotes and no scan, so it
+                # cannot see G1A (price), G1B (currency) or GQ (coverage). Re-stamping its result
+                # silently laundered real REJECT/EXCLUDE stamps to PASS (APP, FICO, BLDR, LYFT,
+                # ZEAL.CO on 2026-10-05) - and value-input now shows the stamp to the Director.
+                # Keep the prior gate when it rested on one of those codes; append the new reasons.
+                _prior_gate = str(rec.get("numeric_gate") or "")
+                _prior_rs = [str(r) for r in (rec.get("numeric_gate_reasons") or [])]
+                _ext = [r for r in _prior_rs if r.startswith(("G1A_PRICE_MISMATCH", "G1B_", "GQ_"))]
+                _rank = {"PASS": 0, "WARN": 1, "EXCLUDE_ELIGIBILITY": 2, "REJECT": 3}
+                if _ext and _rank.get(_prior_gate, 0) > _rank.get(res["gate"], 0):
+                    res = {**res, "gate": _prior_gate,
+                           "reasons": _ext + [r for r in res["reasons"] if r not in _ext]}
                 rec["numeric_gate"] = res["gate"]
                 rec["numeric_gate_reasons"] = list(res["reasons"])
                 rec["computed"] = {k: v for k, v in res["computed"].items()
