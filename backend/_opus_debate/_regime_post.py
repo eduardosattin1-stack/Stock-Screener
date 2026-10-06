@@ -461,7 +461,8 @@ def _get_market(picks, offline):
             except Exception:
                 pass
         if not _os.environ.get("FMP_API_KEY"):
-            _os.environ["FMP_API_KEY"] = "18kyMYWfzP8U5tMsBkk5KDzeGKERr5rA"   # match _value_post fallback
+            from _fmp_key import fmp_key                     # env, else frontend/.env.local - never a literal
+            fmp_key()
         from screener_v6 import fmp, get_chart               # deferred: heavy import, network-capable
 
         def quotes_fn(symbols):

@@ -23,7 +23,8 @@ import requests
 from datetime import datetime, timezone
 from pathlib import Path
 
-KEY = os.environ.get("FMP_API_KEY") or "18kyMYWfzP8U5tMsBkk5KDzeGKERr5rA"
+from _fmp_key import fmp_key                         # env, else frontend/.env.local - never a literal
+KEY = fmp_key()
 BASE = "https://financialmodelingprep.com/stable"
 
 # Threshold knobs - set these once and forget

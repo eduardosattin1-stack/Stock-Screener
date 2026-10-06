@@ -19,7 +19,7 @@ DRY_RUN unless APPLY=1.
 """
 import json, os, sys, datetime
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-os.environ.setdefault("FMP_API_KEY", "18kyMYWfzP8U5tMsBkk5KDzeGKERr5rA")
+from _fmp_key import fmp_key; fmp_key()               # env, else frontend/.env.local - never a literal
 from google.cloud import storage
 import calibration_tracker as ct
 

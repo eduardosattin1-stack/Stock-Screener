@@ -402,7 +402,8 @@ class _RateLimiter:
 
 
 FMP_BASE = "https://financialmodelingprep.com/stable"
-FMP_KEY = os.environ.get("FMP_API_KEY") or "18kyMYWfzP8U5tMsBkk5KDzeGKERr5rA"
+from _fmp_key import fmp_key                         # env, else frontend/.env.local - never a literal
+FMP_KEY = fmp_key()
 
 
 def _fetch_eod_bars(theta, symbol: str, start: str, end: str, limiter=None) -> list:

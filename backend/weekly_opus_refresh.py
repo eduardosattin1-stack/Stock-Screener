@@ -549,7 +549,8 @@ def _funded_leverage(symbols):
             cache = json.load(open(cache_p, encoding="utf-8"))
         except Exception:
             cache = {}
-    key = os.environ.get("FMP_API_KEY") or "18kyMYWfzP8U5tMsBkk5KDzeGKERr5rA"
+    from _fmp_key import fmp_key                     # env, else frontend/.env.local - never a literal
+    key = fmp_key()
     todo = [s for s in symbols if s not in cache]
 
     def one(sym):

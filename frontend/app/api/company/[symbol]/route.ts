@@ -35,7 +35,7 @@
 // lower-tier alternatives and already degrade cleanly when null.
 const FMP_STABLE = "https://financialmodelingprep.com/stable";
 const FMP_V3 = "https://financialmodelingprep.com/api/v3";
-const FMP_KEY = process.env.FMP_API_KEY || "18kyMYWfzP8U5tMsBkk5KDzeGKERr5rA";
+const FMP_KEY = process.env.FMP_API_KEY || "";
 
 type FmpResult<T> = { data: T[] | null; error: string | null };
 

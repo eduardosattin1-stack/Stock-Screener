@@ -23,8 +23,8 @@ echo "============================================="
 
 # Check environment
 if [ -z "$FMP_API_KEY" ]; then
-    export FMP_API_KEY="18kyMYWfzP8U5tMsBkk5KDzeGKERr5rA"
-    echo "Set FMP_API_KEY from default"
+    echo "FMP_API_KEY not set - export it (never hardcode the key)" >&2
+    exit 1
 fi
 
 # Install dependencies

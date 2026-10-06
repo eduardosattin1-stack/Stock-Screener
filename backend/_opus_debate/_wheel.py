@@ -21,7 +21,8 @@ BK = os.path.dirname(_HERE)                              # .../backend
 if BK not in sys.path:
     sys.path.insert(0, BK)
 if not os.environ.get("FMP_API_KEY"):
-    os.environ["FMP_API_KEY"] = "18kyMYWfzP8U5tMsBkk5KDzeGKERr5rA"
+    from _fmp_key import fmp_key                     # env, else frontend/.env.local - never a literal
+    fmp_key()
 
 DEFAULT_TENOR = 40   # ~30-45 DTE: monthly-ish, good theta for a wheel
 

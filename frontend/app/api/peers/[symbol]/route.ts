@@ -30,7 +30,7 @@
 // return an empty peers list (panel will hide itself rather than render junk).
 
 const FMP_STABLE = "https://financialmodelingprep.com/stable";
-const FMP_KEY = process.env.FMP_API_KEY || "18kyMYWfzP8U5tMsBkk5KDzeGKERr5rA";
+const FMP_KEY = process.env.FMP_API_KEY || "";
 
 const MAX_PEERS = 8;
 

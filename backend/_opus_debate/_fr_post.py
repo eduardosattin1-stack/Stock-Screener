@@ -52,7 +52,8 @@ if not os.environ.get("FMP_API_KEY"):
                 os.environ["FMP_API_KEY"] = _line.split("=", 1)[1].strip().replace('"', "").replace("'", "")
                 break
 if not os.environ.get("FMP_API_KEY"):
-    os.environ["FMP_API_KEY"] = "18kyMYWfzP8U5tMsBkk5KDzeGKERr5rA"
+    from _fmp_key import fmp_key                     # env, else frontend/.env.local - never a literal
+    fmp_key()
 from screener_v6 import fmp, get_chart                  # noqa: E402  FMP REST + OHLCV
 sys.path.insert(0, _HERE)                              # sibling modules (_wheel, _post_common)
 from _wheel import stamp_wheel                          # noqa: E402  CSP->CC wheel suggestion

@@ -193,7 +193,8 @@ _COINFLIP = re.compile(
 # adjusted_loeb_score or board_priority. The one allowed edge→tier move: an inverted/
 # negative R:R (no upside left / trading through terms) drops to NONE.
 # ===========================================================================
-FMP_KEY  = os.environ.get("FMP_API_KEY") or "18kyMYWfzP8U5tMsBkk5KDzeGKERr5rA"
+from _fmp_key import fmp_key                         # env, else frontend/.env.local - never a literal
+FMP_KEY  = fmp_key()
 FMP_BASE = "https://financialmodelingprep.com/stable"
 DRIFT_REDOSSIER = 0.15            # |move since dossier| beyond this -> RE_DOSSIER flag
 RATIO_METHODS = ("sop", "recovery", "capital_return")

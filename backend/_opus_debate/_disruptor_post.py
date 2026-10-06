@@ -41,7 +41,8 @@ BK = os.path.dirname(_HERE)                             # .../backend
 sys.path.insert(0, BK)
 os.chdir(BK)
 if not os.environ.get("FMP_API_KEY"):                  # match _value_post.py / _funded_leverage fallback
-    os.environ["FMP_API_KEY"] = "18kyMYWfzP8U5tMsBkk5KDzeGKERr5rA"
+    from _fmp_key import fmp_key                     # env, else frontend/.env.local - never a literal
+    fmp_key()
 from screener_v6 import fmp, get_chart                  # noqa: E402  FMP REST + OHLCV
 sys.path.insert(0, _HERE)                              # so the sibling _wheel module resolves
 from _wheel import stamp_wheel                          # noqa: E402  CSP->CC wheel suggestion
