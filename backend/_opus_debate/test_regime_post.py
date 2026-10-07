@@ -178,9 +178,61 @@ def test_apply_skeptic_corrections():
     print("OK: typed-corrections write-back (apply/recompute/idempotent/stale/junk/revise-trigger).")
 
 
+def test_entry_posture_reconciliation():
+    """Regression (2026-09-08, Bruno's review of the 09-07 value book): a seat whose own debate grade
+    is B ("wait for the wash-out") or C ("pass for now") may not carry an enter-now posture unless
+    the Director wrote a DATED override reason. Cases: (a) enter_now_carry on a wait seat, no reason
+    -> reconciled to wait_for_weakness, original kept; (b) same with a dated reason -> stands, source
+    director-override; (c) typed cro_add_event -> on_confirmation:<event>; (d) grade A -> untouched;
+    (e) grade B whose conclusion names no wait and no typed level -> stands (source director);
+    (f) blank posture on a wait seat -> set from the debate; (g) re-run is idempotent (one memo block)."""
+    ctx = {
+        "W1": {"verdict": "B", "conclusion": "Wait for the wash-out. Good company, wrong day.",
+               "currency": "NOK", "live_px": 118.0, "entry_px": 111.2, "entry_date": "2026-08-31"},
+        "W2": {"verdict": "B", "conclusion": "Hold the file open, not the position."},
+        "W3": {"verdict": "B", "conclusion": "A wait, not a buy, until the print."},
+        "A1": {"verdict": "A", "conclusion": "Buy it here, at conviction four."},
+        "B1": {"verdict": "B", "conclusion": "A good business at a cheap price with the catalyst behind it."},
+        "W4": {"verdict": "C", "conclusion": "Pass for now."},
+    }
+    picks = [
+        {"symbol": "W1", "entry_posture": "enter_now_carry"},
+        {"symbol": "W2", "entry_posture": "scale_in",
+         "entry_posture_override_reason": "Dividend declared 2026-09-01 pays the wait; entering now."},
+        {"symbol": "W3", "entry_posture": "enter_now_carry", "cro_add_px": "$285", "cro_add_event": "November print"},
+        {"symbol": "A1", "entry_posture": "enter_now_carry"},
+        {"symbol": "B1", "entry_posture": "enter_now_carry"},
+        {"symbol": "W4"},
+    ]
+    apx = {"apex_basket": picks, "director_memo": "ROTATION\nKEPT - W1, W2."}
+    ed = _pc.reconcile_entry_posture(apx, picks, lambda s: ctx.get(s), "director_memo", today="2026-09-08")
+    by = {p["symbol"]: p for p in picks}
+    assert by["W1"]["entry_posture"] == "wait_for_weakness" and by["W1"]["entry_posture_director_orig"] == "enter_now_carry"
+    assert by["W1"]["entry_posture_source"] == "cro-reconciled" and by["W1"]["cro_verdict_plain"] == "wait for the wash-out"
+    assert by["W2"]["entry_posture"] == "scale_in" and by["W2"]["entry_posture_source"] == "director-override"
+    assert by["W3"]["entry_posture"] == "on_confirmation: November print" and by["W3"]["cro_add_px"] == 285.0
+    assert by["A1"]["entry_posture"] == "enter_now_carry" and by["A1"]["entry_posture_source"] == "director"
+    assert by["B1"]["entry_posture"] == "enter_now_carry" and by["B1"]["entry_posture_source"] == "director" and not by["B1"]["cro_says_wait"]
+    assert by["W4"]["entry_posture"] == "wait_for_weakness" and by["W4"]["entry_posture_source"] == "cro-derived"
+    assert set(ed["wait_graded"]) == {"W1", "W2", "W3", "W4"} and ed["reconciled"] == ["W1", "W3"]
+    memo = apx["director_memo"]
+    assert memo.count("ENTRY DISCIPLINE (deterministic") == 1 and "held since 2026-08-31 at 111.2 NOK (now 118 NOK, +6.1%)" in memo
+    assert "4 of 6 seat(s) are wait-graded" in memo and "Not wait-graded" in memo and "B1 (wait for the wash-out)" in memo
+    assert 'in its words: "Hold the file open, not the position."' in memo   # verbatim CRO quote, no typed level
+    assert by["W3"]["cro_wait_quote"] and "adds near 285 or on the November print" in memo   # typed level wins over the quote
+    # (g) idempotent: a second pass over the stamped book changes nothing and does not duplicate the block
+    import copy as _copy
+    before = _copy.deepcopy(picks)
+    _pc.reconcile_entry_posture(apx, picks, lambda s: ctx.get(s), "director_memo", today="2026-09-08")
+    assert picks == before and apx["director_memo"].count("ENTRY DISCIPLINE (deterministic") == 1
+    assert apx["entry_discipline"]["reconciled"] == ["W1", "W3"]
+    print("OK: entry-posture reconciliation (7 cases)")
+
+
 def main():
     test_numbers_repricing()
     test_apply_skeptic_corrections()
+    test_entry_posture_reconciliation()
     apx = R._load(R.REGIME_F)
     if not apx or not apx.get("apex_basket"):
         print("SKIP: no apex_basket_opus_regime.json to test against")

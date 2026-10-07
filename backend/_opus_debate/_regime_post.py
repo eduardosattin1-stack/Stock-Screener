@@ -390,6 +390,25 @@ def duration_cap_entries(apx, picks, cycle):
     return entries
 
 
+def _entry_ctx():
+    """Per-seat context for _post_common.reconcile_entry_posture (2026-09-08): the record's grade +
+    the CRO's conclusion paragraph, quote currency + live price, and the PAPER entry from the apex
+    tracking file. Best-effort - a missing file just drops the "held since" clause."""
+    try:
+        pos = (json.load(open(BK.parent / "frontend" / "public" / "speculair_apex_tracking.json",
+                              encoding="utf-8")) or {}).get("positions") or {}
+    except Exception:
+        pos = {}
+
+    def ctx(sym):
+        rec = _load(RES_DIR / f"{sym}.json", {}) or {}
+        pp = pos.get(sym) or {}
+        return {"verdict": rec.get("verdict"), "conclusion": rec.get("moderator_conclusion") or "",
+                "currency": rec.get("price_currency") or "", "live_px": rec.get("live_price"),
+                "entry_px": pp.get("entry_price"), "entry_date": pp.get("entry_date")}
+    return ctx
+
+
 def process(apx, uni, scan_by, market=None):
     """Consume the apex skeptic + numeric gate, clamp conviction, stamp the moat teeth, enforce the
     secular-theme + Director combined caps (+ measured correlation caps when `market` is supplied),
@@ -404,6 +423,10 @@ def process(apx, uni, scan_by, market=None):
     stamp_moat([r for r in apx.get("runner_ups", []) if isinstance(r, dict)], uni, scan_by)  # visibility only
     stamp_valuation(picks)
     conviction_clamp(picks)
+    _ed = _pc.reconcile_entry_posture(apx, picks, _entry_ctx(), "director_memo")   # paper position != buy here
+    print(f"entry-discipline: {len(_ed['wait_graded'])} wait-graded seat(s) of {len(picks)} | "
+          f"reconciled={_ed['reconciled']} set_from_debate={_ed['set_from_debate']} "
+          f"override={_ed['director_overrides']} consistent={_ed['consistent']}")
     extra = _pc.secular_theme_caps(picks)                    # don't put all eggs in one secular tail
     # Base unit = Director size_units when present, else the shared BANDED conviction map — coarse
     # steps shared with publish_to_frontend._apex_weights so the two sizing paths can never diverge.

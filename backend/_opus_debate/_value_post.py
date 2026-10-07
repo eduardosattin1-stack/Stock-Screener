@@ -169,6 +169,32 @@ def stamp_entry_posture(picks, gin=None):
         p["entry_posture"] = derive_entry_posture(p, (gin or {}).get(p["symbol"], {}))
 
 
+def _entry_ctx(gin):
+    """Per-seat context for _post_common.reconcile_entry_posture (2026-09-08): the debate grade
+    (system-of-record = the record's verdict; gin's debate_verdict as fallback), the CRO's own
+    conclusion paragraph, quote currency + live price from the record, and the PAPER entry from the
+    value tracking file - so the memo can say "held since X at Y", not "buy here". Best-effort."""
+    pos = {}
+    try:
+        pos = (json.load(open(Path(BK).parent / "frontend" / "public" / "speculair_value_tracking.json",
+                              encoding="utf-8")) or {}).get("positions") or {}
+    except Exception:
+        pos = {}
+
+    def ctx(sym):
+        try:
+            rec = json.load(open(RES_DIR / f"{sym}.json", encoding="utf-8"))
+        except Exception:
+            rec = {}
+        g, pp = (gin.get(sym) or {}), (pos.get(sym) or {})
+        return {"verdict": rec.get("verdict") or g.get("debate_verdict"),
+                "conclusion": rec.get("moderator_conclusion") or "",
+                "currency": rec.get("price_currency") or "",
+                "live_px": rec.get("live_price") or g.get("price"),
+                "entry_px": pp.get("entry_price"), "entry_date": pp.get("entry_date")}
+    return ctx
+
+
 def stamp_entry_plans(picks, quotes):
     """Fix 5c — display-only tranching guidance from distance to the 52w low."""
     for p in picks:
@@ -261,6 +287,10 @@ def main():
         p["corr_flag"] = p["symbol"] in _flagged                # fix 4: member of any >=0.6 pair
     stamp_entry_plans(picks, quotes)                             # fix 5c
     stamp_entry_posture(picks, gin)                              # entry TIMING (Director-tag fallback)
+    ed = _pc.reconcile_entry_posture(apx, picks, _entry_ctx(gin), "value_memo")   # paper position != buy here
+    print(f"entry-discipline: {len(ed['wait_graded'])} wait-graded seat(s) of {len(picks)} | "
+          f"reconciled={ed['reconciled']} set_from_debate={ed['set_from_debate']} "
+          f"override={ed['director_overrides']} consistent={ed['consistent']}")
     stamp_wheel(picks, "value", quotes)                          # CSP->CC wheel (live yield / qualitative)
     apx["weights"] = weights
     apx["stress_test"] = stress_block(picks, weights, quotes, asof)   # fix 1

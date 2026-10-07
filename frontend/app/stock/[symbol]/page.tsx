@@ -3094,7 +3094,7 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
                 <Zap size={12} /> CATALYST · {c.driver}{c.cro_verdict ? ` · verdict ${c.cro_verdict}` : ""}{c.cro_conviction != null ? ` (${c.cro_conviction}/5)` : ""}
               </span>
               {c.director_conviction != null && <span style={{ fontSize: 10, fontFamily: T.mono, color: tc, fontWeight: 700 }}>Director {c.director_conviction}/100</span>}
-              {c.catalyst_status && <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textLight }}>· {c.catalyst_status}</span>}
+              {c.catalyst_status && <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textLight }}>· {c.catalyst_status_plain || c.catalyst_status}</span>}
               {c.dated_milestone && <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textLight }}>· {c.dated_milestone}</span>}
               {c.posture && <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textLight }}>· {String(c.posture).replace(/_/g, " ")}</span>}
               {c.expected_return_pct != null && <span style={{ fontSize: 10, fontFamily: T.mono, color: c.expected_return_pct >= 0 ? T.green : T.red }}>· {c.expected_return_pct >= 0 ? "+" : ""}{Number(c.expected_return_pct).toFixed(0)}% to target</span>}
@@ -3234,10 +3234,14 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
             {debateData.sop_fair_value && <div style={{ fontSize: 12, fontFamily: T.mono, color: T.text }}>SoP fair value: <strong style={{ color: T.green }}>{String(debateData.sop_fair_value)}</strong></div>}
             {debateData.risk_reward && <div style={{ fontSize: 12, fontFamily: T.mono, color: T.text }}>Risk/reward: <strong>{String(debateData.risk_reward).slice(0, 90)}</strong></div>}
             {debateData.catalyst_status && (() => {
+              // Colour still keys off the machine enum; the LABEL is the plain caption the
+              // publish step writes alongside it (catalyst_status_plain). Falls back to the
+              // enum for records published before 2026-08-11, which have no plain sibling.
               const cs = String(debateData.catalyst_status).split(/[\s|—-]+/)[0].toUpperCase();
               const bad = /FIRED|SOFT|UNVERIF/.test(cs); const good = /PENDING/.test(cs);
               const c = good ? T.green : bad ? T.red : T.amber;
-              return <span style={{ fontSize: 10, fontFamily: T.mono, padding: "2px 8px", borderRadius: 4, background: c + "22", color: c, border: `1px solid ${c}55` }}>CATALYST: {cs}</span>;
+              const label = String(debateData.catalyst_status_plain || cs);
+              return <span style={{ fontSize: 10, fontFamily: T.mono, padding: "2px 8px", borderRadius: 4, background: c + "22", color: c, border: `1px solid ${c}55` }}>Catalyst: {label}</span>;
             })()}
           </div>
           {debateData.sop_breakdown && <p style={{ fontSize: 12, color: T.textLight, lineHeight: 1.6, fontFamily: T.sans, margin: 0, whiteSpace: "pre-wrap" }}>{String(debateData.sop_breakdown)}</p>}

@@ -195,6 +195,9 @@ export function SpeculairTracker() {
     const since = n - 100;
     const c = since > 0 ? "var(--green)" : since < 0 ? "var(--red)" : "var(--text-light)";
     const rotated: any[] = trk?.closed || [];
+    // Count from n_closed when the payload carries it: the embedded value chain caps its
+    // `closed` array, so rotated.length under-reports the real number of rotations.
+    const nRotated: number = typeof trk?.n_closed === "number" ? trk.n_closed : rotated.length;
     // The value book's chain is embedded in speculair_value_apex.json and carries no
     // last_date of its own — fall back to the last NAV point so its card shows the
     // same "· Nd" age as the apex instead of silently dropping it.
@@ -213,7 +216,7 @@ export function SpeculairTracker() {
             {since > 0 ? "+" : ""}{since.toFixed(1)}%
           </div>
           <div style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--text-light)", marginTop: 2 }}>
-            NAV {n.toFixed(1)}{rotated.length ? ` · ${rotated.length} rotated` : ""}{note ? ` · ${note}` : ""}
+            NAV {n.toFixed(1)}{nRotated ? ` · ${nRotated} rotated` : ""}{note ? ` · ${note}` : ""}
           </div>
         </div>
         <Sparkline navs={hist.map((h: any) => h.nav)} color={c} />

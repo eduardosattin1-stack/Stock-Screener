@@ -20,6 +20,7 @@ Design notes carried over from _value_post.py:
     effects (no FMP/screener_v6 import; the caller injects its fetchers).
 """
 import json
+import re
 import math
 import statistics
 from datetime import datetime as _dt
@@ -345,6 +346,31 @@ def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str 
         apx["apex_basket"] = keep
         apx["runner_ups"] = demoted + [r for r in (apx.get("runner_ups") or [])
                                        if (r.get("symbol") if isinstance(r, dict) else r) not in dsyms]
+        # MEMO-CONSISTENCY GUARD (2026-08-25, the NTES incident). A demotion here moves the OBJECT
+        # but cannot rewrite the Director's PROSE: on 2026-08-24 NTES was demoted while the memo
+        # still read "NTES: KEEP ... Kept at a half unit" and its runner-up thesis still said "that
+        # is why the seat stays a half unit" - the published artifact contradicted its own book.
+        # The real fix is ordering (the kill-tier now runs BEFORE the value Director), so reaching
+        # this branch means a kill landed late and the memo is stale by construction. Stamp the
+        # contradiction into the artifact rather than letting a reader trust the prose.
+        _names = ", ".join(sorted(dsyms))
+        _note = ("[POST-LAYER CORRECTION - " + _dt.now().strftime("%Y-%m-%d") + "] The skeptic "
+                 "kill-tier demoted the following name(s) to runner-ups AFTER this memo was "
+                 "written: " + _names + ". Any sentence below that describes one of them as "
+                 "seated, sized, or kept is superseded - the apex_basket field above is the book. "
+                 "Reason(s): "
+                 + " | ".join(f"{d.get('symbol')}: {str((merged.get(d.get('symbol')) or {}).get('kill_fact', ''))[:200]}"
+                              for d in demoted) + "\n\n")
+        for _mk in ("value_memo", "director_memo", "fr_memo", "mining_memo", "fdt_memo"):
+            if isinstance(apx.get(_mk), str) and apx[_mk]:
+                apx[_mk] = _note + apx[_mk]
+                break
+        apx["skeptic_demoted_post_memo"] = sorted(dsyms)
+        for _d in demoted:                       # strip seat language from the demoted entry itself
+            _d["demoted_by_skeptic"] = True
+            _d["seat_status"] = "NOT SEATED - refuted by the skeptic after the Director wrote"
+        print(f"WARN memo-consistency: stamped a post-layer correction into the memo for {_names} "
+              f"(the Director's prose predates this kill)")
     for r in apx.get("runner_ups", []):
         if isinstance(r, dict) and r.get("symbol") in merged and "skeptic_verdict" not in r:
             r["skeptic_verdict"] = merged[r["symbol"]].get("verdict", "")
@@ -670,3 +696,195 @@ def exits_block(picks, quotes, thesis_break, fair_value=None):
         print(f"exits: {n_trim} at/above the trim level, {n_exit} below the thesis break "
               f"-> {[s for s, v in out.items() if v['action'] != 'HOLD']}")
     return out
+
+
+# ── ENTRY DISCIPLINE (2026-09-08) ─────────────────────────────────────────────────────────────────
+# Bruno's read of the 2026-09-07 value book: three seats carried a debate grade B - the CRO's "wait
+# for the wash-out", with NAMED entry levels (NOK 100-105, $285 / $270, $66-70) - yet the Director
+# tagged enter_now_carry / scale_in on two of them, and the memo said "no name graded 'pass for
+# now' is seated" (literally true: that is grade C; grade B IS seated, on the rotation rule). The
+# book is a paper track: KEEP means "already held, do not sell" - never "buy at today's price".
+# This layer makes that distinction deterministic, with the SAME override contract as
+# duration_bucket: the Director may disagree with the CRO's timing only by writing a DATED reason.
+# Display + audit trail only: no seat, size, weight or NAV moves here.
+VERDICT_PLAIN = {"A": "buy now", "B": "wait for the wash-out", "C": "pass for now"}
+POSTURE_PLAIN = {"enter_now_carry": "enter now, carry", "scale_in": "scale in",
+                 "wait_for_weakness": "wait for weakness", "on_confirmation": "on confirmation"}
+_ENTER_NOW = ("enter_now_carry", "scale_in")
+# The CRO's own verdict paragraph (record.moderator_conclusion). Opener = the first clause is a wait;
+# the phrases are the specific ways this pipeline's CROs say "not at this price" (every one seen on
+# the 2026-09-07 tape). Deliberately narrow: "paid to wait" / "while we wait" must NOT fire. The
+# typed cro_add_px / cro_add_event the Director now emits are the primary path; this is the
+# fail-safe for an omitted level, so leaving the field blank cannot dodge the rule.
+_WAIT_OPENER = re.compile(r"^\s*wait\b", re.I)
+_WAIT_PHRASES = re.compile(r"wait for the wash-?out|wait for a better (?:entry|price)|hold the file open"
+                           r"|don'?t buy the flush|do not buy|not a buy|first-actionable-buy|entry trigger", re.I)
+_DATED = re.compile(r"\b(?:20\d\d-\d\d-\d\d"
+                    r"|\d{1,2}\s+(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?,?\s+20\d\d"
+                    r"|(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{1,2},?\s+20\d\d)\b", re.I)
+ENTRY_MEMO_MARK = "\n\nENTRY DISCIPLINE (deterministic"
+
+
+def _num(x):
+    """Coerce a typed-or-prose level ("NOK 105", "$285", 285) to a float; None when there is none."""
+    if isinstance(x, bool):
+        return None
+    if isinstance(x, (int, float)):
+        return float(x)
+    if isinstance(x, str):
+        m = re.search(r"-?\d+(?:\.\d+)?", x.replace(",", ""))
+        if m:
+            try:
+                return float(m.group(0))
+            except ValueError:
+                return None
+    return None
+
+
+def _px(x, cur=""):
+    if x is None:
+        return "?"
+    s = f"{x:,.0f}" if abs(x) >= 1000 else (f"{x:,.2f}".rstrip("0").rstrip("."))
+    return (s + " " + cur).strip()
+
+
+def _posture_plain(v):
+    key = str(v or "").split(":")[0].strip()
+    detail = str(v or "").split(":", 1)[1].strip() if ":" in str(v or "") else ""
+    base = POSTURE_PLAIN.get(key, key or "blank")
+    return f"{base}: {detail}" if detail else base
+
+
+def _wait_quote(concl, limit=260):
+    """The CRO's own wait sentence(s), VERBATIM, for the memo when the Director typed no add level.
+    Picks the wait phrase whose next 400 chars carry a number (the level / date sentence), latest
+    wins on ties; returns from that sentence's start to the first sentence end past `limit` chars.
+    A quote, never a parsed number - the typed cro_add_px stays the only machine-readable level."""
+    if not concl:
+        return ""
+    hits = list(_WAIT_PHRASES.finditer(concl)) + list(_WAIT_OPENER.finditer(concl))
+    if not hits:
+        return ""
+    def _score(m):                      # a priced level (NOK 105 / $285 / 880p) beats a bare percentage
+        win = concl[m.start():m.start() + 400]
+        return (2 if re.search(r"(?:[A-Z]{3}|[$€£])\s?\d|\d+\s?p\b", win) else 1 if re.search(r"\d", win) else 0,
+                m.start())
+    best = max(hits, key=_score)
+    ends = [x.end() for x in re.finditer(r"[.!?]\s", concl[:best.start()])]
+    start = ends[-1] if ends else 0
+    seg = concl[start:start + limit * 2]
+    cut = re.search(r"[.!?]\s", seg[limit:])
+    seg = seg[:limit + cut.end() - 1] if cut else seg
+    return re.sub(r"\s+", " ", seg).strip()
+
+
+def reconcile_entry_posture(apx, picks, ctx_of, memo_key, today=None):
+    """Reconcile every seat's entry_posture to its own debate grade. ctx_of(sym) -> dict with any of
+    verdict / conclusion / currency / live_px / entry_px / entry_date (all optional, best-effort).
+    Per seat stamps cro_verdict(+_plain), cro_says_wait, cro_add_px, cro_add_event, entry_posture_source
+    (director | cro-reconciled | cro-derived | director-override | derived) and, when the post layer
+    reverts an unjustified enter-now tag, entry_posture_director_orig. Appends (replacing any prior
+    copy - idempotent on re-run) the ENTRY DISCIPLINE block to apx[memo_key] and apx['entry_discipline'].
+    Never touches membership, size_units, weights or NAV."""
+    today = today or _dt.now().strftime("%Y-%m-%d")
+    waits, reconciled, overrides, consistent, blank, lines, other = [], [], [], [], [], [], []
+    for p in picks:
+        sym = p.get("symbol")
+        c = ctx_of(sym) or {}
+        v = str(c.get("verdict") or p.get("cro_verdict") or "").strip().upper()[:1]
+        p["cro_verdict"] = v or None
+        p["cro_verdict_plain"] = VERDICT_PLAIN.get(v, "")
+        add_px = _num(p.get("cro_add_px"))
+        add_ev = str(p.get("cro_add_event") or "").strip()
+        p["cro_add_px"] = add_px
+        p["cro_add_event"] = add_ev
+        concl = str(c.get("conclusion") or "")
+        said_wait = bool(_WAIT_OPENER.search(concl) or _WAIT_PHRASES.search(concl))
+        wait_graded = (v == "B" and (said_wait or add_px is not None or bool(add_ev))) or v == "C"
+        p["cro_says_wait"] = wait_graded
+        p["cro_wait_quote"] = _wait_quote(concl) if wait_graded else ""
+        cur = str(p.get("entry_posture") or "")
+        key = cur.split(":")[0].strip()
+        reason = str(p.get("entry_posture_override_reason") or "").strip()
+        src = str(p.get("entry_posture_source") or "")
+        cro_posture = f"on_confirmation: {add_ev}" if add_ev else "wait_for_weakness"
+        if wait_graded:
+            waits.append(sym)
+            if key in _ENTER_NOW and _DATED.search(reason):
+                src = "director-override"
+                overrides.append(sym)
+            elif key in _ENTER_NOW:
+                p["entry_posture_director_orig"] = cur
+                p["entry_posture"] = cro_posture
+                src = "cro-reconciled"
+                reconciled.append(sym)
+            elif not key:
+                p["entry_posture"] = cro_posture
+                src = "cro-derived"
+                blank.append(sym)
+            elif src in ("cro-reconciled", "cro-derived"):        # re-run: already reconciled last pass
+                (reconciled if src == "cro-reconciled" else blank).append(sym)
+            elif src == "director-override":
+                overrides.append(sym)
+            else:
+                src = "director"
+                consistent.append(sym)
+        else:
+            src = "director" if key else "derived"
+            other.append(f"{sym} ({p['cro_verdict_plain'] or 'no grade'})")
+        p["entry_posture_source"] = src
+        if not wait_graded:
+            continue
+        # ── memo line (plain language; the numbers come from the tracking file + the record) ──
+        ccy = str(c.get("currency") or "")
+        e_px, l_px = _num(c.get("entry_px")), _num(c.get("live_px"))
+        held = ""
+        if e_px and c.get("entry_date"):
+            held = f"held since {c['entry_date']} at {_px(e_px, ccy)}"
+            if l_px:
+                held += f" (now {_px(l_px, ccy)}, {((l_px / e_px) - 1) * 100:+.1f}%)"
+        elif str(p.get("decision") or "").upper() == "ADD":
+            held = "new this week"
+        says = f"the debate says {VERDICT_PLAIN.get(v, 'wait')}"
+        if add_px is not None and add_ev:
+            says += f" - adds near {_px(add_px, ccy)} or on the {add_ev}"
+        elif add_px is not None:
+            says += f" - adds near {_px(add_px, ccy)}"
+        elif add_ev:
+            says += f" - adds on the {add_ev}"
+        elif p.get("cro_wait_quote"):
+            says += f' - in its words: "{p["cro_wait_quote"]}"'
+        else:
+            says += " but the Director recorded no add level (read the record's conclusion for the trigger)"
+        orig_plain = _posture_plain(p.get("entry_posture_director_orig"))
+        new_plain = _posture_plain(p.get("entry_posture"))
+        if src == "cro-reconciled":
+            what = f'Director tagged "{orig_plain}" with no dated reason -> reconciled to "{new_plain}".'
+        elif src == "director-override":
+            what = f'Director overrides the wait with a dated reason ("{reason[:140]}") - posture "{new_plain}" stands.'
+        elif src == "cro-derived":
+            what = f'Director left the posture blank -> set to "{new_plain}" from the debate.'
+        else:
+            what = f'Posture "{new_plain}" (Director, consistent with the debate).'
+        lines.append(f"  - {sym}: " + "; ".join(x for x in (held, says) if x) + ". " + what)
+    n = len(picks)
+    head = (f"ENTRY DISCIPLINE (deterministic, stamped {today}). A kept seat is a paper position already "
+            f"held: \"keep\" means do not sell, never buy at today's price. {len(waits)} of {n} seat(s) are "
+            f"wait-graded by their own debate (\"wait for the wash-out\" / \"pass for now\"); for those the "
+            f"entry posture is the reviewer's, not the Director's, unless a dated reason is on record."
+            + (f" Reconciled by the post layer: {', '.join(reconciled)}." if reconciled else "")
+            + (f" Set from the debate (Director left blank): {', '.join(blank)}." if blank else "")
+            + (f" Director overrides on record: {', '.join(overrides)}." if overrides else ""))
+    tail = f"\n  Not wait-graded (posture as the Director tagged it): {', '.join(other)}." if other else ""
+    block = "\n\n" + head + ("\n" + "\n".join(lines) if lines else "") + tail
+    assert block.startswith(ENTRY_MEMO_MARK), "memo marker drifted"
+    memo = apx.get(memo_key)
+    if isinstance(memo, str):
+        i = memo.find(ENTRY_MEMO_MARK)
+        if i >= 0:
+            memo = memo[:i]
+        apx[memo_key] = memo.rstrip() + block
+    summary = {"stamped": today, "wait_graded": waits, "reconciled": reconciled, "set_from_debate": blank,
+               "director_overrides": overrides, "consistent": consistent}
+    apx["entry_discipline"] = summary
+    return summary

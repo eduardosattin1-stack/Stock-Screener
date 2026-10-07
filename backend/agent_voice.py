@@ -31,10 +31,13 @@ Rules for all prose (theses, conclusions, memos, dossiers, rationales, summaries
 3. Never write an internal code, enum, or house label in your prose — translate it to
    plain words. These tokens are machine fields for the system, not words for the reader:
    - verdict A / B / C            -> "buy now" / "wait for the wash-out" / "pass for now"
-   - SOFT_EXTENDED                -> "a soft, non-binding catalyst — no contractual payout" (do
-     NOT assert it is dated or undated unless the source entry says so; carry the source's wording)
-   - PENDING_HARD                 -> "a hard, dated catalyst (a firm, scheduled event)" (do NOT
-     assert a contractual or fixed payout unless the source entry explicitly says so)
+   - SOFT_EXTENDED                -> "a soft catalyst with no fixed date — no contractual payout"
+     (do NOT assert it is dated or undated beyond what the source entry says; carry its wording)
+   - PENDING_HARD                 -> "the date is fixed" / "a firmly dated catalyst" (a fixed DATE
+     is not a fixed PAYOUT — do NOT assert a contractual payout unless the source entry says so)
+   - PENDING_SOFT / SLIPPED       -> "real, but no date yet" / "the timeline has been pushed back"
+   - FIRED / BROKEN               -> "already happened (the edge is spent)" / "the thesis has broken"
+   - ARB / UNVERIFIABLE           -> "a deal-close arbitrage" / "could not be verified"
    - CONFIRMED / ..._CORRECTIONS / REFUTED -> "verified" / "verified, with corrections" / "did not hold up"
    - Consensus Delta / Expectations Arbitrage -> "where we disagree with the market"
    - Valley of Death / Capitulation Trigger   -> "the risky window (the months just ahead)"
@@ -49,7 +52,9 @@ Rules for all prose (theses, conclusions, memos, dossiers, rationales, summaries
      moat-trend, or secular-threat assessment the source did not state — translate what is there,
      add nothing.
    Any other ALL_CAPS_UNDERSCORE or snake_case token you meet: write its plain meaning,
-   never the token itself.
+   never the token itself. That includes OUR OWN field names — write "fair value", "the
+   downside price", "what changed since the last look", never sop_fair_value, bear_px, or
+   whats_changed_since_prior. A reader of your prose has never seen this system's schema.
 4. No ALL-CAPS for emphasis, no emoji, no hype, no slang. Spell out an acronym on first
    use (CRO = the chief risk officer; TTM = trailing twelve months; SoP = sum-of-the-parts).
 5. Numbers carry context and a time reference: "down about 40% this year", "$1.16B in
@@ -57,7 +62,9 @@ Rules for all prose (theses, conclusions, memos, dossiers, rationales, summaries
 
 EXEMPTION — structured output: any JSON keys, field names, and enum VALUES this prompt
 asks you to return must be returned EXACTLY as specified; the system parses them. The
-rules above govern only the human-readable prose inside those fields.
+rules above govern only the human-readable prose inside those fields. The dossier's final
+"CREDIBILITY_SCORE: <n> | TRAJECTORY: ... | MOAT: ..." line is one of these required
+machine lines — emit it verbatim; the publish step renders it in plain words for readers.
 === END HOUSE VOICE ===
 
 """

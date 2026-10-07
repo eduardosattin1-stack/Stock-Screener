@@ -1821,7 +1821,10 @@ export default function Dashboard(){
     ) : null;
 
   // Entry-timing chip (WHEN to enter) — Director-tagged entry_posture, deterministic fallback otherwise.
-  const entryPostureChip = (posture?: string) => {
+  // Since 2026-09-08 the post layer reconciles it to the seat's own debate grade (a "wait" seat is held,
+  // not a buy at today's price) and carries the reviewer's named add level / event — shown inline so a
+  // "keep" never reads as "buy here"; the tooltip says who set the posture.
+  const entryPostureChip = (posture?: string, pick?: any) => {
     if (!posture) return null;
     const key = String(posture).split(":")[0].trim();
     const detail = String(posture).includes(":") ? String(posture).split(":").slice(1).join(":").trim() : "";
@@ -1833,8 +1836,23 @@ export default function Dashboard(){
     };
     const m = map[key];
     if (!m) return null;
+    const addPx: number | null = pick && typeof pick.cro_add_px === "number" ? pick.cro_add_px : null;
+    const addEv: string = pick && pick.cro_add_event ? String(pick.cro_add_event) : "";
+    const src: string = pick ? String(pick.entry_posture_source || "") : "";
+    const grade: string = pick && pick.cro_verdict_plain ? String(pick.cro_verdict_plain) : "";
+    let label = m.label;
+    if (addPx != null) label += ` · adds at ${addPx >= 1000 ? Math.round(addPx).toLocaleString() : addPx}`;
+    else if (addEv && key !== "on_confirmation") label += ` · ${addEv}`;
+    let tip = m.tip;
+    if (grade) tip += ` Debate grade: ${grade}.`;
+    if (pick && pick.cro_wait_quote) tip += ` In the reviewer's words: "${String(pick.cro_wait_quote)}"`;
+    if (addPx != null || addEv) tip += ` Reviewer's add level: ${[addPx != null ? String(addPx) : "", addEv].filter(Boolean).join(" / ")}.`;
+    if (src === "cro-reconciled") tip += ` Reviewer's posture — the Director tagged "${String(pick.entry_posture_director_orig || "").split(":")[0].replace(/_/g, " ")}" with no dated reason; reconciled by the post layer.`;
+    else if (src === "cro-derived") tip += " Set from the debate (the Director left it blank).";
+    else if (src === "director-override") tip += ` Director override of a "wait" grade: ${String(pick.entry_posture_override_reason || "")}`;
+    if (pick && pick.cro_says_wait) tip += " A held seat is a paper position: keep means do not sell, not buy here.";
     return (
-      <span title={m.tip} style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: m.bg, color: m.color, fontFamily: "var(--font-mono)", fontWeight: 700, cursor: "help" }}>{m.label}</span>
+      <span title={tip} style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: m.bg, color: m.color, fontFamily: "var(--font-mono)", fontWeight: 700, cursor: "help" }}>{label}</span>
     );
   };
 
@@ -4694,7 +4712,7 @@ export default function Dashboard(){
                                 {pick.weight_pct != null && (
                                   <span style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>wt {pick.weight_pct}%</span>
                                 )}
-                                {entryPostureChip(pick.entry_posture)}
+                                {entryPostureChip(pick.entry_posture, pick)}
                                 {goalTag(pick)}
                               </div>
                               <span style={{ fontSize: 13, fontWeight: 700, color: perf >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
@@ -4844,7 +4862,7 @@ export default function Dashboard(){
                                   <span title="correlated with another basket name" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>corr</span>
                                 )}
                                 {skepticChip(pick)}
-                                {entryPostureChip(pick.entry_posture)}
+                                {entryPostureChip(pick.entry_posture, pick)}
                               </div>
                               {typeof mos === "number" && (
                                 <span style={{ fontSize: 13, fontWeight: 700, color: mos >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
@@ -5081,7 +5099,7 @@ export default function Dashboard(){
                                 {pick.corr_flag && (
                                   <span title="correlated with another basket name" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>corr</span>
                                 )}
-                                {entryPostureChip(pick.entry_posture)}
+                                {entryPostureChip(pick.entry_posture, pick)}
                               </div>
                               {typeof mos === "number" && (
                                 <span style={{ fontSize: 13, fontWeight: 700, color: mos >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>

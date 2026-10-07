@@ -2444,7 +2444,13 @@ def _update_apex_tracking(apex_basket: list, push_gcs: bool = True,
     return {"inception_date": inception, "since_inception_pct": round((nav / 100.0 - 1) * 100, 2),
             "nav": round(nav, 2), "n_open": len(apex), "n_closed": len(closed),
             "win_rate": round(len(wins) / len(closed) * 100, 1) if closed else None,
-            "history": history, "closed": closed[-20:]}
+            # closed list matches the PERSISTED state (full since 2026-10-06), not a tighter -20.
+            # The value card embeds this return value in speculair_value_apex.json and renders its
+            # length as "N rotated"; at -20 it under-reported 34 legs as 20 and silently dropped
+            # the 14 oldest (all pre-2026-06-30), including HRB's first, LOSING leg while keeping
+            # its +52.65% winner - a truncation that flatters a name. n_closed above is the
+            # authoritative count either way.
+            "history": history, "closed": closed}
 
 
 def _write_output(output: dict, dry_run: bool = False, push_gcs: bool = True):

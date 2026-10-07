@@ -440,6 +440,15 @@ for p in picks:
         "moat_erosion": p.get("moat_erosion", ""), "erosion_severity": p.get("erosion_severity", "none"),
         "secular_theme": p.get("secular_theme", ""),
         "entry_posture": p.get("entry_posture") or derive_entry_posture(p, rec),
+        # entry discipline (2026-09-08, _post_common.reconcile_entry_posture): the debate grade in plain
+        # words, the CRO's named add level / event, and who set the posture (director | cro-reconciled |
+        # cro-derived | director-override) - so a "keep" never reads as "buy here" on the card
+        "cro_verdict": p.get("cro_verdict"), "cro_verdict_plain": p.get("cro_verdict_plain", ""),
+        "cro_says_wait": p.get("cro_says_wait"), "cro_add_px": p.get("cro_add_px"),
+        "cro_add_event": p.get("cro_add_event", ""), "entry_posture_source": p.get("entry_posture_source", ""),
+        "cro_wait_quote": p.get("cro_wait_quote", ""),
+        "entry_posture_director_orig": p.get("entry_posture_director_orig", ""),
+        "entry_posture_override_reason": p.get("entry_posture_override_reason", ""),
         "expected_return_pct": p.get("expected_return_pct"),
         "horizon_months": p.get("horizon_months"),
         "meets_goal": p.get("meets_goal"),
