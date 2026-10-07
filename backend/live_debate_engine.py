@@ -28,7 +28,7 @@ import re
 import sys
 import time
 import random
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Optional
 
@@ -880,6 +880,64 @@ The Radar Agent has classified this candidate with a signal_type:
 - If signal_type is "innovation" or "catalyst": evaluate through the growth/catalyst lens above.
 - If signal_type is "deep_value": shift your framework. The Consensus Delta becomes "Is the street pricing terminal decline into a company with stable/growing earnings power?" The Valley of Death becomes "Is there a liquidation event, debt maturity, or forced selling that could kill the thesis before MOS converges?" The Forcing Function becomes "What event (buyback authorization, activist, asset sale, dividend initiation) will force the market to re-rate?"
 - If signal_type is "trap" or "none": assign conviction ≤ 2 and verdict C unless extraordinary override evidence exists.
+"""
+
+# -- REGIME-LANE CRO RUBRIC (2026-10-06, Bruno) ---------------------------------------------------
+# The regime lane's CRO answers FOUR decision questions in order (thesis -> valuation -> entry ->
+# fit) and the A/B/C letter is DERIVED BY CODE from thesis_state x entry_mode (+ the quadrant entry
+# floor). Deliberately a SEPARATE constant, exported by prep() to backend/_opus_debate/
+# cro_regime_rubric.txt: MODERATOR_SYSTEM_PROMPT is shared with the B13 catalyst lane (same
+# moderator_system.txt), FR, mining and FDT, which are out of scope and must not change. No
+# AGENT_VOICE prefix - the CRO has already read it in moderator_system.txt. ASCII only.
+REGIME_CRO_RUBRIC = """=== REGIME-LANE CRO RUBRIC (2026-10-06) - this lane only; where it conflicts with moderator_system.txt, THIS WINS ===
+This replaces the base mandate ("Your sole responsibility is to evaluate TIMING, NARRATIVE SATURATION, and MARGIN OF SAFETY") and the base A/B/C verdict definitions. The base analysis fields (consensus_delta, valley_of_death, positioning_washout, forcing_function) stay as the supporting analysis, and every base JSON field is still required. Answer FOUR decision questions, separately and IN ORDER, and do not let one answer leak into the next.
+
+Q1 THESIS - is the business case still true? (Not the price, not the macro.)
+  thesis_state = INTACT (the load-bearing claims are corroborated by the latest dated numbers) | IMPAIRED (a load-bearing claim is in doubt but not disproven, and a specific, checkable, dated test can restore it) | BROKEN (a load-bearing claim is disproven by a dated fact).
+  thesis_evidence = the dated evidence for that state (YYYY-MM-DD, the quarter or the filing).
+  thesis_test = REQUIRED when IMPAIRED, else null: {metric, pass_level (restores INTACT), fail_level (makes it BROKEN), resolves_on (the dated event that settles it)}. If you cannot date or measure the test, the state is INTACT or BROKEN, not IMPAIRED.
+
+Q2 VALUATION - the typed valuation block (step 6b of your prompt). Unchanged.
+
+Q3 ENTRY - entry_mode = NOW (buy at today's price) | AT_LEVEL (buy only at entry_level_px) | ON_EVENT (buy only after entry_event) | NONE (no entry).
+  entry_level_px = a number in the same listing and currency as the valuation block; AT_LEVEL only, else null.
+  washout_type = AT_LEVEL only - WHO sells the stock down to your level: MECHANICAL (forced, non-fundamental sellers: an index deletion, fund redemptions, a lock-up expiry, spin-off dumping, yield holders after a dividend cut) | FACTOR (a sector, style or macro de-rating that is not specific to the company). NONE for every other mode. An AT_LEVEL with no named seller is the banned "wait for a flush".
+  entry_event = ON_EVENT only (when IMPAIRED it is normally thesis_test.resolves_on), else "".
+
+Q4 FIT - context, never a lever.
+  peer_position = cheap_vs_peers | in_line | rich_vs_peers | no_peers (peer_groups/<SYM>.json plus your own check; explain it in peer_comps_note).
+  macro_fit = TAILWIND | NEUTRAL | HEADWIND | UNKNOWN, with macro_fit_note (one or two sentences). Read backend/_opus_debate/macro_regime.json: quadrant, quadrant_basis, regime, debt_cycle.debt_cycle_phase, debt_cycle.phase_detail, debt_cycle.expected_horizon_months. Judge whether this business's payback profile (cash now versus a long-dated story; p_fcf and fcf_margin in the metrics) is helped or hurt by that backdrop.
+  macro_fit NEVER changes thesis_state, entry_mode, the verdict or conviction, and a macro or debt-cycle citation is never the dated fact behind a change. File missing, quadrant UNKNOWN or phase UNKNOWN -> macro_fit UNKNOWN (no penalty). Do not read regime_read.json (it is last week's).
+
+THE LETTER IS DERIVED BY CODE from Q1 x Q3. The pipeline re-derives it after the gates, keeps your letter as verdict_agent_orig and logs any mismatch as a defect - so write verdict = the mapped letter:
+  A = INTACT + NOW                                -> "buy now"
+  B = INTACT + AT_LEVEL   (wait_kind price)       -> "wait for a better price"
+  B = IMPAIRED + ON_EVENT (wait_kind proof)       -> "wait for proof"
+  B = INTACT + ON_EVENT   (wait_kind event)       -> "wait for the event"
+  C = BROKEN (with any entry), or entry_mode NONE -> "pass for now"
+  IMPAIRED + NOW and IMPAIRED + AT_LEVEL are not valid answers: an impaired thesis waits for its proof. The code coerces either one to ON_EVENT on thesis_test.resolves_on (wait for proof), or to C when there is no thesis_test, and flags it.
+CONVICTION keeps its 1-5 scale. A C that is YOUR answer (BROKEN, entry_mode NONE, or IMPAIRED with no thesis_test) caps it at 2: a pass must never clear the Director's eligibility bar (conviction >= 3); the code clamps a higher number and keeps yours as conviction_agent_orig. A C that comes only from the price or the quadrant entry floor (no buyable price between the exit and the bar, or the wash-out pass below) leaves your conviction untouched: the letter says "not a buy at this price", the conviction still says how good the business case is, and the macro quadrant never moves conviction. So when only the price fails the floor, answer NOW or AT_LEVEL and let the code decide - write NONE only for a reason of your own (the wash-out pass below is the one price NONE the code reads as a price answer).
+
+HARD RULES (the code enforces each one and stamps a grade flag when it has to):
+ (1) BROKEN is never B: BROKEN means entry_mode NONE.
+ (2) NOW only if base_fv_px / live_price - 1 >= the entry floor for the macro_regime.json quadrant: 20% for GOLDILOCKS, REFLATION, UNKNOWN or a missing file; 25% for STAGFLATION; 30% for RISK_OFF. This is the same bar the Director applies at STEP 3a - a bar to clear, not a weight. Below it, answer AT_LEVEL at the price where the discount clears the floor; when no such price sits above the exit level, still answer NOW - the code grades it a price pass and keeps your conviction. Never write NONE for a price reason. A NOW below the floor is re-derived by code to a price-wait at base_fv_px / (1 + floor), or to C when that price is at or below the exit level.
+ (3) entry_level_px must sit strictly above the exit level (valuation.bear_px and downside_floor_px), strictly below live_price, and base_fv_px / entry_level_px - 1 must clear the same floor. A level at or below the exit, or one whose own discount fails the floor, is a defect: the code replaces it with base_fv_px / (1 + floor) when that price is above the exit, else grades C. A level at or above live_price means the price you wait for is already here: the code reads it as NOW, and rule (2) decides.
+ (4) AT_LEVEL requires washout_type MECHANICAL or FACTOR.
+ (5) IMPAIRED requires all four thesis_test parts; ON_EVENT requires entry_event.
+ (6) signal_type trap or none -> entry_mode NONE unless extraordinary override evidence exists.
+
+WASH-OUT RESOLUTION - only when inputs/<SYM>.json carries a non-null "washout" block. Read washout.level_source - there are two triggers:
+  LEVEL REACHED (level_source entry_level_px or cro_add_px): the price has reached the entry level this committee named last time. The market has answered the wait you set: RESOLVE it, do not extend it. AT_LEVEL is forbidden - a second price-wait is a defect the code coerces.
+  FELL 10% (level_source fall_10pct): a wait-graded name has fallen 10% or more since its last debate and it had no level you named (an older B, a proof wait or an event wait). Re-check the wait; you may keep it.
+  INTACT, waiting for a price -> NOW (buy now). After LEVEL REACHED, if even this price fails rule (2), the answer is NONE (pass for now) - never another level; that pass comes from the price, so the code leaves your conviction alone. After FELL 10% you may instead answer AT_LEVEL at a level that obeys rules (3) and (4).
+  INTACT, waiting for a dated event -> keep ON_EVENT with the same (or a re-dated) entry_event until the event has happened (wait for the event): you are never forced to buy ahead of the event the committee gated on.
+  IMPAIRED -> ON_EVENT with a full thesis_test, the same or a re-dated test (wait for proof).
+  BROKEN   -> NONE (pass for now).
+  Say in thesis_evidence whether the fall came from forced sellers (mechanical), a sector or style sell-off (factor) or company news, with the date; the arrival of the price is the dated fact behind any change of letter. Write washout_resolution = {trigger (FELL_10PCT when washout.level_source is fall_10pct, else LEVEL_REACHED), prior_level_px (washout.level, or null), resolved_to (BUY | WAIT_FOR_PRICE | WAIT_FOR_PROOF | WAIT_FOR_EVENT | PASS), note (one dated sentence)}. With no washout block, washout_resolution is null.
+
+HOUSE VOICE: the enums stay bare tokens in their own fields; the prose says them plainly. Open moderator_conclusion with the plain answer:
+  "Buy now." | "Wait for a better price: we buy near <level>, which <the forced sellers, or the sector sell-off> could deliver." | "Wait for proof: we buy once <the test> passes, due <date>." | "Wait for the event: we buy once <the event> confirms." | "Pass for now."
+In prose write "the thesis holds", "the thesis is in doubt until <the test>" or "the thesis has broken" - never INTACT, IMPAIRED, BROKEN, AT_LEVEL, ON_EVENT, MECHANICAL or FACTOR. Define a wash-out the first time you use the word ("a wash-out, a sharp sell-off by forced or non-fundamental sellers").
 """
 
 
@@ -2267,9 +2325,12 @@ def _load_apex_tracking(gcs_path: str = APEX_TRACKING_PATH, local_name: str = "s
     return {}
 
 
-def _current_prices(symbols: set) -> dict:
+def _current_prices_asof(symbols: set):
     """Current prices for `symbols` from the latest scan. Tries authenticated GCS
-    (Cloud Run), then the public bucket URL, then the local file (dev without ADC)."""
+    (Cloud Run), then the public bucket URL, then the local file (dev without ADC).
+    Returns (prices, asof): asof[sym] = the ISO day the price is dated (the scan's scan_date for
+    scan names, the quote timestamp's UTC day for the FMP fallback, "" when unknown - an unknown
+    date never satisfies the pending-entry tracker's "dated after the decision" test)."""
     scan = None
     try:
         sys.path.insert(0, str(BASE_DIR))
@@ -2292,11 +2353,13 @@ def _current_prices(symbols: set) -> dict:
                 scan = json.loads(local.read_text(encoding="utf-8"))
         except Exception:
             scan = None
-    out = {}
+    out, asof = {}, {}
+    scan_day = str((scan or {}).get("scan_date") or "")[:10]
     for s in (scan or {}).get("stocks", []):
         sym, px = s.get("symbol"), s.get("price")
         if sym in symbols and isinstance(px, (int, float)) and px > 0:
             out[sym] = float(px)
+            asof[sym] = scan_day
     # FMP-quote fallback for OFF-SCAN members — mega-caps not in the screened universe (e.g. Visa "V",
     # TSM, CCJ in the disruptor book). Without this they stamp entry_price + NAV-mark to 0 (showed as a
     # blank/stale card). Best-effort; the scan stays the primary source.
@@ -2314,15 +2377,208 @@ def _current_prices(symbols: set) -> dict:
                             sym, px = q.get("symbol"), q.get("price")
                             if sym in symbols and isinstance(px, (int, float)) and px > 0:
                                 out[sym] = float(px)
+                                ts = q.get("timestamp")
+                                asof[sym] = (datetime.fromtimestamp(ts, timezone.utc).strftime("%Y-%m-%d")
+                                             if isinstance(ts, (int, float)) and ts > 0 else "")
         except Exception:
             pass
-    return out
+    return out, asof
+
+
+def _current_prices(symbols: set) -> dict:
+    """Prices only (the weekly book publishers' price-coverage checks); see _current_prices_asof."""
+    return _current_prices_asof(symbols)[0]
+
+
+# ── PENDING ENTRY (2026-10-06, Bruno: "a seat is bought at the first close AFTER the decision, or at
+# its gate") ───────────────────────────────────────────────────────────────────────────────────────
+# A NEW seat in a gated book (regime + value publishers pass entry_rules="gated") opens PENDING: no
+# entry price, outside the NAV, n_open and the win rate. It fills at the first daily close strictly
+# after the decision (enter now), at the first close at or below its add level (a price wait), or not
+# at all while it waits on an event / a blocked gate (a later debate ungates or drops it). Every piece
+# of pending state lives INSIDE positions[sym]: main's older Saturday writer rebuilds the top-level
+# state dict from a fixed key list and would silently drop a new top-level key. The pass below is
+# state-driven, so a legacy caller (FR / mining / FDT / recovery / the Saturday mark) still fills or
+# strips an existing pending seat - it just never opens or re-gates one. Legacy = bit-identical.
+# Order of the pass (CRO review 2026-10-06): the fill on the STORED gate is resolved FIRST, so this
+# run's decision never cancels or re-gates an order whose gate was already met; such a seat is held,
+# or - when the Director dropped it - exits through the rotation with a real closed leg.
+_ENTRY_RULES = ("legacy", "defer", "gated")
+_WASHOUT_DD = 0.10            # informational wash-out stamp on a pending seat (the next debate reads it)
+_FILL_CACHE: dict = {}        # one EOD lookup per (sym, since, kind, level) per process: EW + weighted fill alike
+_GATE_LEDGER = BASE_DIR / "_opus_debate" / "_entry_gate_ledger.jsonl"
+_GATE_MODES = ("NOW", "AT_LEVEL", "ON_EVENT", "NONE")
+
+
+def _posnum(x):
+    return float(x) if isinstance(x, (int, float)) and not isinstance(x, bool) and x > 0 else None
+
+
+def _tf(p, key, *nested):
+    """Flat typed field first, then a nested {"entry": {...}} / {"cro": {...}} copy (cro_scorecard
+    reads both shapes)."""
+    v = p.get(key)
+    if v not in (None, ""):
+        return v
+    for blk, k in nested:
+        b = p.get(blk)
+        if isinstance(b, dict) and b.get(k) not in (None, ""):
+            return b.get(k)
+    return None
+
+
+def _entry_gate(p, entry_rules, today):
+    """The gate a pending seat rests on: {"kind": next_close | price | event | blocked, ...}.
+    Source order: "defer" -> next_close; the post layer's effective order p["entry_gate"]
+    (_post_common.entry_gate: {letter, mode, level, event} - a dated Director override and a floor /
+    trim-line re-derived A are already applied there); else the same rule on the reconciled posture
+    (cro_verdict / entry_posture / cro_add_px / cro_add_event - a KEEP'd pending seat carries no
+    entry_gate); else the typed record fields (entry_mode / entry_level_px / entry_event); else
+    next_close (fail-open: nothing known never blocks). A price level at or below the exit
+    (thesis_break_px / exit_level_px / downside_floor) is blocked (Bruno's rule)."""
+    if entry_rules == "defer":
+        return {"kind": "next_close", "since": today, "source": "defer"}
+    exit_px = max([x for x in (_posnum(p.get("thesis_break_px")),
+                               _posnum(_tf(p, "exit_level_px", ("entry", "exit_level_px"))),
+                               _posnum(p.get("downside_floor"))) if x] or [0]) or None
+    posture = str(p.get("entry_posture") or "")
+    key = posture.split(":")[0].strip()
+    detail = posture.split(":", 1)[1].strip() if ":" in posture else ""
+    verdict = str(p.get("cro_verdict") or "").strip().upper()[:1]
+    eg = p.get("entry_gate") if isinstance(p.get("entry_gate"), dict) else {}
+    mode, lvl, event, src = None, None, "", ""
+    if str(eg.get("mode") or "").strip().upper() in _GATE_MODES:
+        mode, src = str(eg["mode"]).strip().upper(), "entry_gate"
+        lvl, event = _posnum(eg.get("level")), str(eg.get("event") or "")
+    elif key or verdict in ("A", "B", "C"):
+        # mirror of _post_common.entry_gate on the reconciled pick (held seats get no entry_gate there)
+        lvl = _posnum(p.get("cro_add_px"))
+        event = str(p.get("cro_add_event") or "").strip() or detail
+        src = "entry_posture"
+        if key in ("enter_now_carry", "scale_in"):
+            mode = "NOW"
+        elif verdict == "C":
+            mode = "NONE"
+        elif key == "wait_for_weakness":
+            mode = "AT_LEVEL"
+        elif key == "on_confirmation":
+            mode = "ON_EVENT"
+        elif verdict == "A":
+            mode = "NOW"
+        elif verdict == "B":
+            mode = "AT_LEVEL" if lvl else ("ON_EVENT" if event else "NONE")
+        else:
+            mode = "NOW"                     # an unknown posture with no debate grade: nothing says wait
+    else:
+        m = str(_tf(p, "entry_mode", ("entry", "mode"), ("entry", "entry_mode")) or "").strip().upper()
+        if m in _GATE_MODES:
+            mode, src = m, "entry_mode"
+            lvl = _posnum(_tf(p, "entry_level_px", ("entry", "entry_level_px"), ("entry", "level_px")))
+            event = str(_tf(p, "entry_event", ("entry", "event")) or "")
+    if mode is None or mode == "NOW":
+        g = {"kind": "next_close"}
+    elif mode == "AT_LEVEL" and lvl:
+        g = {"kind": "price", "level_px": lvl,
+             "washout_type": _tf(p, "washout_type", ("entry", "washout_type"))}
+    elif mode == "ON_EVENT":
+        g = {"kind": "event", "event": event[:160]}
+    else:
+        g = {"kind": "blocked", "reason": f"entry_mode={mode}" + (" without an add level" if mode == "AT_LEVEL" else "")}
+    g["source"] = src or "default"
+    if posture:
+        g["posture"] = posture[:200]
+    if g["kind"] == "price" and exit_px and g["level_px"] <= exit_px:
+        g = {"kind": "blocked", "reason": f"add level {g['level_px']} at/below exit {exit_px}",
+             "source": g.get("source")}
+    g["since"] = today
+    return g
+
+
+def _gate_sig(g):
+    """What re-dates a resting order: the gate kind and its level (an event reworded is not a new gate)."""
+    g = g or {}
+    lv = g.get("level_px")
+    return (g.get("kind"), round(lv, 4) if isinstance(lv, (int, float)) else None)
+
+
+def _first_close_after(sym, after, level=None):
+    """(date, close) of the first daily close strictly after `after` (and at or below `level` when
+    given), from FMP stable historical-price-eod/full (unadjusted close - the scan marks' basis).
+    Today's row is never used (it can be a live, in-session bar); it is read on the next run.
+    None when no qualifying close exists yet; the string "ERR" on any failure / no key."""
+    try:
+        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        frm = (datetime.strptime(after, "%Y-%m-%d") + timedelta(days=1)).strftime("%Y-%m-%d")
+        if frm >= today:
+            return None
+        key = get_key("FMP_API_KEY")
+        if not key:
+            return "ERR"
+        r = requests.get("https://financialmodelingprep.com/stable/historical-price-eod/full",
+                         params={"symbol": sym, "from": frm, "to": today, "apikey": key}, timeout=20)
+        if not r.ok:
+            return "ERR"
+        data = r.json()
+        rows = data.get("historical") if isinstance(data, dict) else data
+        if not isinstance(rows, list):
+            return "ERR"
+        best = None
+        for row in rows:
+            d = str((row or {}).get("date") or "")[:10]
+            c = (row or {}).get("close")
+            if not (d and after < d < today) or not _posnum(c):
+                continue
+            if level is not None and float(c) > level:
+                continue
+            if best is None or d < best[0]:
+                best = (d, float(c))
+        return best
+    except Exception:
+        return "ERR"
+
+
+def _resolve_fill(s, pos, prices, asof, last_prices, prev_mark):
+    """(fill_date, fill_px, source) for a pending seat whose gate is met, else None. Only next_close /
+    price gates fill. EOD first; when the EOD lookup fails, an older writer's mark dated after the
+    decision (prior_mark), else this run's mark dated after it (mark) - never a quote seen before."""
+    g = pos.get("gate") or {"kind": "next_close", "since": pos.get("pending_since") or ""}
+    kind = g.get("kind")
+    if kind not in ("next_close", "price"):
+        return None
+    after = g.get("since") or pos.get("pending_since") or ""
+    if not after:
+        return None
+    level = g.get("level_px") if kind == "price" else None
+    k = (s, after, kind, level)
+    if k not in _FILL_CACHE:
+        _FILL_CACHE[k] = _first_close_after(s, after, level)
+    r = _FILL_CACHE[k]
+    if isinstance(r, tuple):
+        return r[0], float(r[1]), ("level_close_eod" if level else "next_close_eod")
+    if r == "ERR":
+        lp = last_prices.get(s)
+        if lp and prev_mark and prev_mark > after and (level is None or lp <= level):
+            return prev_mark, float(lp), "prior_mark"
+        cp, ad = prices.get(s), (asof.get(s) or "")
+        if cp and ad > after and (level is None or cp <= level):
+            return ad, float(cp), "mark"
+    return None
+
+
+def _gate_log(local_name, row):
+    """Append one pending-entry event to the local gate ledger (best-effort; on Cloud Run the file is
+    ephemeral - fills stay durable via positions[].filled_from_pending / closed[].filled_from_pending)."""
+    try:
+        with open(_GATE_LEDGER, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps({"book": local_name, **row}, ensure_ascii=False) + "\n")
+    except Exception:
+        pass
 
 
 def _update_apex_tracking(apex_basket: list, push_gcs: bool = True,
                           gcs_path: str = APEX_TRACKING_PATH,
                           local_name: str = "speculair_apex_tracking.json",
-                          weights: dict = None) -> dict:
+                          weights: dict = None, entry_rules: str = "legacy") -> dict:
     """Persistent live-forward track record for a basket (apex by default; pass gcs_path/local_name
     for a separate book e.g. the Value Lens).
 
@@ -2331,6 +2587,11 @@ def _update_apex_tracking(apex_basket: list, push_gcs: bool = True,
     the tracking code), logs a realized return whenever a name rotates out, and appends
     one history point per day. Returns a compact summary embedded in speculair_baskets.json
     for the frontend. Best-effort — callers wrap in try/except so it never breaks the run.
+
+    entry_rules (2026-10-06): "legacy" (default - a new seat is booked at this run's mark, exactly as
+    before), "defer" (a new seat opens PENDING and fills at the first close after this run) or
+    "gated" (PENDING on its entry gate: next close / add level / event / blocked). Pending seats
+    already in the state are filled / stripped / cancelled under every mode (see PENDING ENTRY above).
     """
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     apex = [p for p in (apex_basket or []) if p.get("symbol")]
@@ -2360,7 +2621,10 @@ def _update_apex_tracking(apex_basket: list, push_gcs: bool = True,
                 log.info(f"tracking {local_name}: restored {len(_extra)} closed leg(s) a truncating writer dropped")
     except Exception as e:
         log.debug(f"tracking local closed-merge skipped: {e}")
-    prices = _current_prices(syms | set(last_prices.keys()))
+    # a pending seat the Director dropped still needs a mark: its order may have filled before this run,
+    # and then it exits with a real closed leg (empty set when nothing is pending - legacy unchanged)
+    _pend_syms = {s for s, v in positions.items() if isinstance(v, dict) and v.get("entry_pending")}
+    prices, asof = _current_prices_asof(syms | set(last_prices.keys()) | _pend_syms)
     period_ret = 0.0
 
     def _wmean(rets_by_sym):                        # weighted mean over names that have a return; equal-weight fallback
@@ -2374,6 +2638,94 @@ def _update_apex_tracking(apex_basket: list, push_gcs: bool = True,
             return sum(rets_by_sym.values()) / len(rets_by_sym)
         return sum(rets_by_sym[s] * ws[s] / tot for s in rets_by_sym)
 
+    # ── PENDING ENTRY pass (state-driven: runs for every caller, incl. the Saturday mark) ──
+    if entry_rules not in _ENTRY_RULES:
+        entry_rules = "legacy"
+    pick_by = {p["symbol"]: p for p in apex}
+    prev_mark = tr.get("last_date")
+    ev = (lambda row: _gate_log(local_name, row)) if weights is None else (lambda row: None)  # EW call logs once
+    # an older writer that dropped a never-filled seat wrote a closed leg with entry_date null - not a trade
+    _ph = [c for c in closed if isinstance(c, dict) and "entry_date" in c and c["entry_date"] is None]
+    if _ph:
+        closed = [c for c in closed if not (isinstance(c, dict) and "entry_date" in c and c["entry_date"] is None)]
+        log.warning(f"tracking {local_name}: dropped {len(_ph)} phantom closed leg(s) of never-filled seats")
+    for s, pos in list(positions.items()):
+        if not (isinstance(pos, dict) and pos.get("entry_pending")):
+            continue
+        if not pos.get("pending_since"):      # hand-migrated seat with no decision date: rests from this run
+            pos["pending_since"] = (pos.get("gate") or {}).get("since") or today
+        # older-writer marks since this seat was last checked (main's Saturday writer has no pending pass)
+        seen = pos.get("pending_checked") or pos.get("pending_since") or ""
+        k_marks = sum(1 for h in history if seen < str((h or {}).get("date") or "") < today)
+        # FILL FIRST (CRO review 2026-10-06, findings 1+4): the order resting on its STORED gate (with its
+        # own since) is checked against closes that printed BEFORE this run, before this run's decision may
+        # cancel or re-gate it - a later decision must never erase a fill that already happened. A filled
+        # seat is HELD (keep != buy) and never re-gated; a filled seat the Director dropped exits through
+        # the rotation loop below with a real closed leg.
+        fill = _resolve_fill(s, pos, prices, asof, last_prices, prev_mark)
+        if fill:
+            fd, fpx, src = fill
+            since = pos.get("pending_since") or fd
+            try:
+                waited = (datetime.strptime(fd, "%Y-%m-%d") - datetime.strptime(since, "%Y-%m-%d")).days
+            except Exception:
+                waited = None
+            pos.update(entry_price=round(fpx, 4), entry_date=fd, entry_price_source=src,
+                       filled_from_pending={"pending_since": since, "gate": pos.get("gate"), "fill_date": fd,
+                                            "fill_px": round(fpx, 4), "decision_px": pos.get("decision_px"),
+                                            "waited_days": waited})
+            lp = _posnum(last_prices.get(s))
+            if lp and k_marks >= 2 and prev_mark and fd < prev_mark:
+                # finding 2: main's writer already chained this seat from its first mark through a mark dated
+                # after the fill. Stepping from the fill would count those legs twice, so the chained mark
+                # stays the base; the move from the fill to the first mark is not in the NAV.
+                pos["filled_from_pending"]["nav_base"] = {"kind": "older_writer_chain", "px": round(lp, 4),
+                                                          "date": prev_mark}
+                pos["nav_from"] = prev_mark       # the base is that mark: never step it on an older quote
+                log.warning(f"tracking {local_name}: {s} filled {fd} at {round(fpx, 4)} but {k_marks - 1} "
+                            f"older-writer NAV step(s) had already chained it - kept the chained base {round(lp, 4)} "
+                            f"(the move from the fill to the first mark is not in the NAV)")
+            else:
+                if lp and k_marks >= 2:
+                    log.warning(f"tracking {local_name}: {s} chained by {k_marks - 1} older-writer NAV step(s) "
+                                f"before its fill on {fd} - the base is the fill")
+                pos["nav_from"] = fd
+                last_prices[s] = fpx              # NAV base = the fill, never a pre-fill mark
+            pos.pop("entry_pending", None)
+            pos.pop("pending_checked", None)
+            ev({"date": today, "symbol": s, "event": "filled", "fill_date": fd, "fill_px": round(fpx, 4),
+                "source": src, **({} if s in syms else {"dropped": True})})
+            continue
+        if s not in syms:                     # dropped before its gate was met: no trade, no closed leg
+            positions.pop(s, None)
+            last_prices.pop(s, None)
+            ev({"date": today, "symbol": s, "event": "cancelled", "pending_since": pos.get("pending_since"),
+                "gate": pos.get("gate")})
+            continue
+        if entry_rules != "legacy":
+            # the new gate rests from today (since=today), so it can only fill on a later run
+            g_new, g_old = _entry_gate(pick_by[s], entry_rules, today), (pos.get("gate") or {})
+            if _gate_sig(g_new) != _gate_sig(g_old):
+                if g_new["kind"] == "next_close":
+                    pos["pending_since"] = today          # ungated by THIS decision -> the order is re-dated
+                pos["gate_history"] = (pos.get("gate_history") or [])[-9:] + [{"date": today, "from": g_old, "to": g_new}]
+                pos["gate"] = g_new
+                ev({"date": today, "symbol": s, "event": "regated", "from": g_old, "to": g_new})
+            elif g_new.get("kind") == "event" and g_new.get("event") != g_old.get("event"):
+                pos["gate"] = {**g_old, "event": g_new.get("event")}
+        if s in last_prices:                      # an older writer marked an unfilled seat: strip it before the step
+            if k_marks >= 2:
+                log.warning(f"tracking {local_name}: {s} unfilled but chained by {k_marks - 1} older-writer NAV step(s)")
+            last_prices.pop(s, None)
+        cp, dpx = prices.get(s), _posnum(pos.get("decision_px"))
+        if (not pos.get("washout_hit") and cp and dpx and (asof.get(s) or "") > (pos.get("pending_since") or "")
+                and cp <= dpx * (1 - _WASHOUT_DD)):
+            # informational for the next debate - never a fill (a price-gate fill IS the "level reached" event)
+            pos["washout_hit"] = {"date": today, "px": round(cp, 4), "kind": "drawdown_10pct"}
+            ev({"date": today, "symbol": s, "event": "washout", "px": round(cp, 4)})
+        pos["pending_checked"] = today
+
+    stepped = set()
     if not tr:
         # INCEPTION — anchor NAV to entry prices so it reflects performance since the
         # basket was established (entry_date), not since the tracker first ran.
@@ -2385,34 +2737,72 @@ def _update_apex_tracking(apex_basket: list, push_gcs: bool = True,
         history = [{"date": inception, "nav": 100.0, "ret": 0.0, "n": len(apex)}]
     else:
         inception = tr.get("inception_date") or today
-        prior = [s for s in last_prices if s in prices and last_prices[s] > 0]
+        # a just-filled name joins the step only once its mark is dated on/after the fill (nav_from)
+        prior = [s for s in last_prices if s in prices and last_prices[s] > 0
+                 and (asof.get(s) or "") >= ((positions.get(s) or {}).get("nav_from") or "")]
         if prior and tr.get("last_date") != today:
             period_ret = _wmean({s: prices[s] / last_prices[s] - 1 for s in prior})
             nav *= (1 + period_ret)
+            stepped = set(prior)
         for s in list(last_prices.keys()):          # rotations → realized exits
             if s not in syms:
                 pos = positions.get(s, {})
                 ep = pos.get("entry_price") or last_prices[s]
-                xp = prices.get(s, last_prices[s])
-                closed.append({"symbol": s, "entry_date": pos.get("entry_date", ""), "exit_date": today,
-                               "entry_price": round(ep, 4), "exit_price": round(xp, 4),
-                               "return_pct": round((xp / ep - 1) * 100, 2) if ep else 0.0,
-                               "conviction": pos.get("conviction", 0)})
+                # finding 3: a fill whose mark predates it (nav_from set, not stepped) exits at the fill base
+                # (0%, as the NAV booked it), never at a quote older than the fill
+                xp = (last_prices[s] if (pos.get("nav_from") and s not in stepped)
+                      else prices.get(s, last_prices[s]))
+                leg = {"symbol": s, "entry_date": pos.get("entry_date", ""), "exit_date": today,
+                       "entry_price": round(ep, 4), "exit_price": round(xp, 4),
+                       "return_pct": round((xp / ep - 1) * 100, 2) if ep else 0.0,
+                       "conviction": pos.get("conviction", 0)}
+                if pos.get("filled_from_pending"):
+                    leg["filled_from_pending"] = pos["filled_from_pending"]
+                closed.append(leg)
                 positions.pop(s, None)
 
     new_last = {}
     for p in apex:
         s = p["symbol"]
         cp = prices.get(s) or p.get("price") or last_prices.get(s) or 0.0
-        new_last[s] = cp
-        if s not in positions:
-            positions[s] = {"entry_price": p.get("entry_price") or cp,
-                            "entry_date": p.get("entry_date") or today,
-                            "conviction": p.get("conviction", 0)}
+        pos = positions.get(s)
+        if pos is None:
+            carried = (p.get("entry_price") or 0) > 0 and str(p.get("entry_date") or today) < today
+            if entry_rules == "legacy" or carried:
+                positions[s] = {"entry_price": p.get("entry_price") or cp,
+                                "entry_date": p.get("entry_date") or today,
+                                "conviction": p.get("conviction", 0)}
+            else:
+                # NEW seat in a gated book: PENDING - no entry price, no last price (outside NAV / n_open)
+                g = _entry_gate(p, entry_rules, today)
+                dpx = _posnum(p.get("live_price")) or (cp or None)
+                positions[s] = {"entry_price": None, "entry_date": None, "conviction": p.get("conviction", 0),
+                                "entry_pending": True, "pending_since": today, "gate": g,
+                                "decision_px": dpx, "pending_checked": today}
+                ev({"date": today, "symbol": s, "event": "opened", "gate": g, "decision_px": dpx})
+                if g["kind"] == "blocked":
+                    log.warning(f"tracking {local_name}: {s} opened PENDING on a BLOCKED gate ({g.get('reason')})")
+                elif g["kind"] == "price" and dpx and not (0.2 < g["level_px"] / dpx < 5):
+                    log.warning(f"tracking {local_name}: {s} add level {g['level_px']} vs decision price {dpx} "
+                                f"looks like a unit slip (GBp vs GBP?) - check the record")
+                continue
         else:
-            positions[s]["conviction"] = p.get("conviction", positions[s].get("conviction", 0))
+            pos["conviction"] = p.get("conviction", pos.get("conviction", 0))
+            if pos.get("entry_pending"):
+                continue
+        nf = positions[s].get("nav_from")
+        if nf:
+            if s in stepped:
+                positions[s].pop("nav_from", None)
+            else:                                   # hold the fill as the base until a mark dated after it
+                new_last[s] = last_prices.get(s) or positions[s].get("entry_price") or cp
+                continue
+        new_last[s] = cp
 
-    point = {"date": today, "nav": round(nav, 4), "ret": round(period_ret, 6), "n": len(apex)}
+    # pending seats sit outside n_open / the history n (counted per pick, so a no-pending run is unchanged)
+    n_open = sum(1 for p in apex if not (positions.get(p["symbol"]) or {}).get("entry_pending"))
+    pend = {s: positions[s] for s in sorted(syms) if (positions.get(s) or {}).get("entry_pending")}
+    point = {"date": today, "nav": round(nav, 4), "ret": round(period_ret, 6), "n": n_open}
     if history and history[-1].get("date") == today:
         history[-1] = point
     else:
@@ -2438,11 +2828,15 @@ def _update_apex_tracking(apex_basket: list, push_gcs: bool = True,
         except Exception as e:
             log.warning(f"apex tracking GCS upload failed: {e}")
     log.info(f"Apex tracking: NAV {nav:.2f} ({(nav / 100 - 1) * 100:+.1f}% since {inception}) | "
-             f"{len(apex)} open, {len(closed)} closed")
+             f"{n_open} open, {len(pend)} pending, {len(closed)} closed")
 
     wins = [c for c in closed if c.get("return_pct", 0) > 0]
     return {"inception_date": inception, "since_inception_pct": round((nav / 100.0 - 1) * 100, 2),
-            "nav": round(nav, 2), "n_open": len(apex), "n_closed": len(closed),
+            "nav": round(nav, 2), "n_open": n_open, "n_pending": len(pend),
+            # seated but NOT bought: no entry price, outside the NAV / n_open / win rate until the gate fills
+            "pending": [{"symbol": s, "pending_since": v.get("pending_since"), "gate": v.get("gate"),
+                         "washout_hit": v.get("washout_hit")} for s, v in pend.items()],
+            "n_closed": len(closed),
             "win_rate": round(len(wins) / len(closed) * 100, 1) if closed else None,
             # closed list matches the PERSISTED state (full since 2026-10-06), not a tighter -20.
             # The value card embeds this return value in speculair_value_apex.json and renders its

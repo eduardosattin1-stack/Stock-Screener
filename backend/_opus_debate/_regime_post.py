@@ -390,22 +390,38 @@ def duration_cap_entries(apx, picks, cycle):
     return entries
 
 
-def _entry_ctx():
+def _entry_ctx(quotes=None):
     """Per-seat context for _post_common.reconcile_entry_posture (2026-09-08): the record's grade +
     the CRO's conclusion paragraph, quote currency + live price, and the PAPER entry from the apex
-    tracking file. Best-effort - a missing file just drops the "held since" clause."""
+    tracking file. Best-effort - a missing file just drops the "held since" clause.
+    2026-10-06 (four-question grade): also the record's typed thesis/entry fields, its base fair value,
+    the quadrant entry floor and the expected return at the LIVE quote (the market layer's, else the
+    record's live_price) - so an A seat under the floor can never say buy. No price -> er_pct None
+    (fail-open, no check)."""
     try:
         pos = (json.load(open(BK.parent / "frontend" / "public" / "speculair_apex_tracking.json",
                               encoding="utf-8")) or {}).get("positions") or {}
     except Exception:
         pos = {}
+    quotes = quotes or {}
+    quad = _pc.current_quadrant(ROOT)
+    floor = _pc.entry_floor_pct(quad)
 
     def ctx(sym):
         rec = _load(RES_DIR / f"{sym}.json", {}) or {}
         pp = pos.get(sym) or {}
+        base = _pc._pos_num((rec.get("valuation") or {}).get("base_fv_px"))
+        px = _pc._pos_num((quotes.get(sym) or {}).get("price")) or _pc._pos_num(rec.get("live_price"))
+        er = round((base / px - 1.0) * 100.0, 2) if (base and px and 0.2 < px / base < 5) else None
         return {"verdict": rec.get("verdict"), "conclusion": rec.get("moderator_conclusion") or "",
                 "currency": rec.get("price_currency") or "", "live_px": rec.get("live_price"),
-                "entry_px": pp.get("entry_price"), "entry_date": pp.get("entry_date")}
+                "entry_px": pp.get("entry_price"), "entry_date": pp.get("entry_date"),
+                # a PENDING seat (seated, not bought yet) reads "pending since X" in the memo, never "held"
+                "pending_since": pp.get("pending_since") if pp.get("entry_pending") else None,
+                **{k: rec.get(k) for k in ("thesis_state", "entry_mode", "wait_kind", "entry_level_px",
+                                           "entry_event", "thesis_test", "washout_type", "macro_fit",
+                                           "peer_position", "grade_rederived")},
+                "base_fv_px": base, "er_pct": er, "floor_pct": floor, "quadrant": quad or "UNKNOWN"}
     return ctx
 
 
@@ -423,10 +439,6 @@ def process(apx, uni, scan_by, market=None):
     stamp_moat([r for r in apx.get("runner_ups", []) if isinstance(r, dict)], uni, scan_by)  # visibility only
     stamp_valuation(picks)
     conviction_clamp(picks)
-    _ed = _pc.reconcile_entry_posture(apx, picks, _entry_ctx(), "director_memo")   # paper position != buy here
-    print(f"entry-discipline: {len(_ed['wait_graded'])} wait-graded seat(s) of {len(picks)} | "
-          f"reconciled={_ed['reconciled']} set_from_debate={_ed['set_from_debate']} "
-          f"override={_ed['director_overrides']} consistent={_ed['consistent']}")
     extra = _pc.secular_theme_caps(picks)                    # don't put all eggs in one secular tail
     # Base unit = Director size_units when present, else the shared BANDED conviction map — coarse
     # steps shared with publish_to_frontend._apex_weights so the two sizing paths can never diverge.
@@ -463,6 +475,16 @@ def process(apx, uni, scan_by, market=None):
                                               bear_label="valuation.bear_px")
         apx["exits"] = _pc.exits_block(picks, quotes, thesis_break=lambda p: p.get("thesis_break_px"),
                                        fair_value=lambda p: p.get("base_fv_px"))
+    # ENTRY DISCIPLINE - moved here 2026-10-06 so it sees the live quotes (ER vs the entry floor) and
+    # exit_action / trim_at_px from the exits block. Runs with or without the market layer (fail-soft:
+    # no quotes -> the record's live_price; no exits -> no trim check). Never touches weights.
+    _ed = _pc.reconcile_entry_posture(apx, picks, _entry_ctx((market or (None,))[0]), "director_memo")   # paper position != buy here
+    for p in picks:                                           # the order a NEW seat rests on (None when held)
+        p["entry_gate"] = _pc.entry_gate(p, held=str(p.get("decision") or "").upper() not in ("ADD", "RE-ADD"))
+    print(f"entry-discipline: {len(_ed['wait_graded'])} wait-graded seat(s) of {len(picks)} | "
+          f"reconciled={_ed['reconciled']} set_from_debate={_ed['set_from_debate']} "
+          f"override={_ed['director_overrides']} consistent={_ed['consistent']} "
+          f"rederived={_ed.get('rederived')}")
     apx["moat_post_applied"] = True
     apx["numeric_post_applied"] = True
     return apx, picks, extra

@@ -30,7 +30,10 @@ Rules for all prose (theses, conclusions, memos, dossiers, rationales, summaries
    barred from selling)", "sum-of-the-parts (valuing each business line separately)".
 3. Never write an internal code, enum, or house label in your prose — translate it to
    plain words. These tokens are machine fields for the system, not words for the reader:
-   - verdict A / B / C            -> "buy now" / "wait for the wash-out" / "pass for now"
+   - verdict A / B / C            -> "buy now" / "wait for <the condition the record names: a better price, proof, or the event>" / "pass for now"
+   - INTACT / IMPAIRED (thesis)   -> "the thesis holds" / "the thesis is in doubt until <the test>"
+   - NOW / AT_LEVEL / ON_EVENT (entry) -> "buy at today's price" / "buy near <level>" / "buy once <event> confirms"
+   - MECHANICAL / FACTOR (wash-out) -> "forced selling by holders who must sell regardless of value" / "a sector-wide or style-wide sell-off"
    - SOFT_EXTENDED                -> "a soft catalyst with no fixed date — no contractual payout"
      (do NOT assert it is dated or undated beyond what the source entry says; carry its wording)
    - PENDING_HARD                 -> "the date is fixed" / "a firmly dated catalyst" (a fixed DATE

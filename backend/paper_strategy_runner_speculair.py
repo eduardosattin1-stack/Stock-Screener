@@ -171,6 +171,10 @@ def build_basket_from_speculair(baskets_data: dict) -> list[dict]:
         sym = p.get("symbol", "")
         if not sym:
             continue
+        if p.get("entry_pending"):
+            # seated by the Director but not bought yet (gated paper tracker, 2026-10-06): it has no
+            # entry price, and buying it here at today's quote would be the fill the gate forbids
+            continue
         picks.append({
             "symbol": sym,
             "conviction": p.get("conviction", 5),
@@ -192,7 +196,7 @@ def open_first_basket(scan_date: str, picks: list[dict]) -> tuple[list, float]:
     
     positions = []
     for p in picks:
-        price = quotes.get(p["symbol"]) or p.get("entry_price", 0)
+        price = quotes.get(p["symbol"]) or p.get("entry_price") or 0   # entry_price may be null
         if price <= 0:
             continue
         positions.append({
@@ -244,7 +248,7 @@ def rotate_basket(scan_date: str, current: list[dict],
     if to_add:
         quotes = fmp_quote_batch([p["symbol"] for p in to_add])
         for p in to_add:
-            price = quotes.get(p["symbol"]) or p.get("entry_price", 0)
+            price = quotes.get(p["symbol"]) or p.get("entry_price") or 0   # entry_price may be null
             if price <= 0:
                 continue
             new_pos = {

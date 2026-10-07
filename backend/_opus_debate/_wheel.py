@@ -128,7 +128,9 @@ def stamp_wheel(picks, book, quotes=None):
     quotes = quotes or {}
     for p in picks:
         w = dict(p.get("wheel") or {})
-        if str(p.get("entry_posture") or "") == "on_confirmation" or w.get("suits") is False:
+        # posture is written "on_confirmation: <event>" (Director + reconcile) - match the KEY, not the
+        # whole string, or the event-risk gate never fires (2026-10-06 fix)
+        if str(p.get("entry_posture") or "").split(":")[0].strip() == "on_confirmation" or w.get("suits") is False:
             p["wheel"] = {"suits": False}                # never wheel into a dated/binary event
             continue
         csp, cc, _px = derive_strikes({**p, **w}, book, quotes.get(p["symbol"]) or {})

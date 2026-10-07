@@ -11,6 +11,11 @@ interface Pick {
   value_score?: number;
   entry_price?: number;
   entry_date?: string;
+  // Pending entry (2026-10-06): seated but not bought yet — the paper tracker holds the order on
+  // its gate (next close / price level / event), so there is no entry price and no P&L. Optional:
+  // main's tracker writer publishes neither field.
+  entry_pending?: boolean;
+  pending_since?: string;
   source_methodologies?: string[];
   // Debt-cycle badge fields (2026-07-27): deterministic payback-speed label +
   // whether the phase duration cap trimmed this seat's weight.
@@ -270,7 +275,12 @@ export function SpeculairTracker() {
             );
           })()}
         </div>
-        <div style={{ textAlign: "right", color: "var(--text-light)" }}>{entry > 0 ? fmtPrice(entry) : PENDING}</div>
+        <div style={{ textAlign: "right", color: "var(--text-light)" }}>
+          {p.entry_pending
+            ? <span title={`Not bought yet${p.pending_since ? ` - pending since ${p.pending_since}` : ""}: the seat waits on its entry gate and stays outside the track record until it fills.`}
+                    style={{ fontSize: 8, fontWeight: 700, padding: "0 3px", borderRadius: 3, border: "1px solid var(--border)", color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.04em", cursor: "help" }}>pend</span>
+            : entry > 0 ? fmtPrice(entry) : PENDING}
+        </div>
         <div style={{ textAlign: "right", color: "var(--text-secondary)" }}>{last != null ? fmtPrice(last) : PENDING}</div>
         <div style={{ textAlign: "right", color, fontWeight: 700 }}>{perf == null ? PENDING : fmtPct(perf)}</div>
         <span />

@@ -308,6 +308,38 @@ try:
 except Exception:
     apex_pos = {}
 
+# Four-question CRO grade (2026-10-06): the typed record fields the seat card, the stock page, the
+# paper tracker and cro_scorecard read. Every payload below is a WHITELIST, so they are named here.
+_GRADE_REC_FIELDS = ("verdict", "verdict_agent_orig", "verdict_structural", "grade_schema",
+                     "thesis_state", "thesis_evidence", "thesis_test", "entry_mode", "entry_level_px",
+                     "entry_event", "washout_type", "peer_position", "macro_fit", "macro_fit_note")
+
+
+def _plain_test(tt):
+    """Display copy of a thesis_test {metric, pass_level, fail_level, resolves_on} with its strings in
+    plain words (plain_language.plainify_text) - the stock-page four-questions strip prints them as they
+    come (2026-10-06 review, finding 6). A NEW dict, so the raw record is never touched; anything that is
+    not a dict passes through."""
+    if not isinstance(tt, dict):
+        return tt
+    return {k: (plain_language.plainify_text(v) if isinstance(v, str) else v) for k, v in tt.items()}
+
+
+def _plain_display_events(es):
+    """Plain words for the event strings the seat chip and its tooltip print (finding 6): cro_add_event,
+    entry_gate.event (the post layer's order) and pending_gate.event (the tracker's resting order). Called
+    AFTER both tracker runs, so the equal-weight and the weighted tracker read the same raw strings; each
+    gate dict is replaced by a new copy, never edited in place."""
+    for e in es:
+        if isinstance(e.get("cro_add_event"), str):
+            e["cro_add_event"] = plain_language.plainify_text(e["cro_add_event"])
+        for k in ("entry_gate", "pending_gate"):
+            g = e.get(k)
+            if isinstance(g, dict) and isinstance(g.get("event"), str):
+                e[k] = {**g, "event": plain_language.plainify_text(g["event"])}
+    return es
+
+
 entries = []
 for p in picks:
     sym = p.get("symbol")
@@ -338,10 +370,11 @@ for p in picks:
         # catalyst-blind CRO value score (1-5) — the number the VALUE Director ranks on;
         # published so the UI can show it next to the regime-tilted debate conviction
         "value_conviction": rec.get("value_conviction"),
-        # NEW names: leave entry_price 0 here so _update_apex_tracking stamps the LIVE quote
-        # (it uses the current price when entry_price is falsy). The scan price is stale for
-        # EU names (FRVIA/SCR.PA/CTSH all showed a spurious day-1 P&L), so it is NOT a fallback.
-        # The backfill after the tracking update reads the live entry back into the displayed book.
+        # NEW names reach the tracker with entry_price 0 and open PENDING (entry_rules="gated", 2026-10-06):
+        # they fill at the first close after this run, or at their gate (add level / event) - never at a
+        # quote seen before the decision. The scan price is stale for EU names (FRVIA/SCR.PA/CTSH all
+        # showed a spurious day-1 P&L), so it is NOT a fallback. The backfill after the tracking update
+        # reads the fill (or the pending state) back into the displayed book.
         "entry_price": prior.get("entry_price") or apex_pos.get(sym, {}).get("entry_price") or 0,
         "entry_date": prior.get("entry_date") or apex_pos.get(sym, {}).get("entry_date") or TODAY,
         "held_since_prior": sym in prior_apex,
@@ -449,6 +482,18 @@ for p in picks:
         "cro_wait_quote": p.get("cro_wait_quote", ""),
         "entry_posture_director_orig": p.get("entry_posture_director_orig", ""),
         "entry_posture_override_reason": p.get("entry_posture_override_reason", ""),
+        # four-question CRO grade (2026-10-06): the record's typed thesis/entry/fit fields + the code-
+        # derived letter (verdict; verdict_agent_orig = the CRO's own), and the post layer's effective
+        # wait (wait_kind, a floor/trim re-derive, the order a NEW seat rests on). Null on older records.
+        **{_k: rec.get(_k) for _k in _GRADE_REC_FIELDS},
+        "thesis_test": _plain_test(rec.get("thesis_test")),   # display copy in plain words (finding 6)
+        "thesis_state_plain": plain_language.thesis_plain(rec.get("thesis_state"), rec.get("thesis_test")),
+        "entry_plain": plain_language.entry_plain(rec),
+        "wait_kind": p.get("wait_kind") or rec.get("wait_kind"),
+        "grade_rederived": p.get("grade_rederived") or rec.get("grade_rederived"),
+        "cro_verdict_record": p.get("cro_verdict_record"),
+        "cro_add_source": p.get("cro_add_source", ""),
+        "entry_gate": p.get("entry_gate"),
         "expected_return_pct": p.get("expected_return_pct"),
         "horizon_months": p.get("horizon_months"),
         "meets_goal": p.get("meets_goal"),
@@ -462,22 +507,31 @@ stamp_wheel(entries, "regime", {e["symbol"]: {"price": scan_by_sym.get(e["symbol
 
 # ── Update the apex track record for the rotation (reuses production logic) ──
 try:
-    track_summary = E._update_apex_tracking(entries, push_gcs=False)
+    track_summary = E._update_apex_tracking(entries, push_gcs=False, entry_rules="gated")
 except Exception as e:
     print(f"WARN: _update_apex_tracking failed ({e}); preserving prior tracking summary.")
     track_summary = baskets.get("apex_tracking", {})
 
-# Backfill the displayed entry_price/date from the tracking the engine just stamped: genuinely-new
-# names (entry_price left 0 above) now carry the LIVE quote, and held names keep their preserved
-# entry. Without this the book shows the stale scan price / 0 and a fake day-1 P&L. Mirrors
-# value_publish; best-effort so it can never break the publish.
+# Backfill the displayed entry_price/date from the tracking the engine just stamped: a filled name
+# carries its fill (first close after the decision, or its gate), held names keep their preserved
+# entry, and a PENDING seat (seated, not bought yet) publishes entry_price null + its gate - never a
+# fake day-1 P&L. Mirrors value_publish; best-effort so it can never break the publish.
 try:
     _upos = (json.load(open(TRACK_LOCAL, encoding="utf-8")) or {}).get("positions", {}) or {}
     for e in entries:
         _pp = _upos.get(e["symbol"], {})
+        if _pp.get("entry_pending"):
+            # pending_gate = the tracker's resting order {kind next_close|price|event|blocked, ...}; the
+            # post layer's entry_gate {letter, mode, level, event} stays as stamped (different shape)
+            e.update(entry_pending=True, pending_since=_pp.get("pending_since"), pending_gate=_pp.get("gate"),
+                     washout_hit=_pp.get("washout_hit"), entry_price=None, entry_date=None)
+            continue
+        e["entry_pending"] = False
         if _pp.get("entry_price"):
             e["entry_price"] = _pp["entry_price"]
             e["entry_date"] = _pp.get("entry_date") or e.get("entry_date")
+        if _pp.get("filled_from_pending"):
+            e["filled_from_pending"] = _pp["filled_from_pending"]
 except Exception as _e:
     print(f"WARN: entry-price backfill from tracking failed ({_e})")
 
@@ -544,10 +598,27 @@ for e in entries:
 try:
     track_summary_w = E._update_apex_tracking(entries, push_gcs=False, weights=apex_weights,
                                               gcs_path="scans/speculair_apex_tracking_weighted.json",
-                                              local_name="speculair_apex_tracking_weighted.json")
+                                              local_name="speculair_apex_tracking_weighted.json",
+                                              entry_rules="gated")
 except Exception as e:
     print(f"WARN: weighted apex tracking failed ({e})")
     track_summary_w = {}
+# The EW and weighted files are separate states: a pending seat must be pending in both (the payload
+# stamps follow the EW file). Best-effort check, never fatal.
+try:
+    _pw = (json.load(open(PUB / "speculair_apex_tracking_weighted.json", encoding="utf-8")) or {}).get("positions", {}) or {}
+    _pe = (json.load(open(TRACK_LOCAL, encoding="utf-8")) or {}).get("positions", {}) or {}
+    _sw = {s for s, v in _pw.items() if isinstance(v, dict) and v.get("entry_pending")}
+    _se = {s for s, v in _pe.items() if isinstance(v, dict) and v.get("entry_pending")}
+    if _sw != _se:
+        print(f"WARN pending-entry mismatch EW vs weighted: {sorted(_sw ^ _se)}")
+except Exception as _e:
+    print(f"WARN: pending-entry EW/weighted check skipped ({_e})")
+# Display copies only, after both tracker runs: the chip / tooltip event strings in plain words.
+try:
+    _plain_display_events(entries)
+except Exception as _e:
+    print(f"WARN: plain-language pass on the seat event strings skipped ({_e})")
 
 # ── Assemble: swap apex_basket + memo, preserve everything else ──────────
 baskets["apex_basket"] = entries
@@ -751,6 +822,12 @@ def _opus_overlay(sym):
         # badge for debated-but-not-seated names: skeptic joined from the raw shard
         # (Director-pick skeptic fields don't exist off-board)
         "risk_badge": badge,
+        # four-question CRO grade (2026-10-06) + plain captions; null on older records
+        **{_k: rec.get(_k) for _k in _GRADE_REC_FIELDS if _k != "verdict"},
+        "thesis_test": _plain_test(rec.get("thesis_test")),   # display copy in plain words (finding 6)
+        "wait_kind": rec.get("wait_kind"), "grade_rederived": rec.get("grade_rederived"),
+        "thesis_state_plain": plain_language.thesis_plain(rec.get("thesis_state"), rec.get("thesis_test")),
+        "entry_plain": plain_language.entry_plain(rec),
     }
 
 overlaid, pm_missing = 0, []
@@ -786,6 +863,10 @@ print(f"tracking (equal-weight, legacy): nav={track_summary.get('nav')} since_in
 _tsw = track_summary_w or {}
 print(f"tracking (DIRECTOR-WEIGHTED = the UI number): nav={_tsw.get('nav')} since_inception={_tsw.get('since_inception_pct')}% "
       f"open={_tsw.get('n_open')} closed={_tsw.get('n_closed')}")
+_pend_list = (track_summary or {}).get("pending") or []
+print(f"  pending entry (seated, not bought - outside the NAV): "
+      + (", ".join(f"{x.get('symbol')} [{(x.get('gate') or {}).get('kind')} since {x.get('pending_since')}]"
+                   for x in _pend_list) or "none"))
 print(f"  preserved: capitulation_watchlist({len(baskets.get('capitulation_watchlist', []))}), "
       f"per_methodology_baskets({len(baskets.get('per_methodology_baskets', {}))})")
 
@@ -825,9 +906,21 @@ def _hist_entry(rec, dossier, date_str, ts):
     }
     # Passthrough tags (when the engine stamped them): lane + carry provenance for the history view.
     # Additive only — dedup key (date) and entry ordering are untouched.
-    for _k in ("lane", "carried"):
+    for _k in ("lane", "carried",
+               # four-question CRO grade (2026-10-06): the typed fields + the valuation block, so the
+               # stock card, time-travel and cro_scorecard read them per dated entry (additive only)
+               "valuation", "verdict_agent_orig", "verdict_structural", "grade_schema", "thesis_state",
+               "thesis_evidence", "thesis_test", "entry_mode", "entry_level_px", "entry_event",
+               "washout_type", "wait_kind", "peer_position", "macro_fit", "macro_fit_note",
+               "grade_rederived", "entry_floor_pct", "washout_resolution", "thesis_break_px"):
         if rec.get(_k) is not None:
             e[_k] = rec[_k]
+    if isinstance(e.get("thesis_test"), dict):           # display copy in plain words (finding 6)
+        e["thesis_test"] = _plain_test(e["thesis_test"])
+    if rec.get("thesis_state") is not None:
+        e["thesis_state_plain"] = plain_language.thesis_plain(rec.get("thesis_state"), rec.get("thesis_test"))
+    if rec.get("entry_mode") is not None:
+        e["entry_plain"] = plain_language.entry_plain(rec)
     return e
 
 
@@ -890,3 +983,22 @@ if args.gcs:
               f"engine={live.get('engine')} per_methodology_baskets={len(live.get('per_methodology_baskets', {}))}")
     except Exception as e:
         print(f"  LIVE readback failed: {e}")
+
+# -- CRO SCORECARD COLLECT (2026-10-06) -----------------------------------------------------------------
+# Best-effort, every publish: fold this run's debate-history entries (written above) and the typed
+# results_regime snapshot into backend/_opus_debate/_cro_write_archive.jsonl. The history keeps 12
+# entries per name and results_regime is overwritten weekly, so a week that is never collected loses its
+# typed values for good. No network, ~5 s. Run as a subprocess (cro_scorecard is never imported here);
+# any failure prints ONE line and never fails the publish.
+try:
+    import subprocess as _sp
+    _cs = _sp.run([sys.executable, str(BK / "cro_scorecard.py"), "--collect-only"], capture_output=True,
+                  text=True, encoding="utf-8", errors="replace", timeout=300)
+    _cs_out = ((_cs.stdout or "").strip().splitlines() or ["(no output)"])[-1]
+    _cs_err = ((_cs.stderr or "").strip().splitlines() or ["(no error text)"])[-1]
+    print(f"  cro-scorecard collect: {_cs_out[:300]}" if _cs.returncode == 0 else
+          f"  WARN cro-scorecard collect failed (exit {_cs.returncode}): {_cs_err[:200]} - run "
+          "`python backend/_opus_debate/cro_scorecard.py --collect-only` before the next publish")
+except Exception as _cs_e:
+    print(f"  WARN cro-scorecard collect skipped ({type(_cs_e).__name__}: {str(_cs_e)[:200]}) - run "
+          "`python backend/_opus_debate/cro_scorecard.py --collect-only` before the next publish")

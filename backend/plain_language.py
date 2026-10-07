@@ -31,6 +31,8 @@ PROSE_FIELDS = {
     "skeptic_kill_fact", "skeptic_corrections", "peer_comps_note", "role_in_scaleout",
     "catalyst_binding_reason", "binding_reason", "whats_changed_since_prior", "dossier_note",
     "thesis", "rationale", "memo", "director_memo", "regime", "risk_stance", "delta_justification",
+    # regime-CRO four-question fields (2026-10-06)
+    "thesis_evidence", "macro_fit_note", "entry_event",
 }
 
 # Machine token -> plain phrase, in TWO forms, because one string cannot be both.
@@ -75,6 +77,13 @@ TOKEN_GLOSSARY = {
     "POSITIONING_WASHOUT": "forced-selling pressure",
     "FORCING_FUNCTION": "the catalyst that forces the re-rating",
     "EXPECTATIONS_ARBITRAGE": "where we disagree with the market",
+    # regime-CRO four-question enums (2026-10-06). NOW / NONE / INTACT / MECHANICAL / FACTOR are
+    # deliberately absent: single plain words that would mangle ordinary capitals.
+    "AT_LEVEL": "at a named price",
+    "ON_EVENT": "on a named event",
+    "WAIT_FOR_PROOF": "wait for proof",
+    "LEVEL_REACHED": "entry level reached",
+    "FELL_10PCT": "a 10% fall",
 }
 
 # Standalone caption form — used for the *_plain sibling fields, where the text stands
@@ -134,6 +143,18 @@ FIELD_GLOSSARY = {
     "moderator_conclusion": "the risk officer's conclusion", "peer_comps_note": "the peer-comparison note",
     "bull_thesis": "the bull case", "bear_thesis": "the bear case",
     "sop_bull": "the sum-of-the-parts upside", "sop_bear": "the sum-of-the-parts downside",
+    # regime-CRO four-question fields (2026-10-06)
+    "thesis_state": "thesis state", "thesis_evidence": "thesis evidence", "thesis_test": "thesis test",
+    "entry_mode": "entry mode", "entry_level_px": "entry level", "entry_event": "entry event",
+    "washout_type": "wash-out type", "washout_resolution": "wash-out resolution",
+    "macro_fit": "macro fit", "macro_fit_note": "macro-fit note", "peer_position": "peer position",
+    "no_peers": "no peers", "wait_kind": "wait type", "verdict_agent_orig": "original debate letter",
+    "grade_rederived": "re-derived grade", "entry_floor_pct": "entry floor",
+    # code-stamped grade fields (grade-derive, 2026-10-06) - delta agents read them off the anchor
+    "verdict_structural": "structural letter", "verdict_source": "letter source",
+    "grade_flags": "grade flags", "grade_basis": "grade inputs", "grade_schema": "grade schema",
+    "entry_mode_agent_orig": "original entry mode", "entry_level_px_agent_orig": "original entry level",
+    "entry_level_px_derived": "derived entry level", "conviction_agent_orig": "original conviction",
 }
 
 # Dossier tag-line vocabularies. Only the dimensions PRESENT on the line are rendered —
@@ -226,6 +247,52 @@ def bucket_plain(value):
     if not isinstance(value, str) or not value.strip():
         return ""
     return _BUCKETS.get(value.strip().lower(), value)
+
+
+# Four-question CRO grade captions (2026-10-06). Standalone captions for the *_plain siblings the
+# publisher adds next to the bare thesis_state / entry_mode enums (house voice: agent_voice.AGENT_VOICE).
+_THESIS = {"INTACT": "the thesis holds", "IMPAIRED": "the thesis is in doubt",
+           "BROKEN": "the thesis has broken"}
+_SELLER = {"MECHANICAL": "forced selling by holders who must sell regardless of value",
+           "FACTOR": "a sector-wide or style-wide sell-off"}
+
+
+def thesis_plain(state, test=None):
+    """Plain caption for a thesis_state; an IMPAIRED one names its test when the record carries it.
+    Empty string when unset or unknown (a legacy record says nothing rather than guessing)."""
+    s = str(state or "").strip().upper()
+    if s not in _THESIS:
+        return ""
+    if s == "IMPAIRED" and isinstance(test, dict) and str(test.get("metric") or "").strip():
+        due = str(test.get("resolves_on") or "").strip()
+        return (f"the thesis is in doubt until the test on {plainify_text(str(test['metric']).strip())} "
+                f"settles it" + (f" ({plainify_text(due)})" if due else ""))
+    return _THESIS[s]
+
+
+def entry_plain(rec):
+    """Plain caption for a record's entry: "buy at today's price" / "buy near <level>[, which <seller>
+    could deliver]" / "buy once <event> confirms" / "no entry - pass for now". Empty when unset."""
+    if not isinstance(rec, dict):
+        return ""
+    mode = str(rec.get("entry_mode") or "").strip().upper()
+    if mode == "NOW":
+        return "buy at today's price"
+    if mode == "AT_LEVEL":
+        lvl = rec.get("entry_level_px")
+        ccy = str(rec.get("price_currency") or "").strip()
+        if isinstance(lvl, (int, float)) and not isinstance(lvl, bool) and lvl > 0:
+            s = f"buy near {lvl:,.2f}".rstrip("0").rstrip(".") + (f" {ccy}" if ccy else "")
+        else:
+            s = "buy at a better price"
+        who = _SELLER.get(str(rec.get("washout_type") or "").strip().upper())
+        return s + (f", which {who} could deliver" if who else "")
+    if mode == "ON_EVENT":
+        ev = str(rec.get("entry_event") or "").strip()
+        return f"buy once {plainify_text(ev)} confirms" if ev else "buy once the named event confirms"
+    if mode == "NONE":
+        return "no entry - pass for now"
+    return ""
 
 
 def plainify_display(rec, extra_status_fields=("catalyst_status", "skeptic_verdict")):

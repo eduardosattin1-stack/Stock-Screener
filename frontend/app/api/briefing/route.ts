@@ -488,9 +488,14 @@ export async function GET(req: Request) {
   const vt = vtIsWeighted ? vtWeighted : (valueApex?.value_tracking || {});
   // Seats come from the standalone state file matching whichever chain was promoted.
   const valueTrk = vtIsWeighted ? valueTrkWeighted : valueTrkEqual;
+  // A PENDING seat (seated, not bought yet: entry_pending, no entry price) has no since-entry
+  // return — drop it BEFORE the FMP pull so it costs no symbol and never reaches the pulse.
+  // Tolerant of main's writer, which never sets entry_pending (every position passes).
+  const heldOnly = <V,>(pos: Record<string, V>): Record<string, V> =>
+    Object.fromEntries(Object.entries(pos || {}).filter(([, v]) => !(v && typeof v === "object" && (v as { entry_pending?: unknown }).entry_pending)));
   const BOOK_SEATS: [string, Record<string, any>, Record<string, any>][] = [
-    ["apex", apexTrk?.positions || {}, apexTrk?.last_prices || {}],
-    ["value", valueTrk?.positions || {}, valueTrk?.last_prices || {}],
+    ["apex", heldOnly(apexTrk?.positions || {}), apexTrk?.last_prices || {}],
+    ["value", heldOnly(valueTrk?.positions || {}), valueTrk?.last_prices || {}],
   ];
   const posSyms = [...new Set(BOOK_SEATS.flatMap(([, pos]) => Object.keys(pos)))];
   const chgRaw: any[] = posSyms.length

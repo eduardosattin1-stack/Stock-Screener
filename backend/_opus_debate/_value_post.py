@@ -169,17 +169,23 @@ def stamp_entry_posture(picks, gin=None):
         p["entry_posture"] = derive_entry_posture(p, (gin or {}).get(p["symbol"], {}))
 
 
-def _entry_ctx(gin):
+def _entry_ctx(gin, quotes=None):
     """Per-seat context for _post_common.reconcile_entry_posture (2026-09-08): the debate grade
     (system-of-record = the record's verdict; gin's debate_verdict as fallback), the CRO's own
     conclusion paragraph, quote currency + live price from the record, and the PAPER entry from the
-    value tracking file - so the memo can say "held since X at Y", not "buy here". Best-effort."""
+    value tracking file - so the memo can say "held since X at Y", not "buy here". Best-effort.
+    2026-10-06 (four-question grade): also the record's typed thesis/entry fields, its base fair value,
+    the quadrant entry floor and the expected return at the LIVE quote (else the record / gin price) -
+    so an A seat under the floor can never say buy. No price -> er_pct None (fail-open)."""
     pos = {}
     try:
         pos = (json.load(open(Path(BK).parent / "frontend" / "public" / "speculair_value_tracking.json",
                               encoding="utf-8")) or {}).get("positions") or {}
     except Exception:
         pos = {}
+    quotes = quotes or {}
+    quad = _pc.current_quadrant(ROOT)
+    floor = _pc.entry_floor_pct(quad)
 
     def ctx(sym):
         try:
@@ -187,11 +193,21 @@ def _entry_ctx(gin):
         except Exception:
             rec = {}
         g, pp = (gin.get(sym) or {}), (pos.get(sym) or {})
+        base = _pc._pos_num((rec.get("valuation") or {}).get("base_fv_px"))
+        px = (_pc._pos_num((quotes.get(sym) or {}).get("price")) or _pc._pos_num(rec.get("live_price"))
+              or _pc._pos_num(g.get("price")))
+        er = round((base / px - 1.0) * 100.0, 2) if (base and px and 0.2 < px / base < 5) else None
         return {"verdict": rec.get("verdict") or g.get("debate_verdict"),
                 "conclusion": rec.get("moderator_conclusion") or "",
                 "currency": rec.get("price_currency") or "",
                 "live_px": rec.get("live_price") or g.get("price"),
-                "entry_px": pp.get("entry_price"), "entry_date": pp.get("entry_date")}
+                "entry_px": pp.get("entry_price"), "entry_date": pp.get("entry_date"),
+                # a PENDING seat (seated, not bought yet) reads "pending since X" in the memo, never "held"
+                "pending_since": pp.get("pending_since") if pp.get("entry_pending") else None,
+                **{k: rec.get(k) for k in ("thesis_state", "entry_mode", "wait_kind", "entry_level_px",
+                                           "entry_event", "thesis_test", "washout_type", "macro_fit",
+                                           "peer_position", "grade_rederived")},
+                "base_fv_px": base, "er_pct": er, "floor_pct": floor, "quadrant": quad or "UNKNOWN"}
     return ctx
 
 
@@ -286,16 +302,21 @@ def main():
     for p in picks:
         p["corr_flag"] = p["symbol"] in _flagged                # fix 4: member of any >=0.6 pair
     stamp_entry_plans(picks, quotes)                             # fix 5c
+    # exits BEFORE the entry discipline (2026-10-06): reconcile reads exit_action / trim_at_px, so a
+    # seat past its trim line can never say buy. exits_block only stamps those two keys + the block.
+    apx["exits"] = exits_block(picks, quotes, gin)                    # fix 5d + trim ceiling
     stamp_entry_posture(picks, gin)                              # entry TIMING (Director-tag fallback)
-    ed = _pc.reconcile_entry_posture(apx, picks, _entry_ctx(gin), "value_memo")   # paper position != buy here
+    ed = _pc.reconcile_entry_posture(apx, picks, _entry_ctx(gin, quotes), "value_memo")   # paper position != buy here
+    for p in picks:                                              # the order a NEW seat rests on (None when held)
+        p["entry_gate"] = _pc.entry_gate(p, held=str(p.get("decision") or "").upper() not in ("ADD", "RE-ADD"))
     print(f"entry-discipline: {len(ed['wait_graded'])} wait-graded seat(s) of {len(picks)} | "
           f"reconciled={ed['reconciled']} set_from_debate={ed['set_from_debate']} "
-          f"override={ed['director_overrides']} consistent={ed['consistent']}")
+          f"override={ed['director_overrides']} consistent={ed['consistent']} "
+          f"rederived={ed.get('rederived')}")
     stamp_wheel(picks, "value", quotes)                          # CSP->CC wheel (live yield / qualitative)
     apx["weights"] = weights
     apx["stress_test"] = stress_block(picks, weights, quotes, asof)   # fix 1
     apx["correlation"] = corr                                         # fix 4
-    apx["exits"] = exits_block(picks, quotes, gin)                    # fix 5d + trim ceiling
     apx["value_post_applied"] = True   # publish gate keys on this (mirror of the regime moat_post_applied)
     json.dump(apx, open(APEX_F, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
     gate_sync(gin)                                                   # fix 7 (regime side; separate file)

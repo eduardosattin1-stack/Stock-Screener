@@ -106,10 +106,15 @@ def write_director_ledger(book, prior_basket_path, tracking_path):
             track = {}
         positions = track.get("positions") or {}
         closed = [c for c in (track.get("closed") or []) if str(c.get("exit_date", "")).startswith(LEDGER_YEAR)]
+        # PENDING ENTRY (2026-10-06): a seat the tracker has not bought yet (no fill at/after its gate) is
+        # NOT a held position - listed apart so rotation / anti-whipsaw never treat an unfilled order as held
+        _pend_of = lambda s: isinstance(positions.get(s), dict) and positions[s].get("entry_pending")
+        held = {s: p for s, p in prior.items() if not _pend_of(s)}
+        pend = {s: p for s, p in prior.items() if _pend_of(s)}
         L = [f"PRIOR-DECISION LEDGER - {book} book, {LEDGER_YEAR}. YOU authored these calls; you must justify",
              "every KEEP / DROP / ADD / RE-ADD in this run AGAINST them (see ROTATION DISCIPLINE in the rubric).",
-             f"\nHELD NOW ({len(prior)}) - drop one only on a BROKEN thesis or a strictly-better orthogonal name:"]
-        for s, p in prior.items():
+             f"\nHELD NOW ({len(held)}) - drop one only on a BROKEN thesis or a strictly-better orthogonal name:"]
+        for s, p in held.items():
             pos = positions.get(s, {})
             ed = pos.get("entry_date") or p.get("entry_date") or "?"
             conv = p.get("director_conviction") or p.get("value_score") or p.get("conviction") or "?"
@@ -127,6 +132,24 @@ def write_director_ledger(book, prior_basket_path, tracking_path):
                 nums.append(f"rr {comp['rr_ratio']:g}")
             L.append(f"  • {s}: HELD since {ed} (conv {conv}"
                      + (", " + ", ".join(nums) if nums else "") + f") - {rat[:220]}")
+        if pend:
+            L.append(f"\nPENDING ENTRY ({len(pend)}) - seated but NOT bought: no entry price, not in the NAV. "
+                     "KEEP leaves the order resting on its gate; switching it to an enter-now posture re-dates "
+                     "the order to this run (it fills at the next close); dropping one costs nothing only if "
+                     "its gate has not been met yet - an order whose gate was met before this run is booked "
+                     "as a buy, and the drop then logs a closed leg:")
+            for s, p in pend.items():
+                pos = positions.get(s) or {}
+                g = pos.get("gate") or {}
+                kind = g.get("kind")
+                gate_txt = (f"price <= {g.get('level_px')}" if kind == "price"
+                            else f"event: {str(g.get('event') or '?')[:120]}" if kind == "event"
+                            else f"blocked: {g.get('reason') or '?'}" if kind == "blocked"
+                            else "fills at the next close")
+                wo = pos.get("washout_hit") if isinstance(pos.get("washout_hit"), dict) else {}
+                rat = (p.get("director_rationale") or p.get("thesis") or "").strip().replace("\n", " ")
+                L.append(f"  • {s}: PENDING since {pos.get('pending_since') or '?'} ({gate_txt})"
+                         + (f"; WASH-OUT {wo.get('date')} at {wo.get('px')}" if wo else "") + f" - {rat[:220]}")
         if closed:
             L.append(f"\nDROPPED in {LEDGER_YEAR} ({len(closed)}) - a RE-ADD requires a DOCUMENTED THESIS CHANGE since the drop:")
             for c in sorted(closed, key=lambda c: c.get("exit_date", ""))[-40:]:
@@ -140,8 +163,9 @@ def write_director_ledger(book, prior_basket_path, tracking_path):
                 tl = "; ".join(f"{e.get('date')} {e.get('decision')}: {(e.get('rationale') or '')[:80]}" for e in evs[-6:])
                 L.append(f"  • {s}: {tl}")
         out.write_text("\n".join(L), encoding="utf-8")
-        print(f"director ledger ({book}): {len(prior)} held + {len(closed)} dropped {LEDGER_YEAR} -> {out.name}")
-        return str(out), len(prior), len(closed)
+        print(f"director ledger ({book}): {len(held)} held + {len(pend)} pending + {len(closed)} dropped "
+              f"{LEDGER_YEAR} -> {out.name}")
+        return str(out), len(held), len(closed)
     except Exception as e:
         print(f"WARN: write_director_ledger({book}) failed ({e})")
         return "", 0, 0
@@ -607,9 +631,10 @@ SYSTEM OF RECORD (decisive - read FIRST). The multi-agent DEBATE already ran on 
   - `sop_mos_pct` (the CRO's reconciled sop_fair_value expressed as MoS vs price) is the SYSTEM-OF-RECORD margin of safety, NOT the 5-method `mos_spread` (that is the RAW scan MoS and can be built on stale/peak inputs). Where sop_mos_pct sits FAR BELOW the raw scan MoS (see `scan_headline_mos_pct`), the raw MoS is an ARTIFACT - trust sop_mos_pct.
   - `forensic_gate`: "EXCLUDE" => INELIGIBLE for the apex (interrogator credibility<=2 - a forensic red flag the factors miss). "CAP" => value_score capped at ~50 (DETERIORATING trajectory: credible but worsening). These are regime-INDEPENDENT forensics; a factor-cheap name NEVER overrides them.
   - `numeric_gate` + `numeric_gate_reasons` (2026-10-06 - the deterministic price/arithmetic check on the debate's OWN numbers, run before you): "REJECT" => INELIGIBLE - the record does not reconcile (price or currency mismatch vs the live quote, a fair value implausible vs the price, or bear/base/bull out of order); do not seat it, held or not, and name it in the memo with its reason. ONE EXCEPTION - a STALE price, not a broken record: when G1A_PRICE_MISMATCH is the ONLY hard reason AND `record_as_of` is before this run's AS OF date, the market simply moved since that debate (the name re-debates automatically once the move passes the re-debate trigger). Judge it ONLY on the current `price` and `sop_mos_pct` in this input (never on the record's own ratios): a HELD seat may stay, a NEW seat may not be added on it, and flag it in the memo. "EXCLUDE_ELIGIBILITY" with TINY_FLOOR / THIN_FLOOR => the CRO's bear price sits within 5% / 15% of today's price, so its downside case is not a real floor and any risk/reward built on it is inflated: you MAY seat it ONLY on the margin-of-safety case (never cite its risk/reward), at size_units <= 0.5, and you MUST name it in the memo with that reason. "EXCLUDE_ELIGIBILITY" for any other reason => treat as REJECT. "WARN" / "PASS" => no restriction (read the reasons).
-  - `debate_verdict` letter: set partly under the (now-removed) catalyst regime, so it is NOT a blanket cap. BUT a verdict-C name is eligible ONLY if its CRO-normalized `sop_mos_pct` is genuinely positive AND it clears the forensic gate AND it is not a peak/stale artifact - otherwise the C is just confirming the raw MoS is fake. Name in the value_memo every verdict-C name you keep and justify it on pure-value grounds.
+  - `debate_verdict` letter (2026-10-06): on rows that carry `thesis_state` it is DERIVED BY CODE from the debate's four questions, not chosen by the CRO - A = the thesis holds and the discount clears the entry floor (buy now); B = a wait (`wait_kind` price: for a better price; proof: for the dated test of a thesis in doubt; event: for a dated event); C = the thesis has BROKEN or the debate names no entry at all (pass for now). `verdict_agent_orig` keeps the CRO's own letter. On older rows without `thesis_state` the letter is the CRO's own, set partly under the (now-removed) catalyst regime. Either way it is NOT a blanket cap. BUT a verdict-C name is eligible ONLY if its CRO-normalized `sop_mos_pct` is genuinely positive AND it clears the forensic gate AND it is not a peak/stale artifact - otherwise the C is just confirming the raw MoS is fake. A C whose `thesis_state` is BROKEN is direct evidence for the broken-thesis test in ROTATION DISCIPLINE below - if you keep it, cite its `thesis_evidence` and say why the value case survives. Name in the value_memo every verdict-C name you keep and justify it on pure-value grounds.
   - SKEPTIC VERDICTS ARE ALREADY IN (2026-08-25 - the kill-tier ran BEFORE you, pre-seat). For EVERY name you are inclined to seat, READ backend/_opus_debate/_skeptic/<SYM>.json first. A REFUTED verdict with kill_scope "thesis" | "moat" | "catalyst" is a HARD no-seat: do not seat it, and cite its kill_fact in the memo as the reason it is NOT in the book. A REFUTED with kill_scope "numbers" AND a typed revised_fv_px is a REPRICING, not a thesis kill: recompute the margin of safety on revised_fv_px against the live price, and seat it ONLY if the revised number still clears your MoS bar and the median-seat dilution bar - quote BOTH the record figure and the skeptic figure in the memo. A numbers-REFUTED with NO revised_fv_px stays a hard no-seat. CONFIRMED_WITH_CORRECTIONS at correction_severity="material" must temper the grade AND the sizing for that seat. A missing shard means the name was outside the shortlist, not that it passed - treat it as unverified and prefer a shortlisted name at equal grade. THIS IS WHY THE ORDERING CHANGED: when the kill-tier ran after you, a refuted seat was demoted by the post layer while your memo still described it as seated (NTES, 2026-08-24). Your memo must now describe the book you actually publish - every name you discuss as seated MUST appear in apex_basket, and every name you exclude on a kill MUST be named with its kill_fact.
   - `value_conviction` (1-5, when present): the CRO's CATALYST-BLIND value score - judged on valuation + forensics with the regime overlay explicitly ignored. PREFER it over `debate_conviction` everywhere in this rubric (debate_conviction is regime-tilted and collapses to a constant in catalyst-light pools). Where value_conviction is null (older results), fall back to debate_conviction but say so.
+  - FOUR-QUESTION FIELDS (2026-10-06; present only on rows the new debate format produced - an older row lacks them, so fall back to the letter and the prose): `thesis_state` INTACT|IMPAIRED|BROKEN (is the business case still true) with `thesis_test` (for IMPAIRED: the metric, its pass and fail levels and the dated event that settles it); `entry_mode` NOW|AT_LEVEL|ON_EVENT|NONE with `entry_level_px` (the price the debate would buy at, in the quote currency) or `entry_event`; `washout_type` MECHANICAL|FACTOR (who the debate expects to sell the stock down to that price); `wait_kind` price|proof|event on a B; `grade_rederived` (set when the code moved the letter - e.g. an A whose discount sits below `entry_floor_pct`, the entry floor for the current macro quadrant); `trim_line_hit`=true when the price is at or above the trim line (85% of fair value). A seat with `trim_line_hit`, or an A re-derived below the floor, is NOT a buy at today's price whatever its letter - the post layer enforces this. `macro_fit` (TAILWIND|NEUTRAL|HEADWIND|UNKNOWN) is CONTEXT ONLY: never a reason to seat, drop, size or re-grade a name. `peer_position` is the debate's own peer read - weigh it beside `peer_verdict`.
 
 RUBRIC - four pillars ~25 pts each, applied ONLY to names that clear the gate:
 1. MARGIN OF SAFETY - primary = sop_mos_pct (CRO-normalized). Cross-check `mos_spread` AGREEMENT (4-5/5 models positive = high-confidence cheap) but DISCOUNT any model MoS on a name flagged peak/stale below. CRO-ONLY LEG: a name with <=2/5 positive model MoS AND a scan MoS below ~+10% (`scan_headline_mos_pct`) means your SoP is the SOLE evidence of cheapness - you may seat it, but you MUST set its `size_units` <= 0.5, tag it by name in the memo, and state in one sentence why your SoP beats five dissenting models.
@@ -624,7 +649,7 @@ RUBRIC - four pillars ~25 pts each, applied ONLY to names that clear the gate:
    - `net_debt_exceeds_mktcap`=true remains a thin-equity flag - NEVER credit net debt as "net cash."
 4. MULTIPLES vs TRUE PEERS (`peer_verdict`/`peer_relative_comps`) + GROWTH DURABILITY/QUALITY (durable positive revenue/EPS growth + ROIC>~8-10% SUPPORT value; negative 3yr revenue CAGR + sub-WACC ROIC + thin/eroding margins = a value trap even when optically cheap). When the peer entry carries `peer_override`/`anchor_multiple`, that is a LIVE, current peer multiple - use it, NEVER a remembered one (peer multiples de-rate). When `convergence`="sector_regulatory" (e.g. PLX.PA/Pluxee vs a now-~10x Edenred, both hit by the same Brazil PAT + Italy voucher reform), the discount-to-peer is SHARED-FACTOR SECTOR BETA, not idiosyncratic alpha: count it as a hidden-factor cluster in the correlation stress below, do NOT credit the gap as single-name edge, and prefer it as a sized/watch leg rather than a full-conviction apex seat.
 
-ROTATION DISCIPLINE (continuity - you are ACCOUNTABLE TO YOUR OWN PRIOR CALLS): FIRST read backend/_opus_debate/_director_ledger_value.txt - it lists your currently-HELD names (entry date + why you picked each) and EVERY name you DROPPED in 2026. Treat this run as a ROTATION of last week's book, NOT a blank re-pick: (1) KEEP each held name UNLESS its thesis is BROKEN (price through thesis_break_px, a forensic/solvency flip, or confirmed moat terminal-erosion) OR you have a STRICTLY-BETTER orthogonal name for that seat - and say which. Re-grading a hair lower is NOT a reason to drop a held compounder. (2) You MAY RE-ADD a name you previously dropped, but ONLY by citing a DOCUMENTED THESIS CHANGE since the drop date (new filing/guidance, a materially lower price, a resolved overhang) - a merely-better grade is NOT a thesis change. You may override this, but you must OWN it in writing in whats_changed (do not exit a name only to re-add it days later with no new fact). (3) SECULAR-LOAD: this is a deep-value book, so it skews to structurally-challenged names - compute book_secular_load_pct = % of your apex carrying material/terminal secular_threat OR an ERODING moat; if it exceeds ~60% you MUST defend the whole-book decline beta in the memo (theme diversification does NOT remove the shared junk/flight-to-quality factor). Seat >=2 CLEAN ANCHORS (WIDE/NARROW moat + non-eroding trend + manageable/none threat, NTES-type) as ballast; if you cannot, justify it. (4) ENTRY DISCIPLINE (2026-09-08): a KEEP is a PAPER POSITION ALREADY HELD - it means "do not sell", NEVER "buy at today's price". Every KEEP line in the memo's ROTATION subsection MUST carry the held-since date + entry price (from the ledger) and, for a seat whose debate grade is B ("wait for the wash-out") or C ("pass for now"), the CRO's add level or event (e.g. "held since 31 Aug at NOK 111 - not a buy here; adds near NOK 105 or on the early-November print"). Do NOT write "no name graded pass for now is seated" as though it settled entry timing - grade C is "pass for now", grade B is "wait", and B IS seated on the rotation rule: say how many seats are wait-graded and what each one waits for. The deterministic post layer reconciles entry_posture to the grade (below) and appends its own ENTRY DISCIPLINE block to your memo.
+ROTATION DISCIPLINE (continuity - you are ACCOUNTABLE TO YOUR OWN PRIOR CALLS): FIRST read backend/_opus_debate/_director_ledger_value.txt - it lists your currently-HELD names (entry date + why you picked each) and EVERY name you DROPPED in 2026. Treat this run as a ROTATION of last week's book, NOT a blank re-pick: (1) KEEP each held name UNLESS its thesis is BROKEN (price through thesis_break_px, a forensic/solvency flip, or confirmed moat terminal-erosion) OR you have a STRICTLY-BETTER orthogonal name for that seat - and say which. Re-grading a hair lower is NOT a reason to drop a held compounder. (2) You MAY RE-ADD a name you previously dropped, but ONLY by citing a DOCUMENTED THESIS CHANGE since the drop date (new filing/guidance, a materially lower price, a resolved overhang) - a merely-better grade is NOT a thesis change. You may override this, but you must OWN it in writing in whats_changed (do not exit a name only to re-add it days later with no new fact). (3) SECULAR-LOAD: this is a deep-value book, so it skews to structurally-challenged names - compute book_secular_load_pct = % of your apex carrying material/terminal secular_threat OR an ERODING moat; if it exceeds ~60% you MUST defend the whole-book decline beta in the memo (theme diversification does NOT remove the shared junk/flight-to-quality factor). Seat >=2 CLEAN ANCHORS (WIDE/NARROW moat + non-eroding trend + manageable/none threat, NTES-type) as ballast; if you cannot, justify it. (4) ENTRY DISCIPLINE (2026-09-08): a KEEP is a PAPER POSITION ALREADY HELD - it means "do not sell", NEVER "buy at today's price". Every KEEP line in the memo's ROTATION subsection MUST carry the held-since date + entry price (from the ledger) and, for a seat whose debate grade is B ("wait for a better price", "wait for proof" or "wait for the event") or C ("pass for now"), the add level or event (the row's typed `entry_level_px` / `entry_event` when present, else the CRO's prose - e.g. "held since 31 Aug at NOK 111 - not a buy here; adds near NOK 105 or on the early-November print"). Do NOT write "no name graded pass for now is seated" as though it settled entry timing - grade C is "pass for now", grade B is "wait", and B IS seated on the rotation rule: say how many seats are wait-graded and what each one waits for. A seat at or above its trim line (`trim_line_hit`) or an A re-derived below the entry floor (`grade_rederived`) is not a buy at today's price either - say so on its KEEP line. The deterministic post layer reconciles entry_posture to the grade (below) and appends its own ENTRY DISCIPLINE block to your memo. (5) PENDING ENTRY (2026-10-06): a name the ledger lists under PENDING ENTRY is seated but NOT bought yet (no entry price, not in the NAV) - KEEP leaves its order resting on its gate, switching it to an enter-now posture re-dates the order to this run (it fills at the next close), and dropping it costs nothing only if its gate has not been met yet (an order whose gate was met before this run is booked as a buy, and the drop then logs a closed leg); never give a pending seat a held-since date or an entry price.
 
 BOOK SIZE IS NOT FIXED (2026-07-24, Bruno): there is no seat target. Seat EVERY name that clears the constraints below and survives the correlation stress - if that is 6, seat 6; if it is 18 and each genuinely earns its place, seat 18. Do NOT pad to a round number and do NOT stop early on one. THE DISCIPLINE THAT REPLACES A SEAT CAP IS DILUTION: the book is EQUAL-WEIGHTED, so each seat you add shrinks every other seat - add a name ONLY if it is at least as good as your CURRENT MEDIAN seat on value_score and margin of safety. State the final count in the memo with one line on why the book is that size this week.
 
@@ -632,7 +657,7 @@ HARD CONSTRAINTS: <=3 names per sector. Every apex name must (a) clear forensic_
 
 HIDDEN-FACTOR CORRELATION STRESS (run over the final book BEFORE sizing - the <=3/sector cap is NOT a correlation control; GICS sectors miss shared real-world factors). Decompose the book on HIDDEN factors: (a) END-MARKET DEMAND CYCLE (consumer-discretionary / travel / housing), (b) REGULATORY or REIMBURSEMENT REGIME (e.g. US hospital Medicaid Directed-Payment-Program / a 2028 reimbursement ruling), (c) ADVERTISING CYCLE (cable & theme-park ad spend, out-of-home advertising), (d) RATE / CREDIT sensitivity, (e) a SINGLE shared macro (one commodity, one FX, one policy), (f) SECULAR-DISRUPTION THEME (each name carries a `secular_theme`: ai-displacement / payments-disintermediation / linear-media-decline / autonomous-mobility / labor-arbitrage-deflation / reimbursement-compression / retail-channel-shift / energy-transition-loser). NO secular_theme may carry >2 names - the live clusters to check are ai-displacement across ADBE/IT/GLOB and payments-disintermediation across EEFT/PLX.PA; "cheap vs peers" inside a cohort that is melting TOGETHER is sector beta, not alpha. A WIDE & non-eroding moat (e.g. ADBE: rising ROIC, expanding margin) counts at HALF toward the theme budget (a durable anchor that merely carries the narrative is not the tail risk), so a theme may seat one durable anchor + at most one eroding leg. FLAG every hidden factor carrying >=2 names. Known live clusters to check EXPLICITLY: THC+UHS (both ride the 2028 Medicaid-DPP / US hospital-reimbursement outcome); CMCSA+SAX.DE (both advertising-cycle - cable ads + theme-park spend, and out-of-home advertising); and any name whose peer entry is tagged `convergence`="sector_regulatory" (e.g. PLX.PA/Pluxee - its cheapness vs Edenred is shared Brazil-PAT/Italy-voucher REGULATORY beta, both names de-rated on the same factor, so it is sector beta NOT name-specific alpha and must be discounted here, not credited as edge). For each >=2 cluster, EITHER (i) DIVERSIFY: swap the lower-value leg for the best orthogonal eligible name / runner-up that does NOT re-cluster (note ARDT re-clusters with hospitals, SREN.SW with SCR.PA reinsurance), OR (ii) keep both ONLY with an explicit combined-size cap + written justification - no hidden factor may quietly carry two full-size legs. A single reimbursement ruling or an ad-recession must not hit two legs at once. Every keep-with-combined-size-cap resolution MUST appear in the output `combined_caps` as NUMBERS (not prose): combined_caps:[{names:[...], max_units(float), axis(str)}] - prose-only caps are a spec violation.
 
-OUTPUT - Write VALID JSON to backend/_opus_debate/apex_basket_value.json = {apex_basket:[{symbol, sector, value_score(0-100), thesis(one sentence), mos_agreement(e.g. "4/5"), sop_mos_pct, net_funded_debt_ebitda, interest_coverage, funded_solvency, peer_verdict, growth_durability, peak_normalized(bool: did you have to discount peak/stale earnings), exposure_axes(list of the hidden factors this name carries, e.g. ["hospital-reimbursement","advertising-cycle"]), secular_theme(the name dominant secular-decline theme id from secular_themes.json or "" - used for the concentration cap), moat(WIDE|NARROW|ERODING|NONE), moat_score(int 0-100, from the input), size_units(float 0.1-1.5: 1.0=full unit, 0.5=half - the SAME sizing you justified in the memo; every CRO-only leg, stale anchor, moat_erosion="CAP" leg, and combined-cap member MUST carry its number here), thesis_break_px(number: the price at which the thesis is BROKEN, from your downside-to-break - below it the name exits at the next review), bear_fv_px(number: your adverse-SoP per-share value, used for the market stress test), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <event>" | "wait_for_weakness" - WHEN a buyer steps in: a carry-paying compounder you enter now while the slow MoS re-rate plays out = enter_now_carry; a standard tranche-in = scale_in; a knife near the 52w low or a name to add only into a flush = wait_for_weakness; gated on a dated event = on_confirmation with that event. ENTRY DISCIPLINE (2026-09-08): entry_posture MUST agree with the seat's debate grade - a grade-B record (the CRO's "wait for the wash-out") or a grade-C record carries wait_for_weakness or on_confirmation:<event>, NEVER enter_now_carry / scale_in, UNLESS you also write entry_posture_override_reason with a DATED fact; the deterministic post layer reverts an unjustified enter-now tag on a wait-graded seat to the CRO's posture and records your original, exactly like duration_bucket_override), cro_add_px (number|null: the entry level the record's moderator_conclusion names for a wait-graded seat, in the quote currency - for a band take the FIRST actionable level, e.g. "NOK 100-105" -> 105, "$285 then $270" -> 285; null when the CRO named none), cro_add_event (string: the dated event the CRO waits for, e.g. "early-November Q3 print" / "late-October count-date print"; else ""), entry_posture_override_reason (string: "" unless you override a wait grade - then the DATED fact), wheel (where a wheel SUITS this seat - a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your downside-to-break = thesis_break_px), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait for the re-rate)}; else {suits:false}), forensic_gate, trap_flag, decision('KEEP'|'ADD'|'RE-ADD' - vs the ledger), decision_rationale(one sentence reconciling this seat to the ledger), whats_changed(REQUIRED non-empty ONLY for RE-ADD: what materially changed since the drop; else "")}], runner_ups:[...~6], combined_caps:[{names:[...], max_units(float), axis(str)}], value_memo}. The value_memo MUST: (a) state the rubric weighting; (b) LIST the names EXCLUDED or CAPPED by the forensic gate and those down-rated as cyclical-peak/stale artifacts - call out BRBR and CALM EXPLICITLY with their CRO-normalized fair value vs the raw scan MoS; (c) give the name-by-name RISE/FALL vs the prior value apex (the caller specifies the prior apex in the run instruction; if none is given, read the existing backend/_opus_debate/apex_basket_value.json for the prior slate BEFORE you overwrite it); (d) a correlation_stress section naming EACH hidden-factor cluster of >=2 (INCLUDING the THC/UHS reimbursement and CMCSA/SAX.DE advertising pairs) AND each SECULAR-THEME cluster of >=2 (e.g. ai-displacement ADBE/IT/GLOB, payments-disintermediation EEFT/PLX.PA) and EXACTLY how you resolved it (diversified -> which swap and why; or kept-with-sizing -> the combined_caps entry with axis="secular-theme:<id>" and the justification, durable anchors counted at half); (e) a BEAR REBUTTAL subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing - if you cannot articulate the bear in one sentence, you do not understand the position; (f) a ROTATION subsection reconciling to backend/_opus_debate/_director_ledger_value.txt - one line per KEEP/ADD/RE-ADD (each KEEP with held-since + entry price and, for a wait-graded seat, the CRO's add level/event), plus one line "N of M seats are wait-graded: held, not a buy at today's price", the broken-thesis reason for every held name you DROPPED, and (for any RE-ADD) the documented thesis change; (g) a SECULAR-LOAD line: book_secular_load_pct + clean_anchor_count, with a defense if load>60% or anchors<2. ALSO emit, at top level alongside apex_basket, book_secular_load_pct(number) and clean_anchor_count(int). Reply exactly: DONE"""
+OUTPUT - Write VALID JSON to backend/_opus_debate/apex_basket_value.json = {apex_basket:[{symbol, sector, value_score(0-100), thesis(one sentence), mos_agreement(e.g. "4/5"), sop_mos_pct, net_funded_debt_ebitda, interest_coverage, funded_solvency, peer_verdict, growth_durability, peak_normalized(bool: did you have to discount peak/stale earnings), exposure_axes(list of the hidden factors this name carries, e.g. ["hospital-reimbursement","advertising-cycle"]), secular_theme(the name dominant secular-decline theme id from secular_themes.json or "" - used for the concentration cap), moat(WIDE|NARROW|ERODING|NONE), moat_score(int 0-100, from the input), size_units(float 0.1-1.5: 1.0=full unit, 0.5=half - the SAME sizing you justified in the memo; every CRO-only leg, stale anchor, moat_erosion="CAP" leg, and combined-cap member MUST carry its number here), thesis_break_px(number: the price at which the thesis is BROKEN, from your downside-to-break - below it the name exits at the next review), bear_fv_px(number: your adverse-SoP per-share value, used for the market stress test), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <event>" | "wait_for_weakness" - WHEN a buyer steps in: a carry-paying compounder you enter now while the slow MoS re-rate plays out = enter_now_carry; a standard tranche-in = scale_in; a knife near the 52w low or a name to add only into a flush = wait_for_weakness; gated on a dated event = on_confirmation with that event. ENTRY DISCIPLINE (2026-09-08): entry_posture MUST agree with the seat's debate grade - a grade-B record (the CRO's "wait for a better price", "wait for proof" or "wait for the event") or a grade-C record carries wait_for_weakness (wait_kind price) or on_confirmation:<event> (wait_kind proof or event), NEVER enter_now_carry / scale_in, UNLESS you also write entry_posture_override_reason with a DATED fact; the deterministic post layer reverts an unjustified enter-now tag on a wait-graded seat to the CRO's posture and records your original, exactly like duration_bucket_override), cro_add_px (number|null: COPY the row's typed entry_level_px when present - the post layer re-reads the typed level and it wins; only for an older row without it, the entry level the record's moderator_conclusion names for a wait-graded seat, in the quote currency - for a band take the FIRST actionable level, e.g. "NOK 100-105" -> 105, "$285 then $270" -> 285; null when the CRO named none), cro_add_event (string: COPY the row's typed entry_event when present; else the dated event the CRO waits for, e.g. "early-November Q3 print" / "late-October count-date print"; else ""), entry_posture_override_reason (string: "" unless you override a wait grade - then the DATED fact), wheel (where a wheel SUITS this seat - a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your downside-to-break = thesis_break_px), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait for the re-rate)}; else {suits:false}), forensic_gate, trap_flag, decision('KEEP'|'ADD'|'RE-ADD' - vs the ledger), decision_rationale(one sentence reconciling this seat to the ledger), whats_changed(REQUIRED non-empty ONLY for RE-ADD: what materially changed since the drop; else "")}], runner_ups:[...~6], combined_caps:[{names:[...], max_units(float), axis(str)}], value_memo}. The value_memo MUST: (a) state the rubric weighting; (b) LIST the names EXCLUDED or CAPPED by the forensic gate and those down-rated as cyclical-peak/stale artifacts - call out BRBR and CALM EXPLICITLY with their CRO-normalized fair value vs the raw scan MoS; (c) give the name-by-name RISE/FALL vs the prior value apex (the caller specifies the prior apex in the run instruction; if none is given, read the existing backend/_opus_debate/apex_basket_value.json for the prior slate BEFORE you overwrite it); (d) a correlation_stress section naming EACH hidden-factor cluster of >=2 (INCLUDING the THC/UHS reimbursement and CMCSA/SAX.DE advertising pairs) AND each SECULAR-THEME cluster of >=2 (e.g. ai-displacement ADBE/IT/GLOB, payments-disintermediation EEFT/PLX.PA) and EXACTLY how you resolved it (diversified -> which swap and why; or kept-with-sizing -> the combined_caps entry with axis="secular-theme:<id>" and the justification, durable anchors counted at half); (e) a BEAR REBUTTAL subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing - if you cannot articulate the bear in one sentence, you do not understand the position; (f) a ROTATION subsection reconciling to backend/_opus_debate/_director_ledger_value.txt - one line per KEEP/ADD/RE-ADD (each KEEP with held-since + entry price and, for a wait-graded seat, the CRO's add level/event), plus one line "N of M seats are wait-graded: held, not a buy at today's price", the broken-thesis reason for every held name you DROPPED, and (for any RE-ADD) the documented thesis change; (g) a SECULAR-LOAD line: book_secular_load_pct + clean_anchor_count, with a defense if load>60% or anchors<2. ALSO emit, at top level alongside apex_basket, book_secular_load_pct(number) and clean_anchor_count(int). Reply exactly: DONE"""
 
 
 # -- FUTURE RESOURCES Director rubric (spec Sec.5, Phase 3) - Opus seat, AGENT_VOICE-prefixed like the
@@ -686,6 +711,10 @@ def value_input():
     sc_by = {s.get("symbol"): s for s in scan.get("stocks", [])}
     res_files = sorted(glob.glob(str(ROOT / "results_regime" / "*.json")))
     fl = _funded_leverage([os.path.basename(f)[:-5] for f in res_files])
+    # the quadrant entry floor the four-question grade uses (UNKNOWN / missing file -> 20%, fail-open)
+    sys.path.insert(0, str(ROOT))
+    import _post_common as _pc
+    _vi_floor = _pc.entry_floor_pct(_pc.current_quadrant(ROOT))
     out = []
     for f in res_files:
         try:
@@ -805,6 +834,17 @@ def value_input():
                                  and isinstance(price, (int, float)) else None),
             "risk_reward": (r.get("risk_reward", "") or "")[:220],
             "debate_verdict": verdict, "debate_conviction": r.get("conviction"),
+            # FOUR-QUESTION GRADE (2026-10-06): debate_verdict is now DERIVED by code from
+            # thesis_state x entry_mode (+ the entry floor); the CRO's own letter rides along, with the
+            # typed wait it implies. Older records: all None -> the Director reads the letter as before.
+            "verdict_agent_orig": r.get("verdict_agent_orig"), "thesis_state": r.get("thesis_state"),
+            "thesis_test": r.get("thesis_test"), "entry_mode": r.get("entry_mode"),
+            "wait_kind": r.get("wait_kind"), "entry_level_px": r.get("entry_level_px"),
+            "entry_event": r.get("entry_event"), "washout_type": r.get("washout_type"),
+            "peer_position": r.get("peer_position"), "macro_fit": r.get("macro_fit"),   # macro_fit: context only
+            "grade_rederived": r.get("grade_rederived"), "entry_floor_pct": _vi_floor,
+            # price at/above 85% of the fair value (TRIM_AT_FRAC) - a seat here can never say buy
+            "trim_line_hit": isinstance(sop_mos, (int, float)) and sop_mos <= (1 / 0.85 - 1) * 100,
             # 8a: value_conviction = the CRO's catalyst-blind value score (decoupled from the
             # regime-tilted `conviction`); older results lack it -> None, Director falls back.
             "value_conviction": r.get("value_conviction"),
@@ -960,6 +1000,21 @@ def value_input():
     return len(out)
 
 
+# Four-question CRO grade columns (2026-10-06), shared by the three debate CSVs. Blank on older records.
+_GRADE_CSV_COLS = ["verdict_agent_orig", "thesis_state", "entry_mode", "entry_level_px", "entry_event",
+                   "wait_kind", "washout_type", "macro_fit"]
+
+
+def _grade_csv(r):
+    out = {}
+    for k in _GRADE_CSV_COLS:
+        v = (r or {}).get(k)
+        if k == "macro_fit" and isinstance(v, dict):         # tolerate a {fit, ...} dict - publish the token
+            v = v.get("fit")
+        out[k] = "" if v is None else v
+    return out
+
+
 def value_csv():
     """CSV of the VALUE apex (apex_basket_value.json) with the FULL output of every agent per name -
     Radar / Interrogator / Architect / Catalyst / CRO + the value-Director's per-name grade - plus the
@@ -986,7 +1041,7 @@ def value_csv():
             "peak_flag", "eps_peak_ratio", "freshness_stale", "peer_verdict_director", "growth_durability", "exposure_axes",
             "size_units_effective", "weight_pct", "mos_agreement_n", "cro_only", "stale_anchor", "corr_flag", "entry_plan",
             "entry_posture", "entry_posture_source", "cro_verdict_plain", "cro_add_px", "cro_add_event", "trap_flag",
-            "debate_verdict", "debate_conviction", "catalyst_status", "sop_fair_value", "sop_breakdown",
+            "debate_verdict", "debate_conviction", *_GRADE_CSV_COLS, "catalyst_status", "sop_fair_value", "sop_breakdown",
             "risk_reward", "peer_comps_note", "radar_peers", "radar_relative_comps", "radar_verdict",
             "radar_rationale", "bull_thesis", "bear_thesis", "sop_bull", "sop_bear", "consensus_delta",
             "valley_of_death", "positioning_washout", "forcing_function", "moderator_conclusion",
@@ -1033,6 +1088,7 @@ def value_csv():
             "cro_verdict_plain": p.get("cro_verdict_plain", ""), "cro_add_px": p.get("cro_add_px", ""), "cro_add_event": p.get("cro_add_event", ""),
             "trap_flag": p.get("trap_flag", ""),
             "debate_verdict": r.get("verdict", ""), "debate_conviction": r.get("conviction", ""),
+            **_grade_csv(r),
             "catalyst_status": r.get("catalyst_status", ""), "sop_fair_value": r.get("sop_fair_value", ""),
             "sop_breakdown": r.get("sop_breakdown", ""), "risk_reward": r.get("risk_reward", ""),
             "peer_comps_note": r.get("peer_comps_note", ""),
@@ -1103,7 +1159,7 @@ def baskets_csv():
             "value_role", "value_score", "value_thesis", "funded_solvency", "net_funded_debt_ebitda", "interest_coverage",
             "sop_mos_pct", "scan_headline_mos_pct", "forensic_gate", "peak_flag", "freshness_stale", "trap_flag",
             "n_methodology_baskets", "methodology_baskets",
-            "verdict", "conviction", "catalyst_status", "sop_fair_value", "risk_reward", "trajectory", "interrogator_score",
+            "verdict", "conviction", *_GRADE_CSV_COLS, "catalyst_status", "sop_fair_value", "risk_reward", "trajectory", "interrogator_score",
             "radar_verdict", "radar_peers", "radar_relative_comps", "radar_rationale",
             "bull_thesis", "bear_thesis", "sop_bull", "sop_bear", "sop_breakdown",
             "consensus_delta", "valley_of_death", "positioning_washout", "forcing_function", "moderator_conclusion",
@@ -1137,7 +1193,8 @@ def baskets_csv():
             "peak_flag": gi.get("peak_flag", ""), "freshness_stale": gi.get("freshness_stale", ""),
             "trap_flag": vl.get("trap_flag", ""),
             "n_methodology_baskets": len(mb), "methodology_baskets": ";".join(mb),
-            "verdict": r.get("verdict", ""), "conviction": r.get("conviction", ""), "catalyst_status": r.get("catalyst_status", ""),
+            "verdict": r.get("verdict", ""), "conviction": r.get("conviction", ""), **_grade_csv(r),
+            "catalyst_status": r.get("catalyst_status", ""),
             "sop_fair_value": r.get("sop_fair_value", ""), "risk_reward": r.get("risk_reward", ""),
             "trajectory": r.get("trajectory", ""), "interrogator_score": r.get("interrogator_score", ""),
             "radar_verdict": pg.get("verdict", ""),
@@ -1187,9 +1244,11 @@ def value_publish(push_gcs=False):
         print(f"WARN: value decision-history capture failed ({_e})")
     track_in = [{**p, "conviction": p.get("value_score", 0)} for p in picks]   # value_score -> conviction log
     try:
+        # entry_rules="gated" (2026-10-06): a NEW seat opens PENDING and fills at the first close after
+        # this run or at its gate (add level / event); held seats are unchanged (keep != buy)
         vt = E._update_apex_tracking(track_in, push_gcs=False,
                                      gcs_path="scans/speculair_value_tracking.json",
-                                     local_name="speculair_value_tracking.json")
+                                     local_name="speculair_value_tracking.json", entry_rules="gated")
     except Exception as e:
         print(f"WARN: value tracking failed ({e})")
         vt = {}
@@ -1199,7 +1258,8 @@ def value_publish(push_gcs=False):
         try:
             vtw = E._update_apex_tracking(track_in, push_gcs=False, weights=weights,
                                           gcs_path="scans/speculair_value_tracking_weighted.json",
-                                          local_name="speculair_value_tracking_weighted.json")
+                                          local_name="speculair_value_tracking_weighted.json",
+                                          entry_rules="gated")
         except Exception as e:
             print(f"WARN: weighted value tracking failed ({e})")
     pos = {}
@@ -1211,9 +1271,30 @@ def value_publish(push_gcs=False):
             pos = {}
     for p in picks:                                   # attach entry for per-pick perf in the card
         pp = pos.get(p["symbol"], {})
+        if pp.get("entry_pending"):                   # seated, not bought yet: no entry, no fake day-1 P&L
+            # pending_gate = the tracker's resting order; the post layer's entry_gate keeps its own shape
+            p.update(entry_pending=True, pending_since=pp.get("pending_since"), pending_gate=pp.get("gate"),
+                     washout_hit=pp.get("washout_hit"), entry_price=None, entry_date=None)
+            continue
         if pp:
+            p["entry_pending"] = False
             p["entry_price"] = pp.get("entry_price")
             p["entry_date"] = pp.get("entry_date")
+            if pp.get("filled_from_pending"):
+                p["filled_from_pending"] = pp["filled_from_pending"]
+    # plain words for the event strings the value chip prints (same pass as the regime publisher's
+    # _plain_display_events) - AFTER both tracker runs, so the trackers read the raw strings
+    try:
+        import plain_language as _pl
+        for p in picks:
+            if isinstance(p.get("cro_add_event"), str):
+                p["cro_add_event"] = _pl.plainify_text(p["cro_add_event"])
+            for _k in ("entry_gate", "pending_gate"):
+                _g = p.get(_k)
+                if isinstance(_g, dict) and isinstance(_g.get("event"), str):
+                    p[_k] = {**_g, "event": _pl.plainify_text(_g["event"])}
+    except Exception as _e:
+        print(f"WARN value_publish: event plain-language pass skipped ({_e})")
     pool_stats = {}                                    # fix 6: honest pool-quality banner
     gp = ROOT / "value_grade_input.json"
     if gp.exists():
@@ -1250,7 +1331,8 @@ def value_publish(push_gcs=False):
            "universe": (pool_stats or {}).get("n_pool")}
     (PUB / "speculair_value_apex.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"value_publish: {len(picks)} apex + {len(out['runner_ups'])} runners | tracking nav={vt.get('nav')} "
-          f"since={vt.get('since_inception_pct')}% open={vt.get('n_open')} closed={vt.get('n_closed')} inception={vt.get('inception_date')}")
+          f"since={vt.get('since_inception_pct')}% open={vt.get('n_open')} pending={vt.get('n_pending')} "
+          f"closed={vt.get('n_closed')} inception={vt.get('inception_date')}")
     if push_gcs:
         import subprocess
         for localf, key in [(PUB / "speculair_value_apex.json", "scans/speculair_value_apex.json"),
@@ -4961,7 +5043,7 @@ def export_debate_csv():
         elif isinstance(p, str):
             director[p] = {"_role": "RUNNER_UP"}
     cols = ["symbol", "sector", "signal_type", "source", "transcript_source",
-            "verdict", "conviction", "catalyst_status", "sop_fair_value", "risk_reward",
+            "verdict", "conviction", *_GRADE_CSV_COLS, "catalyst_status", "sop_fair_value", "risk_reward",
             "trajectory", "interrogator_score",
             "director_role", "director_conviction", "director_thesis", "director_lane",
             "director_regime_fit", "director_exposure_axes",
@@ -4989,7 +5071,7 @@ def export_debate_csv():
         rows.append({
             "symbol": sym, "sector": r.get("sector", ""), "signal_type": r.get("signal_type", ""),
             "source": r.get("source", ""), "transcript_source": r.get("transcript_source", ""),
-            "verdict": r.get("verdict", ""), "conviction": r.get("conviction", ""),
+            "verdict": r.get("verdict", ""), "conviction": r.get("conviction", ""), **_grade_csv(r),
             "catalyst_status": r.get("catalyst_status", ""), "sop_fair_value": r.get("sop_fair_value", ""),
             "risk_reward": r.get("risk_reward", ""), "trajectory": r.get("trajectory", ""),
             "interrogator_score": r.get("interrogator_score", ""),
@@ -5033,6 +5115,80 @@ CARRY_PRICE_MOVE = 0.10       # |move| beyond this since the prior debate -> re-
 # carry with reason "age ceiling deferred" and queue for the next run. Specific triggers (new
 # transcript, price move, PENDING_HARD, escalation) are NOT metered.
 AGE_U_CAP = 20
+# WASH-OUT (2026-10-06, Bruno - four-question CRO grade). A price-wait has an end: when the price
+# reaches the level the committee named (typed entry_level_px on an AT_LEVEL record, or the Director's
+# cro_add_px on an older B), or a B with NO named level has fallen WASHOUT_FALL since its debate price,
+# the name gets a FULL debate that must RESOLVE the wait. When the level was reached: buy now / wait
+# for proof / wait for the event / pass - never another price level. After a fall (review fix P1,
+# 2026-10-06): a named level waits for its own price, so the fall alone never fires on it; a wait with
+# no named level (an older B, a proof or an event wait) may name its first level or keep its event.
+# WASHOUT_U_CAP bounds the Opus spend per run (a broad -10% week could trigger dozens of Bs); the
+# overflow carries and re-triggers next week. Never routed to the Sonnet coverage refresh, which
+# inherits the grade and so could never resolve it.
+WASHOUT_FALL = 0.10
+WASHOUT_U_CAP = 25
+
+
+def _wo_level_num(x):
+    """P7: parse an add level with the SAME parser derive_grade grades it with (_post_common._pos_num:
+    'HK$35.8' -> 35.8, bool / non-positive -> None), so a string level can still fire its wash-out."""
+    try:
+        try:
+            import _post_common as _pcm
+        except ImportError:
+            sys.path.insert(0, os.path.join(BK, "_opus_debate"))
+            import _post_common as _pcm
+        return _pcm._pos_num(x)
+    except Exception:                                 # fail-open: numbers only
+        return float(x) if isinstance(x, (int, float)) and not isinstance(x, bool) and x > 0 else None
+
+
+def _washout_check(pr, sc, legacy_level=None):
+    """The wash-out trigger for one prior record vs this week's scan quote, or None.
+    Level: the record's own entry_level_px when the CRO answered AT_LEVEL (a level the CODE derived
+    from the entry floor - entry_level_px_derived / FLOOR_REDERIVED - is not a CRO level: grade-derive
+    re-letters that one on price by itself, P6), else the Director's legacy cro_add_px for a
+    pre-four-question B; parsed like derive_grade parses it (P7). Unit guard: a level more than 5x
+    away from the quote is a GBp/GBP slip and is ignored. Fall: a B whose scan price is >= 10% below
+    the price its last real debate saw (_debate_price - never the carry restamp), and ONLY when the B
+    has no named level or the price is at/below it (P1) - a price-wait waits for its own level."""
+    if not isinstance(pr, dict):
+        return None
+    L = str(pr.get("verdict") or "").strip().upper()[:1]
+    em = str(pr.get("entry_mode") or "").strip().upper()
+    em_agent = str(pr.get("entry_mode_agent_orig") or em).strip().upper()
+    typed = em in ("NOW", "AT_LEVEL", "ON_EVENT", "NONE")
+    _gf = pr.get("grade_flags") if isinstance(pr.get("grade_flags"), list) else []
+    code_level = pr.get("entry_level_px_derived") is not None or any(
+        f in _gf for f in ("FLOOR_REDERIVED", "LEVEL_FAILS_FLOOR", "LEVEL_REPLACED", "LEVEL_MISSING_DERIVED"))
+    # (a level the code REPLACED - floor or exit - is code-derived too: when the price reaches it,
+    #  grade-derive re-letters the record by itself; no Opus wash-out debate is needed)
+    level, src = None, ""
+    if typed:
+        if em == "AT_LEVEL" and em_agent == "AT_LEVEL" and not code_level:
+            level, src = pr.get("entry_level_px"), "entry_level_px"
+    elif L == "B" and legacy_level is not None:
+        level, src = legacy_level, "cro_add_px"
+    level = _wo_level_num(level) if level is not None else None
+    now = sc.get("price") if isinstance(sc, dict) else None
+    if not (isinstance(now, (int, float)) and not isinstance(now, bool) and now > 0):
+        return None                                   # no quote -> no trigger (fail-open)
+    if level is not None and not (0.2 < now / level < 5):
+        level = None
+    old = _debate_price(pr)
+    fall_raw = (now / old - 1.0) * 100.0 if (old and 0.2 < now / old < 5) else None   # same unit guard
+    fall = round(fall_raw, 1) if fall_raw is not None else None
+    hit = level is not None and now <= level
+    fell = (L == "B" and fall_raw is not None and fall_raw <= -WASHOUT_FALL * 100.0
+            and (level is None or now <= level))
+    if not (hit or fell):
+        return None
+    why = (f"price {now:g} reached the entry level {level:g} ({src})" if hit
+           else f"price {now:g} is {abs(fall):.0f}% below the debate price {old:g}")
+    return {"level": level, "level_source": src if hit else "fall_10pct", "price": now,
+            "debate_price": old, "fall_pct": fall, "prior_letter": L or None,
+            "prior_thesis_state": pr.get("thesis_state"), "prior_entry_mode": pr.get("entry_mode"),
+            "washout_type": pr.get("washout_type"), "why": why}
 
 
 FULL_REFRESH_D = 91           # T4: a seat gets a full re-underwrite at least quarterly (last_full_debate)
@@ -5066,7 +5222,72 @@ def _debate_price(pr):
     return None
 
 
-def _age_allowed(universe, prior_dir, seat_relevant, cap=AGE_U_CAP, skip=(), scan_by=None):
+def _prior_compact_of(pr):
+    """The compact prior_record a re-debated name's bundle carries (CONTINUITY 2026-07-08).
+    Review fix P4 (2026-10-06): verdict / conviction / thesis_state / entry_mode / entry_level_px /
+    entry_event are the COMMITTEE'S OWN ANSWER last time - the CRO inputs grade-derive kept in
+    grade_basis.in, conviction_agent_orig and the letter those inputs map to - because template step 1c
+    tells the CRO to inherit them. What the code published on top of that answer from the price or the
+    quadrant entry floor (a derived letter, level or conviction cap, with its reason) rides separately
+    in code_derived_from_price, labelled, so an obedient CRO never inherits a price-derived grade as
+    its own answer. Older records (no four-question fields) show their stored values."""
+    def _u(x):
+        return str(x or "").strip().upper()
+    b = pr.get("grade_basis") if isinstance(pr.get("grade_basis"), dict) else {}
+    cur = [pr.get("thesis_state"), pr.get("entry_mode"), pr.get("entry_level_px"), pr.get("entry_event")]
+    if isinstance(b.get("in"), list) and len(b["in"]) == 4 and cur == b.get("out"):
+        ts_c, em_c, lvl_c, ev_c = b["in"]
+    else:
+        ts_c, em_c, lvl_c, ev_c = cur
+    ts_u, em_u = _u(ts_c), _u(em_c)
+    typed = (pr.get("verdict_source") == "derived" and ts_u in ("INTACT", "IMPAIRED", "BROKEN")
+             and em_u in ("NOW", "AT_LEVEL", "ON_EVENT", "NONE"))
+    if not typed:                                             # older / B13 / re-check record: its stored letter
+        letter_c = pr.get("verdict")
+    elif ts_u == "BROKEN" or em_u == "NONE":
+        letter_c = "C"
+    elif em_u == "NOW" and ts_u == "INTACT":
+        letter_c = "A"
+    elif em_u == "ON_EVENT" or (em_u == "AT_LEVEL" and ts_u == "INTACT"):
+        letter_c = "B"
+    else:                                                     # IMPAIRED + NOW/AT_LEVEL: the coerced letter
+        letter_c = pr.get("verdict_structural") or pr.get("verdict")
+    conv_c = pr.get("conviction_agent_orig") if pr.get("conviction_agent_orig") is not None else pr.get("conviction")
+    wk_c = (("price" if em_u == "AT_LEVEL" else "proof" if ts_u == "IMPAIRED" else "event")
+            if typed and letter_c == "B" and em_u in ("AT_LEVEL", "ON_EVENT") else None)
+    code = None
+    if pr.get("verdict_source") == "derived":
+        gr = pr.get("grade_rederived") if isinstance(pr.get("grade_rederived"), dict) else {}
+        moved = (_u(pr.get("verdict"))[:1] != _u(letter_c)[:1] or pr.get("conviction") != conv_c
+                 or _u(cur[1]) != em_u or cur[2] != lvl_c or bool(gr))
+        if moved:
+            code = {"note": ("what the code published on top of the committee answer, from the price and the "
+                             "entry floor - context only, never inherit it (the code re-derives it every run)"),
+                    "verdict": pr.get("verdict"), "conviction": pr.get("conviction"),
+                    "entry_mode": pr.get("entry_mode"), "entry_level_px": pr.get("entry_level_px"),
+                    "wait_kind": pr.get("wait_kind"), "why": gr.get("why"),
+                    "flags": pr.get("grade_flags") if isinstance(pr.get("grade_flags"), list) else []}
+    return {
+        "date": str(pr.get("debated_at") or pr.get("as_of") or pr.get("date") or "")[:10],
+        "answer_source": "committee",                         # the fields below are the committee answer
+        "verdict": letter_c, "conviction": conv_c,
+        "value_conviction": pr.get("value_conviction"),
+        "catalyst_status": pr.get("catalyst_status"),
+        "sop_fair_value": pr.get("sop_fair_value"),
+        "price_seen": pr.get("live_price") or pr.get("price") or pr.get("current_price"),
+        "lane": pr.get("lane") or "", "source": pr.get("source") or "",
+        "thesis": str(pr.get("moderator_conclusion") or "")[:600],
+        # four-question grade (2026-10-06): what the committee answered last time (null on older
+        # records - the CRO then picks values that imply the prior verdict)
+        "thesis_state": ts_c, "thesis_test": pr.get("thesis_test"),
+        "entry_mode": em_c, "entry_level_px": lvl_c, "entry_event": ev_c, "wait_kind": wk_c,
+        "washout_type": pr.get("washout_type"),
+        "verdict_structural": pr.get("verdict_structural"), "verdict_agent_orig": pr.get("verdict_agent_orig"),
+        "conviction_agent_orig": pr.get("conviction_agent_orig"),
+        "code_derived_from_price": code}
+
+
+def _age_allowed(universe, prior_dir, seat_relevant, cap=AGE_U_CAP, skip=(), scan_by=None, legacy_levels=None):
     """The oldest `cap` names past CARRY_MAX_AGE_D whose ONLY trigger is age - the only ones the age
     ceiling may trigger this run (see AGE_U_CAP). Excluded so no slot is wasted: seats (re-debated
     weekly anyway), `skip` (B13 names - they never debate in this lane), forensic-ledger re-check
@@ -5093,6 +5314,8 @@ def _age_allowed(universe, prior_dir, seat_relevant, cap=AGE_U_CAP, skip=(), sca
         now_px, old_px = (scan_by.get(sym) or {}).get("price"), _debate_price(pr)
         if isinstance(now_px, (int, float)) and old_px and abs(now_px / old_px - 1) > CARRY_PRICE_MOVE:
             continue
+        if _washout_check(pr, scan_by.get(sym) or {}, (legacy_levels or {}).get(sym)):
+            continue                                  # a wash-out debates anyway (own WASHOUT_U_CAP slot)
         age = _record_age_days(pr, pf)
         if age > CARRY_MAX_AGE_D:
             aged.append((-age, sym))
@@ -5118,7 +5341,7 @@ def _book_record_age_days(r, rf, now):
         return 999
 
 
-def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant, age_allowed=None):
+def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant, age_allowed=None, legacy_level=None):
     """Return ("debate", reason, prior_record_or_None) or ("carry", reason, prior_record).
     The prior record rides along on the DEBATE branch too (2026-07-08 continuity fix) so prep can
     embed it in the input bundle - a re-debated name must know what it said last week.
@@ -5137,6 +5360,12 @@ def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant, age_allowed=Non
     except Exception:
         return "debate", "prior record unreadable", None
     is_seat = sym in seat_relevant
+    # WASH-OUT (2026-10-06): the price the committee waited for arrived -> a FULL debate that resolves
+    # the wait. Checked before every other trigger (and before seat-relevant-only), so a held seat is
+    # re-underwritten in full, never a Sonnet delta, and the reason names the wash-out.
+    wo = _washout_check(pr, sc, legacy_level)
+    if wo:
+        return "debate", f"wash-out arrived ({wo['why']})", pr
     cs = (pr.get("catalyst_status") or "").upper()
     if cs.startswith("PENDING_HARD"):
         return "debate", "prior catalyst PENDING_HARD (dated events move weekly)", pr
@@ -5524,6 +5753,17 @@ def prep():
         s = p.get("symbol") if isinstance(p, dict) else p
         if s:
             seat_relevant.add(s)
+    # WASH-OUT legacy levels (2026-10-06): before the four-question schema the only machine-readable add
+    # level is the Director's cro_add_px on a B seat (regime + value books). Used by _washout_check
+    # ONLY for records with no typed entry_mode; a typed AT_LEVEL record carries its own level.
+    _legacy_levels = {}
+    for p in list(baskets.get("apex_basket") or []) + list(_vb.get("apex_basket") or _vb.get("apex") or []):
+        if not isinstance(p, dict) or not p.get("symbol"):
+            continue
+        _lv = p.get("cro_add_px")
+        if isinstance(_lv, (int, float)) and not isinstance(_lv, bool) and _lv > 0 \
+                and str(p.get("cro_verdict") or "B").strip().upper()[:1] == "B":
+            _legacy_levels.setdefault(p["symbol"], float(_lv))
     prior_res_dir = ROOT / "_archive_prev" / "results_regime"
     prior_doss_dir = ROOT / "_archive_prev" / "dossiers"
     _carry_reasons = {}
@@ -5553,7 +5793,8 @@ def prep():
             pass
 
     syms, no_tx, radar_universe, carried, _no_price = [], [], [], [], []
-    _age_ok = _age_allowed(sorted(sym_meths), prior_res_dir, seat_relevant, skip=b13set, scan_by=scan_by_sym)
+    _age_ok = _age_allowed(sorted(sym_meths), prior_res_dir, seat_relevant, skip=b13set, scan_by=scan_by_sym,
+                           legacy_levels=_legacy_levels)
     _run_date = datetime.now().strftime("%Y-%m-%d")
     for sym in sorted(sym_meths):
         sc = scan_by_sym.get(sym, {})
@@ -5591,7 +5832,7 @@ def prep():
         # (live price + as_of + provenance) - downstream (Director/skeptic/value re-grade/
         # publish) consumes results_regime/ unchanged; the value rubric sees `carried`.
         _decision, _reason, _prior = _carry_or_debate(sym, sc, real, prior_res_dir, seat_relevant,
-                                                      age_allowed=_age_ok)
+                                                      age_allowed=_age_ok, legacy_level=_legacy_levels.get(sym))
         # B13 TIER EXCLUSION: a Basket-13 name never debates in this lane. With a prior record it
         # carries (restamped, so the stock page keeps a dated record); brand-new B13 names are
         # skipped outright - their underwriting lives in _catalyst_weekly.mjs, and their stock-page
@@ -5607,17 +5848,15 @@ def prep():
         # so the fresh agent is a committee CONTINUING coverage, not re-rolling from scratch - the
         # debate-layer analog of the Director's rotation ledger (the 07-07 forensics: FIP A/5->B/3,
         # KBR A/4->refuted-B/3, AAUC A/4->C/2 in 5 days with ZERO new dated facts).
+        # 2026-10-06 (review fix P4): the committee's OWN answer, with any code-derived grade labelled
+        # apart (_prior_compact_of) - step 1c inherits the answer, never a price-derived letter or cap.
         _prior_compact = None
         if _decision == "debate" and isinstance(_prior, dict):
-            _prior_compact = {
-                "date": str(_prior.get("debated_at") or _prior.get("as_of") or _prior.get("date") or "")[:10],
-                "verdict": _prior.get("verdict"), "conviction": _prior.get("conviction"),
-                "value_conviction": _prior.get("value_conviction"),
-                "catalyst_status": _prior.get("catalyst_status"),
-                "sop_fair_value": _prior.get("sop_fair_value"),
-                "price_seen": _prior.get("live_price") or _prior.get("price") or _prior.get("current_price"),
-                "lane": _prior.get("lane") or "", "source": _prior.get("source") or "",
-                "thesis": str(_prior.get("moderator_conclusion") or "")[:600]}
+            _prior_compact = _prior_compact_of(_prior)
+        # WASH-OUT block (2026-10-06): non-null only when the price the committee waited for arrived -
+        # the CRO must then RESOLVE the wait (cro_regime_rubric.txt), and lane-stamp ledgers it
+        _wo = (_washout_check(_prior, sc, _legacy_levels.get(sym))
+               if _decision == "debate" and isinstance(_prior, dict) else None)
         if _decision == "debate" and not isinstance(sc.get("price"), (int, float)):
             _no_price.append(sym)          # price-blind bundle (off-scan name) - agent MUST quote-fetch
         (INP / f"{sym}.json").write_text(json.dumps({
@@ -5627,6 +5866,7 @@ def prep():
             "prior_record": _prior_compact,
             # read by lane-stamp after the debate (carried names get neither - their prior stamps ride along)
             "transcript_date": (max(t["date"] for t in real) if real and _decision == "debate" else ""),
+            "washout": _wo,
             "debate_run": (_run_date if _decision == "debate" else "")},
             ensure_ascii=False, indent=2), encoding="utf-8")
         if _decision == "carry":
@@ -5647,7 +5887,12 @@ def prep():
             continue
         _carry_reasons[_reason] = _carry_reasons.get(_reason, 0) + 1
         debate_info[sym] = {"reason": _reason, "seat": sym in seat_relevant, "has_tx": bool(real),
-                            "prior_exists": isinstance(_prior, dict), "meths": meths}
+                            "prior_exists": isinstance(_prior, dict), "meths": meths,
+                            "washout": bool(_wo),
+                            # wash-out slot order: a reached level first, then the deepest fall
+                            "washout_rank": ((0 if _wo.get("level_source") != "fall_10pct" else 1,
+                                              _wo.get("fall_pct") if isinstance(_wo.get("fall_pct"), (int, float)) else 0.0)
+                                             if _wo else None)}
         if real:
             real.sort(key=lambda t: t["date"])
             # Cap to the last 5 quarters: 8 x 18k chars ~= 36k tokens, over the 25k Read cap an agent
@@ -5698,6 +5943,7 @@ def prep():
     (ROOT / "interrogator_system.txt").write_text(E.INTERROGATOR_SYSTEM_PROMPT, encoding="utf-8")
     (ROOT / "architect_system.txt").write_text(E.ARCHITECT_SYSTEM_PROMPT, encoding="utf-8")
     (ROOT / "moderator_system.txt").write_text(E.MODERATOR_SYSTEM_PROMPT, encoding="utf-8")
+    (ROOT / "cro_regime_rubric.txt").write_text(E.REGIME_CRO_RUBRIC, encoding="utf-8")   # regime-lane CRO four-question rubric (2026-10-06) - regime ONLY, never B13/FR/mining/FDT
     _write_macro_regime()                                   # macro read for the Director's risk_stance
 
     # no_tx names have NO FMP transcript - instead of skipping (the user's explicit ask: "send agents
@@ -5771,7 +6017,14 @@ def prep():
                       and (prior_res_dir / f"{s}.json").exists()]
         seat_triggered = [s for s in debate_all
                           if s not in delta_syms and debate_info.get(s, {}).get("seat")]
-        nonseat = [s for s in debate_all if s not in delta_syms and s not in seat_triggered]
+        # WASH-OUT slots (2026-10-06): a non-seat whose price arrived gets a guaranteed FULL debate,
+        # up to WASHOUT_U_CAP per run (reached levels first, then the deepest falls); the overflow
+        # competes for intake below and, if it misses, CARRIES (never the coverage refresh)
+        washout_full = sorted([s for s in debate_all if s not in delta_syms and s not in seat_triggered
+                               and debate_info.get(s, {}).get("washout")],
+                              key=lambda s: (debate_info[s].get("washout_rank") or (9, 0.0), s))[:WASHOUT_U_CAP]
+        nonseat = [s for s in debate_all if s not in delta_syms and s not in seat_triggered
+                   and s not in washout_full]
 
         def _intake_rank(s):
             info = debate_info.get(s, {})
@@ -5786,6 +6039,8 @@ def prep():
                 score += 3
             if r.startswith("new transcript"):    # a new earnings call is real new information
                 score += 2
+            if r.startswith("wash-out arrived"):  # WASHOUT_U_CAP overflow: the wait was answered
+                score += 5
             if len([m for m in meths if m not in ("apex", "value_drawdown")]) >= 2:
                 score += 2
             if r.startswith("prior catalyst PENDING_HARD") or r.startswith("escalated"):
@@ -5812,7 +6067,7 @@ def prep():
             score += min(_waits.get(s, 0), 4)
             return (-score, -len(meths), s)            # deterministic: score desc, breadth desc, alpha
 
-        room = max(0, U_CAP - len(delta_syms) - len(seat_triggered))
+        room = max(0, U_CAP - len(delta_syms) - len(seat_triggered) - len(washout_full))
         ranked = sorted(nonseat, key=_intake_rank)
         intake, vd_used, ng_used, cd_used, fc_used = [], 0, 0, 0, 0
         for s in ranked:
@@ -5840,22 +6095,60 @@ def prep():
             cd_used += 1 if is_cd else 0
             fc_used += 1 if is_fc else 0
         overflow = [s for s in nonseat if s not in intake]
+        # WASH-OUT overflow (past WASHOUT_U_CAP and the intake race): CARRY the prior record forward
+        # (restamped like any carry) so it keeps its debate price + level and re-triggers next week.
+        # Coverage would inherit the grade (it can never resolve a wait), and leaving it uncovered
+        # would DROP the record from this run's results_regime - next week it would read as new.
+        washout_deferred = []
+        for s in overflow:
+            if not debate_info.get(s, {}).get("washout") or not (prior_res_dir / f"{s}.json").exists():
+                continue
+            try:
+                _pr = json.load(open(prior_res_dir / f"{s}.json", encoding="utf-8"))
+            except Exception:
+                continue
+            _pr["carried"] = True
+            _pr["carried_from"] = str(_pr.get("debated_at") or "")[:10]
+            _pr["carry_reason"] = f"wash-out deferred (WASHOUT_U_CAP={WASHOUT_U_CAP}/run) - re-triggers next run"
+            _pr["tier"] = "coverage"
+            _pr["update_mode"] = "carry"
+            _spx = (scan_by_sym.get(s) or {}).get("price")
+            if isinstance(_spx, (int, float)):
+                _pr["live_price"] = _spx
+            _pr["as_of"] = datetime.now().strftime("%Y-%m-%d")
+            (RES / f"{s}.json").write_text(json.dumps(_pr, ensure_ascii=False, indent=1), encoding="utf-8")
+            _pd = prior_doss_dir / f"{s}.md"
+            if _pd.exists():
+                (ROOT / "dossiers" / f"{s}.md").write_text(_pd.read_text(encoding="utf-8"), encoding="utf-8")
+            try:                                              # the bundle no longer marks a debate this run
+                _b = json.load(open(INP / f"{s}.json", encoding="utf-8"))
+                _b.update({"debate_run": "", "transcript_date": "", "washout_deferred": True})
+                (INP / f"{s}.json").write_text(json.dumps(_b, ensure_ascii=False, indent=2), encoding="utf-8")
+            except Exception:
+                pass
+            carried.append(s)
+            washout_deferred.append(s)
         coverage_syms = [s for s in overflow if debate_info.get(s, {}).get("prior_exists")
-                         and (prior_res_dir / f"{s}.json").exists()]
-        uncovered = [s for s in overflow if s not in coverage_syms]
-        full_set = set(seat_triggered) | set(intake)
+                         and (prior_res_dir / f"{s}.json").exists()
+                         and not debate_info.get(s, {}).get("washout")]
+        uncovered = [s for s in overflow if s not in coverage_syms and s not in washout_deferred]
+        full_set = set(seat_triggered) | set(intake) | set(washout_full)
         syms = [s for s in syms if s in full_set]
         no_tx = [s for s in no_tx if s in full_set]
         n_u = len(delta_syms) + len(full_set)
         print(f"tier-select: universe={len(sym_meths)} | U={n_u}/{U_CAP} [seats-delta={len(delta_syms)}, "
-              f"seats-trigger-full={len(seat_triggered)}, intake-full={len(intake)} "
+              f"seats-trigger-full={len(seat_triggered)}, washout-full={len(washout_full)}/{WASHOUT_U_CAP}, "
+              f"intake-full={len(intake)} "
               f"(vd={vd_used}, ng={ng_used}, cd={cd_used}, fc={fc_used})] "
+              f"| wash-outs: seats={sum(1 for s in seat_triggered if debate_info.get(s, {}).get('washout'))} "
+              f"non-seat={len(washout_full)} intake-won={sum(1 for s in intake if debate_info.get(s, {}).get('washout'))} "
+              f"deferred(carried)={len(washout_deferred)}{' ' + str(washout_deferred) if washout_deferred else ''} "
               f"| C-refresh={len(coverage_syms)} | b13-excluded={len(b13_carried)} carried "
               f"+{len(b13_skipped)} skipped-new{' ' + str(b13_skipped) if b13_skipped else ''} "
               f"| uncovered-overflow={len(uncovered)}{' ' + str(uncovered) if uncovered else ''}")
         # Update the waiting list: uncovered names age, everyone else resets. Written every prep so the
         # next run can lift whoever has been waiting longest (see the starvation guard in _intake_rank).
-        _covered = set(delta_syms) | full_set | set(coverage_syms)
+        _covered = set(delta_syms) | full_set | set(coverage_syms) | set(washout_deferred)
         _new_waits = {s: _waits.get(s, 0) + 1 for s in uncovered}
         for s in _covered:
             _new_waits.pop(s, None)
@@ -5955,7 +6248,7 @@ const SKEPTIC_SYMS = __SKEPTIC_SYMS__   // all of Tier-U - kill-tier runs BEFORE
 const SKEPTIC_LANES = __SKEPTIC_LANES__
 const SKEPTIC_HINTS = __SKEPTIC_HINTS__
 const PRIOR_SEATS = __PRIOR_SEATS__     // last week's apex+runners (both books) - skeptic never skips these
-const BRIEF = "Read CATALYST_WATCH_REGIME.md (repo root) for the current market regime, then APPLY it: reward hard-dated catalysts inside the favorable window; PENALIZE Fed-cut/rate-rescue theses; prize resolution-driver independence (wary of theses hinging on one shared macro factor like oil or AI-capex). NOTE (2026-07-21 apex-reassessment): a PAST/FIRED catalyst is NOT a penalty in THIS book - the dated-event names live in Basket-13, so in this compounder/value lane a fired catalyst on a clean franchise is simply spent news; judge the residual value case on its own. Let the regime tilt MOVE the conviction/verdict only where a LIVE driver exists."
+const BRIEF = "Read CATALYST_WATCH_REGIME.md (repo root) for the current market regime, then APPLY it: reward hard-dated catalysts inside the favorable window; PENALIZE Fed-cut/rate-rescue theses; prize resolution-driver independence (wary of theses hinging on one shared macro factor like oil or AI-capex). NOTE (2026-07-21 apex-reassessment): a PAST/FIRED catalyst is NOT a penalty in THIS book - the dated-event names live in Basket-13, so in this compounder/value lane a fired catalyst on a clean franchise is simply spent news; judge the residual value case on its own. Let the regime tilt MOVE conviction only where a LIVE driver exists - never the letter, which follows thesis_state and entry_mode."
 
 // -- PHASE 0 - RADAR (Sonnet, cheaper), CHUNKED by sector. A single agent over the full universe
 // truncates its peer_groups output (observed at 161 names), so N parallel agents each tag <=20 names
@@ -5981,14 +6274,16 @@ function debatePrompt(sym, online) {
   return 'You run the COMPLETE multi-agent debate for ' + sym + ' as Claude Opus 5 - Interrogator, Architect, then CRO/Moderator - allocating REAL capital. Be skeptical and current-facts-driven.\n' +
     step1 +
     '1b. LIVE PRICE (MANDATORY, BEFORE any valuation reasoning): if the metrics block does not state a current price, you MUST fetch the live quote via the FMP MCP tools (ToolSearch, keyword "FMP quote") and state the price + currency you are using. NEVER assume or infer where the stock trades - a fabricated price inverts the entire risk/reward (the 2026-07-07 AAUC record assumed "near the C$44 offer" when the stock traded 31% below terms). For dual-listed names state WHICH listing/currency your numbers are in.\n' +
-    '1c. CONTINUITY (when inputs/' + sym + '.json carries a non-null prior_record): you are the SAME committee CONTINUING coverage, not a fresh one. Read prior_record (your prior verdict/conviction/thesis dated prior_record.date). If your verdict or conviction will DIFFER, you MUST cite in whats_changed_since_prior the DATED fact(s) that emerged since prior_record.date that justify the change - a re-reading of already-known facts is NOT a justification. If nothing dated changed, INHERIT the prior verdict/conviction and update prices/status only. An A<->C verdict flip or a conviction move of >=2 without a dated fact is a DEFECT, not an opinion.\n' +
+    '1c. CONTINUITY (when inputs/' + sym + '.json carries a non-null prior_record): you are the SAME committee CONTINUING coverage, not a fresh one. Read prior_record: its verdict, conviction, thesis_state, entry_mode, entry_level_px and entry_event are the answer this committee itself gave last time (dated prior_record.date); prior_record.code_derived_from_price, when present, is what the code published on top of that answer from the price and the entry floor (a derived letter, level or conviction cap, with its reason) - context only. If your verdict or conviction will DIFFER from the committee answer, you MUST cite in whats_changed_since_prior the DATED fact(s) that emerged since prior_record.date that justify the change - a re-reading of already-known facts is NOT a justification. If nothing dated changed, INHERIT the committee answer (verdict, conviction, thesis_state, entry_mode, entry_level_px, entry_event) and update prices/status only - never inherit a letter, level or conviction cap the code derived from price: the code re-derives those itself every run. An A<->C verdict flip or a conviction move of >=2 without a dated fact is a DEFECT, not an opinion. A change of thesis_state or entry_mode IS a verdict change - same dated-fact rule (when prior_record has no thesis_state or entry_mode, choose values that imply the prior verdict unless a dated fact moved it). A letter that moves only because the price crossed the entry floor is re-derived by code and is not a flip.\n' +
+    '1d. WASH-OUT CHECK: if inputs/' + sym + '.json carries a non-null washout block, either the price has reached the entry level this committee named last time (washout.level_source entry_level_px or cro_add_px), or a wait-graded name that reached no named level has fallen 10% or more since its last debate (level_source fall_10pct). RESOLVE it per the WASH-OUT RESOLUTION section of ' + DIR + '/cro_regime_rubric.txt; the arrival of the price is the dated fact (cite it with its date in whats_changed_since_prior). When the level was reached, do not extend the wait: buy now, wait for proof, wait for the event, or pass for now - a second price-wait (entry_mode AT_LEVEL) is a defect the code coerces. After a 10% fall (no level was named) you may name a price-wait level that obeys rules (3) and (4), and a proof or event wait may keep ON_EVENT on the same or a re-dated event - you are never forced to buy ahead of the event.\n' +
     '2. INTERROGATOR: read ' + DIR + '/interrogator_system.txt; produce the full forensic dossier (8 sections + final "CREDIBILITY_SCORE: <1-5> | TRAJECTORY: <...>"); Write it to ' + DIR + '/dossiers/' + sym + '.md.\n' +
     '3. PEER COMPS: read ' + DIR + '/peer_groups/' + sym + '.json (this name\'s peers + relative_comps + verdict) as an INDEPENDENT relative-value lever for the valuation below (skip if the file is absent). If the file carries `peer_override`/`anchor_multiple`, those are the CURRENT (live/de-rated) peer multiples - use THEM as the anchor and do NOT cite a peer multiple from memory (peer multiples de-rate; a stale anchor inflates the apparent discount - e.g. Edenred is ~10x fwd P/E today, NOT its pre-shock 20-25x). If `convergence`="sector_regulatory", the discount to that peer is shared-factor SECTOR BETA (both names move on the same unresolved driver), NOT idiosyncratic single-name alpha - say so explicitly in peer_comps_note and DO NOT credit the gap as name-specific edge.\n' +
     '4. ARCHITECT: read ' + DIR + '/architect_system.txt; produce bull_thesis and bear_thesis, AND a SUM-OF-PARTS valuation - value the business by its PARTS (segment SoP from the SEGMENT REVENUE block x peer multiples where present; else whole-company intrinsic via the methodology metric/peer multiple), then apply special-situation OVERLAYS where relevant (net cash, pending distributions [VERIFY whether already paid], announced asset-sales, tender/deal terms minus liabilities). Output sop_bull (favorable parts) and sop_bear (adverse parts), each a per-share value + the parts breakdown.\n' +
     '5. CATALYST VERIFICATION (MANDATORY for every name): identify the load-bearing catalyst(s) and verify their CURRENT status as of today - FIRST reach for the paid FMP MCP tools via ToolSearch (keyword search e.g. \"FMP news\", \"FMP earnings transcript\", \"FMP statements\", \"FMP quote\") since it is structured, licensed and reliable, then WebSearch/WebFetch only for what FMP lacks (do NOT scrape press-release PDFs by shell). catalyst_status = FIRED (already happened, re-rate spent) | ARB (deal terms fixed, tight merger-arb capped at the offer) | PENDING_HARD (dated, binding, real asymmetry) | SOFT_EXTENDED (non-binding / serially-extended / third-party / single-binary) | UNVERIFIABLE. Dated evidence; never fabricate.\n' +
-    '6. CRO/MODERATOR: read ' + DIR + '/moderator_system.txt; ' + BRIEF + ' RECONCILE sop_bull/sop_bear into a base-case sop_fair_value (+ sop_breakdown) and risk_reward (downside-to-break vs upside-to-fair); size ARB to the spread. CATALYST NEUTRALITY (2026-07-21): a FIRED or SOFT catalyst on a clean-forensic franchise is NEITHER a plus NOR a penalty for conviction - the event names live in Basket-13; here you judge the RESIDUAL value case (upside to sop_fair_value, risk_reward, forensic quality). Do NOT down-rate merely because the catalyst is spent or undated - the 2026-07 study showed that clause discarded the basket winners (post-catalyst re-rates keep running); equally do NOT up-rate for a hot event. Sanity-check the multiple against the peer comps. Produce verdict (A/B/C), conviction (int 1-5), consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion. THEN, separately, produce value_conviction (int 1-5): rate the VALUE case as if NO catalyst overlay existed - judged on valuation vs the SoP fair value + forensic quality ONLY, explicitly IGNORING catalyst_status and the regime tilt. The two scores MUST be allowed to diverge (a FIRED-catalyst name can be value_conviction 5; a hot-catalyst name can be value_conviction 1); do not default both to the same number. Whenever value_conviction == 4, ALSO emit value_conviction_blocker: the SINGLE ingredient that withheld the 5 - DISCOUNT_TOO_SMALL | MOAT | FORENSICS | PEAK_ARTIFACT | OTHER: <one line> (empty string for any other score; this is ledger instrumentation, not a grade). ALSO emit moat (WIDE|NARROW|ERODING|NONE - a high-but-FALLING ROIC/margin is ERODING, not WIDE), moat_trend (WIDENING|STABLE|ERODING), secular_threat (terminal|material|manageable|none) and ONE secular_theme id from ' + DIR + '/secular_themes.json (ai-displacement|payments-disintermediation|linear-media-decline|autonomous-mobility|labor-arbitrage-deflation|reimbursement-compression|retail-channel-shift|energy-transition-loser, or \"\"); an ERODING moat or TERMINAL secular threat CAPS value_conviction at 3 (a low multiple on a structurally-shrinking base is a value trap, not value).\n' +
+    '6. CRO/MODERATOR: read ' + DIR + '/moderator_system.txt, THEN ' + DIR + '/cro_regime_rubric.txt (it REPLACES the base mandate and the base A/B/C definitions for this lane and wins any conflict; skip it only if the file is absent). Answer its four decision questions IN ORDER: Q1 THESIS here (thesis_state, thesis_evidence, thesis_test); Q2 VALUATION is step 6b; Q3 ENTRY and Q4 FIT are step 6c. ' + BRIEF + ' RECONCILE sop_bull/sop_bear into a base-case sop_fair_value (+ sop_breakdown) and risk_reward (downside-to-break vs upside-to-fair); size ARB to the spread. CATALYST NEUTRALITY (2026-07-21): a FIRED or SOFT catalyst on a clean-forensic franchise is NEITHER a plus NOR a penalty for conviction - the event names live in Basket-13; here you judge the RESIDUAL value case (upside to sop_fair_value, risk_reward, forensic quality). Do NOT down-rate merely because the catalyst is spent or undated - the 2026-07 study showed that clause discarded the basket winners (post-catalyst re-rates keep running); equally do NOT up-rate for a hot event. Sanity-check the multiple against the peer comps. Produce conviction (int 1-5), consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion. THEN, separately, produce value_conviction (int 1-5): rate the VALUE case as if NO catalyst overlay existed - judged on valuation vs the SoP fair value + forensic quality ONLY, explicitly IGNORING catalyst_status and the regime tilt. The two scores MUST be allowed to diverge (a FIRED-catalyst name can be value_conviction 5; a hot-catalyst name can be value_conviction 1); do not default both to the same number. Whenever value_conviction == 4, ALSO emit value_conviction_blocker: the SINGLE ingredient that withheld the 5 - DISCOUNT_TOO_SMALL | MOAT | FORENSICS | PEAK_ARTIFACT | OTHER: <one line> (empty string for any other score; this is ledger instrumentation, not a grade). ALSO emit moat (WIDE|NARROW|ERODING|NONE - a high-but-FALLING ROIC/margin is ERODING, not WIDE), moat_trend (WIDENING|STABLE|ERODING), secular_threat (terminal|material|manageable|none) and ONE secular_theme id from ' + DIR + '/secular_themes.json (ai-displacement|payments-disintermediation|linear-media-decline|autonomous-mobility|labor-arbitrage-deflation|reimbursement-compression|retail-channel-shift|energy-transition-loser, or \"\"); an ERODING moat or TERMINAL secular threat CAPS value_conviction at 3 (a low multiple on a structurally-shrinking base is a value trap, not value).\n' +
     '6b. TYPED VALUATION BLOCK (MANDATORY - the numbers the pipeline checks and sizes on): distill your reconciliation into POINT NUMBERS per share, in the quote currency: bear_px (your adverse case - ONE number; your ranges stay in the prose), base_fv_px (base case), bull_px (favorable case), downside_floor_px (ONLY a structural floor - deal terms, net cash/share, tender; else null - a chart low or a dividend yield is NOT a floor), valuation_method ("sop"|"multiple"|"spread"|"recovery"), horizon_months (when the base case lands). ORDERING bear_px <= base_fv_px <= bull_px is REQUIRED. State LEVELS only: risk_reward ratios, expected-return %, and MoS % are COMPUTED BY THE PIPELINE from these numbers - any "N:1" or %-vs-% arithmetic you assert in prose will be overwritten by the computed values (the 2026-07-07 HNR1.DE record asserted "2:1" on a 6% dividend-"floor"; the pipeline now does this math).\n' +
-    '7. Write (Write tool) VALID, escaped JSON to ' + RES + '/' + sym + '.json with: symbol(="' + sym + '"), sector, signal_type, live_price(number - the price you actually used), price_currency, valuation({live_price, price_currency, quote_listing(="' + sym + '"), bear_px, base_fv_px, bull_px, downside_floor_px, valuation_method, horizon_months, as_of(today YYYY-MM-DD)} - the step-6b numbers), whats_changed_since_prior(the dated fact(s) per step 1c; "" when no prior_record or unchanged), bull_thesis, bear_thesis, sop_bull, sop_bear, sop_fair_value, sop_breakdown, risk_reward, catalyst_status(EXACTLY one bare enum token: FIRED|ARB|PENDING_HARD|SOFT_EXTENDED|UNVERIFIABLE - NO prose; downstream code exact-matches this field), catalyst_status_note(the dated evidence prose for the status - all explanation goes here), peer_comps_note, verdict, conviction, value_conviction(int), value_conviction_blocker(str; "" unless value_conviction==4), moat, moat_trend, secular_threat, secular_theme, consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion, interrogator_score(int), trajectory, tier(="underwrite"), update_mode(="full"), last_full_debate(today YYYY-MM-DD), source(="' + (online ? 'opus_regime_online' : 'opus_regime_mod') + '"), transcript_source(="' + (online ? 'web' : 'fmp') + '").\n' +
+    '6c. ENTRY + FIT (after 6b, from its numbers), per cro_regime_rubric.txt: entry_mode NOW|AT_LEVEL|ON_EVENT|NONE; entry_level_px (AT_LEVEL only, else null); washout_type MECHANICAL|FACTOR (AT_LEVEL only, else NONE); entry_event (ON_EVENT only, else ""); peer_position cheap_vs_peers|in_line|rich_vs_peers|no_peers; macro_fit TAILWIND|NEUTRAL|HEADWIND|UNKNOWN + macro_fit_note from backend/_opus_debate/macro_regime.json (quadrant, quadrant_basis, debt_cycle.debt_cycle_phase, debt_cycle.phase_detail, debt_cycle.expected_horizon_months). macro_fit is context, never a lever: it never moves thesis_state, entry_mode, the letter or conviction. HARD RULES: NOW only if base_fv_px / live_price - 1 clears the quadrant entry floor (20% GOLDILOCKS/REFLATION/UNKNOWN, 25% STAGFLATION, 30% RISK_OFF); entry_level_px strictly above bear_px and downside_floor_px, strictly below live_price, and itself clearing that floor; AT_LEVEL names its seller in washout_type; BROKEN is never B. The letter is DERIVED BY CODE: A = INTACT+NOW; B = INTACT+AT_LEVEL (wait for a better price), IMPAIRED+ON_EVENT (wait for proof) or INTACT+ON_EVENT (wait for the event); C = BROKEN or NONE, and that C (your own answer) caps conviction at 2 - a C the code derives only from the price or the entry floor leaves conviction alone, so never write NONE for a price reason. Write verdict = the mapped letter; the pipeline re-derives it, keeps yours as verdict_agent_orig and logs any mismatch. Open moderator_conclusion with the plain answer from the rubric HOUSE VOICE section.\n' +
+    '7. Write (Write tool) VALID, escaped JSON to ' + RES + '/' + sym + '.json with: symbol(="' + sym + '"), sector, signal_type, live_price(number - the price you actually used), price_currency, valuation({live_price, price_currency, quote_listing(="' + sym + '"), bear_px, base_fv_px, bull_px, downside_floor_px, valuation_method, horizon_months, as_of(today YYYY-MM-DD)} - the step-6b numbers), whats_changed_since_prior(the dated fact(s) per step 1c; "" when no prior_record or unchanged), bull_thesis, bear_thesis, sop_bull, sop_bear, sop_fair_value, sop_breakdown, risk_reward, catalyst_status(EXACTLY one bare enum token: FIRED|ARB|PENDING_HARD|SOFT_EXTENDED|UNVERIFIABLE - NO prose; downstream code exact-matches this field), catalyst_status_note(the dated evidence prose for the status - all explanation goes here), peer_comps_note, verdict, conviction, value_conviction(int), value_conviction_blocker(str; "" unless value_conviction==4), thesis_state(EXACTLY one bare token: INTACT|IMPAIRED|BROKEN), thesis_evidence(dated prose), thesis_test({metric, pass_level, fail_level, resolves_on} when IMPAIRED, else null), entry_mode(EXACTLY one bare token: NOW|AT_LEVEL|ON_EVENT|NONE), entry_level_px(number|null), entry_event(str), washout_type(MECHANICAL|FACTOR|NONE), peer_position(cheap_vs_peers|in_line|rich_vs_peers|no_peers), macro_fit(TAILWIND|NEUTRAL|HEADWIND|UNKNOWN), macro_fit_note(str), washout_resolution({trigger, prior_level_px, resolved_to: BUY|WAIT_FOR_PRICE|WAIT_FOR_PROOF|WAIT_FOR_EVENT|PASS, note} only when the bundle carried a washout block, else null), moat, moat_trend, secular_threat, secular_theme, consensus_delta, valley_of_death, positioning_washout, forcing_function, moderator_conclusion, interrogator_score(int), trajectory, tier(="underwrite"), update_mode(="full"), last_full_debate(today YYYY-MM-DD), source(="' + (online ? 'opus_regime_online' : 'opus_regime_mod') + '"), transcript_source(="' + (online ? 'web' : 'fmp') + '").\n' +
     'Reply exactly: DONE'
 }
 
@@ -5998,10 +6293,10 @@ function debatePrompt(sym, online) {
 // structurally impossible here (escalate_full_debate routes it to a full re-debate next cycle).
 function deltaPrompt(sym) {
   return 'DELTA REVIEW for ' + sym + ' - you are the SAME committee that underwrote this seat. Your ANCHOR is ' + DIR + '/_archive_prev/results_regime/' + sym + '.json - READ IT FIRST, in full. This is a weekly anchored update, NOT a re-debate.\n' +
-    '1. Also read ' + DIR + '/inputs/' + sym + '.json (fresh metrics + prior_record) and, if they exist, ' + DIR + '/transcripts/' + sym + '.txt and ' + DIR + '/peer_groups/' + sym + '.json.\n' +
-    '2. Fetch the live quote via the FMP MCP tools (ToolSearch, keyword "FMP quote"); check the load-bearing catalyst status (FMP news first, WebSearch only for what FMP lacks). MACRO MEMORY (2026-09-08): ALSO read CATALYST_WATCH_REGIME.md (repo root) - section 5 TRIPWIRES and the newest section 4 read; it is the bi-weekly macro refresh and the ONLY place the committee macro view is kept between runs. If a breached tripwire or a dated development there touches a factor your anchor thesis leans on (oil / Hormuz freight for a tanker, a hike for a rate-sensitive name, a commodity, a policy), that is a DATED FACT since the anchor: record it in deltas[] / whats_changed_since_prior, say what it does to the wait-for-the-wash-out trigger, and set escalate_full_debate when it changes the entry case. NEVER restamp a prior macro read as "unchanged" without checking this file - the 2026-09-07 Odfjell delta carried an 18 Aug Hormuz read straight past the 2-6 Sept tanker strikes.\n' +
-    '3. RULES: you may freely update live_price / price_currency / as_of, the valuation block prices restated off the new quote, and catalyst_status (with a dated fact). You may move sop_fair_value / bear_px / base_fv_px / bull_px / conviction (max +/-1) ONLY on a dated fact that emerged since the anchor date - every such move MUST appear in deltas:[{field, old, new, dated_fact}]. You may NOT flip the verdict: if you now believe the anchor verdict is wrong, KEEP it and set escalate_full_debate=true + escalate_reason (a full re-debate runs next cycle). Unjustified changes are REVERTED by a deterministic gate - do not waste them.\n' +
-    '4. Write (Write tool) VALID JSON to ' + RES + '/' + sym + '.json = the FULL anchor schema updated per the rules (keep every field the anchor carries, incl. the typed valuation block with point numbers and NO asserted ratios). If the anchor has NO valuation block (pre-typed-schema record), CREATE it now from the numbers the anchor itself states, restated off the live quote: {live_price, price_currency, quote_listing, bear_px, base_fv_px, bull_px, downside_floor_px|null, valuation_method, horizon_months, as_of} - levels only, never ratios; this is a TRANSCRIPTION of the existing anchor bear/base/bull view, not a re-underwriting. PLUS: update_mode="delta", tier="underwrite", deltas:[...], whats_changed_since_prior, escalate_full_debate(bool), escalate_reason(""), last_full_debate(copy from the anchor if present, else the anchor debated_at/as_of date), source(keep the anchor source). Reply exactly: DONE'
+    '1. Also read ' + DIR + '/inputs/' + sym + '.json (fresh metrics + prior_record), ' + DIR + '/cro_regime_rubric.txt (the four-question field definitions and the letter mapping) and, if they exist, ' + DIR + '/transcripts/' + sym + '.txt and ' + DIR + '/peer_groups/' + sym + '.json.\n' +
+    '2. Fetch the live quote via the FMP MCP tools (ToolSearch, keyword "FMP quote"); check the load-bearing catalyst status (FMP news first, WebSearch only for what FMP lacks). MACRO MEMORY (2026-09-08): ALSO read CATALYST_WATCH_REGIME.md (repo root) - section 5 TRIPWIRES and the newest section 4 read; it is the bi-weekly macro refresh and the ONLY place the committee macro view is kept between runs. If a breached tripwire or a dated development there touches a factor your anchor thesis leans on (oil / Hormuz freight for a tanker, a hike for a rate-sensitive name, a commodity, a policy), that is a DATED FACT since the anchor: record it in deltas[] / whats_changed_since_prior, say what it does to the entry trigger (the named entry level or event), and set escalate_full_debate when it changes the entry case. NEVER restamp a prior macro read as "unchanged" without checking this file - the 2026-09-07 Odfjell delta carried an 18 Aug Hormuz read straight past the 2-6 Sept tanker strikes.\n' +
+    '3. RULES: you may freely update live_price / price_currency / as_of, the valuation block prices restated off the new quote, and catalyst_status (with a dated fact). You may move sop_fair_value / bear_px / base_fv_px / bull_px / conviction (max +/-1) ONLY on a dated fact that emerged since the anchor date - every such move MUST appear in deltas:[{field, old, new, dated_fact}]. You may NOT flip the verdict: if you now believe the anchor verdict is wrong, KEEP it and set escalate_full_debate=true + escalate_reason (a full re-debate runs next cycle). FOUR-QUESTION FIELDS (thesis_state, thesis_evidence, thesis_test, entry_mode, entry_level_px, entry_event, washout_type, peer_position, macro_fit, macro_fit_note): if the anchor lacks them, TRANSCRIBE them from the anchor conclusion so they imply the ANCHOR letter (A -> INTACT+NOW; B -> INTACT+AT_LEVEL when it names a price level, IMPAIRED+ON_EVENT when it waits on a test of a thesis in doubt, INTACT+ON_EVENT when it waits on a dated event; C -> NONE) - a transcription, never a new view: washout_type is the seller the anchor names (MECHANICAL or FACTOR), NONE when it names none (the code flags that), and each transcribed field goes in deltas[] with dated_fact "transcribed from anchor <anchor date>". Once they exist, thesis_state and entry_mode may NOT change in a delta (they set the letter): keep the anchor values and set escalate_full_debate=true with escalate_reason "fields now imply <letter>: <dated fact>". You may move entry_level_px, entry_event, thesis_test, peer_position and macro_fit only on a dated fact logged in deltas[] (macro_fit never moves anything else). If inputs/' + sym + '.json carries a non-null washout block, do not resolve it here: keep the anchor fields and escalate with reason "wash-out trigger". Unjustified changes are REVERTED by a deterministic gate - do not waste them.\n' +
+    '4. Write (Write tool) VALID JSON to ' + RES + '/' + sym + '.json = the FULL anchor schema updated per the rules (keep every field the anchor carries, incl. the typed valuation block with point numbers and NO asserted ratios). If the anchor has NO valuation block (pre-typed-schema record), CREATE it now from the numbers the anchor itself states, restated off the live quote: {live_price, price_currency, quote_listing, bear_px, base_fv_px, bull_px, downside_floor_px|null, valuation_method, horizon_months, as_of} - levels only, never ratios; this is a TRANSCRIPTION of the existing anchor bear/base/bull view, not a re-underwriting. PLUS: update_mode="delta", tier="underwrite", deltas:[...], thesis_state, thesis_evidence, thesis_test, entry_mode, entry_level_px, entry_event, washout_type, peer_position, macro_fit, macro_fit_note (per rule 3), whats_changed_since_prior, escalate_full_debate(bool), escalate_reason(""), last_full_debate(copy from the anchor if present, else the anchor debated_at/as_of date), source(keep the anchor source). Reply exactly: DONE'
 }
 
 // -- COVERAGE (Sonnet): Tier-C refresh - a structured update with NO grade fields at all. --
@@ -6010,7 +6305,7 @@ function deltaPrompt(sym) {
 function coveragePrompt(sym) {
   return 'COVERAGE REFRESH for ' + sym + ' (Tier-C - NOT a debate, NOT a grade). The standing record is ' + DIR + '/_archive_prev/results_regime/' + sym + '.json - read it and ' + DIR + '/inputs/' + sym + '.json.\n' +
     '1. Fetch the live quote via the FMP MCP tools (ToolSearch "FMP quote"); check the catalyst status via FMP news; scan for material dated developments since the standing record.\n' +
-    '2. Write (Write tool) VALID JSON to ' + DIR + '/_coverage_updates/' + sym + '.json = {symbol:"' + sym + '", as_of(today YYYY-MM-DD), live_price(number), price_currency, whats_new:[{date:"YYYY-MM-DD", fact:"..."}], catalyst_status_check(one line: does the standing catalyst_status still hold?), thesis_update(<=80 words), escalate(bool - true ONLY if something material demands a full re-debate next cycle), escalate_reason("")}. There are NO verdict/conviction/sop fields in this schema - do not add any. Reply exactly: DONE'
+    '2. Write (Write tool) VALID JSON to ' + DIR + '/_coverage_updates/' + sym + '.json = {symbol:"' + sym + '", as_of(today YYYY-MM-DD), live_price(number), price_currency, whats_new:[{date:"YYYY-MM-DD", fact:"..."}], catalyst_status_check(one line: does the standing catalyst_status still hold?), thesis_update(<=80 words), escalate(bool - true ONLY if something material demands a full re-debate next cycle), escalate_reason("")}. If inputs/' + sym + '.json carries a non-null washout block, set escalate=true with escalate_reason "wash-out trigger". There are NO verdict/conviction/sop/thesis/entry fields in this schema - do not add any. Reply exactly: DONE'
 }
 
 // -- LEDGER RE-CHECKS: unexpired forensic-EXCLUDE names get a SHORT re-affirm pass, not a full debate --
@@ -6019,7 +6314,7 @@ const RECHECK_INFO = __RECHECK_INFO__
 function recheckPrompt(sym) {
   const info = RECHECK_INFO[sym] || {}
   return 'LEDGER RE-CHECK for ' + sym + ' (Claude Opus 5). This name was forensically EXCLUDED on ' + (info.date || 'a prior run') + ' (interrogator credibility <= 2: ' + (info.reason || 'see ledger') + '). Do NOT run a full debate. Read ' + DIR + '/inputs/' + sym + '.json, then WebSearch ONLY for material changes since ' + (info.date || 'the exclusion') + ' (new filings, restatements, management change, resolved investigations, a transformed balance sheet). If NOTHING material changed, re-affirm the exclusion in one paragraph. If something material DID change, say so and recommend a full re-debate next run.\n' +
-    'Write (Write tool) VALID JSON to ' + RES + '/' + sym + '.json with: symbol(="' + sym + '"), sector, signal_type, verdict(="C" unless materially changed), conviction(int, keep 1-2 unless changed), value_conviction(int), catalyst_status(="UNVERIFIABLE" unless verified), interrogator_score(int, keep <=2 unless the forensic picture genuinely changed), trajectory, moderator_conclusion(the one-paragraph re-affirmation or the change note), bull_thesis(""), bear_thesis(""), sop_bull(""), sop_bear(""), sop_fair_value(""), sop_breakdown(""), risk_reward(""), peer_comps_note(""), consensus_delta(""), valley_of_death(""), positioning_washout(""), forcing_function(""), source(="ledger_recheck"), transcript_source(="web"). Reply exactly: DONE'
+    'Write (Write tool) VALID JSON to ' + RES + '/' + sym + '.json with: symbol(="' + sym + '"), sector, signal_type, verdict(="C" unless materially changed), conviction(int, keep 1-2 unless changed), value_conviction(int), catalyst_status(="UNVERIFIABLE" unless verified), thesis_state(BROKEN if the forensic finding breaks the case, else IMPAIRED), thesis_evidence(the dated finding), thesis_test(the forensic condition when IMPAIRED, else null), entry_mode(="NONE"), entry_level_px(null), entry_event(""), washout_type(="NONE"), peer_position(="no_peers"), macro_fit(="UNKNOWN"), macro_fit_note(""), interrogator_score(int, keep <=2 unless the forensic picture genuinely changed), trajectory, moderator_conclusion(the one-paragraph re-affirmation or the change note), bull_thesis(""), bear_thesis(""), sop_bull(""), sop_bear(""), sop_fair_value(""), sop_breakdown(""), risk_reward(""), peer_comps_note(""), consensus_delta(""), valley_of_death(""), positioning_washout(""), forcing_function(""), source(="ledger_recheck"), transcript_source(="web"). Reply exactly: DONE'
 }
 
 const BATCH = 8   // rate-limit safety: run 8 web-heavy agents at a time, not the full universe burst (429s).
@@ -6059,9 +6354,10 @@ await agent(
   'Run these exact commands IN ORDER (each is a deterministic gate) and report each summary line verbatim:\n' +
   'python backend/weekly_opus_refresh.py coverage-merge\n' +
   'python backend/weekly_opus_refresh.py continuity-gate\n' +
+  'python backend/weekly_opus_refresh.py grade-derive\n' +   // derive the A/B/C letter from thesis_state x entry_mode + the quadrant entry floor (2026-10-06) - AFTER the continuity gate, so a price-driven re-letter is never read as a flip
   'python backend/weekly_opus_refresh.py lane-stamp\n' +   // neglect-lane provenance onto fresh records (2026-07-17)
   'python backend/weekly_opus_refresh.py numeric-gate --legacy --enforce\n' +   // enforcement flipped 2026-07-11 after the dry-run calibration week (Task: pipeline-v3 Weeks 3-4)
-  'Reply with the four summary lines, then exactly: DONE',
+  'Reply with the five summary lines, then exactly: DONE',
   { label: 'gates', phase: 'Gates', model: 'haiku' })
 
 // -- PHASE 5 - SKEPTIC (Opus, BEFORE the Director): kill-tier over all of Tier-U, so demotion --
@@ -6106,7 +6402,7 @@ if (REVISE.length) {
   for (let b = 0; b < REVISE.length; b += RV_BATCH) {
     await parallel(REVISE.slice(b, b + RV_BATCH).map(sym => () => agent(
       'REVISION for ' + sym + ' (the skeptic corrected this record and the corrected arithmetic flips its verdict-relevant numbers - the prose and grade no longer follow from the record itself). Read ' + DIR + '/results_regime/' + sym + '.json and ' + DIR + '/_skeptic_regime/' + sym + '.json IN FULL.\n' +
-      'HARD CONSTRAINTS: (1) The skeptic corrections (corrections + corrections_typed, ALREADY applied by the pipeline to the valuation block) are ADOPTED FACTS - do not relitigate, soften, offset, or argue with them anywhere in the record. (2) Do NOT change any number in the valuation block or computed{} - the pipeline owns those; your job is to make the words and the grade follow from them. (3) Rewrite ONLY the prose the corrections invalidated: risk_reward, moderator_conclusion, and the specific sentences of bull_thesis / bear_thesis / sop_bear that cite the old numbers. (4) RE-GRADE the record fields that no longer follow (conviction, and the verdict/tier grade if present) so they are consistent with the corrected computed rr_ratio / expected_return_pct - and append to deltas[] a dated entry citing "skeptic correction applied: <field> <from> -> <to>" as the justification, so the continuity gate sees a dated fact, not an unexplained flip. An UNCHANGED grade is a legitimate outcome when the corrected numbers still support it - do not move a grade to appease anyone. (5) Preserve every other field byte-for-byte. Set revision_note to one sentence stating what was rewritten and why.\n' +
+      'HARD CONSTRAINTS: (1) The skeptic corrections (corrections + corrections_typed, ALREADY applied by the pipeline to the valuation block) are ADOPTED FACTS - do not relitigate, soften, offset, or argue with them anywhere in the record. (2) Do NOT change any number in the valuation block or computed{} - the pipeline owns those; your job is to make the words and the grade follow from them. (3) Rewrite ONLY the prose the corrections invalidated: risk_reward, moderator_conclusion, and the specific sentences of bull_thesis / bear_thesis / sop_bear that cite the old numbers. (4) RE-GRADE the record fields that no longer follow (conviction; entry_mode / entry_level_px - a NOW whose corrected discount now fails the entry floor becomes AT_LEVEL with a named washout_type (or stays NOW: the code re-derives it to that price-wait, or to a pass when no buyable price exists, and a C from the floor keeps the conviction - write NONE only for a reason of your own, a NONE you write caps conviction at 2). WASH-OUT: if the record carries a washout_resolution stamped_by grade-derive, or inputs/' + sym + '.json a non-null washout block, follow the WASH-OUT RESOLUTION section of ' + DIR + '/cro_regime_rubric.txt - when the level was reached (trigger_kind LEVEL_REACHED, or washout.level_source not fall_10pct) AT_LEVEL is NOT allowed: an INTACT thesis whose corrected discount fails the floor is NONE (pass for now - the code reads that as a price pass and keeps the conviction) and the opening sentence must not name a buy level; only after a 10% fall (FELL_10PCT) may it be AT_LEVEL, at or below washout.level; thesis_state only if a correction hits the thesis; then set verdict to the letter the ' + DIR + '/cro_regime_rubric.txt mapping gives - the code re-derives it right after this pass) so they are consistent with the corrected computed rr_ratio / expected_return_pct - and append to deltas[] a dated entry citing "skeptic correction applied: <field> <from> -> <to>" as the justification, so the continuity gate sees a dated fact, not an unexplained flip. An UNCHANGED grade is a legitimate outcome when the corrected numbers still support it - do not move a grade to appease anyone. (5) Preserve every other field byte-for-byte. Set revision_note to one sentence stating what was rewritten and why.\n' +
       'Write the FULL record back to ' + DIR + '/results_regime/' + sym + '.json with the Write tool (Read it first). Reply exactly: DONE',
       { label: 'revise:' + sym, phase: 'Revise', agentType: 'general-purpose', model: 'opus' })))
   }
@@ -6122,6 +6418,14 @@ if (REVISE.length) {
   log('No verdict-relevant flips - typed corrections applied deterministically, no revision cycle needed.')
 }
 
+// -- GRADE RE-DERIVE (2026-10-06): skeptic-apply and Revise can move the valuation numbers and the
+// thesis/entry fields (a corrected ER can cross the entry floor), so the code-derived letter is
+// stamped once more before RegimeRead and the Director read the records. Idempotent.
+await agent(
+  'Run exactly: python backend/weekly_opus_refresh.py grade-derive\n' +
+  'It re-derives each debate record letter from thesis_state x entry_mode and the entry floor after the skeptic corrections and revisions. Reply with the summary line it prints verbatim, then exactly: DONE',
+  { label: 'grade-rederive', phase: 'Revise', model: 'haiku' })
+
 phase('RegimeRead')
 await agent(
   'REGIME READ (context layer for the Director - NOT an override; the deterministic dials stay authoritative). Read backend/_opus_debate/macro_regime.json: regime RISK_ON|NEUTRAL|CAUTIOUS|RISK_OFF, score 0-1, quadrant GOLDILOCKS|REFLATION|STAGFLATION|RISK_OFF (growth x inflation 2x2) + quadrant_basis + growth/inflation/rates/credit detail, AND the debt_cycle block (Dalio long-term debt-cycle phase EXPANSION|DISCIPLINE|FORCING|MONETIZATION + cycle_score + weeks_in_phase + phase_basis + cycle_sub_scores + reserve_asset_check).\n' +
@@ -6135,12 +6439,12 @@ phase('Director')
 await agent(
   'You are the SPECULAIR APEX DIRECTOR (Claude Opus 5). The CRO already reconciled each name to a Sum-of-Parts fair value + risk/reward + a LIVE catalyst_status, with Radar peer comps.\n' +
   'STEP 1 - Read CATALYST_WATCH_REGIME.md (repo root) IN FULL and apply its tilt. ALSO read backend/_opus_debate/macro_regime.json (the live macro classifier: regime RISK_ON|NEUTRAL|CAUTIOUS|RISK_OFF + score 0-1 + quadrant GOLDILOCKS|REFLATION|STAGFLATION|RISK_OFF (growth x inflation 2x2, with quadrant_basis) + growth/inflation/rates/credit detail) AND backend/_opus_debate/regime_read.json if present (an agent regime read run before you: agent_view AGREE|CONTRADICT vs the dials + dated evidence + falsifiers - the DIALS are authoritative; a CONTRADICT with dated evidence may temper your stance ONE notch, never flip the dial; carry its falsifiers into the memo so next week can check them). RETURN GOAL: this book targets +30-50% over ~12 months. QUADRANT PLAYBOOK for the RISK_STANCE: GOLDILOCKS => REACH for the goal (credible 12-month re-rate DRIVERS - dated catalyst, earnings inflection, live trend - accept more demand-cycle/AI-capex beta); REFLATION => favor PRICING POWER, cyclical value and real-asset re-rates over duration-sensitive growth (inflation eats long-duration multiples); STAGFLATION => pricing power + real assets ONLY on the reach side, SIZE DOWN demand-cycle beta and duration, favor carry; RISK_OFF (disinflationary slowdown) => DEFENSE - quality, balance sheet, FCF carry, structural floors, even if +30-50% becomes an 18-24mo story. THEN apply the DEBT-CYCLE PHASE MODIFIER (macro_regime.json debt_cycle block - the Dalio long-term debt-cycle axis; it answers what the quadrant cannot: are positive real rates CHOSEN by a hot economy or IMPOSED by the bond market on the borrower). The phase MODIFIES the quadrant stance, it never gates a name: EXPANSION => no modification, quadrant playbook runs as-is; DISCIPLINE => stance CAPPED at balanced - real rates are being imposed; favor short-payback FCF and pricing power, story-duration names get a negative phase_fit REGARDLESS of quadrant, and stretching the +30-50% to an 18-24mo horizon is explicitly permitted rather than chasing the number; FORCING => stance FLOORED at defensive - funding stress live, balance sheet and FCF carry only, reaches suspended not resized; MONETIZATION => UNLOCKS aggressive even from a RISK_OFF quadrant - real rates forced negative, favor real assets, hard-asset re-rates and pricing power, horizon SHORTENS back to ~12mo (this risk-off-tape-buy-real-assets combination is exactly the state the quadrant playbook alone cannot express). If debt_cycle_phase is UNKNOWN: no modifier, note it in the memo. Also read regime_read.json phase_view/phase_falsifiers if present - same one-notch rule as the quadrant. State the risk_stance, the quadrant you applied, the debt-cycle phase you applied, a one-line phase_read, and a one-line macro read in the memo.\n' +
-  'STEP 2 - Run: python backend/_opus_debate/compact_table.py results_regime - confirm the row count; also read ' + DIR + '/peer_groups.json for the relative-value picture. CONTINUITY FLAGS: any record carrying a continuity_flag field flipped its verdict/conviction vs last week WITHOUT citing a dated fact - treat that fresh record as UNRELIABLE for seat decisions on that name: fall back to your ledger + the prior grade (the flag text quotes it) rather than acting on an unjustified downgrade/upgrade, and say so in decision_rationale. SKEPTIC VERDICTS ARE ALREADY IN (this run, pre-seat - the kill-tier ran before you): for EVERY finalist you consider, read ' + DIR + '/_skeptic_regime/<SYM>.json - a REFUTED verdict with kill_scope "thesis" | "moat" | "catalyst" is a HARD no-seat (if you were inclined to seat it, cite the kill_fact in the memo instead); a REFUTED with kill_scope "numbers" AND a typed revised_fv_px is a REPRICING, not a thesis kill: re-compute the expected return on revised_fv_px against the live price and re-grade it against the STEP-3a floor - seat it ONLY if the revised number still clears the floor and the median-seat dilution bar, treat it as correction_severity="material" for sizing, and quote BOTH the record figure and the skeptic figure in the memo (a numbers-REFUTED without revised_fv_px stays a hard no-seat); CONFIRMED_WITH_CORRECTIONS with correction_severity="material" must temper your conviction and sizing for that seat; SKIPPED_LOW_CONVICTION just means the record graded too low to need a kill. CORRECTED RECORDS (2026-08-05): a record carrying skeptic_corrections_applied (and possibly revision_note) has ALREADY absorbed the skeptic corrections - its valuation levels, computed{} and (if revised) prose/grade are the post-correction truth, so grade it on what it says NOW; do not re-apply the corrections a second time from the shard, and read <field>_orig only for the audit trail. Where an entry carries `peer_override`/`anchor_multiple`, that is a LIVE current peer multiple - trust it over any multiple quoted from memory in a dossier; where `convergence`="sector_regulatory", treat that name\'s discount-to-peer as a SHARED-FACTOR cluster in STEP 4, not as idiosyncratic edge.\n' +
+  'STEP 2 - Run: python backend/_opus_debate/compact_table.py results_regime - confirm the row count. Its columns: GRADE = the code-derived letter (a trailing * marks a letter the code re-derived - from the CRO letter, or from an A whose discount sits below the STEP-3a entry floor; entry_posture follows the DERIVED letter), THESIS = thesis_state, ENTRY = NOW / AT <level> <washout_type> / ON <event> / NONE, ER = the computed expected return %, FIT = macro_fit (context only - never a seat, size or drop lever); a blank THESIS/ENTRY is an older record graded by the CRO letter alone; also read ' + DIR + '/peer_groups.json for the relative-value picture. CONTINUITY FLAGS: any record carrying a continuity_flag field flipped its verdict/conviction vs last week WITHOUT citing a dated fact - treat that fresh record as UNRELIABLE for seat decisions on that name: fall back to your ledger + the prior grade (the flag text quotes it) rather than acting on an unjustified downgrade/upgrade, and say so in decision_rationale. SKEPTIC VERDICTS ARE ALREADY IN (this run, pre-seat - the kill-tier ran before you): for EVERY finalist you consider, read ' + DIR + '/_skeptic_regime/<SYM>.json - a REFUTED verdict with kill_scope "thesis" | "moat" | "catalyst" is a HARD no-seat (if you were inclined to seat it, cite the kill_fact in the memo instead); a REFUTED with kill_scope "numbers" AND a typed revised_fv_px is a REPRICING, not a thesis kill: re-compute the expected return on revised_fv_px against the live price and re-grade it against the STEP-3a floor - seat it ONLY if the revised number still clears the floor and the median-seat dilution bar, treat it as correction_severity="material" for sizing, and quote BOTH the record figure and the skeptic figure in the memo (a numbers-REFUTED without revised_fv_px stays a hard no-seat); CONFIRMED_WITH_CORRECTIONS with correction_severity="material" must temper your conviction and sizing for that seat; SKIPPED_LOW_CONVICTION just means the record graded too low to need a kill. CORRECTED RECORDS (2026-08-05): a record carrying skeptic_corrections_applied (and possibly revision_note) has ALREADY absorbed the skeptic corrections - its valuation levels, computed{} and (if revised) prose/grade are the post-correction truth, so grade it on what it says NOW; do not re-apply the corrections a second time from the shard, and read <field>_orig only for the audit trail. Where an entry carries `peer_override`/`anchor_multiple`, that is a LIVE current peer multiple - trust it over any multiple quoted from memory in a dossier; where `convergence`="sector_regulatory", treat that name\'s discount-to-peer as a SHARED-FACTOR cluster in STEP 4, not as idiosyncratic edge.\n' +
   'STEP 3 - Eligible = conviction >= 3 AND numeric_gate NOT in (REJECT, EXCLUDE_ELIGIBILITY) (records stamped by the deterministic numeric gate - an excluded record\'s numbers failed arithmetic/price/floor checks and cannot support a seat regardless of the narrative). Select using sop_fair_value / risk_reward / catalyst_status AS PRIMARY LEVERS - and where a record carries a computed{} block (rr_ratio / expected_return_pct computed by the pipeline from the typed valuation numbers), TRUST THE COMPUTED NUMBERS over any prose arithmetic: prefer the widest COMPUTED risk_reward to a credible SoP fair value. CATALYST NEUTRALITY (2026-07-21 apex-reassessment): catalyst_status is DESCRIPTIVE here, not a grade lever - a FIRED or SOFT catalyst on a clean-forensic, cheap-on-cash-earnings franchise is neither a plus nor a penalty; judge residual sop_fair_value upside + computed risk_reward, not whether the event is spent (the dated-event asymmetry book is Basket-13, STEP 3b). A live PENDING_HARD driver may STRENGTHEN a seat; its absence must NOT veto one. Then regime fit and consensus-delta width.\n' +
   'STEP 3a - ENTRY DISCOUNT FLOOR, SCALED BY THE REGIME (2026-07-24). A thin discount is not a seat: at a ~10% margin the trim ceiling (85% of fair value) is already within touching distance, so you would be buying something with no room to work and real room to fall. For a NEW seat (decision ADD or RE-ADD) the computed expected return to base_fv_px must clear: >= +20% in GOLDILOCKS/REFLATION (reach), >= +25% in STAGFLATION, >= +30% in RISK_OFF (you must be paid more to take risk when the tape is against you). A HELD seat is NOT force-sold for slipping under the floor - that is what the trim ceiling is for - but a held name below the floor may not be ADDED to, and you must say in the memo whether you are keeping it for carry or letting the trim rule take it. THE BOOK HAS NO FIXED SIZE (2026-07-24, Bruno). Do NOT pad to a target and do NOT stop at one either: seat EVERY name that clears the floor and survives STEP 4, however many that is. If only 6 qualify, seat 6 and say so. If 18 qualify and each one genuinely earns its place, seat 18. THE DISCIPLINE THAT REPLACES A SEAT CAP IS DILUTION: the book is EQUAL-WEIGHTED, so every seat you add shrinks every other seat. Add a name ONLY if it is at least as good as the CURRENT MEDIAN seat on computed expected return and skeptic cleanliness - if it is worse than your median, adding it makes the book worse even though the name itself clears the floor. State the final count in the memo with one line on why the book is that size this week. You MAY Read individual ' + RES + '/<SYM>.json for finalists.\n' +
   'STEP 3b - BASKET-13 SEPARATION (HARD RULE, 2026-07-08): the Basket-13 catalyst book (merger-arb spreads, forced-seller recovery, SoP breakups, spins, FDA binaries - anything whose thesis is a dated EVENT rather than a franchise) is a FULLY SEPARATE book with its own funnel, debate, sizing and tracker. You may NOT seat any equity special-sit / event-driven name in this apex basket - no exceptions, no "sleeve". If a name in results_regime carries lane/source values like equity_special_sit / special_sit / opus_catalyst, or its thesis is primarily a dated corporate event, it is INELIGIBLE for a seat here (it may be a runner_up with an explicit note that it belongs to B13). This book seats COMPOUNDERS and value re-rates only: durable franchises where the value case stands without the event.\n' +
   'STEP 4 - CORRELATION/EXPOSURE STRESS over the proposed book, whatever its size (MANDATORY, beyond the <=3/sector cap): decompose on (a) DEMAND-CYCLE beta (cyclical industrials/consumption that de-rate together in a recession), (b) REGULATORY JURISDICTION (e.g. Italian/EU sign-off) - INCLUDING any peer entry tagged `convergence`="sector_regulatory" where the thesis is "cheap vs a peer" and BOTH names de-rated on the SAME regulatory factor (e.g. PLX.PA/Pluxee vs a now-~10x Edenred on the shared Brazil-PAT/Italy-voucher reform): that is sector BETA, so it must NOT be sized as idiosyncratic apex alpha - discount it or hold it as a watch/sized leg, (c) LIQUIDITY/POSITIONING (small-caps that de-gross together), (d) POSTURE (count of wait-for-the-flush entries - a correlated timing bet), (e) SECULAR-DISRUPTION THEME (each name carries a secular_theme from the debate: ai-displacement / payments-disintermediation / linear-media-decline / autonomous-mobility / labor-arbitrage-deflation / reimbursement-compression / retail-channel-shift / energy-transition-loser). No hidden factor may carry >3 names AND no secular_theme may carry >2 names; for any secular_theme with >=2 names you MUST emit a combined_caps entry {names, max_units, axis:"secular-theme:<id>"} (a WIDE non-eroding moat counts at HALF toward the theme budget - a durable anchor that merely carries the narrative is not the tail risk). Do NOT let one melting tail (e.g. AI-displacement across ADBE+IT+GLOB) carry the book. Stress the book against a EUROPEAN-CYCLICAL-RECESSION + CORRELATED-DE-GROSS scenario and diversify if it fails; sequence entries assuming flushes arrive together.\n' +
-  'STEP 5 - FIRST read backend/_opus_debate/_director_ledger_regime.txt (your currently-HELD names with why + every name you DROPPED in 2026) and apply ROTATION DISCIPLINE: KEEP each held name UNLESS its thesis is BROKEN (price through thesis_break, a thesis whose ONLY leg was a now-elapsed event and whose value case no longer stands on its own, a forensic/solvency flip, or confirmed moat terminal-erosion - a fired catalyst on a name whose value case still stands is NOT thesis-broken) OR you have a STRICTLY-BETTER orthogonal name for that seat - do NOT drop a held compounder merely because another name graded a hair higher; you may RE-ADD a previously-dropped name ONLY by citing a DOCUMENTED THESIS CHANGE since the drop date (a better grade is NOT a thesis change) - override allowed but you must OWN it in whats_changed. CONVICTION RUBRIC (0-100, BANDED - your conviction is anchored, not free-floating): 90-100 = table-pounding: computed expected return >= +40% to base_fv_px AND a structural floor or paid-to-wait carry AND a clean skeptic AND a credible 12-mo re-rate path (a live dated driver STRENGTHENS but is NOT required - an earnings trajectory, buyback cadence, or mean-reversion of a de-rated multiple on a clean franchise qualifies); 70-89 = high conviction: computed ER +25-40%, credible re-rate path (dated or undated), clean forensic; 50-69 = solid hold: ER +15-25%, or the re-rate path is weak/contingent, or the record carries WARN/THIN_FLOOR flags; 30-49 = runner-up only; <30 = no seat. CONSISTENCY RULE: conviction >= 70 on a name whose COMPUTED expected return is < +15% requires an explicit carry justification (dividend/buyback floor) in goal_note, else it is a rubric violation. ANCHORING: the ledger shows your PRIOR conviction per held seat - emit conviction_prior (echo it) and conviction_delta (new minus prior) for every KEEP/RE-ADD; when |conviction_delta| > 10 you MUST fill delta_justification with the DATED fact that moved it (the deterministic post layer CLAMPS unjustified moves to prior +/-10 - save yourself the clamp). Then for each pick: symbol, sector, director_conviction (0-100 per the rubric), conviction_prior (number or null for ADDs), conviction_delta (number or null), delta_justification (dated fact when |delta|>10; else ""), size_units (float 0.1-1.5 - your explicit seat size: 1.0=full unit, 1.4=max-conviction anchor, 0.5=half; sizing is decoupled from conviction, so SIZE the seat deliberately; NOTE the published book is EQUAL-WEIGHT since 2026-07-24 - your units still drive the caps and the audit trail, not the live weights), thesis_break_px (number: the price at which this thesis is BROKEN - below it the seat exits at the next review; derive it from your downside-to-break, NOT from a round-number guess. Omit only if you genuinely cannot name one, in which case the pipeline falls back to the bear_px from the debate), one-sentence thesis, sop_fair_value, catalyst_status, lane, regime_fit, phase_fit (one sentence: how THIS seat sits in the current debt-cycle phase - a story-duration reach in DISCIPLINE must say so and own it), duration_bucket_override (OPTIONAL: \"cash_now\"|\"payback_2_3y\"|\"story\" ONLY when you dispute the deterministic FCF-based label the post layer will stamp, PLUS duration_bucket_override_reason with a dated fact - an unjustified override is dropped), phase_needed (OPTIONAL: \"EXPANSION\"|\"DISCIPLINE\"|\"FORCING\"|\"MONETIZATION\"|\"ANY\" - which debt-cycle phase this payoff actually NEEDS in order to be paid, which is NOT the same as which phase we are in. A cash-generative name is paid in DISCIPLINE; a name whose value sits in a terminal year needs MONETIZATION; a payoff that does not hinge on the cost of waiting is ANY. Omit it and the post layer derives it deterministically from duration_bucket - state it only when you disagree, and say why in phase_fit. This is what makes a phase-three trade bought in phase one visible BEFORE it is bought), exposure_axes (hidden factors it carries), secular_theme (the name dominant secular-decline theme id from secular_themes.json or ""), moat (WIDE|NARROW|ERODING|NONE from the debate), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <the dated event>" | "wait_for_weakness" - derive it from your STEP 4 SEQUENCING: a structural/carry anchor that needs no catalyst and pays you to wait = enter_now_carry; a standard tranche-in = scale_in; a leg gated on a dated/ARB event = on_confirmation with that event; a cyclical/de-gross tail or a knife-catch near the 52w low = wait_for_weakness. ENTRY DISCIPLINE (2026-09-08): entry_posture MUST agree with the seat debate grade - a grade-B record (the CRO "wait for the wash-out") or a grade-C record carries wait_for_weakness or on_confirmation:<event>, NEVER enter_now_carry / scale_in, UNLESS you also write entry_posture_override_reason with a DATED fact; the deterministic post layer reverts an unjustified enter-now tag on a wait-graded seat to the CRO posture and records your original, exactly like duration_bucket_override. A KEEP is a PAPER POSITION already held - it means do not sell, never buy at today price - so each KEPT line in the ROTATION subsection carries held-since + entry price and, for a wait-graded seat, the CRO add level or event), cro_add_px (number|null: the entry level the record moderator_conclusion names for a wait-graded seat, in the quote currency - for a band take the FIRST actionable level, e.g. "NOK 100-105" -> 105, "$285 then $270" -> 285; null when the CRO named none), cro_add_event (string: the dated event the CRO waits for, e.g. "early-November Q3 print"; else ""), entry_posture_override_reason (string: "" unless you override a wait grade - then the DATED fact), wheel (where a wheel SUITS this seat - a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your "happy to own" level - a support/downside-to-break below spot), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait)}; else {suits:false}), expected_return_pct (your base-case % upside to sop_fair_value from the current price), horizon_months (WHEN the bulk of that re-rate lands - tie it to the driver/catalyst/trend, not "eventually"), meets_goal (bool: can this credibly deliver ~+30-50% within ~12 months given your stance), goal_note (the 12-month driver; or, for a longer-horizon name you keep, why it still earns a seat), decision ("KEEP"|"ADD"|"RE-ADD" vs the ledger), decision_rationale (one sentence reconciling this seat to the ledger), whats_changed (REQUIRED non-empty ONLY for RE-ADD: what materially changed since the drop; else ""). Plus ~6 runner_ups and a director_memo stating the correlation-stress result. The director_memo MUST OPEN with a "ROTATION" subsection - the running record of what you changed and why, so a reader can follow the book week to week without re-reading the JSON. Format it as one line per decision, grouped: ADDED (symbol - the one fact that earned the seat, and which name it displaced if any), DROPPED (symbol - the broken-thesis reason, or "trimmed out at the ceiling"; every name in last week apex that is not in this one MUST appear here), KEPT (symbol - one clause; group the unchanged ones on a single line), RE-ADDED (symbol - the documented thesis change since the drop date). If NOTHING rotated, say "No rotation this week" and give the one-sentence reason the book was left alone. Then a SECULAR-THEME CONCENTRATION subsection naming each >=2-name theme and how it was resolved (diversified -> the swap; or kept-with-cap -> the combined_caps numbers, durable WIDE anchors counted at half), AND end with a "BEAR REBUTTAL" subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing - if you cannot articulate the bear in one sentence, you do not understand the position.\n' +
+  'STEP 5 - FIRST read backend/_opus_debate/_director_ledger_regime.txt (your currently-HELD names with why + every name you DROPPED in 2026) and apply ROTATION DISCIPLINE: KEEP each held name UNLESS its thesis is BROKEN (price through thesis_break, a thesis whose ONLY leg was a now-elapsed event and whose value case no longer stands on its own, a forensic/solvency flip, or confirmed moat terminal-erosion - a fired catalyst on a name whose value case still stands is NOT thesis-broken) OR you have a STRICTLY-BETTER orthogonal name for that seat - do NOT drop a held compounder merely because another name graded a hair higher; you may RE-ADD a previously-dropped name ONLY by citing a DOCUMENTED THESIS CHANGE since the drop date (a better grade is NOT a thesis change) - override allowed but you must OWN it in whats_changed. PENDING ENTRY: a name the ledger lists under PENDING ENTRY is seated but NOT bought yet (no entry price, not in the NAV) - KEEP leaves its order resting on its gate, switching it to an enter-now posture re-dates the order to this run (it fills at the next close), and dropping it costs nothing only if its gate has not been met yet (an order whose gate was met before this run is booked as a buy, and the drop then logs a closed leg); never give a pending seat a held-since date or an entry price. CONVICTION RUBRIC (0-100, BANDED - your conviction is anchored, not free-floating): 90-100 = table-pounding: computed expected return >= +40% to base_fv_px AND a structural floor or paid-to-wait carry AND a clean skeptic AND a credible 12-mo re-rate path (a live dated driver STRENGTHENS but is NOT required - an earnings trajectory, buyback cadence, or mean-reversion of a de-rated multiple on a clean franchise qualifies); 70-89 = high conviction: computed ER +25-40%, credible re-rate path (dated or undated), clean forensic; 50-69 = solid hold: ER +15-25%, or the re-rate path is weak/contingent, or the record carries WARN/THIN_FLOOR flags; 30-49 = runner-up only; <30 = no seat. CONSISTENCY RULE: conviction >= 70 on a name whose COMPUTED expected return is < +15% requires an explicit carry justification (dividend/buyback floor) in goal_note, else it is a rubric violation. ANCHORING: the ledger shows your PRIOR conviction per held seat - emit conviction_prior (echo it) and conviction_delta (new minus prior) for every KEEP/RE-ADD; when |conviction_delta| > 10 you MUST fill delta_justification with the DATED fact that moved it (the deterministic post layer CLAMPS unjustified moves to prior +/-10 - save yourself the clamp). Then for each pick: symbol, sector, director_conviction (0-100 per the rubric), conviction_prior (number or null for ADDs), conviction_delta (number or null), delta_justification (dated fact when |delta|>10; else ""), size_units (float 0.1-1.5 - your explicit seat size: 1.0=full unit, 1.4=max-conviction anchor, 0.5=half; sizing is decoupled from conviction, so SIZE the seat deliberately; NOTE the published book is EQUAL-WEIGHT since 2026-07-24 - your units still drive the caps and the audit trail, not the live weights), thesis_break_px (number: the price at which this thesis is BROKEN - below it the seat exits at the next review; derive it from your downside-to-break, NOT from a round-number guess. Omit only if you genuinely cannot name one, in which case the pipeline falls back to the bear_px from the debate), one-sentence thesis, sop_fair_value, catalyst_status, lane, regime_fit, phase_fit (one sentence: how THIS seat sits in the current debt-cycle phase - a story-duration reach in DISCIPLINE must say so and own it), duration_bucket_override (OPTIONAL: \"cash_now\"|\"payback_2_3y\"|\"story\" ONLY when you dispute the deterministic FCF-based label the post layer will stamp, PLUS duration_bucket_override_reason with a dated fact - an unjustified override is dropped), phase_needed (OPTIONAL: \"EXPANSION\"|\"DISCIPLINE\"|\"FORCING\"|\"MONETIZATION\"|\"ANY\" - which debt-cycle phase this payoff actually NEEDS in order to be paid, which is NOT the same as which phase we are in. A cash-generative name is paid in DISCIPLINE; a name whose value sits in a terminal year needs MONETIZATION; a payoff that does not hinge on the cost of waiting is ANY. Omit it and the post layer derives it deterministically from duration_bucket - state it only when you disagree, and say why in phase_fit. This is what makes a phase-three trade bought in phase one visible BEFORE it is bought), exposure_axes (hidden factors it carries), secular_theme (the name dominant secular-decline theme id from secular_themes.json or ""), moat (WIDE|NARROW|ERODING|NONE from the debate), entry_posture (one of: "enter_now_carry" | "scale_in" | "on_confirmation: <the dated event>" | "wait_for_weakness" - derive it from your STEP 4 SEQUENCING: a structural/carry anchor that needs no catalyst and pays you to wait = enter_now_carry; a standard tranche-in = scale_in; a leg gated on a dated/ARB event = on_confirmation with that event; a cyclical/de-gross tail or a knife-catch near the 52w low = wait_for_weakness. ENTRY DISCIPLINE (2026-09-08): entry_posture MUST agree with the seat debate grade - a grade-B record (the CRO "wait for a better price", "wait for proof" or "wait for the event") or a grade-C record carries wait_for_weakness (wait_kind price, adding at the record entry_level_px) or on_confirmation:<event> (wait_kind proof or event, the record entry_event), NEVER enter_now_carry / scale_in, UNLESS you also write entry_posture_override_reason with a DATED fact; the deterministic post layer reverts an unjustified enter-now tag on a wait-graded seat to the CRO posture and records your original, exactly like duration_bucket_override. A KEEP is a PAPER POSITION already held - it means do not sell, never buy at today price - so each KEPT line in the ROTATION subsection carries held-since + entry price and, for a wait-graded seat, the CRO add level or event), cro_add_px (number|null: COPY the record typed entry_level_px when present - the post layer re-reads the typed record level and it wins; only for an older record without it, the entry level the record moderator_conclusion names for a wait-graded seat, in the quote currency - for a band take the FIRST actionable level, e.g. "NOK 100-105" -> 105, "$285 then $270" -> 285; null when the CRO named none), cro_add_event (string: COPY the record typed entry_event when present; else the dated event the CRO waits for, e.g. "early-November Q3 print"; else ""), entry_posture_override_reason (string: "" unless you override a wait grade - then the DATED fact), wheel (where a wheel SUITS this seat - a slow-re-rate income name you are happy to own at a discount, NOT an on_confirmation/event-risk name: {suits:true, csp_strike (your "happy to own" level - a support/downside-to-break below spot), cc_strike (the fair-value target where you cap upside once assigned), tenor_days (~30-45), rationale (one sentence: why selling the put pays you to wait)}; else {suits:false}), expected_return_pct (your base-case % upside to sop_fair_value from the current price), horizon_months (WHEN the bulk of that re-rate lands - tie it to the driver/catalyst/trend, not "eventually"), meets_goal (bool: can this credibly deliver ~+30-50% within ~12 months given your stance), goal_note (the 12-month driver; or, for a longer-horizon name you keep, why it still earns a seat), decision ("KEEP"|"ADD"|"RE-ADD" vs the ledger), decision_rationale (one sentence reconciling this seat to the ledger), whats_changed (REQUIRED non-empty ONLY for RE-ADD: what materially changed since the drop; else ""). Plus ~6 runner_ups and a director_memo stating the correlation-stress result. The director_memo MUST OPEN with a "ROTATION" subsection - the running record of what you changed and why, so a reader can follow the book week to week without re-reading the JSON. Format it as one line per decision, grouped: ADDED (symbol - the one fact that earned the seat, and which name it displaced if any), DROPPED (symbol - the broken-thesis reason, or "trimmed out at the ceiling"; every name in last week apex that is not in this one MUST appear here), KEPT (symbol - one clause; group the unchanged ones on a single line), RE-ADDED (symbol - the documented thesis change since the drop date). If NOTHING rotated, say "No rotation this week" and give the one-sentence reason the book was left alone. Then a SECULAR-THEME CONCENTRATION subsection naming each >=2-name theme and how it was resolved (diversified -> the swap; or kept-with-cap -> the combined_caps numbers, durable WIDE anchors counted at half), AND end with a "BEAR REBUTTAL" subsection: ONE sentence per apex seat stating the STRONGEST reason that pick is wrong, written BEFORE final sizing - if you cannot articulate the bear in one sentence, you do not understand the position.\n' +
   'STEP 6 - Write (Write tool) VALID JSON to ' + DIR + '/apex_basket_opus_regime.json = {apex_basket:[...], director_memo, runner_ups:[...], combined_caps:[{names, max_units, axis}], risk_stance ("aggressive"|"balanced"|"defensive" - AFTER the phase modifier), regime_quadrant (echo the quadrant you applied), debt_cycle_phase (echo the phase you applied), phase_read (one sentence tying the phase to the return goal and the horizon you actually adopted), expected_horizon_months (integer - 12 in EXPANSION/MONETIZATION, up to 18-24 in DISCIPLINE/FORCING; makes the horizon stretch explicit and scoreable), macro_read (one sentence interpreting macro_regime.json + the regime read + the +30-50%/12mo goal)}. Reply exactly: DONE',
   { label: 'director', phase: 'Director', model: '__DIRECTOR_MODEL__' })
 log('Radar + coverage + delta + underwrite + gates + skeptic + revise + director complete.')
@@ -6259,6 +6563,37 @@ def continuity_gate():
     if not res.exists() or not prior_dir.exists():
         print("continuity-gate: nothing to diff (missing results_regime/ or _archive_prev/). skipping.")
         return
+    # FOUR-QUESTION GRADE (2026-10-06): the letter is derived by code (grade-derive runs right AFTER
+    # this gate). Flips are judged on the PRICE-FREE structural letter, so an A that became a
+    # price-wait only because the price crossed the entry floor is never read as a re-roll.
+    sys.path.insert(0, str(ROOT))
+    import _post_common as _pc
+    _quad = _pc.current_quadrant(ROOT)
+
+    def _cont_letter(r):
+        s = str(r.get("verdict_structural") or "").strip().upper()[:1] or _pc.structural_letter(r, _quad)
+        return s or str(r.get("verdict_agent_orig") or r.get("verdict") or "").strip().upper()[:1]
+
+    def _agent_in(r, fld):
+        """The CRO's own answer for a guarded four-question field (before any code coercion)."""
+        b = r.get("grade_basis") if isinstance(r.get("grade_basis"), dict) else {}
+        i = {"thesis_state": 0, "entry_mode": 1, "entry_level_px": 2}[fld]
+        vals = [r.get(fld), r.get(f"{fld}_agent_orig")]
+        if isinstance(b.get("in"), list) and len(b["in"]) == 4:
+            vals.append(b["in"][i])
+        return [str(v).strip().upper() if isinstance(v, str) else v for v in vals
+                if v is not None and v != "" and not isinstance(v, (dict, list))]
+
+    def _anchor_in(r, fld):
+        """The value a reverted delta field is restored to: the anchor CRO's own answer when a code
+        coercion is on record (grade_basis / *_agent_orig), else the anchor's stored value."""
+        b = r.get("grade_basis") if isinstance(r.get("grade_basis"), dict) else {}
+        if isinstance(b.get("in"), list) and len(b["in"]) == 4:
+            v = b["in"][{"thesis_state": 0, "entry_mode": 1, "entry_level_px": 2}[fld]]
+            if v not in (None, ""):
+                return v
+        return r.get(f"{fld}_agent_orig") if r.get(f"{fld}_agent_orig") not in (None, "") else r.get(fld)
+
     _rank = {"A": 3, "B": 2, "C": 1}
     checked = flagged = 0
     flags = []
@@ -6284,18 +6619,71 @@ def continuity_gate():
         # the contract says flips escalate to a full re-debate instead. Full-debate records keep the
         # v1 flag-only behavior (reverting a fresh debate would hide real information).
         if cur.get("update_mode") == "delta":
-            GUARDED = ("verdict", "conviction", "value_conviction", "catalyst_status", "sop_fair_value")
+            # 2026-10-06: thesis_state / entry_mode are guarded like the verdict (a change always
+            # reverts AND escalates - it is a letter change by another name); entry_level_px may move
+            # only on a dated fact in deltas[]. A null->value backfill (the delta TRANSCRIBING the
+            # anchor's answer onto an older record) is allowed, but only if it implies the anchor letter.
+            GUARDED = ("verdict", "conviction", "value_conviction", "catalyst_status", "sop_fair_value",
+                       "thesis_state", "entry_mode", "entry_level_px")
             justified = set()
             for d in (cur.get("deltas") or []):
                 if isinstance(d, dict) and d.get("field") and dated.search(str(d.get("dated_fact") or "")):
                     justified.add(str(d["field"]))
-            reverted = []
+            reverted, escal, dirty = [], [], False
+            if pr.get("verdict_agent_orig") and not cur.get("verdict_agent_orig"):
+                cur["verdict_agent_orig"] = pr["verdict_agent_orig"]       # a delta never re-letters the CRO
+                dirty = True
             for fld in GUARDED:
+                if fld in ("thesis_state", "entry_mode", "entry_level_px"):
+                    _pv = _agent_in(pr, fld)
+                    _cv = cur.get(fld)
+                    _cn = _cv.strip().upper() if isinstance(_cv, str) else _cv
+                    if not _pv:
+                        continue                      # anchor has no answer: backfill, checked below
+                    _anchor = _anchor_in(pr, fld)
+                    if _cv is None or _cv == "":
+                        cur[fld], dirty = _anchor, True   # dropped by the delta: inherit the anchor's answer
+                        continue
+                    if _cn in _pv or (fld == "entry_level_px" and fld in justified):
+                        continue
+                    cur[fld] = _anchor
+                    reverted.append(fld)
+                    if fld != "entry_level_px":
+                        escal.append(fld)
+                    continue
                 if cur.get(fld) == pr.get(fld):
+                    continue
+                if fld == "verdict" and str(cur.get(fld) or "").strip().upper()[:1] in {
+                        str(pr.get(k) or "").strip().upper()[:1]
+                        for k in ("verdict", "verdict_agent_orig", "verdict_structural")} - {""}:
+                    cur[fld], dirty = pr.get(fld), True    # the anchor's own / structural letter: not a flip
+                    continue
+                if fld == "conviction" and cur.get(fld) == pr.get("conviction_agent_orig"):
+                    cur[fld], dirty = pr.get(fld), True    # the CRO number behind a derived-C cap
                     continue
                 if fld == "verdict" or fld not in justified:
                     cur[fld] = pr.get(fld)
                     reverted.append(fld)
+            # backfill onto an older (legacy) anchor: the transcribed answer must imply the anchor letter
+            if _pc.structural_letter(pr, _quad) is None:
+                _imp = _pc.structural_letter(cur, _quad)
+                _al = str(pr.get("verdict") or "").strip().upper()[:1]
+                if _imp is not None and _al and _imp != _al:
+                    cur["delta_backfill_rejected"] = {"thesis_state": cur.get("thesis_state"),
+                                                      "entry_mode": cur.get("entry_mode"),
+                                                      "implied_letter": _imp, "anchor_letter": _al}
+                    cur["thesis_state"], cur["entry_mode"] = None, None   # legacy path: the anchor letter stands
+                    reverted.append("four_question_backfill")
+                    escal.append(f"backfill implies {_imp}, anchor {_al}")
+            if escal:
+                cur["escalate_full_debate"] = True
+                _er = f"delta moved the four-question answer ({', '.join(escal)}) - a full re-debate decides it"
+                cur["escalate_reason"] = (f"{cur['escalate_reason']} | {_er}" if cur.get("escalate_reason") else _er)
+            if reverted or dirty:
+                try:                                  # keep the stored letter consistent with what was restored
+                    _pc.derive_grade(cur, quadrant=_quad)
+                except Exception as _e:
+                    print(f"WARN continuity-gate: {f.stem} grade re-derive failed ({_e})")
             if reverted:
                 cur["delta_inherited"] = reverted
                 cur["continuity_flag"] = (f"DELTA_REVERTED: {reverted} changed without a dated fact in "
@@ -6304,13 +6692,48 @@ def continuity_gate():
                 f.write_text(json.dumps(cur, ensure_ascii=False, indent=2), encoding="utf-8")
                 flagged += 1
                 flags.append(f"{f.stem} (delta-reverted: {','.join(reverted)})")
+            elif dirty:
+                f.write_text(json.dumps(cur, ensure_ascii=False, indent=2), encoding="utf-8")
             continue
-        cv, pv = _rank.get(str(cur.get("verdict") or "").strip()[:1].upper()), _rank.get(str(pr.get("verdict") or "").strip()[:1].upper())
-        try:
-            dconv = abs(int(cur.get("conviction")) - int(pr.get("conviction")))
-        except (TypeError, ValueError):
-            dconv = 0
-        big_flip = (cv is not None and pv is not None and abs(cv - pv) >= 2) or dconv >= 2
+        # the letter compared: structural (price-free) when the prior record has one; in the cutover
+        # week (prior is a legacy record) the CRO's own letter against the prior letter
+        _ps = str(pr.get("verdict_structural") or "").strip().upper()[:1] or _pc.structural_letter(pr, _quad)
+        if _ps:
+            _cl, _pl = _cont_letter(cur), _ps
+        else:
+            _cl = str(cur.get("verdict_agent_orig") or cur.get("verdict") or "").strip().upper()[:1]
+            _pl = str(pr.get("verdict") or "").strip().upper()[:1]
+        # P4 (2026-10-06 review, tightened after the confirm pass): compare the COMMITTEE'S OWN answers on
+        # both sides - the price-free structural letter and the conviction before any code cap. A code-
+        # derived letter (floor re-derive, NO_BUYABLE_PRICE) is never a committee answer, so matching it
+        # must not hide a real re-roll (INTACT+NOW at 4 -> BROKEN at 3 with no dated fact is a re-roll even
+        # when last week's PUBLISHED letter was a floor-derived B). Cutover week only (prior is a legacy
+        # record with no structural letter): its letter and verdict_agent_orig are the CRO's answers.
+        if _ps:
+            _pset = {_ps}
+        else:
+            _pset = {x for x in (_pl, str(pr.get("verdict_agent_orig") or "").strip().upper()[:1]) if x}
+        cv = _rank.get(_cl)
+        _gaps = [abs(cv - _rank[x]) for x in _pset if x in _rank] if cv is not None else []
+        dlet = min(_gaps) if _gaps else 0
+
+        def _own_conv(r):
+            for k in ("conviction_agent_orig", "conviction"):      # the CRO's own number first
+                try:
+                    if r.get(k) is not None and not isinstance(r.get(k), bool):
+                        return int(r.get(k))
+                except (TypeError, ValueError):
+                    pass
+            return None
+        _cc, _pc_ = _own_conv(cur), _own_conv(pr)
+        # a pass (own C) is capped at 2 by the rubric - compare a C side at the cap, so a CRO that writes a
+        # compliant C/2 after last week's C/4 (code-capped to 2) is not read as a conviction move
+        if _cc is not None and _cl == "C":
+            _cc = min(_cc, 2)
+        if _pc_ is not None and _pl == "C":
+            _pc_ = min(_pc_, 2)
+        dconv = abs(_cc - _pc_) if (_cc is not None and _pc_ is not None) else 0
+        big_flip = dlet >= 2 or dconv >= 2
         if not big_flip:
             continue
         justification = f"{cur.get('whats_changed_since_prior') or ''} {cur.get('moderator_conclusion') or ''}"
@@ -6318,12 +6741,12 @@ def continuity_gate():
             continue                              # flip carries a dated fact - legitimate update
         prior_date = str(pr.get("debated_at") or pr.get("as_of") or "")[:10]
         cur["continuity_flag"] = (f"UNJUSTIFIED_FLIP vs {prior_date or 'prior run'}: "
-                                  f"{pr.get('verdict')}/{pr.get('conviction')} -> "
-                                  f"{cur.get('verdict')}/{cur.get('conviction')} with no dated fact in "
+                                  f"{_pl or pr.get('verdict')}/{pr.get('conviction')} -> "
+                                  f"{_cl or cur.get('verdict')}/{cur.get('conviction')} with no dated fact in "
                                   f"whats_changed_since_prior - treat this record as a re-roll, prefer the prior grade")
         f.write_text(json.dumps(cur, ensure_ascii=False, indent=2), encoding="utf-8")
         flagged += 1
-        flags.append(f"{f.stem} ({pr.get('verdict')}/{pr.get('conviction')}->{cur.get('verdict')}/{cur.get('conviction')})")
+        flags.append(f"{f.stem} ({_pl or pr.get('verdict')}/{pr.get('conviction')}->{_cl or cur.get('verdict')}/{cur.get('conviction')})")
     print(f"continuity-gate: {checked} diffed vs prior week | {flagged} FLAGGED unjustified flips"
           + (f": {flags}" if flags else " - all changes carry dated facts or are within tolerance"))
 
@@ -6447,6 +6870,38 @@ def _cohort_skeptic_map():
     return out
 
 
+def _close_on_or_before(series, day):
+    """The last close dated on or before `day` (YYYY-MM-DD) in [(date, close), ...]; None if none."""
+    best = None
+    for d, c in series or []:
+        if isinstance(d, str) and d[:10] <= str(day)[:10] and isinstance(c, (int, float)) \
+                and not isinstance(c, bool) and c > 0 and (best is None or d[:10] > best[0]):
+            best = (d[:10], float(c))
+    return best[1] if best else None
+
+
+def _spy_eod_closes(frm):
+    """SPY daily closes [(date, close)] from a week before `frm` to today (FMP stable
+    historical-price-eod/full, the same endpoint the tracker fills use); [] on any failure."""
+    try:
+        import datetime as _dt
+        key = E.get_key("FMP_API_KEY")
+        if not key:
+            return []
+        start = (_dt.date.fromisoformat(str(frm)[:10]) - _dt.timedelta(days=7)).isoformat()
+        r = requests.get("https://financialmodelingprep.com/stable/historical-price-eod/full",
+                         params={"symbol": "SPY", "from": start, "to": _dt.date.today().isoformat(), "apikey": key},
+                         timeout=20)
+        if not r.ok:
+            return []
+        data = r.json()
+        rows = data.get("historical") if isinstance(data, dict) else data
+        return [(str((x or {}).get("date") or "")[:10], (x or {}).get("close"))
+                for x in (rows if isinstance(rows, list) else [])]
+    except Exception:
+        return []
+
+
 def cohort_mark():
     """Append this run's per-name snapshot (idempotent per run-date+symbol), fill any NOW-due forward-
     return horizon on existing rows using fresh FMP quotes, then print + write cohort_report.md."""
@@ -6481,6 +6936,15 @@ def cohort_mark():
                 "value_blocker": rec.get("value_conviction_blocker") or None,
                 "seat": seat_map.get(sym, "none"), "skeptic": skv, "kill_scope": sksc,
                 "continuity_flag": bool(rec.get("continuity_flag")),
+                # four-question grade (2026-10-06): tag the schema so the letter series is never mixed
+                # across the cutover, and keep the CRO's own letter beside the derived one
+                "grade_schema": rec.get("grade_schema"), "verdict_agent_orig": rec.get("verdict_agent_orig"),
+                "verdict_structural": rec.get("verdict_structural"), "thesis_state": rec.get("thesis_state"),
+                "entry_mode": rec.get("entry_mode"), "wait_kind": rec.get("wait_kind"),
+                "washout_type": rec.get("washout_type"),
+                "macro_fit": ((rec.get("macro_fit") or {}).get("fit") if isinstance(rec.get("macro_fit"), dict)
+                              else rec.get("macro_fit")),
+                "grade_rederived": bool(rec.get("grade_rederived")),
                 "numeric_flag": None,          # populated once the numeric-integrity gate ships (Week 0.4+)
                 "price0": rec.get("live_price"), "spy0": spy0,
                 "px_4w": None, "r_4w": None, "px_12w": None, "r_12w": None, "px_26w": None, "r_26w": None,
@@ -6496,6 +6960,39 @@ def cohort_mark():
             continue
         try:
             age_d = (_dt.date.today() - _dt.date.fromisoformat(r["run_date"])).days
+        except Exception:
+            continue
+        if any(age_d >= days and r.get(f"r_{hz}") is None for hz, days in COHORT_HORIZONS.items()):
+            due_syms.add(r["symbol"])
+    # WASH-OUT LEDGER (2026-10-06): the same horizon fill on _washout_ledger.jsonl - price0 is the price
+    # at the trigger - so "what did resolving the wait earn" is scored quarterly beside the cohort
+    wl_rows, wl_bad, wl_dirty = [], [], False
+    try:
+        for _ln in _WASHOUT_LEDGER.read_text(encoding="utf-8").splitlines():
+            if not _ln.strip():
+                continue
+            try:
+                wl_rows.append(json.loads(_ln))
+            except ValueError:
+                wl_bad.append(_ln)                 # kept verbatim on rewrite
+    except OSError:
+        wl_rows = []
+    # spy0 (review fix, finding 18): cohort-mark is not run on the prep day, so a same-day-only spy0
+    # almost never filled and xs_* stayed empty. A row without spy0 takes SPY's close on or before its
+    # date (one EOD fetch for all of them); today's rows take the live quote as before. Fail-open.
+    _wl_need = sorted({str(r.get("date"))[:10] for r in wl_rows if isinstance(r, dict) and r.get("date")
+                       and r.get("spy0") is None and str(r.get("date"))[:10] < today})
+    _spy_hist = _spy_eod_closes(_wl_need[0]) if _wl_need else []
+    for r in wl_rows:
+        if not isinstance(r, dict) or not isinstance(r.get("price"), (int, float)) or not r.get("symbol"):
+            continue
+        if r.get("spy0") is None:
+            _d = str(r.get("date") or "")[:10]
+            _s0 = spy0 if _d == today else _close_on_or_before(_spy_hist, _d)
+            if _s0:
+                r["spy0"], wl_dirty = _s0, True
+        try:
+            age_d = (_dt.date.today() - _dt.date.fromisoformat(str(r.get("date"))[:10])).days
         except Exception:
             continue
         if any(age_d >= days and r.get(f"r_{hz}") is None for hz, days in COHORT_HORIZONS.items()):
@@ -6520,18 +7017,48 @@ def cohort_mark():
                 if r.get("spy0") and spy_curr:
                     r[f"xs_{hz}"] = round(r[f"r_{hz}"] - (spy_curr / r["spy0"] - 1) * 100, 2)
                 filled += 1
+    wl_filled = 0
+    for r in wl_rows:
+        if not isinstance(r, dict) or not isinstance(r.get("price"), (int, float)) or r["price"] <= 0:
+            continue
+        px_now = quotes.get(str(r.get("symbol") or "").upper())
+        if px_now is None:
+            continue
+        try:
+            age_d = (_dt.date.today() - _dt.date.fromisoformat(str(r.get("date"))[:10])).days
+        except Exception:
+            continue
+        for hz, days in COHORT_HORIZONS.items():
+            if age_d >= days and r.get(f"r_{hz}") is None:
+                r[f"px_{hz}"] = px_now
+                r[f"r_{hz}"] = round((px_now / r["price"] - 1) * 100, 2)
+                if r.get("spy0") and spy_curr:
+                    r[f"xs_{hz}"] = round(r[f"r_{hz}"] - (spy_curr / r["spy0"] - 1) * 100, 2)
+                wl_filled += 1
+    if wl_rows and (wl_filled or wl_dirty):
+        try:                                       # atomic rewrite - same rows, return fields added
+            _tmp = _WASHOUT_LEDGER.with_suffix(".jsonl.tmp")
+            _tmp.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in wl_rows)
+                            + "".join(x + "\n" for x in wl_bad), encoding="utf-8")
+            os.replace(_tmp, _WASHOUT_LEDGER)
+        except OSError as _e:
+            print(f"WARN cohort-mark: wash-out ledger rewrite failed ({_e})")
 
     ledger = _cohort_write(ledger)
     print(f"cohort-mark: {new_rows} new row(s) appended | {filled} horizon(s) filled | "
-          f"ledger={len(ledger)} rows -> {COHORT_LEDGER.name}")
-    _cohort_report(ledger)
+          f"ledger={len(ledger)} rows -> {COHORT_LEDGER.name} | wash-out ledger: {len(wl_rows)} row(s), "
+          f"{wl_filled} horizon(s) filled")
+    _cohort_report(ledger, wl_rows)
 
 
-def _cohort_report(ledger):
+def _cohort_report(ledger, washout_rows=None):
     """forward return by conviction bucket / verdict / tier, and the KILL LEDGER (skeptic REFUTED vs
     CONFIRMED forward returns) - the pre-registered accountability check (see the pipeline-v3 plan):
     after ~12 weeks, if conviction 4-5 doesn't beat 1-2 on excess return AND kills don't underperform
-    confirms, the debate layer is not earning its cost."""
+    confirms, the debate layer is not earning its cost.
+    2026-10-06 (four-question grade): per horizon, the derived-schema rows ONLY (grade_schema set) by
+    thesis_state, entry_mode / wait_kind, washout_type, macro_fit and the CRO's letter vs the derived
+    one; plus the wash-out resolutions (_washout_ledger.jsonl) by resolution."""
     def _bucket(c):
         return "4-5" if isinstance(c, (int, float)) and c >= 4 else ("3" if c == 3 else ("1-2" if isinstance(c, (int, float)) else "?"))
 
@@ -6554,6 +7081,27 @@ def _cohort_report(ledger):
         lines.append(f"## {hz} KILL LEDGER - skeptic verdict vs forward excess return")
         for sk in ("CONFIRMED", "CONFIRMED_WITH_CORRECTIONS", "REFUTED"):
             lines.append(f"  {sk}: {_stats([r for r in ledger if r.get('skeptic') == sk], f'xs_{hz}')}")
+        g4 = [r for r in ledger if r.get("grade_schema")]       # never mix letters across the cutover
+        if g4:
+            lines.append(f"## {hz} FOUR-QUESTION GRADE (derived-schema rows only, n={len(g4)})")
+            for lbl, key, vals in (("thesis_state", "thesis_state", ("INTACT", "IMPAIRED", "BROKEN")),
+                                   ("entry_mode", "entry_mode", ("NOW", "AT_LEVEL", "ON_EVENT", "NONE")),
+                                   ("wait_kind", "wait_kind", ("price", "proof", "event")),
+                                   ("washout_type", "washout_type", ("MECHANICAL", "FACTOR", "NONE")),
+                                   ("macro_fit (context only)", "macro_fit",
+                                    ("TAILWIND", "NEUTRAL", "HEADWIND", "UNKNOWN"))):
+                for v in vals:
+                    lines.append(f"  {lbl} {v}: {_stats([r for r in g4 if r.get(key) == v], f'xs_{hz}')}")
+            for v in ("A", "B", "C"):
+                lines.append(f"  derived {v}: {_stats([r for r in g4 if r.get('verdict') == v], f'xs_{hz}')}"
+                             f" | CRO letter {v}: "
+                             f"{_stats([r for r in g4 if str(r.get('verdict_agent_orig') or '')[:1] == v], f'xs_{hz}')}")
+            lines.append(f"  floor/trim re-derived: {_stats([r for r in g4 if r.get('grade_rederived')], f'xs_{hz}')}")
+        if washout_rows:
+            lines.append(f"## {hz} WASH-OUT RESOLUTIONS (_washout_ledger.jsonl, price0 = the trigger price)")
+            for res in sorted({str(r.get("resolution") or "?") for r in washout_rows if isinstance(r, dict)}):
+                _wr = [r for r in washout_rows if isinstance(r, dict) and str(r.get("resolution") or "?") == res]
+                lines.append(f"  {res}: raw {_stats(_wr, f'r_{hz}')} | excess {_stats(_wr, f'xs_{hz}')}")
         lines.append("")
     out = ROOT / "cohort_report.md"
     out.write_text("\n".join(lines), encoding="utf-8")
@@ -6605,6 +7153,163 @@ def cohort_backfill():
 _INTAKE_LANE_TAGS = ("neglect_orphan", "fresh_crash", "quality_discount")   # priority order
 
 
+def grade_derive(res_dir=None, inp_dir=None, dry_run=False, ledger=None):
+    """FOUR-QUESTION GRADE (2026-10-06, Bruno): derive every regime record's A/B/C letter from its typed
+    thesis_state x entry_mode + the quadrant entry floor (_post_common.derive_grade). Runs in the Gates
+    phase AFTER continuity-gate (so a price-driven re-letter is never read as a flip) and once more
+    after skeptic-apply / Revise, before RegimeRead and the Director. Idempotent; writes a record only
+    when it changes. Records without the typed fields (and B13 / ledger re-checks) keep their agent
+    letter. A full record debated THIS run whose prep bundle carried a washout block is resolved as the
+    wash-out debate (no second price-wait once the level was reached; a NOW that fails the floor there
+    is a pass). Review fix P5: every pass also UPSERTS the wash-out ledger row of each such record
+    (full/delta debated this run) from the record as this pass leaves it, so the post-Revise
+    grade-rederive pass leaves the ledger matching the FINAL record. The ledger defaults to
+    _WASHOUT_LEDGER for the real tree, else <res_dir>/../_washout_ledger.jsonl; dry_run writes nothing.
+    Prints ONE summary line (the Gates agent reports it verbatim)."""
+    sys.path.insert(0, str(ROOT))
+    import _post_common as _pc
+    ledger = Path(ledger) if ledger else (_WASHOUT_LEDGER if res_dir is None
+                                          else Path(res_dir).parent / _WASHOUT_LEDGER.name)
+    res_dir = Path(res_dir) if res_dir else RES
+    inp_dir = Path(inp_dir) if inp_dir else INP
+    quad = _pc.current_quadrant(ROOT)
+    floor = _pc.entry_floor_pct(quad)
+    n_letter = {"A": 0, "B": 0, "C": 0}
+    mism, floor_rd, wo_res, coerced, legacy, written, failed = [], [], [], [], 0, 0, []
+    wl_rows = []
+    for f in sorted(res_dir.glob("*.json")):
+        try:
+            rec = json.load(open(f, encoding="utf-8"))
+        except Exception:
+            continue
+        if not isinstance(rec, dict):
+            continue
+        before = json.dumps(rec, sort_keys=True, ensure_ascii=False, default=str)
+        washout, b = None, {}
+        if rec.get("update_mode") in ("full", "delta") and not rec.get("carried"):
+            try:
+                b = json.load(open(inp_dir / f.name, encoding="utf-8")) if (inp_dir / f.name).exists() else {}
+                b = b if isinstance(b, dict) else {}
+            except Exception:
+                b = {}
+            if rec.get("update_mode") == "full" and b.get("debate_run") \
+                    and isinstance(b.get("washout"), dict) and b["washout"]:
+                washout = b["washout"]
+        try:
+            r = _pc.derive_grade(rec, quadrant=quad, washout=washout)
+        except Exception as e:                       # fail-open: the record keeps the letter it has
+            failed.append(f.stem)
+            print(f"WARN grade-derive: {f.stem} failed ({e}) - record left as written")
+            continue
+        if b.get("debate_run") and isinstance(b.get("washout"), dict) and b["washout"]:
+            wl_rows.append(_washout_ledger_row(b, rec))    # P5: from the record as this pass leaves it
+        if r.get("verdict_source") != "derived":
+            legacy += 1
+            continue
+        n_letter[r["verdict"]] = n_letter.get(r["verdict"], 0) + 1
+        if str(r.get("verdict_agent_orig") or "").strip().upper()[:1] not in ("", r["verdict"]):
+            mism.append(f"{f.stem}({str(r['verdict_agent_orig'])[:1]}->{r['verdict']})")
+        if r.get("rederived"):
+            floor_rd.append(f.stem)
+        if r.get("coerced"):
+            coerced.append(f.stem)
+        if r.get("washout_outcome"):
+            wo_res.append(f"{f.stem}:{r['washout_outcome']}")
+        if json.dumps(rec, sort_keys=True, ensure_ascii=False, default=str) != before:
+            written += 1
+            if not dry_run:
+                f.write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
+    n_wl = _washout_ledger_upsert(wl_rows, ledger) if (wl_rows and not dry_run) else 0
+    n = sum(n_letter.values())
+    print(f"grade-derive: {n} derived (A{n_letter['A']}/B{n_letter['B']}/C{n_letter['C']}) | "
+          f"agent!=derived {len(mism)}{' ' + str(mism) if mism else ''} | "
+          f"floor re-derived A->B/C {len(floor_rd)}{' ' + str(floor_rd) if floor_rd else ''} | "
+          f"coerced {len(coerced)} | wash-out resolutions {len(wo_res)}{' ' + str(wo_res) if wo_res else ''} | "
+          f"legacy {legacy} (agent letter kept) | quadrant {quad or 'UNKNOWN'} floor {floor:.0f}% | "
+          f"{written} record(s) {'would be ' if dry_run else ''}rewritten"
+          + (f" | wash-out ledger {n_wl} row(s) upserted" if wl_rows and not dry_run else "")
+          + (f" | FAILED {failed}" if failed else ""))
+    return {"derived": n, "letters": n_letter, "mismatch": mism, "floor_rederived": floor_rd,
+            "coerced": coerced, "washout": wo_res, "legacy": legacy, "written": written, "failed": failed,
+            "ledger_upserted": n_wl}
+
+
+_WASHOUT_LEDGER = ROOT / "_washout_ledger.jsonl"
+
+
+def _washout_ledger_row(b, rec):
+    """One _washout_ledger.jsonl row for a record debated this run whose prep bundle `b` carried a
+    washout block: the trigger (from the bundle) and the resolution (from the record as it stands)."""
+    wo = b.get("washout") if isinstance(b.get("washout"), dict) else {}
+    wr = rec.get("washout_resolution") if isinstance(rec.get("washout_resolution"), dict) else {}
+    trig = (wr.get("trigger_kind") if wr.get("stamped_by") == "grade-derive" and wr.get("trigger_kind")
+            else ("FELL_10PCT" if wo.get("level_source") == "fall_10pct" else "LEVEL_REACHED"))
+    return {"symbol": b.get("symbol") or rec.get("symbol"), "date": b.get("debate_run"),
+            "resolved_date": b.get("debate_run"), "trigger_kind": trig,
+            "level": wo.get("level"), "level_source": wo.get("level_source"),
+            "price": wo.get("price"), "debate_price": wo.get("debate_price"),
+            "fall_pct": wo.get("fall_pct"), "prior_letter": wo.get("prior_letter"),
+            "prior_thesis_state": wo.get("prior_thesis_state"),
+            "prior_entry_mode": wo.get("prior_entry_mode"), "washout_type": wo.get("washout_type"),
+            "new_thesis_state": rec.get("thesis_state"), "new_entry_mode": rec.get("entry_mode"),
+            "new_letter": rec.get("verdict"), "verdict_agent_orig": rec.get("verdict_agent_orig"),
+            "resolution": wr.get("outcome") or ("LEGACY_" + str(rec.get("verdict") or "?")[:1]),
+            "agent_resolved_to": wr.get("resolved_to"),
+            "coerced": bool(set(rec.get("grade_flags") or []) & {
+                "SECOND_PRICE_WAIT_COERCED", "IMPAIRED_ENTRY_COERCED", "IMPAIRED_ENTRY_NO_TEST",
+                "WASHOUT_BELOW_FLOOR", "BROKEN_WITH_ENTRY", "WASHOUT_LEVEL_CAPPED"}),
+            "grade_flags": rec.get("grade_flags") or [], "update_mode": rec.get("update_mode")}
+
+
+def _washout_ledger_upsert(rows, path=None):
+    """Review fix P5 (2026-10-06): UPSERT wash-out ledger rows keyed on (date, symbol). A key already
+    in the ledger is REFRESHED from the new row (resolution, new letter / entry mode, coerced, flags -
+    skeptic-apply, Revise and the grade-rederive pass can all change them after Gates), keeping every
+    field cohort-mark added (spy0, px_* / r_* / xs_* horizon fills); a new key is appended. Unparseable
+    lines are kept verbatim. Atomic rewrite, only when something changed. Returns the rows added or
+    changed; a write failure WARNs and returns 0 (fail-open - the ledger is instrumentation)."""
+    path = Path(path) if path else _WASHOUT_LEDGER
+    existing, bad = [], []
+    try:
+        for _ln in path.read_text(encoding="utf-8").splitlines():
+            if not _ln.strip():
+                continue
+            try:
+                _r = json.loads(_ln)
+            except ValueError:
+                bad.append(_ln)
+                continue
+            (existing.append(_r) if isinstance(_r, dict) else bad.append(_ln))
+    except OSError:
+        pass
+    idx = {(r.get("date"), r.get("symbol")): i for i, r in enumerate(existing)}
+    n = 0
+    for row in rows or []:
+        if not isinstance(row, dict) or not row.get("symbol") or not row.get("date"):
+            continue
+        k = (row.get("date"), row.get("symbol"))
+        if k in idx:
+            merged = dict(existing[idx[k]])
+            merged.update(row)
+            if merged != existing[idx[k]]:
+                existing[idx[k]] = merged
+                n += 1
+        else:
+            idx[k] = len(existing)
+            existing.append(dict(row))
+            n += 1
+    if n:
+        try:
+            _tmp = path.with_suffix(".jsonl.tmp")
+            _tmp.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in existing)
+                            + "".join(x + "\n" for x in bad), encoding="utf-8")
+            os.replace(_tmp, path)
+        except OSError as _e:
+            print(f"WARN wash-out ledger: upsert failed ({_e}) - ledger left as it was")
+            return 0
+    return n
+
+
 def lane_stamp():
     """Deterministic post-debate lane stamp (2026-07-17, intake lanes). Fresh debate records are
     written by the agents against the step-7 schema, which carries no lane field - so after the
@@ -6620,8 +7325,15 @@ def lane_stamp():
                         restamp every carry writes;
       debated_at      - the run date, on full/delta records only (a Sonnet refresh inherits its
                         grades, so it must not reset the age ceiling).
-    Carried records are never touched - their prior stamps ride along in the copied record."""
-    n = n_tx = n_da = 0
+    Carried records are never touched - their prior stamps ride along in the copied record.
+
+    2026-10-06 - also writes one row per WASH-OUT resolution (a full/delta record debated this run
+    whose bundle carried a washout block) to _washout_ledger.jsonl: the quarterly scorecard of "what
+    did resolving the wait earn" (cohort-mark fills forward returns). Review fix P5: an UPSERT on
+    (date, symbol) refreshed from the record as it stands (grade-derive upserts the same rows on every
+    pass, so the post-Revise grade-rederive leaves the FINAL resolution in the ledger)."""
+    n = n_tx = n_da = n_wo = 0
+    _wl_rows = []
     for f in sorted(INP.glob("*.json")):
         try:
             b = json.load(open(f, encoding="utf-8"))
@@ -6651,10 +7363,15 @@ def lane_stamp():
             if rec.get("debated_at") != b["debate_run"]:
                 rec["debated_at"] = b["debate_run"]
                 changed, n_da = True, n_da + 1
+        if b.get("washout") and isinstance(b.get("washout"), dict) and mode in ("full", "delta") \
+                and b.get("debate_run"):
+            _wl_rows.append(_washout_ledger_row(b, rec))
         if changed:
             rp.write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
+    n_wo = _washout_ledger_upsert(_wl_rows) if _wl_rows else 0
     print(f"lane-stamp: {n} results_regime record(s) stamped with an intake lane | "
-          f"{n_tx} transcript_date + {n_da} debated_at stamp(s) for the change-detection gate")
+          f"{n_tx} transcript_date + {n_da} debated_at stamp(s) for the change-detection gate | "
+          f"{n_wo} wash-out resolution(s) ledgered (upsert) -> {_WASHOUT_LEDGER.name}")
 
 
 # ── PLAIN-LANGUAGE CHECK (2026-08-11) ────────────────────────────────────────
@@ -6772,6 +7489,8 @@ if __name__ == "__main__":
         subprocess.run([sys.executable, str(ROOT / "_numeric_gate.py")] + extra, check=True)
     elif mode in ("lane-stamp", "lane_stamp"):
         lane_stamp()
+    elif mode in ("grade-derive", "grade_derive"):
+        grade_derive(dry_run=("--dry-run" in sys.argv))
     elif mode in ("value-revalidate", "value_revalidate"):
         value_revalidate()
     elif mode in ("mining-universe", "mining_universe"):

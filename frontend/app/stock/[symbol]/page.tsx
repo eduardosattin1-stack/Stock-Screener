@@ -2986,8 +2986,147 @@ type DebateHistoryEntry = {
   transcript_source?: string;
   lane?: string;
   carried?: boolean;
+  // Four-question CRO grade (2026-10-06) — every field optional: entries published before it lack
+  // them, and a record without thesis_state/entry_mode keeps the reviewer's own letter.
+  verdict_agent_orig?: string;          // the reviewer's own letter when code derived `verdict`
+  grade_schema?: string;
+  thesis_state?: string;                // INTACT | IMPAIRED | BROKEN
+  thesis_state_plain?: string;
+  thesis_evidence?: string;
+  thesis_test?: { metric?: string; pass_level?: unknown; fail_level?: unknown; resolves_on?: string } | null;
+  entry_mode?: string;                  // NOW | AT_LEVEL | ON_EVENT | NONE
+  entry_plain?: string;
+  entry_level_px?: number | null;
+  entry_event?: string;
+  washout_type?: string;                // MECHANICAL | FACTOR | NONE
+  wait_kind?: string;                   // price | proof | event (a derived B)
+  peer_position?: string;               // cheap_vs_peers | in_line | rich_vs_peers | no_peers
+  macro_fit?: string | { fit?: string } | null;   // context only
+  macro_fit_note?: string;
+  grade_rederived?: { from?: string; to?: string; why?: string; er_pct?: number; floor_pct?: number } | null;
+  entry_floor_pct?: number;
+  washout_resolution?: { outcome?: string; resolved_date?: string; stamped_by?: string; trigger_kind?: string } | null;
+  valuation?: { base_fv_px?: number; bear_px?: number; live_price?: number; downside_floor_px?: number; price_currency?: string } | null;
   [key: string]: any;
 };
+
+// ── FOUR QUESTIONS strip (2026-10-06) — the regime CRO answers four questions in order (thesis,
+//    valuation, entry, fit) and code derives the letter from thesis x entry. Plain words only (no raw
+//    enums on screen); renders nothing for a record that predates the four questions. Fit is context
+//    only: it never moves the thesis, the entry, the letter or the conviction. Display only. ──
+const FQ_GRADE: Record<string, string> = { A: "buy now", B: "wait for a better entry", C: "pass for now" };
+const FQ_WAIT: Record<string, string> = { price: "wait for a better price", proof: "wait for proof", event: "wait for the event" };
+const FQ_SELLER: Record<string, string> = { MECHANICAL: "forced sellers", FACTOR: "sector sell-off" };
+const FQ_PEER: Record<string, string> = { cheap_vs_peers: "cheap against its peers", in_line: "in line with its peers", rich_vs_peers: "rich against its peers", no_peers: "no close peers to compare" };
+const FQ_MACRO: Record<string, string> = { TAILWIND: "the macro backdrop helps", NEUTRAL: "the macro backdrop is neutral", HEADWIND: "the macro backdrop works against it", UNKNOWN: "no macro read" };
+const FQ_OUTCOME: Record<string, string> = { BUY: "buy now", WAIT_FOR_PROOF: "wait for proof", WAIT_FOR_EVENT: "wait for the event", WAIT_FOR_PRICE: "wait for a better price", PASS: "pass for now", PASS_BELOW_FLOOR: "pass for now - still below the entry bar" };
+const fqLetter = (v: unknown) => String(v ?? "").trim().toUpperCase().slice(0, 1);
+const fqGrade = (v: unknown, wk?: unknown) => {
+  const L = fqLetter(v);
+  return L === "B" && typeof wk === "string" && FQ_WAIT[wk] ? FQ_WAIT[wk] : (FQ_GRADE[L] || "");
+};
+const fqNum = (x: unknown): number | null => (typeof x === "number" && isFinite(x) && x > 0 ? x : null);
+// same convention as the seat chip on / (a plain "62.5" under 1000, so it matches the backend's own sentences)
+const fqPx = (x: number) => (x >= 1000 ? Math.round(x).toLocaleString() : String(Math.round(x * 100) / 100));
+const fqLevel = (x: unknown) => (typeof x === "number" && isFinite(x) ? fqPx(x) : String(x ?? "").trim());
+
+function FourQuestionsStrip({ q }: { q: DebateHistoryEntry | null | undefined }) {
+  if (!q || typeof q !== "object") return null;
+  const ts = String(q.thesis_state || "").trim().toUpperCase();
+  const em = String(q.entry_mode || "").trim().toUpperCase();
+  const tsOk = ts === "INTACT" || ts === "IMPAIRED" || ts === "BROKEN";
+  const emOk = em === "NOW" || em === "AT_LEVEL" || em === "ON_EVENT" || em === "NONE";
+  if (!tsOk && !emOk) return null;   // older record: the reviewer's letter alone, nothing to show
+
+  // Q1 thesis
+  const tt = q.thesis_test && typeof q.thesis_test === "object" ? q.thesis_test : null;
+  let thesis = "";
+  if (ts === "INTACT") thesis = "holds";
+  else if (ts === "BROKEN") thesis = "broken";
+  else if (ts === "IMPAIRED") {
+    const metric = tt && tt.metric ? String(tt.metric).trim() : "";
+    const lv = [tt && tt.pass_level != null && fqLevel(tt.pass_level) ? `passes at ${fqLevel(tt.pass_level)}` : "",
+                tt && tt.fail_level != null && fqLevel(tt.fail_level) ? `fails at ${fqLevel(tt.fail_level)}` : ""].filter(Boolean).join(", ");
+    const due = tt && tt.resolves_on ? String(tt.resolves_on).trim() : "";
+    thesis = metric ? `in doubt until ${metric}${lv ? ` (${lv})` : ""} settles it${due ? ` - ${due}` : ""}` : "in doubt";
+  }
+  const thesisColor = ts === "INTACT" ? T.green : ts === "BROKEN" ? T.red : T.amber;
+
+  // Q2 valuation (the typed step-6b block; risk badge as a fallback)
+  const val: NonNullable<DebateHistoryEntry["valuation"]> = (q.valuation && typeof q.valuation === "object" && q.valuation) || {};
+  const base = fqNum(val.base_fv_px), live = fqNum(val.live_price), bear = fqNum(val.bear_px);
+  const ccy = val.price_currency ? ` ${String(val.price_currency)}` : "";
+  const bar = typeof q.entry_floor_pct === "number" ? q.entry_floor_pct : null;
+  let valuation = "";
+  let upPct: number | null = null;
+  if (base && live) {
+    upPct = (base / live - 1) * 100;
+    valuation = `${upPct >= 0 ? "+" : ""}${upPct.toFixed(0)}% to fair value ${fqPx(base)}${ccy} from ${fqPx(live)}`
+      + (bear ? `; bear case ${fqPx(bear)} (${((bear / live - 1) * 100).toFixed(0)}%)` : "");
+  } else if (q.risk_badge && typeof q.risk_badge.upside_pct === "number") {
+    upPct = q.risk_badge.upside_pct;
+    valuation = `${upPct! >= 0 ? "+" : ""}${upPct!.toFixed(0)}% to fair value`;
+  }
+  if (valuation && bar != null) valuation += ` · entry bar ${bar}%`;
+
+  // Q3 entry
+  const lvl = fqNum(q.entry_level_px);
+  const seller = FQ_SELLER[String(q.washout_type || "").trim().toUpperCase()] || "";
+  const ev = String(q.entry_event || "").trim();
+  const entry = em === "NOW" ? "buy now"
+    : em === "AT_LEVEL" ? `${lvl ? `near ${fqPx(lvl)}${ccy}` : "at a better price"}${seller ? ` (${seller})` : ""}`
+    : em === "ON_EVENT" ? `once ${ev || "the named event happens"}`
+    : em === "NONE" ? "none" : "";
+  const rd = q.grade_rederived && typeof q.grade_rederived === "object" ? q.grade_rederived : null;
+  const wr = q.washout_resolution && typeof q.washout_resolution === "object" && q.washout_resolution.stamped_by === "grade-derive" ? q.washout_resolution : null;
+
+  // Q4 fit — context only
+  const pp = FQ_PEER[String(q.peer_position || "").trim()] || "";
+  const mfTok = String((q.macro_fit && typeof q.macro_fit === "object" ? q.macro_fit.fit : q.macro_fit) || "").trim().toUpperCase();
+  const mf = FQ_MACRO[mfTok] || "";
+  const fit = [pp, mf].filter(Boolean).join("; ");
+
+  // the letter (derived) and the reviewer's own when it differs
+  const grade = fqGrade(q.verdict, q.wait_kind);
+  const own = fqLetter(q.verdict_agent_orig);
+  const ownDiffers = !!own && own !== fqLetter(q.verdict) && !!FQ_GRADE[own];
+  const gL = fqLetter(q.verdict);
+  const gc = gL === "A" ? T.green : gL === "B" ? T.amber : T.textLight;
+
+  const row = (n: string, label: string, body: React.ReactNode, color?: string, sub?: string) => (
+    <div style={{ display: "flex", gap: 8, alignItems: "baseline", fontSize: 11, fontFamily: T.mono, lineHeight: 1.5 }}>
+      <span style={{ color: T.textLight, minWidth: 92, flexShrink: 0 }}>{n} · {label}</span>
+      <span style={{ minWidth: 0 }}>
+        <span style={{ color: color || T.text, fontWeight: 600 }}>{body}</span>
+        {sub ? <span style={{ display: "block", fontSize: 10, color: T.textMuted, fontWeight: 400 }}>{sub}</span> : null}
+      </span>
+    </div>
+  );
+
+  return (
+    <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${T.divider}` }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
+        <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textMuted, textTransform: "uppercase", letterSpacing: "0.05em" }}>Four questions</span>
+        {grade && (
+          <span title={q.grade_schema ? "The grade follows from the thesis and entry answers below; it is not set by hand." : "The reviewer's own grade on this debate."}
+                style={{ fontSize: 10, fontFamily: T.mono, fontWeight: 700, padding: "2px 8px", borderRadius: 4, color: gc, background: `color-mix(in srgb, ${gc} 10%, transparent)`, border: `1px solid color-mix(in srgb, ${gc} 35%, transparent)`, cursor: "help" }}>
+            {grade}
+          </span>
+        )}
+        {ownDiffers && <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textLight }}>the debate said {FQ_GRADE[own]}</span>}
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        {tsOk && row("1", "Thesis", thesis, thesisColor, q.thesis_evidence ? String(q.thesis_evidence) : undefined)}
+        {valuation && row("2", "Valuation", valuation, upPct != null && upPct < 0 ? T.red : T.text)}
+        {emOk && row("3", "Entry", entry, em === "NOW" ? T.green : em === "NONE" ? T.textLight : T.amber,
+          [rd && rd.from === "A" && rd.why ? `Graded buy by the debate, but ${String(rd.why)}.` : "",
+           wr && wr.outcome && FQ_OUTCOME[String(wr.outcome)] ? `The price it was waiting for arrived${wr.resolved_date ? ` (${wr.resolved_date})` : ""}: now ${FQ_OUTCOME[String(wr.outcome)]}.` : ""]
+            .filter(Boolean).join(" ") || undefined)}
+        {fit && row("4", "Fit", fit, T.textMuted, `Context only - it never moves the grade.${q.macro_fit_note ? ` ${String(q.macro_fit_note)}` : ""}`)}
+      </div>
+    </div>
+  );
+}
 
 function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setHistIdx }: { debateData: any; debateHistory?: DebateHistoryEntry[]; histIdx?: number; setHistIdx?: (i: number) => void }) {
   if (!debateData) return null;
@@ -2998,6 +3137,10 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
   const conviction = debateData.conviction ?? null;
   const valConv = debateData.value_conviction ?? null;
   const sourceMethodologies = debateData.source_methodologies || [];
+  // The four-question read time-travels with the dropdown: read the SELECTED history entry itself —
+  // debateData spreads it over the current basket pick, so a field an older entry lacks would
+  // otherwise show today's answer. No history -> the pick's own overlay fields.
+  const fourQ: DebateHistoryEntry = debateData._fromHistory ? (debateHistory[histIdx] || debateHistory[0] || debateData) : debateData;
 
   // Colors & Header configurations
   let bannerBg = "rgba(139, 92, 246, 0.05)";
@@ -3054,6 +3197,9 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
                 : "The debate's own model of the adverse case, recomputed by the numeric gate at a verified price — a modeled floor, not a guarantee; the stock can fall below it."}
             </p>
           </div>);})()}
+
+        {/* ── Four questions (regime CRO, 2026-10-06): thesis · valuation · entry · fit; nothing for older records ── */}
+        <FourQuestionsStrip q={fourQ} />
 
         {/* ── Skeptic kill-tier (general debate names) — scale/catalyst names already show it in their strip ── */}
         {debateData.skeptic_verdict && !debateData.scale && !debateData.catalyst && (
@@ -3127,8 +3273,14 @@ function SpeculairDebateCard({ debateData, debateHistory = [], histIdx = 0, setH
         )}
 
         {/* ── Entry price & details if Apex/Watchlist ── */}
-        {(debateData.entry_price > 0 || sourceMethodologies.length > 0) && (
+        {(debateData.entry_price > 0 || debateData.entry_pending || sourceMethodologies.length > 0) && (
           <div style={{ marginTop: 16, paddingTop: 16, borderTop: `1px solid ${T.divider}`, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+            {/* seated but not bought yet: the paper tracker holds the order on its entry gate (no entry price, no P&L) */}
+            {debateData.entry_pending && !(debateData.entry_price > 0) && (
+              <div style={{ fontSize: 11, fontFamily: T.mono, color: T.textLight }}>
+                Entry: <strong style={{ color: T.textMuted }}>not bought yet</strong>{debateData.pending_since ? ` · pending since ${debateData.pending_since}` : ""} · waits on its entry gate, outside the track record until it fills
+              </div>
+            )}
             {debateData.entry_price > 0 && (
               <div style={{ fontSize: 11, fontFamily: T.mono, color: T.textLight }}>
                 Entry Date: <strong style={{ color: T.text }}>{debateData.entry_date}</strong> · Entry Price: <strong style={{ color: T.green }}>${debateData.entry_price.toFixed(2)}</strong>

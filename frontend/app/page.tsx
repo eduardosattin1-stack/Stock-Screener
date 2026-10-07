@@ -1462,6 +1462,51 @@ const annualizedPct = (t: any): string | null => {
   return isFinite(ann) ? `${ann >= 0 ? "+" : ""}${ann.toFixed(1)}%` : null;
 };
 
+// Four-question debate grade (2026-10-06) in plain words — mirrors backend _post_common.grade_plain.
+// A derived B says WHAT it waits for (wait_kind); a B from an older record (no wait_kind) keeps the
+// generic "wait for a better entry". Empty for an unknown letter (never a guessed caption).
+const GRADE_PLAIN: Record<string, string> = { A: "buy now", B: "wait for a better entry", C: "pass for now" };
+const WAIT_PLAIN: Record<string, string> = { price: "wait for a better price", proof: "wait for proof", event: "wait for the event" };
+const gradePlain = (v?: unknown, waitKind?: unknown): string => {
+  const L = String(v ?? "").trim().toUpperCase().slice(0, 1);
+  const wk = typeof waitKind === "string" ? waitKind : "";
+  if (L === "B" && WAIT_PLAIN[wk]) return WAIT_PLAIN[wk];
+  return GRADE_PLAIN[L] || "";
+};
+// Tooltip for the "<letter> · <conviction>/5" debate chip. A four-question record (grade_schema set)
+// has a letter DERIVED by code from the thesis and entry answers, so the reviewer's own letter is
+// named when it differs; an older record keeps the letter the reviewer wrote.
+const gradeChipTip = (pick: { verdict?: unknown; wait_kind?: unknown; verdict_agent_orig?: unknown; grade_schema?: unknown } | null | undefined): string => {
+  const gp = gradePlain(pick?.verdict, pick?.wait_kind);
+  const own = String(pick?.verdict_agent_orig ?? "").trim().toUpperCase().slice(0, 1);
+  const cur = String(pick?.verdict ?? "").trim().toUpperCase().slice(0, 1);
+  const how = pick?.grade_schema
+    ? " The letter follows from two answers in the debate: does the thesis hold, and is there an entry (buy now, wait for a better price, wait for proof or an event, or pass)."
+    + (own && own !== cur && gradePlain(own) ? ` The debate itself said ${gradePlain(own)}.` : "")
+    : " Set by the reviewer on an older debate.";
+  return `Debate grade${gp ? `: ${gp}` : ""}.${how} The second number is the debate's conviction, out of 5.`;
+};
+
+// A PENDING seat (seated by the Director, not bought yet — the paper tracker holds the order on
+// its gate: the next close, a price level, an event, or no buyable entry). Plain tooltip; every
+// field optional (main's tracker writer publishes none of them).
+type PendingSeat = {
+  pending_since?: unknown;
+  pending_gate?: { kind?: unknown; level_px?: unknown; event?: unknown } | null;
+  washout_hit?: { date?: unknown } | null;
+};
+const pendingEntryTip = (pick: PendingSeat | null | undefined): string => {
+  const since = pick && pick.pending_since ? ` since ${pick.pending_since}` : "";
+  const g: NonNullable<PendingSeat["pending_gate"]> = (pick && typeof pick.pending_gate === "object" && pick.pending_gate) || {};
+  const kind = String(g.kind || "");
+  let how = "it fills at the first close after the decision";
+  if (kind === "price") how = `it fills at the first close at or below its add level${typeof g.level_px === "number" ? ` (${g.level_px})` : ""}`;
+  else if (kind === "event") how = `it waits for ${g.event ? String(g.event) : "the named event"} and is bought only after a later debate confirms it`;
+  else if (kind === "blocked") how = "there is no buyable entry yet, so it is bought only if a later debate names one";
+  const wo = pick && pick.washout_hit && pick.washout_hit.date ? ` The price fell 10% below the decision price on ${pick.washout_hit.date}.` : "";
+  return `Not bought yet - pending${since}; ${how}. It stays outside the track record until it fills.${wo}`;
+};
+
 
 
 const getBasketReturn = (name: string, cagr: number) => {
@@ -1824,8 +1869,16 @@ export default function Dashboard(){
   // Since 2026-09-08 the post layer reconciles it to the seat's own debate grade (a "wait" seat is held,
   // not a buy at today's price) and carries the reviewer's named add level / event — shown inline so a
   // "keep" never reads as "buy here"; the tooltip says who set the posture.
+  // Four-question grade (2026-10-06): a typed wait names WHAT it waits for ("wait for a better price · <level>",
+  // "wait for proof · <event>", "wait for the event · <event>"); a PENDING seat (seated, not bought yet) is
+  // prefixed "pending"; a debate A the post layer re-graded (discount under the entry bar / price over the
+  // trim line) says so in the tooltip. Every field optional — older payloads render exactly as before.
   const entryPostureChip = (posture?: string, pick?: any) => {
-    if (!posture) return null;
+    const pending = !!(pick && pick.entry_pending);
+    const pendingChip = (
+      <span title={pick ? pendingEntryTip(pick) : ""} style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: "var(--bg-elevated)", color: "var(--text-light)", border: "1px solid var(--border)", fontFamily: "var(--font-mono)", fontWeight: 700, cursor: "help" }}>pending</span>
+    );
+    if (!posture) return pending ? pendingChip : null;
     const key = String(posture).split(":")[0].trim();
     const detail = String(posture).includes(":") ? String(posture).split(":").slice(1).join(":").trim() : "";
     const map: Record<string, { label: string; color: string; bg: string; tip: string }> = {
@@ -1835,16 +1888,44 @@ export default function Dashboard(){
       wait_for_weakness: { label: "wait for weakness", color: "var(--red)", bg: "rgba(239,68,68,0.12)", tip: "Add only into a flush / de-gross — cyclical tail or knife-catch near the 52-week low." },
     };
     const m = map[key];
-    if (!m) return null;
+    if (!m) return pending ? pendingChip : null;
     const addPx: number | null = pick && typeof pick.cro_add_px === "number" ? pick.cro_add_px : null;
     const addEv: string = pick && pick.cro_add_event ? String(pick.cro_add_event) : "";
     const src: string = pick ? String(pick.entry_posture_source || "") : "";
     const grade: string = pick && pick.cro_verdict_plain ? String(pick.cro_verdict_plain) : "";
+    const fmtLvl = (v: number) => (v >= 1000 ? Math.round(v).toLocaleString() : String(v));
+    // typed wait (the posture IS a wait - a dated Director override keeps its own enter-now label)
+    const wk: string = pick && typeof pick.wait_kind === "string" ? pick.wait_kind : "";
+    const isWait = key === "wait_for_weakness" || key === "on_confirmation";
+    const evTxt = addEv || detail;
+    const shortEv = evTxt.length > 42 ? `${evTxt.slice(0, 40).trimEnd()}…` : evTxt;
     let label = m.label;
-    if (addPx != null) label += ` · adds at ${addPx >= 1000 ? Math.round(addPx).toLocaleString() : addPx}`;
-    else if (addEv && key !== "on_confirmation") label += ` · ${addEv}`;
     let tip = m.tip;
+    if (isWait && wk === "price") {
+      label = "wait for a better price" + (addPx != null ? ` · ${fmtLvl(addPx)}` : "");
+      tip = "Wait for a better price: the debate buys only near the level it names.";
+    } else if (isWait && (wk === "proof" || wk === "event")) {
+      label = (wk === "proof" ? "wait for proof" : "wait for the event") + (shortEv ? ` · ${shortEv}` : "");
+      tip = wk === "proof"
+        ? "Wait for proof: the thesis is in doubt, so the debate buys only once its test settles it" + (evTxt ? ` (${evTxt}).` : ".")
+        : "Wait for the event: the debate buys only after it" + (evTxt ? ` (${evTxt}).` : ".");
+    } else if (addPx != null) label += ` · adds at ${fmtLvl(addPx)}`;
+    else if (addEv && key !== "on_confirmation") label += ` · ${addEv}`;
+    if (pending) {
+      label = `pending · ${label}`;
+      tip = `${pendingEntryTip(pick)} ${tip}`;
+    }
     if (grade) tip += ` Debate grade: ${grade}.`;
+    // a debate A re-graded by the post layer (record-level grade-derive or the live A-seat check)
+    const rd = pick && pick.grade_rederived && typeof pick.grade_rederived === "object" ? pick.grade_rederived : null;
+    if (pick && (pick.cro_verdict_record === "A" || (rd && rd.from === "A"))) {
+      const er = rd && typeof rd.er_pct === "number" ? rd.er_pct : null;
+      const fl = rd && typeof rd.floor_pct === "number" ? rd.floor_pct : null;
+      tip += " Graded buy by the debate, but the discount is below the entry bar or the price is above the trim line"
+        + (er != null && fl != null ? ` (expected return ${er}% against a ${fl}% bar${rd.trim_line_hit ? "; price above the trim line" : ""})`
+          : rd && rd.trim_line_hit ? " (price above the trim line)" : "")
+        + " - not a buy here.";
+    }
     if (pick && pick.cro_wait_quote) tip += ` In the reviewer's words: "${String(pick.cro_wait_quote)}"`;
     if (addPx != null || addEv) tip += ` Reviewer's add level: ${[addPx != null ? String(addPx) : "", addEv].filter(Boolean).join(" / ")}.`;
     if (src === "cro-reconciled") tip += ` Reviewer's posture — the Director tagged "${String(pick.entry_posture_director_orig || "").split(":")[0].replace(/_/g, " ")}" with no dated reason; reconciled by the post layer.`;
@@ -2016,7 +2097,9 @@ export default function Dashboard(){
       <>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <span>Entry:</span>
-          <span>{fmtPrice(ep, cur)}{hasEntry && pick.entry_date ? ` (${pick.entry_date})` : ""}</span>
+          {pick.entry_pending
+            ? <span title={pendingEntryTip(pick)} style={{ color: "var(--text-muted)", cursor: "help" }}>not bought yet{pick.pending_since ? ` (pending since ${pick.pending_since})` : ""}</span>
+            : <span>{fmtPrice(ep, cur)}{hasEntry && pick.entry_date ? ` (${pick.entry_date})` : ""}</span>}
         </div>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <span>Current:</span>
@@ -4679,7 +4762,7 @@ export default function Dashboard(){
                           return <svg width={_W} height={_H}><polyline points={_pts} fill="none" stroke={_up ? "var(--green)" : "var(--red)"} strokeWidth={1.5} /></svg>;
                         })()}
                         <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
-                          NAV {at.nav} · {at.n_open} held · {at.n_closed} closed{at.win_rate != null ? ` · ${at.win_rate}% win` : ""}
+                          NAV {at.nav} · {at.n_open} held{at.n_pending ? ` · ${at.n_pending} pending` : ""} · {at.n_closed} closed{at.win_rate != null ? ` · ${at.win_rate}% win` : ""}
                           <div style={{ fontSize: 8, color: "var(--text-light)", marginTop: 2 }}>{weighted ? `Director-weighted NAV (${basis})` : "equal-weight NAV"} · live-forward, not back-filled</div>
                         </div>
                       </div>
@@ -4692,6 +4775,9 @@ export default function Dashboard(){
                         const currPrice = stock ? stock.price : 0;
                         const entryPrice = pick.entry_price || 0;
                         const perf = entryPrice > 0 ? ((currPrice / entryPrice) - 1) * 100 : 0;
+                        // seated but not bought yet (paper tracker holds it on its entry gate): no entry
+                        // price, so no return — a muted "pending", never a green +0.0%
+                        const pending = !!pick.entry_pending;
                         const _basis = entryPrice > 0 ? entryPrice : currPrice;
                         const apexUpside = typeof pick.expected_return_pct === "number" ? pick.expected_return_pct
                           : (typeof pick.target_px === "number" && pick.target_px > 0 && _basis > 0 ? (pick.target_px / _basis - 1) * 100 : null);
@@ -4715,9 +4801,15 @@ export default function Dashboard(){
                                 {entryPostureChip(pick.entry_posture, pick)}
                                 {goalTag(pick)}
                               </div>
-                              <span style={{ fontSize: 13, fontWeight: 700, color: perf >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
-                                {perf >= 0 ? "+" : ""}{perf.toFixed(1)}%
-                              </span>
+                              {pending ? (
+                                <span title={pendingEntryTip(pick)} style={{ fontSize: 11, fontWeight: 600, color: "var(--text-light)", fontFamily: "var(--font-mono)", cursor: "help" }}>
+                                  pending
+                                </span>
+                              ) : (
+                                <span style={{ fontSize: 13, fontWeight: 700, color: perf >= 0 ? "var(--green)" : "var(--red)", fontFamily: "var(--font-mono)" }}>
+                                  {perf >= 0 ? "+" : ""}{perf.toFixed(1)}%
+                                </span>
+                              )}
                             </div>
                             {wheelLine(pick.wheel)}
                             {(pick.risk_badge?.kind || pick.skeptic_verdict || pick.moat || pick.moat_erosion === "CAP" || pick.secular_theme) && (
@@ -4809,7 +4901,7 @@ export default function Dashboard(){
                           return <svg width={_W} height={_H}><polyline points={_pts} fill="none" stroke={_up ? "var(--green)" : "var(--red)"} strokeWidth={1.5} /></svg>;
                         })()}
                         <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-mono)", lineHeight: 1.5 }}>
-                          NAV {vt.nav} · {vt.n_open} held · {vt.n_closed} closed{vt.win_rate != null ? ` · ${vt.win_rate}% win` : ""}
+                          NAV {vt.nav} · {vt.n_open} held{vt.n_pending ? ` · ${vt.n_pending} pending` : ""} · {vt.n_closed} closed{vt.win_rate != null ? ` · ${vt.win_rate}% win` : ""}
                           <div style={{ fontSize: 8, color: "var(--text-light)", marginTop: 2 }}>{weighted ? "Director-weighted NAV (size_units) · live-forward, not back-filled" : "equal-weight NAV · live-forward, not back-filled"}</div>
                         </div>
                       </div>
@@ -5280,7 +5372,10 @@ export default function Dashboard(){
                                       picks without a debate show "not debated" instead of an empty chip. */}
                                   {pick.verdict ? (
                                     <span style={{ display: "inline-flex", gap: 4, alignItems: "center" }}>
-                                      <span title="Debate grade (regime/catalyst-tilted): the CRO down-rates FIRED/SOFT catalysts — 4+ needs a dated driver" style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, background: pick.conviction >= 4 ? "rgba(20,184,122,0.15)" : "rgba(255,255,255,0.05)", color: pick.conviction >= 4 ? "var(--green)" : "var(--text-muted)", fontFamily: "var(--font-mono)", cursor: "help" }}>
+                                      {/* Four-question grade (2026-10-06): on a four-question record the letter is derived
+                                          from two of the debate's answers (does the thesis hold, is there an entry); an
+                                          older record keeps the reviewer's own letter. The tooltip says which. */}
+                                      <span title={gradeChipTip(pick)} style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, background: pick.conviction >= 4 ? "rgba(20,184,122,0.15)" : "rgba(255,255,255,0.05)", color: pick.conviction >= 4 ? "var(--green)" : "var(--text-muted)", fontFamily: "var(--font-mono)", cursor: "help" }}>
                                         {pick.verdict} · {pick.conviction}/5
                                       </span>
                                       {pick.value_conviction != null && (
