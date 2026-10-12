@@ -6504,11 +6504,17 @@ _B13_BLOCKING = {"QUARANTINED", "NO_UPSIDE", "TRADING_THROUGH_TERMS", "FLOOR_GE_
 _B13_SS_METHODS = {"spread", "recovery", "sop"}  # non-binary equity special-sits (NOT binary_prob)
 
 
-def _b13_universe():
+def _b13_universe(include_closed: bool = True):
     """FULL B13 book for catalyst coverage = the candidate funnel UNION the held tracker SEATS.
     Held seats that entered from an EARLIER funnel snapshot (e.g. FIG/GDOT/WVE) are absent from the
     current _basket13_candidates.json, so debating only the candidates skipped them - that gap is why
-    a held seat could show no debate on its stock page. (ROOT=backend/_opus_debate; both files in backend/.)"""
+    a held seat could show no debate on its stock page. (ROOT=backend/_opus_debate; both files in backend/.)
+
+    include_closed=False (catalyst-prep, 2026-10-12, Bruno-agreed): skip tracker rows that already
+    carry a `resolution` - closed-out seats kept "OPEN" only for post-exit price tracking (AQST, AMLX,
+    AAUC, AVIR, FIP on 2026-10-12) were costing a full debate + skeptic every week for a position the
+    book no longer holds. Same "has a resolution = not held" rule _basket13_candidates.py uses. The
+    default (True) keeps prep's B13 tier-exclusion set exactly as it was."""
     out, seen = [], set()
     f = ROOT.parent / "_basket13_candidates.json"
     if f.exists():
@@ -6522,6 +6528,8 @@ def _b13_universe():
         for e in (trk.get("entries") or []):
             s = e.get("symbol")
             if s and s not in seen and (e.get("status") or "OPEN") != "RESOLVED":
+                if not include_closed and e.get("resolution"):
+                    continue
                 e.setdefault("tier", "ACTIVE")
                 out.append(e); seen.add(s)
     return out
@@ -6547,7 +6555,7 @@ def catalyst_prep():
     """Regenerate _catalyst_weekly.mjs over the non-binary B13 equity special-sits (reuse the prompts
     in _catalyst_debate.mjs, swap only the NAMES table). Prints WORKFLOW_SCRIPT= for the SKILL."""
     import re
-    uni = _b13_universe()   # FULL book (candidates + held seats) - debate ALL for stock-page coverage
+    uni = _b13_universe(include_closed=False)   # candidates + seats still HELD (closed-out seats skipped)
     if not uni:
         print("catalyst-prep: no B13 names (funnel + tracker) - skipping.")
         return
@@ -6565,7 +6573,9 @@ def catalyst_prep():
     new = re.sub(r"const NAMES = \[.*?\n\]", lambda _m: names_js, tmpl, count=1, flags=re.DOTALL)
     out = ROOT / "_catalyst_weekly.mjs"
     out.write_text(new, encoding="utf-8")
-    print(f"catalyst-prep: {len(uni)} B13 names (full book: candidates + held seats) -> {[c['symbol'] for c in uni]}")
+    _closed = sorted({c.get("symbol") for c in _b13_universe()} - {c.get("symbol") for c in uni})
+    print(f"catalyst-prep: {len(uni)} B13 names (candidates + held seats) -> {[c['symbol'] for c in uni]}"
+          + (f" | skipped {len(_closed)} closed-out seat(s) still post-tracked: {_closed}" if _closed else ""))
     print("WORKFLOW_SCRIPT=" + str(out))
 
 

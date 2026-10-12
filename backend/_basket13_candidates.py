@@ -157,7 +157,7 @@ def main(exclude_held=False):
         print(f"WARN: {os.path.basename(SRC)} is {src_age_days} days old "
               f"(generated={src_generated}) — sweep missed or rolled back; trading the prior board")
     window_days = round(MILESTONE_WINDOW_MONTHS * 30.4)
-    entries, staging, excluded, prose_rescued = [], [], [], []
+    entries, staging, excluded, prose_rescued, redated = [], [], [], [], []
 
     # "holds run to resolution": drop names already in the book (any UNRESOLVED entry) so a
     # re-debate only considers names NOT currently held/pending.
@@ -202,6 +202,21 @@ def main(exclude_held=False):
         # STAGING: WATCH, soft-dated forced-seller/spin or H-edge, unblocked
         if tier == "WATCH" and not blocked and (
                 edge == "H" or (lane_pri <= STAGING_LANE_PRIORITY and edge in EDGE_OK)):
+            # 2026-10-12 (Bruno-agreed): a staged name whose structured date has PASSED is
+            # re-dated from the board prose (its next FUTURE catalyst date) or dropped and
+            # reported. Staging never looked at the date, so EYPT sat here 73 days after its
+            # 2026-07-31 readout, feeding the pre-event date, target and floor to the debate.
+            if days is not None and days < 0:
+                iso2, days2, _snip = _prose_milestone(r, datetime.date.today())
+                if iso2 and days2 is not None and days2 >= 0:
+                    d = rec(True)
+                    d.update({"dated_milestone": iso2, "days_to_milestone": days2,
+                              "redated_from": iso, "milestone_source": "prose"})
+                    staging.append(d)
+                    redated.append((r.get("symbol"), iso, iso2, days2))
+                else:
+                    excluded.append((r.get("symbol"), iso, days, "staging-past"))
+                continue
             staging.append(rec(True))
 
     # tighten if oversized: keep only H-edge ACTIVE entries (+ all staging)
@@ -215,6 +230,10 @@ def main(exclude_held=False):
            "source_generated": src_generated, "source_age_days": src_age_days,
            "count": len(cands), "entry_count": len(entries), "staging_count": len(staging),
            "milestone_window_months": MILESTONE_WINDOW_MONTHS, "tightened": tightened,
+           # audit trail for the staging date rule (2026-10-12)
+           "staging_redated": [{"symbol": s, "from": a, "to": b, "days": n} for s, a, b, n in redated],
+           "staging_dropped_past": [{"symbol": s, "date": iso, "days": d}
+                                    for s, iso, d, rr in excluded if rr == "staging-past"],
            "candidates": cands}
     json.dump(out, open(OUT, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
 
@@ -229,6 +248,12 @@ def main(exclude_held=False):
                  for s, iso, d, rr in excluded if rr == reason]
         if names:
             print(f"  excluded ACTIVE [{reason}]: {', '.join(names)}")
+    past_w = [f"{s}({iso},{d}d)" for s, iso, d, rr in excluded if rr == "staging-past"]
+    if past_w:
+        print(f"  dropped WATCH [date passed, no future date in the prose]: {', '.join(past_w)}")
+    if redated:
+        print("  staging re-dated from prose: "
+              + ", ".join(f"{s}({a} -> {b}, {n}d)" for s, a, b, n in redated))
     if prose_rescued:
         print(f"  prose-date rescued ({len(prose_rescued)} — dated via bloom_catalysts/analysis, "
               f"not expected_close_date): "
