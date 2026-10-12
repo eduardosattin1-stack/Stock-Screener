@@ -72,10 +72,33 @@ full wiring before touching any of it.
   master dial has an FMP fallback (nominal 30y − `inflationRate`, which is market-implied
   expected inflation ~2.3%, NOT realized CPI).
 
+### Quadrant inputs — repaired 2026-10-12 (do not regress)
+
+- From the day it shipped (2026-07-16) to 2026-10-12 the quadrant ran on a **0.5 CPI no-data
+  default + a hardcoded Q4-2025 GDP seed** and printed GOLDILOCKS every week (true tape: CPI
+  +3.35% y/y, accelerating). Root cause: FMP `economic-indicators` ignores from/to WINDOWS
+  (0-1 rows) but answers POINT queries (from == to). `_fetch_monthly_series` now backfills by
+  point query (v7 + v8 + historical). Never re-add hardcoded macro seeds.
+- Quadrant inflation axis = CPI y/y level + 6m-annualized trend (`cpi_measures`, matched by
+  DATE — Oct-2025 CPI was never published). Growth axis = REAL GDP, annualized, live paths only
+  (historical/backtest keep nominal QoQ). `quadrant_inputs` carries provenance; when it is not
+  ok the quadrant publishes UNKNOWN (fail-open) and `_write_macro_regime` FAIL-LOUDs; the
+  briefing shows "QUADRANT · INPUTS STALE" instead of a label-derived guess.
+  Mid-week repair without ticking the cycle: `weekly_opus_refresh.py macro-refresh`.
+- `debt_cycle.advance_state` is a no-op within 4 days of the last tick (same weekly publish):
+  a re-prep after a paused run can no longer add a week or a second hysteresis tick.
+- `inflation_resilience` (`backend/inflation_resilience.py`, Bruno-approved 2026-10-12):
+  deterministic per-name label from the 2021-22 gross-margin path (resilient/mixed/exposed/
+  unknown) -> `_opus_debate/inflation_resilience.json`, read by macro_fit + the Director as a
+  JUDGEMENT input only (FORK 2/B: no weight, no gate, no conviction; unknown never a penalty).
+  Thresholds are priors — score them before giving the label teeth.
+
 ## Other standing notes
 
 - `apply_macro_tilt` / `regime_composite_floor` in `macro_regime.py` are imported but
   never called (known dead wiring — see MACRO_REGIME_DIRECTOR_LOGIC.md §9). Decide
   wire-or-delete before adding anything near them.
 - Tests: `python backend/tests/test_debt_cycle.py` (fixture = the 2026-07 tape;
-  must read DISCIPLINE) and `python backend/_opus_debate/test_regime_post.py`.
+  must read DISCIPLINE), `python backend/tests/test_macro_inputs.py` (fixture = the
+  2026-10-12 tape; must read REFLATION) and `python backend/_opus_debate/test_regime_post.py`.
+  On Windows set `PYTHONIOENCODING=utf-8` or the arrow glyphs crash the cp1252 console.

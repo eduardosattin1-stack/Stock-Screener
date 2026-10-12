@@ -175,7 +175,7 @@ def write_director_ledger(book, prior_basket_path, tracking_path):
 RETURN_GOAL = {"low_pct": 30, "high_pct": 50, "horizon_months": 12}
 
 
-def _write_macro_regime():
+def _write_macro_regime(advance_cycle: bool = True):
     """Fetch the live macro classifier (macro_regime.py - the V7 path: it is the only one
     that emits regime_detail + the growth x inflation quadrant; _compute_regime_v8 emits
     neither, so switching this call to v8 as-is would silently strip the fields the Apex
@@ -183,7 +183,12 @@ def _write_macro_regime():
     Directors read it, so their risk_stance is anchored to a structured macro read.
     Self-heals via fetch_macro_regime's GCS last-known-good cache; neutral fallback on
     hard failure. Also carries the Dalio debt-cycle phase (backend/debt_cycle.py) - the
-    ONLY call site that advances the phase state machine (advance=True)."""
+    ONLY call site that advances the phase state machine (advance=True).
+
+    advance_cycle=False (the `macro-refresh` verb): re-read the macro dials WITHOUT
+    touching the debt-cycle state machine - the existing snapshot's debt_cycle block is
+    kept verbatim (no FRED re-fetch, no tick). For mid-week maintenance like 2026-10-12,
+    when the quadrant inputs were repaired after prep had already ticked the cycle."""
     out = ROOT / "macro_regime.json"
     from datetime import datetime as _dt
     try:
@@ -208,6 +213,10 @@ def _write_macro_regime():
             # the Director's quadrant playbook + the regime-read agent both key off this.
             "quadrant": r.get("quadrant", "UNKNOWN"),
             "quadrant_basis": r.get("quadrant_basis", ""),
+            # provenance of the two quadrant axes (source / newest point / age / measured
+            # y/y + 6m + real-growth numbers) - 2026-10-12, after the quadrant was found to
+            # have run on a 0.5 CPI default + a hardcoded GDP seed since 2026-07-16.
+            "quadrant_inputs": r.get("quadrant_inputs") or {},
             "features": dict(feat),
             "version": r.get("version", ""),
             "asof": _dt.now().strftime("%Y-%m-%d"),
@@ -216,18 +225,37 @@ def _write_macro_regime():
         print(f"WARN: macro_regime fetch failed ({e}) - writing NEUTRAL fallback")
         doc = {"regime": "NEUTRAL", "score": 0.5, "regime_detail": {}, "features": {},
                "quadrant": "UNKNOWN", "quadrant_basis": "",
+               "quadrant_inputs": {"ok": False, "problems": [f"macro fetch failed: {e}"]},
                "asof": _dt.now().strftime("%Y-%m-%d"), "fallback": True}
+    # FAIL-LOUD on an untrustworthy quadrant - the alert that was missing for ~3 months.
+    _qi = doc.get("quadrant_inputs") or {}
+    if doc.get("quadrant") in (None, "", "UNKNOWN") or not _qi.get("ok", False):
+        print("FAIL-LOUD WARN: growth x inflation quadrant is NOT a live read - publishing "
+              f"{doc.get('quadrant') or 'UNKNOWN'} (loosest entry floor, no quadrant playbook). "
+              f"Problems: {'; '.join(_qi.get('problems') or ['no input provenance'])}. "
+              "Fix the CPI/real-GDP feed before the Director runs.")
     # -- Dalio debt-cycle phase (third axis; 2026-07-27). advance=True here and ONLY
     # here: the weekly publish is the state machine's clock tick. Fail-open: a hard
     # failure publishes UNKNOWN (loosest caps, no stance modifier) but the pipeline
     # must SAY so - the smoke test (tests/test_debt_cycle.py) asserts non-UNKNOWN.
-    try:
-        import debt_cycle as _dc
-        from screener_v6 import fmp as _fmp
-        cyc = _dc.fetch_debt_cycle(_fmp, advance=True)
-    except Exception as e:
-        print(f"FAIL-LOUD WARN: debt_cycle classifier failed ({e}) - publishing UNKNOWN (fail-open caps)")
-        cyc = {"debt_cycle_phase": "UNKNOWN", "fallback": True}
+    prev_cyc = None
+    if not advance_cycle:
+        try:
+            prev_cyc = (json.loads(out.read_text(encoding="utf-8")) or {}).get("debt_cycle")
+        except Exception:
+            prev_cyc = None
+    if prev_cyc:
+        cyc = prev_cyc
+        print(f"macro-refresh: debt_cycle block kept verbatim from the existing snapshot "
+              f"(asof {cyc.get('asof', '?')}, no tick)")
+    else:
+        try:
+            import debt_cycle as _dc
+            from screener_v6 import fmp as _fmp
+            cyc = _dc.fetch_debt_cycle(_fmp, advance=advance_cycle)
+        except Exception as e:
+            print(f"FAIL-LOUD WARN: debt_cycle classifier failed ({e}) - publishing UNKNOWN (fail-open caps)")
+            cyc = {"debt_cycle_phase": "UNKNOWN", "fallback": True}
     if cyc.get("debt_cycle_phase") in (None, "UNKNOWN"):
         print("FAIL-LOUD WARN: debt_cycle_phase is UNKNOWN in the published snapshot - "
               "no stance modifier + loosest duration caps will apply; investigate before the Director runs")
@@ -235,6 +263,7 @@ def _write_macro_regime():
     out.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"macro_regime: {doc['regime']} (score {doc.get('score')}) | quadrant {doc.get('quadrant')} "
           f"| cycle {cyc.get('debt_cycle_phase')} ({cyc.get('weeks_in_phase', '?')}w) -> {out.name}")
+    print(f"macro_regime quadrant basis: {doc.get('quadrant_basis', '')}")
     return doc
 
 # LEGACY-9 method set - used ONLY for signal typing (deep_value vs catalyst), never for selection.
@@ -5945,6 +5974,17 @@ def prep():
     (ROOT / "moderator_system.txt").write_text(E.MODERATOR_SYSTEM_PROMPT, encoding="utf-8")
     (ROOT / "cro_regime_rubric.txt").write_text(E.REGIME_CRO_RUBRIC, encoding="utf-8")   # regime-lane CRO four-question rubric (2026-10-06) - regime ONLY, never B13/FR/mining/FDT
     _write_macro_regime()                                   # macro read for the Director's risk_stance
+    # INFLATION RESILIENCE (2026-10-12, Bruno-approved): deterministic per-name label from the
+    # gross-margin path through the 2021-22 inflation shock -> inflation_resilience.json, read
+    # by the underwriters' macro_fit and the Director as a JUDGEMENT input (never a weight, a
+    # seat gate or a conviction fact - FORK 2/B). Fail-open: a failed build leaves no file and
+    # the prompts treat a missing file as 'unknown, no penalty'.
+    try:
+        import inflation_resilience as _ir
+        _ir.build({r["symbol"]: r.get("sector") for r in radar_universe if r.get("symbol")},
+                  out_path=ROOT / "inflation_resilience.json")
+    except Exception as _e:
+        print(f"WARN inflation-resilience: build failed ({_e}) - no labels this run (judgement input only)")
 
     # no_tx names have NO FMP transcript - instead of skipping (the user's explicit ask: "send agents
     # to fetch transcripts online so we don't skip any pick"), pass them as ONLINE_SYMS so the debate
@@ -6438,7 +6478,7 @@ await agent(
 phase('Director')
 await agent(
   'You are the SPECULAIR APEX DIRECTOR (Claude Opus 5). The CRO already reconciled each name to a Sum-of-Parts fair value + risk/reward + a LIVE catalyst_status, with Radar peer comps.\n' +
-  'STEP 1 - Read CATALYST_WATCH_REGIME.md (repo root) IN FULL and apply its tilt. ALSO read backend/_opus_debate/macro_regime.json (the live macro classifier: regime RISK_ON|NEUTRAL|CAUTIOUS|RISK_OFF + score 0-1 + quadrant GOLDILOCKS|REFLATION|STAGFLATION|RISK_OFF (growth x inflation 2x2, with quadrant_basis) + growth/inflation/rates/credit detail) AND backend/_opus_debate/regime_read.json if present (an agent regime read run before you: agent_view AGREE|CONTRADICT vs the dials + dated evidence + falsifiers - the DIALS are authoritative; a CONTRADICT with dated evidence may temper your stance ONE notch, never flip the dial; carry its falsifiers into the memo so next week can check them). RETURN GOAL: this book targets +30-50% over ~12 months. QUADRANT PLAYBOOK for the RISK_STANCE: GOLDILOCKS => REACH for the goal (credible 12-month re-rate DRIVERS - dated catalyst, earnings inflection, live trend - accept more demand-cycle/AI-capex beta); REFLATION => favor PRICING POWER, cyclical value and real-asset re-rates over duration-sensitive growth (inflation eats long-duration multiples); STAGFLATION => pricing power + real assets ONLY on the reach side, SIZE DOWN demand-cycle beta and duration, favor carry; RISK_OFF (disinflationary slowdown) => DEFENSE - quality, balance sheet, FCF carry, structural floors, even if +30-50% becomes an 18-24mo story. THEN apply the DEBT-CYCLE PHASE MODIFIER (macro_regime.json debt_cycle block - the Dalio long-term debt-cycle axis; it answers what the quadrant cannot: are positive real rates CHOSEN by a hot economy or IMPOSED by the bond market on the borrower). The phase MODIFIES the quadrant stance, it never gates a name: EXPANSION => no modification, quadrant playbook runs as-is; DISCIPLINE => stance CAPPED at balanced - real rates are being imposed; favor short-payback FCF and pricing power, story-duration names get a negative phase_fit REGARDLESS of quadrant, and stretching the +30-50% to an 18-24mo horizon is explicitly permitted rather than chasing the number; FORCING => stance FLOORED at defensive - funding stress live, balance sheet and FCF carry only, reaches suspended not resized; MONETIZATION => UNLOCKS aggressive even from a RISK_OFF quadrant - real rates forced negative, favor real assets, hard-asset re-rates and pricing power, horizon SHORTENS back to ~12mo (this risk-off-tape-buy-real-assets combination is exactly the state the quadrant playbook alone cannot express). If debt_cycle_phase is UNKNOWN: no modifier, note it in the memo. Also read regime_read.json phase_view/phase_falsifiers if present - same one-notch rule as the quadrant. State the risk_stance, the quadrant you applied, the debt-cycle phase you applied, a one-line phase_read, and a one-line macro read in the memo.\n' +
+  'STEP 1 - Read CATALYST_WATCH_REGIME.md (repo root) IN FULL and apply its tilt. ALSO read backend/_opus_debate/macro_regime.json (the live macro classifier: regime RISK_ON|NEUTRAL|CAUTIOUS|RISK_OFF + score 0-1 + quadrant GOLDILOCKS|REFLATION|STAGFLATION|RISK_OFF (growth x inflation 2x2, with quadrant_basis) + growth/inflation/rates/credit detail) AND backend/_opus_debate/regime_read.json if present (an agent regime read run before you: agent_view AGREE|CONTRADICT vs the dials + dated evidence + falsifiers - the DIALS are authoritative; a CONTRADICT with dated evidence may temper your stance ONE notch, never flip the dial; carry its falsifiers into the memo so next week can check them). RETURN GOAL: this book targets +30-50% over ~12 months. QUADRANT PLAYBOOK for the RISK_STANCE: GOLDILOCKS => REACH for the goal (credible 12-month re-rate DRIVERS - dated catalyst, earnings inflection, live trend - accept more demand-cycle/AI-capex beta); REFLATION => favor PRICING POWER, cyclical value and real-asset re-rates over duration-sensitive growth (inflation eats long-duration multiples); STAGFLATION => pricing power + real assets ONLY on the reach side, SIZE DOWN demand-cycle beta and duration, favor carry; RISK_OFF (disinflationary slowdown) => DEFENSE - quality, balance sheet, FCF carry, structural floors, even if +30-50% becomes an 18-24mo story. THEN apply the DEBT-CYCLE PHASE MODIFIER (macro_regime.json debt_cycle block - the Dalio long-term debt-cycle axis; it answers what the quadrant cannot: are positive real rates CHOSEN by a hot economy or IMPOSED by the bond market on the borrower). The phase MODIFIES the quadrant stance, it never gates a name: EXPANSION => no modification, quadrant playbook runs as-is; DISCIPLINE => stance CAPPED at balanced - real rates are being imposed; favor short-payback FCF and pricing power, story-duration names get a negative phase_fit REGARDLESS of quadrant, and stretching the +30-50% to an 18-24mo horizon is explicitly permitted rather than chasing the number; FORCING => stance FLOORED at defensive - funding stress live, balance sheet and FCF carry only, reaches suspended not resized; MONETIZATION => UNLOCKS aggressive even from a RISK_OFF quadrant - real rates forced negative, favor real assets, hard-asset re-rates and pricing power, horizon SHORTENS back to ~12mo (this risk-off-tape-buy-real-assets combination is exactly the state the quadrant playbook alone cannot express). If debt_cycle_phase is UNKNOWN: no modifier, note it in the memo. Also read regime_read.json phase_view/phase_falsifiers if present - same one-notch rule as the quadrant. State the risk_stance, the quadrant you applied, the debt-cycle phase you applied, a one-line phase_read, and a one-line macro read in the memo. If quadrant is UNKNOWN (its CPI/real-GDP inputs were stale or missing - quadrant_basis says which), run NO quadrant playbook and say so in the memo. INFLATION RESILIENCE (judgement input - never a seat gate, never a weight, never a conviction fact): backend/_opus_debate/inflation_resilience.json labels each name resilient|mixed|exposed|unknown from its gross margin through the 2021-22 inflation (the numbers sit in inflation_resilience_basis), and each underwriter macro_fit_note carries one transcript pass-through sentence. Under REFLATION or STAGFLATION weigh it the way you weigh phase_fit: at equal merit prefer the resilient name, and for every exposed name you seat, say in its rationale why its margins hold this time (cite the pass-through evidence, or say there is none). unknown is never a penalty; under GOLDILOCKS or RISK_OFF it is context only.\n' +
   'STEP 2 - Run: python backend/_opus_debate/compact_table.py results_regime - confirm the row count. Its columns: GRADE = the code-derived letter (a trailing * marks a letter the code re-derived - from the CRO letter, or from an A whose discount sits below the STEP-3a entry floor; entry_posture follows the DERIVED letter), THESIS = thesis_state, ENTRY = NOW / AT <level> <washout_type> / ON <event> / NONE, ER = the computed expected return %, FIT = macro_fit (context only - never a seat, size or drop lever); a blank THESIS/ENTRY is an older record graded by the CRO letter alone; also read ' + DIR + '/peer_groups.json for the relative-value picture. CONTINUITY FLAGS: any record carrying a continuity_flag field flipped its verdict/conviction vs last week WITHOUT citing a dated fact - treat that fresh record as UNRELIABLE for seat decisions on that name: fall back to your ledger + the prior grade (the flag text quotes it) rather than acting on an unjustified downgrade/upgrade, and say so in decision_rationale. SKEPTIC VERDICTS ARE ALREADY IN (this run, pre-seat - the kill-tier ran before you): for EVERY finalist you consider, read ' + DIR + '/_skeptic_regime/<SYM>.json - a REFUTED verdict with kill_scope "thesis" | "moat" | "catalyst" is a HARD no-seat (if you were inclined to seat it, cite the kill_fact in the memo instead); a REFUTED with kill_scope "numbers" AND a typed revised_fv_px is a REPRICING, not a thesis kill: re-compute the expected return on revised_fv_px against the live price and re-grade it against the STEP-3a floor - seat it ONLY if the revised number still clears the floor and the median-seat dilution bar, treat it as correction_severity="material" for sizing, and quote BOTH the record figure and the skeptic figure in the memo (a numbers-REFUTED without revised_fv_px stays a hard no-seat); CONFIRMED_WITH_CORRECTIONS with correction_severity="material" must temper your conviction and sizing for that seat; SKIPPED_LOW_CONVICTION just means the record graded too low to need a kill. CORRECTED RECORDS (2026-08-05): a record carrying skeptic_corrections_applied (and possibly revision_note) has ALREADY absorbed the skeptic corrections - its valuation levels, computed{} and (if revised) prose/grade are the post-correction truth, so grade it on what it says NOW; do not re-apply the corrections a second time from the shard, and read <field>_orig only for the audit trail. Where an entry carries `peer_override`/`anchor_multiple`, that is a LIVE current peer multiple - trust it over any multiple quoted from memory in a dossier; where `convergence`="sector_regulatory", treat that name\'s discount-to-peer as a SHARED-FACTOR cluster in STEP 4, not as idiosyncratic edge.\n' +
   'STEP 3 - Eligible = conviction >= 3 AND numeric_gate NOT in (REJECT, EXCLUDE_ELIGIBILITY) (records stamped by the deterministic numeric gate - an excluded record\'s numbers failed arithmetic/price/floor checks and cannot support a seat regardless of the narrative). Select using sop_fair_value / risk_reward / catalyst_status AS PRIMARY LEVERS - and where a record carries a computed{} block (rr_ratio / expected_return_pct computed by the pipeline from the typed valuation numbers), TRUST THE COMPUTED NUMBERS over any prose arithmetic: prefer the widest COMPUTED risk_reward to a credible SoP fair value. CATALYST NEUTRALITY (2026-07-21 apex-reassessment): catalyst_status is DESCRIPTIVE here, not a grade lever - a FIRED or SOFT catalyst on a clean-forensic, cheap-on-cash-earnings franchise is neither a plus nor a penalty; judge residual sop_fair_value upside + computed risk_reward, not whether the event is spent (the dated-event asymmetry book is Basket-13, STEP 3b). A live PENDING_HARD driver may STRENGTHEN a seat; its absence must NOT veto one. Then regime fit and consensus-delta width.\n' +
   'STEP 3a - ENTRY DISCOUNT FLOOR, SCALED BY THE REGIME (2026-07-24). A thin discount is not a seat: at a ~10% margin the trim ceiling (85% of fair value) is already within touching distance, so you would be buying something with no room to work and real room to fall. For a NEW seat (decision ADD or RE-ADD) the computed expected return to base_fv_px must clear: >= +20% in GOLDILOCKS/REFLATION (reach), >= +25% in STAGFLATION, >= +30% in RISK_OFF (you must be paid more to take risk when the tape is against you). A HELD seat is NOT force-sold for slipping under the floor - that is what the trim ceiling is for - but a held name below the floor may not be ADDED to, and you must say in the memo whether you are keeping it for carry or letting the trim rule take it. THE BOOK HAS NO FIXED SIZE (2026-07-24, Bruno). Do NOT pad to a target and do NOT stop at one either: seat EVERY name that clears the floor and survives STEP 4, however many that is. If only 6 qualify, seat 6 and say so. If 18 qualify and each one genuinely earns its place, seat 18. THE DISCIPLINE THAT REPLACES A SEAT CAP IS DILUTION: the book is EQUAL-WEIGHTED, so every seat you add shrinks every other seat. Add a name ONLY if it is at least as good as the CURRENT MEDIAN seat on computed expected return and skeptic cleanliness - if it is worse than your median, adding it makes the book worse even though the name itself clears the floor. State the final count in the memo with one line on why the book is that size this week. You MAY Read individual ' + RES + '/<SYM>.json for finalists.\n' +
@@ -7443,6 +7483,10 @@ if __name__ == "__main__":
         sys.exit(0)
     if mode == "prep":
         prep()
+    elif mode in ("macro-refresh", "macro_refresh"):
+        # re-read the macro dials into macro_regime.json WITHOUT ticking the debt cycle
+        E.load_api_keys()
+        _write_macro_regime(advance_cycle=False)
     elif mode == "merge":
         merge_radar()
     elif mode in ("peer-overrides", "peer_overrides"):

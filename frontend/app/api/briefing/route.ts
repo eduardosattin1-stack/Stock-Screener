@@ -207,7 +207,21 @@ export async function GET(req: Request) {
         ? (inf === "decelerating" ? "GOLDILOCKS" : "REFLATION")
         : (inf === "decelerating" ? "RISK_OFF" : "STAGFLATION"))
     : null;
-  const quadrant = mrFull.quadrant && mrFull.quadrant !== "UNKNOWN" ? mrFull.quadrant : quadrantFallback;
+  // Input provenance (2026-10-12). From 2026-07-16 to 2026-10-12 the quadrant ran on a
+  // defaulted CPI score + a hardcoded GDP seed and this chip said GOLDILOCKS every week. The
+  // backend now publishes quadrant_inputs and an explicit UNKNOWN when they are stale; that
+  // UNKNOWN must surface as a warning, never be papered over by the label-derived fallback
+  // (whose labels come from the same defaulted scores). No inputs block = older snapshot.
+  const qi = mrFull.quadrant_inputs && typeof mrFull.quadrant_inputs === "object" ? mrFull.quadrant_inputs : null;
+  const quadrantStale = qi != null && (qi.ok === false || mrFull.quadrant === "UNKNOWN");
+  const quadrant = quadrantStale ? null
+    : (mrFull.quadrant && mrFull.quadrant !== "UNKNOWN" ? mrFull.quadrant : quadrantFallback);
+  const cpiYoy = typeof qi?.cpi?.yoy_pct === "number" ? qi.cpi.yoy_pct : null;
+  const gdpAnn = typeof qi?.gdp?.ann_growth_pct === "number" ? qi.gdp.ann_growth_pct : null;
+  const quadrantNumbers = [
+    cpiYoy != null ? `CPI ${cpiYoy > 0 ? "+" : ""}${cpiYoy.toFixed(1)}% y/y` : null,
+    gdpAnn != null ? `real GDP ${gdpAnn > 0 ? "+" : ""}${gdpAnn.toFixed(1)}% ann.` : null,
+  ].filter(Boolean).join(", ");
   // Dalio debt-cycle chip (2026-07-27) — published with the weekly baskets. phaseFallback
   // mirrors quadrantFallback's job for the pre-regeneration snapshot: the phase cannot be
   // derived from labels (it is a path-dependent state machine), so the fallback is simply
@@ -240,7 +254,12 @@ export async function GET(req: Request) {
     regime,
     score: r2(score),
     quadrant,
-    quadrant_detail: quadrant ? `growth ${g || "?"} × inflation ${inf || "?"}` : null,
+    quadrant_detail: quadrant
+      ? `growth ${g || "?"} × inflation ${inf || "?"}${quadrantNumbers ? ` (${quadrantNumbers})` : ""}`
+      : null,
+    // true => the growth/inflation read is NOT live (stale or missing CPI / real-GDP inputs)
+    quadrant_stale: quadrantStale,
+    quadrant_problems: quadrantStale && Array.isArray(qi?.problems) ? qi.problems.slice(0, 3) : [],
     regime_read: spec?.regime_read || null,
     cycle: cycle_pulse,
     summary: `Macro regime ${regime}. ${sentiment}`,

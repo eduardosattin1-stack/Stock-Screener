@@ -251,56 +251,97 @@ def _score_vix(vix_price: float, vix_sma200: float = None) -> float:
         return abs_score
 
 
+def _months_back(date_str: str, n: int) -> str:
+    """'2026-08-01', 12 -> '2025-08-01' (month-start keys, as FMP/BLS date monthly rows)."""
+    y, m = int(date_str[:4]), int(date_str[5:7])
+    m -= n
+    while m <= 0:
+        m += 12
+        y -= 1
+    return f"{y:04d}-{m:02d}-01"
+
+
+def cpi_measures(cpi_values: list) -> Optional[dict]:
+    """Headline-CPI inflation read for the regime + quadrant (2026-10-12 rebuild).
+
+    LEVEL = year-over-year %, TREND = 6-month annualized vs that YoY (> +0.3pp =
+    accelerating, < -0.3pp = decelerating). Lookbacks are matched BY DATE, not by list
+    index: the previous version took cpi_values[2] as "3 months ago" (it is 2) and scored
+    a 3-month annualized rate, so one month decided the axis (June 2026's -0.42% print
+    alone turned a 3.35% YoY tape into "target inflation"). Needs 13 monthly points for
+    YoY; with 7-12 the 6m annualized rate stands in as the level and `level_basis` says so.
+    Returns None when there is too little data to say anything (< 7 points)."""
+    pts = {}
+    for d, v in cpi_values or []:
+        try:
+            pts[str(d)[:7] + "-01"] = float(v)
+        except (TypeError, ValueError):
+            continue
+    if len(pts) < 7:
+        return None
+    newest = max(pts)
+    v0 = pts[newest]
+
+    def _ann(months):
+        prev = pts.get(_months_back(newest, months))
+        if not prev or prev <= 0:
+            return None
+        return ((v0 / prev) ** (12.0 / months) - 1) * 100
+
+    ann_3m, ann_6m = _ann(3), _ann(6)
+    prev_12 = pts.get(_months_back(newest, 12))
+    yoy = (v0 / prev_12 - 1) * 100 if prev_12 else None
+    if ann_6m is None:
+        return None
+    level, level_basis = (yoy, "yoy") if yoy is not None else (ann_6m, "6m_annualized")
+
+    if level <= 2.0:
+        score = 1.0      # at target
+    elif level <= 3.0:
+        score = 0.75
+    elif level <= 4.0:
+        score = 0.50
+    elif level <= 5.0:
+        score = 0.30
+    elif level <= 7.0:
+        score = 0.15
+    else:
+        score = 0.0      # stagflation territory
+    trend = "stable"
+    if yoy is not None:
+        if ann_6m > yoy + 0.3:
+            trend = "accelerating"
+        elif ann_6m < yoy - 0.3:
+            trend = "decelerating"
+    if trend == "accelerating":
+        score *= 0.7
+    return {"score": round(max(0.0, min(1.0, score)), 4), "latest": newest,
+            "yoy_pct": round(yoy, 2) if yoy is not None else None,
+            "ann_6m_pct": round(ann_6m, 2),
+            "ann_3m_pct": round(ann_3m, 2) if ann_3m is not None else None,
+            "level_basis": level_basis, "trend": trend, "n_points": len(pts)}
+
+
 def _score_cpi_trend(cpi_values: list) -> float:
     """
-    CPI trend: is inflation accelerating or decelerating?
-    Input: list of (date, value) sorted newest first, at least 3 months.
-    Accelerating inflation = risk-off, decelerating = risk-on.
+    CPI trend: is inflation accelerating or decelerating? (good-is-high: 1.0 = at target.)
+    Thin wrapper over cpi_measures(); no usable data -> 0.5 neutral. A 0.5 from this
+    branch is NOT a reading - callers that need to know (the quadrant) check
+    cpi_measures() / the inputs provenance instead of trusting the number.
     """
-    if len(cpi_values) < 3:
-        return 0.5  # no data → neutral
-
-    # Compute YoY-ish change rate: 3-month annualized
-    newest = cpi_values[0][1]
-    three_mo_ago = cpi_values[2][1] if len(cpi_values) >= 3 else cpi_values[-1][1]
-    six_mo_ago = cpi_values[5][1] if len(cpi_values) >= 6 else cpi_values[-1][1]
-
-    if three_mo_ago <= 0 or six_mo_ago <= 0:
-        return 0.5
-
-    # 3-month annualized rate
-    rate_3m = ((newest / three_mo_ago) ** 4 - 1) * 100
-    # 6-month annualized rate (if available)
-    rate_6m = ((newest / six_mo_ago) ** 2 - 1) * 100 if len(cpi_values) >= 6 else rate_3m
-
-    # Trend: is recent rate higher than longer-term?
-    is_accelerating = rate_3m > rate_6m + 0.3  # +0.3 tolerance
-
-    # Score based on absolute level + trend
-    if rate_3m <= 2.0:
-        level_score = 1.0    # target inflation
-    elif rate_3m <= 3.0:
-        level_score = 0.75
-    elif rate_3m <= 4.0:
-        level_score = 0.50
-    elif rate_3m <= 5.0:
-        level_score = 0.30
-    elif rate_3m <= 7.0:
-        level_score = 0.15
-    else:
-        level_score = 0.0    # stagflation territory
-
-    # Penalty for acceleration
-    if is_accelerating:
-        level_score *= 0.7
-
-    return max(0, min(1, level_score))
+    m = cpi_measures(cpi_values)
+    return m["score"] if m else 0.5
 
 
-def _score_gdp_momentum(gdp_values: list) -> float:
+def _score_gdp_momentum(gdp_values: list, annualize: bool = False) -> float:
     """
     GDP growth momentum. Input: list of (date, value) sorted newest first.
     At least 2 quarters needed. Positive & accelerating = risk-on.
+
+    annualize=True (the LIVE paths since 2026-10-12, fed REAL GDP): QoQ growth is
+    compounded to an annual rate before banding, so ">3" means 3% a year - the bands
+    below read naturally. The historical/backtest callers still pass nominal GDP with
+    annualize=False (raw QoQ %) and are deliberately left as they were.
     """
     if len(gdp_values) < 2:
         return 0.5  # no data → neutral
@@ -311,14 +352,18 @@ def _score_gdp_momentum(gdp_values: list) -> float:
     if prev <= 0:
         return 0.5
 
-    # QoQ growth rate
-    growth = (latest - prev) / prev * 100
+    def _g(a, b):
+        q = (a - b) / b
+        return ((1 + q) ** 4 - 1) * 100 if annualize else q * 100
+
+    # QoQ growth rate (annualized when asked)
+    growth = _g(latest, prev)
 
     # Acceleration check
     if len(gdp_values) >= 3:
         prev2 = gdp_values[2][1]
         if prev2 > 0:
-            prev_growth = (prev - prev2) / prev2 * 100
+            prev_growth = _g(prev, prev2)
             is_accelerating = growth > prev_growth
         else:
             is_accelerating = False
@@ -364,7 +409,7 @@ def classify_regime(macro_score: float) -> str:
 # LIVE: Fetch current macro data (for screener_v6.py)
 # ---------------------------------------------------------------------------
 
-def growth_inflation_quadrant(sub_scores: dict) -> dict:
+def growth_inflation_quadrant(sub_scores: dict, inputs: Optional[dict] = None) -> dict:
     """JPM-style growth x inflation 2x2 over the classifier's own sub-scores (2026-07-16,
     after JPM's agentic regime work): the single risk-axis `regime` label cannot distinguish
     STAGFLATION (growth down, inflation hot -> pricing power / real assets) from a
@@ -378,6 +423,13 @@ def growth_inflation_quadrant(sub_scores: dict) -> dict:
     c = sub_scores.get("cpi_trend")
     if not isinstance(g, (int, float)) or not isinstance(c, (int, float)):
         return {"quadrant": "UNKNOWN", "quadrant_basis": "missing growth/inflation sub-scores"}
+    # 2026-10-12: a defaulted or stale axis is NOT a reading. From the day this shipped
+    # (2026-07-16) to 2026-10-12 cpi was the 0.5 no-data default and gdp a hardcoded
+    # Q4-2025 seed, and the 2x2 printed GOLDILOCKS every week. Fail-open instead:
+    # UNKNOWN = loosest entry floor, no quadrant playbook - and the caller FAIL-LOUDs.
+    if inputs is not None and not inputs.get("ok", False):
+        return {"quadrant": "UNKNOWN",
+                "quadrant_basis": "quadrant inputs not usable - " + "; ".join(inputs.get("problems") or ["no provenance"])}
     growth_up = g >= 0.5
     inflation_cooling = c >= 0.5
     if growth_up and inflation_cooling:
@@ -390,6 +442,13 @@ def growth_inflation_quadrant(sub_scores: dict) -> dict:
         q = "STAGFLATION"
     basis = (f"growth {'up' if growth_up else 'down'} (gdp {g:.2f}) x "
              f"inflation {'cooling' if inflation_cooling else 'hot/sticky'} (cpi {c:.2f})")
+    if inputs is not None:
+        ci, gi = inputs.get("cpi") or {}, inputs.get("gdp") or {}
+        if ci.get("yoy_pct") is not None:
+            basis += (f" | CPI {ci['yoy_pct']:+.2f}% y/y, {ci.get('ann_6m_pct'):+.2f}% 6m ann., "
+                      f"{ci.get('trend')} (through {ci.get('latest', '?')[:7]})")
+        if gi.get("ann_growth_pct") is not None:
+            basis += f" | real GDP {gi['ann_growth_pct']:+.2f}% ann. ({gi.get('latest', '?')[:7]})"
     return {"quadrant": q, "quadrant_basis": basis}
 
 
@@ -438,81 +497,50 @@ def fetch_macro_regime(fmp_func, rate_limit_func=None) -> dict:
             vix_price = float(vix_data[0].get("price", 20))
             vix_sma200 = float(vix_data[0].get("priceAvg200", 0)) or None
 
-    # 3. CPI (need ~6 months of history)
+    # 3+4. CPI + REAL GDP (2026-10-12 rebuild). Needs 13+ monthly CPI points (y/y level +
+    # 6m trend, see cpi_measures) and 3+ quarters of REAL GDP (nominal GDP counts inflation
+    # as growth, so a hot-inflation quarter could never read as stagflation).
+    # _fetch_monthly_series backfills with point queries when FMP drops the window - it
+    # had been doing so since at least 2026-07-17, leaving CPI on its 0.5 default and GDP
+    # on the hardcoded seed below this comment's predecessor. The GCS last-known-good is
+    # now only REFRESHED by a complete series and only USED (source stamped) when the
+    # live fetch comes back thin. The hardcoded seeds are gone on purpose: a missing axis
+    # must publish UNKNOWN with a FAIL-LOUD, never a number that looks like a reading.
     today = datetime.now()
-    cpi_from = (today - timedelta(days=270)).strftime("%Y-%m-%d")
-
-    # v7.2 fix: removed country=US (FMP stable REST rejects unknown params,
-    # returns 404). The economic-indicators endpoint DOES work on stable —
-    # it only takes name + from + to.
-    cpi_raw = fmp_func("economic-indicators", {
-        "name": "CPI",
-        "from": cpi_from, "to": today.strftime("%Y-%m-%d")
-    })
-    sleep()
-    cpi_values = []
-    if cpi_raw and isinstance(cpi_raw, list):
-        cpi_values = sorted(
-            [(d["date"], float(d["value"])) for d in cpi_raw if d.get("value")],
-            reverse=True
-        )
-
-    # Persist fresh data to GCS on success; fall back to cache on failure
+    today_s = today.strftime("%Y-%m-%d")
     _macro_cache = _load_macro_cache()
-    if cpi_values:
-        _macro_cache["CPI"] = [[d, v] for d, v in cpi_values]
+
+    def _series(name, from_days, freq, min_points):
+        vals = _fetch_monthly_series(
+            fmp_func, name, (today - timedelta(days=from_days)).strftime("%Y-%m-%d"),
+            today_s, freq=freq)
+        sleep()
+        src = (_FETCH_META.get(name) or {}).get("source", "fmp")
+        if len(vals) >= min_points:
+            _macro_cache[name] = [[d, v] for d, v in vals]
+            return vals, src, True
+        cached = _macro_cache.get(name) or []
+        if len(cached) > len(vals):
+            log.warning(f"  {name}: FMP returned {len(vals)} point(s), using GCS last-known-good "
+                        f"({len(cached)} points)")
+            return [(d, v) for d, v in cached], "gcs_cache", False
+        log.warning(f"  {name}: {len(vals)} point(s) from FMP (below the {min_points}-point cache "
+                    f"refresh) and no fuller cache - quadrant_inputs decides if it is usable")
+        return vals, (src if vals else "none"), False
+
+    # 11, not 13: BLS never published October 2025 (federal shutdown), so a full year
+    # of CPI is 12 points until that hole rolls out of the window in late 2026.
+    cpi_values, cpi_src, cpi_fresh = _series("CPI", 430, "M", 11)
+    gdp_values, gdp_src, gdp_fresh = _series("realGDP", 560, "Q", 3)
+    if cpi_fresh or gdp_fresh:
         _save_macro_cache(_macro_cache)
-    else:
-        cached = _macro_cache.get("CPI") or []
-        if cached:
-            log.warning("  CPI: FMP returned empty, using GCS last-known-good")
-            cpi_values = [(d, v) for d, v in cached]
-        else:
-            # Only falls through if FMP fails AND GCS cache is empty
-            # (i.e. first run ever or running locally without GCS access).
-            # Hardcoded values are a last-resort safety net; fresh FMP data
-            # overwrites the GCS cache on every successful scan.
-            log.warning("  CPI: no data from FMP or GCS cache, using hardcoded seed")
-            cpi_values = [
-                ("2026-03-01", 330.293), ("2026-02-01", 327.46),
-                ("2026-01-01", 326.588), ("2025-12-01", 326.031),
-                ("2025-11-01", 325.063), ("2025-09-01", 324.245),
-            ]
-
-    # 4. GDP (need ~3 quarters)
-    gdp_from = (today - timedelta(days=400)).strftime("%Y-%m-%d")
-
-    # v7.2 fix: same as CPI — removed country=US.
-    gdp_raw = fmp_func("economic-indicators", {
-        "name": "GDP",
-        "from": gdp_from, "to": today.strftime("%Y-%m-%d")
-    })
-    sleep()
-    gdp_values = []
-    if gdp_raw and isinstance(gdp_raw, list):
-        gdp_values = sorted(
-            [(d["date"], float(d["value"])) for d in gdp_raw if d.get("value")],
-            reverse=True
-        )
-
-    # Persist fresh data on success; fall back to cache on failure
-    if gdp_values:
-        _macro_cache["GDP"] = [[d, v] for d, v in gdp_values]
-        _save_macro_cache(_macro_cache)
-    else:
-        cached = _macro_cache.get("GDP") or []
-        if cached:
-            log.warning("  GDP: FMP returned empty, using GCS last-known-good")
-            gdp_values = [(d, v) for d, v in cached]
-        else:
-            log.warning("  GDP: no data from FMP or GCS cache, using hardcoded seed")
-            gdp_values = [
-                ("2025-10-01", 31422.526), ("2025-07-01", 31098.027),
-                ("2025-04-01", 30485.729), ("2025-01-01", 30042.113),
-            ]
+    inputs = quadrant_inputs(cpi_values, gdp_values, cpi_src, gdp_src, today)
+    if not inputs["ok"]:
+        log.warning("  QUADRANT INPUTS NOT USABLE: " + "; ".join(inputs["problems"]))
 
     return _attach_debt_cycle(
-        _compute_regime(rates, vix_price, vix_sma200, cpi_values, gdp_values), fmp_func)
+        _compute_regime(rates, vix_price, vix_sma200, cpi_values, gdp_values,
+                        inputs=inputs, gdp_annualize=True), fmp_func)
 
 # ---------------------------------------------------------------------------
 # HISTORICAL: Fetch macro data as of a past date (for backtest_full.py)
@@ -617,17 +645,23 @@ def fetch_macro_regime_historical(fmp_func, as_of_date: str, rate_limit_func=Non
 # ---------------------------------------------------------------------------
 
 def _compute_regime(rates: dict, vix_price: float, vix_sma200: float,
-                    cpi_values: list, gdp_values: list) -> dict:
+                    cpi_values: list, gdp_values: list,
+                    inputs: Optional[dict] = None, gdp_annualize: bool = False) -> dict:
     """
     Compute macro regime from raw data.
     Returns dict with regime, score, features (for ML), tilts.
+
+    inputs (live path only): quadrant_inputs() provenance - stamped onto the result as
+    `quadrant_inputs` and used to publish UNKNOWN instead of a defaulted quadrant.
+    gdp_annualize: True when gdp_values is the live REAL GDP series (see
+    _score_gdp_momentum); the historical callers keep the old nominal QoQ behaviour.
     """
     # Sub-scores (each 0.0–1.0, higher = more risk-on)
     s_curve = _score_yield_curve(rates)
     s_level = _score_yield_level(rates)
     s_vix = _score_vix(vix_price, vix_sma200)
     s_cpi = _score_cpi_trend(cpi_values)
-    s_gdp = _score_gdp_momentum(gdp_values)
+    s_gdp = _score_gdp_momentum(gdp_values, annualize=gdp_annualize)
 
     sub_scores = {
         "yield_curve":  s_curve,
@@ -683,7 +717,8 @@ def _compute_regime(rates: dict, vix_price: float, vix_sma200: float,
         "regime_detail": regime_detail,
         # growth x inflation 2x2 — the risk-axis regime label collapses two measured axes;
         # the quadrant keeps them apart (GOLDILOCKS | REFLATION | STAGFLATION | RISK_OFF).
-        **growth_inflation_quadrant(sub_scores),
+        **growth_inflation_quadrant(sub_scores, inputs=inputs),
+        **({"quadrant_inputs": inputs} if inputs is not None else {}),
         "features":   features,
         "tilts":      REGIME_TILTS[regime],
         "rates":      rates,
@@ -987,27 +1022,76 @@ assert abs(sum(SUB_WEIGHTS_V8.values()) - 1.0) < 1e-6, \
 # Monthly-series fetch helpers (with backtest-safe lag filter)
 # ---------------------------------------------------------------------------
 
+# Provenance of the last fetch per series name -> {"source", "n", "latest"}. Module-level
+# so _fetch_monthly_series keeps its plain-list return type for the backtest callers; the
+# live fetchers read it to stamp `quadrant_inputs` (2026-10-12).
+_FETCH_META: dict = {}
+
+
+def _period_starts(from_date: str, to_date: str, freq: str = "M") -> list:
+    """Month-start (freq="M") or quarter-start ("Q") dates inside [from_date, to_date]."""
+    y, m = int(from_date[:4]), int(from_date[5:7])
+    step = 3 if freq == "Q" else 1
+    if freq == "Q":
+        m = ((m - 1) // 3) * 3 + 1
+    lo, hi, out = from_date[:7] + "-01", to_date[:10], []
+    while True:
+        d = f"{y:04d}-{m:02d}-01"
+        if d > hi:
+            return out
+        if d >= lo or freq == "Q":
+            out.append(d)
+        m += step
+        if m > 12:
+            m -= 12
+            y += 1
+
+
 def _fetch_monthly_series(
     fmp_func, name: str, from_date: str, to_date: str,
-    as_of_date: Optional[str] = None, pub_lag_days: int = 14,
+    as_of_date: Optional[str] = None, pub_lag_days: int = 14, freq: str = "M",
 ) -> list:
     """
-    Fetch a named monthly economic indicator from FMP. Returns a list of
-    (date, value) tuples, newest first.
+    Fetch a named monthly (freq="M") or quarterly (freq="Q") economic indicator from
+    FMP. Returns a list of (date, value) tuples, newest first.
 
     If `as_of_date` is provided, we restrict to rows where:
         date + pub_lag_days <= as_of_date
     This guards against look-ahead — the backtest on date D only "sees"
     values that WOULD have been publicly released by D.
+
+    2026-10-12: FMP's stable economic-indicators no longer honours a from/to WINDOW -
+    a 13-month CPI window returns one row, a GDP window none, sentiment/recession one -
+    while a POINT query (from == to == the period start) returns that period reliably.
+    Every macro sub-score fed by this helper had been sitting on its 0.5 no-data
+    default or a seed. So: keep the window call (cheap when it works) and backfill the
+    periods it dropped with point queries (~15 calls for a 15-month series).
     """
     raw = fmp_func("economic-indicators", {
         "name": name, "from": from_date, "to": to_date,
     })
-    if not raw or not isinstance(raw, list):
+    rows = list(raw) if isinstance(raw, list) else []
+    source = "fmp_window"
+    expected = _period_starts(from_date, to_date, freq)
+    have = {(r.get("date") or "")[:10] for r in rows if isinstance(r, dict)}
+    if expected and len(have & set(expected)) < 0.75 * len(expected):
+        for d in expected:
+            if d in have:
+                continue
+            pt = fmp_func("economic-indicators", {"name": name, "from": d, "to": d})
+            if isinstance(pt, list):
+                rows.extend(x for x in pt if isinstance(x, dict))
+        source = "fmp_points"
+    if not rows:
+        _FETCH_META[name] = {"source": "none", "n": 0, "latest": None}
         return []
 
     values = []
-    for r in raw:
+    seen = set()
+    for r in rows:
+        if not isinstance(r, dict) or (r.get("date") or "")[:10] in seen:
+            continue
+        seen.add((r.get("date") or "")[:10])
         d = (r.get("date") or "")[:10]
         v = r.get("value")
         if not d or v is None:
@@ -1028,7 +1112,54 @@ def _fetch_monthly_series(
         values.append((d, v))
 
     values.sort(reverse=True)    # newest first
+    _FETCH_META[name] = {"source": source if values else "none", "n": len(values),
+                         "latest": values[0][0] if values else None}
     return values
+
+
+# Freshness limits for the quadrant inputs (days from the period START to today).
+# CPI for month M publishes ~mid M+1, so the newest point is normally 45-75 days old;
+# real GDP for quarter Q publishes ~4 weeks after it ends, so up to ~210 days. Past
+# these the series has stopped updating and must not be read as current.
+_CPI_MAX_AGE_DAYS = 100
+_GDP_MAX_AGE_DAYS = 230
+
+
+def quadrant_inputs(cpi_values: list, gdp_values: list, cpi_source: str, gdp_source: str,
+                    today: Optional[datetime] = None) -> dict:
+    """Provenance + freshness verdict for the two quadrant axes (2026-10-12). `ok` is
+    False when either axis is defaulted, seeded, cached-stale or too thin to measure -
+    growth_inflation_quadrant then publishes UNKNOWN and _write_macro_regime FAIL-LOUDs.
+    This is the alert that did not exist while the quadrant ran on a default + a seed."""
+    today = today or datetime.now()
+    problems = []
+    cm = cpi_measures(cpi_values)
+    cpi = {"source": cpi_source, "n_points": len(cpi_values or [])}
+    if cm:
+        cpi.update(cm)
+    else:
+        problems.append(f"CPI too thin to measure ({len(cpi_values or [])} points, source {cpi_source})")
+    gdp = {"source": gdp_source, "n_points": len(gdp_values or []),
+           "latest": gdp_values[0][0] if gdp_values else None}
+    if len(gdp_values or []) >= 2 and gdp_values[1][1] > 0:
+        q = gdp_values[0][1] / gdp_values[1][1] - 1
+        gdp["ann_growth_pct"] = round(((1 + q) ** 4 - 1) * 100, 2)
+    else:
+        problems.append(f"real GDP too thin ({len(gdp_values or [])} points, source {gdp_source})")
+    for label, d, src, limit in (("CPI", cpi.get("latest"), cpi_source, _CPI_MAX_AGE_DAYS),
+                                 ("real GDP", gdp.get("latest"), gdp_source, _GDP_MAX_AGE_DAYS)):
+        if src in ("seed", "none", "default"):
+            problems.append(f"{label} from {src}, not a live read")
+        if d:
+            try:
+                age = (today - datetime.strptime(str(d)[:10], "%Y-%m-%d")).days
+            except ValueError:
+                age = None
+            if age is not None:
+                (cpi if label == "CPI" else gdp)["age_days"] = age
+                if age > limit:
+                    problems.append(f"{label} newest point {str(d)[:7]} is {age}d old (limit {limit}d)")
+    return {"ok": not problems, "problems": problems, "cpi": cpi, "gdp": gdp}
 
 
 # ---------------------------------------------------------------------------
@@ -1067,33 +1198,34 @@ def fetch_macro_regime_v8(fmp_func, rate_limit_func=None) -> dict:
     #     v7.2.2 Apr 22 — fixed by matching v7's fallback pattern. ---
     cache = _load_macro_cache()
 
-    def _fetch_or_cache(name: str, from_date: str) -> list:
-        """Fetch fresh monthly series; fall back to GCS cache if empty.
-        Updates cache in-place on successful fetch so the outer _save_macro_cache
-        call at the end persists only the fresh values.
-        """
-        vals = _fetch_monthly_series(fmp_func, name, from_date, today_str)
+    def _fetch_or_cache(name: str, from_date: str, freq: str = "M", min_points: int = 4) -> list:
+        """Fetch a fresh series (point-query backfilled, see _fetch_monthly_series); fall
+        back to the GCS cache when it comes back thin. The cache is refreshed only by a
+        series with >= min_points rows - a 1-row FMP answer used to overwrite it, which
+        is how the 'last-known-good' itself went bad (2026-10-12)."""
+        vals = _fetch_monthly_series(fmp_func, name, from_date, today_str, freq=freq)
         sleep()
-        if vals:
+        if len(vals) >= min_points:
             cache[name] = [[d, v] for d, v in vals]  # refresh cache
             return vals
         cached = cache.get(name) or []
-        if cached:
+        if len(cached) > len(vals):
             log.warning(
-                f"  {name}: FMP returned empty, using GCS last-known-good "
+                f"  {name}: FMP returned {len(vals)} row(s), using GCS last-known-good "
                 f"({len(cached)} rows)"
             )
             return [(d, v) for d, v in cached]
-        log.warning(f"  {name}: FMP empty AND GCS cache empty — neutral defaults will apply")
-        return []
+        if not vals:
+            log.warning(f"  {name}: FMP empty AND GCS cache empty — neutral defaults will apply")
+        return vals
 
-    # --- CPI (v7 retained) ---
-    cpi_from = (today - timedelta(days=270)).strftime("%Y-%m-%d")
-    cpi_values = _fetch_or_cache("CPI", cpi_from)
+    # --- CPI: 13+ months for the y/y level (cpi_measures) ---
+    cpi_from = (today - timedelta(days=430)).strftime("%Y-%m-%d")
+    cpi_values = _fetch_or_cache("CPI", cpi_from, min_points=11)   # Oct-2025 never published
 
-    # --- GDP (v7 retained) ---
-    gdp_from = (today - timedelta(days=400)).strftime("%Y-%m-%d")
-    gdp_values = _fetch_or_cache("GDP", gdp_from)
+    # --- REAL GDP, annualized in _compute_regime_v8 (2026-10-12: was nominal QoQ) ---
+    gdp_from = (today - timedelta(days=560)).strftime("%Y-%m-%d")
+    gdp_values = _fetch_or_cache("realGDP", gdp_from, freq="Q", min_points=3)
 
     # --- NEW v8 series ---
     unemp_from = (today - timedelta(days=240)).strftime("%Y-%m-%d")
@@ -1118,6 +1250,7 @@ def fetch_macro_regime_v8(fmp_func, rate_limit_func=None) -> dict:
         unemp_values=unemp_values,
         sent_values=sent_values,
         rec_values=rec_values,
+        gdp_annualize=True,
     ), fmp_func)
 
 
@@ -1183,7 +1316,7 @@ def fetch_macro_regime_v8_historical(
     gdp_from = (as_of - timedelta(days=400)).strftime("%Y-%m-%d")
     gdp_values = _fetch_monthly_series(
         fmp_func, "GDP", gdp_from, as_of_date,
-        as_of_date=as_of_date, pub_lag_days=30,
+        as_of_date=as_of_date, pub_lag_days=30, freq="Q",
     )
     sleep()
 
@@ -1228,14 +1361,16 @@ def _compute_regime_v8(
     vix_price: float, vix_sma200: Optional[float],
     cpi_values: list, gdp_values: list,
     unemp_values: list, sent_values: list, rec_values: list,
+    gdp_annualize: bool = False,
 ) -> dict:
-    """Compute v8 regime from raw inputs."""
+    """Compute v8 regime from raw inputs. gdp_annualize: live path passes REAL GDP and
+    True (see _score_gdp_momentum); the historical path keeps nominal QoQ."""
     s_curve = _score_yield_curve(rates)
     s_curve_3m = _score_yield_curve_3m(rates)
     s_level = _score_yield_level(rates)
     s_vix = _score_vix(vix_price, vix_sma200)
     s_cpi = _score_cpi_trend(cpi_values)
-    s_gdp = _score_gdp_momentum(gdp_values)
+    s_gdp = _score_gdp_momentum(gdp_values, annualize=gdp_annualize)
     s_unemp = _score_unemployment_rate(unemp_values)
     s_sent = _score_consumer_sentiment(sent_values)
     s_rec = _score_recession_prob(rec_values)

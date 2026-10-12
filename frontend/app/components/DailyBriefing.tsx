@@ -215,6 +215,17 @@ export function DailyBriefing({ macroRegime, macroScore, macro }: { macroRegime?
                 </span>
               );
             })()}
+            {/* Stale-inputs warning (2026-10-12): replaces the quadrant chip when the weekly
+                classifier could not read live CPI / real GDP — never show a confident 2x2
+                built on defaults (it read GOLDILOCKS that way from 2026-07-16 to 2026-10-12). */}
+            {regime_pulse.quadrant_stale && (
+              <span
+                title={`The growth × inflation read is not live this week, so no quadrant is applied. ${(regime_pulse.quadrant_problems || []).join(" · ")}`}
+                style={{ fontFamily: "var(--font-mono)", fontSize: 9, fontWeight: 700, padding: "2px 7px", borderRadius: 4, color: "var(--red)", background: "color-mix(in srgb, currentColor 12%, transparent)", border: "1px solid color-mix(in srgb, var(--red) 40%, transparent)", cursor: "help", letterSpacing: "0.06em" }}
+              >
+                QUADRANT · INPUTS STALE
+              </span>
+            )}
             {/* Dalio debt-cycle chip (third axis, weekly state machine) — answers what the
                 quadrant can't: are positive real rates chosen by a hot economy, or imposed
                 by the bond market? DISCIPLINE = duration punished / real assets not yet. */}

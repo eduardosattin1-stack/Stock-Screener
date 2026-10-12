@@ -690,7 +690,13 @@ baskets["expected_horizon_months"] = director.get("expected_horizon_months")
 baskets["macro_regime"] = {"regime": _macro.get("regime"), "score": _macro.get("score"),
                            "regime_detail": _macro.get("regime_detail", {}),
                            # growth x inflation 2x2 (2026-07-16) — the briefing's quadrant chip
-                           "quadrant": _macro.get("quadrant"), "quadrant_basis": _macro.get("quadrant_basis", "")}
+                           "quadrant": _macro.get("quadrant"), "quadrant_basis": _macro.get("quadrant_basis", ""),
+                           "asof": _macro.get("asof"),
+                           # input provenance (2026-10-12): the briefing shows a stale-inputs
+                           # warning instead of a confident chip when this says not ok. A
+                           # snapshot from before the fix has no block -> treated as unverified.
+                           "quadrant_inputs": {k: (_macro.get("quadrant_inputs") or {}).get(k)
+                                               for k in ("ok", "problems", "cpi", "gdp")}}
 # Dalio debt-cycle block (2026-07-27) — the briefing's cycle chip + falsifier strip
 baskets["debt_cycle"] = {k: _cycle_pub.get(k) for k in
                          ("debt_cycle_phase", "prior_phase", "weeks_in_phase", "cycle_score",

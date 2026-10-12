@@ -459,6 +459,15 @@ def process(apx, uni, scan_by, market=None):
     # re-run build_weights with those caps appended — one normalization path, no bespoke
     # re-normalization. Fail-open: missing snapshot => UNKNOWN => loosest caps.
     stamp_duration_buckets(picks, scan_by)
+    # Inflation-resilience label (2026-10-12): DISPLAY + audit only - copied from this run's
+    # inflation_resilience.json so the published book shows it; it feeds no cap and no weight
+    # (FORK 2/B). Fail-open: no file => every seat 'unknown', nothing else changes.
+    try:
+        import inflation_resilience as _ir
+        _ir.stamp(picks, ROOT / "inflation_resilience.json")
+        _ir.stamp(apx.get("runner_ups") or [], ROOT / "inflation_resilience.json")
+    except Exception as _e:
+        print(f"WARN regime-post: inflation-resilience stamp skipped ({_e})")
     _cycle = (_load(ROOT / "macro_regime.json", {}) or {}).get("debt_cycle") or {}
     stamp_cycle_fit(picks, _cycle)              # which phase each payoff NEEDS vs where we are
     _dur = duration_cap_entries(apx, picks, _cycle)

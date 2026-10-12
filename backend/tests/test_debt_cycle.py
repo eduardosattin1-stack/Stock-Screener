@@ -98,6 +98,21 @@ rr, st3 = compute_debt_cycle(calm, st3, "2026-08-08", advance=True)      # back 
 check(f"hysteresis needs {HYSTERESIS_PUBLISHES} consecutive — flap stays EXPANSION",
       rr["debt_cycle_phase"] == "EXPANSION", rr["debt_cycle_phase"])
 
+# 2026-10-12: a re-prep inside the same weekly publish (paused/crashed run) is a no-op —
+# it must neither add a week nor count as a second hysteresis tick.
+st4 = {"phase": "DISCIPLINE", "weeks_in_phase": 12, "pending_target": None, "pending_count": 0}
+a1, st4 = compute_debt_cycle(mon_inputs, st4, "2026-10-12", advance=True)
+a2, st4 = compute_debt_cycle(mon_inputs, st4, "2026-10-12", advance=True)   # same-day re-prep
+a3, st4 = compute_debt_cycle(mon_inputs, st4, "2026-10-14", advance=True)   # Tuesday fallback, same week
+check("same-week re-prep: no extra hysteresis tick (still DISCIPLINE, pending 1)",
+      a3["debt_cycle_phase"] == "DISCIPLINE" and a3["pending_count"] == 1,
+      f"{a3['debt_cycle_phase']} pending={a3['pending_count']}")
+check("same-week re-prep: weeks_in_phase advanced once", a3["weeks_in_phase"] == a1["weeks_in_phase"] == 13,
+      f"{a1['weeks_in_phase']} -> {a3['weeks_in_phase']}")
+a4, st4 = compute_debt_cycle(mon_inputs, st4, "2026-10-19", advance=True)   # next week's publish
+check("next week's publish does tick (FORCING after 2 real publishes)", a4["debt_cycle_phase"] == "FORCING",
+      a4["debt_cycle_phase"])
+
 print("\n=== fail-open + stance modifier + duration bucket ===")
 check("UNKNOWN carries the loosest caps",
       _UNKNOWN_RESULT["duration_caps"] == PHASE_DURATION_CAPS["EXPANSION"] == {"story_max": 0.40})

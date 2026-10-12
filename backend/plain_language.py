@@ -115,6 +115,7 @@ FIELD_GLOSSARY = {
     "value_conviction": "value-only conviction", "size_units": "position size",
     "days_to_earnings": "days to earnings", "risk_reward": "risk-reward",
     "duration_bucket": "payback speed", "phase_fit": "cycle fit",
+    "inflation_resilience": "inflation resilience", "quadrant_basis": "the growth-and-inflation read",
     # grown from the residual-token report (the `plain-language` check prints what is
     # still leaking; add the unambiguous ones here rather than guessing at run time)
     "peer_override": "the peer-group override", "anchor_multiple": "the anchor multiple",

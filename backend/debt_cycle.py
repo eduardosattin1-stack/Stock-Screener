@@ -426,6 +426,11 @@ _LEGAL_NEXT = {
     "MONETIZATION": {"EXPANSION"},
 }
 HYSTERESIS_PUBLISHES = 2    # target must repeat on N consecutive advances
+# A tick within this many days of the previous one is the SAME weekly publish (a re-prep
+# after a paused/crashed run) and is a no-op: without it a same-day re-prep added a week
+# to weeks_in_phase, and two preps in one week could satisfy the 2-publish hysteresis on
+# one week of evidence (2026-10-12). Matches the routine's 4-day freshness gate.
+MIN_TICK_GAP_DAYS = 4
 
 
 def _target_phase(cycle_score: float, sub: dict, real_delta_3m: Optional[float]) -> str:
@@ -468,8 +473,18 @@ def _step_toward(current: str, target: str) -> str:
 def advance_state(state: dict, target: str, asof: str) -> dict:
     """Apply one publish tick: hysteresis (target must repeat HYSTERESIS_PUBLISHES
     consecutive ticks), then at most ONE legal step. Illegal jumps are stepped
-    once along the chain and logged via transition_blocked/transition_implied."""
+    once along the chain and logged via transition_blocked/transition_implied.
+    Idempotent within MIN_TICK_GAP_DAYS of the last tick (same weekly publish)."""
     state = dict(state or {})
+    last = str(state.get("asof") or "")[:10]
+    if last and asof:
+        try:
+            gap = (datetime.strptime(str(asof)[:10], "%Y-%m-%d") - datetime.strptime(last, "%Y-%m-%d")).days
+        except ValueError:
+            gap = None
+        if gap is not None and 0 <= gap < MIN_TICK_GAP_DAYS:
+            log.info(f"  debt_cycle: tick skipped - last advance {last} is {gap}d ago (same weekly publish)")
+            return state
     phase = state.get("phase") or "DISCIPLINE"
     if phase not in PHASES:
         phase = "DISCIPLINE"
