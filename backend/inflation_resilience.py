@@ -57,6 +57,7 @@ EXPOSED_BELOW_PP = -4.0
 RECLASS_GM_PP = 12.0       # a gross-margin move bigger than this ...
 RECLASS_OM_PP = 3.0        # ... with operating margin moving less than this = reclassification
 CACHE_MAX_AGE_DAYS = 180
+ROYALTY_GM_PCT = 95.0      # base gross margin at/above this = royalty/licensing P&L (ZEAL.CO 99% -> 59%)
 FINANCIAL_SECTORS = {"financial services", "financials", "financial", "banks", "insurance"}
 METHOD = ("gross-margin change, worst fiscal year ending 2021-07..2023-06 vs the last "
           "fiscal year ending 2019-01..2020-02")
@@ -115,6 +116,10 @@ def classify(statements: list, sector: Optional[str] = None) -> dict:
     if gm0 is None or any(gm is None for _, gm, _ in shock_m):
         return _unknown("no_cogs", "no positive cost-of-sales line in the 2019 or 2021-22 filings "
                                    "(bank/insurer-style accounts) - gross margin not measurable")
+    if gm0 >= ROYALTY_GM_PCT:
+        return _unknown("no_cogs", f"gross margin {gm0:.1f}% in the base year - a royalty/licensing-style "
+                                   f"P&L with no meaningful cost of sales, so a later drop reflects a "
+                                   f"revenue-mix change, not pricing")
     wd, gm1, om1 = min(shock_m, key=lambda x: x[1])
     d_gm = gm1 - gm0
     d_om = (om1 - om0) if (om0 is not None and om1 is not None) else None
@@ -234,6 +239,10 @@ def build(sym_sector: dict, out_path: Path = OUT_F, cache_path: Path = CACHE_F,
         "counts": dict(counts),
         "by_symbol": by_symbol,
     }
+    # Also key each symbol at the TOP level: debate agents told to read "this symbol's entry"
+    # looked for doc[SYM] and reported "no entry" for names that were present (2026-10-12).
+    for sym, rec in by_symbol.items():
+        doc.setdefault(sym, rec)
     try:
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")

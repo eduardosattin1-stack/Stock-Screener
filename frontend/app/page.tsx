@@ -1899,22 +1899,36 @@ export default function Dashboard(){
     const isWait = key === "wait_for_weakness" || key === "on_confirmation";
     const evTxt = addEv || detail;
     const shortEv = evTxt.length > 42 ? `${evTxt.slice(0, 40).trimEnd()}…` : evTxt;
+    // 2026-10-12 (Bruno): this chip only renders on SEATED cards, so it states the POSITION action -
+    // "hold" (owned) or "buying" (seated, not bought yet) - plus when to add. The bare debate wording
+    // ("wait for a better price") read as "don't own this" on a name the Director had just seated.
+    const verb = pending ? "buying" : "hold";
     let label = m.label;
     let tip = m.tip;
+    let color = m.color, bg = m.bg;
     if (isWait && wk === "price") {
-      label = "wait for a better price" + (addPx != null ? ` · ${fmtLvl(addPx)}` : "");
-      tip = "Wait for a better price: the debate buys only near the level it names.";
+      label = pending
+        ? (addPx != null ? `buying at ${fmtLvl(addPx)}` : "buying on a better price")
+        : (addPx != null ? `hold · add at ${fmtLvl(addPx)}` : "hold · add on a better price");
+      tip = pending
+        ? "Seated but not bought yet: the entry fills only near the level the debate names."
+        : "Held - keep it. The debate adds more only near the level it names; at today's price it is not a fresh buy.";
     } else if (isWait && (wk === "proof" || wk === "event")) {
-      label = (wk === "proof" ? "wait for proof" : "wait for the event") + (shortEv ? ` · ${shortEv}` : "");
+      label = `${verb} · ${pending ? "after" : "add after"} ${shortEv || (wk === "proof" ? "the test" : "the event")}`;
       tip = wk === "proof"
-        ? "Wait for proof: the thesis is in doubt, so the debate buys only once its test settles it" + (evTxt ? ` (${evTxt}).` : ".")
-        : "Wait for the event: the debate buys only after it" + (evTxt ? ` (${evTxt}).` : ".");
-    } else if (addPx != null) label += ` · adds at ${fmtLvl(addPx)}`;
-    else if (addEv && key !== "on_confirmation") label += ` · ${addEv}`;
-    if (pending) {
-      label = `pending · ${label}`;
-      tip = `${pendingEntryTip(pick)} ${tip}`;
-    }
+        ? `${pending ? "Seated but not bought yet" : "Held - keep it"}. The thesis is in doubt, so the debate adds only once its test settles it` + (evTxt ? ` (${evTxt}).` : ".")
+        : `${pending ? "Seated but not bought yet" : "Held - keep it"}. The debate adds only after the event` + (evTxt ? ` (${evTxt}).` : ".");
+    } else if (key === "scale_in" || key === "enter_now_carry") {
+      label = pending ? (key === "scale_in" ? "buying · scale in" : "buying now · carry") : (key === "scale_in" ? "hold · add now" : "hold · add now · carry");
+    } else if (isWait) {
+      label = `${verb} · ${key === "on_confirmation" ? "add on confirmation" : "add into weakness"}` + (addPx != null ? ` · ${fmtLvl(addPx)}` : "");
+    } else if (addPx != null) label = `${verb} · add at ${fmtLvl(addPx)}`;
+    if (isWait) { color = "var(--amber)"; bg = "var(--amber-light)"; }
+    if (pending) tip = `${pendingEntryTip(pick)} ${tip}`;
+    // thin add-to-exit gap: adding near the exit line buys risk, not margin of safety
+    const exitPx: number | null = pick && typeof pick.thesis_break_px === "number" && pick.thesis_break_px > 0 ? pick.thesis_break_px : null;
+    const gapPct = addPx != null && exitPx != null && addPx > exitPx ? ((addPx - exitPx) / addPx) * 100 : null;
+    const thinGap = gapPct != null && gapPct < 10;
     if (grade) tip += ` Debate grade: ${grade}.`;
     // a debate A re-graded by the post layer (record-level grade-derive or the live A-seat check)
     const rd = pick && pick.grade_rederived && typeof pick.grade_rederived === "object" ? pick.grade_rederived : null;
@@ -1933,7 +1947,17 @@ export default function Dashboard(){
     else if (src === "director-override") tip += ` Director override of a "wait" grade: ${String(pick.entry_posture_override_reason || "")}`;
     if (pick && pick.cro_says_wait) tip += " A held seat is a paper position: keep means do not sell, not buy here.";
     return (
-      <span title={tip} style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: m.bg, color: m.color, fontFamily: "var(--font-mono)", fontWeight: 700, cursor: "help" }}>{label}</span>
+      <>
+        <span title={tip} style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: bg, color, fontFamily: "var(--font-mono)", fontWeight: 700, cursor: "help" }}>{label}</span>
+        {thinGap && (
+          <span
+            title={`The add level (${fmtLvl(addPx as number)}) is only ${gapPct!.toFixed(0)}% above the exit line (${fmtLvl(exitPx as number)}): an add there could be stopped out by an ordinary dip - it buys risk, not margin of safety.`}
+            style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: "rgba(239,68,68,0.12)", color: "var(--red)", fontFamily: "var(--font-mono)", fontWeight: 700, cursor: "help" }}
+          >
+            thin gap · {gapPct!.toFixed(0)}% to exit
+          </span>
+        )}
+      </>
     );
   };
 

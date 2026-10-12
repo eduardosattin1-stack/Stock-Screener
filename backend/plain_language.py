@@ -48,6 +48,7 @@ PROSE_FIELDS = {
 # Keep every replacement a NEUTRAL description of the token — never add a claim the source
 # did not make (the agent_voice caveat: a fixed date is not a fixed payout).
 TOKEN_GLOSSARY = {
+    "CATALYST_WATCH_REGIME": "the catalyst-watch market brief",
     # grown from the residual-token report (2026-08-31 run)
     "FLOOR_ANCHORED_TO_52W_LOW": "anchored to the 52-week low",
     "THIN_FLOOR": "thinly supported on the downside",
@@ -116,6 +117,7 @@ FIELD_GLOSSARY = {
     "days_to_earnings": "days to earnings", "risk_reward": "risk-reward",
     "duration_bucket": "payback speed", "phase_fit": "cycle fit",
     "inflation_resilience": "inflation resilience", "quadrant_basis": "the growth-and-inflation read",
+    "peer_groups": "the peer groups", "macro_regime": "the macro read",
     # grown from the residual-token report (the `plain-language` check prints what is
     # still leaking; add the unambiguous ones here rather than guessing at run time)
     "peer_override": "the peer-group override", "anchor_multiple": "the anchor multiple",
