@@ -1,0 +1,29 @@
+{
+  "checked": 3,
+  "results": [
+    {
+      "symbol": "AVEX",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "2026-10-13",
+      "note": "As of 2026-10-12 the 180-day lockup has not expired yet. Class-action notices give 2026-10-13, while MarketBeat lists 10-14. Searches found no announced post-expiry secondary. Shares were already weak before the expiry, trading as low as $14.06 per MarketBeat on 2026-10-07. The lead-plaintiff deadline of 2026-10-20 is unchanged (MarketBeat / Kaplan Fox notices)."
+    },
+    {
+      "symbol": "KDP",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "",
+      "note": "The interim milestone closed on time and favorably. KDP's 8-K (SEC, filed 2026-09-28) says the Chobani deals completed on 2026-09-28: the $800M stake redemption ($400M cash plus a $400M note due 2026-12-26) and the $125M Allentown facility sale, with net proceeds going to debt reduction. The board catalyst, the separation into Beverage Co / Global Coffee Co, is still ahead: Q3-26 earnings in late Oct 2026, operational readiness at year-end 2026, and the split in early 2027."
+    },
+    {
+      "symbol": "TMC",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "2026-10-19",
+      "note": "As of 2026-10-12, NOAA's virtual hearing (Federal Register 2026-16869, docket NOAA-NOS-2026-1751) is still set for 13-Oct and comments close 19-Oct. I found no report of a postponement, and the hearing is a procedural step, not a decision. The board's permit date is stale and leans adverse: on its Q2 call (2026-08-13), TMC said certification is now expected in Oct-2026 and a Q1-2027 permit is no longer likely, only one before Q4-2027 vessel commissioning, so the board's \"end-Q1-2027\" decision target should be pushed out."
+    }
+  ]
+}
