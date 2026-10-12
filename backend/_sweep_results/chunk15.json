@@ -2,188 +2,56 @@
  "chunk": "15 (PLUG-RLJ)",
  "scanned": 150,
  "scan_distribution": {
-  "active": 2,
-  "watch": 10,
-  "none": 138
+  "active": 0,
+  "watch": 2,
+  "none": 148
  },
  "survivors_flagged": [
   {
-   "symbol": "PPC",
-   "score": 7,
-   "tier": "ACTIVE",
-   "lane": "minority squeeze-out / merger-arb",
-   "one_line": "JBS (82% holder) proposed 2.086 JBS shares per PPC share on 2026-08-20 at literally ZERO premium ($28.50 vs $28.49 close); a special committee with independent advisors plus a mandatory majority-of-minority vote condition is the classic bump setup, stock only $30.48 vs $34.50 200d and $44.87 52wk high, so the market has not priced a raise."
-  },
-  {
-   "symbol": "PPTA",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "supply-shortage + timing-moat with dated financing milestone",
-   "one_line": "EXIM's $2.9B senior secured loan approved May 2026 is to be documented in H2-2026 alongside a guided final investment/construction decision in H2-2026 for the only US mine able to meet DoD antimony demand by 2029; stock at $25.09 sits BELOW its $26.59 200d and well under the $37.37 high, so the FID leg is not re-rated, but this is a development story not a hard special-situation."
-  },
-  {
-   "symbol": "PSKY",
+   "symbol": "RAPP",
    "score": 5,
    "tier": "WATCH",
-   "lane": "merger_arb",
-   "one_line": "Acquirer of WBD at $31/sh cash ($111B); DOJ cleared June 2026 and all federal approvals won, but California AG suit heads to trial and a $0.25/qtr ticking fee starts 2026-09-30 — real dated mechanics, though PSKY is the acquirer leg (the arb is WBD) and is already +25% since last earnings."
-  },
-  {
-   "symbol": "PVLA",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "binary_regulatory",
-   "one_line": "QTORIN rapamycin NDA submission guided for H2 2026 in microcystic lymphatic malformations (Breakthrough/Fast Track/Orphan, first-in-disease), with a second indication reading through from TOIVA — but the de-risking Phase 3 SELVA topline already printed positive in February 2026, so part of the re-rate is behind it and the PDUFA itself lands in 2027."
-  },
-  {
-   "symbol": "QURE",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "binary_catalyst",
-   "one_line": "AMT-130 Huntington's BLA submits Q3-2026 under accelerated approval with a ~60-day acceptance step in Q4 — real forward regulatory arc, but at $44.50 vs a $28 200dma and a 5x off the low, the asymmetry is largely spent."
-  },
-  {
-   "symbol": "RARE",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "binary_catalyst",
-   "one_line": "UX111 (MPS IIIA) has a hard 19-Sep-2026 PDUFA on a post-CRL resubmission while the stock sits at an all-time low ($15.30 vs $39.89) on the UNRELATED GTX-102 Angelman miss — genuine dislocated asymmetry, but 13 days out is one bi-weekly cycle, so entry-arc is late and post-approval value is thin."
+   "lane": "dated_binary",
+   "one_line": "RAP-219 Phase 2 bipolar-mania topline is guided for Oct 2026, a dated binary on an expanded, potentially confirmatory trial. Asymmetry and price run-in were not yet checked, and it is close to resolution for a bi-weekly pipeline."
   },
   {
    "symbol": "RCI",
-   "score": 6,
-   "tier": "ACTIVE",
-   "lane": "capital_return_asset_monetization",
-   "one_line": "Two live dated structural steps: MLSE 25% buy-in (C$4.35B) closing Q4-2026 on league approvals, then the pre-announced minority-stake recapitalization of the consolidated sports/media group (~$18B mark) targeted late-2026/early-2027 — a sum-of-parts crystallization plus deleveraging in a stock still at $37.5 vs 200d $36.6 and below its 52wk high, i.e. early-arc and un-rerated."
-  },
-  {
-   "symbol": "RILY",
    "score": 5,
    "tier": "WATCH",
-   "lane": "distressed_restructuring",
-   "one_line": "Deleveraging distressed holdco (renamed BRC Group): announced repurchase of B. Riley Securities minority and combination with B. Riley Wealth still pending plus rolling note redemptions - one live structural milestone at a fraction-of-NAV, thin-coverage stub, though several deleveraging legs already fired."
+   "lane": "spin_off",
+   "one_line": "Bought Kilmer's 25% of MLSE for C$4.35B (announced 2026-07-06, closing Q4 2026 pending league approvals); CFO plans to announce minority-stake sales of the >C$25B sports/media entity by H1 2027 and use the proceeds to cut debt. Real sum-of-parts unlock, but widely covered and mid-arc."
   }
  ],
  "verified": [
   {
-   "symbol": "PPC",
-   "score": 4,
+   "symbol": "RAPP",
+   "score": 5,
    "tier": "WATCH",
-   "lane": "minority squeeze-out / merger-arb (stock-for-stock ratio)",
-   "catalyst": "JBS N.V. (82% holder) made a non-binding all-stock proposal on 2026-08-18 to buy PPC's ~18% minority at a fixed 2.086 JBS shares per PPC share, to be negotiated by a PPC special committee of independent directors and conditioned on a majority-of-the-minority vote — the classic setup for a negotiated bump.",
-   "dated_milestone": "Proposal dated 2026-08-18 (JBS 8-K/Form 425). No outside date or deadline disclosed. Next dated markers: PPC special-committee appointment / advisor-retention disclosure and any JBS Form 425 amendment (open, weeks-to-months); PPC Q3-2026 results ~late Oct 2026. As of 2026-09-06 there is no definitive agreement and no revised ratio.",
-   "instrument": "PPC common; the only clean expression is long PPC vs short 2.086 JBS (ratio spread) — unhedged PPC is simply long JBS/protein beta, since the consideration is JBS paper, not cash.",
-   "bloom_gates": "G1 PASS (named counterparty: JBS N.V., 82% holder, formal written proposal in an SEC 8-K/425). G2 PARTIAL (structural commitment — special committee with independent legal/financial advisors + mandatory majority-of-minority condition — but the proposal is expressly NON-BINDING, no price commitment, no definitive agreement, and JBS can walk as it effectively did in a prior attempt). G3 FAIL — the \"unpriced figure\" is not unpriced: PPC at $30.48 vs JBS at $13.03 implies a 2.339 ratio, i.e. the tape already carries a 12.1% raise over the 2.086 offered.",
-   "edge": "L. Run-up from the pre-catalyst base: PPC closed $28.49 on 2026-08-18 (unaffected) and sits at $30.48 = +7.0%. But the load-bearing number is the ratio, and it is worse than the dollar move suggests: JBS has fallen $13.66 to $13.03 (-4.6%), so the offer is now worth 2.086 x $13.03 = $27.18 and PPC trades 12.1% ABOVE its own deal value. Remaining capture to a provenance-checked favorable resolution: a typical controller squeeze-out bump of ~15% (ratio to ~2.40) is worth $31.27 at JBS spot = +2.6% from here; a fat 20% bump (2.503) = $32.61 = +7.0%. Against that, no-deal/offer-only reverts to ~$27.18 = -10.8%. Reference R/R ~0.25:1. The triage premise \"the market has not priced a raise\" is falsified by the tape and by the coverage (JPMorgan constructive; the sell-side/blog framing is literally \"likely to be rejected and raised\").",
-   "primary_source": "JBS N.V. Form 8-K / Form 425, press release dated 2026-08-18 (SEC EDGAR CIK 0001791942, accession 0001213900-26-091373, ex99); corroborated by Reuters/Investing.com 2026-08-18/19 and Food Dive 2026-08-19. Prices: FMP quotes 2026-09-06 — PPC $30.48 (200d $34.50, 52wk high $44.87), JBS $13.03 (200d $14.50); unaffected 2026-08-18 closes per the JBS release: PPC $28.49, JBS $13.66. Gap: no filing yet confirming the special committee's members or advisors, and no disclosed timetable, so the milestone date is open-ended.",
+   "lane": "dated_binary",
+   "catalyst": "Topline results from the RAP-219 Phase 2 proof-of-concept trial in bipolar mania, guided for October 2026 (Q1-26 guidance pulled it forward from 1H27 to 4Q26). The CEO's September 23, 2026 caution that some trial patients may see worsening symptoms has already knocked down market expectations.",
+   "dated_milestone": "Bipolar mania Phase 2 topline due October 2026, not yet released as of 2026-10-12. Next date: Q3 earnings around Nov 5, 2026, which is the backstop if the readout slips.",
+   "instrument": "RAPP common (NASDAQ). Biotech binary with no preferred stack ahead of the common. Sizing should assume a gap move either way within about 3 weeks.",
+   "bloom_gates": "G2 (partial): a concrete, company-guided readout window for a named trial, October 2026. G1 does not apply (no counterparty). G3 fails: there is no contractual or specific unpriced figure, and the upside is a judgement about how the market re-rates a proof-of-concept read.",
+   "edge": "M-L. The stock has de-rated into the event instead of running up. Run-up from the pre-catalyst base is -26%: $41.47 close on 9/22, the day before the CEO's warning, to $30.65 today (about -34% from $46.28 on 9/8; the 50-day average is $42.43). Remaining capture to a provenance-checked favorable value (the pre-warning level, roughly $40-42) is about +31-37%. Downside floor is roughly $24 (the 52-week low is $23.75). Epilepsy (FOS Phase 2a: 90% median seizure reduction in weeks 9-12) plus about $436M of cash (a stale figure) support a market cap of about $1.47B, so a fail costs maybe -20-25%. The warning from management is a negative tell, which is why the edge is not H. The asymmetry is decent and not harvested, but it is not a mispricing I can name.",
+   "primary_source": "Rapport Q1 2026 business update press release (May 2026): bipolar Phase 2 topline guided to 4Q26. KoalaGains top-losers item (2026-09-23): -17.7% on the CEO's TD Cowen summit caution, October 2026 topline. Company release (2026-09-02) for the TD Cowen fireside on 2026-09-23. FMP quote 2026-10-12: $30.65, market cap $1.466B, 52-week range $23.75-$52.93. Yahoo snapshot: $41.47 close on 2026-09-22.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The event is real, dated, forward and unfired — JBS's 2026-08-18 proposal is a genuine minority squeeze-out with a special committee and a majority-of-minority condition, and no definitive agreement exists yet — but it is already re-rated, which is what caps this. PPC trades at a 2.339 implied ratio against the 2.086 offered, so roughly a 12% bump is in the price before the special committee has said anything; the residual to even a generous 20% raise is ~+7% at JBS spot, against ~-11% if JBS walks or the committee accepts near the original terms, for ~0.25:1 reference R/R. Compounding this, the consideration is JBS paper that has itself fallen 4.6% since the proposal (and sits below its own 200d), so an unhedged PPC position is a long beef/poultry-cycle bet wearing an arb costume, and the only honest expression — long PPC vs short 2.086 JBS — is precisely the trade whose spread has already run. Per the residual-capture rule this is a mostly-harvested event: cap 4, WATCH not ACTIVE. It re-qualifies only on a spread reset (PPC back toward ~2.15x JBS, i.e. sub-$28.5 with JBS unchanged) or on a definitive agreement whose ratio prints above the ~2.34 already discounted."
-  },
-  {
-   "symbol": "PPTA",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "supply-shortage / timing-moat (US antimony) with a dated federal-financing milestone",
-   "catalyst": "Definitive documentation and closing of EXIM's board-approved $2.9B senior secured loan, guided \"later this year,\" alongside a final investment/construction decision guided H2-2026 for the Stibnite gold-antimony project.",
-   "dated_milestone": "EXIM facility close guided by 2026-12-31 (Q2 release, 2026-08-17: \"anticipate closing this facility later this year\"); FID/construction decision guided H2-2026. Next hard checkpoint: Q3-2026 results, ~mid-November 2026.",
-   "instrument": "common equity (NASDAQ: PPTA)",
-   "bloom_gates": "G1 PASS (named counterparty: US Export-Import Bank; board approval dated 2026-05-21). G2 PARTIAL (board-approved $2.9B senior secured 13-yr facility, but expressly \"subject to completion of definitive documentation and satisfaction of conditions precedent\" — an approval, not an executed commitment). G3 FAIL (no specific currently-unpriced figure survives: the $2.9B has been public 3.5 months and the tape de-rated through it).",
-   "edge": "L. Residual capture is the unusual part: run-up from the pre-catalyst base is NEGATIVE — pre-announcement close 2026-05-20 was $27.51, today $25.09 = -8.8%, and the stock printed $16.44 in July with the EXIM approval already in hand. So this is the opposite of VISN: nothing has been harvested. But the remaining % cannot be provenance-checked — there is no contractual resolution price, only a re-rating, and I did not verify a project NPV within the lookup budget. Against a price-memory anchor of $33.90 (2026-04-17, the level paid for this same story when it was LESS funded) versus an observed $16.44 floor, remaining upside is ~+35% against ~-34% downside, R:R ~1.0. Edge is low because the milestone is soft, not because the story is harvested.",
-   "primary_source": "Perpetua Resources Q2 2026 results, PRNewswire 2026-08-17 (EXIM close \"later this year\"; FID \"second half of the year\"; $574.2M unrestricted + $60.9M restricted cash; no debt/converts disclosed); EXIM $2.9B board approval PR 2026-05-21 (prnewswire.com/CNBC 2026-05-21); Perpetua \"Advances Construction of the Stibnite Gold Project\" (injunction denied 2026-05-29, critical-path construction commenced 2026-05-30); FMP EOD chart + quote pulled 2026-09-06 ($25.09, 200d $26.59, 52wk 16.435-37.37, mkt cap $3.14B).",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The dated forward legs are real and named — EXIM's board-approved $2.9B senior secured facility still needs definitive documentation, guided to close by year-end, with FID guided H2-2026 for what the Department of War has called the only US mine able to meet defense antimony demand by 2029. Three things cap this at 4 despite genuinely unharvested residual (stock -8.8% from the pre-EXIM $27.51 base, i.e. the approval was sold, not bought). First, the FID is largely ceremonial: after the Idaho court denied the injunction on 2026-05-29, Perpetua commenced critical-path construction on 2026-05-30 and is already fabricating processing equipment and building access — an FID that ratifies work underway is not a hard binary. Second, the resolution event adds $2.9B of senior secured claims ahead of a $3.14B common stack rather than releasing value to it, and the numerator I can defend is only a price-memory anchor, not a re-derived project NPV — a real provenance gap I could not close in the lookup budget. Third, and decisive against ACTIVE under a strict gate, the substance here is a levered gold bet: the name de-rated ~25% from its April high WHILE the $2.9B was being approved, which is the tape saying it prices bullion and developer beta, not milestones. Worth watching into the loan close for a genuine mispricing if the equity stays below the 200d, but this is a development story, not a special situation."
-  },
-  {
-   "symbol": "PSKY",
-   "score": 3,
-   "tier": "NONE",
-   "lane": "merger_arb",
-   "catalyst": "Paramount Skydance's $31/sh cash ($110.9B) acquisition of WBD is frozen pending a STATE antitrust trial (California AG Bonta et al. + WGA), with PSKY contractually agreed not to close until five days after that case resolves — but PSKY is the acquirer leg, where the $31 cash payoff and the $0.25/qtr ticking fee are liabilities, not upside.",
-   "dated_milestone": "2026-10-01 ticking fee begins accruing to WBD holders (~$7M/day, ~$1.3B by trial end, a PSKY cash cost); 2027-03-02 to 2027-03-19 state antitrust trial (Judge Martinez-Olguin, 12 court days); 2027-06 merger agreement outside date.",
-   "instrument": "None for PSKY. The only underwritable expression of this event is WBD common (gross spread $28.25 → $31 = +9.7% plus accruing ticking fee), which is a different symbol.",
-   "bloom_gates": "G1 PASS (named counterparty: WBD, $31.00/sh cash, $110.9B; named opposing party: CA AG Rob Bonta + state coalition and WGA). G2 PASS (concrete dated commitment: $0.25/qtr per-WBD-share ticking fee measured daily from 2026-09-30; July 24 2026 agreement to postpone closing until 5 days post-trial). G3 FAIL for PSKY — no specific currently-unpriced figure accrues to the acquirer's common; the quantified spread belongs to WBD.",
-   "edge": "L. Residual capture on the PSKY leg is unmeasurable and the recent move is already a re-rate: PSKY is -48% from its 52wk high ($20.86 → $10.86) since the deal was struck, but +42% off the $7.62 low and roughly +25% off its post-Q2-print base (10-Q filed 2026-08-04) into today — i.e. the near-term bounce is harvested, and the remaining % to a \"favorable resolution value\" cannot be stated because no such value is derivable for the acquirer's stub. On the other leg the number is knowable and small: WBD $28.25 → $31.00 = 9.7% remaining gross, over ~6-9 months with binary court risk.",
-   "primary_source": "Variety, \"Paramount Agrees to Postpone Warner Bros. Merger Until After Antitrust Trial\" (2026-07-24) and \"Judge Sets Paramount-Warner Bros. Antitrust Trial for March 2027\"; Paramount IR deal release (2026-02-27, $31.00/sh cash, $110.9B, $0.25/qtr ticking fee from 2026-09-30); PSKY Form 10-Q balance sheet, period 2026-06-30, filed 2026-08-04 (CIK 0002041610); FMP quotes PSKY $10.86 / WBD $28.25 as of 2026-09-05 close.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The triage note's premises are materially wrong and the correction kills the case: this is not a federally-cleared deal awaiting a side-show state suit — Paramount agreed on 2026-07-24 to cancel the preliminary-injunction fight and contractually postpone closing until five days after the state antitrust case resolves, with trial set for 2027-03-02 to 03-19 and the merger agreement's outside date in June 2027. So the milestone is a ~6-month-out binary court verdict, and the $0.25/qtr ticking fee starting 2026-09-30 is a ~$7M/day cost TO PSKY (~$1.3B by trial end), not a mechanic in its favor. More fundamentally, PSKY is the wrong leg: the contractual $31/sh payoff and the measurable 9.7% remaining spread sit with WBD, while PSKY common is a $11.8B equity stub carrying $13.5B net debt (Q2 10-Q, 2026-08-04) that must absorb a $110.9B cash purchase — no favorable-resolution value re-derives from that waterfall, and the market has voted with a 48% drawdown from the 52wk high. Add that the near-term move is already harvested (+25% off the post-Q2 base, +42% off the $7.62 low) and that a court block is arguably PSKY-POSITIVE, and there is no signed, quantifiable, unpriced figure to underwrite here. Real dated event, wrong symbol."
-  },
-  {
-   "symbol": "PVLA",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "binary_regulatory",
-   "catalyst": "Palvella is completing a rolling NDA to FDA for QTORIN 3.9% rapamycin gel in microcystic lymphatic malformations (Breakthrough/Fast Track/Orphan, no approved therapy, >30,000 US patients), with completion guided for H2 2026 and a standalone US launch guided for H1 2027.",
-   "dated_milestone": "NDA submission completion guided H2 2026 (first module filed 2026-06-29); Phase 3 TOIVA/cutaneous venous malformations trial initiation guided Q4 2026; US approval/launch guided H1 2027 — no PDUFA date assigned as of the 2026-08-04 Q2 release.",
-   "instrument": "common equity (NASDAQ: PVLA)",
-   "bloom_gates": "G2 only — concrete dated commitment (rolling NDA module filed 2026-06-29, completion H2 2026, launch H1 2027, TOIVA Ph3 start Q4 2026). G1 weak (FDA is a regulator, not a commercial counterparty; no partner/acquirer named). G3 FAILS — no specific currently-unpriced figure; the >30,000-patient TAM and the $207-$232 sell-side targets are published and in the tape.",
-   "edge": "L — the event is forward but the money was already made. Pre-catalyst base 2026-02-23 close $87.84 (day before SELVA Phase 3 topline); today $157.24 = RUN-UP +79.0%, and the stock sits 2.6% under its 52-week high of $161.38 (52-wk low $52.82, +198%). REMAINING to my re-derived favorable-resolution value ~$178 is +13%; even the most bullish inherited target ($232, Canaccord) is only +48% for a binary that still carries CRL/label risk. What is left is administrative filing plus an un-started TOIVA Phase 3 — the de-risking read (SELVA p<0.001 on mLM-IGA plus all secondaries, 2026-02-24) and the $230M February raise are both fully absorbed. Mostly harvested.",
-   "primary_source": "Palvella 8-K/Q2 2026 press release, sec.gov EDGAR CIK 1583648 accession 000119312526331556, dated 2026-08-04 (cash $250.6M, 15,802,768 shares incl. pre-funded warrants as of 2026-07-31, NDA completion H2 2026, launch H1 2027, TOIVA Ph3 Q4 2026); rolling-NDA first-module PR 2026-06-29 and SELVA topline PR 2026-02-24, ir.palvellatx.com; prices FMP EOD/quote through 2026-09-04.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The triage note is directionally right and the correction it flags is the whole story: the de-risking Phase 3 SELVA topline printed 2026-02-24 and the stock went $87.84 to $157.24 (+79%), now within 2.6% of its all-time high, so the NDA milestone that remains is an administrative filing step rather than an information event. Gate result: G2 passes (dated, concrete, company-committed — rolling NDA module filed 2026-06-29, completion H2 2026, launch H1 2027), but G3 fails outright, because there is no specific unpriced figure left — a $2.23B EV against a >30,000-patient orphan indication worth perhaps $150-360M peak US sales is already pricing approval and a good chunk of the launch. Residual capture is roughly +13% to my re-derived $178 against a ~$92 CRL floor (RR 0.32), which is the classic mostly-harvested profile: real event, certain-ish resolution, gain already collected by the February tape. Score capped at 4 / WATCH on that basis. Genuine remaining optionality is TOIVA (cutaneous venous malformations), but that Phase 3 has not started and reads out well beyond the horizon; the one gap in this verification is that no PDUFA date exists yet, so the 2027 approval timing is company guidance rather than an FDA-assigned date."
-  },
-  {
-   "symbol": "QURE",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "binary_catalyst",
-   "catalyst": "uniQure submitted the AMT-130 (ifezuntirgene inilparvovec) BLA to FDA for accelerated approval in Huntington's disease on 2026-09-02 with a priority-review request, leaving FDA filing acceptance / priority-review grant (~60 days) and topline 4-year Phase I/II data as the remaining forward legs.",
-   "dated_milestone": "FDA 60-day filing-acceptance + priority-review decision ~2026-11-01 (from the 2026-09-02 submission); topline four-year Phase I/II data guided for September 2026; PDUFA H1-2027 if priority review is granted.",
-   "instrument": "Common equity (QURE, NASDAQ); the only asymmetric expression left is H1-2027-dated calls into a PDUFA, not spot at $44.50.",
-   "bloom_gates": "G1 (named counterparty: FDA, via the 2026-06-17 Type B meeting outcome) + G2 (concrete commitment: BLA filed 2026-09-02, UK MAA filed same day, priority review requested). G3 fails — there is no specific currently-unpriced figure; the favorable-resolution number is inherited sell-side consensus, not a re-derived one.",
-   "edge": "L. Residual capture: pre-catalyst base $26.99 (2026-06-16 close, day before the Type B/BLA-plan release); 2026-06-17 gapped +78% to $48.16 on 19.7M shares (vs ~1M normal). Run-up from base to today's $44.50 = +64.9%. Remaining from $44.50 to the favorable-resolution value = +29% to consensus $57.50 / +36% to median $60.50 / +80% to the $80 high. So ~57% of the base-to-consensus move is already harvested, and the flagged submission itself was a sell-the-news (-7% from $47.86 on 09-01 to $44.50). Against that, target-low $28 sits at the pre-event base = -37% revert on a refuse-to-file or a re-opened confirmatory-design fight. Reference R/R 0.74:1.",
-   "primary_source": "uniQure press release \"uniQure Announces Submission of Biologics License Application for Ifezuntirgene Inilparvovec (AMT-130) in Huntington's Disease\", GlobeNewswire 2026-09-02; prior \"uniQure Announces Plan for BLA Submission for AMT-130\" 2026-06-17 and Q2-2026 results 2026-07-29 (4-year data guided September 2026). Prices: FMP quote + EOD light chart, 2026-09-06.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The triage note is directionally right but stale on one load-bearing fact: the flagged milestone has already fired — the BLA went in 2026-09-02, five days ago, and the market sold it (-7% off the 09-01 close). The actual re-rate was a single 2026-06-17 print, +78% from $26.99 to $48.16 on 19.7M shares, when the Type B meeting confirmed the 3-year Phase I/II analysis could carry an accelerated-approval BLA; everything since has been chop between $37 and $51, and $44.50 today is below the June-25 offering price of $45.50. What remains forward and dated is real — the ~60-day filing-acceptance/priority-review decision around 2026-11-01, the September-2026 topline four-year data, and a 2027 PDUFA — but acceptance is a low-information administrative step and the informative leg (the 4-year readout) is not what was flagged. On residual capture the asymmetry is largely, though not entirely, spent: +65% run-up from the pre-catalyst base already banked versus +29% left to consensus against a -37% revert to that same base if FDA refuses to file, and the resolution value is an inherited analyst number rather than a re-derived one, over a launch-economics question (uniQure's own Hemgenix) that nobody has priced. Cap at 4, WATCH — a real arc, mostly harvested, with the interesting expression being dated calls into the PDUFA rather than spot."
-  },
-  {
-   "symbol": "RARE",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "binary_catalyst",
-   "catalyst": "FDA PDUFA action date of 19-Sep-2026 on the resubmitted UX111 (rebisufligene etisparvovec) BLA for Sanfilippo Type A, where the original CRL was CMC/facility-inspection only with no clinical deficiency cited.",
-   "dated_milestone": "2026-09-19 FDA action date (Class 2 resubmission review); next scheduled company update Q3 earnings ~early-Nov 2026",
-   "instrument": "common equity (RARE, NASDAQ)",
-   "bloom_gates": "G1 (named counterparty: FDA, statutory action date) + G2 (concrete dated commitment: BLA resubmission accepted with 19-Sep-2026 PDUFA); G3 only weakly — the incremental rare-pediatric PRV (~$100-150M on recent comps, ~7-10% of a $1.51B cap, program now extended to 30-Sep-2029) is a real unpriced figure but small relative to cap.",
-   "edge": "M — run-up from the pre-catalyst base is NEGATIVE, not harvested: the PDUFA has been public since the resubmission acceptance yet RARE is -45% in the last week and -62% from the $39.89 high, closing at $15.30 (52w low $13.81, 50d avg $27.71). Remaining capture from $15.30 to a provenance-checked favorable-resolution value of ~$21 is roughly +37%; downside on a second CMC CRL is ~-20% to ~$12, so reference R/R ~1.7:1. Edge is capped at M, not H, because the approval does not restore the lost value — the $24 of price destroyed was Angelman (GTX-102 apazunersen, Phase 3 Aspire missed both primary Bayley-4 cognitive and the MDRI key secondary, announced 02-Sep-2026), a permanently larger commercial opportunity that UX111 cannot replace, and because 13 days is a single bi-weekly cycle with no room to build an arc.",
-   "primary_source": "Ultragenyx IR, \"Ultragenyx Announces U.S. FDA Acceptance of BLA Resubmission for UX111 AAV Gene Therapy to Treat Sanfilippo Syndrome Type A (MPS IIIA)\" (PDUFA 19-Sep-2026); cross-checked against Ultragenyx IR/GlobeNewswire \"Phase 3 Aspire results in Angelman Syndrome\" 02-Sep-2026 and Federal Register 2026-17932 \"Issuance of Priority Review Voucher; GENGLYCOS\" 02-Sep-2026; price/cap from FMP quote 2026-09-04 ($15.30, $1.507B, 52w 13.81-39.89)",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The event passes every gate cleanly: real, specific, dated, forward and idiosyncratic — FDA accepted the UX111 resubmission with a 19-Sep-2026 action date, the prior CRL was CMC and facility-inspection driven rather than clinical, and the resubmitted file carries up to 8 years of follow-up showing durable CSF-HS reduction. It is genuinely un-harvested: the collapse to an all-time low is entirely the unrelated 02-Sep-2026 Aspire Angelman miss, and in the same week Ultragenyx actually secured its first AAV gene therapy approval (GENGLYCOS, PRV issued per Federal Register 02-Sep-2026), a non-dilutive ~$150M voucher that the tape has not credited. What holds this at WATCH/6 rather than ACTIVE is the remaining-capture arithmetic, not the event quality: MPS IIIA is an ultra-rare one-time-dose indication whose approval plus a second PRV plausibly adds a few hundred million of enterprise value against a $1.51B cap, so favorable resolution is a ~+37% move rather than a re-rate, the CMC failure mode is precisely the kind that repeats, and 13 days leaves exactly one bi-weekly cycle — the entry arc is late and the position would be a naked binary rather than a built one."
+   "analysis": "The catalyst is real, dated and forward. The October 2026 topline has not fired. It is not a macro bet, and it is not harvested: the stock fell 17.7% on 9/23/26 after the CEO cautioned that some bipolar mania patients might worsen, so expectations have been reset lower. The 2026 epilepsy/FOS program and about $436M of cash (a stale figure) cap the downside, which leaves roughly +31% to the pre-warning level against roughly -22% to the 52-week low (about 1.4:1). Two things keep this at WATCH, not ACTIVE: management itself flagged a possible negative signal, and a readout inside about 3 weeks may land before a bi-weekly pipeline can act. Gaps: I could not find the exact readout date, the trial size or the endpoint, and the cash figure was not re-checked against the latest 10-Q. Numerator provenance is not applicable (no preferred stock or waterfall; the upside is a binary re-rate, not a derived SoP)."
   },
   {
    "symbol": "RCI",
    "score": 5,
-   "tier": "ACTIVE",
-   "lane": "capital_return_asset_monetization",
-   "catalyst": "Rogers signed a binding C$4.35B agreement on 6-Jul-2026 to buy Kilmer Sports' remaining 25% of MLSE (marking MLSE at C$17.4B, +39% over the C$12.5B BCE mark), closing Q4-2026 on league approvals, ahead of a pre-announced minority recapitalization of the consolidated sports/media group at >C$25B whose proceeds are earmarked for debt paydown.",
-   "dated_milestone": "MLSE 25% buy-in close targeted Q4-2026 (subject to NHL/NBA/MLS/CFL approvals); next hard date = Q3-2026 results in late Oct 2026 for a recap-process update; sports/media minority recapitalization targeted late-2026/early-2027, with some reporting pointing to a stake sale in H1-2027.",
-   "instrument": "common equity (NYSE: RCI, Class B non-voting)",
-   "bloom_gates": "Leg 1 passes G1 (named counterparty: Kilmer Sports Inc.), G2 (signed definitive agreement, C$4.35B, close Q4-2026) and G3 (MLSE marked C$17.4B, +39% over the C$12.5B BCE mark; sports+media >C$25B vs a total common market cap of ~C$27.8B). Leg 2 (the recap that actually brings cash in) FAILS G1 — no named investor, no signed agreement, only a company-stated late-2026/early-2027 target with reporting pointing to H1-2027.",
-   "edge": "M",
-   "primary_source": "Rogers news release / SEC Form 6-K, 6-Jul-2026 (\"Rogers to Become 100% Owner of Maple Leaf Sports & Entertainment\", C$4.35B, close Q4-2026 on league approvals) + Globe and Mail 6-Jul-2026 (C$17.4B implied MLSE value vs C$12.5B) + Sportico 27-Apr-2026 (sports stake sale at >C$25B / ~US$18B, recap targeted late-2026/early-2027, proceeds to debt paydown) + RCI Q2-2026 balance sheet filed 22-Jul-2026 (total debt C$45.7B, net debt C$44.0B, minority interest C$6.29B) + FMP quote 6-Sep-2026 ($37.52, 200d $36.59, 50d $34.68, 52wk 31.38-41.14, mcap US$20.27B).",
-   "verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "kill_fact": "Reported debt leverage is 3.8x at 30-Jun-2026 (Q2 press release), NOT the 4.3x the line asserts — and the C$4.35B is 100% cash funded \"through existing and new short-term credit facilities\" against only C$6.1B liquidity (C$1.7B cash + C$4.4B undrawn), pushing leverage back toward ~4.2x on close. The correction is favorable on the number but fatal to the numerator: the only precedent for how Rogers actually monetizes is Blackstone's C$7B BNSI deal (49.9% economic / 20% voting, closed 20-Jun-2025), which sits on the balance sheet as the C$6.293B minority interest the line cites — that figure is exactly right, but it is preferred-like STRUCTURED equity carrying a repurchase right Rogers may exercise only if leverage is ≤3.25x, a threshold it is nowhere near and moving away from. If leg 2 (the >C$25B / US$18.25B recap, which has no named counterparty, no signed agreement, and management guidance already slipped to \"late 2026 or early 2027\") is papered the same way, \"proceeds earmarked for debt paydown\" is a swap of one senior claim for another, not value delivered to the Class B common — the exact inverted-waterfall pattern the provenance test exists to catch, and it is unverified rather than disproven.",
-   "analysis": "The flag checks out on facts and on residual: both legs are real and dated, and the stock has captured essentially none of either — flat YTD and over three months despite the April recap pre-announcement and the July signing, with ~25-50% still on the table against a capital-structure-derived SoP of $47-56. Numerator provenance survives: the C$6.29B non-controlling/structured-equity interest sitting ahead of the common is only ~16% of the ~C$37B residual equity and management has said recap proceeds go to debt paydown, so this is not an FIP-style inverted waterfall. Two things cap it at 6 rather than higher: leg 1 is a C$4.35B cash OUTFLOW that raises leverage from an already-heavy 4.3x net-debt/EBITDA and only sets a comp — the actual monetization is leg 2, which has no named counterparty, no signed agreement and a timeline already drifting toward H1-2027; and this is a $20B, fully-covered name whose SoP gap is a long-standing Rogers-family control discount that prior crystallization events (the BCE stake, the Blackstone structured equity) demonstrably did not close."
-  },
-  {
-   "symbol": "RILY",
-   "score": 2,
-   "tier": "NONE",
-   "lane": "distressed_restructuring",
-   "catalyst": "BRC Group Holdings (ex-B. Riley Financial) \"seeks to\" repurchase the minority shares of B. Riley Securities and combine BRS with B. Riley Wealth, targeted for completion by year-end 2026 — an internal consolidation with no disclosed price, no named counterparty and no binding agreement.",
-   "dated_milestone": "BRS minority buy-in + BRS/BRW combination \"expected by year-end 2026\" (announced 2026-04-20, still no signed terms as of 2026-09-06); nearest hard date is the 2026-09-29 full redemption of $142.1M of 6.50% Senior Notes due 2026 at 100% of par (already announced, cash-out, neutral-to-common).",
-   "instrument": "common equity (RILY); Series A/B preferred depositary shares sit ahead of it",
-   "bloom_gates": "NONE pass. G1 fails — counterparty is an unnamed group of BRS minority holders, not a named external acquirer. G2 fails — the 2026-04-20 release says the company \"seeks to\" repurchase and \"intends to\" combine; no definitive agreement, no consideration, no closing conditions disclosed. G3 fails — zero specific unpriced figure was published (no buy-in price, no pro-forma equity value for the combined BRS/BRW platform). The only dated, concrete item is the 2026-09-29 par redemption of $142.1M of notes, which is already announced and fired-in-price.",
-   "edge": "L — run-up from the pre-catalyst base is NEGATIVE and remaining capture is not derivable. Pre-catalyst base = $7.80 close on 2026-04-17 (last session before the 2026-04-20 announcement); last close $7.03 on 2026-09-04 = -9.9% run-up, and -34% off the 2026-05-22 $10.68 post-announcement peak, i.e. the market already round-tripped and faded this story. Remaining % to a provenance-checked favorable-resolution value cannot be stated as positive: the equity waterfall supports no mechanical common residual (see numerator provenance), so the \"fraction-of-NAV\" framing in the triage note is unsupported — the common trades at roughly 10x its post-preferred book and against deeply negative tangible equity.",
-   "primary_source": "BRC Group Holdings press release, \"BRC Group Holdings Seeks to Repurchase Minority Shares of B. Riley Securities and Combine B. Riley Securities with B. Riley Wealth,\" 2026-04-20 (PRNewswire / brileysecurities.com); BRC Group Holdings Form 10-Q for the quarter ended 2026-06-30, filed 2026-08-06 (SEC CIK 0001464790, accession 000146479026000046) for the capital structure, preferred arrears and debt; BRC Group Holdings notice of full redemption of $142,137,375 of 6.50% Senior Notes due 2026, redemption date 2026-09-29. Price reference: FMP EOD close $7.03 on 2026-09-04 vs $7.80 on 2026-04-17.",
+   "tier": "WATCH",
+   "lane": "spin_off",
+   "catalyst": "Rogers now owns 100% of MLSE (closed 2026-10-01) and plans to sell a minority stake in its combined sports/media entity, which it values at more than C$25B, by H1 2027, using the cash to pay down debt. The sale would put a market price on the sports assets.",
+   "dated_milestone": "Kilmer 25% buyout CLOSED 2026-10-01 (announced 2026-07-06). Next: Q3 2026 results around late Oct 2026, for an update on the sale process; the minority-stake sale announcement is guided for H1 2027 (no buyer, terms or date yet).",
+   "instrument": "RCI common (NYSE; RCI-B.TO)",
+   "bloom_gates": "G2 partial: a stated management intent and timeline (sale within ~12 months / by H1 2027), not a contract. G3 partial: management's >C$25B entity value is a specific figure the stock does not reflect. G1 FAIL: no named buyer.",
+   "edge": "M. Run-up from the pre-catalyst base: -5.8% (US$31.62 on 2026-07-02 to US$29.78 on 2026-10-12, a 52-week low, down 4% today). Remaining to the provenance-checked value: about +25-30% (US$38, see valuation). The deal story has not been harvested at all; the stock has de-rated on the telecom core (Q2 loss, competition). The edge is limited because the sale is widely covered and has no buyer or price yet. Selling a stake at fair value only moves value between Rogers' own pockets; the equity gains only if the sale price beats the sports value the market already implies. That is likely given the thin equity slice, but unproven.",
+   "primary_source": "Rogers/GlobeNewswire closing release 2026-10-01 (via telcomagazine.com/globenewswire/3373334). Announcement 2026-07-06 (iphoneincanada.ca, thelogic.co). RCI Q2 2026 balance sheet, filed 2026-07-22 (FMP). FMP quote 2026-10-12 and EOD prices for 2026-07-02.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The flagged milestone is genuinely forward and unfired, but it is not a Bloom-grade catalyst: the 2026-04-20 release only says BRC Group \"seeks to\" repurchase BRS minority shares and combine BRS with B. Riley Wealth by year-end 2026 — an internal reorganization of subsidiaries it already controls, with no definitive agreement, no named external counterparty and no disclosed price, so nothing specific and currently unpriced can be pointed at. Numerator provenance kills the upside independently: at 2026-06-30 parent equity is $142.2M against $494.6M of goodwill and intangibles (tangible common equity roughly -$294M) with ~$114M of Series A/B preferred liquidation preference plus $12.1M of accrued arrears ahead of the common, and the company's own capital plan sends cash to the 2026 senior notes first (the $142.1M 6.50% par redemption on 2026-09-29) — so the mechanical common residual is negative, not a fraction of NAV. Residual capture confirms there is nothing left to harvest either: the stock is -9.9% versus its $7.80 pre-announcement base (2026-04-17) and -34% from the $10.68 May peak, meaning the market already tried and rejected this thesis; thin coverage is real but it is a levered stub with negative tangible equity, not a mispriced event."
+   "analysis": "The Kilmer buyout is real and done (C$4.35B, closed 2026-10-01). The forward event is the minority-stake sale of the >C$25B sports/media entity by H1 2027, which is management intent with no named buyer. Capital structure re-derived from the Q2 2026 balance sheet (CAD): total debt C$45.7B, net debt C$44.0B before the C$4.35B buyout cash, and C$6.3B of minority interest ranking ahead of the common (mostly the Blackstone-led wireless-backhaul structured equity, whose redemption and step-up terms were NOT checked here; that is a gap). Common equity is only about C$22.5B (US$16.1B) inside an EV of about C$77B, so the waterfall does support the upside: if a sale crystallises C$25B against roughly C$15B implied, that is about +C$10B, or about +40% gross on the equity, though leverage cuts both ways. Score 5 / WATCH rather than ACTIVE: there is no counterparty yet, the guided date is 6-9 months out, the story is widely covered, and the telecom stub is deteriorating (52-week low) and could swamp the SoP gain."
   }
  ]
 }

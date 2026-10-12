@@ -2,73 +2,24 @@
  "chunk": "19 (UCB-WEX)",
  "scanned": 150,
  "scan_distribution": {
-  "active": 4,
-  "watch": 10,
-  "none": 136
+  "active": 1,
+  "watch": 5,
+  "none": 144
  },
  "survivors_flagged": [
   {
    "symbol": "UNF",
-   "score": 8,
-   "tier": "ACTIVE",
-   "lane": "merger_arb",
-   "one_line": "Live Cintas merger at $155 cash + 0.7720 CTAS = $309.76 vs $275.17 spot, a 12.6% gross spread to a 2H26 close; holders approved 99% in June, sole live variable is the FTC Second Request issued 2026-06-11 (two largest uniform-rental operators) — spread has widened since announcement, so regulatory risk is over-, not under-priced."
-  },
-  {
-   "symbol": "UCB",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "capital_return",
-   "one_line": "Closed the $2.0B Navitas sale to Wafra on 2026-09-01 — $1.9B net proceeds and +145bps CET1 against a $4.27B market cap, currently parked in 4.0-4.5% short paper (EPS-dilutive); the deployment decision (buyback/tender vs in-market M&A) is unannounced and the Q3 call is the forward gate, stock flat to its 50dma."
-  },
-  {
-   "symbol": "VAL",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "merger_arb",
-   "one_line": "Transocean all-stock at 15.235x RIG (=$89.12 vs $86.74, ~2.7% gross); CFIUS cleared but DOJ Second Request unresolved + 75% VAL vote, close 2H26 - a real complicated arb, but late-arc with thin spread against a large break-price downside."
-  },
-  {
-   "symbol": "VECO",
    "score": 7,
    "tier": "ACTIVE",
    "lane": "merger_arb",
-   "one_line": "Live all-stock merger with Axcelis ($5.2B, both shareholder votes passed Feb-2026); ONLY China SAMR remains, close targeted 2H26 — and VECO at $44.67 vs 50dma $52 / 52wk high $87 means the tape is pricing real break/semicap risk, not deal certainty. Early-to-mid arc, unmoved, one hard remaining gate."
+   "one_line": "Cintas deal at $155 cash + 0.772 CTAS, worth about $311 against UNF at $260.85, a gross spread of about 19% pricing heavy FTC risk. Shareholders approved 6/11, both firms certified Second Request compliance 10/2, and they agreed not to close before Dec 11 unless the FTC closes its probe first. The FTC decision or suit by about mid-Dec is the dated binary; Canada's review is also in progress."
   },
   {
-   "symbol": "VERA",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "dated_binary",
-   "one_line": "TRUTAKNA got accelerated approval 07-Jul-2026 and the stock did NOT re-rate ($35.89, below 200dma, sixth entrant into a crowded IgAN field) — forward binary is the pulled-forward ORIGIN pivotal eGFR readout in Q3'26 with sBLA in Q4'26, i.e. full-approval/differentiation asymmetry that is priced as if it fails. Slightly late-arc on timing but price is genuinely unmoved."
-  },
-  {
-   "symbol": "VFS",
+   "symbol": "VLRS",
    "score": 5,
    "tier": "WATCH",
-   "lane": "distressed_restructuring",
-   "one_line": "Dated restructuring milestone: sale of Vietnamese manufacturing arm VFTP for ~$530M transferring ~VND182T (~$7B) of debt off the balance sheet, targeted completion Q3'26 — stock $3.08 near 52wk low, unmoved. Heavily discounted because it is a Vingroup related-party shuffle on a ~1% float; real date, low-quality mechanism."
-  },
-  {
-   "symbol": "VNDA",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "binary",
-   "one_line": "Imsidolimab GPP PDUFA Dec 12 2026 with the stock at $5.43 near 52w lows and ~$264M cash vs $327M cap — unmoved dated binary plus activist/poison-pill overhang; offset by Vanda's poor FDA track record."
-  },
-  {
-   "symbol": "VNET",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "overhang",
-   "one_line": "Shandong Hi-Speed's 38.1% block sold to CATL affiliates at $8.69/ADS closing Q4 2026 while the ADS sits at $6.37 near 52w lows — forced-seller overhang clearing at a 27% premium to spot, price moved against it; but no bid for the minority float."
-  },
-  {
-   "symbol": "WBD",
-   "score": 7,
-   "tier": "ACTIVE",
-   "lane": "merger_arb",
-   "one_line": "Paramount Skydance $31/sh cash deal (superior-proposal Feb-26, holders approved 23-Apr-26) still open at $28.25 = ~9.7% gross spread; hard dated hooks are the 30-Sep-26 ticking-fee step-up and pending DOJ/EU/state-AG clearances with Q3-26 target close - late-arc but the spread is the whole trade and the regulatory tail is what is mispriced."
+   "lane": "merger",
+   "one_line": "50/50 Viva Aerobus combination (Grupo Mas Vuelos): shareholders, FTC and Colombia have cleared it. Mexico's antitrust ruling (>75% domestic share) is the last gate, expected before end-2026. Real binary, but a merger of equals with no arb spread."
   }
  ],
  "verified": [
@@ -77,135 +28,30 @@
    "score": 5,
    "tier": "WATCH",
    "lane": "merger_arb",
-   "catalyst": "FTC resolution of the 2026-06-11 Second Request on Cintas' pending acquisition of UniFirst ($155 cash + 0.7720 CTAS per share), the only remaining condition after the 2026-06-12 shareholder approval.",
-   "dated_milestone": "FTC Second Request compliance then a 30-day HSR clock; parties reaffirmed a 2H26 (by 2026-12-31) close, merger-agreement outside date 2027-01-10 with automatic extensions of up to eight months (to ~2027-09-10) for antitrust.",
-   "instrument": "common equity hedged 0.7720 CTAS short per UNF share (true spread capture); unhedged UNF common is ~50% a long-CTAS position, not an arb",
-   "bloom_gates": "G1 (named counterparty: Cintas, definitive merger agreement 2026-03-10) + G2 (concrete commitment: fixed $155 cash + 0.7720 CTAS consideration, $350M reverse termination fee, $213M company fee, 99% holder approval 2026-06-12). G3 fails — there is no currently-unpriced figure; the 12.6% spread IS the market's published price of the block risk.",
-   "edge": "L. Run-up: pre-catalyst base $231.26 (2026-03-04 close, the day before the 2026-03-05 +13.6% leak gap) to $275.17 today = +19.0%. Remaining: $275.17 to the $309.76 deal mark = +12.6%. So 44% of the $78.50 base-to-deal move is still on the table (56% harvested) — not mostly-harvested, but the residual is entirely the antitrust discount, and the R/R is inverted: +12.6% up vs roughly -16% to a ~$232 break floor (pre-leak $231 standalone, partly cushioned by the $350M RTF ≈ $19/sh), i.e. ~0.8:1. Market-implied close probability is only ~55.5% ((275.17-232)/(309.76-232)). The triage claim that \"the widening spread means regulatory risk is over-priced\" is an assertion I could not support: this is a horizontal #1-plus-#2 uniform-rental combination, the FTC issued a Second Request and is reportedly interviewing competitors, and a widening spread is at least as consistent with correctly-rising block odds. No differentiated edge on an FTC litigation coin-flip.",
-   "primary_source": "Cintas 8-K / UniFirst 8-K disclosing the FTC Second Request and the 2026-06-12 shareholder approval (SEC, 2026-06-11/12, dp248355_8k.htm); UniFirst DEFM14A (SEC, 2026-05, ny20072400x1_defm14a.htm) for the $155 + 0.7720 terms, $350M reverse termination fee and 2027-01-10 outside date; MLex 2026-06-11 on the Second Request and reaffirmed 2H26 close; FMP quotes UNF $275.17 / CTAS $200.47 and UNF EOD history 2026-03-02..03-13 for the pre-leak base.",
+   "catalyst": "The FTC will either clear Cintas's acquisition of UniFirst ($155 cash plus 0.772 CTAS shares per UNF share) or sue to block it, with the Second Request waiting period and the reported Dec-11 no-close date putting that decision around mid-December 2026.",
+   "dated_milestone": "Second Requests issued 2026-06-11 and UNF shareholders approved the same day (confirmed). Triage says both firms certified substantial compliance on 10/2, which would end the 30-day HSR clock around early November, and that they agreed not to close before 12/11; I could not verify either claim. Next date: FTC clearance or complaint, expected by about 2026-12-11. Canada's Competition Bureau review is also open.",
+   "instrument": "UNF common, long only or hedged by shorting 0.772 CTAS per UNF share. The hedge locks the $155 cash leg plus the stock leg.",
+   "bloom_gates": "G1 yes: named counterparty Cintas, signed merger agreement 2026-03-11. G2 yes: fixed $155 cash + 0.772 CTAS consideration, shareholder approval obtained, $213M termination fee reported. G3 yes: specific unpriced figure is the ~19.3% gross spread ($311.26 deal value vs $260.85).",
+   "edge": "M-L. The event is real, contractual and dated, but the market already prices it as roughly a coin flip on the FTC. With a break price near the pre-leak base of about $200, the implied close probability is about 55%. Uniform rental is concentrated (Cintas is #1, UNF is #3), so heavy FTC risk is a reasonable view rather than mispricing. Run-up from the pre-catalyst base ($199.84 on 2026-02-09, before the 02-10 approach news) to today: +30.5%. Remaining to deal value ($155 + 0.772 x $202.41 = $311.26): +19.3%. So the event is not mostly harvested, and about 40% of the original gap is still on the table. UNF has also fallen from its 50-day average of ~$274 to $260.85. The spread widening recently is a mild negative signal on regulatory odds.",
+   "primary_source": "UniFirst news release on the Second Request and shareholder approval, 2026-06-11 (investors.unifirst.com/node/20606); MLex on the HSR waiting period, 2026; FMP batch quote UNF $260.85 / CTAS $202.41, 2026-10-12; FMP EOD UNF price history, Jan-Mar 2026",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The event is fully verified and passes the reality gates: a signed 2026-03-10 definitive agreement with a named acquirer, 99% holder approval on 2026-06-12, and a single live variable — the FTC Second Request issued 2026-06-11 — with a hard outside date of 2027-01-10 (extendable ~8 months). It is genuinely forward and not a macro bet, and 44% of the base-to-deal move is unharvested, so it does not fall to the mostly-priced cap on residual grounds. What it fails is asymmetry and edge: +12.6% to the deal mark against a ~-16% break floor is 0.8:1, the ~55% market-implied close probability is a defensible price for a horizontal combination of the two largest uniform-rental operators facing an FTC that is interviewing competitors, and I found no evidence for the triage thesis that the widening spread represents over-pricing rather than correctly deteriorating odds. Two structural caveats compound this: half the consideration is uncollared CTAS stock, so the headline $309.76 is a mark that an unhedged holder cannot lock, and the eight-month extension option can push realization to late 2027, collapsing the annualized return on an already sub-1 R/R. WATCH, not ACTIVE — it becomes actionable on a discrete de-risking event (substantial-compliance certification, a negotiated divestiture consent, or an early-termination grant), or on a wider spread that pays for the litigation risk."
+   "analysis": "This is a clean, contractual cash-plus-stock merger arb, so the numerator-provenance rule does not apply. Using CTAS at $202.41, the deal is worth $311.26 against UNF at $260.85: a 19.3% gross spread that resolves within about two months on an FTC binary. Downside if the deal breaks is roughly $195-200, the pre-approach trading range, so the trade risks about $61-66 to make about $50 (reward/risk ~0.8). That is fair-to-slightly-favorable only if you put FTC clearance above roughly 55-60%. Gap: the web-search budget ran out before I could confirm the 10/2 compliance certification or the Dec-11 timing agreement. The only sources found run through August, and FMP press releases since 09-15 show nothing deal-related. Hold at WATCH until those two items are confirmed and there is any read on FTC staff posture (a consent or divestiture remedy versus a suit)."
   },
   {
-   "symbol": "UCB",
+   "symbol": "VLRS",
    "score": 4,
    "tier": "WATCH",
-   "lane": "capital_return",
-   "catalyst": "United Community Banks closed the ~$2.0B cash sale of Navitas equipment finance to Wafra funds on 2026-09-01 (+145bps CET1 to ~14.5% pro forma), leaving an undeclared deployment decision — buyback/tender vs opportunistic M&A — with the Q3 earnings call as the first forward gate.",
-   "dated_milestone": "Q3 2026 earnings release + call, expected ~2026-10-21 (Q3'25 was released 2025-10-22); the date has NOT yet been formally announced by the company, and management has made no commitment to decide by then. Prior hard dates: agreement 2026-06-12, close 2026-09-01.",
-   "instrument": "common equity (NYSE: UCB)",
-   "bloom_gates": "G3 PARTIAL only. G1 FAILS for the forward leg — Wafra is the counterparty to the leg that already fired (closed 2026-09-01); the deployment leg has no named counterparty. G2 FAILS — the 2026-06-12 release is explicit optionality (\"may include a combination of continued organic growth, balance sheet optimization, share repurchases, and opportunistic M&A\"), no sized authorization tied to the proceeds; the only live buyback is the $100M program expiring 2026-12-31 already earmarked to retire Peach State-issued shares. G3 passes weakly: +145bps CET1 / ~14.5% pro forma and the $1.9B of incremental capital are specific, dated, disclosed figures the tape has moved +4% on in three months.",
-   "edge": "L. RESIDUAL CAPTURE: run-up from the pre-catalyst base (2026-06-11 close $34.27, day before the 06-12 agreement) to 2026-09-04 close $35.64 = +4.0% — essentially unharvested, but for a bad reason: the market judged the trade roughly value-neutral, since an ~$1.8B book yielding 7-8% was swapped for 4.0-4.5% sub-2yr paper (EPS-dilutive) against only 3% TBV accretion and an $81M post-tax one-timer. Remaining to the provenance-checked favorable-resolution value (~$40, full-excess-to-buyback branch) = +12.2%. Reference R:R ~1.05:1 against a $31.5 floor. The event is unfired and unpriced, but the numerator itself is small and branch-dependent.",
-   "primary_source": "UCBI/GlobeNewswire press release, \"United Community Banks, Inc. Announces Completion of Sale of Navitas Equipment Finance Business to Funds Managed by Wafra Inc.\", 2026-09-01 (~$2.0B cash, 7% premium to par, prelim price on 08-28 financials); and the agreement release 2026-06-12 ($1.9B, +145bps CET1 to ~14.5% pro forma, 3% TBV accretion, $109M pre-tax / $81M post-tax one-time benefit, $42M reserve release, $1.8B owned receivables = 10% of loans, proceeds reinvested at 4.0-4.5% sub-2yr, use-of-proceeds optionality language). Buyback context: 8-K of 2025-12-08, $100M authorization through 2026-12-31.",
+   "lane": "merger",
+   "catalyst": "Mexico's antitrust authority (CNA, which replaced COFECE) still has to rule on the 50/50 holding-company merger of equals between Volaris and Viva Aerobus (combined about 69% of domestic passengers). This is the last major closing condition.",
+   "dated_milestone": "Announced about 2025-12-19. Volaris shareholders approved on 2026-03-25 (91.8% of share capital in favour). Management guided to regulatory review taking up to 12 months from announcement, which points to a CNA ruling by about Dec 2026. No date has been set. Next datable checkpoint: Q3-2026 earnings in late October 2026.",
+   "instrument": "VLRS common (NYSE ADS); BMV: VOLAR",
+   "bloom_gates": "G1 yes: the counterparty is named (Viva Aerobus / Grupo Mas Vuelos). G2 partial: a signed merger agreement plus a shareholder vote, but the Mexican regulatory outcome is open and remedies are possible. G3 fails: there is no cash price, exchange-ratio premium or quantified synergy figure that sits unpriced against today's price, so there is no contractual numerator.",
+   "edge": "L. This is an all-share merger of equals: no arbitrage spread, no premium, and no contractual price to anchor favourable-resolution value. Any upside would come from synergies or pricing power that I could not quantify within the lookup budget, so no provenance-checked number exists. Run-up from the pre-catalyst base: about -22%. The stock closed at $7.95 on 2025-12-17, jumped to $9.49 on announcement (2025-12-19) and is $6.23 now (FMP, 2026-10-12), near its 52-week low of $5.79. Nothing has been harvested; the move since announcement is fuel- and operations-driven, not deal-related. Remaining to favourable resolution: not derivable. Without a contractual price the remaining percentage is undefined, and approval mostly removes a risk rather than delivering a number. The $9.08 consensus target (+46%) comes from analysts and is excluded under the provenance rule.",
+   "primary_source": "DLA Piper, 'Volaris-Viva Aerobus merger' (2026-04-03): CNA jurisdiction, closing conditions (Mexico, HSR, Colombia), 2026-03-25 shareholder vote. Mexico Business News, CNA independence test commentary (Jan 2026). FMP quote VLRS $6.23 (2026-10-12) and EOD history (2025-12-17 $7.95, 2025-12-19 $9.49). FMP news feed 2026-07-01 to 2026-10-12: no CNA ruling reported.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The transaction is real, dated and closed, but the value-creating leg has already fired and the market priced it as a wash (+4.0% vs the 06-11 base), so what remains is a discretionary capital-allocation decision with no counterparty, no sized commitment and no company-committed decision date — a routine Q3 call is not a catalyst gate. Re-deriving the numerator rather than inheriting it: ~350bps of excess CET1 ≈ $680M ≈ 16% of the market cap is genuinely deployable and the waterfall is clean (only a ~$0.1B non-cumulative perpetual preferred ahead of the common, no PIK, no manager fee, no contractual use-of-proceeds restriction), but buying back at ~1.7x TBV is book-dilutive and caps the mechanical gain at roughly +10-13% EPS even in the full-buyback branch — while \"opportunistic M&A,\" given equal billing in the company's own language, is the branch that typically costs an acquirer 3-8% on announcement. Score capped at 4 on the EQUITY rather than the EVENT: G1 and G2 both fail on the forward leg, only a weak G3 survives, and the honest reward is low-teens with roughly 1:1 reference R:R. GAPS: I did not spend a lookup on the Q2 10-Q, so post-sale RWA, TBV/share and the preferred balance are estimates from disclosed aggregates rather than filed figures, and the ~2026-10-21 Q3 date is inferred from the prior-year cadence and not yet announced."
-  },
-  {
-   "symbol": "VAL",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "merger_arb",
-   "catalyst": "Closing of the Transocean all-stock acquisition of Valaris at a fixed 15.235 RIG-per-VAL exchange ratio, gated on DOJ Second Request resolution plus both shareholder votes, guided to 2H26.",
-   "dated_milestone": "DOJ Second Request received 2026-05-04; parties contractually committed not to certify substantial compliance before 2026-07-31 (HSR clock = compliance + 30 days). As of 2026-09-07 EDGAR shows NO definitive merger proxy (still PREM14A 2026-05-19) and no Valaris filing since the 10-Q of 2026-08-06 - so the S-4/DEFM14A effectiveness and both special meetings are still unscheduled and must land in Q4 2026 for the guided 2H26 close. Next hard date: Q3 10-Q / any 8-K announcing DOJ clearance or proxy mailing.",
-   "instrument": "Paired equity: long VAL vs short 15.235 RIG (unhedged long VAL is not an arb - it is a levered offshore-drilling beta bet on RIG).",
-   "bloom_gates": "G1 PASS (named counterparty: Transocean Ltd., signed Business Combination Agreement 2026-02-09). G2 PASS (concrete contractual commitment: fixed 15.235 RIG per VAL share, ~$5.8B all-stock). G3 FAIL - there is no currently-unpriced figure; the entire remaining value is a 2.7% visible spread that any arb desk screens daily.",
-   "edge": "L. RESIDUAL CAPTURE: (a) run-up = VAL closed ~$57.75 on 2026-02-06, the last pre-announcement print, vs $86.74 today = +50% of the event already harvested; (b) remaining = 15.235 x RIG $5.85 = $89.12 deal value vs $86.74 = +2.74% gross, i.e. roughly 95% of the announcement-to-parity move is gone. Against a break-price floor near the ~$60-65 standalone level, that is ~2.7% up vs ~25-28% down (RR ~0.10) for a deal that still has an unresolved DOJ Second Request, no definitive proxy on file, and a 75% Valaris vote threshold. Even on a clean Q4 close, ~2.7% over ~4 months annualizes to single digits - below the risk-free-plus-borrow cost of carrying the RIG short.",
-   "primary_source": "Valaris/Transocean 8-K on DOJ Second Request, sec.gov Archives tm269762d6_8k.htm (received 2026-05-04; no substantial-compliance certification before 2026-07-31); Valaris PREM14A 2026-05-19 (15.235 exchange ratio, BCA dated 2026-02-09); SEC EDGAR Valaris filing index checked 2026-09-07 (no DEFM14A; latest filing 10-Q 2026-08-06); FMP batch-quote 2026-09-07: VAL $86.74, RIG $5.85.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The event is real, contractual and genuinely forward - the merger has not closed, DOJ is the live gate, and the exchange ratio is fixed so no numerator derivation is required (an exchange-ratio deal is contractual, exempt from the SoP re-derivation rule; there is no pref stack or waterfall issue here). But it fails on remaining capture, not on quality: the Feb-9 announcement already delivered +50%, and what is left is a 2.74% ratio spread that is fully visible and tightly priced by dedicated arb capital. The new fact this check surfaces is negative - as of 2026-09-07 no DEFM14A/S-4 effectiveness has been filed and Valaris has been silent since its 2026-08-06 10-Q, so the 2H26 close now requires DOJ clearance, proxy mailing, two shareholder meetings (Valaris needs 75%) and completion all inside Q4; slippage into 1H27 is the base case risk, which further degrades an already sub-hurdle annualized return. Score capped at 4 under the mostly-harvested rule; hedged it is a low-return, high-break-loss late-arc spread, and unhedged it is a macro bet on offshore day rates, which the mandate excludes."
-  },
-  {
-   "symbol": "VECO",
-   "score": 3,
-   "tier": "NONE",
-   "lane": "merger_arb",
-   "catalyst": "China SAMR clearance — the sole remaining condition to the fixed 0.3575x all-stock Axcelis/Veeco merger (both shareholder votes passed 2026-02-06), with an outside date of 2026-09-30 that auto-extends to as late as 2027-06-30 if only regulatory approvals remain.",
-   "dated_milestone": "Outside date 2026-09-30 (23 days out), auto-extending in successive increments to as late as 2027-06-30 while regulatory approvals are the only unsatisfied condition. SAMR accepted the filing under its simplified procedure 2026-01-23 (10-day comment window closed 2026-02-01) but had not appeared on SAMR's unconditional-clearance list as of the last checkable tape; company guidance remains \"second half of 2026.\"",
-   "instrument": "VECO common equity (as flagged). The only positive-expectancy expression of this event today is the REVERSE arb — short VECO / long 0.3575 ACLS — not the long.",
-   "bloom_gates": "G1 PASS (named counterparty: Axcelis Technologies, signed definitive Agreement and Plan of Merger, 2025-10-01). G2 PASS (concrete commitment: fixed 0.3575 exchange ratio, both shareholder votes passed 2026-02-06, US HSR + Ireland + UK antitrust and German FDI cleared). G3 FAIL — and fails in the wrong direction: the figure is not unpriced, it is OVER-priced. Deal-terms value today = 0.3575 x ACLS $115.08 = $41.14 vs VECO $44.67, so VECO trades at 108.6% of terms.",
-   "edge": "L. Run-up: pre-catalyst base $30.43 (VECO close 2025-09-30, last trading day before the 2025-10-01 announcement) to $44.67 today = +46.8% already harvested. Remaining capture to favorable resolution: NEGATIVE -7.9% ($41.14 terms value / $44.67 price - 1). A successful close mechanically marks VECO DOWN ~8% at unchanged ACLS. The only path to a positive return from $44.67 is ACLS itself appreciating — i.e. semicap/AI sector beta, which is precisely the macro/sector bet the gate excludes, wearing an event costume.",
-   "primary_source": "Axcelis/Veeco joint press release 2025-10-01 (0.3575 fixed exchange ratio; $34.91 implied value, 14.7% premium to VECO $30.43 / ACLS $97.64 as of 2025-09-30; 58/42 pro forma split) and Axcelis Form 10-Q for the quarter ended 2026-06-30 plus the Feb-2026 Form 425 (both votes passed 2026-02-06; SAMR the sole outstanding approval; outside date 2026-09-30 with automatic extensions to 2027-06-30; close expected 2H26); ION Analytics Dealreporter, Mar-2026, on heightened SAMR scrutiny and possible third-party complaints. Live prices VECO $44.67 / ACLS $115.08, FMP batch-quote 2026-09-05.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The event is real, dated and unfired, but the triage read the tape backwards: VECO's slide from the 50dma is not the market pricing break risk into the target — it is VECO mechanically tracking ACLS, which fell from a $135 50dma to $115 on semicap de-rating. Measured against the only thing that matters in a fixed-ratio stock deal, VECO trades at 108.6% of terms ($44.67 vs $41.14), so SAMR clearance and a successful close are a -7.9% event for a VECO long, while the +46.8% from the $30.43 pre-announcement base is already banked by whoever owned it in Sept-2025. This is the VISN failure mode in its sharpest form — buying the receipt at a premium to the receipt — with the added defect that residual upside requires ACLS to rally, converting a claimed event trade into an unhedged semicap sector bet; the genuine remaining edge (short VECO / long 0.3575 ACLS to capture 7.9% convergence, with real deal-break and timing risk into a 2027-06-30 backstop) is the opposite side of the flagged instrument and is not what was proposed."
-  },
-  {
-   "symbol": "VERA",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "dated_binary",
-   "catalyst": "ORIGIN 3 pivotal eGFR final efficacy analysis, pulled forward from 2027 to Q3'26 under an FDA-aligned revised plan, which would convert TRUTAKNA's proteinuria-based accelerated approval into full approval and is the only event that can establish eGFR-slope differentiation versus the five prior IgAN entrants.",
-   "dated_milestone": "ORIGIN 3 eGFR topline — guided Q3 2026, reaffirmed 10-Aug-2026, therefore due on or before 30-Sep-2026 (<=23 days from 07-Sep-2026); sBLA submission Q4 2026; potential full approval 2027. No exact day has been guided.",
-   "instrument": "Defined-risk long calls (Oct/Nov-2026 expiry) rather than common — the downside case is accelerated-approval withdrawal risk, not a normal drawdown",
-   "bloom_gates": "G1 MET (named counterparty: FDA, explicit alignment on the revised earlier ORIGIN 3 final efficacy analysis, 02-Jun-2026). G2 MET (concrete dated commitment: eGFR results Q3'26, sBLA Q4'26, reaffirmed verbatim in the Q2 release 10-Aug-2026). G3 NOT MET — there is no stated currently-unpriced figure; the upside is a derived re-rate multiple, not a contractual or disclosed number. This is the main scoring deduction.",
-   "edge": "M — RUN-UP: +5.7% from the pre-catalyst base ($33.94 close 01-Jun-2026, the session before the 02-Jun pull-forward announcement) to $35.89 today. The residual-capture test passes emphatically: the approval pop has fully round-tripped (07-Jul close $42.96 -> $35.89 = -16.5%), the stock sits below its 200dma ($39.44) and -36% from the 52w high ($56.05), and the 02-Jun pull-forward news itself was sold (-7.9% next session). This is genuinely unharvested — the rare case that survives the VISN/SLS screen. REMAINING: +53% to today's $35.89 versus a derived favorable-resolution value of ~$55. Edge is M not H because (a) G3 fails — the numerator is my own comp multiple, not a disclosed figure; (b) a confirmatory eGFR win is the base case, not a surprise (Phase 2b eGFR supported it and every prior entrant confirmed eGFR), so a plain win may re-rate far less than the full +53%; (c) the crowded-field overhang that caused the de-rate is structural and is NOT cured by this event — only a best-in-class eGFR slope cures it, and slope magnitude is unforecastable.",
-   "primary_source": "Vera Therapeutics PR \"Announces Alignment with U.S. FDA on Earlier ORIGIN Phase 3 Analysis\" (02-Jun-2026, ir.veratx.com) — eGFR analysis pulled forward from 2027 to Q3'26, sBLA Q4'26; reaffirmed in \"Business Update and Second Quarter 2026 Financial Results\" (10-Aug-2026, GlobeNewswire); accelerated approval PR (07-Jul-2026, GlobeNewswire) — 46% proteinuria reduction from baseline, 42% vs placebo, p<0.0001 at 36 weeks; Q2'26 balance sheet via FMP (10-Q filed 10-Aug-2026); price/chart via FMP 07-Sep-2026.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The triage claim verifies on every checkable point and the price claim verifies more strongly than flagged: accelerated approval landed 07-Jul-2026 on a proteinuria surrogate, and not only did the stock fail to re-rate, it has given back the entire approval move and then some, leaving the run-up from the pre-catalyst base at just +5.7% — so the forward event is close to fully unpriced rather than mostly harvested. The equity waterfall is clean (zero preferred, ~71.8M shares, $499M cash against a $75M term loan), so the FIP failure mode does not apply and the derived ~$55 favorable-resolution value is supported by the capital structure rather than inherited from a target. It caps at 6/WATCH rather than ACTIVE because G3 fails — there is no disclosed unpriced figure, the numerator is a comp multiple I built — because a confirmatory eGFR win is the base case rather than a surprise (so the realized re-rate is likely well short of +53%), and because the sixth-entrant crowding that caused the de-rate is a structural overhang this readout does not fix unless the eGFR slope is genuinely best-in-class. Two gaps to note: I did not spend a lookup independently confirming the \"sixth entrant\" competitor count, and the company has guided only to \"Q3 2026\" with no exact date — with <=23 days left in the window this resolves before the next-but-one re-debate cycle, so it is a decide-now-or-skip name, and if taken it should be defined-risk given the label-withdrawal tail on a miss."
-  },
-  {
-   "symbol": "VFS",
-   "score": 2,
-   "tier": "NONE",
-   "lane": "distressed_restructuring",
-   "catalyst": "Sale of Vietnamese manufacturing arm VFTP for ~$530M, deconsolidating ~$3.3B of VFTP debt ($2.5B loans + $831M leases) — announced 12-May-2026 and COMPLETED 30-Jun-2026, i.e. already fired.",
-   "dated_milestone": "FIRED 2026-06-30 (6-K: equity transfer completed, \"the Company no longer holds any equity interest in VFTP\"). Follow-on already passed: delayed Q2'26 results reported 2026-09-03, which carry the post-deconsolidation balance sheet. No forward dated milestone remains.",
-   "instrument": "none — no position; the event is closed and the equity waterfall does not support a derived upside",
-   "bloom_gates": "G1 only (named counterparty: buyer group led by Future Investment Research and Development JSC). G2 FAILS — the commitment was consummated 10 weeks ago, so there is nothing forward to commit to. G3 FAILS — the ~$530M / ~$7B figures are public since 12-May and now booked in the 03-Sep Q2 report; not unpriced.",
-   "edge": "L — the triage note's \"targeted completion Q3'26\" is a stale read of the May-12 announcement; closing happened 30-Jun-2026. RESIDUAL CAPTURE: pre-catalyst base ~$3.45 (200d avg $3.40, pre-12-May), today $3.08 — run-up is NEGATIVE at roughly -11%. Remaining % to a provenance-checked favorable value: NOT ESTABLISHABLE — there is no derivable common-equity upside (see analysis), so the honest remaining capture is 0%, not a discount. The market saw the deleveraging, closed it, digested Q2, and marked the stock DOWN to within 11% of the 52wk low ($2.78) — that is a verdict on the mechanism, not an unpriced event.",
-   "primary_source": "SEC Form 6-K, VinFast Auto Ltd (CIK 1913510), filed 2026-06-30 — completion of VFTP equity transfer; corroborated by the 2026-05-12 6-K announcing the ~$530M sale / ~$404.8M P-Note repayment, and FMP quote 2026-09-07 ($3.08, 52wk range $2.78–$5.285, 200d avg $3.40).",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "NUMERATOR PROVENANCE (FIP lesson applied): the ~$7B debt \"removal\" is a consolidation-accounting transfer to a Vingroup-affiliated buyer group, not cash to the common — and the $530M proceeds are contractually pre-committed, with ~VND10,162bn (~$404.8M, 76%) earmarked to repay the P-Note, leaving only ~$125M residual against a business still losing ~$0.48/sh per quarter. Ahead of the common sits a multi-billion Vingroup exchangeable preference stack (5,558,672,454 VFTP exchangeable prefs; the terminated 5.21B exchange agreement of 29-Jun did not extinguish them — 464,573,166 were re-classified into VFVN, and the Series 5 rate of 10.1:1 implies enormous share issuance), on top of ongoing Vingroup/Pham Nhat Vuong funding injections that dilute rather than accrete. On a ~1% float the $7.2B market cap is a non-price, so no SoP re-derivation off it is credible. Conclusion: the event is real and dated but FIRED, the sponsor is the related party on both sides, and the equity waterfall cannot support the flagged upside — per the rule, score the equity not the event, and the equity is a diluting related-party shell. GAP: the full post-deconsolidation Q2'26 balance sheet detail was not retrievable within the lookup budget, but this only affects magnitude, not the fired/forward determination, which is dispositive on its own."
-  },
-  {
-   "symbol": "VNDA",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "binary",
-   "catalyst": "FDA PDUFA target action date of December 12, 2026 on the accepted BLA for imsidolimab (IL-36R mAb) in generalized pustular psoriasis, resting on a GEMINI-1 pivotal that hit its primary endpoint (53.3% vs 13.3% GPPPGA 0/1 at wk4, p=0.0131).",
-   "dated_milestone": "2026-12-12 — FDA PDUFA action date for imsidolimab in GPP (BLA accepted 2026-02-25), ~96 days forward. Interim reads: Bysanti commercial launch in 2H-2026 and Q3 results (early Nov 2026, cash-burn check).",
-   "instrument": "Common equity (long). Dec-2026/Jan-2027 calls express the binary with defined risk, but PDUFA-cycle IV on a $327M-cap name is expensive; equity preferred given the ~-21% floor.",
-   "bloom_gates": "G2 + G3. G2 = concrete dated commitment (statutory FDA action date on an accepted BLA, announced 2026-02-25). G3 = specific currently-unpriced figure: at $5.43 the stock trades BELOW its $5.76 close on 2026-02-20, the last print before the PDUFA date was publicly knowable, so the market carries approximately zero optionality for the event. G1 fails (FDA is not a \"named counterparty\" in the Bloom sense).",
-   "edge": "M. RESIDUAL CAPTURE: run-up = NEGATIVE. From the pre-catalyst base the event is 0% harvested — VNDA closed $5.76 on 2026-02-20 (day before the PDUFA date was knowable) and $8.28 on 2026-02-25 (BLA-acceptance day, though that print reflects the +41%/48M-share Bysanti approval pop on 02-23, not imsidolimab, which added only +1.3%). Today $5.43 is -5.7% vs the pre-announce base and -34.4% vs the 02-25 print; 200dma $6.58, 52w range $4.27-$9.94. Remaining capture to the provenance-checked favorable-resolution mark ($8.50, the 02-26/27 level when the BLA was accepted, Bysanti approved and cash was $202M) = +57%; downside to the 52w low on a CRL = -21%; R/R 2.7:1. This is the rare unfired-AND-unpriced case — the opposite of VISN/SLS. Edge is M not H because the numerator is genuinely small: GPP is ultra-rare and imsidolimab would be second-in-class behind entrenched spesolimab (SPEVIGO), so part of the reason it is unpriced is that it is not worth much.",
-   "primary_source": "Vanda PR via PRNewswire/BioSpace, 2026-02-25: \"FDA Acceptance of BLA Filing for Imsidolimab for GPP,\" target action date December 12, 2026. GEMINI-1 efficacy/p-value: AnaptysBio 8-K, Oct-2023, republished NEJM Evidence 2026. Capital structure: FMP Q2-2026 balance sheet, filed 2026-08-06 (CIK 0001347178). Prices: FMP EOD through 2026-09-04.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The event is real, specific, dated, forward and non-macro: an accepted BLA with a statutory 2026-12-12 action date backed by a Phase 3 that hit its primary endpoint at p=0.0131 — and it is genuinely unharvested, with the stock at $5.43 sitting BELOW the $5.76 it traded before the PDUFA date was public, and 34% below the 02-25 announcement print. That combination (0% run-up captured, +57% to the favorable-resolution mark, -21% to the 52w-low floor) is what earns the WATCH rather than a NONE. Two things cap it at 6: the triage's balance-sheet support is wrong — $264M is total current assets, while actual cash+short-term investments is $170.0M and fell $32.3M in Q2 alone against $192.3M of total liabilities, so there is no cash floor near the market cap and runway is roughly five quarters into a Bysanti launch; and GPP is an ultra-rare indication where imsidolimab arrives second behind spesolimab, so even a clean approval delivers a small commercial numerator. The offsetting \"poor FDA track record\" is now half-stale (Bysanti was approved around 2026-02-21, the source of the +41% 48M-share move), and the activist/poison-pill overhang is a 2024-vintage governance discount with no forward date — it is not part of the catalyst and should not be scored as one."
-  },
-  {
-   "symbol": "VNET",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "overhang",
-   "catalyst": "Closing of the SPA under which non-controlled CATL affiliates buy 650,424,192 Class A shares (~38.1%) from Shandong Hi-Speed Holdings subsidiaries for ~$942M at $1.4486/share = $8.6914/ADS, expected Q4 2026.",
-   "dated_milestone": "Shandong Hi-Speed Holdings shareholder-approval vote, then closing \"expected in Q4 2026\" (SPA announced 2026-05-13); next hard checkpoint = Q3 2026 results / 6-K deal update, ~mid-Nov 2026.",
-   "instrument": "Common ADS (VNET, Nasdaq) — no claim on the block price; options are liquid (unusual call volume flagged 2026-08-10, IV surging 2026-07-22)",
-   "bloom_gates": "G1 YES (named counterparty: CATL non-controlled/non-consolidated affiliates vs Shandong Hi-Speed Holdings subsidiaries, signed SPA). G2 YES (concrete commitment: $942M, 650,424,192 shares, $1.4486/sh = $8.6914/ADS, Q4-2026 close, condition = SHS shareholder approval; reinforced by the 2026-08-18 VNET–CATL Strategic Cooperation Agreement). G3 NO — the $8.69 is a privately negotiated secondary price the market has had ~4 months to price and explicitly refuses; it is not an unpriced figure accruing to the float.",
-   "edge": "M — Run-up: NEGATIVE. Pre-catalyst base $9.02 (2026-05-12); announcement pop to $11.28 on 2026-05-13 (+25%) has fully round-tripped to $6.37, i.e. −29% vs the pre-event base and 0% of the event harvested (rare — most WATCH names are 50-90% harvested). Remaining: +36.4% from $6.37 to the $8.6914 block print. But that remaining figure is NOT ours to collect: no tender, no mandatory offer, zero proceeds to VNET — a minority holder captures only a derived overhang-clearing/strategic-anchor re-rating, which is judgement, not contract. Un-harvested, but the numerator is inherited rather than owned.",
-   "primary_source": "VNET 6-K / press release announcing the CATL-affiliate SPA with Shandong Hi-Speed subsidiaries, 2026-05-13 (corroborated: Bloomberg \"CATL-Linked Investors Agree to Buy 38% VNET Stake in $942 Million Deal\", 2026-05-13); VNET Q2-2026 6-K balance sheet filed 2026-08-18; VNET–CATL Strategic Cooperation Agreement PR, 2026-08-18; Seeking Alpha \"Solid Wholesale Execution Overshadowed By Balance Sheet Reality\", 2026-08-19; FMP quote/EOD 2026-09-07 ($6.37; 52w 5.91–14.48) and 2026-05-12 pre-event close $9.02.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The event is genuinely real, dated and forward: a signed SPA (announced 2026-05-13) in which CATL-affiliated strategic investors take Shandong Hi-Speed's ~38.1% for ~$942M at $8.6914/ADS, closing expected Q4 2026 subject to SHS shareholder approval, backed by a separate VNET–CATL Strategic Cooperation Agreement signed 2026-08-18 — so it clears G1 and G2 and is unusually un-harvested (spot $6.37 sits 29% BELOW the $9.02 pre-announcement base, versus a 52w high of $14.48). The disqualifier is the numerator, not the event: the $8.69 is a private transfer between two selling/buying blocks with no bid for the minority float and no proceeds to the company, so the \"27% premium to spot\" is a reference print rather than a claimable value, and the residual thesis collapses into a re-rating bet on top of CNY 30.6B total debt / CNY 23.4B net debt with negative FCF — precisely the \"fundamentals over event-driven catalysts\" reason Seeking Alpha cited on 2026-08-19 for the de-rating. Unverified gaps within the lookup budget: whether closing trips change-of-control put rights on VNET's converts/notes (a potential NEGATIVE at the very moment of the catalyst), and a stray moomoo headline \"Shandong Hi-Speed Completes 30% Stake Sale in VNET\" whose date and relationship to this SPA I could not resolve (page returned empty) — either would change the read and should be checked before any ACTIVE promotion."
-  },
-  {
-   "symbol": "WBD",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "merger_arb",
-   "catalyst": "Paramount Skydance's $31.00/sh all-cash acquisition of WBD is fully cleared by every antitrust regulator (DOJ 2026-06-12, EU 2026-07-22, \"all regulatory conditions satisfied\" 2026-08-14) but is frozen by a 12-state AG + WGA antitrust suit before Judge Martinez-Olguin, leaving a ~9.7% gross spread that resolves only at the March 2027 trial.",
-   "dated_milestone": "Next: 2026-09-24 bond hearing on Paramount's $1.88B injunction-bond motion; then 2026-10-01 ticking-fee start ($0.25/sh per quarter, ~$650M/90d, accrued daily); trial 2027-03-02 to 2027-03-19; outside date / $7B reverse-termination trigger 2027-06-04.",
-   "instrument": "common equity (long WBD, merger-arb spread capture)",
-   "bloom_gates": "G1 PASS - named counterparty and contractual price (Paramount Skydance Corp / PSKY, definitive merger agreement, $31.00/sh cash, holders approved 2026-04-23). G2 PASS - concrete dated commitments: $0.25/sh-per-quarter ticking consideration accruing daily from 2026-10-01 (~$7M/day to WBD holders) and a $7B reverse-termination fee if not consummated by 2027-06-04. G3 FAIL - no specific currently-unpriced figure: the $28.25 quote implies ~74-76% close odds, which is exactly where Kalshi/Polymarket sat on 2026-08-17 (~1-in-4 failure), so the \"mispriced regulatory tail\" is in fact the consensus print.",
-   "edge": "L-M. Run-up: +137% from the $11.92 pre-bid trough (52wk low, before the sale process was publicly knowable) to $28.25 - the announcement/approval leg is harvested. Remaining: +9.7% to the contractual $31.00, or +11.5% to ~$31.50 including roughly two quarters of ticking fee at a realistic post-trial Q2-2027 close. Against a ~$19 break case that is +3.25 up vs -9.25 down = 0.35:1 reference RR, requiring >74% close probability merely to break even - i.e. the market price already is the fair odds, over a 7-9 month hold.",
-   "primary_source": "Paramount Skydance PRNewswire, \"Paramount Skydance satisfies all regulatory conditions under the merger agreement... clearances in nearly 70 countries\" (2026-08-14); CNBC, \"Paramount seeks $1.88 billion bond from state AGs\" and \"Prediction market traders see roughly 1-in-4 odds Paramount's bid fails\" (both 2026-08-17); Variety, \"Judge sets Paramount-Warner Bros. antitrust trial for March 2027\" (2026-07); Reuters, \"California expected to seek TV channel sales from Paramount-Warner\" (2026-08-23); FMP quote WBD $28.25 (2026-09-04 close).",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The triage note's factual premises are stale and materially change the trade: DOJ cleared on 2026-06-12 and the EU on 2026-07-22, and Paramount declared ALL merger-agreement regulatory conditions satisfied on 2026-08-14, so there is no pending clearance to be \"mispriced\" and the Q3-26 target close is dead - the sole remaining obstacle is the 12-state AG suit led by California's Rob Bonta plus a WGA action, with a court-set 12-day trial running 2027-03-02 to 2027-03-19 and an extended outside date of 2027-06-04. That converts a flagged \"9.7% spread with a near-term close\" into a 7-9 month binary legal hold: the contractual value is real (cash price, no waterfall risk, plus $0.25/sh/qtr ticking and a $7B reverse-termination backstop), but $28.25 already discounts ~75% close odds, matching prediction markets exactly, and the +3.25 / -9.25 asymmetry means the position pays roughly zero EV at consensus probability. Score is capped at 4 on residual capture - the +137% announcement leg is harvested and only the terminal spread remains, priced fairly - and it stays WATCH rather than NONE because a Bonta settlement (reported CNN/cable divestiture ask, 2026-08-23) or a favorable 2026-09-24 bond ruling would collapse the spread on a dated, observable trigger; the honest gap I could not close in six lookups is the current preliminary-injunction posture after the TRO lapsed on 2026-08-17, which affects timing but not the spread math."
+   "analysis": "The binary is real, dated in rough terms and still ahead: CNA approval, probably with conditions, is the last gate. A merger of equals still has no numerator: approval does not pay the common holder a fixed amount, it only unlocks synergies nobody has quantified, and a forced remedy (slot or route divestitures at a combined 69% domestic share) could erase them. The equity has fallen about 22% below its pre-announcement base on fuel costs and fleet groundings, so the event is not priced in. But the thesis then becomes an airline-operations and fuel recovery call rather than an event, so score it as the equity, capped at 4. Gaps: the web search budget ran out after one query, so I could not confirm that the FTC/HSR waiting period and Colombian clearance are done, whether the CNA has issued a ruling, or the 10-Q net debt detail (Seeking Alpha 2026-09-23 cites net debt/EBITDAR of 3.2-3.3x and $824M liquidity; there is no preferred stock ahead of the common)."
   }
  ]
 }

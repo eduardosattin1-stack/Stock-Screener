@@ -2,166 +2,56 @@
  "chunk": "14 (OLPX-PLTR)",
  "scanned": 150,
  "scan_distribution": {
-  "active": 2,
-  "watch": 8,
-  "none": 140
+  "active": 0,
+  "watch": 9,
+  "none": 141
  },
  "survivors_flagged": [
+  {
+   "symbol": "OPFI",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "regulatory_structural",
+   "one_line": "BNCCORP buy (holders approved Sep 17) awaits OCC/Fed/FDIC sign-off, Q4-26 target: a fintech gets a national bank charter plus the Up-C collapse; stock at 52-wk low, unmoved."
+  },
   {
    "symbol": "ORGO",
    "score": 5,
    "tier": "WATCH",
-   "lane": "regulatory_repricing",
-   "one_line": "Crushed to $1.71 (52w high $7.08) by the CY2026 per-cm2 skin-substitute payment reset; CY2027 PFS proposed rule published 2026-07-16 with the final rule due ~Nov 2026 — a hard-dated regulatory reset on a maximally suppressed, uncovered name (early arc), though the direction of the CY2027 change is unverified so the asymmetry is unproven."
-  },
-  {
-   "symbol": "PARR",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "asset_monetization",
-   "one_line": "Aug-25-2026 definitive sale of Laramie Energy's assets for $485M cash plus $65M earn-out puts ~$195M against PARR's 46% stake at a dated close, though shares near 52wk highs make it late-arc."
-  },
-  {
-   "symbol": "PAYO",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "merger_arb",
-   "one_line": "Signed all-cash Nuvei merger at $7.40 with a Sept-14-2026 shareholder vote and a June-2027 outside date, but $7.17 leaves only ~3.2% gross over ~9 months against multi-jurisdiction licensing risk."
-  },
-  {
-   "symbol": "PBI",
-   "score": 6,
-   "tier": "ACTIVE",
-   "lane": "capital_return_restructuring",
-   "one_line": "Board strategic-alternatives review disclosed 31-Jul plus a live $50M cash tender for 2037/2043 notes (20-Aug) on a 15% FCF yield - dated deleveraging and possible asset monetization still ahead, though the equity has already run."
-  },
-  {
-   "symbol": "PCG",
-   "score": 6,
-   "tier": "ACTIVE",
-   "lane": "distressed_restructuring",
-   "one_line": "Board authorized a full strategic review of structure and financing on 2-Sep right after California killed wildfire liability reform and the stock lost ~30% in days - fresh, early-arc, still-suppressed, with forward milestones (review outcome, $2B capex deferral, Jan-2027 legislative session, IG-rating path); risk is it reads as a political bet."
-  },
-  {
-   "symbol": "PCVX",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "dated_binary",
-   "one_line": "VAX-31 adult Phase 3 OPUS-1 topline guided to Q4-2026 and narrowed on 3-Sep, with $2.5B cash against a beaten-down, Baupost-exited holder base - a genuine hard-dated binary, but a clinical coin-flip rather than a structural mispricing."
-  },
-  {
-   "symbol": "PHVS",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "dated_binary",
-   "one_line": "CHAPTER-3 Ph3 prophylaxis topline guided Q3-2026 (imminent) plus deucrictibant IR PDUFA 23-Apr-2027; real dated binary but RAPIDe-3 already fired and the stock has re-rated to $35 — late-arc, asymmetry largely paid for."
+   "lane": "binary_pdufa",
+   "one_line": "ReNu knee-OA BLA accepted Jul-2026 with a PDUFA of 2027-04-24. Early in the arc, months out, coverage thin; the asymmetry is still to be confirmed."
   }
  ],
  "verified": [
   {
-   "symbol": "ORGO",
-   "score": 2,
-   "tier": "NONE",
-   "lane": "regulatory_repricing",
-   "catalyst": "CY2027 Medicare PFS final rule (~Nov 2026, effective 2027-01-01) — but the 2026-07-16 proposed rule explicitly does NOT revisit the skin-substitute payment methodology, so the \"reset\" is status quo, not relief.",
-   "dated_milestone": "2026-09-14 CY2027 PFS comment period closes; CY2027 PFS final rule due ~2026-11-01, effective 2027-01-01. Q3 2026 print ~early Nov 2026.",
-   "instrument": "common equity (no position recommended)",
-   "bloom_gates": "NONE pass. G1 fails — CMS is a rulemaker, not a counterparty making a commitment to ORGO. G2 fails — the concrete content of the CY2027 proposal is that CMS keeps the flat ~$127/cm2 rate and declines to move to FDA-category-differentiated rates (the PMA-favorable outcome ORGO lobbied for); that is a commitment to no change. G3 fails — the ~$127.14/cm2 rate is fully public and fully priced: it is the direct cause of the 58% y/y revenue collapse and the -76% drawdown.",
-   "edge": "L — the triage flagged the direction as unverified; it is now verified and it is NEUTRAL-to-negative. Residual capture: run-up from the pre-catalyst base is -76% (7.08 52w high to 1.71; the negative catalyst fully fired with the CY2026 final rule 2025-10-31, effective 2026-01-01), and the remaining % to a provenance-checked favorable resolution is not computable because the CY2027 proposed rule contains no favorable change to capture — the only path to upside is CMS reversing itself in the final rule on comments it has not proposed to adopt. Waterfall check kills the derived numerator independently: 130,000 Series A convertible preferred (issued 2024-11-12) carries an 8% cumulative dividend compounding quarterly and PIK-able at company option, carried at $139.9M at 6/30/26 (accreting ~$3.1M/qtr from $136.8M at 3/31/26) with a minimum $1,500/share (1.5x) change-of-control preference = ~$195M ahead of a $220M common cap. Conversion is far out of the money at $1.71, so the preference stands in any sale. Cash is $46.8M against ~$46M of Q2 burn.",
-   "primary_source": "CMS CY2027 Medicare Physician Fee Schedule Proposed Rule, Federal Register 2026-14327 published 2026-07-16 (+ CMS fact sheet and Holland & Knight / HMP Wounds analyses, 2026-07): CMS does not propose revisiting the skin-substitute national payment methodology. Cross-checked against ORGO Q2 2026 10-Q filed 2026-08-06 (cash $46.8M, preferred carried $139.9M) and the 2026-08-13 Q2 earnings call; price via FMP quote 2026-09-06 ($1.71, 52w high $7.077, mkt cap $220M).",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The flagged asymmetry does not survive verification: CMS's CY2027 PFS proposed rule (published 2026-07-16, comments close 2026-09-14) declines to revisit the national skin-substitute payment methodology finalized in the CY2026 rule, holding the single ~$127.14/cm2 volume-weighted-ASP rate and merely extending it to non-sheet products — i.e., the differentiated PMA-favorable rate Organogenesis publicly lobbied for was not proposed. The repricing has therefore already fired, not pending: Q2 2026 net product revenue fell 58% y/y to $42.8M, gross margin went 73% to 45%, net loss was $96.3M, and FY2026 guidance was cut to $179-215M (-62% to -68% y/y), with the stock at $1.71 vs a $7.08 52-week high. Even granting a recovery case, the equity waterfall cannot carry it — a $139.9M accreting Series A preferred with a ~$195M change-of-control preference sits ahead of a $220M common cap while cash ran $92.1M to $46.1M in a single quarter, so this is a levered stub on a rule that is currently proposed to stay exactly as it is. Gap: I did not independently read the CY2027 rule text at federalregister.gov (relied on CMS fact-sheet/Holland & Knight/HMP summaries dated 2026-07); if the final rule in November unexpectedly adopts category-differentiated pricing this would need re-underwriting, but that is an unproposed reversal, not a dated forward commitment."
-  },
-  {
-   "symbol": "PARR",
-   "score": 3,
-   "tier": "NONE",
-   "lane": "asset_monetization",
-   "catalyst": "Laramie Energy (PARR owns 46%) signed a definitive agreement 2026-08-25 to sell substantially all oil and gas assets for $485M cash plus up to $65M of contingent earn-outs, with PARR guiding to ~$146M of proceeds (~$27.5M of it deferred five years) plus up to ~$30M of earn-out, closing expected by end of 2026.",
-   "dated_milestone": "Signed definitive agreement 2026-08-25; close expected by 2026-12-31 subject to regulatory approvals and customary conditions. Next checkpoint: Q3 2026 earnings (early Nov 2026) for close timing/HSR status, then the closing 8-K.",
-   "instrument": "common equity (no position warranted)",
-   "bloom_gates": "G2 only. G1 FAILS - the 8-K names no counterparty, only \"a third-party purchaser.\" G2 PASSES - signed definitive agreement with a stated price, stated PARR share, and a dated close window. G3 FAILS - the ~$146M/~$30M figures were disclosed in the announcement itself and are demonstrably priced; there is no currently-unpriced figure left.",
-   "edge": "L. RESIDUAL CAPTURE - (a) run-up: pre-catalyst base is the 2026-08-25 close of $73.82 (8-K and press release hit that evening); PARR is $81.32 on 2026-09-04, so +10.2% has already been taken since the event became publicly knowable. (b) remaining: crediting the FULL undiscounted $176M nominal onto the pre-announcement $3.70B cap gives ~+4.3%, i.e. ~$77.0, and the PV-based figure ~$76.4. Spot at $81.32 is already ABOVE the fully-credited value, so remaining capture from the event is ~0% and arithmetically negative (-6% to fully-credited FV). The post-announcement move is 2.4-3.5x the entire value of the deal to PARR, which means the tape is paying for something else - refining crack spreads, with the 200-day average at $56.01 vs $81.32 spot and the stock 6.6% off its 52wk high of $87.03. Buying this is buying a commodity-margin bet with a 3% asset-sale rounding error stapled to it.",
-   "primary_source": "Par Pacific Holdings Form 8-K and press release \"Par Pacific Announces Agreement to Sell Laramie Energy Assets,\" 2026-08-25 (sec.gov/Archives/edgar/data/0000821483/000143774926028947/parr20260825_8k.htm; parpacific.com press release). Capital structure from FMP balance-sheet TTM, Q2 period ended 2026-06-30. Price/tape from FMP quote and EOD chart through 2026-09-04.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The event is genuine, contractual and forward - a signed definitive agreement with a dated year-end close - and the numerator survives the waterfall check cleanly, since PARR carries zero preferred stock and no manager fee leakage, so the FIP trap is absent. It fails on materiality and on residual capture instead: PARR's re-derived take is ~$118.5M at close and at most ~$176M nominal against a $4.08B market cap, or 2.9-4.3%, while the stock has already run +10.2% since the announcement - two to three times the entire value of the deal - leaving spot above even a fully-credited fair value. Only one Bloom gate passes (G2); the buyer is unnamed and every figure is already public, and with the 200-day at $56 against $81 spot the actual driver of this stock is the refining margin cycle, which is precisely the macro bet the screen is meant to exclude. Downgrading from the triage WATCH/5 to NONE/3: the catalyst is real but immaterial and more than fully harvested, so the correct object to score is the equity, and the equity is a levered crack-spread position near 52-week highs."
-  },
-  {
-   "symbol": "PAYO",
-   "score": 3,
-   "tier": "NONE",
-   "lane": "merger_arb",
-   "catalyst": "Nuvei's signed all-cash acquisition of Payoneer at $7.40/share (merger agreement 2026-06-12, announced 2026-06-15, ~$2.75B equity value) goes to a shareholder vote on 2026-09-14, with closing guided to mid-2027 pending multi-jurisdiction payments-licensing and regulatory approvals.",
-   "dated_milestone": "2026-09-14 special shareholder meeting (majority of outstanding shares required; ~19% locked by voting agreements). Next dates after: regulatory/licensing clearances through H1-2027, closing guided mid-2027, flagged outside date June-2027 (not independently confirmed).",
-   "instrument": "common equity (long PAYO); pure deal-spread, no derivative expression adds anything at this spread",
-   "bloom_gates": "G1 PASS - named counterparty Nuvei, definitive merger agreement dated 2026-06-12. G2 PASS - concrete commitment: $7.40/share all cash, unanimous board approval both sides, committed financing from BMO, RBC, Barclays, UBS and Wells Fargo. G3 FAIL - no specific currently-unpriced figure: the only number left on the table is the 3.2% spread, which IS the market's own price of deal risk, and the 2026-09-14 vote is pre-locked by ~19% of votes under voting agreements plus unanimous board support.",
-   "edge": "L - RESIDUAL CAPTURE: run-up +39.5% from the $5.14 pre-catalyst base (close 2026-06-08, the day before the 2026-06-09 +24% leak session on 52.0M shares vs 2.4M prior) to $7.17 today; remaining +3.21% from $7.17 to the contractual $7.40. That is ~92.5% of the total event move already harvested. Worse, the residual is a TIME problem, not just a size problem: closing is guided to mid-2027, so ~9-10 months for 3.21% is ~3.9-4.3% annualized - at or below risk-free - against roughly -27% to the ~$5.15-5.25 unaffected price on a break. Reference R/R ~0.12 ($0.23 up vs ~$1.95 down). This is buying the receipt, not the gain.",
-   "primary_source": "Payoneer Global Inc. Form 8-K Ex-99.1 press release, \"Nuvei to Acquire Payoneer for $2.75 Billion\" (SEC EDGAR CIK 0001845815, filed 2026-06-15, merger agreement dated 2026-06-12); DEFA14A/proxy special meeting set 2026-09-14; FMP quote $7.17 and EOD series (2026-06-05 to 2026-09-06), retrieved 2026-09-06.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The event is entirely real and verifiable - signed definitive all-cash agreement at $7.40, unanimous boards, five-bank committed financing, a dated 2026-09-14 special meeting - but it is also almost fully harvested and structurally uncompensated. PAYO re-rated from $5.14 to $7.02 within four sessions of the 2026-06-09 leak and has drifted only to $7.17 in the eleven weeks since; the 3.21% left is a ~4% annualized carry over a mid-2027 close, which is no better than T-bills while carrying a ~27% break tail from multi-jurisdiction money-transmitter and payments-licensing approvals (Payoneer holds licences across China, India and dozens of other regimes) that are the actual long pole, not the vote. Numerator provenance is exempt here - $7.40 is a contractual cash price to the common with no preferred stack or waterfall between it and shareholders - so the derivation is sound; the problem is purely that the spread is thin, the clock is long, and the only forward milestone that is genuinely unfired (the Sept-14 vote) is a formality with 19% of votes already contractually committed. Gap to note: I did not independently confirm the June-2027 outside date or the termination-fee structure from the merger agreement itself (the 8-K press release omits both); the flagged outside date is taken from triage."
-  },
-  {
-   "symbol": "PBI",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "capital_return_restructuring",
-   "catalyst": "Board-run Phase 2 strategic review (Strategic Review Committee of independent directors, explicitly including divestitures and a full sale of the company) running alongside a live $50M cash tender for the 5.25% 2037 and 6.70% 2043 notes.",
-   "dated_milestone": "Tender offer expires 5:00pm ET 18-Sep-2026 (withdrawal deadline 10-Sep-2026); next scheduled company date after that is Q3 results ~early Nov 2026. The sale process itself has NO stated timetable — management said it will not comment on outcomes or timing.",
-   "instrument": "common equity",
-   "bloom_gates": "G2 only, and weakly: the $50M tender is a concrete, dated, contractual commitment but is de minimis (2.3% of $2.158B total debt, ~$3M/yr of interest saved = ~0.1% of market cap). G1 fails - no named counterparty anywhere in the process. G3 fails - the ~15% FCF yield is a post-re-rating figure, not an unpriced one.",
-   "edge": "L - run-up from the pre-catalyst base ~$10.50 (Feb-Mar 2026, before the activist-CEO/strategic-review news became knowable) to $17.40 today = +66% already harvested (+94% off the $8.95 52w low); from the 30-Jun-2026 Phase 2 announcement close of $17.52 the stock is -0.7%, i.e. the review is fully in the tape. Remaining capture to a provenance-checked favorable resolution (whole-co sale at 7.5x EV/EBITDA) is ~+22% to ~$21.2, ~+36% to ~$23.6 at 8.0x, against a no-deal reversion toward the $13.55 200dma / $10.50 pre-review base. Mostly-harvested plus a sub-1.0 reference R:R = cap 4.",
-   "primary_source": "Pitney Bowes 8-K / press release \"Commences Cash Tender Offers for Two Series of Notes,\" 20-Aug-2026 (sec.gov/Archives/edgar/data/0000078814/000162828026058130/pbi-2026xtenderofferxlaunc.htm); \"Initiates Second Phase of Strategic Review Process,\" 30-Jun-2026 (businesswire 20260630784087); Q2-2026 10-Q balance sheet, period 30-Jun-2026, filed 30-Jul-2026 (FMP). Prices: FMP quote 05-Sep-2026 and EOD series Feb/Mar and Jun/Jul 2026.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The event is real and forward - an independent-director Strategic Review Committee entered Phase 2 on 30-Jun-2026 with a full sale explicitly on the table, and the $50M tender for the 2037/2043 notes is live with a hard 18-Sep-2026 expiry - but the triage misdates the disclosure (30-Jun, not 31-Jul) and that month matters: the equity had already re-rated from ~$10.50 to ~$17.50 before Phase 2 was announced and has gone nowhere since, so roughly two-thirds of the move is harvested and what remains is a contingent takeout premium with no named buyer and no stated timetable. On provenance, the waterfall is clean and I re-derived it rather than inheriting a target: preferred stock is $0, so the whole EV above $1.891B net debt accrues to 137M common shares - this is not a FIP-style hidden-pref trap - but the flagged deleveraging leg is economically trivial, retiring 2.3% of debt for ~$3M of annual interest, which is treasury housekeeping rather than the value driver. Scoring the remaining capture (~+22% to a 7.5x sale case against a ~-28% no-deal reversion toward the 200dma, R:R 0.78) caps this at 4/WATCH; the entry that would actually be worth taking is a named-counterparty or signed-deal headline, and the risk is that such a headline is itself the last leg of the move."
-  },
-  {
-   "symbol": "PCG",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "distressed_restructuring",
-   "catalyst": "PG&E's board formed a four-director Strategic Review Committee on 2-Sep-2026 to evaluate the company's organizational and financing structure, alongside a committed $2B deferral of 2027 capex, after California's legislature adjourned 31-Aug without the utility subrogation-liability cap investors had priced in.",
-   "dated_milestone": "Q3-2026 earnings call, late Oct 2026 — the company committed only to update the review \"during its regular quarterly earnings calls or when there are material developments\"; the substantive driver is the California legislature reconvening Jan-2027 on subrogation/liability reform. No committed completion date for the review itself.",
-   "instrument": "common equity (PCG, NYSE)",
-   "bloom_gates": "G2 only. G2 PASS: board-approved, specific, dated 2-Sep-2026 — four-director Strategic Review Committee formed; ~$2B of 2027 investment deferred (2027 capex ~$11.4B vs prior plan), cutting 2027 debt financing need by ~$2B; 2027 non-GAAP core EPS guidance $1.78–$1.82 introduced. G1 FAIL: no named counterparty — no financial or legal advisor named, committee directors unnamed, no buyer/partner/asset-sale counterparty. G3 FAIL: the $1.78–$1.82 figure is four days public and the whole sell side (Mizuho, BMO, Wells Fargo) repriced on it; the genuinely unpriced item is the review OUTCOME, which carries no figure and no date.",
-   "edge": "M — residual capture is fully intact but the mechanism is political, not corporate. (a) Run-up from pre-catalyst base: NEGATIVE. Pre-event base ~$17.38 (mid-Aug, before the 28-Aug SB 492 news broke); today $14.30 = −17.7%. Off the post-crash low ($13.27, ~31-Aug) the review has harvested only ~+7.8%, and just +2.4% on the session. Essentially nothing of the favorable resolution is priced — this is a fallen knife, not a bought receipt. (b) Remaining to provenance-checked favorable resolution: +21.7% to the pre-event $17.38, +38% to ~$19.80 (11x 2027 core EPS $1.80, still a deep discount to regulated peers at 15–17x). So ~0% harvested / ~22–38% remaining. Edge is capped at M, not H, because the value gap closes only if Sacramento or the CPUC caps subrogation exposure — PG&E's own committee cannot fix the liability tail — and a $38B mega-cap covered by every utility desk offers no informational advantage.",
-   "primary_source": "PG&E Corporation press release, \"PG&E Launches Strategic Review to Build a Better, More Affordable Energy Future for California Customers,\" 2026-09-02 (investor.pgecorp.com); price/base from FMP quote 2026-09-05 ($14.30, 52wk low $12.59, 50d avg $17.09) and press coverage of the 28-31 Aug SB 492 selloff (Seeking Alpha / 24-7 Wall St., 2026-08-31); capital structure from PCG Q2-2026 balance sheet, filed 2026-07-23.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The event is real, dated (2-Sep-2026), forward, and almost entirely unharvested — the stock is 17.7% BELOW its pre-catalyst base and only 2.4% up on the day, so the residual-capture test passes cleanly, which is unusual and the strongest thing about this name. But two gates bite: only G2 passes (no named counterparty, no advisor, no committee names, no completion date — the company committed only to \"updates on quarterly earnings calls,\" which is a process, not a milestone), and the triage's own worry is confirmed on inspection: the $22–38% gap closes on California legislative action on subrogation in the Jan-2027 session or a CPUC mechanism, neither of which the board's review controls. Numerator provenance was re-derived rather than inherited — the $1.58B preferred is immaterial here (not a FIP-style waterfall problem), but the same discipline exposes the real defect: the senior claim ahead of the common is an unbounded wildfire liability that cannot be sized from the capital structure at all, so no honest favorable-resolution number exists, only a re-rating multiple. Gap noted: PG&E has published no review timeline, no advisor, and no target capital structure, so there is nothing to underwrite until the late-Oct Q3 call — WATCH, and it converts to ACTIVE only on a named structural counterparty (holdco/opco separation, asset sale, named equity partner) or concrete liability-cap legislation with a hearing date."
-  },
-  {
-   "symbol": "PCVX",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "dated_binary",
-   "catalyst": "Vaxcyte narrowed guidance on 3-Sep-2026 for topline safety/tolerability/immunogenicity data from the VAX-31 adult Phase 3 OPUS-1 non-inferiority trial from \"Q4-2026\" to \"by the end of October,\" a hard-dated, unfired, single-readout binary on the company's lead adult pneumococcal-conjugate program.",
-   "dated_milestone": "OPUS-1 adult Phase 3 topline by end of October 2026 (guidance narrowed 3-Sep-2026); follow-ons OPUS-2/OPUS-3 topline 1H-2027, then manufacturing-consistency study and BLA submission.",
-   "instrument": "Common equity (NASDAQ: PCVX). Payoff skew is adverse for unhedged common; the event is only expressible sensibly as defined-risk optionality, which is a different trade from the one being screened.",
-   "bloom_gates": "G2 PARTIAL only — a dated, company-made commitment to disclose OPUS-1 topline by end-Oct-2026 (concrete date, but a commitment to release information, not to transfer value). G1 FAILS: no named counterparty (no partner, acquirer, activist, or contracted buyer). G3 FAILS: no specific currently-unpriced figure — the upside is an unquantified probabilistic re-rate, not a contractual or mechanically derivable number.",
-   "edge": "L. RESIDUAL CAPTURE: run-up = +98.5% from the 52-wk low of $30.81 and +34.7% from the 10-Jun-2026 low of $45.42; the stock sits 5.9% below its 52-wk high of $65.00 and the 3-Sep narrowing itself moved it 0.0% ($61.58 on 2-Sep to $61.16 on 4-Sep) — the market treated the date-tightening as no new information, i.e. the event is fully anticipated. REMAINING: +23% from $61.16 to a $75 favorable-resolution value (+39% to an $85 bull case), against -59% to a $25 failure floor ($17.4/sh net cash plus residual infant/other option value; -72% to cash alone). Reference R:R ~0.38:1. At a 70% success prior the expected value is ~$62 — within 2% of the tape, so the coin-flip is fairly priced and there is no structural mispricing to harvest.",
-   "primary_source": "Vaxcyte press release, \"Vaxcyte Appoints Chief Medical Officer and Chief Legal Officer; Narrows Guidance for Expected VAX-31 OPUS-1 Topline Data,\" GlobeNewswire, 3-Sep-2026 (topline \"expected by the end of October\"); Vaxcyte Q2-2026 results, 5-Aug-2026 (cash/equivalents/investments $2,507.7M at 30-Jun-2026; net loss $284.3M; OPUS-2/3 in 1H-2027 enabling BLA); FMP quote 4-Sep-2026 close $61.16, 52-wk $30.81-$65.00, mkt cap $8.83B.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The event is genuinely real, dated, forward and idiosyncratic — OPUS-1 topline lands by end-October 2026 and has not fired — but it clears no strict Bloom gate: there is no named counterparty and no specific unpriced figure, only a company commitment to publish data whose outcome is an immunogenicity coin-flip. The numerator cannot be provenance-checked because there is no waterfall to re-derive: with $2.51B cash (~$17.4/sh) and no debt or preferred ahead of the common, ~$6.3B of enterprise value is already pure expectation on the adult PCV franchise, so a win buys roughly +23% to a bottom-up $75 while a miss costs roughly -59% to a $25 cash-plus-optionality floor — a 0.38:1 payoff that a ~70% success prior prices to within 2% of today's tape. The 3-Sep date-narrowing moving the stock 0.0%, with the shares already +99% off the 52-wk low and 6% below the 52-wk high, confirms the binary is anticipated rather than unpriced: real event, harvested asymmetry, no edge — WATCH the print, do not underwrite the seat."
-  },
-  {
-   "symbol": "PHVS",
+   "symbol": "OPFI",
    "score": 5,
    "tier": "WATCH",
-   "lane": "dated_binary",
-   "catalyst": "CHAPTER-3 Phase 3 topline for deucrictibant XR (40mg QD oral) in HAE prophylaxis — 85 patients randomized 2:1, enrollment complete, company-guided to Q3-2026, i.e. inside the next ~24 days.",
-   "dated_milestone": "CHAPTER-3 topline: guided 3Q2026, hard window closes 2026-09-30 (24 days out). Secondary: deucrictibant IR on-demand PDUFA 2027-04-23; EMA MAA validated Jul-2026.",
-   "instrument": "Defined-risk long-dated call spread (Oct/Nov expiry straddling the topline window). Equity long is the wrong instrument at $35 — the payoff is roughly symmetric and IV is the only honest way to express it.",
-   "bloom_gates": "G2 PASS — concrete company commitment: enrollment completed, 85 subjects randomized 2:1 to XR 40mg/day vs placebo for 24 weeks, topline explicitly guided to 3Q2026 (reaffirmed in the 2026-08-12 Q2 release). G1 PARTIAL — FDA is a named counterparty but only for the IR on-demand NDA (PDUFA 2027-04-23), not for CHAPTER-3. G3 FAIL — no specific currently-unpriced figure survives scrutiny; the prophylaxis TAM (Orladeyo ~$0.6B, Takhzyro ~$1.1B) is well-known sell-side arithmetic, and consensus already carries a $46.43 PT.",
-   "edge": "M/L. RESIDUAL CAPTURE: (a) run-up — the 3Q2026 topline guidance has been public since the Jan-2026 strategic-priorities release, so the pre-catalyst base is ~$25.0 (2026-01-08); $25.0 → $35.25 = +41% already banked into the print (+71% off the 52wk low of $20.65). The stock sits at its 50d average ($34.79) and 8% under its 52wk high ($38.13) — fully anticipated, not overlooked. (b) remaining — to consensus $46.43 = +32%; to my derived favorable-resolution $55 = +56%; to BofA's Neutral $35 = 0%. So ~55-60% of the plausible move to consensus is harvested. Against that, a CHAPTER-3 miss reprices to on-demand-only (~$16, -55%), giving RR ≈ 1.0x on my number and ~0.6x on consensus. The triage note's \"asymmetry largely paid for\" is directionally right but for the wrong reason: RAPIDe-3 (on-demand) is what fired and re-rated the stock; CHAPTER-3 (prophylaxis) is a separate, larger, entirely unfired binary. It earns credit for being genuinely forward — it just doesn't earn ACTIVE, because CHAPTER-1's ~84% attack-rate reduction already let the market price a high probability of success, leaving the residual thin relative to the downside tail.",
-   "primary_source": "Pharvaris N.V., \"Reports Second Quarter 2026 Financial Results and Provides Business Update,\" GlobeNewswire, 2026-08-12 (CHAPTER-3 topline guided 3Q2026; IR PDUFA 2027-04-23; €318M cash at 2026-06-30, runway into 2028). Corroborated by Pharvaris enrollment-completion release (85 randomized 2:1, XR 40mg/day, 24 weeks) and FMP quote 2026-09-04 ($35.25; 52wk 20.65-38.13; 50d 34.79; mkt cap $2.463B).",
+   "lane": "regulatory_structural",
+   "catalyst": "OppFi is waiting on OCC, Fed and FDIC approval to buy BNCCORP and BNC National Bank (about $130M: $19.375 cash plus 1.90 OPFI shares per BNCC share). Closing would turn OppFi into a bank holding company, rename the bank OppFi Bank N.A., and end the Up-C structure, with about $40.8M paid to end the TRA.",
+   "dated_milestone": "Signed 2026-04-29. OCC comment-response letter 2026-06-27. BNCC holders approved 2026-09-17. Regulator decisions still outstanding, close guided for Q4-26. Next date: Q3-26 earnings around 2026-11-04 (another source says 10-28), the likely point for an approval-timing update.",
+   "instrument": "OPFI common (NYSE). $5.93 on 2026-10-12, the 52-week low. 52-week high $11.69, 50-day average $7.19, 200-day average $8.59, market cap about $506M.",
+   "bloom_gates": "G1 yes: named counterparty (BNCCORP / BNC National Bank) and named approvers (OCC, Federal Reserve, FDIC). G2 yes: definitive agreement and target-holder approval on 2026-09-17. G3 no: the value of the charter (rate exportation, deposit funding, the 40%+ EPS growth management claims) is not a specific contractual figure. It is a management projection, and I could not re-derive it.",
+   "edge": "M/L. (a) Run-up from the pre-catalyst base: negative, about -35% to -40%. The stock was roughly $9-10 when the deal was announced on 2026-04-29 and is $5.93 now. The fall came from the Q2 miss (adjusted EPS $0.33 vs $0.44-0.45 consensus, down 24.9% the next day) and a guidance cut (FY26 adjusted EPS $1.34-1.51 from $1.76-1.84, per a secondary source), not from the deal. (b) Remaining to a favorable outcome: approval and a re-rate from about 4.2x to about 6x the midpoint of FY26 adjusted EPS ($1.42) gives about $8.5, or +43%. That number is a judgement multiple, not a contractual numerator. Nothing about the event is harvested, but the upside is soft. The approval itself is uncertain: Senator Warren has formally urged the OCC, FDIC and Fed to block the deal, and the agencies can still impose a 'Burdensome Condition', which is a walk-away trigger.",
+   "primary_source": "OppFi/BNCCORP definitive agreement press release and 8-K, 2026-04-29 (sec.gov, edgar 0001818502). BNCCORP holder-approval release, 2026-09-17 (finviz). OCC public-comment file, OppFi interim bank, applicant response dated 2026-06-27 (occ.gov). Fed FOIA file with public comments and the 2026-06-23 meeting summary (federalreserve.gov). OppFi Q2-26 results 8-K, 2026-08-10 (sec.gov). Warren letter to OCC, FDIC and Fed (insurancenewsnet). FMP quote, 2026-10-12.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "This is a real, specific, dated, forward, non-macro binary: enrollment is closed, the readout is company-committed to Q3-2026 with only 24 days left in the window, and it is unfired — so it clears the reality and timing gates cleanly and does not fail on the triage note's \"already fired\" framing (that was RAPIDe-3, the on-demand study; CHAPTER-3 is the separate and commercially larger prophylaxis arm). Numerator provenance is clean even though the binary lane is exempt: the Q2-2026 balance sheet shows €318M cash (up from €292M after a $132M raise), runway into 2028, and no preferred stack or structural debt ahead of the ~70M common shares, so the $2.46B market cap is an honest equity claim on the franchise — none of the FIP-style waterfall leakage. What caps it is residual capture, not event quality: +41% of run-up is already in the price from the pre-guidance base against ~+32% remaining to consensus and a -55% downside to on-demand-only value, and the stock is trading at its 50d average into a print the market plainly expects to hit. Score the remaining capture, not the catalyst — WATCH at 5, and the only sane expression is defined-risk optionality rather than the equity."
+   "analysis": "The event is real, specific and still ahead: holders approved, three federal approvals are pending, and close is guided for Q4-26. Nothing has been priced in; the stock is about 40% below where it traded at announcement. That said, the sell-off is about fundamentals (Q2 miss, guidance cut, LOC rollout and LOLA migration delays), and the charter's economic value is a projection, not a contractual figure. There is no preferred stock ahead of the common. The TRA buyout ($40.8M) and the cash part of the deal consideration (about $70M) use roughly 20% of market cap, and the share issuance to BNCC holders is modest. Approval risk is politically live (Warren letter) and regulator timing is open-ended. On a strict gate this is a WATCH: a binary-ish approval on a cheap but broken-growth fintech. GAP: I did not open the 10-Q to confirm cash or debt after the deal, and I did not confirm the guidance cut against the 8-K."
+  },
+  {
+   "symbol": "ORGO",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "binary_pdufa",
+   "catalyst": "FDA decision on the ReNu (Amnuvx/azimplacel) BLA for symptomatic knee osteoarthritis. The BLA was accepted 2026-07-06 with a PDUFA target action date of 2027-04-24.",
+   "dated_milestone": "PDUFA 2027-04-24. Next: Q3-2026 10-Q / earnings (~early Nov 2026) for liquidity and ATM usage, plus any AdCom announcement (none found as of 2026-10-12).",
+   "instrument": "ORGO common (Nasdaq), $1.29 on 2026-10-09, market cap ~$166M",
+   "bloom_gates": "G1 (named counterparty: FDA) + G2 (concrete commitment: PDUFA date is set). G3 fails: no specific unpriced figure survives the capital-structure check.",
+   "edge": "L. Run-up from the pre-catalyst base: -48% ($2.48 on 2026-07-06 acceptance day, ~$2.36 pre-announcement, to $1.29 now). Nothing is harvested; the stock has fallen on wound-care revenue collapsing. Remaining %, provenance-checked: on approval roughly +60-100% (to ~$2.0-2.6/sh after the dilution expected before launch). On a CRL roughly -75%+. The upside is not re-derivable to the $3 analyst target. Ahead of the common sits the Avista Series A convertible preferred: $148.0M liquidation preference at 2026-06-30 (carried at $139.9M), accreting 8% compounded quarterly, converting at $3.79, so it is far out of the money and works like debt. Cash was $46.8M against roughly a $34M per-quarter adjusted EBITDA loss, the revolver expired 2026-08-06, and a $75M ATM is authorized. The ~$1.29 equity is therefore an option behind a ~$150M senior claim and heavy pre-PDUFA dilution.",
+   "primary_source": "Organogenesis press release (GlobeNewswire), 2026-07-06, \"FDA acceptance of BLA for ReNu\" (PDUFA 2027-04-24). Q2-2026 10-Q / 8-K (Aug 2026): Series A liquidation preference $147.963M, cash $46.8M, guidance $179-215M. FMP quote/EOD as of 2026-10-09.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The event checks out: FDA accepted the ReNu BLA on 2026-07-06 with a PDUFA date of 2027-04-24. It is forward and unpriced, and the stock is down about 48% since acceptance. But approval odds are mixed: the second Phase 3 missed its primary endpoint (one-sided p=0.0393 against a 0.023 target), though RMAT designation and data from more than 1,300 patients across three RCTs help. The equity waterfall is also weak. FY26 revenue guidance was cut to $179-215M (down 62-68% after CMS skin-substitute reimbursement reform), cash is $46.8M, the revolver is gone, and a $148M accreting preferred sits ahead of the common. Per the numerator-provenance rule I scored the EQUITY, not the event, and capped it at 4. WATCH for Q3 liquidity, ATM pricing and whether an AdCom is scheduled. Gap: I did not read the Q2 10-Q liquidity/going-concern section directly."
   }
  ]
 }

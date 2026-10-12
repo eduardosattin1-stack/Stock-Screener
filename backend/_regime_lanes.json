@@ -1,6 +1,6 @@
 {
-  "as_of": "2026-09-21",
-  "source": "CATALYST_WATCH_REGIME.md §3/§4-D (v8 instance, 2026-09-21 bi-weekly refresh)",
+  "as_of": "2026-10-12",
+  "source": "CATALYST_WATCH_REGIME.md §3/§4-D (v9 instance, 2026-10-12 bi-weekly refresh)",
   "written_by": "catalyst-watch-regime-refresh Phase 1b — regenerate this file whenever §3's lane ranking changes; _post_board.py reads it at import and WARNs if it is missing or drifts from the canon lane set",
   "lane_priority": {
     "spinoff": 1,
@@ -17,12 +17,12 @@
     "unknown": 9
   },
   "notes": [
-    "NO rank change vs 2026-09-06. Held deliberately: re-ranking on one two-week window is the error the 2026-09-06 run had to unwind (the 2026-08-18 fresh-crash promotion).",
-    "spinoff/forced_seller stay 1 but are only WEAKLY supported this window (Fable refuter D): the lock-up cohort's low undercuts (HONA -0.56%, Q -1.4%, ADIG -0.3%) were <=1.4% and concentrated on the 9/18 triple-witching + S&P rebalance session (index flow, not lock-up supply); FDXF made a new all-time low ($116.05 intraday, 9/21) and kept falling; SPCX's 9/9 unlock produced no new low. The dated supply is still the densest on the board (MMED split-off exp 10/9, SPCX tranches 9/24-12/8, Vylor 10/1, Gentherm/Modine close 10/1, MSGR, Flex->Axiom).",
-    "Brief D's proposed rule 'buy the first undercut only if reclaimed within 3 sessions' is fitted in-sample on n=4 and was NOT adopted.",
-    "merger_arb holds 4 but is the PROMOTION CANDIDATE: the refuter found it under-ranked on realized moves (WBD +10.8% on the 9/21 state-AG settlement, MG through H.I.G.'s $20.35 offer, IMXI ~30% spread with an acquirer walk option). Clean spreads (ACVA 0.43%, ATKR 0.55%, KVUE ~0.7%, QRVO ~0.4%) are worthless; the edge is complicated arb. Pre-registered: promote to 2-3 if >=2 of {IMXI, NSC, Nexstar/Tegna, MG, KVUE} converge favourably by the 2026-10-19 run.",
-    "distressed holds 3: CCC-BB 928bp (FRED 9/18) and the loan distress ratio is now SOURCED at 6.50% (PitchBook LCD, August) with Fitch private-credit defaults a record 6.3% TTM; but this window's named example (NFE) was a 1-for-50 reverse-split artifact with creditor (SVP) equity overhang, and an equity book still cannot cleanly express a credit signal.",
-    "bio_convergence stays thinnest a SEVENTH run: FDA approved AHEAD of goal dates all September (IONS, SRRK, ROIV, Telix), so the PDUFA date keeps vanishing as an anchor; the only large product move was a briefing-document release (GRAIL +33.8%). Two of Brief D's six listed PDUFA dates were invalid.",
-    "Canon lane ADDED 2026-09-21 (Bruno-approved): 'briefing_doc' -- FDA advisory-committee briefing-document releases (~2 business days before a panel), split out of bio_convergence in _post_board.canon_lane() so the cohort is tracked separately. Ranked 9 alongside bio_convergence: the object is n-of-a-handful (REPL +, CAPR -, GRAIL +33.8% on 9/21) and unfillable/halted through the vote; promote only once it reaches ~3-of-5 with a demonstrated fill."
+    "NO rank change vs 2026-09-21 (third consecutive unchanged run). Held per doctrine: no re-rank on a single two-week window.",
+    "spinoff/forced_seller stay 1, now SUPPORTED (Fable refuter D): MMED broke its 9/21 low ($18.94 on 10/8 vs $21.09) inside the exchange-offer pricing window and the final ratio hit the 4.5939 cap; FDXF new low $107.67 (10/1) then +7.2%. Index adds (VYLR same-day S&P 500 add) and mega-cap liquidity (SPCX tranches) cancel the effect. MMED's real flowback window starts week of 10/12.",
+    "merger_arb holds 4; pre-registered promotion test FAILED (1 of 5 converged: WBD, the efficient one, closed 10/6). Candidate flag removed. Live objects: MG go-shop 10/27, IMXI (new HSR 10/2, 11/10 conditional outside date), KVUE EU 10/13, NSC after 11/18.",
+    "distressed holds 3. CREDIT TRIPWIRE FULLY BREACHED (CCC-BB 1,058bp on 10/8, >1,000 since 10/1, FRED): the breach adds supply but does NOT promote the lane -- an equity book still cannot express a CCC-OAS signal cleanly, and the Braskem AIP test missed its date. The breach acts through the 1.7 financing-cost driver cap, not lane rank.",
+    "activist holds 5: Brief D's demotion to 6 not adopted (rests on in-window price alone; campaigns now dated -- ETD meeting 11/4).",
+    "bio_convergence / briefing_doc stay 9 (thinnest an EIGHTH run). Brief D's promotion to 5 on GRAIL (+30% after a split-efficacy panel) rated WEAKLY supported by the refuter (n=1; MIRM sell-the-news inside the same window) and NOT adopted. Now the PROMOTION CANDIDATE: promote if >=2 of the next 3 panel/briefing-doc events drift >=10% post-event in the vote's direction.",
+    "No new canon lane needed: SpaceX-800MHz new-entrant shock (TMUS -13.3% 10/9) and post-merger leverage (SKYD) are fresh_crash sub-tags; Nexstar/Tegna and Vylor-PFAS are litigation-overhang annotations, not lanes."
   ]
 }
