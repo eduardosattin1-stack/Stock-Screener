@@ -1,0 +1,277 @@
+{
+ "chunk": "gapfill-carry85 (84 names)",
+ "scanned": 83,
+ "scan_distribution": {
+  "active": 1,
+  "watch": 15,
+  "none": 67
+ },
+ "survivors_flagged": [
+  {
+   "symbol": "DDL",
+   "score": 7,
+   "tier": "ACTIVE",
+   "lane": "merger_arb_capital_return",
+   "one_line": "Sale of the China business to Meituan ($717M plus up to $280M upstreamed, roughly $997M gross) still awaits SAMR approval; outside date about Feb 2027; company committed a 'substantial majority' (~90%) to buybacks or dividends. At $2.15 (~$466M cap) the proceeds look like roughly 2x the price, but check the per-ADS figure. Risks: SAMR (Meituan is under live instant-retail scrutiny, Maiyatian hearing 10-10) and transfer tax."
+  },
+  {
+   "symbol": "IRDM",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "one_line": "Rocket Lab deal: $27 cash plus RKLB stock, nominal $54, collar $67.50-112.50. RKLB is at $68.21, just above the floor, so the deal is worth about $54 against $47.47, a ~14% gross spread. Holders approved 99.6%, FCC cleared its first step, financing is done, close mid-2027. A complicated collar arb: below $67.50 the value floats with RKLB."
+  },
+  {
+   "symbol": "NSC",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "one_line": "UNP deal (1 UNP share + $88.82 cash) is worth about $367 against $317.79, a ~15.5% spread. STB schedule: rebuttals March 2027, final briefs 2027-05-28, decision late summer 2027 at the earliest. Political and competitor pushback; widely followed, so the spread is long-dated and regulatory-priced."
+  },
+  {
+   "symbol": "VNDA",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "pdufa_binary",
+   "one_line": "Imsidolimab (GPP) PDUFA 2026-12-12; the stock is at lows ($4.57, ~$275M cap), so expectations are low. Small indication with Spevigo already approved, so the upside is modest. Bysanti and tradipitant are already approved (fired)."
+  },
+  {
+   "symbol": "ANNX",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "one_line": "ARCHER II Ph3 GA topline (vonaprument, BCVA-loss endpoint, n>630) guided Q4 2026. Stock $4.02, well off its $7.18 high and not run up. A real pivotal binary, dated only to the quarter."
+  },
+  {
+   "symbol": "SGRY",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "capital_return_deleveraging",
+   "one_line": "Signed the sale of its Idaho Falls hospitals to Intermountain on 2026-07-24 for about $795M, roughly 44% of the ~$1.8B market cap, to cut $3.75B of debt; closing still needs HSR and other approvals. Stock has not re-rated (13.89 vs 50d 14.3)."
+  },
+  {
+   "symbol": "DBVT",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary_regulatory",
+   "one_line": "Viaskin Peanut (ages 4-7) BLA filed 2026-09-30; FDA acceptance and a possible priority-review PDUFA date are due ~late Nov (60-day clock). Stock has crushed to $9.8 (-60% off the high), so this is early-arc and unpriced."
+  },
+  {
+   "symbol": "NEXA",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "merger_arb_complex",
+   "one_line": "Boliden buying Votorantim's 64.7% at 0.25 BOL/sh (signed 08-27, closes Q1-27), then must tender cash for minorities within 30d at 0.25 x 20d BOL VWAP; implied ~$14.5-14.8 vs $13.20, roughly a 10%+ gap on a two-step Lux/NYSE structure with thin coverage"
+  },
+  {
+   "symbol": "PPTA",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "supply_shortage_financing",
+   "one_line": "EXIM board approved a $2.9B Stibnite loan (05-21); definitive docs/close plus FID guided for 2H26 and still pending. Stock has fallen 37->20.6, so the antimony-moat financing milestone does not look priced; federal litigation is the remaining risk"
+  },
+  {
+   "symbol": "RZLT",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "one_line": "Phase 3 upLIFT (tumor HI, single-arm, n=16) topline guided before YE2026; interim 6/8 responders. Stock is $4.87 after the sunRIZE failure, giving asymmetric upside on a high-probability open-label readout; BLA mid-2027"
+  },
+  {
+   "symbol": "RNW",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "one_line": "CPPIB/Sinha take-private at $7.02 cash, with 51.1% irrevocables, close guided Q1-27; stock at $6.88 leaves a ~2% gross spread, so it is low-risk but thin"
+  },
+  {
+   "symbol": "WBD",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "one_line": "Paramount deal ($81B equity) passed the shareholder vote (Apr-23) and DOJ (Jun-12) but 12 states sued; trial set Mar-2-2027. Paramount pays a ticking fee of ~$7M/day after Sep-30. A real complicated-arb setup but widely followed, and it resolves months out."
+  }
+ ],
+ "verified": [
+  {
+   "symbol": "DDL",
+   "score": 6,
+   "tier": "ACTIVE",
+   "lane": "merger_arb_capital_return",
+   "catalyst": "Meituan (Two Hearts Investments) is buying Dingdong's China business for $717M cash. Closing needs SAMR antitrust clearance, and the company has committed at least 90% of the cash proceeds to buybacks or dividends.",
+   "dated_milestone": "SPA signed 2026-02-05. Distribution plan announced 2026-02-10 and approved by shareholders. Up to $280M upstreamed to Cayman by 2026-08-31. Next: SAMR decision, with the 12-month outside date around 2027-02-05 (extendable by mutual consent). Q3 results expected around late Nov 2026.",
+   "instrument": "DDL common ADS (NYSE). 2 ADS = 3 Class A shares; about 325M shares outstanding, so about 216.7M ADS-equivalents.",
+   "bloom_gates": "G1: named counterparty, Meituan via Two Hearts Investments. G2: concrete commitment of at least 90% of proceeds to buybacks or dividends, already approved by shareholders. G3: about $3.2-4.1 per ADS of distributable cash against a $2.15 price, unpriced because the market is discounting it heavily.",
+   "edge": "H/M. Run-up from the pre-catalyst base is about -33%: $3.20 on 2026-02-04 to $2.15 now, and the stock fell 14% on the announcement day. Nothing has been harvested, so the market is pricing a high chance of failure. Remaining capture is about +50% to +90% from $2.15 to a provenance-checked $3.25-4.15 per ADS (midpoint about $3.5, +63%). The edge is M rather than H because the SAMR outcome hangs on Meituan's live instant-retail antitrust scrutiny, and because getting cash out of China to an ADR holder, plus buyback-versus-dividend ambiguity, may justify part of the discount.",
+   "primary_source": "Dingdong PR 2026-02-05 (definitive SPA with Meituan, $717M, $280M upstream cap, 90/10 installments, SAMR condition); Dingdong PR 2026-02-10 (at least 90% of proceeds to buybacks/dividends, up to $997M); Dingdong Q2-2026 results PR 2026-08-20 (deal pending SAMR, 324,989,883 weighted shares, cash balances, $157M HK loan); FMP quote 2026-10-12 ($2.15, $466M market cap) and EOD history 2026-02-04/05 ($3.20 to $2.74).",
+   "verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "kill_fact": "I confirmed the core terms against the 2026-02-05 definitive-agreement 6-K and the EGM coverage. Buyer: Two Hearts (Meituan). Price: $717M base cash, paid 90% at closing and 10% after taxes, plus up to $280M more that is CONTINGENT. Shareholders approved the not-less-than-90% buyback/dividend resolution. SAMR has NOT cleared the deal; it is still pending 8 months on, with nothing new in news through 2026-10-12. The 12-month long-stop is about Feb 2027 and can be extended by mutual consent. Live price is $2.15 (52-week range $1.65-3.41; market cap $466M / $2.15 = 216.6M ADS, which matches the stated count). The trade is NOT harvested: price sits below the pre-deal $2.8-3.2 range and about 34% below the $3.25 low case. Corrections: (1) The $4.14 high case depends on the $280M contingent add-on. Treat it as an option, not the base case. (2) The break floor should include the $75M reverse termination fee Meituan pays if antitrust approval fails (about $0.35/ADS). That supports roughly $1.75-2.0 versus the $2.15 price. (3) At $2.15 the reward-to-risk is about 1.10/0.40 = 2.75:1, not 3.5:1. Load-bearing risk: the market implies only about a 27% close probability. That fits SAMR scrutiny of Meituan's grocery and instant-retail dominance after its 2025 delivery-war probe, so the discount is a priced regulatory risk, not mispricing. I found no dated SAMR milestone. The transfer tax and whether the HK bridge loan sits inside the sold perimeter remain unverified.",
+   "analysis": "Numerator re-derived from the capital structure: no preferred stock or external manager was found. The low case is $717M less about $60M PRC indirect-transfer tax, times 90%, plus net upstreamed cash, giving about $700M or $3.25/ADS. The high case is $997M gross times 90% = about $897M or $4.14/ADS. Q2-26 continuing-ops cash was about RMB1.81B ($267M); a $157M Dingdong HK bridge loan due end-Aug may net against the $280M upstream, and the overseas remainder burns about $36M a year. Pre-deal the stock traded around $2.8-3.2, but the discontinued China business on its own would likely trade lower now, so my break-case floor is about $1.75. That gives roughly 3.5:1 reward-to-risk on a real, dated, contractual event. Gaps: I could not verify current SAMR status (no filing or news found through 2026-10-12), I estimated the transfer tax rather than finding it in a filing, and whether the HK loan sits inside the sold perimeter is unclear. Score held at 7, not higher, for those reasons."
+  },
+  {
+   "symbol": "IRDM",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "catalyst": "Rocket Lab is buying Iridium for $27 cash plus RKLB stock. Inside the $67.50-112.50 RKLB collar the stock part is fixed at $27, so holders get $54. Below $67.50 the exchange ratio locks at about 0.4 RKLB per share and the value floats down with RKLB. Close is guided for mid-2027 after FCC licence transfer and S-4 effectiveness.",
+   "dated_milestone": "Announced 2026-06-29 (prior close about $43.50, a 24.1% premium). HSR waiting period expired 2026-08-12. FCC transfer-of-control applications filed 2026-08-10. S-4 filed 2026-08-13 and S-4/A later; the 424B3 prospectus suggests it went effective. Holders approved with 99.6% of votes cast. Financing done: a $1.94B ATM raise, and the $3.6B bridge was terminated. NEXT: an FCC consent order (no date set) and close, guided mid-2027.",
+   "instrument": "IRDM common. The spread is only clean if you hedge the collar floor with about 0.4 RKLB $67.5 puts per IRDM share, expiring around mid-2027. Shorting about 0.4 RKLB overhedges inside the collar, where the value is fixed.",
+   "bloom_gates": "G1 yes: Rocket Lab is a named, signed acquirer. G2 yes: a definitive merger agreement, shareholder vote done, HSR cleared, financing funded. G3 weak: the roughly $6.53 gap to $54 is not unpriced. It is about what the embedded short RKLB put at the $67.50 floor is worth.",
+   "edge": "L-M. Run-up from the pre-catalyst base: 43.50 to 47.47, about +9%. Remaining to the in-collar value: 47.47 to 54.00, about +13.8% gross, roughly 19% annualized over about 9 months. RKLB at $68.21 is only about 1% above the $67.50 floor. Below the floor the payout is 27 + 0.4 x RKLB, so an IRDM holder is long $54 and short about 0.4 at-the-money RKLB puts. With RKLB implied vol around 70% and about 0.75 years to close, that put strip is worth roughly $6-7 per IRDM share. That is about the whole spread, so the hedged residual is near zero and the visible 14% is mostly payment for RKLB downside risk, not mispricing. Remaining capture net of that hedge is small. On top of that sit the FCC timing risk and a small break risk.",
+   "primary_source": "Rocket Lab Form S-4 (2026-08-13), S-4/A and 424B3 on SEC EDGAR (CIK 0001819994); Rocket Lab IR release on Iridium acquisition progress (HSR expiry 2026-08-12, FCC filing 2026-08-10); GovConWire on the Iridium stockholder approval; Nasdaq/Zacks announcement coverage 2026-06-29 (24.1% premium); FMP batch quote 2026-10-12 (IRDM $47.47, RKLB $68.21).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The deal is real and well along: a signed agreement, a 99.6% shareholder vote, HSR expired 2026-08-12, financing funded, and the FCC transfer filed 2026-08-10, which is the last major gate before a mid-2027 close. But RKLB sits right at the $67.50 collar floor, so the ~14% gross spread is mostly what the market charges for the embedded short RKLB put (RKLB is down 55% from its $151 high and still volatile); hedged, the arb nets close to zero. It is a WATCH name: it gets interesting if RKLB rallies well back into the collar while IRDM lags, or if the FCC moves quickly; unhedged it is a directional RKLB bet. Gaps: FCC order timing and the S-4 effective date were not confirmed beyond the 424B3, and the put cost is my estimate, not a quoted chain."
+  },
+  {
+   "symbol": "NSC",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "catalyst": "Union Pacific's agreed acquisition of Norfolk Southern (1 UNP share + $88.82 cash per NSC share) is in STB merits review under the procedural schedule adopted 2026-08-18.",
+   "dated_milestone": "Next date: DOJ/DOT preliminary comments 2026-12-03. Then responses and protests 2027-02-16, final briefs 2027-05-28, and a final STB decision within 90 days of record close. The record-close date is not yet set, so the earliest decision is H2 2027.",
+   "instrument": "Long NSC / short 1.0x UNP per share (hedged spread). Outright long NSC carries UNP equity beta on 76% of the consideration.",
+   "bloom_gates": "G1 (named counterparty: Union Pacific) + G2 (signed merger agreement with fixed exchange ratio plus cash, and STB procedural schedule dated 2026-08-18). G3 is only partial: the spread is a priced, widely followed regulatory-risk discount, not an unpriced figure.",
+   "edge": "L-M. Deal value is contractual, so it needs no provenance re-derivation: 278.34 UNP + 88.82 = $367.16 vs NSC $317.79, a 15.5% gross spread re-verified via FMP on 2026-10-12. Run-up from the pre-catalyst base (about $260 before the July 2025 merger reports, approximate, not re-pulled) to today is about +22%. Remaining capture is +15.5% gross over roughly 12-15+ months to an H2-2027 decision at the earliest, about 11-13% annualized before financing and dividend differential. This is the market's consensus regulatory-risk price, not an informational edge. Downside on a break is about $270-285 (standalone NSC plus a reverse termination fee of about $2.5B, roughly $11/share; fee recalled from the 2025 terms and not re-verified this run), so about -12% against +15.5% upside, implying roughly a 45-50% break probability.",
+   "primary_source": "STB procedural-schedule decision 2026-08-18, as reported by WOWT (2026-08-19) and FreightWaves/Railway Age ('Regulators set schedule for review of UP-NS merger'). FMP batch-quote NSC $317.79 / UNP $278.34, 2026-10-12.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The deal is real, signed and dated, and the STB schedule checks out (DOJ/DOT comments 2026-12-03, final briefs 2027-05-28, decision H2 2027 at the earliest). The 15.5% spread recomputes exactly from live UNP/NSC quotes. However, the spread is long-dated and prices well-publicized political, shipper and competitor opposition, and this is the first major Class I merger under the 2001 STB rules, a genuinely uncertain bar. That makes it a fair-priced regulatory binary, not an underpriced one, with no dated near-term figure the market is missing. Keep it WATCH: the 2026-12-03 DOJ/DOT comments are the first read on whether the regulatory haircut should tighten or widen. Gaps: the pre-catalyst base price and the break-fee size come from memory, not this run's lookups."
+  },
+  {
+   "symbol": "VNDA",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "pdufa_binary",
+   "catalyst": "FDA action on the Quimilza (imsidolimab, anti-IL-36R) BLA for generalized pustular psoriasis, PDUFA target 2026-12-12, still pending with no extension reported.",
+   "dated_milestone": "PDUFA 2026-12-12. Phase III readouts by YE2026: NEREUS in GLP-1 vomiting, VQW-765 in social anxiety, HETLIOZ in DSPD. Q3 earnings around early Nov 2026.",
+   "instrument": "VNDA common (NASDAQ)",
+   "bloom_gates": "G1 (FDA is a named counterparty with a dated PDUFA) + G2 (an accepted BLA is a concrete pending decision). G3 is weak: GPP is an orphan niche where Spevigo is already approved, so there is no specific unpriced revenue figure that would re-rate a $275M cap on its own.",
+   "edge": "L-M. Run-up from the pre-catalyst base is about -45%: BLA acceptance on 2026-02-25 came with the stock near its $9.94 52-week high, and it now trades at $4.57, close to the $4.27 low. So nothing has been harvested on that front, but the decline reflects HETLIOZ generic erosion and cash burn, not doubt about the PDUFA. Remaining capture if approved: roughly +10-25% (to ~$5.0-5.7). Approval odds look high (GEMINI-1/2: 53% vs 13% GPPPGA 0/1 at week 4, published in NEJM Evidence), but peak sales in GPP are modest against Spevigo. The real swing factor is the base business: $170M cash vs a $62.5M Q2 GAAP loss, and EV is only about $105M on $240-290M revenue guidance. The setup is a cheap equity with several year-end readouts, not a single high-capture binary.",
+   "primary_source": "Vanda Q2 2026 results, 8-K Ex.99.1 dated 2026-08-05 (sec.gov/Archives/edgar/data/0001347178/000162828026053308); FDA BLA acceptance PR 2026-02-25 (HCPLive); FMP quote 2026-10-12 ($4.57, mcap $274.8M, 52w $4.27-$9.94)",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The catalyst is real, dated and forward: the BLA was accepted 2026-02-25 with a 2026-12-12 PDUFA, which the Q2 release on 2026-08-05 reaffirmed, and no decision or extension has been found. At ~$275M market cap vs $170M cash (EV ~$105M), the equity is priced for Fanapt/Bysanti execution risk and burn. A GPP approval in a small indication that Spevigo already serves adds incremental value, not a re-rating, so the event alone supports only modest upside. Gap: I did not re-derive the 10-Q capital structure (no preferred, debt not checked) or check the CRL/AdCom history. The score is capped at 4 because the remaining capture is small, not because the event is doubtful."
+  },
+  {
+   "symbol": "ANNX",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "catalyst": "ARCHER II pivotal Ph3 (vonaprument, C1q Fab, GA, n>630, 2:1 vs sham) Month-15 primary endpoint topline (prevention of >=15-letter BCVA loss), guided Q4 2026, plus tanruprubart GBS BLA submission guided Q4 2026.",
+   "dated_milestone": "ARCHER II Month-15 topline in Q4 2026 (quarter only, no day given); tanruprubart BLA filing Q4 2026; ANX1502 oral proof-of-concept data fall 2026. Next check: Q3 2026 10-Q/earnings, early-to-mid Nov 2026, for a tighter readout date.",
+   "instrument": "ANNX common (NASDAQ). Optional defined-risk calls spanning the Q4 window. The binary is two-sided, so keep the position small.",
+   "bloom_gates": "G2 (company has committed to a Q4 2026 Month-15 topline and a Q4 2026 BLA). G3 partial: the first function-based (BCVA) GA readout is a specific, unpriced outcome. No G1 counterparty.",
+   "edge": "M. A real, forward pivotal binary in a stock that has de-rated, not run up. Run-up from the pre-catalyst base: the readout has been public since the 2025 enrollment, so I used the 52-week low ($2.54) as the base, which gives about +58%. But the stock is down about 44% from its $7.18 high and sits below both its 50-day ($4.65) and 200-day ($5.33) averages, so it is not crowded into the event. Remaining capture: about +150% to my success value (~$10/share, roughly $1.6B market cap) versus about -50% to my failure floor (~$2, supported by cash and the GBS asset). The edge is capped at M for three reasons: the timing is a quarter, not a date; the trial's primary endpoint was changed mid-study (see analysis); and Phase 2 BCVA benefit is not the same as Phase 3 proof.",
+   "primary_source": "Annexon Q2 2026 financial results press release (2026-08-12, annexonbiosciences.gcs-web.com), which gives the Month-15 primary endpoint for Q4 2026, the BLA for Q4 2026 and runway into 2028. Annexon ARCHER II enrollment-completion release (2025-07-28, ir.annexonbio.com). FMP quote 2026-10-12: $4.02, market cap $659M, 52-week range $2.54-$7.18.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "Verified: ARCHER II enrolled more than 630 patients (July 2025). The Q2 2026 release (2026-08-12) says the Month-15 primary endpoint is \"on track for Q4 2026\", and nothing suggests the readout has happened yet. A $200M credit facility extended cash runway into 2028, so there is no near-term financing overhang before the readout. Two risks I could not fully resolve. First, the company changed the trial's primary endpoint mid-study, to two primary readouts at Month 15 and Month 24. That can be read as hedging against a weak 15-month signal. Second, reports of the facility size conflict ($200M per the company, $50M per a third party); this is unverified against the 8-K. Upside rests on clinical-binary probability (my estimate is about 35% success), not on a capital-structure waterfall, so the provenance rule does not cap the score. There is no preferred stock ahead of the common, but the debt facility does sit ahead of it."
+  },
+  {
+   "symbol": "SGRY",
+   "score": 2,
+   "tier": "NONE",
+   "lane": "capital_return_deleveraging",
+   "catalyst": "The sale of Surgery Partners' Idaho Falls stakes (Mountain View Hospital and Idaho Falls Community Hospital) to Intermountain Health has already closed: completed 2026-09-17 for $797M gross and $587M net cash, with the money going to pay down debt.",
+   "dated_milestone": "Announced 2026-07-24; HSR and physician approvals cleared; CLOSED 2026-09-17. Nothing binding is still to come. The only date left is Q3 earnings in early November 2026, where the paydown amount and post-closing adjustments get confirmed. That is a reporting date, not a catalyst.",
+   "instrument": "SGRY common (NASDAQ)",
+   "bloom_gates": "G1 (named buyer, Intermountain Health) and G2 (binding SPA) were both met, but both are now spent because the deal closed. G3 fails: the triage figure of $795M, about 44% of market cap, is GROSS. Net cash was only $587M, and the company itself puts the leverage improvement at about 0.3x (4.4x to about 4.1x). That is not a large figure the market has failed to price.",
+   "edge": "L. The event FIRED on 2026-09-17; it is not forward. Run-up from the pre-catalyst base: not measured (no July price pulled), and the stock trades about 3% under its 50d (13.89 vs 14.31). So nothing was harvested, but there is no event left to harvest either. Remaining capture from this catalyst: about 0%. Re-derived capital structure (Q2 10-Q, 2026-06-30): total debt $4.02B, net debt $3.80B, NCI $1.43B, no preferred stock. Pro forma, $587M net goes to debt, so net debt is about $3.2B. Equity holders get no direct value. The sale is close to leverage-neutral (EBITDA leaves along with the proceeds; FY26 adj. EBITDA guide was cut to at least $489M). So the 44%-of-market-cap framing overstates what reaches the common.",
+   "primary_source": "Surgery Partners press release 'Completes Sale of Ownership Interests in Idaho Falls Facilities to Intermountain Health; Updates Guidance' (2026-09-17, via finviz/Becker's ASC); original deal release 2026-07-24; FMP Q2-2026 balance sheet (10-Q filed 2026-08-10); FMP quote 2026-10-12 ($13.89, mcap $1.82B).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The triage note is out of date. It treats the deal as still awaiting HSR approval, but Surgery Partners announced completion on 2026-09-17: $797M gross, $587M net, with guidance cut to revenue of $3.08-3.18B and adj. EBITDA of at least $489M. Score the equity, not the event: the asset sale cuts leverage only from about 4.4x to about 4.1x. Debt stays heavy (about $3.2B net pro forma, plus $1.43B NCI ahead of the common in EV terms), and the sold hospitals' EBITDA is gone. That explains why the stock has not re-rated, and no dated forward catalyst remains. Gap: I did not check for a later announced buyback, take-private interest, or a further divestiture; any of those would be a new and separate catalyst."
+  },
+  {
+   "symbol": "DBVT",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary_regulatory",
+   "catalyst": "The FDA has to decide by about 2026-11-28 whether to accept the Viaskin Peanut (ages 4-7) BLA, filed 2026-09-29 with Breakthrough designation and a Priority Review request. The acceptance letter then sets a PDUFA date in about mid-2027 (priority) or about late Q3 2027 (standard).",
+   "dated_milestone": "BLA submitted 2026-09-29. Next: FDA 60-day filing decision around 2026-11-28, with the Day-74 letter around 2026-12-12 giving the review class and PDUFA date. If priority review is granted, the PDUFA date would be about late May to June 2027.",
+   "instrument": "DBVT ADS (Nasdaq); also trades as DBV on Euronext Paris",
+   "bloom_gates": "G2 is met: there is a concrete statutory commitment, the FDA's 60-day filing decision plus a PDUFA date once the filing is accepted, and the counterparty is the FDA. G3 is only partly met: the company is valued at about $234M with about $175M cash at 6/30/26, which suggests a low enterprise value for a Breakthrough-designated BLA. But the fully diluted share count, which includes about 124M ordinary shares from outstanding pre-funded warrants, was not re-derived here.",
+   "edge": "M. Run-up from the pre-catalyst base: roughly -40% to -60%, not a run-up. The filing path has been public since the positive VITESSE result on 2025-12-16, and the stock is down about 63% from its $26.19 52-week high to $9.80, a new 52-week low on 2026-10-08. So none of the event is harvested. Remaining capture: acceptance alone is a low-information, high-probability event, worth perhaps +20-30% back toward the 50-day average of $12.87. Most of the value sits with approval in 2027. The market's discount reflects three things: (1) cash runway only reaches about Q3 2027, so a financing is likely before or around the PDUFA date and launch, meaning dilution; (2) the FDA has rejected Viaskin before (2020 CRL); (3) short interest rose to 4.4% of capital in early October. The edge is the gap between a de-risked filing and the price, but a financing overhang caps how much of that the stock can capture in the near term.",
+   "primary_source": "DBV Technologies press release, GlobeNewswire 2026-09-29 (BLA submitted, Priority Review requested); DBV Q2/H1 2026 results 2026-07-16 (cash $174.9M, runway into Q3 2027); DBV warrant-exercise release 2026-01-16 (EUR 166.7M, 71.0M pre-funded warrants convertible into up to 124.3M ordinary shares); FMP quote 2026-10-12 ($9.80, market cap $234M, 52-week high $26.19)",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The catalyst is real, dated and forward. DBV submitted the BLA on 2026-09-29 (GlobeNewswire), so the FDA's filing decision is due around late November, and the Day-74 letter will set the review class and PDUFA date. The selloff has no fundamental trigger I could find. Commentary attributes it to technical selling and rising short interest, and the filing-day rebound was erased by 2026-10-01. The stock is unpriced in the sense of having no run-up, but the near-term milestone carries little information, and the cash runway into Q3 2027 implies a financing before commercial launch. Scored as WATCH 5, not ACTIVE. Gaps: I did not re-derive fully diluted equity value against current cash from the 10-Q (pre-funded warrants for about 124M ordinary shares and the ADS ratio are unverified), and I did not get Q3 cash burn. Reference price, target and floor are approximate."
+  },
+  {
+   "symbol": "NEXA",
+   "score": 3,
+   "tier": "WATCH",
+   "lane": "merger_arb_complex",
+   "catalyst": "Boliden buys Votorantim's 64.68% of Nexa at 0.250 new BOL shares per Nexa share (signed 2026-08-27), then must launch a cash tender for all minority shares within 30 days of closing, priced at 0.250 x Boliden's 20-trading-day Nasdaq Stockholm VWAP before closing.",
+   "dated_milestone": "Signed 2026-08-27. Next steps: Boliden EGM vote and Nexa vote on a new board (dates not yet found), then closing expected Q1-2027, then the cash tender within 30 days of closing, so cash arrives around Q2-2027.",
+   "instrument": "NEXA common (NYSE). A properly hedged spread means shorting 0.25 BOL.ST per NEXA share, because the tender price floats with BOL's price and with SEK/USD.",
+   "bloom_gates": "G1 yes (Boliden and Votorantim named, definitive agreement signed). G2 yes (a contractual duty to tender for minorities within 30 days of closing, with a formula price). G3 weak: the figure is a floating formula, not a fixed price. At today's tape it implies only about $13.70, not the triaged $14.5-14.8.",
+   "edge": "L. The triage numerator is stale. Today's implied tender value is 0.25 x 549.2 SEK = 137.3 SEK, which is about $13.70 at USD/SEK 10.02. At signing it was $15.29. Remaining capture from $13.20 is about +3.8% gross, received around Q2-2027 (6-7 months), so roughly 6-7% annualized, and it moves with BOL and SEK unless hedged. Run-up from the pre-catalyst base ($12.04 on 2026-07-01, the day before deal talk surfaced) to today: about +9.6%. NEXA actually fell from $15.58 to $13.90 on announcement day as minorities priced in the formula. The event is real and forward, but the spread is thin and mostly harvested.",
+   "primary_source": "Boliden press release 'Boliden to acquire controlling stake in Nexa Resources' (2026-08-27, investors.boliden.com / placera.se) and the Nexa announcement (2026-08-28, poder360 PDF). FMP quotes 2026-10-12 (NEXA $13.20, BOL.ST 549.2 SEK, USDSEK 10.022) and FMP NEXA EOD history 2026-06-25 to 2026-09-04.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The deal is real and contractual. The Boliden SPA was signed 2026-08-27, Boliden has a fully committed $2B bridge facility for the tender, Peruvian sub-MTOs and refinancing, and closing is expected in Q1-27 subject to the Boliden shareholder vote, regulators and Nexa's board vote. But the minority cash tender is a floating formula (0.25 x BOL 20d VWAP), not a fixed price. With BOL at 549 SEK and USD/SEK at 10.02 it implies only about $13.70, so the claimed 10%+ gap is really about 3.8% for 6+ months of two-step Lux/NYSE/Peru execution risk. If the deal breaks, the stock likely falls back toward the pre-deal $12-12.9 range, about 2-3x the upside, so the risk/reward is poor unless BOL rallies. Gaps: I did not see the full SPA. I have not confirmed a floor or collar on the tender price, or the EGM dates. Numerator provenance does not apply because the price is a contractual formula."
+  },
+  {
+   "symbol": "PPTA",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "supply_shortage_financing",
+   "catalyst": "Perpetua is expected to close the $2.9B senior secured EXIM loan for Stibnite (the board approved it unanimously on 2026-05-21) and take its final investment / full-construction decision, both guided for 2H26.",
+   "dated_milestone": "EXIM definitive documents and loan close, plus FID, guided \"later this year\" / 2H26, so the hard window is 2026-12-31. The next checkpoint is Q3-26 results, expected around mid-November 2026. Commercial operations are guided for 2029.",
+   "instrument": "PPTA common stock (Nasdaq/TSX)",
+   "bloom_gates": "G1 yes: named counterparty, U.S. EXIM Bank. G2 yes: a board-approved $2.9B, 13-year senior secured facility, though conditions precedent and definitive documents are still open. G3 partial: no figure is contractually unpriced. Upside is derived from P/NAV re-rating, against after-tax NPV5 of $3.457B plus about $574M unrestricted cash vs a $2.58B market cap.",
+   "edge": "M. Run-up from the pre-catalyst base is negative: the stock is 20.64 now, about 45% below the 37.37 52-week high it set around the EXIM notification and approval, so the approval has been fully round-tripped rather than harvested. Remaining capture: about +24% to roughly 25.6 if close and FID re-rate the stock to about 0.8x NAV; up to about +55% (around 32) at 1.0x NAV. NAV uses the published after-tax NPV5 of $3.457B plus $574M cash over about 125M shares. Two things cap the edge. First, closing a loan the board has already approved is a high-probability, low-surprise event. Second, the market has de-rated the stock despite the approval, which points to schedule, gold-price or dilution worries that the close alone may not fix.",
+   "primary_source": "PPTA 10-Q for the quarter ended 2026-06-30 (filed around 2026-08-17; $574.2M cash, EXIM close guided later in 2026, no full construction until financing). EXIM board approval press release, 2026-05-21. Perpetua construction and exploration update (PRNewswire), 2026-09-28. Motley Fool, 2026-09-28. FMP quote, 2026-10-12: $20.64, 52-week range 16.43-37.37.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "This is a real, dated, forward catalyst: EXIM board approval fired on 05-21, and the loan close and FID are pending for 2H26. Federal litigation remains (the 05-29 preliminary-injunction denial is on appeal). Shareholder-law-firm investigations dated 08-17 and 09-07 add headline risk. The 09-28 construction update knocked the stock down about 6%, and it gave no close date. Numerator provenance: the 10-Q shows no preferred stack ahead of the common. EXIM debt is project-senior and already inside the NPV, so the equity waterfall supports the NAV math. Gaps: I did not re-derive the NPV at spot gold, and the share count is approximate (implied by market cap). Score 5 WATCH: the event is real and the residual looks unharvested, but surprise content is low and the window slips into 2027 if documents drag. Escalate on a confirmed close/FID date or a favorable Ninth Circuit ruling."
+  },
+  {
+   "symbol": "RZLT",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "catalyst": "Topline from the Phase 3 upLIFT trial (single-arm, open-label, up to 16 patients) of ersodetug in tumor hyperinsulinism, guided for before YE2026. The interim result is 7 of 8 responders on the primary endpoint (at least 50% reduction in IV glucose infusion rate).",
+   "dated_milestone": "upLIFT topline guided 'before end of 2026' (reaffirmed in the FY26 8-K/10-K, 2026-09-24). After that: BLA filing guided for mid-2027. Still open: FDA feedback on the failed sunRIZE congenital HI study, which was meant to serve as confirmatory evidence.",
+   "instrument": "RZLT common (NASDAQ), $4.87, market cap about $469M, about 96M shares",
+   "bloom_gates": "G2 (company guides topline before YE2026 in its SEC filings). Partial G3: the interim already disclosed 7 of 8 responders, so most of the efficacy figure is public and priced. G1 does not apply.",
+   "edge": "L. The readout is real and dated, but it is telegraphed: the interim disclosed 7 of 8 responders, so positive topline is consensus. Run-up from the pre-interim base: $3.30 (2026-05-29) to $4.87 is +48%. From the post-sunRIZE low of $1.07 it is +355%. Remaining upside to the favorable-resolution value: about $6.50 (~+33%). This rests on a roughly $600-650M market cap for a small orphan indication, before an expected raise on positive data. Unfavorable case is about $1.75 (~-64%), with cash near $1/share. Probability-weighted value is about $5.79 (+19%), and the asymmetry is unfavorable.",
+   "primary_source": "Rezolute FY2026 8-K earnings exhibit and 10-K (SEC EDGAR, 2026-09-24). Rezolute upLIFT interim press release (2026-06-02, BioSpace/Nasdaq). FMP quote and EOD history (2026-10-12).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "This is a clean, dated, forward binary, but most of the upside is already priced. The 7-of-8 interim responder rate was published on 2026-06-02 and the stock rose about 48% from $3.30. Today's $4.87 already discounts a high-probability positive topline. Cash was $107.8M at 2026-06-30 against a burn of about $20M per quarter, leaving roughly $95M today (~$1/share). Further risks: likely dilution right after positive data, and the confirmatory evidence package depends on the failed sunRIZE trial, which FDA is still reviewing. Score is capped at 4 under the mostly-harvested rule. Gap: I did not confirm current upLIFT enrollment status (8 of 16 at the last update) or whether YE2026 timing still holds, and no sell-side peak-sales figure was checked."
+  },
+  {
+   "symbol": "RNW",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "catalyst": "A consortium of CPP Investments and founder Sumant Sinha signed a binding Transaction Agreement on 2026-08-11 to take ReNew private at $7.02 cash per share through a UK Part 26 scheme of arrangement, with irrevocable undertakings to vote for it from JERA Nex and Platinum Cactus, and close guided for Q1-2027.",
+   "dated_milestone": "Transaction Agreement signed 2026-08-11 (SC 13E3 filed). Next: the Court Meeting and General Meeting dates in the Scheme Document, which I could not find. After that comes the court sanction hearing, which is also the deadline for rollover elections. Close guided for Q1-2027.",
+   "instrument": "RNW common stock (NASDAQ), held for the $7.02 cash-out. Do not elect the rollover.",
+   "bloom_gates": "G1 (named counterparty: CPP Investments + Sumant Sinha consortium) + G2 (concrete commitment: signed Transaction Agreement, scheme of arrangement, named irrevocables). G3 fails: the $7.02 price is public and almost fully priced.",
+   "edge": "L. Run-up from the pre-catalyst base (about $5.85 on 2026-05-21, before the 2026-05-28 $6.75 proposal) to $6.88 today is about +17.6%. The remaining capture from $6.88 to $7.02 is +2.0% gross, roughly 4-5% annualized over about 5 months, which is near the risk-free rate before any break risk or India FX/regulatory slippage. The event is real but about 88% harvested.",
+   "primary_source": "SEC EDGAR SC 13E3 exhibit 99(a)(3)(i), ReNew Energy Global plc, CIK 1848763 (https://www.sec.gov/Archives/edgar/data/0001848763/000119312526398221/d72407dex99a31.htm), Transaction Agreement dated 2026-08-11. 6-K of 2026-08-07 (CPPIB best-and-final $7.02). InsideArbitrage 2026-08 (Q1-2027 close guide). FMP quote of 2026-10-12 ($6.88) and EOD history for 2026-05-20 to 06-02.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The deal is real and contractual: a signed 2026-08-11 Transaction Agreement at $7.02 cash under a UK scheme of arrangement, and the stock at $6.88 shows the market treats it as very likely. Because the numerator is a cash deal price, the capital-structure re-derivation does not apply. The score is held to 4 by residual capture: about 2% gross remains after a roughly 17.6% run-up from the pre-proposal base, so this is a thin arb with little more yield than T-bills. The downside is asymmetric back toward the $5.5-5.9 pre-bid range if the deal breaks. Gaps: I could not verify the 51.1% irrevocable figure from triage (the filing names JERA Nex and Platinum Cactus but the share counts were cut off), or the Court Meeting date. The Q1-27 close comes from a secondary source (InsideArbitrage). There is no sign that Masdar, which bid $8.15 in Oct-2025, will make a topping bid."
+  },
+  {
+   "symbol": "WBD",
+   "score": 3,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "catalyst": "Paramount Skydance is buying WBD for $31.00 cash per share plus a $0.25/quarter ticking fee. The deal is paused by a TRO won by 12 states, and the antitrust trial runs Mar-2 to Mar-19-2027 (outside date Jun-4-2027).",
+   "dated_milestone": "The ticking fee started accruing Sep-30/Oct-1-2026 (sources disagree on the day). Next dates: the Supreme Court decides whether to take the Iowa/Montana original-jurisdiction objection (state AG responses were due Sep-25-2026; outcome not found), then the trial starts Mar-2-2027. The pause lifts 5 days after the merits ruling or on Jun-1-2027; the outside date is Jun-4-2027.",
+   "instrument": "WBD common (cash merger-arb spread)",
+   "bloom_gates": "G1 (named counterparty: Paramount Skydance, plus the 12 state AGs led by California) and G2 (signed definitive agreement: $31 cash, $0.25/qtr ticking fee, $7B regulatory reverse termination fee, Netflix break fee covered) both pass. G3 fails: the remaining figure is about 2% and the market already prices it.",
+   "edge": "Low. Run-up from the pre-catalyst base: about +147% (unaffected $12.54, now $30.95). Remaining capture if the deal closes: about +1.8% to $31.50 by the end of trial (2 quarters of ticking fee) and about +2.3% to roughly $31.70 at the Jun-2027 outside date. That is spread over 5 to 8 months, so roughly 3-4% annualized, below cash-plus. A break falls to a standalone floor of about $18 plus roughly $2.8/sh of the $7B fee, so the market implies about a 95% chance of closing while a litigated state-AG trial is pending. The situation is widely followed and the edge is mostly harvested, so the cap of 4 applies.",
+   "primary_source": "TheWrap, Paramount's $1.88B bond request and the Supreme Court Iowa/Montana objection (Sep-2026); Variety, trial set for Mar-2-2027 (2026); Al Jazeera, the deal paused while the case plays out (Jul-24-2026); Pulse2/MarketChameleon, $31 all-cash terms (Feb-27-2026); SEC SC TO-T/A (FY2026); FMP quote WBD $30.95 (2026-10-12).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The setup is real, dated and forward. The shareholder vote and DOJ clearance passed, but the 12-state suit and TRO pause the close, and the trial is Mar-2-2027. A cash deal price is contractual, so no numerator re-derivation is needed. The edge is almost fully priced, though: WBD at $30.95 is below the $31 headline even with the ticking fee accruing, and the remaining ~2% gross over 5-8 months sits against about $13/sh of break downside. Gap: I could not verify whether the ticking fee pays out only at close or quarterly, which changes the carry. I also found no post-Sep-25 news on the Supreme Court objection, Paramount's $1.88B bond request, or settlement talks. A settlement or consent decree before trial is the one path that would speed up the carry."
+  }
+ ]
+}
