@@ -499,6 +499,14 @@ def process(apx, uni, scan_by, market=None):
           f"reconciled={_ed['reconciled']} set_from_debate={_ed['set_from_debate']} "
           f"override={_ed['director_overrides']} consistent={_ed['consistent']} "
           f"rederived={_ed.get('rederived')}")
+    # BASKET MEANS BOUGHT (2026-10-13): a NEW seat whose own debate says wait is a runner-up, not a
+    # basket member. Weights are rebuilt on the survivors so a deferred name is never sized.
+    _held = {p["symbol"] for p in picks if str(p.get("decision") or "").upper() not in ("ADD", "RE-ADD")}
+    _moved = _pc.seat_means_bought(apx, _held, "director_memo")
+    if _moved:
+        picks = [p for p in apx.get("apex_basket", []) if p.get("symbol")]
+        memo = {p["symbol"]: _pc.banded_units(p.get("director_conviction") or p.get("conviction")) for p in picks}
+        apx["weights"] = _pc.build_weights(apx, picks, extra_caps=extra, memo_units=memo, per_name_cap=_pc.moat_per_name_cap)
     apx["moat_post_applied"] = True
     apx["numeric_post_applied"] = True
     return apx, picks, extra

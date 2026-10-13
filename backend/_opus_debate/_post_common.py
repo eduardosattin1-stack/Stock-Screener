@@ -1374,6 +1374,51 @@ def reconcile_entry_posture(apx, picks, ctx_of, memo_key, today=None):
     return summary
 
 
+def seat_means_bought(apx, held_syms, memo_key="director_memo"):
+    """BASKET MEANS BOUGHT (2026-10-13, Bruno). Every position the paper books ever recorded (125 of 126
+    across regime + value) was filled at the first close after the Director added it; the one
+    wait-gated new seat (KARE.AT, 2026-10-12, buy at EUR 411) was the inconsistency. Rule: a NEW seat
+    is bought at the next close, so a NEW name whose own debate says wait for a better price / proof /
+    the event (reconciled posture wait_for_weakness or on_confirmation, or a B/C grade with no
+    enter-now override) is NOT a basket member - it goes to the FRONT of runner_ups with its trigger
+    stamped, and joins the basket only when a later run grades it buy. Held seats are untouched (keep
+    != buy here; the hold/add-at label already covers them). Returns the moved symbols."""
+    keep, moved = [], []
+    for p in apx.get("apex_basket", []) or []:
+        sym = p.get("symbol")
+        if not sym or sym in held_syms:
+            keep.append(p)
+            continue
+        post = str(p.get("entry_posture") or "")
+        key = post.split(":")[0].strip()
+        v = str(p.get("cro_verdict") or "").strip().upper()[:1]
+        src = str(p.get("entry_posture_source") or "")
+        waits = key in ("wait_for_weakness", "on_confirmation") or (v in ("B", "C") and key not in _ENTER_NOW)
+        if waits and src != "director-override":
+            lvl = _pos_num(p.get("cro_add_px"))
+            ev = str(p.get("cro_add_event") or "").strip() or (post.split(":", 1)[1].strip() if ":" in post else "")
+            trig = (f"buys near {lvl:g}" if lvl is not None else (f"buys after {ev[:120]}" if ev else "buys on a better price"))
+            p["seat_deferred"] = True
+            p["seat_deferred_reason"] = (f"new seat whose debate says wait ({p.get('cro_verdict_plain') or key or v}): "
+                                         f"a basket seat is bought at the next close, so it waits on the runner-up list - {trig}")
+            p["runner_up_trigger"] = trig
+            moved.append(p)
+            print(f"seat-means-bought: {sym} graded wait by its own debate -> runner-up ({trig})")
+        else:
+            keep.append(p)
+    if moved:
+        ms = {m["symbol"] for m in moved}
+        apx["apex_basket"] = keep
+        apx["runner_ups"] = moved + [r for r in (apx.get("runner_ups") or [])
+                                     if (r.get("symbol") if isinstance(r, dict) else r) not in ms]
+        note = ("SEAT RULE (deterministic, " + _dt.now().strftime("%Y-%m-%d") + "): a basket seat is bought at the next "
+                "close. New names whose own debate says wait were moved to the runner-up list with their trigger: "
+                + ", ".join(f"{m['symbol']} ({m['runner_up_trigger']})" for m in moved) + ".")
+        if isinstance(apx.get(memo_key), str):
+            apx[memo_key] = note + "\n\n" + apx[memo_key]
+    return [m["symbol"] for m in moved]
+
+
 def entry_gate(p, held, today=None):
     """The entry order a NEW seat rests on (2026-10-06), read off the reconciled pick: None for a seat
     already held (keep != buy, nothing to gate), else {letter, mode NOW|AT_LEVEL|ON_EVENT|NONE, level,

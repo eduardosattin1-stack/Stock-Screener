@@ -319,6 +319,14 @@ def main():
           f"override={ed['director_overrides']} consistent={ed['consistent']} "
           f"rederived={ed.get('rederived')}")
     stamp_wheel(picks, "value", quotes)                          # CSP->CC wheel (live yield / qualitative)
+    # BASKET MEANS BOUGHT (2026-10-13): a NEW seat whose own debate says wait is a runner-up, not a
+    # basket member. Weights are rebuilt on the survivors so a deferred name is never sized.
+    _held = {p["symbol"] for p in picks if str(p.get("decision") or "").upper() not in ("ADD", "RE-ADD")}
+    if _pc.seat_means_bought(apx, _held, "value_memo"):
+        picks = [p for p in apx.get("apex_basket", []) if p.get("symbol")]
+        syms = [p["symbol"] for p in picks]
+        weights = build_weights(apx, picks, extra_caps=breach_caps)
+        corr = corr_block(syms, weekly_rets, weights)
     apx["weights"] = weights
     apx["stress_test"] = stress_block(picks, weights, quotes, asof)   # fix 1
     apx["correlation"] = corr                                         # fix 4
