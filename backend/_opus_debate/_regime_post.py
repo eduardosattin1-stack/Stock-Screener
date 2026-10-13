@@ -434,6 +434,11 @@ def process(apx, uni, scan_by, market=None):
                                   quadrant=apx.get("regime_quadrant"))   # -> records, before verdicts
     apx = _pc.consume_skeptic(apx, REGIME_F, SKEP_DIR)        # REFUTED -> demote BEFORE weights
     apx = numeric_demote(apx)                                 # numeric-gate teeth (inert pre-enforce)
+    try:                                                      # free-float floor (2026-10-13): KARE-class names out
+        import free_float as _ff
+        _ff.float_demote(apx, ROOT / "free_float.json")
+    except Exception as _e:
+        print(f"WARN regime-post: free-float gate skipped ({_e})")
     picks = [p for p in apx.get("apex_basket", []) if p.get("symbol")]
     stamp_moat(picks, uni, scan_by)
     stamp_moat([r for r in apx.get("runner_ups", []) if isinstance(r, dict)], uni, scan_by)  # visibility only

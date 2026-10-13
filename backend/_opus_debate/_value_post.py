@@ -287,6 +287,11 @@ def main():
     offline = "--offline" in sys.argv
     apx, gin = load()
     apx = consume_skeptic(apx)                              # 8b fork (b): REFUTED demotes BEFORE weights
+    try:                                                    # free-float floor (2026-10-13): KARE-class names out
+        import free_float as _ff
+        _ff.float_demote(apx, Path(_HERE) / "free_float.json")
+    except Exception as _e:
+        print(f"WARN value-post: free-float gate skipped ({_e})")
     picks = [p for p in apx.get("apex_basket", []) if p.get("symbol")]
     syms = [p["symbol"] for p in picks]
     quotes, weekly_rets, asof = get_market(syms, syms + ["XLY"], offline)
