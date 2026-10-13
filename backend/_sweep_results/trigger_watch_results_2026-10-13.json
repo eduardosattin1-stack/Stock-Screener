@@ -1,0 +1,37 @@
+{
+  "checked": 4,
+  "results": [
+    {
+      "symbol": "RCI",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "2027-06-30",
+      "note": "Global News reports Rogers has closed its C$4.35B purchase of Kilmer's 25% MLSE stake, which was only the precondition. The catalyst itself, the minority-stake sale of the combined sports entity that Rogers values at over C$25B, is still guided for an announcement by H1 2027 and needs league approval; no buyer or terms have been reported (Castanet/CP, July 2026). Next checkpoint is the Q3 2026 results in late October, and the board date should move from 2026-10-01 to the H1-2027 window."
+    },
+    {
+      "symbol": "MTN",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "",
+      "note": "The 2026-09-29 milestone was only the 13D/A filing (TownLift, Sept 2026, reports Oasis raised its stake to about 9% that day), not a terminal event. As of 2026-10-13 I found no settlement 8-K, no preliminary or definitive proxy and no annual-meeting date (KPCW 2026-09-16 says no date is set; Vail usually meets in early December), so the contest is still ahead."
+    },
+    {
+      "symbol": "LNTH",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "2026-10-14",
+      "note": "The Lantheus DEFM14A on SEC EDGAR and Quartr proxy summaries still put the special meeting on 2026-10-14. It needs a majority of outstanding shares, and the board unanimously recommends voting FOR. As of 2026-10-13 no vote result, adjournment or postponement was found. Even after the vote, FTC/HSR clearance and a 1H27 close remain ahead, so the deal is not terminal."
+    },
+    {
+      "symbol": "B",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "",
+      "note": "The 2026-09-29 checkpoint was only a repeat of the year-end-2026 target. Web searches on 2026-10-13 turned up no F-1/S-1 or Canadian prospectus for North American Barrick, no pricing and no delay announced; the latest coverage I found (spring 2026, e.g. mining.com) still says the IPO should complete by year-end 2026. The next dated check is Q3 results on 2026-11-09."
+    }
+  ]
+}
