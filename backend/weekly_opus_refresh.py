@@ -55,6 +55,7 @@ import live_debate_engine as E  # noqa: E402
 import gcs_io  # noqa: E402
 import requests  # noqa: E402
 import _numeric_core  # noqa: E402  shared valuation arithmetic (2026-07-10 extraction)
+import _seat_triggers as ST  # noqa: E402  held-seat re-debate triggers: price / results release / macro (2026-10-19)
 from agent_voice import AGENT_VOICE  # noqa: E402  # house-voice preamble for the director prompts (prose only)
 
 ROOT = Path("_opus_debate")
@@ -5260,6 +5261,48 @@ def _washout_check(pr, sc, legacy_level=None):
 
 FULL_REFRESH_D = 91           # T4: a seat gets a full re-underwrite at least quarterly (last_full_debate)
 
+_FMP_STABLE = "https://financialmodelingprep.com/stable"
+_HIST_CLOSE_CACHE, _REPORT_ROWS_CACHE = {}, {}
+
+
+def _hist_close(sym, on_date):
+    """FMP end-of-day close on or before `on_date` (YYYY-MM-DD): the full-debate price for a seat
+    whose record predates the full_debate_px stamp (_seat_triggers #1). None on any failure."""
+    key = (sym, on_date)
+    if key in _HIST_CLOSE_CACHE:
+        return _HIST_CLOSE_CACHE[key]
+    px = None
+    try:
+        from datetime import timedelta as _td
+        d0 = (datetime.fromisoformat(on_date) - _td(days=10)).strftime("%Y-%m-%d")
+        rows = requests.get(f"{_FMP_STABLE}/historical-price-eod/light",
+                            params={"symbol": sym, "from": d0, "to": on_date, "apikey": E.get_key("FMP_API_KEY")},
+                            timeout=20).json()
+        rows = [r for r in (rows if isinstance(rows, list) else [])
+                if isinstance(r, dict) and str(r.get("date", ""))[:10] <= on_date and r.get("price")]
+        if rows:
+            px = float(max(rows, key=lambda r: r["date"])["price"])
+    except Exception:
+        px = None
+    _HIST_CLOSE_CACHE[key] = px
+    return px
+
+
+def _report_rows(sym):
+    """FMP reported-earnings rows for one symbol (_seat_triggers #2). [] on failure = no release
+    trigger this run (fail-open: the seat keeps its normal route)."""
+    if sym in _REPORT_ROWS_CACHE:
+        return _REPORT_ROWS_CACHE[sym]
+    rows = []
+    try:
+        got = requests.get(f"{_FMP_STABLE}/earnings",
+                           params={"symbol": sym, "limit": 8, "apikey": E.get_key("FMP_API_KEY")}, timeout=20).json()
+        rows = got if isinstance(got, list) else []
+    except Exception:
+        rows = []
+    _REPORT_ROWS_CACHE[sym] = rows
+    return rows
+
 
 def _record_age_days(pr, pf):
     """Days since this record was last DEBATED (full/delta - stamped `debated_at` by lane-stamp from
@@ -5408,7 +5451,8 @@ def _book_record_age_days(r, rf, now):
         return 999
 
 
-def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant, age_allowed=None, legacy_level=None):
+def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant, age_allowed=None, legacy_level=None,
+                     live_px=None, hist_close_fn=None, report_rows_fn=None):
     """Return ("debate", reason, prior_record_or_None) or ("carry", reason, prior_record).
     The prior record rides along on the DEBATE branch too (2026-07-08 continuity fix) so prep can
     embed it in the input bundle - a re-debated name must know what it said last week.
@@ -5473,14 +5517,31 @@ def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant, age_allowed=Non
             prior_ref = datetime.fromtimestamp(pf.stat().st_mtime).strftime("%Y-%m-%d")
         if latest and prior_ref and latest > prior_ref:
             return "debate", f"new transcript {latest} (prior debate {prior_ref})", pr
+    # RESULTS RELEASE (2026-10-19, _seat_triggers #2): a seat whose company reported after its last
+    # full debate re-underwrites in full - from the FMP reported-earnings dates, so it fires even
+    # where FMP carries no call transcript (9980.HK / 267260.KS never could before).
+    if is_seat:
+        try:
+            _rd = ST.last_report_date((report_rows_fn or _report_rows)(sym), datetime.now().strftime("%Y-%m-%d"))
+        except Exception:
+            _rd = None
+        _why = ST.release_trigger(pr, _rd)
+        if _why:
+            return "debate", _why, pr
     # price move vs the price the prior debate saw (2026-10-06: the DEBATE price - the old chain
     # read the top-level live_price, which every carry restamps, so cumulative drift was invisible:
     # WING sat 45% off its debate price, PETR4.SA 25%, and stale carried records then failed G1A)
-    now_px = sc.get("price")
-    old_px = _debate_price(pr)
+    # 2026-10-19 (_seat_triggers #1): for a SEAT, the price of its last FULL debate - delta agents
+    # restate valuation.live_price weekly, so INTU sat +19% above its full debate while this read
+    # +5.6%. Seats also get a live quote (prep passes live_px) instead of the possibly-stale scan.
+    now_px = live_px if isinstance(live_px, (int, float)) and live_px > 0 else sc.get("price")
+    old_px, _px_src = ST.full_debate_price(pr, sym, is_seat, hist_close_fn or _hist_close, _debate_price)
     if isinstance(now_px, (int, float)) and isinstance(old_px, (int, float)) and old_px > 0:
         mv = abs(now_px / old_px - 1)
         if mv > CARRY_PRICE_MOVE:
+            if is_seat:
+                return "debate", (f"price moved {mv * 100:.0f}% since the last full debate "
+                                  f"(> {CARRY_PRICE_MOVE * 100:.0f}%; reference: {_px_src})"), pr
             return "debate", f"price moved {mv * 100:.0f}% (> {CARRY_PRICE_MOVE * 100:.0f}%)", pr
     if is_seat:
         return "debate", "seat-relevant-only", pr    # no real trigger -> DELTA mode under tiering
@@ -5863,6 +5924,13 @@ def prep():
     _age_ok = _age_allowed(sorted(sym_meths), prior_res_dir, seat_relevant, skip=b13set, scan_by=scan_by_sym,
                            legacy_levels=_legacy_levels)
     _run_date = datetime.now().strftime("%Y-%m-%d")
+    # live quotes for SEATS only (one batch call): the price trigger must not run on a scan that can
+    # be a week old when a Saturday scan fails (2026-10-17). Empty on failure -> the scan price.
+    try:
+        _seat_live = _numeric_core.fetch_live_quotes(sorted(seat_relevant), fmp_key=E.get_key("FMP_API_KEY")) \
+            if seat_relevant else {}
+    except Exception:
+        _seat_live = {}
     for sym in sorted(sym_meths):
         sc = scan_by_sym.get(sym, {})
         scan_fin = {k: sc.get(k) for k in E._SCAN_FIN_FIELDS if sc.get(k) is not None}
@@ -5899,7 +5967,8 @@ def prep():
         # (live price + as_of + provenance) - downstream (Director/skeptic/value re-grade/
         # publish) consumes results_regime/ unchanged; the value rubric sees `carried`.
         _decision, _reason, _prior = _carry_or_debate(sym, sc, real, prior_res_dir, seat_relevant,
-                                                      age_allowed=_age_ok, legacy_level=_legacy_levels.get(sym))
+                                                      age_allowed=_age_ok, legacy_level=_legacy_levels.get(sym),
+                                                      live_px=_seat_live.get(str(sym).upper()))
         # B13 TIER EXCLUSION: a Basket-13 name never debates in this lane. With a prior record it
         # carries (restamped, so the stock page keeps a dated record); brand-new B13 names are
         # skipped outright - their underwriting lives in _catalyst_weekly.mjs, and their stock-page
@@ -6030,6 +6099,39 @@ def prep():
         _ff.build([r["symbol"] for r in radar_universe if r.get("symbol")], out_path=ROOT / "free_float.json")
     except Exception as _e:
         print(f"WARN free-float: build failed ({_e}) - no float floor this run (fail-open)")
+    # MACRO-CHANGE TRIGGER (2026-10-19, _seat_triggers #3). Runs HERE, after _write_macro_regime and
+    # the inflation labels, because the routing loop above only sees last week's snapshot. A seat
+    # headed for a delta whose last full debate saw a different quadrant / debt-cycle phase AND is
+    # exposed to the move gets a FULL re-debate instead (capped, oldest full debate first). It
+    # refreshes the thesis only - never a gate, a weight or conviction (FORK 2/B). Fail-open.
+    try:
+        _mnow = ST.macro_now(json.load(open(ROOT / "macro_regime.json", encoding="utf-8")))
+        _cl = ROOT / "_cycle_ledger.jsonl"
+        _cledger = [json.loads(_l) for _l in open(_cl, encoding="utf-8") if _l.strip()] if _cl.exists() else []
+        _irf = ROOT / "inflation_resilience.json"
+        _irl = ({_s: (_v or {}).get("inflation_resilience") for _s, _v in
+                 (json.load(open(_irf, encoding="utf-8")).get("by_symbol") or {}).items()} if _irf.exists() else {})
+        import debt_cycle as _dcm
+        _mc, _durb = [], {}
+        for _s, _d in debate_info.items():
+            if not (_d.get("seat") and _d.get("reason") == "seat-relevant-only"):
+                continue
+            try:
+                _mc.append((_s, json.load(open(prior_res_dir / f"{_s}.json", encoding="utf-8"))))
+            except Exception:
+                continue
+            try:
+                _durb[_s] = _dcm.duration_bucket(scan_by_sym.get(_s) or {}).get("duration_bucket")
+            except Exception:
+                _durb[_s] = None
+        _promo, _defer = ST.promote_macro_seats(_mc, _mnow, _cledger, _irl, _durb)
+        for _s, _why in _promo.items():
+            debate_info[_s]["reason"] = _why
+        print(f"macro-trigger: now quadrant {_mnow['quadrant'] or 'UNKNOWN'} / phase {_mnow['phase'] or 'UNKNOWN'} | "
+              f"{len(_mc)} delta-bound seat(s) checked | promoted to a full re-debate: {sorted(_promo) or 'none'}"
+              + (f" | deferred to next run (cap {ST.MACRO_U_CAP}): {_defer}" if _defer else ""))
+    except Exception as _e:
+        print(f"WARN macro-trigger: skipped ({_e}) - seats keep their normal route (fail-open)")
 
     # no_tx names have NO FMP transcript - instead of skipping (the user's explicit ask: "send agents
     # to fetch transcripts online so we don't skip any pick"), pass them as ONLINE_SYMS so the debate
@@ -7427,8 +7529,16 @@ def lane_stamp():
     did resolving the wait earn" (cohort-mark fills forward returns). Review fix P5: an UPSERT on
     (date, symbol) refreshed from the record as it stands (grade-derive upserts the same rows on every
     pass, so the post-Revise grade-rederive leaves the FINAL resolution in the ledger)."""
-    n = n_tx = n_da = n_wo = 0
+    n = n_tx = n_da = n_wo = n_fd = 0
     _wl_rows = []
+    # 2026-10-19 (_seat_triggers): full debates stamp the price they underwrote against and the macro
+    # read they saw; deltas keep their anchor's stamps (a delta never re-underwrites). The price and
+    # macro-change seat triggers read these instead of fields a delta restates every week.
+    try:
+        _mcur = ST.macro_now(json.load(open(ROOT / "macro_regime.json", encoding="utf-8")))
+    except Exception:
+        _mcur = {"quadrant": None, "phase": None}
+    _anchor_dir = ROOT / "_archive_prev" / "results_regime"
     for f in sorted(INP.glob("*.json")):
         try:
             b = json.load(open(f, encoding="utf-8"))
@@ -7458,6 +7568,24 @@ def lane_stamp():
             if rec.get("debated_at") != b["debate_run"]:
                 rec["debated_at"] = b["debate_run"]
                 changed, n_da = True, n_da + 1
+            if mode == "full":
+                if ST.stamp_full_debate(rec, b["debate_run"], _mcur):
+                    changed, n_fd = True, n_fd + 1
+            else:
+                _c = False
+                try:
+                    _c = ST.carry_full_stamps(rec, json.load(open(_anchor_dir / f"{b.get('symbol')}.json", encoding="utf-8")))
+                except Exception:
+                    pass
+                _lfd = str(rec.get("last_full_debate") or "")[:10]
+                if not ST._num(rec.get("full_debate_px")) and _lfd:
+                    _px = _hist_close(b.get("symbol"), _lfd)   # a seat that predates the stamp: backfill once
+                    if _px:
+                        rec["full_debate_px"], rec["full_debate_px_date"] = _px, _lfd
+                        rec["full_debate_px_source"] = "closing price on the last full debate date"
+                        _c = True
+                if _c:
+                    changed, n_fd = True, n_fd + 1
         if b.get("washout") and isinstance(b.get("washout"), dict) and mode in ("full", "delta") \
                 and b.get("debate_run"):
             _wl_rows.append(_washout_ledger_row(b, rec))
@@ -7466,6 +7594,7 @@ def lane_stamp():
     n_wo = _washout_ledger_upsert(_wl_rows) if _wl_rows else 0
     print(f"lane-stamp: {n} results_regime record(s) stamped with an intake lane | "
           f"{n_tx} transcript_date + {n_da} debated_at stamp(s) for the change-detection gate | "
+          f"{n_fd} full-debate price/macro stamp(s) for the seat triggers | "
           f"{n_wo} wash-out resolution(s) ledgered (upsert) -> {_WASHOUT_LEDGER.name}")
 
 

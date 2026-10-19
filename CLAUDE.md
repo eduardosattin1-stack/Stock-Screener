@@ -93,6 +93,22 @@ full wiring before touching any of it.
   JUDGEMENT input only (FORK 2/B: no weight, no gate, no conviction; unknown never a penalty).
   Thresholds are priors — score them before giving the label teeth.
 
+### Held-seat re-debate triggers (2026-10-19, `backend/_seat_triggers.py`)
+
+A held seat gets a light weekly update (delta) unless a trigger forces a FULL re-debate. Beyond the
+existing ones (wash-out, dated catalyst, escalation, 91-day refresh, new transcript), three fixes:
+1. **Price** is measured from the last FULL debate (`full_debate_px`, stamped by lane-stamp;
+   older seats fall back to the close on `last_full_debate`). Delta agents restate
+   `valuation.live_price` weekly, so the old check only saw week-over-week moves (INTU +19% read +5.6%).
+2. **Results release** from FMP reported-earnings dates, so names without an FMP transcript
+   (HK/KS listings) re-underwrite on their own results.
+3. **Macro change**: the quadrant or debt-cycle phase differs from the read at the seat's last full
+   debate (`macro_at_full_debate`) AND the seat is exposed (its debate called macro a tailwind or
+   headwind; inflation-exposed margins into REFLATION/STAGFLATION; a story-duration name into
+   DISCIPLINE/FORCING). Runs in prep AFTER `_write_macro_regime`. Capped at `MACRO_U_CAP` per run,
+   oldest first. It re-checks the thesis only and never gates, weights or touches conviction
+   (FORK 2/B); an UNKNOWN read never triggers.
+
 ## Other standing notes
 
 - `apply_macro_tilt` / `regime_composite_floor` in `macro_regime.py` are imported but
@@ -100,5 +116,6 @@ full wiring before touching any of it.
   wire-or-delete before adding anything near them.
 - Tests: `python backend/tests/test_debt_cycle.py` (fixture = the 2026-07 tape;
   must read DISCIPLINE), `python backend/tests/test_macro_inputs.py` (fixture = the
-  2026-10-12 tape; must read REFLATION) and `python backend/_opus_debate/test_regime_post.py`.
+  2026-10-12 tape; must read REFLATION), `python backend/tests/test_seat_triggers.py` and
+  `python backend/_opus_debate/test_regime_post.py`.
   On Windows set `PYTHONIOENCODING=utf-8` or the arrow glyphs crash the cp1252 console.
