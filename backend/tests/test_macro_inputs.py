@@ -69,8 +69,23 @@ check("a seeded axis is flagged", not seed["ok"] and any("seed" in p for p in se
 stale = M.quadrant_inputs(CPI, REAL_GDP, "gcs_cache", "gcs_cache", datetime(2027, 3, 1))
 check("a cache that stopped updating is flagged stale", not stale["ok"]
       and any("old" in p for p in stale["problems"]), stale["problems"])
-check("historical callers (no inputs) keep the old un-gated behaviour",
-      M.growth_inflation_quadrant({"cpi_trend": 0.5, "gdp_momentum": 0.65})["quadrant"] == "GOLDILOCKS")
+check("historical callers (no inputs) stay un-gated (never UNKNOWN)",
+      M.growth_inflation_quadrant({"cpi_trend": 0.5, "gdp_momentum": 0.65})["quadrant"] != "UNKNOWN")
+
+print("\n=== 3-4% CPI band boundary (2026-10-19) ===")
+# Sept-2026 print (BLS 2026-10): +3.72% y/y, 6m ann. +3.67% -> trend stable, score exactly 0.50.
+# With `>= 0.5` that read as 'cooling' -> GOLDILOCKS, one month after +3.35% accelerating read
+# REFLATION. Hotter CPI must never read calmer.
+CPI_SEP = [("2026-09-01", 336.298)] + CPI[:-1]
+ms = M.cpi_measures(CPI_SEP)
+check("Sept tape: +3.72% y/y, stable, score 0.50", ms and abs(ms["yoy_pct"] - 3.72) < 0.02
+      and ms["trend"] == "stable" and abs(ms["score"] - 0.5) < 1e-9, ms)
+qs = M.growth_inflation_quadrant({"cpi_trend": ms["score"], "gdp_momentum": g},
+                                 inputs=M.quadrant_inputs(CPI_SEP, REAL_GDP, "fmp_points", "fmp_points",
+                                                          datetime(2026, 10, 19)))
+check("3.72% stable CPI with growth up = REFLATION, not GOLDILOCKS", qs["quadrant"] == "REFLATION", qs)
+check("CPI <= 3% (0.75 band) with growth up still reads GOLDILOCKS",
+      M.growth_inflation_quadrant({"cpi_trend": 0.75, "gdp_momentum": 0.85})["quadrant"] == "GOLDILOCKS")
 
 print("\n=== FMP window-drop backfill (_fetch_monthly_series) ===")
 calls = []

@@ -431,7 +431,11 @@ def growth_inflation_quadrant(sub_scores: dict, inputs: Optional[dict] = None) -
         return {"quadrant": "UNKNOWN",
                 "quadrant_basis": "quadrant inputs not usable - " + "; ".join(inputs.get("problems") or ["no provenance"])}
     growth_up = g >= 0.5
-    inflation_cooling = c >= 0.5
+    # STRICT > (2026-10-19): cpi_measures scores the whole 3-4% y/y band at exactly 0.50
+    # when the trend is stable, so >= read Sept-2026's +3.72% y/y (3m ann. +4.56%) as
+    # "cooling" -> GOLDILOCKS, while the prior month's +3.35% accelerating read REFLATION.
+    # Cooling now needs CPI <= 3% y/y (0.75 band) or better.
+    inflation_cooling = c > 0.5
     if growth_up and inflation_cooling:
         q = "GOLDILOCKS"
     elif growth_up:
