@@ -1,0 +1,532 @@
+{
+ "week": "2026-W43",
+ "generated_at": "2026-10-20T15:20:59",
+ "model": "gemini-4-argon",
+ "method": "blind second debate + two-way skeptic, graded with our rules",
+ "picks": {
+  "0175.HK": {
+   "symbol": "0175.HK",
+   "books": [
+    "apex"
+   ],
+   "issues": [],
+   "gemini": {
+    "bear_px": 14.2,
+    "base_fv_px": 23.55,
+    "bull_px": 31.8,
+    "live_price": 14.94,
+    "currency": "HKD",
+    "grade": "A",
+    "thesis_state": "INTACT",
+    "entry_mode": "NOW",
+    "conviction": 4,
+    "numeric_gate": "EXCLUDE_ELIGIBILITY"
+   },
+   "claude": {
+    "bear_px": 11.76,
+    "base_fv_px": 21.9,
+    "bull_px": 36.37,
+    "live_price": 15.11,
+    "currency": "HKD",
+    "grade": "A",
+    "thesis_state": "INTACT",
+    "entry_mode": "NOW"
+   },
+   "skeptic_on_ours": {
+    "verdict": "CONFIRMED_WITH_CORRECTIONS",
+    "kill_scope": "numbers",
+    "revised_fv_px": 21.45,
+    "correction_severity": "minor",
+    "finding": "Geely paid its FY2025 final dividend of HK$0.50 per share (~HK$5.39B / ~RMB 4.60B) in cash on 2026-07-30 after the 2026-06-30 balance sheet date and executed an automated share repurchase contract with Morgan Stanley (67.43M shares bought back through October 2026; 63.21M treasury shares as of 2026-09-30), reducing post-June-30 net cash by RMB 4.60B and contradicting the record's claim of 'no buyback and no capital-return commitment'."
+   },
+   "skeptic_on_its_own": {
+    "verdict": "CONFIRMED_WITH_CORRECTIONS",
+    "kill_scope": "numbers",
+    "revised_fv_px": 21.9
+   },
+   "blind": true,
+   "status": "confirmed",
+   "reasons": [
+    "its value is +8% from ours"
+   ],
+   "summary": "Second opinion agrees. A different AI model (Gemini), working blind from the filings, valued it at HKD 23.55 against our 21.9. its value is +8% from ours."
+  },
+  "1698.HK": {
+   "symbol": "1698.HK",
+   "books": [
+    "value"
+   ],
+   "issues": [],
+   "gemini": {
+    "bear_px": 27.5,
+    "base_fv_px": 42.6,
+    "bull_px": 57.0,
+    "live_price": 33.44,
+    "currency": "HKD",
+    "grade": "B",
+    "thesis_state": "IMPAIRED",
+    "entry_mode": "ON_EVENT",
+    "conviction": 3,
+    "numeric_gate": "PASS"
+   },
+   "claude": {
+    "bear_px": 34.4,
+    "base_fv_px": 43.0,
+    "bull_px": 58.5,
+    "live_price": 32.84,
+    "currency": "HKD",
+    "grade": "B",
+    "thesis_state": "IMPAIRED",
+    "entry_mode": "ON_EVENT"
+   },
+   "skeptic_on_ours": {
+    "verdict": "REFUTED",
+    "kill_scope": "numbers",
+    "revised_fv_px": 41.8,
+    "correction_severity": "material",
+    "finding": "The record's bear_px of HK$34.4 sits above the live spot price (HK$32.84 / HK$33.44, triggering G4_BEAR_ABOVE_SPOT) because a prior adjustment added RMB 27.3B of broad cash (including RMB 13.64B of illiquid non-current term deposits) to the bear case while leaving the base case (HK$43.0) and sop_bear prose (HK$29.2) on strict liquid net cash of RMB 13.78B, and used 3.08B basic shares instead of Q2 2026 Form 6-K diluted ordinary shares of 3.160B (1.58B diluted ADSs at 1 ADS = 2 Class A ordinary shares)."
+   },
+   "skeptic_on_its_own": {
+    "verdict": "CONFIRMED_WITH_CORRECTIONS",
+    "kill_scope": "numbers",
+    "revised_fv_px": 38.3
+   },
+   "blind": true,
+   "status": "repriced",
+   "reasons": [
+    "its skeptic corrected a number in our record (revised value 41.8, -3%)"
+   ],
+   "summary": "Second opinion agrees on direction, not on the number. A different AI model (Gemini), working blind from the filings, valued it at HKD 42.6 against our 43. its skeptic corrected a number in our record (revised value 41.8, -3%). Its skeptic on our record: The record's bear_px of HK$34.4 sits above the live spot price (HK$32.84 / HK$33.44, triggering G4_BEAR_ABOVE_SPOT) because a prior adjustment added RMB 27.3B of broad cash (including RMB 13.64B of illiquid non-current term deposits) to the"
+  },
+  "2618.HK": {
+   "symbol": "2618.HK",
+   "books": [
+    "value"
+   ],
+   "issues": [],
+   "gemini": {
+    "bear_px": 7.8,
+    "base_fv_px": 15.0,
+    "bull_px": 18.5,
+    "live_price": 10.26,
+    "currency": "HKD",
+    "grade": "A",
+    "thesis_state": "INTACT",
+    "entry_mode": "NOW",
+    "conviction": 3,
+    "numeric_gate": "PASS"
+   },
+   "claude": {
+    "bear_px": 7.6,
+    "base_fv_px": 15.0,
+    "bull_px": 21.6,
+    "live_price": 10.31,
+    "currency": "HKD",
+    "grade": "A",
+    "thesis_state": "INTACT",
+    "entry_mode": "NOW"
+   },
+   "skeptic_on_ours": {
+    "verdict": "REFUTED",
+    "kill_scope": "numbers",
+    "revised_fv_px": 13.3,
+    "correction_severity": "material",
+    "finding": "The record adds +RMB 8.65B (+HK$1.6/share) of 'ex-lease net cash' on top of a post-IFRS-16 P/E multiple in base_fv_px (and +RMB 10.38B in bull_px) despite JD Logistics carrying RMB 1.40B of consolidated net debt as of 2026-06-30 (RMB 5.17B borrowings + RMB 18.70B lease liabilities minus RMB 22.47B cash) and committing RMB 3.80B cash to privatize Deppon Logistics (effective March 2026); additionally, the record misdates the RMB 6.48B Kuayue-Express 36.43% minority buyout to '2026-10-08' when it was announced on 2024-12-06."
+   },
+   "skeptic_on_its_own": {
+    "verdict": "CONFIRMED_WITH_CORRECTIONS",
+    "kill_scope": "numbers",
+    "revised_fv_px": 13.8
+   },
+   "blind": true,
+   "status": "repriced",
+   "reasons": [
+    "its skeptic corrected a number in our record (revised value 13.3, -11%)"
+   ],
+   "summary": "Second opinion agrees on direction, not on the number. A different AI model (Gemini), working blind from the filings, valued it at HKD 15 against our 15. its skeptic corrected a number in our record (revised value 13.3, -11%). Its skeptic on our record: The record adds +RMB 8.65B (+HK$1.6/share) of 'ex-lease net cash' on top of a post-IFRS-16 P/E multiple in base_fv_px (and +RMB 10.38B in bull_px) despite JD Logistics carrying RMB 1.40B of consolidated net debt as of 2026-06-30 (RMB 5.17B "
+  },
+  "267260.KS": {
+   "symbol": "267260.KS",
+   "books": [
+    "apex"
+   ],
+   "issues": [],
+   "gemini": {
+    "bear_px": 380000.0,
+    "base_fv_px": 680000.0,
+    "bull_px": 920000.0,
+    "live_price": 487500.0,
+    "currency": "KRW",
+    "grade": "A",
+    "thesis_state": "INTACT",
+    "entry_mode": "NOW",
+    "conviction": 4,
+    "numeric_gate": "PASS"
+   },
+   "claude": {
+    "bear_px": 400000.0,
+    "base_fv_px": 720000.0,
+    "bull_px": 1010000.0,
+    "live_price": 527000.0,
+    "currency": "KRW",
+    "grade": "A",
+    "thesis_state": "INTACT",
+    "entry_mode": "NOW"
+   },
+   "skeptic_on_ours": {
+    "verdict": "CONFIRMED_WITH_CORRECTIONS",
+    "kill_scope": "catalyst",
+    "revised_fv_px": null,
+    "correction_severity": "minor",
+    "finding": "While the record's core bear-case events (the 2026-10-19 fatal contractor fall at the Ulsan transformer plant construction site and the 2026-10-15 KOSPI >8% circuit-breaker sell-off) are confirmed by primary Korean reports, the record overlooks HD Hyundai Electric's binding 2026-07-02 KRW 1,121.2B North American data-center power and distribution equipment contract running through 2029 and uses 36.05M total issued shares rather than 35,992,704 outstanding shares ex-treasury."
+   },
+   "skeptic_on_its_own": {
+    "verdict": "CONFIRMED_WITH_CORRECTIONS",
+    "kill_scope": "catalyst",
+    "revised_fv_px": null
+   },
+   "blind": true,
+   "status": "confirmed",
+   "reasons": [
+    "its value is -6% from ours"
+   ],
+   "summary": "Second opinion agrees. A different AI model (Gemini), working blind from the filings, valued it at KRW 680000 against our 720000. its value is -6% from ours."
+  },
+  "9980.HK": {
+   "symbol": "9980.HK",
+   "books": [
+    "apex",
+    "value"
+   ],
+   "issues": [],
+   "gemini": {
+    "bear_px": 78.0,
+    "base_fv_px": 125.0,
+    "bull_px": 158.0,
+    "live_price": 93.1,
+    "currency": "HKD",
+    "grade": "A",
+    "thesis_state": "INTACT",
+    "entry_mode": "NOW",
+    "conviction": 4,
+    "numeric_gate": "PASS"
+   },
+   "claude": {
+    "bear_px": 69.5,
+    "base_fv_px": 127.5,
+    "bull_px": 171.8,
+    "live_price": 99.5,
+    "currency": "HKD",
+    "grade": "B",
+    "thesis_state": "INTACT",
+    "entry_mode": "ON_EVENT"
+   },
+   "skeptic_on_ours": {
+    "verdict": "CONFIRMED_WITH_CORRECTIONS",
+    "kill_scope": "catalyst",
+    "revised_fv_px": null,
+    "correction_severity": "minor",
+    "finding": "The record repeatedly misstates the Q3 2026 earnings release catalyst date as '26 October 2026' (including in entry_event), whereas Eastroc Beverage's official HKEX Notice of Board Meeting (filed 2026-10-14) schedules the Board meeting to approve and publish Q3 2026 results for Thursday, 29 October 2026 (and Shanghai Stock Exchange 605499.SS publication for 30 October 2026)."
+   },
+   "skeptic_on_its_own": {
+    "verdict": "CONFIRMED_WITH_CORRECTIONS",
+    "kill_scope": "numbers",
+    "revised_fv_px": 113.0
+   },
+   "blind": true,
+   "status": "confirmed",
+   "reasons": [
+    "its value is -2% from ours"
+   ],
+   "summary": "Second opinion agrees. A different AI model (Gemini), working blind from the filings, valued it at HKD 125 against our 127.5. its value is -2% from ours."
+  },
+  "DUE.DE": {
+   "symbol": "DUE.DE",
+   "books": [
+    "apex",
+    "value"
+   ],
+   "issues": [],
+   "gemini": {
+    "bear_px": 11.5,
+    "base_fv_px": 21.5,
+    "bull_px": 32.4,
+    "live_price": 16.1,
+    "currency": "EUR",
+    "grade": "B",
+    "thesis_state": "IMPAIRED",
+    "entry_mode": "ON_EVENT",
+    "conviction": 3,
+    "numeric_gate": "PASS"
+   },
+   "claude": {
+    "bear_px": 13.24,
+    "base_fv_px": 23.89,
+    "bull_px": 37.97,
+    "live_price": 16.48,
+    "currency": "EUR",
+    "grade": "B",
+    "thesis_state": "INTACT",
+    "entry_mode": "AT_LEVEL"
+   },
+   "skeptic_on_ours": {
+    "verdict": "CONFIRMED_WITH_CORRECTIONS",
+    "kill_scope": "numbers",
+    "revised_fv_px": 22.34,
+    "correction_severity": "material",
+    "finding": "A 2026-10-19 edit to the record switched bear_px (11.68 -> 13.24) back to the EUR 77.7M ex-lease 'net financial status' definition that its own 2026-09-22 correction ruled inadmissible, creating a direct contradiction with base_fv_px (23.89) and bull_px (37.97) which deduct EUR 218.1M of balance-sheet net debt; additionally, base_fv_px deducts June 30, 2026 net debt of EUR 218.1M with zero deduction for the guided H2 2026 free cash flow burn (-EUR 107.3M at the -EUR 75M FY26 guidance midpoint after +EUR 32.3M H1 actual FCF), and the record omits CFO Dietmar Heinrich's retirement on 2026-09-30."
+   },
+   "skeptic_on_its_own": {
+    "verdict": "CONFIRMED_WITH_CORRECTIONS",
+    "kill_scope": "numbers",
+    "revised_fv_px": 20.4
+   },
+   "blind": true,
+   "status": "confirmed",
+   "reasons": [
+    "its value is -10% from ours"
+   ],
+   "summary": "Second opinion agrees. A different AI model (Gemini), working blind from the filings, valued it at EUR 21.5 against our 23.89. its value is -10% from ours."
+  },
+  "INCH.L": {
+   "symbol": "INCH.L",
+   "books": [
+    "value"
+   ],
+   "issues": [
+    "not blind: its record was saved after it had read ours"
+   ],
+   "gemini": {
+    "bear_px": 510.0,
+    "base_fv_px": 832.0,
+    "bull_px": 1084.0,
+    "live_price": 676.5,
+    "currency": "GBp",
+    "grade": "B",
+    "thesis_state": "IMPAIRED",
+    "entry_mode": "ON_EVENT",
+    "conviction": 3,
+    "numeric_gate": "PASS"
+   },
+   "claude": {
+    "bear_px": 546.0,
+    "base_fv_px": 973.0,
+    "bull_px": 1297.0,
+    "live_price": 686.5,
+    "currency": "GBp",
+    "grade": "A",
+    "thesis_state": "INTACT",
+    "entry_mode": "NOW"
+   },
+   "skeptic_on_ours": {
+    "verdict": "REFUTED",
+    "kill_scope": "numbers",
+    "revised_fv_px": 860.0,
+    "correction_severity": "material",
+    "finding": "Because the record did not pull Inchcape's FY 2025 (2026-03-03) and H1 2026 (2026-07-28) LSE RNS segment tables ('The regional split is estimated from group totals... no segment block was supplied'), it overstated Americas base operating profit at £285M (vs £230M in FY25 and £255M true TTM) and APAC at £115M (vs £39M in H1 2026, a £78M annualized run-rate) while inventing a non-existent -£58M unallocated central cost line; additionally, it used a stale 348.3M share count instead of 336.81M shares per the 2026-10-19 RNS without deducting the ~£130M of post-June-30 cash outflows for buybacks (~£"
+   },
+   "skeptic_on_its_own": {
+    "verdict": "CONFIRMED_WITH_CORRECTIONS",
+    "kill_scope": "numbers",
+    "revised_fv_px": 811.0
+   },
+   "blind": false,
+   "status": "unverified",
+   "reasons": [
+    "not blind: its record was saved after it had read ours"
+   ],
+   "summary": "Second opinion not usable this week. A different AI model (Gemini), working blind from the filings, valued it at GBp 832 against our 973. not blind: its record was saved after it had read ours. Its skeptic on our record: Because the record did not pull Inchcape's FY 2025 (2026-03-03) and H1 2026 (2026-07-28) LSE RNS segment tables ('The regional split is estimated from group totals... no segment block was supplied'), it overstated Americas base operating pr"
+  },
+  "INTU": {
+   "symbol": "INTU",
+   "books": [
+    "apex"
+   ],
+   "issues": [],
+   "gemini": {
+    "bear_px": 265.0,
+    "base_fv_px": 405.0,
+    "bull_px": 485.0,
+    "live_price": 325.62,
+    "currency": "USD",
+    "grade": "A",
+    "thesis_state": "INTACT",
+    "entry_mode": "NOW",
+    "conviction": 4,
+    "numeric_gate": "PASS"
+   },
+   "claude": {
+    "bear_px": 216.0,
+    "base_fv_px": 375.0,
+    "bull_px": 484.0,
+    "live_price": 302.75,
+    "currency": "USD",
+    "grade": "B",
+    "thesis_state": "INTACT",
+    "entry_mode": "AT_LEVEL"
+   },
+   "skeptic_on_ours": {
+    "verdict": "CONFIRMED_WITH_CORRECTIONS",
+    "kill_scope": "numbers",
+    "revised_fv_px": 369.0,
+    "correction_severity": "minor",
+    "finding": "The record back-solves an implied share count of 273.5M from an outdated market-cap snapshot ($72.88B / $266.45), whereas Intuit's FY2026 Form 10-K (period ended 2026-07-31, filed 2026-09-09) reports 278.0M weighted-average diluted shares (and 267.2M basic shares outstanding), and the record omits that beginning Q1 FY2027 (2026-08-01) Intuit changed its Non-GAAP EPS definition ($22.88-$23.12 FY27 guide) to include ~$2.0B of stock-based compensation as an expense."
+   },
+   "skeptic_on_its_own": {
+    "verdict": "CONFIRMED_WITH_CORRECTIONS",
+    "kill_scope": "numbers",
+    "revised_fv_px": 376.2
+   },
+   "blind": true,
+   "status": "confirmed",
+   "reasons": [
+    "its value is +8% from ours"
+   ],
+   "summary": "Second opinion agrees. A different AI model (Gemini), working blind from the filings, valued it at USD 405 against our 375. its value is +8% from ours."
+  },
+  "LRN": {
+   "symbol": "LRN",
+   "books": [
+    "apex",
+    "value"
+   ],
+   "issues": [],
+   "gemini": {
+    "bear_px": 66.5,
+    "base_fv_px": 108.0,
+    "bull_px": 137.0,
+    "live_price": 80.99,
+    "currency": "USD",
+    "grade": "B",
+    "thesis_state": "IMPAIRED",
+    "entry_mode": "ON_EVENT",
+    "conviction": 3,
+    "numeric_gate": "PASS"
+   },
+   "claude": {
+    "bear_px": 65.8,
+    "base_fv_px": 102.4,
+    "bull_px": 120.1,
+    "live_price": 85.59,
+    "currency": "USD",
+    "grade": "B",
+    "thesis_state": "INTACT",
+    "entry_mode": "AT_LEVEL"
+   },
+   "skeptic_on_ours": {
+    "verdict": "CONFIRMED_WITH_CORRECTIONS",
+    "kill_scope": "numbers",
+    "revised_fv_px": 105.5,
+    "correction_severity": "minor",
+    "finding": "The record double-counts Stride's $414.5M 1.125% Convertible Senior Notes due 2027 by deducting the full $414.5M principal as debt inside its $261.1M net cash calculation ($745.4M cash minus $484.3M total debt and leases) while simultaneously adding ~2.1M converted shares to the denominator (44.1M diluted shares vs 42.04M post-buyback basic shares, ignoring net-share settlement and capped calls up to $86.28); additionally, moderator_conclusion falsely claims the $500M buyback authorization expires on 2026-10-31 when the Board already extended it to 2027-10-31."
+   },
+   "skeptic_on_its_own": {
+    "verdict": "CONFIRMED_WITH_CORRECTIONS",
+    "kill_scope": "numbers",
+    "revised_fv_px": 95.8
+   },
+   "blind": true,
+   "status": "confirmed",
+   "reasons": [
+    "its value is +5% from ours"
+   ],
+   "summary": "Second opinion agrees. A different AI model (Gemini), working blind from the filings, valued it at USD 108 against our 102.4. its value is +5% from ours."
+  },
+  "MMS": {
+   "symbol": "MMS",
+   "books": [
+    "apex",
+    "value"
+   ],
+   "issues": [],
+   "gemini": {
+    "bear_px": 40.0,
+    "base_fv_px": 78.0,
+    "bull_px": 102.0,
+    "live_price": 61.33,
+    "currency": "USD",
+    "grade": "A",
+    "thesis_state": "INTACT",
+    "entry_mode": "NOW",
+    "conviction": 4,
+    "numeric_gate": "PASS"
+   },
+   "claude": {
+    "bear_px": 44.0,
+    "base_fv_px": 78.0,
+    "bull_px": 105.0,
+    "live_price": 59.39,
+    "currency": "USD",
+    "grade": "B",
+    "thesis_state": "INTACT",
+    "entry_mode": "ON_EVENT"
+   },
+   "skeptic_on_ours": {
+    "verdict": "REFUTED",
+    "kill_scope": "numbers",
+    "revised_fv_px": 77.5,
+    "correction_severity": "material",
+    "finding": "The record claims on 2026-10-19 that there was 'no dated company development since the 2026-10-12 anchor' and underwrites an unspent $400M share buyback, missing that on 2026-10-19 Maximus signed a definitive agreement to acquire Agile Defense, LLC for $660M in cash (plus up to $50M earnout) — re-leveraging the balance sheet from a preliminary Sept 30, 2026 pre-deal net leverage of 1.7x back up to 2.2x-2.3x — and missing the 2026-10-02 VA MDE-NG Draft RFP release (Solicitation 36C10X27R0001); additionally, its 2026-10-19 adjustment to bear_px (42.0 -> 44.0) omitted $57M of capitalized lease li"
+   },
+   "skeptic_on_its_own": {
+    "verdict": "CONFIRMED_WITH_CORRECTIONS",
+    "kill_scope": "numbers",
+    "revised_fv_px": 76.5
+   },
+   "blind": true,
+   "status": "repriced",
+   "reasons": [
+    "its skeptic corrected a number in our record (revised value 77.5, -1%)"
+   ],
+   "summary": "Second opinion agrees on direction, not on the number. A different AI model (Gemini), working blind from the filings, valued it at USD 78 against our 78. its skeptic corrected a number in our record (revised value 77.5, -1%). Its skeptic on our record: The record claims on 2026-10-19 that there was 'no dated company development since the 2026-10-12 anchor' and underwrites an unspent $400M share buyback, missing that on 2026-10-19 Maximus signed a definitive agreement to acquire Agile Defe"
+  },
+  "ROCK": {
+   "symbol": "ROCK",
+   "books": [
+    "apex"
+   ],
+   "issues": [],
+   "gemini": {
+    "bear_px": 21.0,
+    "base_fv_px": 43.5,
+    "bull_px": 58.0,
+    "live_price": 37.715,
+    "currency": "USD",
+    "grade": "B",
+    "thesis_state": "IMPAIRED",
+    "entry_mode": "ON_EVENT",
+    "conviction": 3,
+    "numeric_gate": "PASS"
+   },
+   "claude": {
+    "bear_px": 30.6,
+    "base_fv_px": 55.0,
+    "bull_px": 75.0,
+    "live_price": 36.44,
+    "currency": "USD",
+    "grade": "B",
+    "thesis_state": "INTACT",
+    "entry_mode": "ON_EVENT"
+   },
+   "skeptic_on_ours": {
+    "verdict": "REFUTED",
+    "kill_scope": "numbers",
+    "revised_fv_px": 47.7,
+    "correction_severity": "material",
+    "finding": "The record's SoP deducts only $10M/yr ($75M at 7.5x) of unallocated corporate overhead when Gibraltar's Q2 2026 Form 10-Q shows normalized unallocated corporate expense runs ~$30M/yr (-$225M at 7.5x, an omitted -$150M / -$5.05 per share drag), and its prior correction for the 2026-10-15 binding $208M cash sale of Infrastructure (D.S. Brown) to Saint-Gobain was applied only to bear_px (30.6) while leaving base_fv_px (55.0) and bull_px (75.0) on stale pre-sale Infrastructure multiples ($160M and $220M) and an unachievable $150M H2 organic FCF debt-paydown assumption (H1 2026 operating cash flow "
+   },
+   "skeptic_on_its_own": {
+    "verdict": "CONFIRMED_WITH_CORRECTIONS",
+    "kill_scope": "numbers",
+    "revised_fv_px": 42.8
+   },
+   "blind": true,
+   "status": "repriced",
+   "reasons": [
+    "its value is -21% from ours",
+    "its skeptic corrected a number in our record (revised value 47.7, -13%)"
+   ],
+   "summary": "Second opinion agrees on direction, not on the number. A different AI model (Gemini), working blind from the filings, valued it at USD 43.5 against our 55. its value is -21% from ours; its skeptic corrected a number in our record (revised value 47.7, -13%). Its skeptic on our record: The record's SoP deducts only $10M/yr ($75M at 7.5x) of unallocated corporate overhead when Gibraltar's Q2 2026 Form 10-Q shows normalized unallocated corporate expense runs ~$30M/yr (-$225M at 7.5x, an omitted -$150M / -$5.05 per share dra"
+  }
+ }
+}

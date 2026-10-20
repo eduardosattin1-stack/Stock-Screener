@@ -2192,6 +2192,8 @@ export default function Dashboard(){
 
   const [expandedApex, setExpandedApex] = useState<Set<string>>(new Set());
   const [valueApex, setValueApex] = useState<any>({});
+  // Independent second opinion (Gemini, blind) per seat - backend/gemini_confirm/pickup_week.py
+  const [geminiConfirm, setGeminiConfirm] = useState<any>(null);
   const [expandedValue, setExpandedValue] = useState<Set<string>>(new Set());
   const [fdtApex, setFdtApex] = useState<any>({});
   const [expandedFdt, setExpandedFdt] = useState<Set<string>>(new Set());
@@ -2225,6 +2227,37 @@ export default function Dashboard(){
           .catch((e) => console.error("Error loading value apex:", e));
       });
   }, []);
+
+  useEffect(() => {
+    fetch("/api/gcs/scans/speculair_gemini_confirm.json")
+      .then((r) => { if (r.ok) return r.json(); throw new Error("GCS gemini confirm fetch failed"); })
+      .then((d) => { if (d?.picks) setGeminiConfirm(d); })
+      .catch(() => {
+        fetch("/speculair_gemini_confirm.json")
+          .then((r) => (r.ok ? r.json() : null))
+          .then((d) => { if (d?.picks) setGeminiConfirm(d); })
+          .catch(() => {});
+      });
+  }, []);
+
+  // Second-opinion badge: a different AI model re-ran the debate blind and attacked our record.
+  // Advisory only - it never moves a seat or a weight. No badge when the check was unusable.
+  const dualChip = (symbol?: string) => {
+    const e = symbol ? geminiConfirm?.picks?.[symbol] : null;
+    if (!e || !["confirmed", "repriced", "disagreement"].includes(e.status)) return null;
+    const look = e.status === "confirmed"
+      ? { label: "2× confirmed", bg: "rgba(20,184,122,0.15)", fg: "var(--green)" }
+      : e.status === "repriced"
+        ? { label: "2× repriced", bg: "rgba(234,179,8,0.15)", fg: "var(--amber)" }
+        : { label: "2× disagree", bg: "rgba(239,68,68,0.15)", fg: "var(--red)" };
+    return (
+      <span title={`${e.summary || ""} (${geminiConfirm.week})`}
+            style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: look.bg, color: look.fg,
+                     fontFamily: "var(--font-mono)", fontWeight: 700, cursor: "help" }}>
+        {look.label}
+      </span>
+    );
+  };
 
   useEffect(() => {
     // DUAL-MODE during the split migration: prefer the FDT payload, fall back to the still-live
@@ -4836,9 +4869,9 @@ export default function Dashboard(){
                               )}
                             </div>
                             {wheelLine(pick.wheel)}
-                            {(pick.risk_badge?.kind || pick.skeptic_verdict || pick.moat || pick.moat_erosion === "CAP" || pick.secular_theme) && (
+                            {(pick.risk_badge?.kind || pick.skeptic_verdict || pick.moat || pick.moat_erosion === "CAP" || pick.secular_theme || geminiConfirm?.picks?.[pick.symbol]) && (
                               <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 6 }}>
-                                {riskBadge(pick)}{skepticChip(pick)}{moatChips(pick)}
+                                {riskBadge(pick)}{skepticChip(pick)}{dualChip(pick.symbol)}{moatChips(pick)}
                               </div>
                             )}
                             <div style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-light)" }}>
@@ -4978,6 +5011,7 @@ export default function Dashboard(){
                                   <span title="correlated with another basket name" style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: "var(--amber-light)", color: "var(--amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>corr</span>
                                 )}
                                 {skepticChip(pick)}
+                                {dualChip(pick.symbol)}
                                 {entryPostureChip(pick.entry_posture, pick)}
                               </div>
                               {typeof mos === "number" && (

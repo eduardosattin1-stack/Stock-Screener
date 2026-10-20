@@ -113,8 +113,13 @@ def listing_facts(sym):
         note = (f"1 {rep_ccy} = {fx} {trade_ccy} (live FMP quote at export"
                 + ("; GBp = pence, 100 per pound" if trade_ccy == "GBp" else "") + ")") if fx else \
             "trading and reporting currency are the same"
-    px_major = (q["price"] / 100.0) if (q.get("price") and trade_ccy == "GBp") else q.get("price")
-    shares = (q.get("marketCap") / px_major) if q.get("marketCap") and px_major else None
+    # Two share counts, both labelled: FMP's "outstanding" figure can be a vendor error (9980.HK read
+    # 895.5M against 727.1M in its own filing, 2026-10), and the filed quarterly diluted average lags
+    # buybacks. A >10% gap is flagged so the agent settles it from the filing, never by guessing.
+    fl = (fmp("shares-float", symbol=sym) or [{}])[0]
+    s_vendor = fl.get("outstandingShares")
+    s_filed = inc.get("weightedAverageShsOutDil")
+    gap = (s_vendor / s_filed - 1) if s_vendor and s_filed else None
     return {
         "company": q.get("name") or prof.get("companyName"),
         "exchange": q.get("exchange") or prof.get("exchange"),
@@ -123,9 +128,13 @@ def listing_facts(sym):
         "reporting_currency": rep_ccy,
         "fx_reporting_to_trading": fx,
         "fx_note": note,
-        "shares_outstanding_approx": round(shares) if shares else None,
-        "shares_note": "market cap / price at export - VERIFY against the latest filing; corporate actions "
-                       "(bonus issues, splits, buybacks) change it",
+        "shares_filed_diluted_avg": s_filed,
+        "shares_filed_period": inc.get("date"),
+        "shares_vendor_outstanding": s_vendor,
+        "shares_note": ("CONFLICT: the two counts differ by {:+.0f}% - settle it from the latest filing and say which "
+                        "you used".format(gap * 100) if gap is not None and abs(gap) > 0.10 else
+                        "the counts agree within 10%") + "; VERIFY against the latest filing - bonus issues, splits "
+                        "and buybacks change it",
         "next_earnings_hint": (fmp("earnings", symbol=sym, limit=2) or [{}])[0].get("date"),
     }
 
