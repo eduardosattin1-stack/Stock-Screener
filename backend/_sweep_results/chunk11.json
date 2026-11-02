@@ -2,78 +2,10 @@
  "chunk": "11 (KRYS-MBUU)",
  "scanned": 150,
  "scan_distribution": {
-  "active": 1,
-  "watch": 7,
-  "none": 142
+  "active": 0,
+  "watch": 5,
+  "none": 145
  },
- "survivors_flagged": [
-  {
-   "symbol": "LAB",
-   "score": 6,
-   "tier": "ACTIVE",
-   "lane": "merger_arb",
-   "one_line": "Reverse merger with Treeline: LAB holders get about 16% of the combined company plus a CVR. Deal values LAB at about $460M, tied to roughly $450M of net cash, versus a $270M market cap at $0.69. Shareholder vote is pending and close is guided before year-end 2026. Risk is that Treeline's $2.5B valuation is not real and holders dump the stock after close."
-  },
-  {
-   "symbol": "LBTYK",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "spin_off",
-   "one_line": "Plan: list Ziggo Group in Amsterdam and distribute the 90% stake, guided 'as early as mid-2027'. Q3 results late Oct should firm the timetable. Stock $8.52, below the board's $9.25 floor, as VMO2 debt stress (GBP600m cost-cut plan) leaks into parent cash. Real event, but the date is guided and the floor is leaking."
-  },
-  {
-   "symbol": "LNTH",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "merger_arb",
-   "one_line": "Curium cash deal at $102.50 plus CVR up to $12, signed Aug-2026, close expected 1H27. Stock at $100.15 leaves a ~2.3% cash spread plus a free CVR option. Late-arc and largely priced."
-  }
- ],
- "verified": [
-  {
-   "symbol": "LAB",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "merger_arb",
-   "catalyst": "LAB stockholders vote on the all-stock reverse merger into private Treeline Biosciences (holders get about 16% of TRLN plus a CVR on legacy-asset sale proceeds and up to $50M of SomaLogic earnout). Treeline holders already approved by written consent on 2026-06-06, and Viking (15%) is locked into a voting agreement.",
-   "dated_milestone": "Merger signed 2026-06-08. S-4 filed 2026-07-20 and amended since. The special-meeting date is still blank, with no definitive proxy found. Next date: definitive proxy and meeting date, then close guided before year-end 2026 (Q2 release, 2026-08-05).",
-   "instrument": "LAB common (Nasdaq), $0.689 on 2026-10-12, market cap about $270M, about 391M shares. Each share also gets one non-tradeable CVR as a closing dividend.",
-   "bloom_gates": "G1 yes: named counterparty Treeline Biosciences, with Viking's voting agreement. G2 yes: signed merger agreement with written Treeline consent and close guided for 2026. G3 partial: the $460M deal value (net cash plus $10M) is a fixed figure, but what it is worth to LAB holders depends on Treeline's private mark, so the figure is not contractual.",
-   "edge": "L-M. The $460M (about $1.18/sh) is not a cash price. It assumes the private Treeline mark of about $2.4-2.5B is real. LAB holders swap about $450M of net cash for 16% of a biotech, which leaves only about $144M of the combined $900M+ cash pile behind their shares (about $0.37/sh) plus the CVR. Run-up from the pre-deal base ($1.15 close on 2026-06-05) to today: -40%, so the market has priced the deal down, not up. Remaining to the deal-mark value: about +70% ($0.69 to $1.18). That only holds if TRLN trades at the private mark after close, and reverse-merger biotechs usually trade below it once holders sell. The provenance-checked floor is about $0.37 cash-backed plus CVR option value.",
-   "primary_source": "Standard BioTools/Treeline merger press release and 8-K, 2026-06-08 (BioSpace/StreetInsider/SEC). Form S-4 (2026-07-20) and S-4/A (SEC EDGAR CIK 1162194), which give the $1.15 close on 2026-06-05 and Treeline's written consent on 2026-06-06. Q2 2026 results release, 2026-08-05 (close before YE2026, $30M SomaLogic buyout). Viking Schedule 13D (15%, voting agreement 2026-06-06). FMP quote, 2026-10-12, $0.6894.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The event is real and dated: a signed agreement, Treeline consent already given, Viking's 15% committed, and close guided for year-end 2026. But the upside is not a contractual spread. Today's price implies a combined equity of about $1.7B against the about $2.9B deal mark, so the market is pricing in a 40% haircut on Treeline's private valuation. Since signing the stock has fallen from $1.15 to $0.69 rather than closing a gap. Scored on the equity and capped at 4 because the numerator comes from a private-company mark. The asymmetry is thin: about +0.49 to the deal mark versus about -0.32 to the cash-backed floor. The CVR (Mass Cytometry divestiture proceeds plus up to $50M of SomaLogic earnout, part already bought out by Illumina for $30M) is the only clean extra, and its size is not quantified here. Gaps: no meeting date, CVR not sized, and the latest 10-Q was not pulled to confirm net cash and closing-adjustment mechanics."
-  },
-  {
-   "symbol": "LBTYK",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "spin_off",
-   "catalyst": "Liberty Global plans to spin off its 90% stake in Ziggo Group (the Dutch business it now fully controls, after buying Vodafone's 50% of VodafoneZiggo on 2026-08-03; Vodafone took about EUR1.0bn plus 10% of Ziggo Group) and list it on Euronext Amsterdam, guided for \"as early as mid-2027\".",
-   "dated_milestone": "Buyout closed 2026-08-03 (fired step). Spin guided for mid-2027 at the earliest, and still needs final board approval, an effective SEC registration statement and a shareholder vote. Next check: Q3-2026 results around late October 2026, which should firm the timetable and update the year-end corporate cash target (raised to $2bn at Q2). Hard backstop: Vodafone may sell its 10% to a third party if the spin has not happened within 18 months of closing, i.e. by about Feb 2028.",
-   "instrument": "LBTYK common (Nasdaq), $8.52 on 2026-10-12, 52-week range $8.21-$13.12, market cap about $2.9bn, about 341m shares",
-   "bloom_gates": "G1 yes: named counterparty (Vodafone, buyout closed 2026-08-03; Euronext Amsterdam as the venue). G2 yes but conditional: management has stated the intent, named the Ziggo Group CEO and CFO, and the Vodafone 18-month sale right forces the timing, but board approval, SEC effectiveness and a shareholder vote are still outstanding. G3 partial: the $2bn year-end corporate cash target is about 69% of market cap (about $5.9/share). The value of the Ziggo equity is not a fixed figure: it is heavily levered and swings with leverage.",
-   "edge": "M. Run-up from the pre-catalyst base: about -25% to -35%. The stock traded around $11-13 when the spin and the VodafoneZiggo buyout became public (52-week high $13.12) and is now $8.52, near its 52-week low of $8.21, so nothing has been harvested and the event is negatively priced. Remaining to the favorable-resolution value: about +50% to $13 (a conservative holdco-discount-narrowing target, roughly the 52-week high). The rough mechanical SoP is higher, about $15-20/share: $5.9/share cash, plus the 90% Ziggo equity at about $8-9/share (very sensitive to leverage), plus the 50% VMO2 stake at somewhere between zero and an option value. The edge is the cash backing plus the forced Vodafone timeline. Against it: the date is distant and conditional, and the stress at VMO2 (about GBP22bn debt, a reported GBP600m owner-driven cost-cut plan not yet confirmed as of 2026-09-13) is weighing on the parent.",
-   "primary_source": "Liberty Global 8-K Ex.99.1, \"Liberty Global Completes Buyout of VodafoneZiggo\" (2026-08-03): sec.gov/Archives/edgar/data/0001570585/000157058526000119. Liberty Global Q2 2026 results 8-K Ex.99.1 (2026-07-24; total debt $8.4bn, YE corporate cash target $2bn, spin \"as early as mid-2027\"): sec.gov/Archives/edgar/data/0001570585/000157058526000111. FMP quote 2026-10-12 ($8.52). telecoms.com on the VMO2 cost-cut report (2026-09).",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The event is real and documented. The Vodafone buyout closed on 2026-08-03 and management guides the spin for as early as mid-2027, but it is 9+ months away and needs board, SEC and shareholder approvals, so it is not an ACTIVE-tier dated catalyst yet. Numerator provenance: the opco debt (Ziggo, VMO2) is non-recourse, and I know of no preferred stock ahead of the common at the Liberty Global parent. I did not open the latest 10-Q in this pass, so the parent-level claims and the size of the Ziggo Group net debt are unverified gaps. On a rough re-derivation, cash alone is about 69% of market cap. The stock fell through $9.25 even though the event is getting closer. The likely cause is spillover from VMO2 distress plus holdco skepticism (after the Sunrise precedent, the parent did not re-rate). That makes this a value-plus-catalyst setup, not a priced-event harvest. Keep it on WATCH until Q3 results (late October) confirm the timetable and the Ziggo leverage, and check the 10-Q for any parent guarantees or VMO2 support commitments."
-  },
-  {
-   "symbol": "LNTH",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "merger_arb",
-   "catalyst": "Curium US Holdings is buying Lantheus for $102.50/sh cash at close plus a non-transferable CVR worth up to $12/sh, tied to prostate, neurology and DEFINITY commercial milestones through 2030. Signed 2026-08-03, close guided to 1H27.",
-   "dated_milestone": "Special shareholder meeting on 2026-10-14 (majority of outstanding shares required). Next: FTC/HSR waiting period. The HSR notice was voluntarily pulled on 2026-09-17 and refiled to give the FTC more review time, refile date not confirmed. Close guided to 1H27.",
-   "instrument": "LNTH common (long cash spread, CVR comes free at close)",
-   "bloom_gates": "G1 yes (Curium US Holdings, a CapVest company, is the named counterparty). G2 yes (signed definitive merger agreement, board unanimous). G3 weak: the $2.35/sh cash spread is contractual but thin, and the CVR's $12 cap is a specific figure that is probably mostly unpriced but carries real probability risk (sales milestones out to 2030, non-transferable).",
-   "edge": "L. Run-up: the unaffected 60-day VWAP was about $74-83, depending on whether the stated 38% premium refers to the $102.50 cash or the $114.50 total, against $100.15 today. That is roughly +20-35%, and the price was already about $50 at the 52-week low, so most of the takeover premium is harvested. Remaining: +2.3% to the $102.50 cash over about 6-9 months (roughly 3-4.5% annualized, about T-bill level or below), plus a free but non-tradeable CVR option worth up to +12% at full payout, which a realistic probability weighting puts at maybe 2-5%. The FTC pull-and-refile adds timing and second-request risk that the spread barely compensates.",
-   "primary_source": "Lantheus/Curium merger press release, investor.lantheus.com/node/17091 (2026-08-03); Lantheus 8-K/DEFA14A on SEC EDGAR re HSR withdrawal and refile (Sept 2026, accession 0001193125-26-396654/396661); proxy summary via Quartr (special meeting 2026-10-14); FMP quote LNTH $100.15 (2026-10-12)",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The deal is real, signed and contractual, so numerator provenance is exempt. The cash price is $102.50 and FMP shows $100.15 on 2026-10-12. The vote is two days out on 10-14. The live risk is antitrust: Curium voluntarily withdrew and refiled the HSR notice on 9/17 to give the FTC more time. That usually means extended review and can mean a second request, which could push timing out or force remedies in the radiopharma overlap. With roughly 2.3% of cash spread left, an annualized return at or below the risk-free rate, and only CVR optionality on top, this is a mostly-harvested arb, so score is capped at 4. Gap: I did not confirm the HSR refile date, the waiting-period status or the exact CVR milestone thresholds."
-  }
- ]
+ "survivors_flagged": [],
+ "verified": []
 }

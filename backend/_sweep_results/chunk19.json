@@ -2,24 +2,31 @@
  "chunk": "19 (UCB-WEX)",
  "scanned": 150,
  "scan_distribution": {
-  "active": 1,
-  "watch": 5,
-  "none": 144
+  "active": 0,
+  "watch": 9,
+  "none": 141
  },
  "survivors_flagged": [
   {
    "symbol": "UNF",
-   "score": 7,
-   "tier": "ACTIVE",
+   "score": 6,
+   "tier": "WATCH",
    "lane": "merger_arb",
-   "one_line": "Cintas deal at $155 cash + 0.772 CTAS, worth about $311 against UNF at $260.85, a gross spread of about 19% pricing heavy FTC risk. Shareholders approved 6/11, both firms certified Second Request compliance 10/2, and they agreed not to close before Dec 11 unless the FTC closes its probe first. The FTC decision or suit by about mid-Dec is the dated binary; Canada's review is also in progress."
+   "one_line": "Cintas deal ($155 cash + 0.772 CTAS) is in a complicated merger-arb setup. Both sides certified Second Request compliance and agreed with the FTC not to close before Dec 11, 2026. A late-Oct Semafor report (unconfirmed) says the FTC told Cintas it will sue to block. The FTC suit/vote binary is the real catalyst, but the spread has likely already repriced on the news."
+  },
+  {
+   "symbol": "VIR",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "one_line": "Ph3 ECLIPSE-1 (tobevibart+elebsiran, HDV) topline guided Q4 2026, ECLIPSE-2/3 Q1 2027; AASLD oral Nov 8; stock up ~130% off lows near 52w high so the binary is partly priced."
   },
   {
    "symbol": "VLRS",
    "score": 5,
    "tier": "WATCH",
-   "lane": "merger",
-   "one_line": "50/50 Viva Aerobus combination (Grupo Mas Vuelos): shareholders, FTC and Colombia have cleared it. Mexico's antitrust ruling (>75% domestic share) is the last gate, expected before end-2026. Real binary, but a merger of equals with no arb spread."
+   "lane": "merger_arb",
+   "one_line": "Viva Aerobus/Volaris 50/50 combination (Grupo Mas Vuelos): FTC, Colombia and shareholders (Mar-26) cleared. Mexico CNA is the last gate, approval expected before YE26 (Reuters, Oct-26) likely with route/low-cost conditions. Mid-arc, since the deal has been known since Dec-25."
   }
  ],
  "verified": [
@@ -28,30 +35,45 @@
    "score": 5,
    "tier": "WATCH",
    "lane": "merger_arb",
-   "catalyst": "The FTC will either clear Cintas's acquisition of UniFirst ($155 cash plus 0.772 CTAS shares per UNF share) or sue to block it, with the Second Request waiting period and the reported Dec-11 no-close date putting that decision around mid-December 2026.",
-   "dated_milestone": "Second Requests issued 2026-06-11 and UNF shareholders approved the same day (confirmed). Triage says both firms certified substantial compliance on 10/2, which would end the 30-day HSR clock around early November, and that they agreed not to close before 12/11; I could not verify either claim. Next date: FTC clearance or complaint, expected by about 2026-12-11. Canada's Competition Bureau review is also open.",
-   "instrument": "UNF common, long only or hedged by shorting 0.772 CTAS per UNF share. The hedge locks the $155 cash leg plus the stock leg.",
-   "bloom_gates": "G1 yes: named counterparty Cintas, signed merger agreement 2026-03-11. G2 yes: fixed $155 cash + 0.772 CTAS consideration, shareholder approval obtained, $213M termination fee reported. G3 yes: specific unpriced figure is the ~19.3% gross spread ($311.26 deal value vs $260.85).",
-   "edge": "M-L. The event is real, contractual and dated, but the market already prices it as roughly a coin flip on the FTC. With a break price near the pre-leak base of about $200, the implied close probability is about 55%. Uniform rental is concentrated (Cintas is #1, UNF is #3), so heavy FTC risk is a reasonable view rather than mispricing. Run-up from the pre-catalyst base ($199.84 on 2026-02-09, before the 02-10 approach news) to today: +30.5%. Remaining to deal value ($155 + 0.772 x $202.41 = $311.26): +19.3%. So the event is not mostly harvested, and about 40% of the original gap is still on the table. UNF has also fallen from its 50-day average of ~$274 to $260.85. The spread widening recently is a mild negative signal on regulatory odds.",
-   "primary_source": "UniFirst news release on the Second Request and shareholder approval, 2026-06-11 (investors.unifirst.com/node/20606); MLex on the HSR waiting period, 2026; FMP batch quote UNF $260.85 / CTAS $202.41, 2026-10-12; FMP EOD UNF price history, Jan-Mar 2026",
+   "catalyst": "The FTC is expected to vote on whether to sue to block Cintas's $155 cash + 0.772 CTAS-per-share acquisition of UniFirst before the parties' agreed Dec 11, 2026 no-close date. A suit would push the deal into litigation, toward a break and the $350M reverse termination fee. No suit would mean a close at roughly $328/share.",
+   "dated_milestone": "Dec 11, 2026: the date the parties agreed with the FTC not to close before. The FTC vote or complaint is expected on or before it. Next check: any FTC complaint filing in Nov 2026. Last news was the Oct 27-28 Semafor report, which is unconfirmed. The FTC spokesperson said it has not voted.",
+   "instrument": "Long UNF / short 0.772 CTAS per share (hedged merger-arb spread). An unhedged long UNF carries CTAS beta, since about 53% of the consideration is in stock.",
+   "bloom_gates": "G1: named counterparties (Cintas as acquirer, the FTC as regulator). G2: concrete commitments (signed merger agreement, $350M antitrust reverse termination fee, agreed timing not to close before Dec 11). G3: a specific spread figure. Deal value is $155 + 0.772 x $224.36 = $328.2 against UNF at $256.76, a 27.8% gross spread. The gross spread is quantified, but much of the FTC risk is already in that price.",
+   "edge": "L-M. Run-up from the pre-catalyst base is +51%: about $170 on 2025-12-19, before Cintas's renewed approach, to $256.76 today. Remaining to favorable resolution is +27.8% ($256.76 to $328.2 deal value at CTAS $224.36). Implied deal probability is about 50-55%, using a ~$175-185 standalone break price and the $350M RTF (about $19/share, payable only if blocked under antitrust law, not on the suit alone). The spread already repriced about -10.5% on Oct 27, from $279.64 to $250.40, on the Semafor report. The market treats this as a coin flip. I have no information edge on the FTC vote, so this is a fairly priced binary, not mispricing. Remaining capture is large but symmetric (roughly +71 up vs -70 to -80 down).",
+   "primary_source": "Semafor via TheStandard/TIKR/Newsquawk (2026-10-27/28): FTC reportedly told Cintas it will sue; FTC spokesperson says no vote yet. FMP batch-quote 2026-11-02 (UNF $256.76, CTAS $224.36). FMP EOD history (UNF $170.16 on 2025-12-19; $279.64 on 2026-10-26 to $250.40 on 2026-10-27). Deal terms and the $350M RTF as reported in the TIKR/Finimize coverage (Oct 2026).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "This is a clean, contractual cash-plus-stock merger arb, so the numerator-provenance rule does not apply. Using CTAS at $202.41, the deal is worth $311.26 against UNF at $260.85: a 19.3% gross spread that resolves within about two months on an FTC binary. Downside if the deal breaks is roughly $195-200, the pre-approach trading range, so the trade risks about $61-66 to make about $50 (reward/risk ~0.8). That is fair-to-slightly-favorable only if you put FTC clearance above roughly 55-60%. Gap: the web-search budget ran out before I could confirm the 10/2 compliance certification or the Dec-11 timing agreement. The only sources found run through August, and FMP press releases since 09-15 show nothing deal-related. Hold at WATCH until those two items are confirmed and there is any read on FTC staff posture (a consent or divestiture remedy versus a suit)."
+   "analysis": "The event is real, dated and unfired. The FTC has not voted, and the Semafor report that it told Cintas it would sue is unconfirmed. Both sides certified Second Request compliance and agreed not to close before Dec 11, 2026, so the vote or complaint should land by then. UNF fell from $279.64 to $250.40 (-10.5%) on Oct 27 and has drifted back to about $257. At $256.76 the gross spread to $328.2 is 27.8%, and the implied deal probability is about 50-55% against a $175-185 break value plus a partial RTF floor. That is roughly a fair price for a likely-but-unfiled FTC suit followed by litigation, not an unpriced edge. Gap: I could not confirm whether anything happened between Oct 30 and Nov 2 because the web search budget was exhausted. The standalone break value is an estimate from the Dec 2025 pre-approach price, not a fresh DCF. The cash deal price is contractual, so it is exempt from numerator provenance."
+  },
+  {
+   "symbol": "VIR",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "catalyst": "Phase 3 ECLIPSE-1 topline for tobevibart+elebsiran in chronic hepatitis delta vs deferred treatment (composite: undetectable HDV RNA + ALT normalization at Wk48), guided for Q4 2026; ECLIPSE-2/3 follow in Q1 2027.",
+   "dated_milestone": "Q3-2026 earnings/corporate update 2026-11-05 (could confirm or slip the timing); AASLD oral ~2026-11-08 (per triage, not verified); ECLIPSE-1 topline by 2026-12-31; ECLIPSE-2/3 topline Q1 2027.",
+   "instrument": "VIR common (NASDAQ). Simple capital structure: no preferred stack. Cash about $1.01B at Q2-26, about $5.6/sh net.",
+   "bloom_gates": "G2 (concrete dated commitment: company-guided Q4 2026 ECLIPSE-1 topline in the Feb-2026 8-K, reaffirmed after Q2). G1 only partially met: Norgine holds the EU/ANZ rights and Astellas paid $315M on another program, so neither is a counterparty to this readout. G3 is weak: there is no contractual figure; value is derived from the US HDV launch.",
+   "edge": "M-L. Phase 2 SOLSTICE gave 88% (21/24) undetectable HDV RNA at Wk96, and the comparator is deferred treatment, so P(success) is high, about 75-80%. But the tape already reflects it. (a) Run-up from the pre-readout base: the 52-week low was $4.82 (about the cash floor), today $11.12, so +131%, with part of that driven by the Astellas cash and not the readout. (b) Remaining: a favorable read to about $15-17 is +35-50%, while a fail falls toward cash at about $5.5-6.0 (-45-50%). Probability-weighted EV is about $13.9, roughly +25%. The event is real and forward but about half-harvested.",
+   "primary_source": "Vir Q4-2025 earnings 8-K Ex-99.2 (sec.gov, 2026-02-23): ECLIPSE-1 topline Q4 2026, ECLIPSE-2/3 Q1 2027. Q2-2026 results (2026-08-05, via pulse2/marketbeat): cash about $1.01B, runway 2H-2028. FMP quote 2026-11-02: $11.12, 52w range 4.815-12.19, mcap $1.88B.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The dated forward binary is real and has not fired. The company guided ECLIPSE-1 topline to Q4 2026 (Feb-2026 8-K) and all three ECLIPSE trials are fully enrolled. Cash of about $1.01B gives a runway into 2H-2028, which puts a hard floor near $5.6/sh with no preferred or debt waterfall to worry about. The trouble is that the stock sits at $11.12, 9% below its $12.19 52-week high and +131% off the lows, so the high-probability success case is largely priced. What is left is a roughly 1.6:1 skew (+40% vs -48%) on a high-P(success) binary, which is a reasonable WATCH but not an ACTIVE entry; it would upgrade on a pullback toward $8-9 before the readout. Gaps: the Nov-8 AASLD oral and any October timing update were not verified because the search budget ran out, and the Nov-2025 enrollment PR had put topline in Q1 2027, so the 11-05 call carries real slip risk to the dated milestone."
   },
   {
    "symbol": "VLRS",
-   "score": 4,
+   "score": 3,
    "tier": "WATCH",
-   "lane": "merger",
-   "catalyst": "Mexico's antitrust authority (CNA, which replaced COFECE) still has to rule on the 50/50 holding-company merger of equals between Volaris and Viva Aerobus (combined about 69% of domestic passengers). This is the last major closing condition.",
-   "dated_milestone": "Announced about 2025-12-19. Volaris shareholders approved on 2026-03-25 (91.8% of share capital in favour). Management guided to regulatory review taking up to 12 months from announcement, which points to a CNA ruling by about Dec 2026. No date has been set. Next datable checkpoint: Q3-2026 earnings in late October 2026.",
-   "instrument": "VLRS common (NYSE ADS); BMV: VOLAR",
-   "bloom_gates": "G1 yes: the counterparty is named (Viva Aerobus / Grupo Mas Vuelos). G2 partial: a signed merger agreement plus a shareholder vote, but the Mexican regulatory outcome is open and remedies are possible. G3 fails: there is no cash price, exchange-ratio premium or quantified synergy figure that sits unpriced against today's price, so there is no contractual numerator.",
-   "edge": "L. This is an all-share merger of equals: no arbitrage spread, no premium, and no contractual price to anchor favourable-resolution value. Any upside would come from synergies or pricing power that I could not quantify within the lookup budget, so no provenance-checked number exists. Run-up from the pre-catalyst base: about -22%. The stock closed at $7.95 on 2025-12-17, jumped to $9.49 on announcement (2025-12-19) and is $6.23 now (FMP, 2026-10-12), near its 52-week low of $5.79. Nothing has been harvested; the move since announcement is fuel- and operations-driven, not deal-related. Remaining to favourable resolution: not derivable. Without a contractual price the remaining percentage is undefined, and approval mostly removes a risk rather than delivering a number. The $9.08 consensus target (+46%) comes from analysts and is excluded under the provenance rule.",
-   "primary_source": "DLA Piper, 'Volaris-Viva Aerobus merger' (2026-04-03): CNA jurisdiction, closing conditions (Mexico, HSR, Colombia), 2026-03-25 shareholder vote. Mexico Business News, CNA independence test commentary (Jan 2026). FMP quote VLRS $6.23 (2026-10-12) and EOD history (2025-12-17 $7.95, 2025-12-19 $9.49). FMP news feed 2026-07-01 to 2026-10-12: no CNA ruling reported.",
+   "lane": "merger_arb",
+   "catalyst": "Mexico's CNA ruling on the Volaris/Viva Aerobus 50/50 combination into Grupo Mas Vuelos, the last open regulatory gate, is expected before YE26 and likely with conditions on fares, routes and slots.",
+   "dated_milestone": "CNA decision expected by 2026-12-31 (Reuters, six sources). FTC, Colombia and shareholder approvals were already done by Mar-26. Next dated item: CNA resolution, then the closing/share-exchange date. Neither date is set.",
+   "instrument": "VLRS common (NYSE ADS) at $6.86 on 2026-11-02",
+   "bloom_gates": "G1 yes (named counterparty: Viva Aerobus / Grupo Mas Vuelos). G2 partial (signed combination agreement, but it is a stock-for-stock merger of equals with no cash price). G3 fail (there is no specific unpriced figure, and the upside is only a derived synergy story).",
+   "edge": "L. This is not a real arb: holders roll into 50% of a combined, levered ULCC, so there is no contractual spread to capture. Run-up from the pre-announcement base ($7.95 on 2025-12-17, before the 2025-12-19 announcement jump to $9.49) to today ($6.86) is -14%. The deal pop has fully reversed and the stock sits below its undisturbed price. Remaining capture to a provenance-checked favorable-resolution value cannot be stated: there is no contractual deal value, and the cap table and lease/debt waterfall of the combined entity were not re-derived (lookup budget exhausted). An approval that Reuters already widely reported as likely is probably not a re-rating event by itself. The tail risks are conditions that bite (fare caps, slot divestitures) or a block.",
+   "primary_source": "Mexico News Daily citing Reuters (six sources), 'Viva-Volaris airlines merger likely to proceed', Oct-2026. mexicobusiness.news, 'US FTC Clears Volaris-Viva Merger into Grupo Mas Vuelos' (2026). DLA Piper, 'Volaris-Viva Aerobus merger', 2026-04-03. FMP quote 2026-11-02 ($6.855). FMP EOD 2025-12-17 ($7.95) / 2025-12-19 ($9.49). Volaris Q3-26 results, GlobeNewswire 2026-10-26.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The binary is real, dated in rough terms and still ahead: CNA approval, probably with conditions, is the last gate. A merger of equals still has no numerator: approval does not pay the common holder a fixed amount, it only unlocks synergies nobody has quantified, and a forced remedy (slot or route divestitures at a combined 69% domestic share) could erase them. The equity has fallen about 22% below its pre-announcement base on fuel costs and fleet groundings, so the event is not priced in. But the thesis then becomes an airline-operations and fuel recovery call rather than an event, so score it as the equity, capped at 4. Gaps: the web search budget ran out after one query, so I could not confirm that the FTC/HSR waiting period and Colombian clearance are done, whether the CNA has issued a ruling, or the 10-Q net debt detail (Seeking Alpha 2026-09-23 cites net debt/EBITDAR of 3.2-3.3x and $824M liquidity; there is no preferred stock ahead of the common)."
+   "analysis": "The event is real and forward: the CNA is the last gate, and the Reuters/Mexico News Daily report says approval is expected before YE26 with consumer-protection, route and low-cost conditions. But the event belongs to the wrong lane. It is a 50/50 all-stock combination, so approval only unlocks synergy value whose size depends on what the CNA imposes, and nothing contractual pins a price. The stock has round-tripped below its pre-deal base ($6.86 vs $7.95) on an ULCC loss cycle (Q3-26 EPS -$0.23, Zacks Rank 5 on 2026-10-16), so this is an airline-fundamentals call, not an event spread. Gap: I did not re-derive the combined-entity equity waterfall or look for a CNA ruling after October; the search budget ran out."
   }
  ]
 }

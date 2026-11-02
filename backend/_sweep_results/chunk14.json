@@ -3,55 +3,9 @@
  "scanned": 150,
  "scan_distribution": {
   "active": 0,
-  "watch": 9,
-  "none": 141
+  "watch": 5,
+  "none": 145
  },
- "survivors_flagged": [
-  {
-   "symbol": "OPFI",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "regulatory_structural",
-   "one_line": "BNCCORP buy (holders approved Sep 17) awaits OCC/Fed/FDIC sign-off, Q4-26 target: a fintech gets a national bank charter plus the Up-C collapse; stock at 52-wk low, unmoved."
-  },
-  {
-   "symbol": "ORGO",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "binary_pdufa",
-   "one_line": "ReNu knee-OA BLA accepted Jul-2026 with a PDUFA of 2027-04-24. Early in the arc, months out, coverage thin; the asymmetry is still to be confirmed."
-  }
- ],
- "verified": [
-  {
-   "symbol": "OPFI",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "regulatory_structural",
-   "catalyst": "OppFi is waiting on OCC, Fed and FDIC approval to buy BNCCORP and BNC National Bank (about $130M: $19.375 cash plus 1.90 OPFI shares per BNCC share). Closing would turn OppFi into a bank holding company, rename the bank OppFi Bank N.A., and end the Up-C structure, with about $40.8M paid to end the TRA.",
-   "dated_milestone": "Signed 2026-04-29. OCC comment-response letter 2026-06-27. BNCC holders approved 2026-09-17. Regulator decisions still outstanding, close guided for Q4-26. Next date: Q3-26 earnings around 2026-11-04 (another source says 10-28), the likely point for an approval-timing update.",
-   "instrument": "OPFI common (NYSE). $5.93 on 2026-10-12, the 52-week low. 52-week high $11.69, 50-day average $7.19, 200-day average $8.59, market cap about $506M.",
-   "bloom_gates": "G1 yes: named counterparty (BNCCORP / BNC National Bank) and named approvers (OCC, Federal Reserve, FDIC). G2 yes: definitive agreement and target-holder approval on 2026-09-17. G3 no: the value of the charter (rate exportation, deposit funding, the 40%+ EPS growth management claims) is not a specific contractual figure. It is a management projection, and I could not re-derive it.",
-   "edge": "M/L. (a) Run-up from the pre-catalyst base: negative, about -35% to -40%. The stock was roughly $9-10 when the deal was announced on 2026-04-29 and is $5.93 now. The fall came from the Q2 miss (adjusted EPS $0.33 vs $0.44-0.45 consensus, down 24.9% the next day) and a guidance cut (FY26 adjusted EPS $1.34-1.51 from $1.76-1.84, per a secondary source), not from the deal. (b) Remaining to a favorable outcome: approval and a re-rate from about 4.2x to about 6x the midpoint of FY26 adjusted EPS ($1.42) gives about $8.5, or +43%. That number is a judgement multiple, not a contractual numerator. Nothing about the event is harvested, but the upside is soft. The approval itself is uncertain: Senator Warren has formally urged the OCC, FDIC and Fed to block the deal, and the agencies can still impose a 'Burdensome Condition', which is a walk-away trigger.",
-   "primary_source": "OppFi/BNCCORP definitive agreement press release and 8-K, 2026-04-29 (sec.gov, edgar 0001818502). BNCCORP holder-approval release, 2026-09-17 (finviz). OCC public-comment file, OppFi interim bank, applicant response dated 2026-06-27 (occ.gov). Fed FOIA file with public comments and the 2026-06-23 meeting summary (federalreserve.gov). OppFi Q2-26 results 8-K, 2026-08-10 (sec.gov). Warren letter to OCC, FDIC and Fed (insurancenewsnet). FMP quote, 2026-10-12.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The event is real, specific and still ahead: holders approved, three federal approvals are pending, and close is guided for Q4-26. Nothing has been priced in; the stock is about 40% below where it traded at announcement. That said, the sell-off is about fundamentals (Q2 miss, guidance cut, LOC rollout and LOLA migration delays), and the charter's economic value is a projection, not a contractual figure. There is no preferred stock ahead of the common. The TRA buyout ($40.8M) and the cash part of the deal consideration (about $70M) use roughly 20% of market cap, and the share issuance to BNCC holders is modest. Approval risk is politically live (Warren letter) and regulator timing is open-ended. On a strict gate this is a WATCH: a binary-ish approval on a cheap but broken-growth fintech. GAP: I did not open the 10-Q to confirm cash or debt after the deal, and I did not confirm the guidance cut against the 8-K."
-  },
-  {
-   "symbol": "ORGO",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "binary_pdufa",
-   "catalyst": "FDA decision on the ReNu (Amnuvx/azimplacel) BLA for symptomatic knee osteoarthritis. The BLA was accepted 2026-07-06 with a PDUFA target action date of 2027-04-24.",
-   "dated_milestone": "PDUFA 2027-04-24. Next: Q3-2026 10-Q / earnings (~early Nov 2026) for liquidity and ATM usage, plus any AdCom announcement (none found as of 2026-10-12).",
-   "instrument": "ORGO common (Nasdaq), $1.29 on 2026-10-09, market cap ~$166M",
-   "bloom_gates": "G1 (named counterparty: FDA) + G2 (concrete commitment: PDUFA date is set). G3 fails: no specific unpriced figure survives the capital-structure check.",
-   "edge": "L. Run-up from the pre-catalyst base: -48% ($2.48 on 2026-07-06 acceptance day, ~$2.36 pre-announcement, to $1.29 now). Nothing is harvested; the stock has fallen on wound-care revenue collapsing. Remaining %, provenance-checked: on approval roughly +60-100% (to ~$2.0-2.6/sh after the dilution expected before launch). On a CRL roughly -75%+. The upside is not re-derivable to the $3 analyst target. Ahead of the common sits the Avista Series A convertible preferred: $148.0M liquidation preference at 2026-06-30 (carried at $139.9M), accreting 8% compounded quarterly, converting at $3.79, so it is far out of the money and works like debt. Cash was $46.8M against roughly a $34M per-quarter adjusted EBITDA loss, the revolver expired 2026-08-06, and a $75M ATM is authorized. The ~$1.29 equity is therefore an option behind a ~$150M senior claim and heavy pre-PDUFA dilution.",
-   "primary_source": "Organogenesis press release (GlobeNewswire), 2026-07-06, \"FDA acceptance of BLA for ReNu\" (PDUFA 2027-04-24). Q2-2026 10-Q / 8-K (Aug 2026): Series A liquidation preference $147.963M, cash $46.8M, guidance $179-215M. FMP quote/EOD as of 2026-10-09.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The event checks out: FDA accepted the ReNu BLA on 2026-07-06 with a PDUFA date of 2027-04-24. It is forward and unpriced, and the stock is down about 48% since acceptance. But approval odds are mixed: the second Phase 3 missed its primary endpoint (one-sided p=0.0393 against a 0.023 target), though RMAT designation and data from more than 1,300 patients across three RCTs help. The equity waterfall is also weak. FY26 revenue guidance was cut to $179-215M (down 62-68% after CMS skin-substitute reimbursement reform), cash is $46.8M, the revolver is gone, and a $148M accreting preferred sits ahead of the common. Per the numerator-provenance rule I scored the EQUITY, not the event, and capped it at 4. WATCH for Q3 liquidity, ATM pricing and whether an AdCom is scheduled. Gap: I did not read the Q2 10-Q liquidity/going-concern section directly."
-  }
- ]
+ "survivors_flagged": [],
+ "verified": []
 }

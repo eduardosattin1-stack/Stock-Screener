@@ -1,5 +1,5 @@
 {
- "run_date": "2026-10-12",
+ "run_date": "2026-11-02",
  "universe": 2961,
  "expected": [
   1,
@@ -26,89 +26,101 @@
  "harvested": {
   "1": {
    "scanned": 150,
-   "flagged": 2,
-   "verified": 2,
-   "kept": 2
+   "flagged": 3,
+   "verified": 3,
+   "kept": 3
   },
   "2": {
-   "scanned": 150,
-   "flagged": 2,
-   "verified": 2,
-   "kept": 2
+   "scanned": 140,
+   "flagged": 3,
+   "verified": 3,
+   "kept": 3
   },
   "3": {
+   "scanned": 150,
+   "flagged": 5,
+   "verified": 5,
+   "kept": 5
+  },
+  "5": {
+   "scanned": 151,
+   "flagged": 3,
+   "verified": 3,
+   "kept": 3
+  },
+  "4": {
    "scanned": 150,
    "flagged": 4,
    "verified": 4,
    "kept": 3
   },
-  "4": {
+  "8": {
    "scanned": 150,
    "flagged": 2,
    "verified": 2,
    "kept": 1
   },
-  "5": {
-   "scanned": 150,
-   "flagged": 6,
-   "verified": 6,
-   "kept": 5
-  },
-  "9": {
-   "scanned": 150,
-   "flagged": 0,
-   "verified": 0,
-   "kept": 0
-  },
   "6": {
    "scanned": 150,
-   "flagged": 2,
-   "verified": 2,
-   "kept": 2
+   "flagged": 3,
+   "verified": 3,
+   "kept": 3
   },
   "7": {
    "scanned": 150,
    "flagged": 3,
    "verified": 3,
-   "kept": 2
+   "kept": 1
   },
-  "8": {
-   "scanned": 149,
-   "flagged": 3,
-   "verified": 3,
-   "kept": 3
-  },
-  "11": {
+  "9": {
    "scanned": 150,
-   "flagged": 3,
-   "verified": 3,
-   "kept": 3
-  },
-  "13": {
-   "scanned": 149,
    "flagged": 1,
    "verified": 1,
    "kept": 0
   },
+  "11": {
+   "scanned": 150,
+   "flagged": 0,
+   "verified": 0,
+   "kept": 0
+  },
+  "10": {
+   "scanned": 149,
+   "flagged": 4,
+   "verified": 4,
+   "kept": 4
+  },
   "12": {
    "scanned": 150,
+   "flagged": 3,
+   "verified": 3,
+   "kept": 1
+  },
+  "13": {
+   "scanned": 149,
    "flagged": 4,
    "verified": 4,
    "kept": 4
   },
   "14": {
    "scanned": 150,
-   "flagged": 2,
-   "verified": 2,
-   "kept": 2
-  },
-  "10": {
-   "scanned": 151,
-   "flagged": 6,
-   "verified": 6,
-   "kept": 5
+   "flagged": 0,
+   "verified": 0,
+   "kept": 0
   },
   "15": {
+   "scanned": 136,
+   "flagged": 3,
+   "verified": 3,
+   "kept": 2
+  },
+  "16": {
+   "scanned": 150,
+   "flagged": 4,
+   "verified": 4,
+   "kept": 4
+  },
+  "17": {
    "scanned": 150,
    "flagged": 2,
    "verified": 2,
@@ -116,33 +128,21 @@
   },
   "18": {
    "scanned": 150,
-   "flagged": 4,
-   "verified": 4,
-   "kept": 3
-  },
-  "19": {
-   "scanned": 150,
-   "flagged": 2,
-   "verified": 2,
+   "flagged": 3,
+   "verified": 3,
    "kept": 2
   },
-  "17": {
+  "19": {
    "scanned": 150,
    "flagged": 3,
    "verified": 3,
    "kept": 2
   },
   "20": {
-   "scanned": 111,
-   "flagged": 2,
-   "verified": 2,
-   "kept": 1
-  },
-  "16": {
-   "scanned": 150,
-   "flagged": 4,
-   "verified": 4,
-   "kept": 2
+   "scanned": 112,
+   "flagged": 3,
+   "verified": 3,
+   "kept": 3
   }
  }
 }

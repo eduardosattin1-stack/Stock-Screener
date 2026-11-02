@@ -2,100 +2,100 @@
  "chunk": "16 (RLMD-SLB)",
  "scanned": 150,
  "scan_distribution": {
-  "active": 1,
-  "watch": 10,
-  "none": 139
+  "active": 0,
+  "watch": 6,
+  "none": 144
  },
  "survivors_flagged": [
   {
-   "symbol": "ROKU",
+   "symbol": "RNW",
    "score": 5,
    "tier": "WATCH",
    "lane": "merger_arb",
-   "one_line": "Fox is buying Roku for $96 cash + 0.9693 FOXA (~$156.5 implied vs $152.85, ~2.4% gross spread). Shareholder vote Oct 14 2026; DOJ Second Request Sep 8; close 1H27. Real but complicated arb with a thin spread for antitrust risk."
-  },
-  {
-   "symbol": "RXO",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "merger_arb",
-   "one_line": "CHRW buying it for $17.25 cash + 0.0856 CHRW shares (~$30.25), announced Oct-5; already up ~20%, closes 1H27 pending antitrust review. A plain cash-and-stock arb with a modest spread."
+   "one_line": "CPP Investments/Sinha UK scheme take-private at $7.02 cash (Aug-11 agreement, Oct-28 side letter, 51.1% irrevocables); stock at $6.865 = ~2.3% gross spread; court and general meeting dates not confirmed; thin spread, low asymmetry."
   },
   {
    "symbol": "RYAM",
-   "score": 6,
-   "tier": "ACTIVE",
-   "lane": "M&A",
-   "one_line": "Strategic review run by Morgan Stanley/Wachtell, which management guides to conclude in Q4-2026 ('constructive engagement'); AIP's rejected $11-12 bid (unconfirmed) vs a ~$7 stock, down from ~$9 in July. An unmoved, early-arc setup; Q3 report Nov-5."
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "m_and_a",
+   "one_line": "Formal strategic review (Morgan Stanley/Wachtell, since Apr-2026). Management says it will conclude and announce a path in Q4-2026. AIP's rejected $11-12 bid sets a reference price. Dated window is real, but the bid premium is known and the outcome could be the standalone plan."
+  },
+  {
+   "symbol": "RZLT",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "one_line": "upLIFT tumor-HI pivotal (n~16, single-arm) is fully enrolled with topline guided mid-Dec 2026 and 6/8 hit the primary at interim; stock ~$3.9 vs $11.46 52w high after the sunRIZE failure, so not re-rated. Asymmetric, but small-n and dropout risk."
   },
   {
    "symbol": "SLAB",
    "score": 5,
    "tier": "WATCH",
    "lane": "merger_arb",
-   "one_line": "TI cash deal at $231 vs ~$222, about a 4% gross spread. Holders approved 2026-04-30; China SAMR had not formally accepted the filing as of June, with close guided 1H27. A thin spread for real China-approval risk; watch for SAMR acceptance or a ruling."
+   "one_line": "TI $231 cash deal (ann. 2026-02-04), HSR expired 05-22, Singapore cleared 08-07; SAMR acceptance/approval outstanding, close guided 1H27. Px $222.48 = ~3.8% gross spread, so mostly priced; the edge is pricing China risk."
   }
  ],
  "verified": [
   {
-   "symbol": "ROKU",
-   "score": 3,
+   "symbol": "RNW",
+   "score": 4,
    "tier": "WATCH",
    "lane": "merger_arb",
-   "catalyst": "Fox Corp is buying Roku for $96 cash plus 0.9693 FOXA per share (fixed ratio, signed 2026-06-14). It still needs Roku's stockholder vote and DOJ clearance after the Second Request, with close guided to 1H27.",
-   "dated_milestone": "Roku special meeting reported for 2026-10-14, but my searches did not confirm the date (the filings I saw left it blank). Approval is effectively assured by voting and support agreements. Next: DOJ Second Request compliance, then a clearance, consent-decree or suit decision. Close guided to 1H27.",
-   "instrument": "Long ROKU and short 0.9693 FOXA per share to hedge the stock leg. A naked long ROKU leaves you holding FOXA price risk as well as deal risk.",
-   "bloom_gates": "G1 yes: named acquirer (Fox Corp). G2 yes: signed merger agreement with a fixed $96 cash + 0.9693 FOXA exchange ratio. G3 weak: the specific figure is the ~$3.64 (2.4%) gross spread, and the market already prices it as compensation for DOJ risk, so it is not unpriced.",
-   "edge": "L. Run-up from the pre-catalyst base: about +26%. The base is ~$121, backed out from the 33.7% premium to the close before the sale-process reports; ROKU is $152.85 today. Remaining: about +2.4% gross to the $156.49 implied value (96 + 0.9693 x FOXA $62.41, FMP 2026-10-12), over roughly 6-9 months to a 1H27 close. That is about 3-5% annualized, near or below cash yields. The deal breaks if DOJ sues over self-preferencing of Fox content on Roku's home screen, and the break downside to ~$120-125 is about -20%, which dwarfs the spread. The spread has also narrowed as the offer value fell from $162 to $156 with FOXA. Mostly harvested, so the score is capped.",
-   "primary_source": "Fox Corp FY2026 10-K (sec.gov, filed Aug 2026): $96 cash + 0.9693 FOXA, signed 2026-06-14. Fox S-4/424B3 (2026): $162.20 implied at the 2026-06-11 unaffected close. Semafor 2026-09-08 plus Fox SEC filing 2026-09-09: DOJ Second Request. FMP quotes 2026-10-12: ROKU $152.85, FOXA $62.41.",
+   "catalyst": "A consortium of CPP Investments and CEO Sumant Sinha is taking ReNew private for $7.02 per share in cash through a UK scheme of arrangement. Holders of about 51.1% of the voting power have signed irrevocable undertakings, and close is guided to Q1 2027.",
+   "dated_milestone": "Scheme agreement 2026-08-11 (final $7.02 proposal dated 2026-07-27, confirmatory letter 2026-08-06). Next steps are the court meeting and general meeting, then the sanction hearing. The scheme-meeting dates were not found in any public source (gap). Expected close is Q1 2027.",
+   "instrument": "RNW common (NASDAQ). Cash-election arb; anyone not electing the rollover by the court hearing gets the cash by default.",
+   "bloom_gates": "G1 passes: named counterparties (CPP Investments as Purchaser, plus Sumant Sinha). G2 passes: signed scheme with 51.1% irrevocables. G3 is weak: the only unpriced figure left is a 2.3% gross spread.",
+   "edge": "L. The deal is real, contractual and forward, but almost all of it is already in the price. Run-up from the pre-proposal base (about $5.8-6.0, using the 200-day average of $5.97; 52-week low $4.385) to $6.865 today is roughly +15-17%. Remaining from $6.865 to the $7.02 cash price is +2.26% gross, about 5-6% annualized over a Q1 2027 close. That is near cash yield. Against it, the break downside is about -15-20% back to the base, and an earlier 2025 consortium bid for RNW did not complete.",
+   "primary_source": "FMP quote, 2026-11-02 ($6.865, 200-day average $5.97). InsideArbitrage, Aug 2026: CPP and Sinha consortium at $7.02, Q1 2027 close, 51.1% irrevocables. ReNew investor-relations 6-K files: the $7.02 BAFO and the 2026-08-06 confirmatory letter. SEC 6-K FY2026 d104914dex992.htm: scheme General Meeting definitions.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The deal is real, specific and still ahead. The 10-K confirms the signed agreement and fixed ratio, and the DOJ Second Request was reported 2026-09-08 and confirmed in an SEC filing the next day. The shareholder vote is a formality because voting agreements are in place. But about 90% of the move from the undisturbed price is already captured. The remaining ~2.4% gross spread is thin pay for a live vertical-antitrust Second Request and a 6-9 month hold. Upside is about $3.6 per share against roughly $30 per share on a break, so the risk/reward is poor. The cash and fixed-ratio terms are contractual, so the provenance check does not apply. Gap: I did not confirm the Oct 14 meeting date in the definitive proxy."
-  },
-  {
-   "symbol": "RXO",
-   "score": 2,
-   "tier": "NONE",
-   "lane": "merger_arb",
-   "catalyst": "C.H. Robinson (CHRW) is acquiring 100% of RXO for $17.25 cash plus 0.0856 CHRW shares per share. Holders can elect all-cash $30.25 or all-stock 0.1992, prorated to about 57% cash / 43% stock. The deal was announced 2026-10-05 and is expected to close in 1H27, subject to regulatory approval and an RXO shareholder vote.",
-   "dated_milestone": "Announced 2026-10-05. Next steps are the HSR filing and waiting period, the S-4/proxy, and the RXO shareholder vote, likely around 1Q27; no date has been set. Expected close is 1H27.",
-   "instrument": "RXO common, long. A classic arb would short 0.0856 CHRW per RXO share to hedge the stock leg.",
-   "bloom_gates": "G1 passes: named counterparty, CHRW. G2 passes: signed merger agreement, unanimous board approvals, $4.5B committed financing plus a Morgan Stanley bridge, and a voting agreement from MFN Partners (about 17% of shares). G3 fails: no specific unpriced figure remains, because the spread is about 1.2%.",
-   "edge": "L. Run-up from the pre-catalyst base is +24%. The Oct-2 close was about $23.45 (implied by the 29% premium to $30.25); RXO now trades at $29.08. Remaining capture is about +1.2%. Live consideration is $17.25 + 0.0856 x $142.31 (CHRW) = $29.43, a gross spread of $0.35, or roughly 2% annualized over 6-9 months, which is below the risk-free rate. If the deal breaks, downside is about -19% back to around $23.5, so upside/downside is about 0.06. The fixed exchange ratio means CHRW weakness also eats the spread: CHRW is down from a $151.88 VWAP to $142.31, so the headline $30.25 is now $29.43. The event is real but almost fully harvested.",
-   "primary_source": "RXO Form 425 filings on SEC EDGAR (merger announcement, 2026-10-05): https://www.sec.gov/Archives/edgar/data/0001929561/000119312526413211/d115124d425.htm. FreightWaves deal report, 2026-10-05. FMP batch-quote, 2026-10-12: RXO $29.08, CHRW $142.31.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The deal is real, specific and dated: a signed agreement, committed financing and a 17% holder locked up. Price provenance is contractual, so it is exempt from the waterfall check. But the market has already priced most of it. RXO is at $29.08 against live consideration of $29.43, leaving about 1.2% gross (around 2% annualized) after a +24% run-up. Against that sits roughly 19% break downside, plus antitrust review of a merger of two large truckload brokers and exposure to CHRW price swings. Mostly harvested with negative risk-adjusted carry, so tier NONE. Gap: I did not check the HSR timing or second-request status, or any regulator commentary."
+   "analysis": "The cash price is contractual, so the numerator provenance check does not apply, and 51.1% irrevocables make approval at the scheme vote very likely. Remaining capture is about 2.3% gross against about -15-20% downside if the deal breaks. On top of that, the 2025 bid failed and Indian regulatory and court timing is uncertain, so the trade is mostly harvested and the asymmetry is poor. Score is capped at 4 under the residual-capture rule. Keep it on WATCH for a spread widening (for example above 6%) or for the court-meeting date to be confirmed. Gap: I could not verify the court and general meeting dates or the Oct-28 side letter."
   },
   {
    "symbol": "RYAM",
-   "score": 6,
-   "tier": "ACTIVE",
-   "lane": "M&A",
-   "catalyst": "RYAM's board-run strategic review, with Morgan Stanley and Wachtell advising and a possible sale of the whole company on the table, is guided to conclude with a \"clear path forward\" in Q4-2026. A named bidder sits behind it: AIP's documented, rejected $11-12/share cash proposal against a $7.02 stock.",
-   "dated_milestone": "Review conclusion guided for Q4-2026 (by 2026-12-31). Next date: the Q3-2026 earnings release, expected in early November. The triage says Nov-5; last year's pattern was a Nov-4 release with the call the next day, and the 2026 date is not yet confirmed.",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "m_and_a",
+   "catalyst": "Rayonier Advanced Materials is running a formal strategic review (sale of all or part, strategic investment, merger, or the standalone plan) with Morgan Stanley and Wachtell. Management has guided that it will conclude the review and announce a path in Q4-2026.",
+   "dated_milestone": "Q3-2026 earnings around 2026-11-04 (estimated; first chance for a review update). Review outcome guided for Q4-2026, so by 2026-12-31. The April release said the board set no firm timetable.",
    "instrument": "RYAM common (NYSE)",
-   "bloom_gates": "G1: named counterparty, American Industrial Partners (AIP Capital Fund VIII), in a Schedule 13D exhibit letter dated 2025-11-18. G3: a specific unpriced figure, $11.00-12.00/share all-cash, with no financing condition and a go-shop, 99-117% above the 2025-11-17 close. G2 is only partial: management guides the review to conclude in Q4-2026 but has not committed to any transaction, and says there is no assurance of one.",
-   "edge": "M. Run-up: the pre-catalyst base is about $5.53 (implied by the bid's 99-117% premium to the 2025-11-17 close). Today's $7.02 is +27% above that. Remaining capture: +64% from $7.02 to the $11.50 midpoint, or +57% to the $11 floor. So most of the upside is still on the table. The market implies roughly 25% odds of a deal (($7.02-$5.5)/($11.5-$5.5)). The stock has slid from about $9 in July to $7, below both its 50-day ($8.35) and 200-day ($8.66) averages. This is a binary, unharvested setup, but the bid is stale and was rejected. The edge is medium, not high: the tape is fading the deal, and a \"path forward\" could just as easily mean a standalone plan or partial asset sales.",
-   "primary_source": "AIP Schedule 13D exhibit (proposal letter dated 2025-11-18, SEC accession 0000950103-26-002612). RYAM Q2-2026 8-K and earnings release (2026-08-04). RYAM 10-Q for the quarter ended 2026-06-27. Review launch: Jax Daily Record (2026-04-20). CEO appointment: Jax Daily Record (2026-06-25). FMP quote, 2026-10-12: $7.02.",
-   "verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "kill_fact": "Correction, and it helps the line: the claim \"no evidence AIP is in the current process\" is wrong. AIP's 13D/A, filed 2026-07-15 with an event date of 2026-07-14, says AIP signed the Issuer's standard confidentiality agreement, with a standstill, in connection with the formal strategic-alternatives process announced 2026-04-20. AIP holds 3.4M shares (5.04%, about $25.4M cost, roughly $7.48 average). The filing says AIP may submit non-binding proposals, but it makes no new price commitment. The Q2-2026 8-K (EX-99.1, 2026-08-04) confirms the company expects \"to conclude the review and communicate a clear path forward during the fourth quarter\", and the CEO cites several \"interested parties\". The deal has not fired and is not priced in. The stock is $7.02 against a 50-day average of $8.35 and a 52-week high of $11.85, so it is fading into the decision with about 57-71% to run to the $11-12 bid. The real risks: (1) a \"clear path forward\" can be a partial asset sale or a stand-alone plan, and secured lenders (net secured leverage about 4.3x) would take those proceeds before the common does; (2) the $11-12 figure is a rejected, non-binding letter from 2025-11-18, not a live price; (3) if no sale comes, the levered equity could retest about $5.4. No 8-K or deal news was found from September to 2026-10-12.",
-   "analysis": "The triage's \"unconfirmed\" $11-12 bid is now CONFIRMED in AIP's Schedule 13D exhibit letter. That letter was dated 2025-11-18, the board rejected the bid in December 2025, and AIP disclosed it in February 2026. The Q2-2026 release (2026-08-04) and the 10-Q both guide the review to conclude in Q4-2026. Capital-structure check (10-Q, quarter ended 2026-06-27): about $812M debt principal (term loan of about $691M due 2029) against $57M cash, so net debt is about $755M against a $473M market cap. Nothing senior sits ahead of the common except a $12.2M BioNova subsidiary preferred. That means a cash deal price flows straight to the common, and the $11-12 is contractual-style, not derived. The equity is highly levered, though, and RYAM lost $420M in 2025, so a no-deal outcome likely retests the $5.4 low. Risks: there is no evidence AIP is in the current process. In June the board named a permanent CEO, Daniel Krawczyk (an M&A operator), and RBC read that as making a sale somewhat less likely. No news from September or October was found. Gaps: I did not verify change-of-control or debt-portability terms, any bidder other than AIP, or the confirmed Q3 date."
+   "bloom_gates": "G2 partial: the Q4-2026 conclusion is a concrete, dated management commitment, but only to announce a path, not to sell. G1 not met: AIP is a named bidder, but its offer was made around Nov-2025, rejected in Dec-2025 and disclosed in Feb-2026, with no evidence it is still live. G3 not met: there is no contractual price; the $11-12 is a stale, rejected indication.",
+   "edge": "M-L. Run-up: none. The stock is $6.77, about 22% below its 200-day average of $8.67, 43% below the $11.85 52-week high, and +26% off the $5.38 low. Whatever bid premium was priced in after the AIP disclosure has largely bled out. Remaining: +62-77% to the old $11-12 AIP level only if a sale happens at that price. The downside if the review ends standalone is roughly the low end ($5.4-5.5, -20%). A rough binary (about 40% sale at about $10, 60% standalone at about $5.5) gives an expected value near $7.3, about +8%. The capital structure has no preferred ahead of the common but about $779M of debt against a $458M market cap with interest coverage near 0.1x, so any sale value flows to the equity only after a heavy debt load. That leverage makes a rejected 2025 per-share bid an unreliable anchor today.",
+   "primary_source": "RYAM Q2-2026 earnings release, 8-K dated 2026-08-04 (sec.gov ex99-1), and the 10-Q for the period ended 2026-06-27: both state the review will conclude in Q4-2026. Jax Daily Record 2026-04-20 on the review launch and the AIP bid history. FMP quote 2026-11-02: $6.77, market cap $458M, 200-day average $8.67, 52-week range $5.38-11.85.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The dated window is real: the Q2 release (2026-08-04) and the 10-Q both say the review concludes in Q4-2026. But there is no named live counterparty and no price, and the falling price says the market thinks a sale at the old AIP level is unlikely. The option value is cheap because the bid premium has largely been given back, but the event is a coin flip with a credible standalone downside on a heavily levered balance sheet. It stays WATCH, to be revisited at Q3 earnings (about 11-04). Gap: I found no Q3 release, 8-K or October news on the review. Debt is from an undated Simply Wall St snapshot, not re-derived from the latest 10-Q."
+  },
+  {
+   "symbol": "RZLT",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "catalyst": "Topline data are due in mid-December 2026 from upLIFT, the single-arm pivotal Phase 3 of ersodetug in tumor hyperinsulinism (n=16). The primary endpoint is the share of patients reaching at least a 50% cut in IV glucose infusion, and it passes if the lower bound of the 95% CI is at least 30%, meaning roughly 9 of 16 responders.",
+   "dated_milestone": "upLIFT topline guided for mid-Dec 2026 (enrollment completed, PR 2026-10-14). Next after that is an NDA/BLA filing decision with Breakthrough Therapy designation (granted May 2025), timing not yet guided.",
+   "instrument": "RZLT common (NASDAQ), $3.795 on 2026-11-02, market cap about $367M",
+   "bloom_gates": "G2: a concrete company commitment to mid-Dec 2026 topline with a predefined statistical bar. G3 is only partial: the readout itself is unpriced, but the interim (7 of the first 8 responders) is already public and was traded in June 2026. G1 is not applicable (no counterparty).",
+   "edge": "M. This is a binary with a favorable starting point. 7 of the first 8 patients met the responder bar (one cancer death counts as a non-responder), so the trial needs only about 2 more responders among the last 8. Run-up from the pre-catalyst base: +15% from the $3.30 close before the interim (2026-05-29), and about +115-200% from the post-sunRIZE crash range of $1.23-1.77 (Dec 2025). Remaining capture: about +45-70% to a success value of roughly $5.5-6.5 (the June-August post-interim range of $4.9-5.3 plus some readout de-risking), against about -65-70% to roughly $1.1-1.3 (cash backing, about $108M at 6/30/26 less burn) on failure. The probability-weighted value is about $5.0 at roughly 80% success odds, so about +30% expected. The stock has already given back from $4.87 to $3.58-3.95 on the October update, so this is not re-rated, but it is not deep value either.",
+   "primary_source": "Rezolute PR 'Completion of Enrollment in Phase 3 upLIFT Study' (GlobeNewswire, 2026-10-14); June 2026 positive interim PR (BioSpace); FY2026 10-K/8-K (SEC, cash $107.8M at 2026-06-30); FMP quote and EOD history (2026-11-02); Clinical Trials Arena on sunRIZE failure (2025-12-11).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The catalyst is confirmed as real, dated and forward. Rezolute's 2026-10-14 PR says upLIFT is fully enrolled with topline mid-Dec 2026, and 7 of the first 8 patients met the responder criterion, so the 56% responder-rate threshold looks very achievable. The upside is limited by the small market (tumor HI is ultra-rare and ersodetug is now the company's only viable indication after the Dec-2025 sunRIZE congenital-HI failure, which cut the stock 88%). Other limits: a one-death/non-responder pattern in a cancer population, an open-label single-arm design, and likely dilution after the data, since cash was $107.8M at 6/30/26 against about $78M a year of burn. Gaps: I did not pull the latest 10-Q for exact share count or cash at 9/30, I did not verify the remaining-8 responder count beyond the October PR, and the success-case value is a heuristic from the post-interim trading range, not a rNPV."
   },
   {
    "symbol": "SLAB",
    "score": 4,
    "tier": "WATCH",
    "lane": "merger_arb",
-   "catalyst": "China SAMR clearance of Texas Instruments' $231/sh all-cash takeover of Silicon Labs (agreed 2026-02-04), the last major regulatory condition before a 1H27 close.",
-   "dated_milestone": "Completed: HSR expired 2026-05-22 (8-K 2026-05-26), holder approval 2026-04-30, Singapore cleared. Still open: SAMR formal acceptance, which had not happened as of 2026-06-11 (MLex), and the review that follows. Next date to check: SLAB Q3 10-Q / earnings, around late Oct to early Nov 2026, for a regulatory status update. Outside close guided 1H27.",
-   "instrument": "SLAB common (long, cash merger arb)",
-   "bloom_gates": "G1 (named acquirer: Texas Instruments) + G2 (definitive $231 all-cash merger agreement, holder-approved). G3 is weak: the only figure not yet priced is a 4.0% gross spread.",
-   "edge": "L. Run-up: about +45-55% from the pre-announcement base. That base is estimated from the 52-week range ($115.51 low; low-to-mid $150s before 2026-02-04), not a verified print. Remaining: +4.0% gross ($222.04 to $231). That is roughly 6-8% annualized over the 6-9 months to a 1H27 close. If the deal breaks, the stock likely falls back toward $150-170, a 25-30%+ loss. That is about 7-9x downside per unit of upside, against real China/SAMR timing and conditioning risk while US-China chip tensions persist (China is about 15% of SLAB revenue and about 20% of TI's). The spread is mostly harvested and fairly prices the remaining risk.",
-   "primary_source": "MLex 2026-06-11 (SAMR had not formally accepted the filing); SLAB 8-K 2026-05-26 (HSR waiting period expired 2026-05-22); TI/SLAB merger announcement 2026-02-04 ($231 cash, close expected 1H27); SEC Form 425 transcript Feb 2026 (China approval required); FMP quote 2026-10-12 ($222.04).",
+   "catalyst": "Texas Instruments' $231/sh all-cash acquisition of Silicon Labs (signed 2026-02-04) closes on China SAMR clearance, guided for 1H27.",
+   "dated_milestone": "Done: signed 2026-02-04, stockholders approved 2026-04-30, Singapore CCS cleared 2026-08-07. Still open: SAMR had not formally accepted the filing as of the MLex report of 2026-06-11, and I found no later update. Next date: SAMR acceptance/decision, then close in 1H27 (by about 2027-06-30).",
+   "instrument": "SLAB common, long against the $231 cash consideration. Cash deal, so no TXN hedge is needed.",
+   "bloom_gates": "G1 (named counterparty: Texas Instruments) and G2 (definitive merger agreement at $231 cash, stockholders approved). G3 not met: the remaining figure is the $8.52 spread, which is already almost fully priced.",
+   "edge": "L. Run-up from the pre-catalyst base: $136.62 close on 2026-02-03 to $222.48 = +62.8%. Remaining to the contractual $231 = +3.83% gross, about 6% annualized to a mid-2027 close. Break downside: the undisturbed price was around $137-145, so a break costs about 35-38%. The spread implies roughly a 10-11% break probability. This is a pure bet on how China's SAMR handles a US-semi deal during trade friction, and the market is already pricing that risk sensibly. The payoff is asymmetric to the downside, and about 90%+ of the event value is already in the price.",
+   "primary_source": "Silicon Labs 10-Q for the period ending 2026-07-04 (stockholder approval 2026-04-30, $231 cash, close 1H27); TXN Q1-2026 10-Q; CCS Singapore clearance release 2026-08-07; MLex 2026-06-11 (SAMR not yet accepted the filing); FMP quote 2026-11-02 at $222.48 and FMP EOD closes for 2026-02-03 ($136.62) and 2026-02-04 ($203.41).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The deal is real and contractual, and the $231 cash price is exempt from numerator provenance. The US, shareholder and Singapore conditions are done. The one gating item is SAMR, which had not even formally accepted the filing as of 2026-06-11. I found no newer SAMR status, which is the key gap in this verification. FMP shows SLAB at $222.04 on 2026-10-12, right at its 52-week high of $223.50. That leaves about 4.0% gross for the China-approval risk on a deal worth about +50% to holders, so the residual is mostly harvested (score capped at 4). Upgrade only if the spread widens sharply on a SAMR delay without signs the deal is breaking, or if SAMR accepts or clears and the timeline shortens."
+   "analysis": "The deal is real and contractual: TXN pays $231 cash, HSR expired, stockholders approved on 04-30, Singapore cleared on 08-07. That leaves SAMR as the only meaningful condition. I could not verify SAMR acceptance after the 2026-06-11 MLex report that it had not been accepted, so this is an evidence gap. At $222.48 the stock has captured about 63% from the $136.62 unaffected close, and only 3.8% gross remains against about 36% break downside. That makes it a mostly-harvested event, capped at score 4. The numerator-provenance rule does not apply because the cash price is contractual. Keep on WATCH: the actionable trigger is SAMR formally accepting the filing, or the spread widening on trade-tension headlines."
   }
  ]
 }

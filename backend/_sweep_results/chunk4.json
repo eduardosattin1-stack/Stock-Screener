@@ -3,55 +3,99 @@
  "scanned": 150,
  "scan_distribution": {
   "active": 0,
-  "watch": 9,
-  "none": 141
+  "watch": 4,
+  "none": 146
  },
  "survivors_flagged": [
+  {
+   "symbol": "BUR",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "one_line": "The Second Circuit reversed the $16B YPF judgment on 2026-03-27 and the stock fell about 50%. A Supreme Court cert petition was filed 2026-09-30, with a conference decision likely Dec-Jan. Cert is unlikely to be granted, but a grant would re-rate a crushed stock, so the payoff is lopsided. The treaty-arbitration route is a second option."
+  },
   {
    "symbol": "CAPR",
    "score": 5,
    "tier": "WATCH",
-   "lane": "binary_pdufa",
-   "one_line": "Deramiocel PDUFA reportedly moved to 2026-11-22 after a major amendment that narrows the label to upper-limb only. Single secondary source, not yet confirmed by Capricor. Stock has already crashed to ~$7.8 on the 9-3 negative AdCom (PT cut to $2), so this is a post-washout binary with asymmetry, not a run-up name."
+   "lane": "binary",
+   "one_line": "FDA decision on the deramiocel BLA is due 2026-11-22, pushed back from August by a major amendment that added 24-month open-label data. Only one source reports the new date, so confirm it in Capricor's filings. The FDA panel voted 9-3 against efficacy on 07-29 and the stock plunged. An approval would be a large upside surprise, but the decision is about 3 weeks out, so the setup is late-arc."
   },
   {
    "symbol": "CBRS",
    "score": 5,
    "tier": "WATCH",
-   "lane": "overhang_clearing",
-   "one_line": "Main 180-day IPO lockup expires around mid-November 2026 after staged releases (June, ~Oct 1). Stock $164 is near its year low and under the $185 IPO price. Setup: buy the suppressed name after the overhang clears; exact date needs checking against the S-1."
+   "lane": "overhang",
+   "one_line": "Staged IPO lockup ends fully around Nov 9-mid Nov 2026 (or 2 trading days after Q3 results). Stock is about 20% below the $185 IPO price after insider Form 144 filings, so this is a buy-after-the-overhang-clears setup. Dates conflict between sources."
+  },
+  {
+   "symbol": "CCOI",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "distressed",
+   "one_line": "$750M of 7% unsecured notes mature Jun 2027. A secured refi (around 9.5%, ring-fencing IRU obligations) was guided for Q3 and is still not confirmed. Stock is down 85% to about $6.3 and Q3 earnings land next week. The refi/LME outcome is a real binary, but it is already deep in the price."
   }
  ],
  "verified": [
   {
+   "symbol": "BUR",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "catalyst": "The Supreme Court decides whether to hear the Petersen/Eton Park v. Argentina (YPF) case. Granting review would revive a claim the market has written off since the Second Circuit reversed the roughly $16B judgment on 2026-03-27.",
+   "dated_milestone": "Cert petition reportedly filed 2026-09-30 (I could not check this). Argentina's opposition brief and conference distribution are next, with a decision likely Dec-2026 to Jan-2027. Nearer date: 3Q26 results on 2026-11-04.",
+   "instrument": "BUR common (NYSE, $3.65; also listed in London). Long-dated calls would express the lopsided payoff better than shares if liquidity allows.",
+   "bloom_gates": "G1 is met: the counterparty is named (Republic of Argentina / YPF). G2 is not met: there is no commitment, only a discretionary court decision. G3 is partial: the stock implies close to zero value for the YPF claim, but I could not re-derive the current carrying value of the YPF asset or the slice of the claim that belongs to Burford.",
+   "edge": "L-M. The event is real and dated, but the Supreme Court grants roughly 1-5% of paid petitions, and even a grant only reopens the case; it does not reinstate the award. Run-up from the pre-catalyst base: about 0% to slightly negative. The London price was 286p (about $3.85) on 2026-09-24, just before the filing, against $3.65 today, so none of the cert option is priced. Remaining capture if cert is granted: an estimated +40-90%, toward $5-7. The 200-day average is $5.38 and the pre-reversal 52-week high was $10.10. A grant would restore part of that, not all of it. Probability-weighted, the expected value is small. The asymmetry is real, but the odds are weak.",
+   "primary_source": "Proactive Investors via FMP news, 2026-03-30 (Second Circuit reversal, 40%+ drop). Burford press releases via FMP: senior secured notes, 2026-09-14; jury verdict statement, 2026-09-28; 3Q26 results date, 2026-10-26. FMP quote, 2026-11-02 ($3.65, 52-week range 2.86-10.10). Cert petition filing date taken from the triage flag and not independently verified.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "FMP news confirms the Second Circuit reversal on 2026-03-27 (Proactive Investors, 2026-03-30: shares fell more than 40%) and the stock's collapse since: $3.65 now against a $10.10 52-week high, with a 2026-09-14 issue of $300M of 8% senior secured notes. I could not independently confirm the 2026-09-30 cert petition or a conference date because the web-search budget was exhausted, and I did not reach the 10-Q for the YPF carrying value or the debt stack ahead of the common. Treat the numerator as unverified. That alone caps the score at 4 under the provenance rule. This is a low-probability, discretionary court binary, not a commitment. A further possible source of upside is the 2026-09-25 jury verdict of $5.7B in a patent case in which Burford has a financial interest; Burford's share of it is not disclosed. That is a separate, undated thesis. Keep on WATCH. Re-score if cert is granted, if the Solicitor General is invited to give a view (CVSG), or after the 3Q26 numbers show the YPF write-down and how the capital structure stands."
+  },
+  {
    "symbol": "CAPR",
    "score": 5,
    "tier": "WATCH",
-   "lane": "binary_pdufa",
-   "catalyst": "FDA action on the deramiocel BLA for DMD, now targeting upper-limb function after a major amendment, with a PDUFA date of 2026-11-22.",
-   "dated_milestone": "PDUFA target action date 2026-11-22. The 2026-10-07 PPMD webinar has already happened. Next after that: the Q3 10-Q (~mid-Nov) for an updated cash figure, and any label or partner news.",
-   "instrument": "CAPR common (NASDAQ). Defined-risk calls or call spreads would suit a binary better if IV allows.",
-   "bloom_gates": "G1 yes (FDA/CBER is a named counterparty with a dated action). G2 yes (the PDUFA goal date is a concrete regulatory commitment). G3 partial: the binary is open, but its value is probability-weighted and the negative AdCom has already been priced in, so it is not a clearly unpriced figure.",
-   "edge": "L-M. Run-up from the pre-catalyst base: about 0-5%. The stock has sat around $7.6-8.0 since the 9-03 AdCom washout (50d avg $7.64, spot $7.83), so it has not run up. Remaining to the favorable value: about +90-130% if approved (my own rough estimate of ~$15-18/sh: approved rare-disease DMD asset, narrow upper-limb label, US partner economics). Floor if rejected: about $3.5-4/sh in net cash, roughly -50 to -55%. With approval odds of maybe 30-35% after the negative AdCom, the probability-weighted value is about $7-8, close to spot. The asymmetry is real but about fairly priced. There is no clear mispricing edge.",
-   "primary_source": "Capricor press release, GlobeNewswire 2026-10-05 ('Positive HOPE-3 OLE Data on Upper Limb Function... PDUFA Target Action Date November 22, 2026'). Capricor 10-Q for Q2 2026, filed 2026-08-14 (FMP balance sheet). FMP quote 2026-10-12 ($7.83, mcap $450M). Hagens Berman notice 2026-09-27 (FDA extended the BLA review).",
+   "lane": "binary",
+   "catalyst": "The FDA must act on Capricor's deramiocel BLA for Duchenne muscular dystrophy by 2026-11-22. The date was extended after a major amendment added 24-month HOPE-3 open-label extension data, and the 07-29 advisory panel voted 9-3 against efficacy.",
+   "dated_milestone": "PDUFA target action date 2026-11-22 (approval or CRL). After that, the securities class action covering the 12/17/2025-7/26/2026 class period moves to the lead-plaintiff stage, and the Q3 10-Q is due in mid-November.",
+   "instrument": "CAPR common (NASDAQ), $6.93-6.95 on 2026-11-02, market cap about $401M, about 58M shares. The risk is binary, so the position should be small. Defined-risk call spreads would also work if the options are liquid.",
+   "bloom_gates": "G1 passes: the counterparty is named (FDA/CBER acting on the deramiocel BLA). G2 passes: there is a concrete, dated PDUFA goal of 2026-11-22, confirmed in the company's own press release. G3 passes only partly: an approval is not priced in (about $6.95 now vs about $19.7 before the panel), but the market's discount reflects real negative panel evidence, so the gap is not a clean mispricing.",
+   "edge": "L-M. The date is confirmed and the event is forward-looking, but the discount looks fair rather than mispriced. Run-up: +74% from the post-panel base of about $4.00 (07-30 to 08-13 closes $3.85-4.21) to $6.95. Most of that came on 08-14, when the major amendment and PDUFA extension became public (+58% that day, 66M shares traded). Remaining: about +160% to a favorable-resolution value of about $18. I took that value from the pre-panel close of $19.70, haircut for a likely narrow label and launch ramp. On a CRL the price would fall to roughly $3.0-3.5, about cash per share, a 50-55% drop. At 25% approval odds (low after a 9-3 negative panel and the allegations about the analysis plan), the expected value is about 0.25*18 + 0.75*3.3 = $7.0, roughly today's price. The event has been partly harvested, the large residual reflects real binary risk, and I see no informational edge.",
+   "primary_source": "Capricor press release (GlobeNewswire, 2026-10-05) 'Positive HOPE-3 Open-Label Extension Data on Upper Limb Function in DMD at 2026 World Muscle Society Congress', which states that the data are in the BLA major amendment and gives a PDUFA target action date of November 22, 2026. Capricor Q2-2026 10-Q balance sheet (filed 2026-08-14). FMP EOD prices for 2026-07-20 to 2026-11-02.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "Capricor's own 2026-10-05 press release confirms the PDUFA date of 2026-11-22 and says the upper-limb HOPE-3 OLE data went into a BLA major amendment. That means the date is company-confirmed, not single-source as triage said. The upper-limb-only label is implied by how the amendment is framed but not stated outright. The capital structure is clean: per the 6/30/26 10-Q there is no preferred and no funded debt, ~$238M of cash and investments against ~$91M of lease liabilities, and ~58M shares. That gives a cash floor of about $3.5-4/sh after burn, so the equity waterfall does not cap the event. The binary is still forward and unharvested. But after a negative AdCom and with the securities class action about a rewritten SAP outstanding, approval odds are low enough that spot roughly equals the expected value. Gaps: web search budget was exhausted, so I did not independently verify the AdCom vote details, the reported $2 PT, or the partner milestone terms."
+   "analysis": "Capricor's own 2026-10-05 GlobeNewswire release confirms the PDUFA date of November 22, 2026, so the single-source date concern is resolved. The capital structure is clean: about $238M in cash and investments at 6/30/26 (10-Q filed 2026-08-14), no preferred stock and no funded debt, only about $91M of lease liabilities. Cash is therefore a real floor of about $3-4 per share after Q3 burn, and nothing in the waterfall eats into the upside. The setup is late-arc and roughly fairly priced. The 9-3 panel vote against efficacy, plus class-action allegations that the HOPE-3 statistical analysis plan was rewritten one day before unblinding without FDA agreement, keep approval odds near 20-30%. That makes the probability-weighted value of about $7 close to the $6.95 price, so this stays a WATCH binary at score 5 and does not qualify as ACTIVE. Gap: my web-search budget was used up before I could look for any FDA label-negotiation or late-cycle meeting disclosures in recent filings, so I could not check for them."
   },
   {
    "symbol": "CBRS",
    "score": 3,
    "tier": "NONE",
-   "lane": "overhang_clearing",
-   "catalyst": "Cerebras's main 180-day IPO lockup ends around 2026-11-09/10. The IPO priced 2026-05-13 at $185 per the 424B4 filed 2026-05-14, so 180 days lands about Nov 9. After that, the last locked-up insider and VC supply is free to sell.",
-   "dated_milestone": "Final lockup expiry about 2026-11-09/10. This is derived from the prospectus date, not read from the lock-up clause; the exact day and any early release tied to Q3 earnings are still unverified. Q3 earnings (first 2027 guide, Q4 core gross margin) are likely early-to-mid Nov 2026.",
-   "instrument": "CBRS common (NASDAQ). Reference $164.17 on 2026-10-12, just above the 52-week low of $160.81 and under the $185 IPO price.",
-   "bloom_gates": "None passed. G1: no named counterparty, because a lockup expiry is a supply event, not a deal with someone. G2: no concrete company commitment. G3: no specific figure that the market has not priced; the expiry date and share count are public in the S-1/424B4. The OpenAI 750MW / $25.4B RPO backlog is already known and is not this catalyst.",
-   "edge": "L. Lockup dates are among the most widely known calendar events, and the staged early release (about Oct 1) has already been sold into. Insider Form 4 sales on Sep 28-29 were COO 396k shares at about $204 and CFO 32.5k shares. CNBC on 2026-10-02 put the -20% week down to the lockup plus the loss of OpenAI's Ultrafast workload to Nvidia. Run-up from the pre-catalyst base: none. The stock fell about 20%, from about $204 on Sep 29 to $164, so the overhang discount has already been taken. Remaining capture to the favorable value (back to the $185 IPO price after the overhang clears): about +13%. That figure is not provenance-checked, because the payoff depends on sentiment and OpenAI concentration, not on the capital structure. Much of the overhang may already be priced, and the November release can still add supply first.",
-   "primary_source": "SEC EDGAR: CBRS 424B4 filed 2026-05-14 (cerebras-424b4.htm; IPO priced 2026-05-13) and the closing 8-K filed 2026-05-15. CNBC 2026-10-02, \"Cerebras stock hits post-IPO low...lockup expiration\". Form 4 sales dated 2026-09-28/29, via Defense World 2026-10-01. FMP quote 2026-10-12 ($164.17, 52-week range $160.81-$386.34).",
+   "lane": "overhang",
+   "catalyst": "The main IPO lockup ends about 2 trading days after Q3 results, which are due after the close on Thu 2026-11-12, so roughly 2026-11-16. That makes more shares available to sell. It does not create value, and the date is widely known.",
+   "dated_milestone": "Q3-2026 results after the close on 2026-11-12 (company PR, 2026-10-20). The lockup release follows about 2 trading days later, around 2026-11-16. The triage note's \"Nov 9 to mid-Nov\" range comes before that date and is likely stale.",
+   "instrument": "CBRS common (NASDAQ)",
+   "bloom_gates": "None passed. G1: no named counterparty. A lockup expiry is a share-supply event, not a deal. G2: there is no concrete commitment to pay the common anything. G3: there is no specific unpriced figure. The lockup date and Q3 date are public and calendared. The Oracle/OCI deal (2026-10-27) and RPO of $25.4B are already public and already in the price.",
+   "edge": "L. The triage premise is stale. CBRS last traded at $99.58 (FMP quote, 2026-11-02, -8.8% on the day, at a fresh 52-week low of $98.50). That is about 46% below the $185 IPO price, not 20%, and about 74% below the $386 peak. Run-up from the pre-catalyst base: none, about -46% since the IPO and below the 50-day average of $169. There is no gain to harvest, but there is also no event-defined upside. Remaining capture: not definable. A lockup release has no provenance-checked favorable-resolution value. Any rebound after the overhang clears would be a sentiment and flow call, not a contractual or SoP figure. Analyst targets (+180%) are inherited and do not count. Selling pressure is plausibly already priced, since the stock fell 9% today ahead of the release.",
+   "primary_source": "FMP quote CBRS, 2026-11-02. Cerebras Q3 results date PR (GlobeNewswire, 2026-10-20). Johnson Fistel short-seller investigation release (GlobeNewswire, 2026-10-29). Reuters on the Oracle/Cerebras deal (2026-10-27). Seeking Alpha on RPO $25.4B and cash $8.6B (2026-10-23).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The event is real, dated (about Nov 9-10) and still ahead, but it is a technical supply event with no Bloom gate. The early release has already happened and the stock already fell about 20% around it, so the clean overhang-clearing setup is mostly used up. What the stock does next depends on OpenAI concentration (it lost the Ultrafast workload to Nvidia, then Altman called Cerebras a \"close partner\" on Oct 5) and on the Q3 guide, not on the lockup itself. Gaps: web search was exhausted this turn, so I could not read the lock-up clause in the 424B4 for the exact date, any earnings-linked early-release triggers, or the number of shares unlocking. The date is inferred as 180 days after the 2026-05-13 pricing. I also skipped the numerator-provenance check, since the upside does not come from the capital structure. Score 3, no tier: watch it only as a timing tool after the expiry, not as a catalyst."
+   "analysis": "Two dates are confirmed: Q3 results on 2026-11-12, and the staged lockup ending about 2 trading days later. But a lockup expiry is a known supply event with no Bloom G1/G2/G3 content, so it fails the gate as a catalyst. \"Buy after the overhang clears\" is a timing trade on flows, not a mispriced specific event. Live risks also cut against it: a short-seller report and several securities-fraud investigations announced 2026-10-29 and 10-30 (Johnson Fistel, Block & Leviton), plus a fresh 52-week low. I did not pull the 10-Q, so the exact staged-release share count and the lockup trigger wording were not checked against the S-1 or prospectus. Web search was unavailable (budget used up), so there are 3 effective lookups. Re-screen after Q3 only if results set a specific, unpriced dated figure, such as RPO conversion or a named contract."
+  },
+  {
+   "symbol": "CCOI",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "distressed",
+   "catalyst": "Cogent has to refinance about $746M of current debt (the 7% unsecured notes due Jun-2027) by mid-2027. The secured refi guided for Q3 is still unannounced, and the Q3 call on 2026-11-05 is the next point where it could be confirmed or turn into an LME.",
+   "dated_milestone": "Q3-2026 earnings call 2026-11-05 08:30 ET (PRNewswire 2026-10-14). Hard backstop: the notes mature Jun-2027 and become a going-concern/current-liability issue at the FY26 10-K (~late Feb 2027).",
+   "instrument": "Equity is a lottery ticket under a $2.45B net debt stack, so a better way in is probably the 2027 unsecured notes (if available) or a defined-risk call spread after the 11-05 call. The common only works if the refi is clean and non-dilutive.",
+   "bloom_gates": "None passed cleanly. G1 fails: no named lender or arranger. G2 fails: the Q3 refi was guided but has no commitment, and FMP news from Aug to Nov 2 shows no announcement. G3 is partial: the $746M maturity amount and date are specific, but they are public and already in the price.",
+   "edge": "L. Run-up from the pre-catalyst base: none. The stock is about -85% from its $41.05 52-week high and sits at a new low of $6.25, down 7.3% today, so no residual run-up has been harvested. Remaining: I could not derive it properly. Mechanically the equity is about 11% of EV ($320M cap against $2.45B net debt, which includes $940M of IRU/finance leases). Book equity is -$34M and there is no preferred. A clean refi at ~9.5% adds about $18M/yr of interest. On a relief rally back to the 50-day average (~$8.65) the remaining move is roughly +38%. The ~$13.7 consensus target (+120%, Zacks 10-28) is inherited from analysts and NOT supported by the waterfall. The bad branch (LME or exchange at a discount, or equitization) is close to -100%. Pricing is two-sided and there is no specific unpriced figure, so the edge is low.",
+   "primary_source": "FMP quote 2026-11-02 ($6.25, mcap $320M). FMP balance sheet Q2-2026 (10-Q filed 2026-08-06). PRNewswire 2026-10-14 (Q3 call set for 2026-11-05). Zacks 2026-10-28 (consensus target +119.8%, not used as numerator). No refi press release found in FMP news for 2026-08-01 to 2026-11-02.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The refi binary is real and has a date, but nothing is committed: no counterparty, no signed financing, and the Q3 deadline it was guided for has passed without an announcement. That makes the event uncertain rather than unpriced. Q2-26 10-Q data (FMP balance sheet, filed 2026-08-06) shows $183.7M of cash against $746M of short-term debt, $950M of long-term debt and $940M of lease/IRU obligations. Total debt is $2.64B against a $320M market cap with negative book equity, so the common is a thin, highly levered residual and I scored the equity rather than the event (cap 4). There is also securities class-action overhang (class period Feb-2024 to May-2026). The gap: web search was unavailable this turn (budget exhausted), so I could not check whether a refi term sheet, an exchange offer, or ad-hoc noteholder group activity was reported outside FMP news."
   }
  ]
 }

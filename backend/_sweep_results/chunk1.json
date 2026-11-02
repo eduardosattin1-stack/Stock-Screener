@@ -3,55 +3,77 @@
  "scanned": 150,
  "scan_distribution": {
   "active": 0,
-  "watch": 9,
-  "none": 141
+  "watch": 8,
+  "none": 142
  },
  "survivors_flagged": [
   {
-   "symbol": "ACRS",
+   "symbol": "ADPT",
    "score": 5,
    "tier": "WATCH",
-   "lane": "binary",
-   "one_line": "Two readouts due in Q4 2026: bosakitug Ph2 in atopic dermatitis (n=109) and ATI-052 Ph1b PoC in asthma and AD. Stock fell from a ~$5.56 50d avg to $3.83, so the binaries are not priced in. Early-arc, but still plain biotech binary risk."
+   "lane": "spin_off",
+   "one_line": "Announced 2026-06-15: separating MRD from Immune Medicine, with the separation path (sale, spin or partnership) due by YE2026. The structural milestone is still ahead, but the outcome is not assured and a 2024 review ended with no deal."
   },
   {
    "symbol": "AGIO",
    "score": 5,
    "tier": "WATCH",
-   "lane": "dated_binary",
-   "one_line": "Mitapivat sickle-cell sNDA (Priority Review, accelerated approval) has a PDUFA date of Nov-1-2026. Stock is down about 29% in 3 months after the tebapivat failure, so it is not run up into the binary. Approval risk and the label/REMS framing are the asymmetry. No AdCom was found."
+   "lane": "binary_pdufa",
+   "one_line": "FDA pushed the mitapivat sickle-cell sNDA PDUFA from Nov 1 to Feb 1 2027 over a REMS question (major amendment). The stock fell >15%, so the setup is reset and months out, though efficacy is mixed (pain-crisis endpoint missed)."
+  },
+  {
+   "symbol": "ALVO",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary_fda",
+   "one_line": "FDA decisions on the AVT05 (Simponi) and AVT06 (Eylea) resubmissions are due Q4-2026 under a 6-month goal. The Reykjavik plant was reclassified VAI after the prior CRLs, so approval odds look better. Stock is $4.57, below its 50-day of $5.32, so not priced as a run-up into the decision."
   }
  ],
  "verified": [
   {
-   "symbol": "ACRS",
+   "symbol": "ADPT",
    "score": 4,
    "tier": "WATCH",
-   "lane": "binary",
-   "catalyst": "Topline results from the randomized, placebo-controlled Phase 2 of bosakitug (anti-TSLP, ATI-045) in moderate-to-severe atopic dermatitis (n=109, primary endpoint % change in EASI at week 24). Phase 1b proof-of-concept readouts for ATI-052 (TSLP/IL-4Ra bispecific) in asthma and AD are due in the same window.",
-   "dated_milestone": "Company guidance is 4Q 2026 for bosakitug Ph2 topline (enrollment closed Mar-2026; reaffirmed in the Q2 release on 2026-08-06; July-2026 investor snapshot says 4Q26). ATI-052 Ph1b PoC readouts were reaffirmed 2026-08-06 for 2H26. Next: Q3 2026 earnings, expected early Nov 2026. Readout window is Oct-Dec 2026.",
-   "instrument": "ACRS common (NASDAQ), $3.83 on 2026-10-12, mkt cap ~$535M",
-   "bloom_gates": "G2 only: a concrete, dated company commitment (4Q26 topline, reaffirmed 2026-08-06). No G1 (no named counterparty or partner economics). No G3 (no specific unpriced figure; the upside depends on efficacy, not a contractual number).",
-   "edge": "L-M. This is a clean, dated, unfired binary, but there is no informational edge on the outcome. The prior Ph2a evidence (94% EASI-75 at wk26) came from a small single-arm study, and TSLP has a mixed record in AD (tezepelumab missed). (a) Run-up from the pre-catalyst base: about +28% from roughly $3.0 at the start of 2026, derived from AAII's mid-Sept YTD of +83.55% at ~$5.5. Most of the 2026 run-up (to a $6.60 high) has already been given back after a ~35% fall since mid-Sept, from a $5.17-6.27 range to $3.83. (b) Remaining capture: about +60-100% to roughly $6-7.5 on a clean win, which means retaking and exceeding the $6.60 high. This is an estimate, not derived from a model. On a miss the downside is about -50-60% toward the cash and modzatinib floor (~$1.5-2). Asymmetry is roughly even at coin-flip odds.",
-   "primary_source": "Aclaris Q2 2026 results press release (GlobeNewswire, 2026-08-06): timelines reaffirmed, runway through end-2028. Aclaris July 2026 investor snapshot (investor.aclaristx.com, 2026-07-14): bosakitug Ph2 topline 4Q26. Enrollment-complete press release (Mar-2026, n=109). FMP quote 2026-10-12: $3.83, 50d avg $5.56, 52w range $1.74-6.60. AAII auto-article 2026-09-15: YTD +83.55%, Sept range $5.17-6.27.",
+   "lane": "spin_off",
+   "catalyst": "Adaptive says it will name its preferred way to separate the loss-making Immune Medicine unit (sale, spin or partnership) by YE2026, leaving a pure-play profitable MRD (clonoSEQ) company.",
+   "dated_milestone": "Preferred separation path due by 2026-12-31. Next date: Q3-2026 results and call on 2026-11-04 after the close, the first chance for a progress update.",
+   "instrument": "ADPT common (NASDAQ), $25.43 on 2026-11-02, market cap about $4.06B",
+   "bloom_gates": "G2 only, and weak: the commitment is to identify a path by YE2026, not to complete a deal. There is no named counterparty (G1 fails) and no specific unpriced figure (G3 fails). The company also says there is no assurance of any transaction, and a 2024 strategic review ended with no deal.",
+   "edge": "L. Run-up: +44.5% from the pre-announcement close of $17.60 (2026-06-12) to $25.43 today. Most of that move came from MRD fundamentals (Q2 MRD revenue +33%, raised FY guide, NCCN myeloma guideline update on 9/17, IMS cure definition on 9/25), not from the separation. Remaining: about 3-8%, roughly +$0.8-2.0/share. That is what is left on the favourable path once the roughly $24M/yr adjusted-EBITDA drag from Immune Medicine (about $6M a quarter) stops and some sale value comes in for a unit with about $5.4M quarterly revenue that is shrinking 40% y/y. The equity is not compelling on this event because the event is small relative to a $4B MRD equity.",
+   "primary_source": "Adaptive press release 'Announces Plan to Separate its MRD and Immune Medicine Businesses' (2026-06-15); Q2-2026 8-K/10-Q (filed 2026-07-29/30, sec.gov adpt-20260630); Q3 date press release (GlobeNewswire 2026-10-14); FMP EOD prices (2026-06-12 close $17.60; 2026-11-02 quote $25.43)",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The catalyst is real and forward: bosakitug Ph2 AD topline is guided to 4Q26, with ATI-052 Ph1b PoC readouts in 2H26, and nothing has fired as of 2026-10-12 (latest press release is from 2026-09-03). The setup is plain biotech binary risk on an efficacy outcome with no contractual floor. The stock's ~35% slide from mid-September has no company news behind it in FMP press releases or stock news; that is an unresolved gap (competitor TSLP read-through, a financing overhang or pre-readout de-risking cannot be ruled out). Runway through 2028 (Q2 release) limits near-term dilution risk. Score capped at 4/WATCH: the event is dated, but the edge is uninformed coin-flip odds and the drawdown cause is unverified. Numerator provenance does not apply (binary lane, no SoP upside claimed), and the cash balance was not re-read from the 10-Q."
+   "analysis": "The separation plan is real and dated (announced 2026-06-15, with the preferred path due by YE2026) and has not fired. But Immune Medicine is a small, shrinking, cash-burning unit, so a favourable outcome mostly removes a drag rather than unlocking value. ADPT is being priced on MRD growth, not on this event. Capital-structure check: the debt is $345M of zero-coupon converts due 2031 that replaced the OrbiMed revenue-share financing (about $156.9M payoff). There is no preferred stock ahead of the common and no external-manager fee, so the waterfall is clean. The problem is the size of the upside, not who has claims ahead of the common. Gaps: I did not read the Q2 10-Q line by line, and the Q3 results (11/04) may update the path. Upgrade only if a named buyer or partner and a price emerge."
   },
   {
    "symbol": "AGIO",
-   "score": 5,
+   "score": 4,
    "tier": "WATCH",
-   "lane": "dated_binary",
-   "catalyst": "FDA action on the mitapivat sNDA for sickle cell disease (accelerated approval, Priority Review). The PDUFA goal date is 2026-11-01.",
-   "dated_milestone": "PDUFA 2026-11-01 (a Sunday, so the action could come as early as Fri 2026-10-30). Next marker: label and REMS text at approval. Novo's etavopivat filing (2H26) is the competitive overhang that follows.",
-   "instrument": "AGIO common (no preferred, no material debt). A defined-risk options structure through the PDUFA date is preferable to outright stock because the binary is roughly symmetric.",
-   "bloom_gates": "G1 yes (named counterparty: the FDA, PDUFA 2026-11-01, Priority Review accepted 2026-07-07). G2 yes (concrete dated regulatory commitment). G3 weak: no specific unpriced figure. SCD peak sales are contested after the RISE UP pain-crisis co-primary miss (Nov 2025) and with etavopivat close behind.",
-   "edge": "M-/L+. RESIDUAL CAPTURE: (a) Run-up from the pre-catalyst base. The accelerated-approval path became knowable on 2026-03-31; the 2026-03-30 close was $29.61, so the run-up to $31.81 is +7%. The stock is +42% from the post-topline low of $22.34 (2025-11-19) and -15% from $37.39 just before the Priority Review news. It is not run up. (b) Remaining to the favorable-resolution value: about $38-40, +20-25%. That is derived and not contractual: it reverses the post-tebapivat de-rating back toward the $37-44 range seen after acceptance. The CRL downside is about $23-24 (-25%), toward the Nov-2025 low; the cash floor is about $16/sh (~$965M cash on 6/30/26, ~60M shares). With approval odds around 75-80% (the FDA itself steered Agios to the accelerated-approval path), expected value is modestly positive but not asymmetric. The real asymmetry sits in label and REMS breadth (whether the hepatocellular-injury REMS carries over from thalassemia/AQVESME, and whether the Hb-surrogate label omits pain-crisis claims). That cannot be priced from public data.",
-   "primary_source": "Agios PR 'U.S. FDA Grants Priority Review to Agios' sNDA for Mitapivat in Sickle Cell Disease' (2026-07-07, BioSpace/Barchart). Agios Q2 2026 8-K ex99.1 (2026-07-30, sec.gov: cash $964.8M, PDUFA reaffirmed). Clinical Trials Arena/BioPharma Dive on the tebapivat discontinuation (2026-07-21). FMP quote $31.81 (2026-10-09 close) and EOD history (Nov-2025 -51% gap on RISE UP; 2026-04-20 -23% on Novo's etavopivat).",
+   "lane": "binary_pdufa",
+   "catalyst": "FDA decision on the mitapivat sickle-cell sNDA (accelerated approval, Priority Review) was pushed from 2026-11-01 to 2027-02-01. The FDA classified Agios's 10-19 safety submission as a major amendment, and whether a REMS is needed is still open.",
+   "dated_milestone": "PDUFA 2027-02-01 for the mitapivat SCD sNDA. Earlier read: Q3-2026 results and the REMS/label-negotiation update, expected early Nov 2026.",
+   "instrument": "AGIO common (NASDAQ), ref $30.97 on 2026-11-02. Mkt cap $1.85B against about $0.9-0.96B cash (Q2: $964.8M); no preferred stock and no meaningful debt.",
+   "bloom_gates": "G1 (FDA, named counterparty) and G2 (dated PDUFA 2027-02-01) pass. G3 is weak: the unpriced part is only the gap back to the pre-delay price, and the SCD revenue figure is unspecified (company guided no material SCD revenue in 2026).",
+   "edge": "M-L. Run-up from the pre-catalyst base is about -18% to -19%: the delay reversed it, from roughly $37.5 before the 10-29 news to about $31 now. Remaining to a favorable resolution is about +19% (approval with REMS restoring roughly $37). The downside on a CRL is about -23% (to roughly $24, cash of about $15/sh plus the thalassemia franchise). The likely outcome is approval with a REMS, as the thalassemia label (AQVESME) already carries one. A REMS slows the launch but does not stop it, and at an assumed ~75% approval probability the expected value is only about +9%. The thesis also waits through 3 months of dead time, and efficacy is mixed (pain-crisis endpoint missed).",
+   "primary_source": "Agios PR via HCPLive 2026-10-30 ('Mitapivat PDUFA date for sickle cell disease extended to February 2027'); TIKR 2026-10 ('Agios sinks 18%'); Agios Q2-2026 8-K 2026-07-30 (cash $964.8M); FMP quote 2026-11-02 ($30.97).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "Verified as real, dated and forward. The sNDA was submitted 2026-05-12 under accelerated approval after FDA engagement, Priority Review was granted 2026-07-07, PDUFA is 2026-11-01 and no decision has been found. The RISE UP Phase 3 met the hemoglobin-response endpoint (40.6%) but missed the co-primary on pain crises (Nov 2025, -51% day), so approval rests on a surrogate the FDA invited. Approval looks likely, but commercial value is capped by the missed pain endpoint and by Novo's etavopivat, which met its endpoint 2026-04-20 (AGIO -23% that day) and files in 2H26. Equity is clean: market cap $1.90B against about $965M cash, giving EV around $0.9-1.0B, with PKD/thalassemia revenue on top. The provenance check found no preferred stack, so the event value flows through to common. The unresolved gap is the label/REMS framing; no AdCom was verified. Gross remaining upside is about +20-25% against about -25% on a CRL, so this is a WATCH binary rather than an ACTIVE one."
+   "analysis": "Verified: the FDA asked about a REMS on 10-09, Agios sent about 9 months of updated safety data on 10-19, and the FDA classified that response as a major amendment on 10-28, moving the PDUFA to 2027-02-01. The stock fell about 18-19% and trades near $31 (50-day average $33.6, 52-week range $22.24-$46). The event is real, dated and unfired, and there is no preferred stock or debt ahead of the common: the EV of about $0.9B is backed by cash of about $15/sh. Still, the favorable case mostly restores the price before the delay (+~19%) against roughly -23% on a CRL, which gives a reward/risk below 1 and about +9% expected value after a 3-month wait. Gaps: Q3-2026 cash was not yet found (Q2 figure used), the probability of a REMS label was not independently quantified, and RISE UP pain-crisis detail was not re-checked."
+  },
+  {
+   "symbol": "ALVO",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary_fda",
+   "catalyst": "FDA decisions are due on the resubmitted BLAs for AVT05 (golimumab, Simponi biosimilar) and AVT06 (aflibercept, Eylea biosimilar). The Reykjavik plant is now VAI, Teva commercialises both in the US, and the Regeneron settlement allows the AVT06 US launch in Q4-2026.",
+   "dated_milestone": "The BLAs were resubmitted 2026-06-04 under a 6-month goal confirmed by FDA in the H1 release (2026-08-19), so the inferred action date is about 2026-12-04, still in Q4-2026. The exact PDUFA dates are not disclosed. Next date: Q3 results, around mid-November 2026 (unverified).",
+   "instrument": "ALVO common (NASDAQ). Optionally, a defined-risk call spread expiring Dec-2026 or Jan-2027 across the decision date.",
+   "bloom_gates": "G1: Teva is the named US commercial partner, and the Regeneron/Bayer settlement fixes a Q4-2026 US launch date for AVT06. G2: FDA confirmed 6-month review goal dates, a concrete regulatory commitment. G3 is weak: no specific unpriced figure is disclosed, and the US Eylea biosimilar field is crowded.",
+   "edge": "M. Run-up: +48% from the pre-catalyst base of $3.08 (2026-07-27, before the VAI/inspection-closure news of 07-29) to $4.565, and +45% from $3.14 on 2026-06-03, before the resubmission. Remaining: about +30% to roughly $5.9-6.1, the Sept/Oct level where approval odds were priced richer, against about -32% to roughly $3.1 on a third CRL. At about 80% approval odds after VAI, the expected value is about +17%. Roughly half of the move is already harvested, but the 26% pullback from the $6.15 peak has re-opened some of it.",
+   "primary_source": "Alvotech H1-2026 results release, 2026-08-19 (6-K, sec.gov 0001628280-26-057988): goal dates in line with the 6-month process, decisions expected Q4-2026, VAI classification. Alvotech resubmission press release, 2026-06-04. Alvotech 6-K exh 99.1, 2026-10-14 (AVT29 EU filing; no US approval yet). FMP quote/EOD, 2026-11-02.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The catalyst is real, dated and unfired. The resubmission went in 2026-06-04 with FDA-confirmed 6-month goal dates (decision around early December 2026), the Reykjavik plant cleared VAI, and no US approval has been reported as of the 2026-10-14 6-K. The stock has already run +45-48% off its June/July base. The October slide from $6.15 to $4.57 has no identified cause in searches; it may reflect the weak H1 (revenue -31% y/y), the $152M June dilution, or a crowded US aflibercept market that limits the value of AVT06 even if approved. This is a binary with a moderate positive skew rather than a mispricing, so it stays WATCH at 5. Gaps: the exact PDUFA dates, the reason for the October decline, and the net-debt load were not verified."
   }
  ]
 }

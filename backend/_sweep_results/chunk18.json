@@ -3,8 +3,8 @@
  "scanned": 150,
  "scan_distribution": {
   "active": 0,
-  "watch": 9,
-  "none": 141
+  "watch": 7,
+  "none": 143
  },
  "survivors_flagged": [
   {
@@ -12,28 +12,21 @@
    "score": 5,
    "tier": "WATCH",
    "lane": "merger_arb",
-   "one_line": "Anglo-Teck merger: shareholder and Canada approvals done; China SAMR (normal procedure) and South Korea still pending; close guided Sep 2026 to Mar 2027. A real arb with China risk, but well covered and late-arc."
+   "one_line": "The Anglo American merger has cleared everywhere except China's SAMR, which reportedly wants copper-supply commitments. Anglo still guides to closing by March 2027. This is a stock-for-stock spread trade with China timing risk, not a fresh early-arc setup."
   },
   {
    "symbol": "TFX",
    "score": 5,
    "tier": "WATCH",
-   "lane": "capital_return",
-   "one_line": "The OEM sale closed 2026-08-03 ($1.5B). The $530M Acute Care/Urology sale to Intersurgical is still pending for 2H26. About $1.8B in net proceeds is earmarked for buybacks under a $1B authorization plus debt paydown. Check the Q3 10-Q for closing and ASR status."
+   "lane": "activist_capital_return",
+   "one_line": "Activist Irenic is pushing for a sale. The OEM sale closed in August ($1.5B net). The $530M Acute Care/Urology sale to Intersurgical is due to close in Q4-26. The company plans a $1B buyback and has a new CEO and chair. The stock barely moved (~$123-127), but sale-of-company risk remains unconfirmed."
   },
   {
-   "symbol": "TRIP",
+   "symbol": "TXNM",
    "score": 5,
    "tier": "WATCH",
-   "lane": "activist_structural",
-   "one_line": "$700M TheFork sale to Amex is set to close by YE2026 (French labor/regulatory steps pending); Viator sub-IPO/sale and the Starboard-driven portfolio review are still live, but coverage is heavy and the Starboard settlement already landed."
-  },
-  {
-   "symbol": "TSAT",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "distressed",
-   "one_line": "About C$2.3bn of GEO term loan and notes mature Dec-2026 (rated CC). Creditors are suing to void the 2025 LEO equity transfer as a fraudulent conveyance. Hard dated LME/restructuring milestone, binary for the equity. The setup is known, so not early-arc."
+   "lane": "merger_arb",
+   "one_line": "Blackstone $61.25 cash deal: PUCT/FERC/NRC/HSR done; on 2026-10-16 the New Mexico regulator (NMPRC) accepted the amended application; hearings set for Jan 19-Feb 1 2027; outside date 2027-05-31; close expected 1H27. A dated regulatory arb, but long-dated and widely tracked."
   }
  ],
  "verified": [
@@ -42,60 +35,45 @@
    "score": 2,
    "tier": "NONE",
    "lane": "merger_arb",
-   "catalyst": "China's SAMR decision on the Anglo American-Teck all-share merger, at 1.3301 Anglo shares per Teck B share. SAMR is reportedly asking for a commitment to supply copper concentrate to China, not asset sales. Closing comes 11 trading days after the last condition is met.",
-   "dated_milestone": "SAMR (and South Korea) decision. Anglo guides year-end 2026, inside a Sep-2026 to Mar-2027 window. The Anglo special-dividend declaration and finalisation notice must come at least 8 trading days before its record date, which falls before the Effective Date. Next check: the SAMR remedy announcement, expected Q4 2026.",
-   "instrument": "TECK common (NYSE) vs AAL.L / NGLOY. Hedged arb is long TECK, short 1.3301 AAL per share.",
-   "bloom_gates": "G1 yes (named counterparty Anglo American, named regulator SAMR). G2 yes (contractual 1.3301 exchange ratio; SAMR's request for copper concentrate supply commitments). G3 fails: once Anglo's special dividend is netted out there is no unpriced figure left.",
-   "edge": "L. Run-up: TECK was about $33-34 before the Sep-2025 announcement and is $68.05 today, roughly +100%. That move is mostly the copper tape plus the merger premium, and it is all priced. Remaining: the headline spread looks like about 8.6% (1.3301 x 2 NGLOY ADRs at $27.78 = $73.90 vs TECK $68.05). But that Anglo price still carries the ~$4.5B (~$4.19/share) special dividend. It goes only to Anglo holders, with a record date before the Effective Date. Ex-dividend, Anglo is about $51.4, which puts TECK's deal value near $68.3, so the remaining spread is about +0.3%. That is negative after borrow and carry against a China-remedy break risk of roughly 6-9 months.",
-   "primary_source": "Reuters via globalbankingandfinance.com, 'China demands copper supply commitments from Anglo-Teck', 2026-10-02. Teck 6-K / BNN press release 'Teck provides information related to the Anglo special dividend and the merger', 2026-09-01. Anglo 'Total Voting Rights and Merger-related Information' SENS, Sep 2026. FMP quotes TECK $68.05 / NGLOY $27.78 / AAL.L 4171p, 2026-10-12.",
+   "catalyst": "China's SAMR clearance of the Anglo American-Teck all-stock merger (1.3301 Anglo shares per Teck share). SAMR is reportedly negotiating copper-concentrate supply assurances, and South Korea is also reportedly still pending.",
+   "dated_milestone": "Closing is guided within the Sept-2026 to Mar-2027 window (mlex, Oct-2026). Next date: a SAMR remedy decision, expected by end-Q1 2027, with no fixed date announced.",
+   "instrument": "TECK common (NYSE). The spread would need to be hedged by shorting 1.3301 Anglo shares (AAL.L, or NGLOY ADRs at 0.5 share each) per Teck share.",
+   "bloom_gates": "G1 passes: a named counterparty (Anglo American) and a named regulator (SAMR). G2 passes: a signed definitive merger agreement at a fixed 1.3301 exchange ratio. G3 fails: the spread is already closed once the Anglo special dividend is netted out, so no currently unpriced figure is left.",
+   "edge": "L. Before the deal was announced (around 2025-09-08), Teck traded near US$34. At $62.95 today, the run-up is about +85%, much of it copper beta. The remaining capture is about 0%. On 2026-11-02, NGLOY $25.71 x 2 gives $51.42 per Anglo share. Netting out the roughly $4.19 per share special dividend that goes only to pre-merger Anglo holders leaves $47.23. Multiplied by 1.3301, that implies $62.82 per Teck share, against Teck at $62.95, so the spread is about -0.2%. The trade is fully harvested, and the holder keeps China timing and break risk with no premium for it.",
+   "primary_source": "mlex, \"Anglo American still sees Teck Resources deal completing by March\" (Oct-2026). reporteminero.cl on SAMR's copper-supply demand (2026-10). Teck Form 6-K / merger circular on SEC EDGAR, giving the 1.3301 ratio and the $4.5B (~$4.19/sh) special dividend (2025). FMP batch quotes for TECK $62.945, NGLOY $25.71 and AAL.L 3824p (2026-11-02).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The deal is real, dated and still forward: SAMR has not approved it, and on 2026-10-02 Reuters reported that it wants a commitment to supply copper concentrate rather than asset sales, which points to a conditional approval later. Once Anglo's special dividend, which Teck holders do not receive, is netted out, the arb spread is essentially zero, about 0.3%. Buying TECK now is therefore a leveraged long-Anglo / copper position (a macro bet) rather than a merger capture. Gaps: the 1.3301 ratio and the ~$4.19/share dividend come from the Sep-2025 circular, and the final per-share dividend will be adjusted for the share count and ordinary dividends. FX and quote timestamps were not synced, so the residual could be ±1-2% either way, which does not change the call."
+   "analysis": "The event is real, dated and still ahead, but the stock-for-stock deal leaves no residual spread. Netting out the $4.5B (about $4.19 per share) special dividend, which goes only to Anglo holders, Teck already trades at or slightly above deal-implied value. The upside comes from the contractual ratio, not from a derived valuation, so the numerator-provenance check does not apply. What remains is the SAMR copper-supply remedy timing (reportedly no asset sales demanded) and a small break risk, uncompensated, plus outright copper exposure if unhedged. That is a macro and commodity bet, not an event edge. Gap: the GBP/ADR cross was taken from NGLOY rather than a live AAL.L x GBPUSD fix, and the special-dividend per-share figure is \"subject to adjustment\", so the spread estimate carries about ±1pp error. That is not enough to change the verdict."
   },
   {
    "symbol": "TFX",
    "score": 4,
    "tier": "WATCH",
-   "lane": "capital_return",
-   "catalyst": "Intersurgical's $530M purchase of Teleflex's Acute Care/Interventional Urology business is still pending under an FTC Second Request. The proceeds are meant to fund the remaining roughly $500M of the $1B buyback.",
-   "dated_milestone": "Done: OEM sale to Montagu/Kohlberg closed in Q3 for about $1.5B gross (about $1.25B after tax), and the $700M Term Loan A-2 was repaid. A $250M ASR was announced to start 2026-08-07, but I have not confirmed it started. Next: Q3 2026 earnings and 10-Q, expected about late Oct/early Nov 2026 (should state ASR status and FTC progress). The Acute Care deal now targets Q4 2026 (slipped from 2H26) and needs FTC clearance.",
-   "instrument": "TFX common, $125.12 on 2026-10-12, market cap about $5.54B",
-   "bloom_gates": "G1: yes, named buyer Intersurgical Ltd. G2: partial. There is a signed sale agreement, but the $1B buyback authorization does not oblige Teleflex to buy. G3: weak. $530M is about 9.6% of market cap, but it swaps a business for cash rather than adding net value, so it is not a clearly unpriced figure.",
-   "edge": "L. Run-up from the pre-announcement base ($119.82 close on 2025-12-08, the day before the 12/09 announcement) to $125.12 today: +4.4%. The stock peaked at $131.25 on announcement day. Remaining capture: about 3-6% (my derived estimate; I did not build an SoP), roughly the accretion from retiring about 4M shares (about 9% of the share count) with $500M at about $125. That is partly offset by giving up the divested earnings, plus the risk that the FTC blocks the deal or forces remedies. Most of the event value (OEM close, loan paydown, first $250M of buybacks) is already done and in the price.",
-   "primary_source": "Teleflex 10-Q for Q2 2026 (period ending 2026-06-30, SEC accession 0000096943-26-000095): debt note and FTC Second Request disclosure. Q2 2026 earnings call summaries (MarketBeat/Nasdaq, 2026-08-09): OEM close, A-2 repayment, $250M ASR from 08-07, Acute Care close expected Q4. 8-K of 2025-12-09: deal terms and $1B authorization. FMP quote and price history checked 2026-10-12.",
+   "lane": "activist_capital_return",
+   "catalyst": "CVC and GTCR made a joint take-private approach (reported 2026-04-22, still unconfirmed and without a price). It sits on top of Irenic's sale campaign, the $1.0B buyback funded by about $1.8B of divestiture proceeds, and the pending close of the Acute Care/Urology sale to Intersurgical.",
+   "dated_milestone": "Q3-26 results call on 2026-11-05 (status of the bid and buyback, plus Intersurgical close timing). Next date is the Acute Care/Urology close, guided for Q4-26.",
+   "instrument": "TFX common (NYSE)",
+   "bloom_gates": "G1 partial: counterparties CVC/GTCR are named but only as a reported, unconfirmed approach with no price. G2 yes: the $1.0B buyback and $800M debt paydown are company-committed, though their execution pace is undisclosed. G3 no: there is no specific unpriced figure, because the bid price was never disclosed.",
+   "edge": "L. (a) Run-up: from $124.75 (the 2026-04-21 close before the bid report) to $140.89 today is +12.9%. The stock is near its 52-week high of $145 and above its 50-day ($131) and 200-day ($125) averages. So the triage figure of ~$123-127 is stale and the bid premium is largely back in the price. (b) Remaining: there is no disclosed offer price to measure against. The one roundup that called the deal \"agreed\" put EV at ~$5.5B, roughly today's $5.97B market cap, which would imply about 0% left. A typical 20-30% take-private premium on the pre-bid base would mean about $150-162, or 7-15% left. The cost of being wrong is about -12% back to the ~$125 base if the approach is dead.",
+   "primary_source": "Bloomberg via news.bgov.com, \"CVC and GTCR Said to Make Take-Private Offer for Teleflex\" (2026-04-22). Teleflex 8-K Ex 99.1 responding to Irenic (2026-03-27). Business Wire Q3-26 call notice (2026-10-22, call 2026-11-05). FMP quote TFX $140.89 (2026-11-02).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The OEM leg has closed and the first $500M of buybacks has happened ($250M bought in the open market in Q2 at $130.85 average, plus a $250M ASR announced for 2026-08-07), so the high-certainty part of the event has fired. What remains depends on the Intersurgical deal, which has been under an FTC Second Request since 2026-03-11 and has slipped to Q4 2026. The equity waterfall is clean: no preferred and no external manager. Gross debt was $2,825M at 6/30 before the A-2 repayment, roughly $2.1B after it. Even so, $530M of sale proceeds turned into about 9% fewer shares, against the earnings sold, gives only low-to-mid single-digit upside, so I am scoring the equity, not the event, capped at 4. Not verified: whether the ASR actually started or settled, and the current FTC status. The Q3 10-Q is not out yet, so the next filing is the check."
+   "analysis": "The CVC/GTCR approach (Bloomberg/Reuters, 2026-04-22) is real but six months old. It has no confirmed price or agreement, and FMP news from 2026-09-15 to 2026-11-02 has no follow-up, only R&D and earnings-call notices. Meanwhile the stock has rerated to $140.89, about +13% above the pre-bid base, so most of a plausible sale premium already looks priced. I did not do the 10-Q waterfall check (the lookup budget went to bid status). The divestiture proceeds are earmarked $1.0B buyback / $0.8B debt, with no preferred ahead of the common, but there is no SoP figure to re-derive. So the score is on the EQUITY's remaining capture, capped at 4. The 2026-11-05 Q3 call is the near-term test: confirmation of a process or a signed deal would upgrade it, and silence leaves a ~12% downside back to the base."
   },
   {
-   "symbol": "TRIP",
+   "symbol": "TXNM",
    "score": 4,
    "tier": "WATCH",
-   "lane": "activist_structural",
-   "catalyst": "Tripadvisor sells TheFork to American Express for $700M cash under a put-option agreement, about $680M net, expected to close before YE2026 once French labor consultations and regulatory approvals are done.",
-   "dated_milestone": "TheFork closing by 2026-12-31 (labor consultation and regulatory steps pending). Next date: Q3-2026 earnings, early Nov 2026, for a closing-timing update and how proceeds will be used (buyback vs debt paydown vs experiences M&A). Viator sub-IPO/sale has no date.",
-   "instrument": "TRIP common (NASDAQ)",
-   "bloom_gates": "G1 (American Express is the named buyer) + G2 (signed $700M put-option agreement, guided to close by YE2026). G3 fails: the $700M has been public since 2026-06-15. The only figure that may still be unpriced (a Viator separation) has no number and no date.",
-   "edge": "L. Run-up from the pre-catalyst base: -30% ($12.41 on 2026-06-12 and $12.56 on the 06-15 announcement, vs $8.675 on 2026-10-12). So none of this was harvested by a rally; the stock fell on the Q2 miss (revenue -16.5% YoY) and the de-rating of the core business. Remaining capture from the event itself is about 0%: the cash price is fixed and was disclosed in June, so closing turns a known receivable into cash and does not reveal new value. Rough SoP (derived from the capital structure, not an analyst target): no preferred. 6/30 net debt about $51M (cash $843M vs debt $894M). Adding ~$680M net proceeds gives about $630M net cash, roughly $5.4/share on ~116M shares. That implies about $380M EV for Tripadvisor core plus Viator. A re-rate to the announcement-day level of ~$12.5 would be +44%, but that depends on the undated Viator separation or a reversal in fundamentals, not on this closing.",
-   "primary_source": "Tripadvisor press release 'Tripadvisor Enters into Agreement to Sell TheFork to American Express for $700 Million' (tripadvisor.mediaroom.com, 2026-06-15); Q2-2026 10-Q balance sheet via FMP (filed 2026-08-06: cash $843.2M, total debt $893.9M, preferred $0); FMP quote 2026-10-12 $8.675, mkt cap $1.009B; FMP EOD 2026-06-12 $12.41 / 06-15 $12.56.",
+   "lane": "merger_arb",
+   "catalyst": "Blackstone Infrastructure's $61.25/sh cash takeout of TXNM needs only one more approval, from the NMPRC. The commission accepted the amended application on 2026-10-16, with $220M of rate credits and other customer benefits; evidentiary hearings run Jan 19 to Feb 1 2027 and the deal must close by the 2027-05-31 outside date.",
+   "dated_milestone": "NMPRC evidentiary hearings 2027-01-19 to 2027-02-01, then a hearing-examiner recommended decision and a commission vote. Merger outside date 2027-05-31; company guides to a 1H27 close. NMPRC has no statutory deadline for the revised application.",
+   "instrument": "TXNM common (NYSE), merger-arb long at about $58.50",
+   "bloom_gates": "G1 (named acquirer: Blackstone Infrastructure) + G2 (signed merger agreement at $61.25 cash, outside date 2027-05-31, a $175M reverse termination fee after TXNM waived half of the original $350M). G3 is not met: the $2.75 spread is visible and widely tracked, so nothing about the price is unpriced.",
+   "edge": "L. The spread is only fair pay for a real regulatory binary. RUN-UP: about +22% from the roughly $48 pre-rumor/pre-announcement base (spring 2025) to $58.50 today, so about 78% of the deal value is already harvested. REMAINING: +4.7% gross to $61.25, or about +6% including about 2 quarterly dividends (assumed permitted), which is about 10% annualized over 7 months. The market implies about 75-80% odds of approval. The NMPRC is hostile: it rejected Avangrid-PNM in 2021, voted 2-1 to void the $400M Blackstone stock sale, and opponents are contesting the fee waiver. A break back to about $47-48 standalone is roughly -18%, against +5-6% if the deal closes. That is consensus arb pricing with no informational edge.",
+   "primary_source": "TXNM 10-Q for Q3-2026 (sec.gov pnm-20260930.htm, filed ~2026-10-30); TXNM 8-K dated 2026-10-27 (hearing schedule Jan 19-Feb 1 2027); FMP quote 2026-11-02 ($58.495); SourceNM 2026-08-04 (opposition over the fee waiver)",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The event is real and specific: named buyer (Amex), a $700M figure, a YE2026 close date, and it has not closed. But it was announced on 2026-06-15, so the closing adds essentially no unpriced value; the stock has since fallen ~31% on the Q2 miss and core-business erosion. The capital structure is clean (no preferred; net debt about $51M before proceeds), so mechanically the equity holds about $5.4/share of post-close net cash and the rest of the business is valued at ~$380M EV. That is a deep-value setup, but the re-rate would have to come from the undated Viator sub-IPO/sale and the Starboard-driven portfolio review, not from TheFork closing. Score the equity, not the event: capped at 4, WATCH. Gap: no October 2026 news found on Viator or Starboard (search returned only older items), and the convertible maturity schedule inside the $816M LTD was not verified."
-  },
-  {
-   "symbol": "TSAT",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "distressed",
-   "catalyst": "Telesat GEO Inc. owes about US$1.7bn in December 2026 (a US$1.32bn term loan plus a US$387m note), with no deal announced. Lenders holding about 90% of the term loan are suing in NY Supreme Court and Ontario (filed 2026-01-21) to void the Sept-2025 transfer of 62% of Lightspeed equity as a fraudulent conveyance, so the GEO restructuring decides whether the equity keeps LEO.",
-   "dated_milestone": "December 2026 maturity of the GEO term loan and notes. Next dated step: any refinancing, exchange or forbearance announcement, or a court ruling on the transfer, before maturity. The Q3-2026 results in early November 2026 are the next disclosure point.",
-   "instrument": "TSAT common (NASDAQ), $45.96 on 2026-10-12, market cap about $680m. A position here is a binary bet on the restructuring outcome.",
-   "bloom_gates": "G1 yes: named counterparty (WSFS as term-loan agent for lenders holding about 90%, NY County Supreme Court plus Ontario). G2 partial: the maturity is contractual and dated, but no restructuring commitment or RSA exists. G3 not met: I could not derive a specific unpriced figure, because the LEO-level claims ahead of the common were not checked.",
-   "edge": "L. Run-up from the pre-catalyst base: +33% (34.66 on 2026-01-20, the day before the lawsuit, to 45.96), and +68% from the post-suit low of 27.39 on 2026-01-21. So the market has already priced a largely favorable outcome despite the suit and the going-concern doubt. Remaining % to the favorable-resolution value: NOT DERIVABLE. Ahead of the common at Lightspeed sit the federal C$2.54bn and Quebec C$0.4bn government loans and the remaining build-out funding, and the GEO equity value is about zero. The flagged upside therefore rests on the event, not on a re-derived equity waterfall. If the transfer is voided or LEO value goes to lenders, the downside is severe.",
-   "primary_source": "Bloomberg Law / 9fin / CreditSights on the WSFS lawsuit filed 2026-01-21; Briefs.co, 2026-08-13 (Q2-2026 results, US$120m borrowing, US$1.32bn term loan plus US$387m note due Dec-2026); Telesat 20-F FY2025 (SEC); FMP quote 2026-10-12 and EOD prices for January 2026.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The setup is real and dated: about US$1.7bn of GEO debt matures in December 2026, and the August-2026 filings admit cash falls short, with \"significant doubt\" about going concern. Lenders holding about 90% of the term loan are suing (filed 2026-01-21) to void the 2025 transfer of 62% of Lightspeed. No RSA, exchange or forbearance had been found as of the latest coverage (August 2026). But the equity has rallied +33% above its pre-lawsuit level, so the market is already leaning toward the outcome where the company wins or the lenders take only GEO. I could not re-derive the provenance waterfall (the 20-F/6-K capital stack was not read, and the web-search budget ran out after 3 lookups), so the score is capped at 4 as equity-not-event. Gap: news after August 2026 is unverified, and the LEO-level claim stack has not been checked against the latest 6-K/MD&A."
+   "analysis": "The catalyst is real, dated and still ahead: NMPRC is the sole remaining approval (FERC Feb-2026, PUCT settlement, NRC 2026-08-21), and hearings are set for Jan 19 to Feb 1 2027. But it is mostly harvested. The stock has moved from about $48 to $58.50 and only about 4.7% gross is left to the $61.25 cash price. The downside is asymmetric (about -18% on a break) given this commission's 2021 Avangrid rejection, its 2-1 vote to void the stock sale, and TXNM halving the reverse break fee to $175M, which weakens the cushion if the deal fails. Capped at 4 under the residual-capture rule. The deal price is contractual cash, so the numerator-provenance rule does not apply. Gaps: the pre-catalyst base of about $48 is from memory, not re-pulled, and dividend permissibility was not re-checked."
   }
  ]
 }

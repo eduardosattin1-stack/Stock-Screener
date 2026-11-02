@@ -2,78 +2,56 @@
  "chunk": "17 (SLDB-TCMD)",
  "scanned": 150,
  "scan_distribution": {
-  "active": 1,
-  "watch": 6,
-  "none": 143
+  "active": 0,
+  "watch": 3,
+  "none": 147
  },
  "survivors_flagged": [
   {
-   "symbol": "SMMT",
+   "symbol": "SVRA",
    "score": 5,
    "tier": "WATCH",
    "lane": "binary_pdufa",
-   "one_line": "Ivonescimab BLA (EGFRm NSCLC post-TKI) PDUFA 2026-11-14 with no AdCom found; FDA says it needs a stat-sig OS benefit, which HARMONi lacks. Stock ~$17, off its $29 high after a $500M raise, so some of the risk is priced in. A famous late-arc binary; Q3 earnings 10-22."
-  },
-  {
-   "symbol": "SVRA",
-   "score": 6,
-   "tier": "ACTIVE",
-   "lane": "pdufa_binary",
-   "one_line": "MOLBREEVI (autoimmune PAP) BLA PDUFA Nov 22 2026 (pushed from Aug 22 after a major amendment), UK MHRA decision Q4 2026; stock ~$4.8, down ~15% YTD and well under its $7 52w high, consensus PT ~$11, so the binary has not been bid up; early-arc"
+   "one_line": "MOLBREEVI (aPAP) BLA PDUFA 2026-11-22 after a 3-month major-amendment extension; no AdCom planned. Stock ~$5 and flat (not run up), ~34% short interest, ~$150M non-dilutive capital unlocks on approval; real dated binary with asymmetry, but ~3 weeks out."
   },
   {
    "symbol": "SYNA",
    "score": 5,
    "tier": "WATCH",
    "lane": "merger_arb",
-   "one_line": "onsemi deal revised Oct 1 to $123 cash after an unnamed third party made an unsolicited bid. Stock $119.82 (~2.7% gross spread), FTC cleared, close targeted mid-2027. Already jumped ~16% on the news; upside is a topping bid."
+   "one_line": "onsemi deal amended 2026-10-01 from 1.35x stock to $123 cash after a rival strategic party made a non-binding proposal on 9-02. Price $118.04 is a ~4.2% gross spread; the shareholder vote is pending (DEFM14A filed), FTC has reportedly cleared, foreign/FDI approvals remain, and close is guided for mid-2027. That annualizes thin unless a topping bid comes."
   }
  ],
  "verified": [
   {
-   "symbol": "SMMT",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "binary_pdufa",
-   "catalyst": "FDA action on the ivonescimab + chemo BLA for EGFRm non-squamous NSCLC after TKI, PDUFA 2026-11-14. The filing rests on HARMONi PFS. The primary OS read missed (HR 0.79, p=0.057); later cuts show HR 0.78 (nominal p=0.033, Sep-2025) and HR 0.76 (Jun-2026 cut), with no CI or p-value disclosed.",
-   "dated_milestone": "PDUFA 2026-11-14. Next date: Q3 earnings around 2026-10-22. No AdCom scheduled as of 2026-10-12. Watch also for a detailed OS presentation (CI and p-value) at an upcoming medical meeting.",
-   "instrument": "SMMT common (Nasdaq), ~$17.59, market cap ~$14.0B. A defined-risk options structure into the 11-14 date would fit better than outright stock, given the roughly symmetric binary.",
-   "bloom_gates": "G1 (named counterparty: FDA, with a fixed PDUFA date) and G2 (concrete dated regulatory commitment). G3 fails: there is no specific unpriced figure. A label in the 2L EGFRm niche is small next to a $14B cap that already prices the global ivonescimab franchise (HARMONi-3/-7). Approval mainly removes overhang.",
-   "edge": "L. We have no informational edge on an OS-dependent FDA judgement. The later OS cuts (HR 0.76-0.78, nominal p≈0.03) are public, and the missing CIs/p-value mean the market sees the same ambiguity the FDA does. Run-up from pre-catalyst base: about 0% to slightly negative. The stock was in the high teens to $20s around the Jan-2026 BLA acceptance, peaked at $29.23, fell about 13% on the Q2 ATM raise, and is now $17.59, up about 14% from its 50-day average of $15.46. So the event is not harvested on price. Remaining: about +25% to an approval value near $22, and about −35-40% to a CRL value near $11 (near the $12.07 52-week low). At roughly coin-flip approval odds, the expected value is at or below spot.",
-   "primary_source": "Summit 8-K / press release 2026-07-22 (updated HARMONi OS, HR 0.76, Jun-2026 cut, PDUFA 2026-11-14), sec.gov/Archives/edgar/data/0001599298/000159929826000058. BLA acceptance PR on BusinessWire 2026-01-29. FMP quote 2026-10-12 ($17.59, 52-week range $12.07-$29.23, market cap $14.03B).",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "This is a real, dated, forward binary with no AdCom found. The FDA earlier said OS is key, and the July-2026 update (HR 0.76, both ITT and Western) was sent to the agency without a disclosed p-value or CI. That is the crux, and no outside party can resolve it before the date. The payoff looks asymmetric to the downside: a CRL hits the franchise narrative, while approval of a narrow 2L label adds little to a $14B valuation. The FDA's treatment of the OS data cannot be verified ahead of time, and the triage's \"$500M raise\" did not reconcile: the filings show a $380M ATM alongside Q2. Keep it on WATCH for the OS detail release and the Q3 call, not ACTIVE."
-  },
-  {
    "symbol": "SVRA",
    "score": 5,
-   "tier": "ACTIVE",
-   "lane": "pdufa_binary",
-   "catalyst": "FDA action on the MOLBREEVI (molgramostim) BLA for autoimmune PAP, PDUFA Nov 22 2026, with the UK MHRA decision (150-day accelerated assessment) also due in Q4 2026.",
-   "dated_milestone": "FDA PDUFA 2026-11-22 (extended 3 months from 2026-08-22 because of a major amendment). MHRA decision Q4 2026. EMA/CHMP Q1 2027. A $75M RTW royalty tranche funds on FDA approval.",
-   "instrument": "SVRA common (NASDAQ). Optional: defined-risk call spread into Nov 22 to cap the CRL gap.",
-   "bloom_gates": "G1 named counterparty: FDA (PDUFA), MHRA and EMA, plus RTW Investments, whose $75M royalty funding is contingent on approval. G2 concrete commitment: statutory PDUFA goal date of 2026-11-22. G3 partial: the $75M approval-contingent tranche is a specific figure, but the approval value itself is derived, not contractual.",
-   "edge": "M. Run-up from the pre-catalyst base (~$3.45 in early Oct 2025, before the BLA resubmission was accepted) to $4.92 is about +43%. That is partly a re-rate, but the stock has since fallen about 18% YTD (from $6.03 on 12/31/25) and is below its 50-day ($5.32) and 200-day ($5.49) averages and its $7.01 52w high, so the binary has been de-rated, not bid up. Remaining capture: about +40-55% to my own approval value of ~$7-7.5. I did not use the ~$11 consensus target. My figure is a rare-disease launch re-rate on a ~$1.0B cap with ~205M shares, against ~$200M cash at Q2 less burn and a royalty encumbrance on revenue. A CRL would mean roughly -45-50% (~$2.5, about 1x cash plus residual EU/UK value). At ~75-80% approval odds the probability-weighted value is ~$6.3-6.5, about +30%. Event quality is real, but the setup is a symmetric-ish binary, not an asymmetric one.",
-   "primary_source": "Savara Q2 2026 results PR (2026-08-11, s205.q4cdn.com) and 10-Q for the period ended 2026-06-30 (sec.gov 000119312526344585): PDUFA 2026-11-22, MHRA Q4 2026, EMA Q1 2027, $75M RTW tranche on approval. MHRA acceptance PR 2026-04-07 (BioSpace). FMP quote and EOD history as of 2026-10-09.",
-   "verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "kill_fact": "Confirmed from company releases: the PDUFA date is 2026-11-22, which is the original 2026-08-22 date pushed back three months because the FDA classed the info-request responses as a major amendment. Priority Review was kept, and the Day-74 letter said no AdCom is planned. The MHRA accepted the MAA on 2026-04-07 under 150-day accelerated review, with a decision expected in Q4 2026. The EMA decision is expected in Q1 2027. Company press releases since the Q2 report on 2026-08-11 show no FDA or MHRA action, so the event is still forward and unfired. The FMP quote is $4.92, with a market cap of about $1.0B, a 52-week range of $3.35-$7.01, and the price below both its 50-day ($5.32) and 200-day ($5.49) averages. That is not harvested, and the price sits well under the stale-but-indicative consensus of about $9-11. Corrections: (a) I could not confirm that the extension was announced in April 2026; my searches only surfaced it in the 2026-08-11 Q2 release, so treat the announcement date as unverified. (b) The content of the major amendment has never been disclosed. This program's only prior deficiency was CMC (the 2024 RTF), and drug substance has since moved to a new manufacturer, FUJIFILM. An undisclosed amendment to a CMC-sensitive biologic is a real CRL tail, not a footnote. (c) Third-party commentary notes there was no 8-K for the BLA acceptance, the priority review or the extension. That is a disclosure-quality flag, not a disqualifier. (d) The numerator is unmodeled. The +40-55% on approval is a rough guess anchored to analyst targets, with no deduction for the RTW royalty/term-loan take or for the launch-financing dilution a clinical-stage company typically needs after approval. Under the provenance rule, that cuts the score from 6 to 5.",
-   "analysis": "Verified: PDUFA is 2026-11-22 after the FDA classed Savara's information-request responses as a major amendment (announced April 2026, reaffirmed in the Q2 results on 2026-08-11). The MHRA accepted the MAA under accelerated 150-day review on 2026-04-07 with a Q4 2026 decision, and no FDA or MHRA decision has been reported as of 2026-10-12. The event is forward, dated, not fired and not macro. The price ($4.92 per FMP 2026-10-09) has drifted down from $6+ into the date, so residual capture is still substantial (+40-55% on approval), not harvested. Gaps: I did not re-read the Q2 10-Q for the exact term-loan balance or RTW royalty terms, and the approval value is my rough estimate, not a modeled launch curve. This program already had a 2024 refusal-to-file on CMC, so a CRL tail is not negligible, which keeps the score at 6 rather than higher."
+   "tier": "WATCH",
+   "lane": "binary_pdufa",
+   "catalyst": "FDA action on the MOLBREEVI (molgramostim, inhaled GM-CSF) BLA for autoimmune PAP, with PDUFA goal date 2026-11-22 after the April 2026 major-amendment 3-month extension; FDA approval also unlocks up to $150M of non-dilutive capital.",
+   "dated_milestone": "2026-11-22 FDA PDUFA action date (a Sunday, so the decision may come on Fri 11-20 or earlier). Next: UK MHRA decision in Q4 2026, then EMA decision in Q1 2027.",
+   "instrument": "SVRA common (NASDAQ). Use a small pre-PDUFA position, or defined-risk calls or call spreads, because a CRL means roughly a 45-50% gap down.",
+   "bloom_gates": "G1 (named counterparty: the FDA, plus the lender/partner behind the $150M tranche) and G2 (concrete commitment: a dated PDUFA goal of 2026-11-22, and the $150M is contractually triggered by approval). G3 is partial: the $150M is a specific figure but is non-dilutive financing, not equity value, so the approval value itself is derived.",
+   "edge": "M. (a) Run-up: none. At $4.705 (FMP, 2026-11-02) the stock is below its 50-day ($5.07) and 200-day ($5.39) averages and about 33% under the 52-week high of $7.01, so the base is fading into the event rather than running up. Measured from the post-resubmission base (~$4-5), the run-up is about 0-15%. (b) Remaining: about +40-50% to an estimated approval value of ~$6.50-7.00 (prior high plus de-risked launch and the $150M unlock; my estimate, not an analyst target). CRL floor is ~$2.50 (cash ~$0.6-0.8/share plus residual EU/UK optionality), about -47%. At an assumed ~75-80% approval probability the expected value is roughly +20-25%. This is clearly unharvested, but it is a true binary.",
+   "primary_source": "Savara 10-Q for Q2 2026 (SEC EDGAR svra-20260630, filed Aug 2026) and Q2 2026 results release (2026-08-11): PDUFA 2026-11-22 after a major-amendment extension, ~$173M cash, up to $150M non-dilutive capital on approval. FMP quote 2026-11-02: $4.705, market cap $966.7M, 52-week range $3.86-7.01.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The catalyst is verified: the MOLBREEVI BLA has a 2026-11-22 PDUFA after the FDA classified Savara's information-request responses as a major amendment (10-Q filings for Q1 and Q2 2026; Q2 release 2026-08-11). No decision is reported yet. Cash was about $173M at 2026-06-30, the Q2 net loss was $40.2M, and up to $150M of non-dilutive capital is tied to approval. At about $967M market cap and $4.70 the event looks unpriced, since the stock trades below its 50/200-day averages. Score is held at 5/WATCH rather than higher for four reasons: the major amendment signals CMC/data questions behind a prior refuse-to-file and resubmission history; the downside is a symmetric-magnitude binary; the 34% short interest and the no-AdCom claim could not be verified within the lookup budget; and my Q3 2026 10-Q lookup did not surface. Numerator provenance does not apply: this is a single-asset biotech with no preferred stack, and the approval value is re-derived from market cap and cash, not inherited."
   },
   {
    "symbol": "SYNA",
-   "score": 3,
+   "score": 4,
    "tier": "WATCH",
    "lane": "merger_arb",
-   "catalyst": "onsemi buys Synaptics for $123/share all-cash under the amended merger agreement of Oct 1 2026 (replacing the June 25 all-stock deal valued at about $7B). The only upside beyond the spread would be a topping bid from the unnamed strategic party, whose non-binding proposal arrived Sep 2.",
-   "dated_milestone": "Amended agreement signed 2026-10-01; FTC already cleared. Next: Synaptics shareholder vote (date not yet set, proxy pending) and the remaining non-US approvals. Close targeted by mid-2027.",
-   "instrument": "SYNA common (long) at $119.82, against the $123 cash consideration",
-   "bloom_gates": "G1 (named acquirer onsemi; the rival bidder is unnamed) + G2 (signed amended merger agreement, Morgan Stanley's committed ~$2.45B debt financing, no financing condition). G3 fails: the $123 figure is now almost fully priced.",
-   "edge": "L. Run-up from the pre-catalyst base of $106.15 (close before the Oct 1 announcement) to $119.82 is +12.9%. Remaining from $119.82 to $123 contractual is +2.65% gross over ~8-9 months, roughly 3.5-4% annualized, which is at or below T-bills for a deal still needing a shareholder vote and foreign approvals. The rival bid is non-binding, undisclosed and unnamed, and the board unanimously chose a LOWER onsemi price over it, so a topping bid is speculative. If the deal breaks, the stock likely drops back toward its 50-200 day averages of about $100-102, a 15-17% loss, against about 2.7% of upside. Mostly harvested, so the score is capped at 4.",
-   "primary_source": "onsemi/Synaptics joint release 'onsemi and Synaptics Announce Revised Merger Agreement' (onsemi.com newsroom + SEC 8-K/DEFA14A ex99-1, CIK 817720), 2026-10-01; Finviz/Benzinga reaction 2026-10-02 (prior close $106.15 → $120.76 premarket); FMP quote 2026-10-12 ($119.82)",
+   "catalyst": "The onsemi deal was amended on 2026-10-01 to $123 per share in cash with committed Morgan Stanley financing and no financing condition. It now awaits the Synaptics shareholder vote (DEFM14A filed, record date 2026-10-13) and non-US regulatory approvals. Close is guided for mid-2027.",
+   "dated_milestone": "Amended agreement signed 2026-10-01. The DEFM14A sets a 2026-10-13 record date, but the virtual special meeting date was not confirmed in these lookups (a summary says it falls within about 30 days of SEC clearance, so roughly Nov/Dec 2026). Next: the shareholder vote, then the remaining foreign/FDI clearances, then close by mid-2027.",
+   "instrument": "SYNA common (long spread vs the $123 cash consideration); no hedge leg is needed now that the deal is all-cash",
+   "bloom_gates": "G1 (named counterparty: onsemi, plus the unsolicited strategic \"Party A\", reportedly Cirrus Logic per Bloomberg 2026-10-09 and unconfirmed). G2 (concrete commitment: signed amended merger agreement, $123 cash, committed debt financing, no financing condition, FTC cleared). G3 is weak: the only currently unpriced figure is the ~$4.98 gross spread. The topping-bid optionality is not a specific figure.",
+   "edge": "L. Run-up from the pre-amendment base (2026-09-30 close $106.15, per Stocktwits) to $118.03 today is about +11.2%. Remaining capture to the contractual $123 is about +4.2% gross over about 7-8 months, which is about 6-7% annualized, roughly a risk-free-plus-small-premium arb return. The upside tail is a topping bid. But the board has already formally found that Party A's proposal no longer qualifies as superior, and the amendment cut aggregate value from about $7B to $5.7B (cash certainty traded for a lower headline). A renewed bid is possible but not dated or evidenced. Downside on a break is large: about $106 pre-amendment, and the stock traded as low as $58 within the past 12 months. Most of the event's value is already harvested.",
+   "primary_source": "onsemi/Synaptics press release \"onsemi and Synaptics Announce Revised Merger Agreement\" (2026-10-01; Synaptics 8-K/DEFA14A, SEC accession 0001140361-26-038301/038302). Synaptics DEFM14A (SEC accession 0001140361-26-039983, record date 2026-10-13). FMP quote SYNA $118.025 (2026-11-02). Stocktwits, 2026-10-01 (pre-amendment close $106.15).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The event is real and well underwritten: cash price, committed financing, no financing condition, FTC already cleared. But the market priced it on Oct 2 (+13.8% to ~$120.76), and today's 2.65% gross spread over a ~mid-2027 close pays below the risk-free rate for real break risk (shareholder vote, foreign reviews). This is a revised-down deal: the competing approach cut the price from ~$7B to $5.7B, so the 'topping bid' framing in the triage note is inverted. Re-score only if the unnamed strategic party goes public with a binding bid above $123 or the spread widens past ~6-8%. Gaps: I did not find the original June per-share value or the pre-June undisturbed price, and the vote date is not yet set. No numerator re-derivation was needed, since this is a contractual cash price and exempt."
+   "analysis": "The deal is real, signed, financed and FTC-cleared, and the vote and foreign approvals are forward, dated-ish milestones, so the event qualifies. But the $123 cash price is contractual and already about 96% priced: the 4.2% gross spread annualizes to roughly 6-7% against a break downside of more than 10%, and the board has already rejected Party A as non-superior. Score is capped at 4 (mostly harvested, thin residual). Gaps: the exact special-meeting date and the list of remaining foreign jurisdictions (likely including China SAMR, the main timing risk for a semis deal) were not confirmed. The DEFM14A also cites an \"unaffected\" $125.62 price for 2026-06-25 that conflicts with the trading base and was not reconciled. Numerator provenance check is not needed (cash deal price, exempt)."
   }
  ]
 }

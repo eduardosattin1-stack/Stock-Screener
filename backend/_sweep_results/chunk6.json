@@ -3,55 +3,77 @@
  "scanned": 150,
  "scan_distribution": {
   "active": 0,
-  "watch": 6,
-  "none": 144
+  "watch": 5,
+  "none": 145
  },
  "survivors_flagged": [
   {
-   "symbol": "DNTH",
+   "symbol": "DBVT",
    "score": 5,
    "tier": "WATCH",
-   "lane": "binary",
-   "one_line": "Phase 2 MoMeNtum (MMN) topline due Dec 2026 and CAPTIVATE Part B guidance by year-end; stock is about 30% off its high after a 75% interim response, but a $4.6B cap limits the asymmetry."
+   "lane": "pdufa_milestone",
+   "one_line": "Viaskin Peanut BLA (ages 4-7) filed 09-29-2026 with Priority Review requested. FDA's 60-day filing decision and PDUFA date come around 11-28-2026; the remediation timing at manufacturer Fareva is the risk."
+  },
+  {
+   "symbol": "DDL",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "one_line": "Sale of the China business to Meituan for $717M (signed 02-05-2026) awaits China antitrust (SAMR) and shareholder approval, with a roughly 02-2027 long-stop. Leftover cash plus the overseas business means a sum-of-the-parts / distribution angle; status not checked since February."
   },
   {
    "symbol": "DYN",
    "score": 5,
    "tier": "WATCH",
-   "lane": "dated_binary",
-   "one_line": "DYNE-251 (z-rostudirsen) DMD exon-51 BLA accepted with Priority Review, PDUFA 2027-01-21 (8-K 2026-07-20). Real dated binary about 3 months out, but it is a well-covered name and the BTD/AA path is consensus, so the asymmetry is probably partly priced. The DM1 accelerated-approval path is a second leg."
+   "lane": "binary_pdufa",
+   "one_line": "z-rostudirsen (DYNE-251, DMD exon 51) BLA has Priority Review with PDUFA 1/21/27 (accelerated approval). Shares dipped ~12% rather than ran up. Watch for an AdCom/briefing doc."
   }
  ],
  "verified": [
   {
-   "symbol": "DNTH",
+   "symbol": "DBVT",
    "score": 5,
    "tier": "WATCH",
-   "lane": "binary",
-   "catalyst": "The Phase 2 MoMeNtum readout of claseprubart in MMN (46 patients) is due in Dec 2026, and the CAPTIVATE CIDP Part B top-line guidance is due by YE'26. These are two company-dated binary events on one asset whose classical-pathway mechanism is already supported by a 75% interim responder rate in CIDP Part A.",
-   "dated_milestone": "MoMeNtum (MMN) Ph2 top-line Dec 2026, guided 'on track' in the Q2 PR of 2026-08-04. CAPTIVATE Part B top-line guidance by YE'26. DNTH212 Ph1 healthy-volunteer data by YE'26. Further out: EMERGE gMG Ph3 top-line 2H'28.",
-   "instrument": "DNTH common (NASDAQ). Could also be expressed through options around the Dec readout; IV was not checked.",
-   "bloom_gates": "G2 only: concrete dated company commitments (MMN top-line Dec '26, CAPTIVATE Part B guidance YE'26). No G1, since there is no counterparty or partner deal. No G3, since there is no specific unpriced figure; the 75% CIDP interim responder rate is public and priced.",
-   "edge": "M-L. The event is real, dated and forward, but much of the upside is already priced. (a) Run-up: from the 52-week low of $32.22 to $82.37 today is about +156%. The 75% CAPTIVATE interim, the cash raise and the AANEM data are already in the price. (b) Remaining: a favorable MMN readout plus constructive CIDP Part B guidance plausibly rerates the stock back toward its $117.88 high, about +40%. A miss in MMN (a niche indication) leaves CIDP and gMG intact, so the floor is about $55-60 (-30%). That is above the cash floor of about $21/share (roughly $1.19B cash and investments on about 56M shares, with no debt or preferred). Symmetric R/R near 1.3:1 on a $4.6B cap / about $3.4B EV.",
-   "primary_source": "Dianthus Q2 2026 results PR, GlobeNewswire, 2026-08-04. AANEM presentations PR, 2026-09-29. FMP quote 2026-10-12 ($82.37, mcap $4.61B, 52-week $32.22-$117.88). FMP balance sheet 2026-06-30 (10-Q filed 2026-08-04): cash+ST $887M plus LT investments $304M, total debt $1.3M (leases), preferred $0.",
+   "lane": "pdufa_milestone",
+   "catalyst": "FDA's 60-day filing decision on the VIASKIN Peanut BLA for children aged 4-7, submitted 2026-09-29 with Priority Review requested, is due around 2026-11-28 and should set a PDUFA date (about May 2027 if priority is granted, about Sep 2027 if standard).",
+   "dated_milestone": "~2026-11-28: FDA filing/acceptance decision (Day 60 from the 09-29 submission) plus Priority Review call and PDUFA date. Next: PDUFA ~2027-05 (priority) or ~2027-09 (standard). Fareva manufacturing remediation and pre-license inspection readiness sit in between.",
+   "instrument": "DBVT Nasdaq ADS (common; Euronext DBV line is the same equity)",
+   "bloom_gates": "G1 (named counterparty: US FDA/CBER, with contract manufacturer Fareva as the named execution risk) + G2 (concrete commitment: BLA submitted 09-29 with Priority Review requested, so FDA's 60-day filing review is a statutory clock). G3 partial: the gap between the $219M market cap and $165.7M cash (EV about $53M) is a specific figure that the market is not pricing in.",
+   "edge": "M. Run-up from the pre-catalyst base is NEGATIVE: the stock was $11.55 on 2026-09-29 (BLA filing day) and is $9.12 now, -21% (and -50% from ~$18 in early June), so nothing has been harvested. Remaining capture: the filing acceptance alone is a modest de-risking event, maybe +15-30% back toward $11-12. The real value sits at approval, about 6-10 months out: EV is only ~$53M against a first-in-class pediatric peanut patch, and an approval-case market cap of ~$500-800M would be +130-260% from today. Approval odds are cut by the Fareva CMC remediation (CRL risk rather than refuse-to-file risk) and by dilution from financing warrants. The edge is medium because the market is pricing the manufacturing risk heavily, not ignoring the event.",
+   "primary_source": "DBV Technologies press releases via GlobeNewswire: BLA submission, 2026-09-29; Q3 2026 results and business update, 2026-10-28 ($165.7M cash, funded into Q3-2027). Price data from FMP quote and EOD history, 2026-11-02 ($9.12, market cap $219M).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "Verified: the dates and figures come from the Q2 2026 PR of 2026-08-04 (MMN top-line Dec '26 with 46 patients enrolled vs a 36 target; CAPTIVATE Part B guidance by YE'26; 75% Part A interim responder rate; about $1.2B cash, runway into 2030). FMP's 2026-06-30 balance sheet shows no debt and no preferred, so there is no capital-structure issue. The equity is clean, about 26% cash-backed against market cap. The setup is a 2-3 month binary with real but moderate remaining capture: the stock is already about 2.5x its low, and MMN is the smaller indication. Most of the value sits in CIDP and gMG, which the December MMN readout does not resolve. Gap: I could not find out why the stock fell from $117.88, and from a 50-day average of $102.6, to $82.37 (competitor data, AANEM detail, or the market tape?), because the web-search budget was used up. That should be checked before any upgrade, since an unexplained 30% drawdown into a readout can be informative."
+   "analysis": "Confirmed from primary sources: the BLA was submitted 2026-09-29 with Priority Review requested, and Q3 results on 10-28 reported $165.7M cash with runway into Q3-2027. The stock has been sliding steadily (new 52-week lows in mid-October, $9.12 today), so the filing event is forward and the stock has de-rated rather than run up. Manufacturing problems at Fareva usually lead to a later CRL rather than a refuse-to-file, so a ~11-28 acceptance is likely, but it is only a partial re-rate; the approval binary is in 2027 and depends on Fareva remediation. Gaps: no 10-Q check of warrant tranches or dilution, and the web search budget was exhausted, so the Fareva remediation timeline and the exact acceptance date are not independently confirmed beyond the company PRs."
+  },
+  {
+   "symbol": "DDL",
+   "score": 5,
+   "tier": "ACTIVE",
+   "lane": "merger_arb",
+   "catalyst": "China antitrust (SAMR) clearance of Dingdong's shareholder-approved US$717M all-cash sale of its China grocery business to a Meituan subsidiary, followed by the board's stated plan to return at least 90% of post-closing cash.",
+   "dated_milestone": "Contractual long-stop is about 2027-02-05 (12 months from the 2026-02-05 signing), extendable by mutual consent with no fee. Next check is Q3 results around 2026-11-18 (date not confirmed by the company). Already done: shareholder approval on 2026-03-27 and the up-to-US$280M cash extraction by 2026-08-31. SAMR's decision is undated, and SAMR can stop its own review clock under AML Art. 32, so no statutory date forces a decision.",
+   "instrument": "DDL common ADS (NYSE), $1.93 on 2026-11-02, market cap about US$422M",
+   "bloom_gates": "G1 named counterparty: Meituan wholly owned subsidiary. G2 concrete commitment: a binding US$717M cash SPA (90% at close, 10% after the indirect-transfer tax filings), a US$75M regulatory break fee and a US$150M failure-to-close fee. G3 currently unpriced figure: US$717M is about $3.31/ADS, plus about $1.23/ADS of cash already outside the sale perimeter, against a $1.93 price. All three pass.",
+   "edge": "M. The asymmetry is real but slow, and the regulator is leaning on the deal. RUN-UP from the pre-catalyst base: the ADS was about $2.86-3.20 between 2026-01-30 and 2026-02-04 (FMP EOD) and is $1.93 today, so -33% to -40%. It has de-rated, not run up, and nothing is harvested. REMAINING: +81% to the provenance-checked event value of about $3.50, and +65% to the probability-weighted fair value of $3.18 (70% close odds). Downside is about +1% to the $1.95 judgemental broken-deal floor and -20% to the $1.55 contractual floor (cash outside the sale plus the break fee). The gap is about time, the SAMR outcome and China-ADR sentiment, not about the arithmetic.",
+   "primary_source": "Dingdong 6-K of 2026-02-05 (SPA terms: US$717M, fees, 12-month long-stop). Q2-2026 results 6-K (cash outside the sale perimeter, borrowings held for sale). SEC EDGAR index for CIK 1854545, checked 2026-10-26, latest filing the 2026-10-02 6-K. Local dossier backend/_opus_debate/_catalyst_results/DDL.json and _catalyst_skeptic/DDL.json (re-verified 2026-10-26). FMP quote 2026-11-02 ($1.93) and FMP EOD history for 2026-01-28 to 02-10.",
+   "verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "kill_fact": "Checked live on 2026-11-02. FMP shows DDL at $1.93, market cap $422.0M, 52-week range $1.65-3.41, 50-day average $2.17 and 200-day average $2.44. SEC EDGAR via FMP shows nothing filed after the 2026-10-02 6-K (change of director); the last financial filing is the 2026-08-21 Q2 6-K. FMP stock news for 2026-10-15 to 11-02 is empty, so the catalyst has NOT fired: no SAMR clearance and no closing. The run-up is NOT harvested: the price sits about 43% below the 52-week high and only 17% above the low, near the broken-deal floor, against a modeled value of $3.50-3.70. Corrections: (a) I could not independently re-read the Q2 6-K cash/debt split this run, so the $3.50-3.70 waterfall still rests on the prior re-derivation; (b) the 90% return is a stated intention of a controlled board, not a contract, and the proceeds pass through RMB conversion and SAFE outbound approval, which adds timing risk; (c) the SAMR risk is unresolved and could not be checked because the web search budget is exhausted. Mergermarket's 2026-09-29 report of rival complaints and the Maiyatian read-across (2026-10-10) make conditions or a slip likely. The price looks like it already prices meaningful break or slip odds, so the asymmetry is real but binary. I cut the score from 6 to 5 for the unverified regulatory path and the discretionary payout.",
+   "analysis": "Since the 2026-10-26 re-check the status is unchanged: no SEC filing after the 2026-10-02 board 6-K, and FMP news for 2026-10-20 to 11-02 is empty. The price moved from $1.99 to $1.93 and now sits right on the broken-deal floor. Numerator provenance was re-derived from the Q2-2026 6-K, not from analyst targets. There is no preferred stack. RMB1,646.8M of borrowings, including the US$157M bridge loan, stays inside the business being sold. About US$267.1M of cash (RMB1,421.2M plus RMB391.3M of short-term investments) is already outside the sale perimeter. On about 216.6M basic ADS (about 236M fully diluted) the event value is about $3.50-3.70 after tax, cash burn and a 90% payout haircut, so the equity waterfall supports the upside. The main risks are on the regulator side. Mergermarket reported on 2026-09-29 that rivals were complaining, and SAMR flagged Meituan's instant-retail power in the parallel Maiyatian case on 2026-10-10, which makes conditions or a slip past the long-stop likely. The 90% cash return is a stated intention of a controlled board, not a contract. Gap: web search budget was exhausted this run, so no news after 2026-10-26 beyond FMP could be checked. The Maiyatian outcome is the next read-across tell."
   },
   {
    "symbol": "DYN",
-   "score": 6,
+   "score": 5,
    "tier": "WATCH",
-   "lane": "dated_binary",
-   "catalyst": "FDA accelerated-approval decision on z-rostudirsen (DYNE-251) for exon-51 DMD, with Priority Review and dystrophin as the surrogate endpoint; PDUFA date 2027-01-21.",
-   "dated_milestone": "PDUFA 2027-01-21 (BLA accepted 2026-07-20). Next dates: Q3-26 10-Q/earnings in early Nov 2026; any AdCom or mid-cycle signal Oct-Dec 2026; DM1 z-basivarsen ACHIEVE registrational-cohort topline Q1 2027 (second leg).",
-   "instrument": "DYN common (Nasdaq), $16.64 at the 2026-10-09 close, market cap about $3.1B",
-   "bloom_gates": "G1 yes (the counterparty is FDA/CBER, with a set PDUFA action). G2 yes (Priority Review, PDUFA 2027-01-21, accelerated-approval filing). G3 partial: equity value is about $1.0B net cash plus the DMD franchise. The 29% de-rate below the pre-BLA base came from DM1 class read-across, not from the DMD file, so DMD approval value looks partly unpriced.",
-   "edge": "M. Run-up from the pre-catalyst base: -29%. The stock was $23.45 on 2026-07-20, the day the BLA acceptance was announced, and is $16.64 now. It fell about 16% on 2026-09-08 after Novartis's Phase 3 HARBOR trial in DM1 (del-desiran) failed, then drifted lower. So the event is not harvested; the stock has given back the gain. Remaining to the favorable-resolution value: about +35-45% (approval re-rates it back toward the $20.50 offering price to $24, using the July pre-read-across level as the anchor). Downside on a CRL: about -30% to roughly $11-12, which is net cash of about $5.5/share plus the DM1 and pipeline option value. Probability-weighted at about 0.8 approval gives about $20.7, or roughly +24%. That is a reasonable reward/risk but not deeply asymmetric. The name is well covered and the FDA climate for DMD surrogate-endpoint approvals is uncertain.",
-   "primary_source": "Dyne press release (GlobeNewswire), 2026-07-20: FDA accepts the z-rostudirsen BLA, Priority Review, PDUFA 2027-01-21. Q2-26 results release, 2026-07-29. Offering close release, 2026-07-23 (21.045M shares at $20.50). Benzinga, 2026-09-08, on the HARBOR read-across selloff. FMP quote/EOD prices and the Q2-26 balance sheet (filed 2026-07-29).",
+   "lane": "binary_pdufa",
+   "catalyst": "FDA action on the accelerated-approval BLA for z-rostudirsen (DYNE-251) in exon-51 DMD. The BLA was accepted with Priority Review, using dystrophin as the surrogate endpoint, and the PDUFA date is 2027-01-21.",
+   "dated_milestone": "PDUFA 2027-01-21. The next item to watch is any AdCom notice or late-cycle meeting outcome before then; none was found in DYN press releases through 2026-10-22.",
+   "instrument": "DYN common (NASDAQ). No preferred stock and minimal debt ahead of the common (Hercules term loan; about $20M debt on the balance sheet plus about $199M of other non-current liabilities).",
+   "bloom_gates": "G2: a concrete dated regulatory commitment (PDUFA 2027-01-21, Priority Review). G1 does not apply because the counterparty is the FDA, not a commercial party. G3 is only partial: the approval value is a rough estimate, not a contractual figure.",
+   "edge": "M. Run-up from the pre-catalyst base is -28%: $23.74 close on 2026-07-17, before the 07-20 BLA acceptance, versus $17.02 now. The stock also trades about 17% below the $20.50 follow-on price of 2026-07-21. Remaining upside to the favorable-resolution value is about +39% (re-rating to the pre-acceptance $23.7) and about +59% to the 52-week high of $27.3. Estimated CRL downside is about -32% (to roughly $11.5, near 2x net cash per share). Nothing is harvested, but the slide is unexplained and may be the market pricing FDA skepticism toward dystrophin-surrogate accelerated approvals in DMD. Probability-weighted at 65% approval, fair value is about $19.4 (+14%), so the edge is moderate, not high.",
+   "primary_source": "Dyne GlobeNewswire press releases: 2026-07-20 (FDA accepts BLA, Priority Review, PDUFA 2027-01-21, accelerated approval on dystrophin); 2026-07-21 and 07-23 ($375M upsized offering at $20.50, closed with the full overallotment); 2026-07-29 (Q2 results restating the PDUFA date). FMP sources: quote of 2026-11-02 ($17.02), EOD history 2026-07-14 to 07-24, and the Q2-2026 balance sheet (filed 2026-07-29).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The DMD catalyst is real, specific, dated and unfired: BLA accepted with Priority Review and a PDUFA date of 2027-01-21, filed for accelerated approval on dystrophin as the surrogate. The capital structure is clean: no preferred, about $898M cash and investments at 6/30, plus about $431M gross from the July raise at $20.50, against about $200M of Hercules debt. Net cash of about $1.0-1.1B supports the downside floor, so an equity waterfall does not cap this name. Residual capture is favorable because the stock trades 29% below the pre-catalyst base on DM1 read-across from the Novartis HARBOR failure (2026-09-08). That same failure weakens the second leg (the DM1 topline in Q1 2027) and the market's view of whether biomarker gains translate into functional benefit, so it stays WATCH rather than ACTIVE. Gap: web search was unavailable, so I did not check FDA AdCom status, peak-sales consensus or Q3 cash burn. The ~80% approval probability is my own judgement, not sourced."
+   "analysis": "The event is verified real, dated, forward and unfired. The BLA was accepted on 2026-07-20 with Priority Review and a PDUFA date of 2027-01-21. It is an accelerated-approval filing on dystrophin, with functional improvement reported in the DELIVER registrational cohort. Rather than running up, the stock fell 28% from its pre-acceptance base to $17.02 (market cap about $3.18B). The 6/30 balance sheet held about $898M cash, plus about $355M net from the July raise, so net cash is roughly $1.1B, or about $6/share, and EV is about $2.1B. The capital structure is clean (no preferred; Hercules debt is modest), so the numerator was not inherited. It is anchored to the pre-catalyst price and a net-cash floor, not to an analyst target. Gaps: the web-search budget was exhausted, so I could not identify why the stock fell from July to November (FDA or DMD peer read-through versus sector beta), whether an AdCom is planned, or the current exon-51 competitive and regulatory context. The binary risk under current FDA posture toward DMD surrogates keeps this at WATCH until those are checked."
   }
  ]
 }

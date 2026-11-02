@@ -1,79 +1,57 @@
 {
  "chunk": "8 (FRHC-GTY)",
- "scanned": 149,
+ "scanned": 150,
  "scan_distribution": {
   "active": 0,
   "watch": 10,
-  "none": 139
+  "none": 140
  },
  "survivors_flagged": [
   {
-   "symbol": "FRMI",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "activist",
-   "one_line": "Stock at 1-yr low. Two dated events: the Oct 30 annual meeting, where the ousted founder (~22% holder) has a 14a-8 proposal for an investment-bank strategic review and governance changes, and the TensorWave lease closing, pushed to Oct 31 and still waiting on a guaranty. Unrated, but a binary that depends on governance and financing."
-  },
-  {
-   "symbol": "FULC",
+   "symbol": "FRVO",
    "score": 5,
    "tier": "WATCH",
-   "lane": "capital_return",
-   "one_line": "Pociredir dropped in Jun-26 (FDA PRC2 risk). Reverse merger with Slate pending, with a pre-closing special cash dividend; S-4/A on file and shareholder vote ahead. Stock ~$3.77 vs ~$333M cash at Mar-26. Need the dividend size vs price."
+   "lane": "overhang",
+   "one_line": "180-day IPO lockup on ~97% of Class A shares (May-13 IPO at $27) expires around Nov 9, the same day as Q3 results. The stock already trades ~46% below the IPO price after a short report and law-firm notices. The lockup date is my estimate; the 424B4 prospectus will confirm it. This is an early-arc overhang-clearing setup: watch whether supply clears once the lockup ends."
   },
   {
-   "symbol": "GDOT",
-   "score": 6,
+   "symbol": "GPC",
+   "score": 5,
    "tier": "WATCH",
-   "lane": "merger_arb",
-   "one_line": "Two-part breakup ($8.11 cash + 0.2215 New CommerceOne sh) shareholder- and HSR-approved; Fed/AL/UT bank approvals pending and the Q3-2026 close target has slipped. At $12.61 vs implied $14.23-19.18 the spread is wide but rests on an unlisted bank stock's value. Watch for the approval date."
+   "lane": "spin_off",
+   "one_line": "Automotive/Industrial separation reaffirmed for early 2027. Stock de-rated after the Q3 miss and EPS cut (separation costs), so not re-rated, but the spin is widely known (mid-arc). Gabelli talk 11/3, CEO-elect named."
   }
  ],
  "verified": [
   {
-   "symbol": "FRMI",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "activist",
-   "catalyst": "Two dated binaries. First, the TensorWave 222 MW Project Matador lease must close by Oct 31 2026; it was pushed from Sep 30 because the guaranty is still being negotiated. Second, at the Oct 30 annual meeting the ousted founder Neugebauer (about 22% holder) has a 14a-8 proposal for an independent strategic review and governance changes.",
-   "dated_milestone": "2026-10-30 annual meeting vote. Next: 2026-10-31 TensorWave lease closing deadline, with the guaranty still pending. Q3 10-Q due about mid-November.",
-   "instrument": "FRMI common (NASDAQ), $3.43 on 2026-10-12, at its 52-week low (52-week high $32.39).",
-   "bloom_gates": "G1 yes: named counterparty TensorWave TEX1 LLC on a 222 MW lease. G2 partial: a signed lease plus a First Amendment, but closing depends on an unsigned guaranty. Proposal 14a-8 is precatory (advisory only) and commits no transaction. G3 fails: no specific unpriced figure. The company is pre-revenue and the lease economics behind any re-rating are not disclosed.",
-   "edge": "L. Run-up from the pre-catalyst base is negative. The stock is down about 20% since the Sep 11 proposal filing, about 20% since the Sep 22 lease extension, and about 89% from its 52-week high. So the market is pricing failure, not success. Remaining capture is unquantifiable on a provenance basis. The only upside numbers are inherited sell-side figures (consensus PT $20.67, or +500%), and those are disallowed. The equity is about 2.1x book ($2.19B market cap vs $1.03B book) with no favorable-resolution value I can derive. Skew is negative: a failed guaranty or closing on Oct 31 strips out the only anchor tenant. A precatory review vote does not by itself create value.",
-   "primary_source": "Fermi/TensorWave First Amendment press release, Accesswire, 2026-09-22. Founder 14a-8 proposal press release, PRNewswire, 2026-09-11. Texas Business Court TRO denial press release, PRNewswire, 2026-09-17. FMP Q2 2026 balance sheet (filed 2026-08-14). FMP quote, 2026-10-12.",
+   "symbol": "FRVO",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "overhang",
+   "catalyst": "The estimated 180-day IPO lockup expiry (May-13 IPO + 180 days ≈ Nov 9, 2026) falls on the same day as Q3 results, which are confirmed for Nov 9. The thesis is that a known supply overhang clears.",
+   "dated_milestone": "Q3-2026 results come out before the open on Mon 2026-11-09, with a call at 10:00 ET (confirmed). Lockup expiry is ~2026-11-09 but unconfirmed because the 424B4 was not checked. Next milestone: the first post-lockup Form 4/144 insider-sale filings in the week of Nov 9-16.",
+   "instrument": "FRVO common (NASDAQ). No position is warranted before lockup supply hits and Q3 results answer the short report.",
+   "bloom_gates": "None passed. G1: no named counterparty (the lockup release is a supply event, not a buyer). G2: no concrete commitment such as a buyback, take-out or financing backstop. G3: no specific unpriced figure, since the lockup is a public, widely known date and the Q3 numbers are unknown. Dated: yes (results confirmed, lockup estimated). Forward: yes. Not a macro bet: yes.",
+   "edge": "L. A lockup expiry is a known, scheduled event, and the supply is usually priced in or hits on the day. 'Overhang clearing' is a hoped-for price pattern after the event, not a value-unlocking event. (a) Run-up from the pre-catalyst base: NEGATIVE, about -43%. The stock was $14.33 at the Oct-6 Morpheus short-report close and is $8.16 now (FMP quote 2026-11-02), about 70% below the $27 IPO price, not the 46% stated in the triage. So nothing is harvested, but a falling knife is not residual capture. (b) Remaining % to a favorable-resolution value: not derivable. There is no contractual or SoP numerator, and the company is pre-revenue (Q2 revenue $113k vs $241k estimated; EPS -0.38). Any upside figure would be a guess about sentiment, not a re-derived value.",
+   "primary_source": "GlobeNewswire 'Fervo Energy to Report Third Quarter 2026 Results on November 9, 2026' (2026-10-30). PRNewswire item on the Morpheus Research report (2026-10-30, report dated 2026-10-06). FMP quote FRVO $8.16 (2026-11-02). FMP earnings calendar (updated 2026-11-02). Lockup terms not verified against the 424B4.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "Both events are real, dated and forward. However, the 14a-8 proposal is non-binding: the board won the TRO fight on Sep 17, and the court upheld its bylaws. The TensorWave closing is a financing-contingent binary at a pre-revenue developer that had only $62.5M cash at 6/30 against a $1.6B PP&E build and $731M of non-current liabilities, so a closing does not secure the funding. No preferred sits ahead of the common. Still, the equity waterfall cannot support a derived upside figure: there is no disclosed lease NPV, and the build is heavily capex-funded. So I am scoring the equity, not the event, under the cap of 4, and keeping it on WATCH for the Oct 31 closing print. Gap: the web-search budget was exhausted, so the guaranty status after Sep 22, current share count, debt terms in the Q2 10-Q notes and the proxy vote recommendations are unverified."
+   "analysis": "Confirmed: Q3 results on 2026-11-09 (GlobeNewswire release 2026-10-30, FMP earnings calendar), the Morpheus short report of 2026-10-06 (thermal decline, water loss, seismicity damage) and repeated law-firm investigation notices. The stock has kept falling, to $8.16 versus $14.33 on Oct 6, so the triage figure of '46% below the IPO price' is stale. Gap: the lockup date and its ~97% coverage were not checked against the 424B4 (the web-search budget for this turn was used up), and no 10-Q capital-structure lookup was done. That lookup matters less here because the thesis has no derived upside numerator. The setup does not pass any Bloom gate: it is lockup supply landing on a binary results/short-report rebuttal day for a pre-revenue name under litigation, so it is a sentiment trade, not a catalyst. Re-look only if, after Nov 9, there is visible insider or sponsor non-selling, a named strategic investor, or Q3 data that specifically refutes the short report's operating claims."
   },
   {
-   "symbol": "FULC",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "capital_return",
-   "catalyst": "Fulcrum is doing an all-stock reverse merger with privately held Slate Medicines (announced 2026-08-17). Fulcrum holders end up with about 5.0% of the combined company and get a special cash dividend before closing. The deal needs a stockholder vote and is expected to close in Q4 2026.",
-   "dated_milestone": "Merger signed 2026-08-17 (GlobeNewswire/Reuters). Next: S-4 declared effective, then the FULC stockholder vote and the dividend record date, with closing guided to Q4 2026. The exact vote date and dividend size could not be confirmed.",
-   "instrument": "FULC common (Nasdaq), $3.77 on 2026-10-12. Buying now captures the pre-closing cash dividend plus a ~5% stub in Slate Medicines.",
-   "bloom_gates": "G1 yes: named counterparty, Slate Medicines, with a signed merger agreement. G2 yes: a concrete commitment to a pre-closing special cash dividend and a 5.0% ownership split. G3 only partial: the dividend size per share, the specific figure that matters here, is NOT verified (see analysis).",
-   "edge": "L. Run-up from the pre-catalyst base is about +25-33%: the post-pociredir low was $2.83 (52-week low), and the August pre-deal trading level was about $2.85-3.0, against $3.77 now. Remaining to the favorable value is about 0-10%. Net cash at 6/30/26 was $318.8M of cash and short-term investments minus $13.3M of total liabilities, or about $305M. Spread over about 76.3M shares (implied by FMP market cap and BlackRock's 8.82M shares = 11.57%), that is about $4.00/share. Burn was about $26M/quarter in Q2, and wind-down plus deal costs come on top, so cash at a Q4 close is likely about $3.5-3.8/share before the 5% Slate stub. A $3.77 price leaves roughly 0-10% if the stub is worth around $0.1-0.3/share. Most of the value is already priced in; the stock trades near liquidation value.",
-   "primary_source": "FMP balance sheet, Q2 10-Q filed 2026-07-30 (cash and short-term investments $318.84M, total liabilities $13.26M, no preferred). Merger: GlobeNewswire press release 2026-08-17 'Fulcrum Therapeutics and Slate Medicines Announce Merger Agreement' plus Reuters 2026-08-17; 5.0% ownership per Business Wire/Halper Sadeh 2026-08-17. FMP quote $3.77 on 2026-10-12.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The event is real and forward-dated: a signed all-stock reverse merger with Slate Medicines, a pre-closing special dividend, and a Q4 2026 close subject to a vote. Several shareholder-rights firms are probing whether the 5% split is fair to FULC holders. Re-deriving value from the capital structure (no preferred stock, no debt, only $5.3M of leases, $318.8M cash at 6/30/26) gives about $4.00/share of net cash at June 30, falling toward about $3.5-3.8 by closing. At $3.77 the common is already priced at roughly cash plus a small option on the stub, so remaining capture is thin; the score is capped at 4 as mostly harvested. GAP: the exact dividend amount per share and the vote date could not be verified, because the web-search budget was used up and the GlobeNewswire press release returned 403. The \"$245M deal\" headline (Defense World/MarketBeat 2026-08-17) may be the dividend pool, which would be about $3.2/share. That needs confirming from the S-4/A before any upgrade."
-  },
-  {
-   "symbol": "GDOT",
+   "symbol": "GPC",
    "score": 5,
    "tier": "WATCH",
-   "lane": "merger_arb",
-   "catalyst": "The breakup (Smith Ventures/CommerceOne buy Green Dot for $8.11 cash plus 0.2215 New CommerceOne shares per GDOT share) closes once the still-pending Fed and Alabama/Utah bank approvals arrive.",
-   "dated_milestone": "Shareholder and HSR approvals are done. The Fed/AL/UT bank approvals are still pending, and no approval date has been published (the Q3-2026 target has slipped). Next checkpoint is GDOT's Q3-2026 results (~early-mid Nov 2026), where an updated close guide is expected.",
-   "instrument": "GDOT common (NYSE), $12.61 on 2026-10-12. No clean hedge is possible because New CommerceOne stock is unlisted and cannot be shorted.",
-   "bloom_gates": "G1 (named counterparties Smith Ventures/CommerceOne, plus named regulators Fed and AL/UT) + G2 (signed agreement, shareholder- and HSR-approved). G3 is only partial: the $8.11 cash leg is contractual, but the stock leg's value (0.2215 x an unlisted bank share) is derived, not fixed.",
-   "edge": "M. Run-up: about -7% versus the pre-announcement base (~$13.5, my recollection from before the Nov-2025 deal; not checked this session), or +25% from the post-deal 52-week low of $10.10. Very little has been harvested. Remaining: +12.8% to the $14.23 low end, +52% to the $19.18 high end, about +32% to the ~$16.70 midpoint. Today's price implies New CommerceOne at about $20.3/share ((12.61-8.11)/0.2215), against $27.6-$49.9 implied by the flagged range. The spread is wide because the market doubts the stock leg's value and the regulatory timing, not because nobody has noticed. The value is undated, unhedgeable and depends on an unlisted bank share, so the edge is medium, not high.",
-   "primary_source": "FMP quote 2026-10-12 ($12.61, 52-week range $10.10-$13.75); Zacks 2026-08-18 'What Green Dot's Pending Split Means for Investors as Closing Nears' ($8.11 cash + CommerceOne stock, regulatory approvals outstanding); Green Dot Q2-2026 release, Business Wire 2026-08-10.",
+   "lane": "spin_off",
+   "catalyst": "Genuine Parts is splitting into two public companies, NAPA/Automotive (GPC) and Motion/Industrial, with completion reaffirmed for Q1 2027. Leadership and boards are named, and December investor days will show each standalone business.",
+   "dated_milestone": "Gabelli Automotive Symposium 2026-11-03 (CEO Stengel, CEO-elect Carruthers, CFO/COO Nappier). December 2026 investor days for GPC and Motion. Separation completes Q1 2027.",
+   "instrument": "GPC common (NYSE). Cap structure checked: no preferred and no external manager; investment-grade debt only.",
+   "bloom_gates": "G2 (concrete commitment: dated Q1-2027 separation, named leadership teams and boards per the 2026-09-09 release, investor days scheduled). G1 does not apply (no counterparty). G3 is weak: the unpriced figure is a derived SoP gap, not a disclosed number.",
+   "edge": "M. (a) Run-up from the pre-catalyst base: about +6% (2026-07-01 close $117.40, the day before the +13% gap to $132.57 on 07-02, to $124.2 today). Measured from the June lows around $98 it is about +27%. After the Q3 miss the stock gave back the whole post-announcement premium. (b) Remaining to the provenance-checked SoP: about +15-20%, to roughly $140-150. Motion at about 14x EBITDA on ~$1.2B, Automotive at about 9x on ~$1.45B, less about $3B capitalized corporate cost, less $6.06B net debt incl leases, over 137.9M shares. Edge is moderate: mostly unharvested, but the gap depends on the multiples assumed, and dis-synergies plus separation costs eat into it.",
+   "primary_source": "GPC PRNewswire 2026-09-09 (leadership named, separation on track Q1 2027, December investor days). GPC Q3 2026 results 2026-10-20 (EPS outlook narrowed to $7.50-7.75). GPC Gabelli presentation notice 2026-10-22. FMP balance sheet, 10-Q 2026-09-30 (filed 2026-10-20). FMP quote/EOD 2026-11-02 ($124.17).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The deal is real and mostly unpriced: $12.61 implies New CommerceOne at ~$20/share against the flagged $27.6-$49.9, and only bank approvals remain. But the stock leg rests on an unlisted bank whose waterfall I could not re-derive (I did not reach the S-4/10-Q in my lookups). The Fed approval has no date and has already slipped past Q3, and the 2026-09 broker consensus is Reduce. The cash leg (64% of today's price) is a hard contractual floor once the deal closes. If it breaks, standalone GDOT falls back toward the ~$10 low (~-20%). So keep it on WATCH at 5 until a dated approval or a New CommerceOne pro-forma book value per share confirms the numerator. GAP: web search budget was exhausted; regulatory status comes only from FMP news (latest 2026-08-18 Zacks: approvals still pending), and I could not confirm whether anything happened between Sept and Oct."
+   "analysis": "The separation is real, dated and committed: Q1-2027 completion was reaffirmed on 2026-09-09 with leadership named, and the Q3 release (2026-10-20) narrowed adj EPS guidance to $7.50-7.75 from $7.50-8.00, citing separation costs. The capital structure is clean: 10-Q 2026-09-30 shows $5.11B debt + $1.71B leases, $0.76B cash, no preferred, 137.9M shares. So the SoP numerator holds for the equity, but the upside is a multiple-arbitrage on Motion that the market already knows about, not a hidden figure. The 2026-07-02 announcement premium is fully round-tripped. That keeps roughly 15-20% on the table into the December investor days, so this rates WATCH, not ACTIVE. Gap: web search budget was exhausted, so segment EBITDA and peer multiples are estimates, not taken from the filing segment note."
   }
  ]
 }

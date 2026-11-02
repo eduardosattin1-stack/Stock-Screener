@@ -1,57 +1,79 @@
 {
  "chunk": "15 (PLUG-RLJ)",
- "scanned": 150,
+ "scanned": 136,
  "scan_distribution": {
   "active": 0,
-  "watch": 2,
-  "none": 148
+  "watch": 8,
+  "none": 128
  },
  "survivors_flagged": [
   {
-   "symbol": "RAPP",
+   "symbol": "PRAX",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary_pdufa",
+   "one_line": "Two dated PDUFAs: relutrigine on 2026-12-27 (pushed back by a major amendment) and ulixacaltamide on 2027-01-29 (no AdCom, mid-cycle clean). At $278 the stock is about 29% below its $393 high and under its 200-day, so it has not run into the events. But it is a $7.8B, well-covered name, and the asymmetry is unproven."
+  },
+  {
+   "symbol": "QRVO",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "one_line": "Skyworks stock+cash merger; both shareholder votes passed Feb-2026. Still waiting on the FTC Second Request and foreign approvals (incl. China); close guided late-2026 to early-2027. A regulatory-clearance spread with no hard date yet."
+  },
+  {
+   "symbol": "QURE",
    "score": 5,
    "tier": "WATCH",
    "lane": "dated_binary",
-   "one_line": "RAP-219 Phase 2 bipolar-mania topline is guided for Oct 2026, a dated binary on an expanded, potentially confirmatory trial. Asymmetry and price run-in were not yet checked, and it is close to resolution for a bi-weekly pipeline."
-  },
-  {
-   "symbol": "RCI",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "spin_off",
-   "one_line": "Bought Kilmer's 25% of MLSE for C$4.35B (announced 2026-07-06, closing Q4 2026 pending league approvals); CFO plans to announce minority-stake sales of the >C$25B sports/media entity by H1 2027 and use the proceeds to cut debt. Real sum-of-parts unlock, but widely covered and mid-arc."
+   "one_line": "AMT-130 Huntington's accelerated-approval BLA reportedly filed 2-Sep-2026 (single source). FDA filing acceptance and priority-review/PDUFA date due about early Nov. Management expects an AdCom, so a later briefing-doc event is possible. Stock already re-rated on the FDA reversal."
   }
  ],
  "verified": [
   {
-   "symbol": "RAPP",
+   "symbol": "PRAX",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "binary_pdufa",
+   "catalyst": "FDA action on relutrigine (SCN2A/SCN8A DEEs, priority review, PDUFA moved to 2026-12-27 after a major amendment, no AdCom), then ulixacaltamide (essential tremor, PDUFA 2027-01-29, mid-cycle found no major issues). EMERALD broad-DEE topline is also guided for Q4 2026.",
+   "dated_milestone": "Relutrigine PDUFA 2026-12-27. Next: ulixacaltamide PDUFA 2027-01-29. EMERALD topline Q4 2026 (undated). Q3 10-Q expected around early Nov 2026.",
+   "instrument": "PRAX common (NASDAQ). Options would fit a binary event better, but implied vol was not checked.",
+   "bloom_gates": "G1 partial: the FDA is the named counterparty, with set PDUFA dates. G2: no concrete commitment (an approval is not contractual). G3: fails. No specific figure is still unpriced; the favorable value is only a guess at re-rating.",
+   "edge": "L. Both events are real, dated and still ahead. But (a) run-up from the pre-catalyst base is about +400%: roughly $55 before the Essential3 ulixacaltamide Phase 3 topline in Oct 2025 (approximate, from memory, not re-verified), versus $277 today. Even from the 52-week low of $154 the gain is +80%. (b) Remaining to a favorable resolution is about +42%, if both approvals take it back to the $392.70 52-week high. That target is a guess, not derived. It sits against roughly -35 to -50% on a CRL. Approval odds are high and widely covered at a $7.7B market cap. Most of the move came when the efficacy data was de-risked, not at the regulatory step, so the event is mostly harvested. The pullback below the 200-day ($315) is the only sign the run-in is not crowded.",
+   "primary_source": "Praxis Q2 2026 corporate update / 8-K (sec.gov praxisq22026pr.htm, 2026-08-06); Q1 2026 10-Q (cash about $1.4B at 2026-03-31); FMP quote for PRAX on 2026-11-02 ($277.27, market cap $7.74B, 52-week range $154.45-$392.70, 200-day average $314.83)",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "Both PDUFA dates are confirmed in the company's Q2 2026 update (Aug 6, 2026): relutrigine on 2026-12-27 after a major-amendment extension with no AdCom planned, and ulixacaltamide on 2027-01-29 with no major mid-cycle concerns. The company also said it will give no regulatory updates before those dates. The capital structure is clean: about $1.4B cash as of 3/31/26, runway into 2028, no preferred stock ahead of the common. So the numerator problem is not dilution or a waterfall. It is that the stock's roughly 5x move since the Phase 3 data has already priced most of the approval value. This is a high-probability, well-covered binary with no unpriced figure, so it scores as mostly harvested (cap 4). It stays on WATCH for the Dec 27 date and for any EMERALD read in Q4. Gaps: no Q3 2026 10-Q yet, the June 30 cash figure was not confirmed, and the pre-catalyst base price was not re-checked against FMP history."
+  },
+  {
+   "symbol": "QRVO",
+   "score": 0,
+   "tier": "NONE",
+   "lane": "merger_arb",
+   "catalyst": "The Skyworks-Qorvo stock+cash merger (0.960 SWKS + $32.50 cash per QRVO share) closed on 2026-10-05, so the catalyst has fired and QRVO no longer trades. The triage premise is stale.",
+   "dated_milestone": "Closed 2026-10-05 (Qorvo 8-K). FTC timing agreement lapsed ~2026-08-03; SAMR cleared unconditionally 2026-09-21 to 10-04. No next date: there is no remaining instrument.",
+   "instrument": "None. QRVO common was delisted from Nasdaq on 2026-10-05. FMP still shows a frozen last print of $114.17 (timestamp 2026-10-05, volume 0). Former holders now own SWKS ($87.18 on 2026-11-02) plus cash.",
+   "bloom_gates": "G1 (named counterparty Skyworks) and G2 (signed merger agreement) were met historically. Neither applies now because the event has fired, and no G3 unpriced figure remains.",
+   "edge": "None. The run-up is the whole spread: QRVO went from about $75 (52-week low, before the deal) to its final $114.17 print at close, roughly +52%. Remaining: 0%, because the spread collapsed at closing and there is nothing left to buy. The implied consideration at today's SWKS price is 32.50 + 0.96 x 87.18 = $116.19. That number exists only as SWKS exposure, which is ordinary equity risk and not an arb.",
+   "primary_source": "Qorvo Form 8-K on merger completion, 2026-10-05 (sec.gov/Archives/edgar/data/0001604778/000095010326015180/dp254466_8k.htm). MLex: US antitrust cleared (~2026-08-03) and SAMR clearance list (published 2026-10-15). OCBJ: 'Skyworks completes $22B combination with Qorvo'. FMP batch-quote, 2026-11-02.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The triage flag is stale. The FTC let the timing agreement lapse in early August 2026, China's SAMR cleared the deal unconditionally between 2026-09-21 and 10-04, and the merger closed on 2026-10-05, with QRVO delisted. The FMP quote is frozen at the 2026-10-05 close with zero volume, which confirms there is no live instrument. Gap: I did not independently confirm the KFTC clearance, but the closing itself proves all conditions were met or waived."
+  },
+  {
+   "symbol": "QURE",
    "score": 5,
    "tier": "WATCH",
    "lane": "dated_binary",
-   "catalyst": "Topline results from the RAP-219 Phase 2 proof-of-concept trial in bipolar mania, guided for October 2026 (Q1-26 guidance pulled it forward from 1H27 to 4Q26). The CEO's September 23, 2026 caution that some trial patients may see worsening symptoms has already knocked down market expectations.",
-   "dated_milestone": "Bipolar mania Phase 2 topline due October 2026, not yet released as of 2026-10-12. Next date: Q3 earnings around Nov 5, 2026, which is the backstop if the readout slips.",
-   "instrument": "RAPP common (NASDAQ). Biotech binary with no preferred stack ahead of the common. Sizing should assume a gap move either way within about 3 weeks.",
-   "bloom_gates": "G2 (partial): a concrete, company-guided readout window for a named trial, October 2026. G1 does not apply (no counterparty). G3 fails: there is no contractual or specific unpriced figure, and the upside is a judgement about how the market re-rates a proof-of-concept read.",
-   "edge": "M-L. The stock has de-rated into the event instead of running up. Run-up from the pre-catalyst base is -26%: $41.47 close on 9/22, the day before the CEO's warning, to $30.65 today (about -34% from $46.28 on 9/8; the 50-day average is $42.43). Remaining capture to a provenance-checked favorable value (the pre-warning level, roughly $40-42) is about +31-37%. Downside floor is roughly $24 (the 52-week low is $23.75). Epilepsy (FOS Phase 2a: 90% median seizure reduction in weeks 9-12) plus about $436M of cash (a stale figure) support a market cap of about $1.47B, so a fail costs maybe -20-25%. The warning from management is a negative tell, which is why the edge is not H. The asymmetry is decent and not harvested, but it is not a mispricing I can name.",
-   "primary_source": "Rapport Q1 2026 business update press release (May 2026): bipolar Phase 2 topline guided to 4Q26. KoalaGains top-losers item (2026-09-23): -17.7% on the CEO's TD Cowen summit caution, October 2026 topline. Company release (2026-09-02) for the TD Cowen fireside on 2026-09-23. FMP quote 2026-10-12: $30.65, market cap $1.466B, 52-week range $23.75-$52.93. Yahoo snapshot: $41.47 close on 2026-09-22.",
+   "catalyst": "The FDA accepted the AMT-130 (ifezuntirgene inilparvovec) Huntington's accelerated-approval BLA with Priority Review and set a PDUFA date of 1-May-2027. An advisory committee (AdCom) is expected beforehand, date not yet set.",
+   "dated_milestone": "FIRED 2026-11-02: BLA acceptance, Priority Review and PDUFA date set. NEXT: Q3 earnings call 2026-11-04 08:30 ET (AdCom timing guidance); AdCom date to be announced (likely Q1-2027); PDUFA 2027-05-01.",
+   "instrument": "QURE common (NASDAQ). Biotech binary: options or a sized stake only. No preferred stock; the $510M other non-current liability is mostly the Hemgenix royalty financing.",
+   "bloom_gates": "G1 (named counterparty: the FDA/CBER review) + G2 (concrete commitment: PDUFA 1-May-2027 with priority review). G3 not met: no specific unpriced contractual figure; the upside is a probability-weighted re-rating.",
+   "edge": "M-L. Run-up from the pre-catalyst base: roughly -3% (the post-48-month-data close was $24.51 on 2026-09-29; today $23.73), and -39% from the $39.11 close on 2026-09-28 before the data. The acceptance was sold (-4.4% today), so it was not a re-rate. Remaining: +77% to an approval value of about $42 (the Aug-Sep 2026 trading range with the BLA pending, before the data dented durability). About -50% to a CRL floor of about $12 (net cash about $11 a share after burn, plus Hemgenix royalties). Probability-weighted value is about $25.5 at roughly 45% approval odds, versus $23.73: a thin positive expected value. The mispricing is not obvious. The market is already discounting durability doubts (48-month cUHDRS 44% slowing, p=0.144) and the FDA's 2025-26 history of reversals.",
+   "primary_source": "GlobeNewswire / uniQure PR 2026-11-02 'FDA Acceptance and Priority Review of the BLA... PDUFA May 1, 2027'; Reuters 2026-09-29 (48-month data miss); FMP Q2-2026 balance sheet (filed 2026-07-29); FMP EOD prices through 2026-11-02.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The catalyst is real, dated and forward. The October 2026 topline has not fired. It is not a macro bet, and it is not harvested: the stock fell 17.7% on 9/23/26 after the CEO cautioned that some bipolar mania patients might worsen, so expectations have been reset lower. The 2026 epilepsy/FOS program and about $436M of cash (a stale figure) cap the downside, which leaves roughly +31% to the pre-warning level against roughly -22% to the 52-week low (about 1.4:1). Two things keep this at WATCH, not ACTIVE: management itself flagged a possible negative signal, and a readout inside about 3 weeks may land before a bi-weekly pipeline can act. Gaps: I could not find the exact readout date, the trial size or the endpoint, and the cash figure was not re-checked against the latest 10-Q. Numerator provenance is not applicable (no preferred stock or waterfall; the upside is a binary re-rate, not a derived SoP)."
-  },
-  {
-   "symbol": "RCI",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "spin_off",
-   "catalyst": "Rogers now owns 100% of MLSE (closed 2026-10-01) and plans to sell a minority stake in its combined sports/media entity, which it values at more than C$25B, by H1 2027, using the cash to pay down debt. The sale would put a market price on the sports assets.",
-   "dated_milestone": "Kilmer 25% buyout CLOSED 2026-10-01 (announced 2026-07-06). Next: Q3 2026 results around late Oct 2026, for an update on the sale process; the minority-stake sale announcement is guided for H1 2027 (no buyer, terms or date yet).",
-   "instrument": "RCI common (NYSE; RCI-B.TO)",
-   "bloom_gates": "G2 partial: a stated management intent and timeline (sale within ~12 months / by H1 2027), not a contract. G3 partial: management's >C$25B entity value is a specific figure the stock does not reflect. G1 FAIL: no named buyer.",
-   "edge": "M. Run-up from the pre-catalyst base: -5.8% (US$31.62 on 2026-07-02 to US$29.78 on 2026-10-12, a 52-week low, down 4% today). Remaining to the provenance-checked value: about +25-30% (US$38, see valuation). The deal story has not been harvested at all; the stock has de-rated on the telecom core (Q2 loss, competition). The edge is limited because the sale is widely covered and has no buyer or price yet. Selling a stake at fair value only moves value between Rogers' own pockets; the equity gains only if the sale price beats the sports value the market already implies. That is likely given the thin equity slice, but unproven.",
-   "primary_source": "Rogers/GlobeNewswire closing release 2026-10-01 (via telcomagazine.com/globenewswire/3373334). Announcement 2026-07-06 (iphoneincanada.ca, thelogic.co). RCI Q2 2026 balance sheet, filed 2026-07-22 (FMP). FMP quote 2026-10-12 and EOD prices for 2026-07-02.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The Kilmer buyout is real and done (C$4.35B, closed 2026-10-01). The forward event is the minority-stake sale of the >C$25B sports/media entity by H1 2027, which is management intent with no named buyer. Capital structure re-derived from the Q2 2026 balance sheet (CAD): total debt C$45.7B, net debt C$44.0B before the C$4.35B buyout cash, and C$6.3B of minority interest ranking ahead of the common (mostly the Blackstone-led wireless-backhaul structured equity, whose redemption and step-up terms were NOT checked here; that is a gap). Common equity is only about C$22.5B (US$16.1B) inside an EV of about C$77B, so the waterfall does support the upside: if a sale crystallises C$25B against roughly C$15B implied, that is about +C$10B, or about +40% gross on the equity, though leverage cuts both ways. Score 5 / WATCH rather than ACTIVE: there is no counterparty yet, the guided date is 6-9 months out, the story is widely covered, and the telecom stub is deteriorating (52-week low) and could swamp the SoP gain."
+   "analysis": "The triage flag's 'acceptance due early Nov' event fired today, 2026-11-02 (GlobeNewswire): the BLA was accepted with Priority Review and a PDUFA date of 1-May-2027. The stock fell 4.4% on the news. The live forward binaries are the AdCom (date to be announced, management expects one) and the PDUFA itself, both dated and forward. Neither is re-rated: the stock still sits about 39% below its pre-Sep-29 level after the mixed 48-month data (cUHDRS 44% slowing, not significant; TFC above 60% slowing at nominal significance). Securities-fraud investigations and the Barclays downgrade to $28 add overhang. The capital structure is clean: about $810M cash and investments at 30-Jun-2026 against $50M debt, no preferred stock, and a market cap of about $1.65B. The approval upside is therefore not diluted by any security ranking ahead of the common, but probability-weighted it is only modestly above the price. WATCH for the AdCom date and briefing documents, which are the next real re-pricing point. Gap: I did not verify the Q3 cash balance or share count; that comes with the Nov 4 call."
   }
  ]
 }

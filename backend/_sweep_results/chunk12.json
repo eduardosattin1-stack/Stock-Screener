@@ -2,100 +2,78 @@
  "chunk": "12 (MBVI-NBIX)",
  "scanned": 150,
  "scan_distribution": {
-  "active": 1,
+  "active": 0,
   "watch": 5,
-  "none": 144
+  "none": 145
  },
  "survivors_flagged": [
   {
-   "symbol": "MLYS",
+   "symbol": "MFIC",
    "score": 5,
    "tier": "WATCH",
-   "lane": "binary",
-   "one_line": "Lorundrostat hypertension PDUFA 2026-12-22; stock fell from $47.65 to $23.37 (near 52w low), so it has not run into the date; possible asymmetry"
+   "lane": "merger_arb",
+   "one_line": "Ares Capital (ARCC) agreed on 2026-10-27 to buy MFIC for about $10.88/sh, partly in ARCC stock. MFIC trades at $10.33, about 5% below the headline price. The deal already re-rated the stock, so this is now a plain BDC-merger spread that closes after shareholder votes. Thin edge."
   },
   {
    "symbol": "MTN",
-   "score": 6,
-   "tier": "ACTIVE",
-   "lane": "activist_structural",
-   "one_line": "Oasis filed a 13D (6.5% stake) on 2026-09-16 and nominated 4 directors (Chapek, Hudson, Roberts, Street). Its stated ask is a review or sale of the company or some resorts. Vail has hired takeover-defense bankers and Matthew Prince wants Park City. The annual meeting is likely December but the proxy isn't filed yet, so the date is unconfirmed. Pass units are down about 10%, so it's still early-arc."
-  },
-  {
-   "symbol": "MSGS",
    "score": 5,
    "tier": "WATCH",
-   "lane": "spin_off",
-   "one_line": "Rangers spin-off (MSG Rangers Corp, 1 share per 2 MSGS) has a 2026-10-20 record date and targets 2026-10-26 completion. The spin itself has been known since Feb/May and is late-arc. The tradeable setup is post-spin forced selling in the Rangers SpinCo, which would need a re-check after the 10-26 distribution."
+   "lane": "activist",
+   "one_line": "Oasis Management proxy fight for 2 board seats (Chapek, Hudson); annual meeting is Dec 14, 2026. Largest holder backs management, so the activist's odds are lower. Stock only +7% since earnings, so not re-rated."
   },
   {
-   "symbol": "MUX",
+   "symbol": "NATL",
    "score": 5,
    "tier": "WATCH",
-   "lane": "spin-off/sum-of-parts (subsidiary IPO)",
-   "one_line": "McEwen Copper ~$300M IPO targeted Q4-2026 (advisers shortlisted, $4B Los Azules financing incl. Rio talks) would mark MUX's large stake; timing depends on the market and isn't firm."
+   "lane": "merger_arb",
+   "one_line": "Pending ~$4B acquisition by Brink's: CMA accepted the NoteMachine divestiture remedy in principle 10/8 (avoids Phase 2) and close is guided for early Q1 2027. A late-arc, well-known arb, so the spread needs checking vs deal terms (NATL $46.83, BCO $108.20)."
   }
  ],
  "verified": [
   {
-   "symbol": "MLYS",
-   "score": 5,
+   "symbol": "MFIC",
+   "score": 4,
    "tier": "WATCH",
-   "lane": "binary",
-   "catalyst": "The FDA decides on lorundrostat (Mineralys's NDA for adults with uncontrolled hypertension, add-on to other blood-pressure drugs) by the PDUFA target date of 2026-12-22.",
-   "dated_milestone": "PDUFA 2026-12-22 (confirmed still on track in the Q2 release of 2026-08-11). Next: Q3 results in early-to-mid November 2026, which should restate the date and any label or AdComm news.",
-   "instrument": "MLYS common (NASDAQ), $23.37 on 2026-10-12, market cap about $2.06B, about 88M shares",
-   "bloom_gates": "G1: yes, named counterparty (FDA). G2: yes, concrete dated commitment (PDUFA 2026-12-22, NDA accepted 2026-03). G3: weak. AstraZeneca's Baxfendy (baxdrostat), the first approved drug in this class, was cleared on 2026-05-18, so lorundrostat's approval risk is largely de-risked and visible. What stays unpriced is commercial share as the second drug to market, not the approval itself.",
-   "edge": "M. Run-up from the pre-catalyst base: about -13%. The stock was $26.97 on 2026-04-04, after the NDA acceptance made the date public, and is $23.37 now (-51% from the $47.65 high in Nov-2025), so the PDUFA has not been bid into. Remaining upside: about +25-35% to roughly $30-32 on approval (still a low EV against a $1B+ US launch, with the royalty now bought out). Downside on a CRL: about -45-55% to roughly $11-13 (net cash about $6.4/share). Probability-weighted (about 85-90% approval given the class precedent): roughly $28.5-29, or about +22%. Edge is moderate, not high. Approval is the consensus expectation after Baxfendy, and the derating mostly reflects being second to market behind AstraZeneca, which approval alone does not fix.",
-   "primary_source": "Mineralys Q2 2026 press release (ir.mineralystx.com, 2026-08-11): PDUFA 2026-12-22, launch prep on track. Mineralys NDA-acceptance press release (2026-03). FDA approval of AZ Baxfendy (TCTMD/ACC, 2026-05-18/19). FMP quote 2026-10-12 ($23.37). Q2 cash of $661M and the $500M debt facility per secondary Q2 summaries (Panabee/Quartr, Aug 2026).",
+   "lane": "merger_arb",
+   "catalyst": "Ares Capital (ARCC) signed a definitive agreement on 2026-10-27 to acquire MFIC for about $10.88/sh ($1.21 cash plus about $9.67 in ARCC stock, roughly $2.6B enterprise value); it closes after both shareholder votes.",
+   "dated_milestone": "Signed 2026-10-27. Next steps: S-4/joint proxy filing, then the MFIC and ARCC shareholder votes (dates not yet set; a 1H-2027 close is likely, typical for BDC-to-BDC mergers). The Q3 earnings call set for 2026-11-05 was cancelled.",
+   "instrument": "MFIC common (long). Optional short of ARCC against the stock leg if the exchange ratio is fixed.",
+   "bloom_gates": "G1 (named buyer, ARCC) + G2 (signed definitive merger agreement). G3 fails: the deal price was public on 2026-10-27 and the stock re-priced the same day.",
+   "edge": "L. Run-up from the pre-announcement close (8.36 on 2026-10-26) to 10.33 today is +23.6%. Remaining to the $10.88 headline is +5.3% gross. If the stock leg is a fixed share count priced at ARCC's 10-26 close of 18.61, ARCC at 19.36 lifts implied value to about $11.27 (+9%), but that move is beta to ARCC, not event edge. If the ratio floats NAV-for-NAV, it is about 5%. Roughly 80% of the event is already harvested. What is left is a standard BDC-merger spread plus MFIC's dividend carry, with timing (vote, months to close) and ARCC-price risk.",
+   "primary_source": "Business Wire, 'Ares Capital Corporation Agrees to Acquire MidCap Financial Investment Corporation', 2026-10-27. Consideration split from the Newsfile/Brodsky & Smith release, 2026-10-27. MFIC call cancellation: GlobeNewswire, 2026-10-30. Prices: FMP EOD, 2026-10-15 to 2026-11-02 (MFIC 8.36 -> 10.33; ARCC 18.61 -> 19.36).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "Verified: the PDUFA is 2026-12-22, unfired and still on track as of the Q2 release (2026-08-11). The stock is near its 52-week low ($21.46-47.65) and below its 50- and 200-day averages, so there has been no pre-event run-up. The capital structure supports the equity on its own: about $661M of cash on 2026-06-30 against $100M drawn on a $500M facility (later tranches need approval and sales milestones), plus the $200M Tanabe royalty buyout, gives net cash of about $560M and an EV of about $1.5B. The hold-back from ACTIVE is that the class precedent (AZ Baxfendy, approved 2026-05-18, similar add-on label) makes approval close to expected. Upside then depends on lorundrostat's label and pricing versus AstraZeneca's distribution reach, and a CRL would hit hard. Gaps: Q2 cash came from secondary summaries rather than the 10-Q, and there was no options-implied move check."
+   "analysis": "Verified: the deal is real, signed and dated (Business Wire, 2026-10-27, $10.88 = $1.21 cash + $9.67 ARCC stock). MFIC jumped from 8.36 to 10.26 on the announcement and now trades at 10.33. Of the ~29.7% total move from 8.36 to the $10.88 headline, ~23.6% has already happened, so residual capture is about 5%, which caps the score at 4 under the mostly-harvested rule. Numerator provenance is exempt because the price is contractual, but there is one gap: the web search budget was exhausted, so I could not confirm whether the stock leg uses a fixed exchange ratio or a NAV-for-NAV ratio set near closing (this decides whether the spread is 5% or about 9%). The shareholder-litigation 'investigations' (Halper Sadeh, Ademi, KSF) are routine and do not threaten the deal."
   },
   {
    "symbol": "MTN",
-   "score": 5,
+   "score": 3,
    "tier": "WATCH",
-   "lane": "activist_structural",
-   "catalyst": "Oasis Management (about 6.5%, 13G switched to 13D) has nominated Chapek, Hudson, Roberts and Street for Vail's board at the 2026 annual meeting and argues the 42 resorts are undervalued against peers; the sale or strategic-review ask has no bid price attached, and Prince's standing offer for Park City Mountain discloses no price either.",
-   "dated_milestone": "Done: 13D/notice 2026-09-10/16 and 13D/A 2026-09-29 (nominee agreements). Next: proxy filings by Vail and Oasis (not filed as of 2026-10-12), then the annual meeting, which is usually early December but has no announced date. Vail's own director search is set to finish in early 2027. Settlement risk is open at any time.",
-   "instrument": "MTN common (NYSE), $146.03 at the 2026-10-09 close",
-   "bloom_gates": "G1 YES: named counterparties, namely Oasis with four named nominees plus Chapek's paid advisory deal, and Matthew Prince's standing Park City offer. G2 NO: no concrete commitment. Oasis has not started soliciting votes, Vail's CEO says no sale is planned and Park City is 'not for sale', and the meeting date is unset. G3 NO: no specific unpriced figure. Prince's offer has no disclosed price (only a $500M pledge to invest in the resort), and Oasis cites a peer-relative discount without a number.",
-   "edge": "M-/L. Run-up: +12.4% from the pre-catalyst base of $129.93 (2026-06-17 close, the day before the Semafor proxy-fight report sent the stock +11%) to $146.03. The 2026-09-09 base before the 13D was $130.33, giving the same +12%. Remaining: about +20% to +36% only if there is a full sale. That range comes from my own capital-structure work, not an analyst target: FY27 Resort EBITDA guide midpoint $835M, about $2.92B net debt ($3.19B debt minus about $0.27B cash and CDs at 7/31/26), no preferred ahead of the common, about 35.6M shares. At 11x the equity is worth about $176/share, at 12x about $199, versus about 9.7x EV/EBITDA today. Probability-weighted (about 25% sale or review, about 45% board-seat settlement, about 30% Vail wins) the value is about $152, roughly +4%. That means about half the realistic proxy-fight premium is already harvested, and the larger upside depends on an outcome management is openly refusing.",
-   "primary_source": "SEC Schedule 13D (Oasis, filed 2026-09-16, notice dated 2026-09-10) and 13D/A dated 2026-09-29 (sec.gov 0000902664-26-003832 / -003970); Vail DEFA14A September 2026 (sec.gov 0000812011-26-000039); Vail FY2026 8-K results released 2026-09-28 (debt $3.19B, 3.9x leverage, FY27 EBITDA guide $805-865M); KPCW 2026-09-16; FMP EOD prices 2026-06-17 to 2026-10-09.",
+   "lane": "activist",
+   "catalyst": "Oasis Management is running a contested proxy fight (BLUE card) for 2 Vail Resorts board seats (Robert Chapek, M. Ashton Hudson), with the vote at the Dec 14, 2026 annual meeting. Oasis is asking for operating and loyalty fixes, not a sale, spin or capital return.",
+   "dated_milestone": "2026-12-14 annual meeting vote (definitive proxy DEFC14A filed 2026-10-30). Before that, watch for ISS/Glass Lewis recommendations, likely late Nov to early Dec 2026.",
+   "instrument": "MTN common (NYSE), $151.82 on 2026-11-02, market cap about $5.4B",
+   "bloom_gates": "G1 only: Oasis Management is a named counterparty and its nominees are named. G2 fails: there is no concrete commitment such as a sale process, buyback, spin or asset disposal, only a call for operating 'initiatives'. G3 fails: no specific unpriced figure. Even a full win puts 2 directors on the board, a minority.",
+   "edge": "L. Run-up: about +7% from the pre-catalyst base. The nominations window closed 2026-09-10, after earnings the price was about $141, and it is $151.82 now. Zacks has it +7.2% since the 2026-09-28 report, above the 50-day $143 and 200-day $138 averages. Remaining: no favorable-resolution value can be derived. Winning 2 board seats has no contractual or capital-structure value attached, so the remaining capture is unquantifiable and plausibly about 0% from the event itself. The largest holder backs management (Reuters 2026-10-30), which lowers the odds of a win. Any re-rating depends on snowfall and pass sales (a weather/macro-like driver), not on the vote.",
+   "primary_source": "SEC EDGAR: Vail Resorts DEFC14A, 2026-10-30 (Annual Meeting Dec 14, 2026). Oasis Management PRNewswire letter, 2026-11-02 (BLUE card, Chapek/Hudson). Reuters, 2026-10-30, 'Vail Resorts' biggest investor backs company in fight with activist Oasis'. FMP quote, 2026-11-02 ($151.82).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The activist event is real and specific: 13D, four named nominees, paid nominee agreements, and a December meeting in practice. But the catalyst the market cares about (a sale or a Park City disposal) has no price, no commitment and no date, and the board-seat vote is not a value-realization event in itself. The equity waterfall is clean (no preferred, 3.9x leverage), so the sale case does mechanically support $176-199. The stock has already re-rated about 12% from the $130 base, and a likely settlement outcome leaves little residual, so this is a WATCH, not ACTIVE. Upgrade if Oasis files a definitive proxy with a dated meeting, if Vail opens a strategic review, or if a priced bid for Park City or the whole company appears. Gaps: the 10-10/10-12 tape was not checked, the pass-unit -10% figure was not re-verified, and lease liabilities and noncontrolling interests are not netted (they would modestly lower the sale-case value per share)."
+   "analysis": "The proxy fight is real and dated. The company filed a DEFC14A on 2026-10-30 for the Dec 14 meeting, and Oasis sent its BLUE-card letter on 2026-11-02. A second dissident PREC14A, a 'meyer' filing dated 2026-10-30, also appears on EDGAR and was not resolved here. But the event is a minority 2-seat governance contest with no committed value-unlock mechanism. Reuters reported on 2026-10-30 that the biggest investor backs management. That leaves no specific forward figure for the market to price, and the equity case rests on winter visit and pass trends plus a dividend funded with debt (FCF short of the $8.88 payout). The event clears the dated and forward tests but fails G2 and G3, so this is a watch-list governance item, not an actionable catalyst. Gap: the web-search budget was exhausted, so the Oasis letter, the Reuters piece and the 10-K capital structure were not read in full. Numerator provenance does not apply because no derived upside is claimed."
   },
   {
-   "symbol": "MSGS",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "spin_off",
-   "catalyst": "MSG Sports spins off its Rangers business as MSG Rangers (MSGR), 1 share for every 2 MSGS; the board has approved it, the record date is 2026-10-20, distribution is 2026-10-26, and the remaining company trades as MSGK.",
-   "dated_milestone": "2026-10-20 record date; 2026-10-21 MSGR WI / MSGK WI when-issued trading starts; 2026-10-26 distribution; 2026-10-27 regular-way MSGK/MSGR. Next re-check: 2026-10-27 to 2026-11-15 for forced-selling discount in MSGR.",
-   "instrument": "MSGS common now (a low-edge way to own the spin). The better instrument is MSGR when-issued or regular-way after 2026-10-27, if index or mandate selling pushes it below a franchise-value floor.",
-   "bloom_gates": "G2 (concrete commitment: board-approved spin with set record and distribution dates). G1 is weak: the counterparty is the NHL/NBA approval, not a buyer. G3 fails: no currently-unpriced specific figure. The spin unlocks no cash, sale price or buyback.",
-   "edge": "L. The event is real, dated and forward, but mostly harvested. Run-up: pre-catalyst base $293.78 (2026-02-17 close, the day before the Feb-18 spin-exploration news, +16% on the day) to $402.30 today = +37%. Remaining: about 0% is contractual from the spin itself. A mechanical SoP using third-party franchise marks (Knicks ~$9.75B, Rangers ~$3.65B, unverified Forbes-type estimates) less ~$258.5M debt (Knicks revolver $242M + NHL advance $16.5M; no preferred stock or external manager) gives ~$13.1B / ~24.1M shares = ~$545/share, +35%. That figure is a perpetual private-control gap that the spin does not close; no sale is required or announced. Capturable remaining is at most single digits (spin re-rating) unless MSGR sees forced selling after the spin.",
-   "primary_source": "MSG Sports press release 'MSG Sports Board Approves Spin-Off of Rangers Business From Knicks Business' (Oct 2026, q4cdn IR PDF / Webull); MSGS FY2026 10-K (sec.gov msgs-20260630.htm: Feb-2026 board authorization, Apr-2026 MSGS Spinco formation, $242.0M Knicks revolver + $16.5M NHL advance); FMP quote 2026-10-12 ($402.30) and EOD history (2026-02-17 $293.78, 2026-02-18 $341.76).",
+   "symbol": "NATL",
+   "score": 2,
+   "tier": "NONE",
+   "lane": "merger_arb",
+   "catalyst": "Brink's (BCO) acquisition of NCR Atleos for $30.00 cash + 0.1574 BCO shares per NATL share. The UK CMA accepted the Brink's divestiture remedy in principle on 2026-10-08, avoiding a Phase 2 review, and close is guided for early Q1 2027.",
+   "dated_milestone": "CMA formal acceptance of the undertakings, then close in early Q1 2027 (guided). Next dated item: NATL Q3 results on 2026-11-04, released with no call or outlook because the deal is pending.",
+   "instrument": "NATL common, long NATL / short 0.1574 BCO hedge",
+   "bloom_gates": "G1 (named acquirer, Brink's) + G2 (signed merger agreement; CMA remedy accepted in principle). G3 fails: no unpriced figure is left, because the spread is about 0.4%.",
+   "edge": "L. Implied deal value = 30.00 + 0.1574 x 108.20 = $47.03 vs NATL $46.83, so the gross spread is 0.43% (about 1.2-1.5% annualized over 3-5 months). That is below cash yield and before the BCO dividend paid on the short hedge. Run-up from the pre-announcement base ($41.87 close on 2026-02-26, before the 8.2M-volume jump on 02-27): +11.8%. Remaining to the deal value: +0.43%. Essentially fully harvested.",
+   "primary_source": "Kahn Swick & Foti investor alert stating the deal terms (Business Wire, 2026-06-09). WSJ, \"U.K. Regulator Says Brink's Disposals Could Clear Way for $4 Billion NCR Atleos Takeover\" (2026-10-08). NATL Q3 date release (Business Wire, 2026-10-20). FMP quotes on 2026-11-02 (NATL 46.83, BCO 108.20) and FMP EOD history.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "Verified: the spin is board-approved, with record date 2026-10-20 and distribution 2026-10-26 (when-issued trading from 10-21). It is still conditional on Form 10 effectiveness, final league approval and a tax opinion. The capital structure is clean (~$258.5M debt at FY26 year-end, no preferred stock), so the equity waterfall is not a problem. But the parent has already re-rated +37% from the pre-news base, and the spin creates no cash event that closes the gap between the share price and franchise value. Score is capped at 4 as mostly harvested. The real setup is post-spin forced selling in the small-cap MSGR SpinCo, so keep on WATCH and re-check after the 2026-10-27 regular-way start. Gaps: the Form 10 debt split between SpinCo and RemainCo and the franchise valuations were not verified from primary filings."
-  },
-  {
-   "symbol": "MUX",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "spin-off/sum-of-parts (subsidiary IPO)",
-   "catalyst": "McEwen Copper (46.3% owned by MUX) plans a ~$300M US or Canadian IPO targeted for Q4-2026 as part of a ~$4B Los Azules financing (talks with Rio Tinto and others); the listing would put a public mark on a stake carried at an implied $457M.",
-   "dated_milestone": "Target only: Q4-2026 IPO, timing dependent on market conditions (Aug-2026 report). No filing found on EDGAR or SEDAR as of 2026-10-12. Next checkpoints: an F-1/prospectus filing, a Rio Tinto or strategic equity term sheet, MUX Q3-2026 results (~early Nov 2026), and the Los Azules board construction decision targeted for end-2026.",
-   "instrument": "MUX common (NYSE), $17.88 on 2026-10-09, mkt cap ~$1.07B, ~59.7M shares",
-   "bloom_gates": "G1 partial: Rio Tinto named as one of several possible strategic investors, but Rio declined to comment and no terms are disclosed. The IPO advisers are shortlisted but not named. G2 not met: no filing, size or price commitment, and the IPO has slipped repeatedly since 2022-2023. G3 partial: the implied stake value of $457M (~$7.65/MUX share) is specific, but it is a last-round mark, not a new unpriced figure.",
-   "edge": "L-M. Run-up: -20.6% from the pre-catalyst base ($22.51 on 2026-03-17, the day before the first IPO report) to $17.88 today, and -3% since the Aug-2026 Q4-target report ($18.36). So the event is not harvested and not priced in. Remaining: re-derived, not inherited. If the IPO prices around 1.5x the last-round implied value, the stake mark goes from $457M to ~$690M, which is +$3.9/share or about +20%. That is before the dilution drag. MUX's pro-rata share of the ~$600M existing-shareholder equity is ~$278M, against $78.9M of cash and $130M of debt principal. That points to either MUX equity issuance or a diluted stake, which could cut the net remaining figure to ~+5-15%. An IPO at or below the last round adds nothing.",
-   "primary_source": "Kitco/Reuters 'McEwen Copper plans $300M IPO to finance Argentina project' (2026-03-18); ReporteMinero/MiningReporters 'McEwen Copper Los Azules $4B financing' (Aug-2026); McEwen Q2-2026 results via GlobeNewswire (2026-08-05) and Quartr (46.3% stake, implied $457M, cash $78.9M, debt principal $130M); FMP quote and EOD prices (2026-10-09)",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The IPO plan is real and reported twice (Reuters via Kitco/MiningWeekly 2026-03-18/19; Aug-2026 ReporteMinero/MiningReporters), but it is only a target. It depends on market conditions, there is no filing, and McEwen Copper IPO timelines have slipped before (2022, 2023). Equity waterfall: the $457M implied stake is ~43% of MUX's market cap. The rest covers the San Jose 49% interest (dividends of $58.2M YTD) and the Timmins/Fox and Gold Bar mines, with $130M of debt principal ahead of the common and no preferred stock. The main issue is that the $4B financing needs ~$600M of equity from existing holders, which MUX cannot fund pro rata from $79M of cash. So the event could crystallize value and dilute MUX at the same time. Score is capped at 4 because the event is undated and uncommitted and the dilution-adjusted upside is modest and uncertain. Gap: I did not open the 10-Q directly; the Q2 figures come from Quartr and GlobeNewswire summaries, and the last-round per-share price was not checked."
+   "analysis": "The deal is real and contractual. Terms of $30 cash + 0.1574 BCO are confirmed in the KSF release of 2026-06-09, and the CMA remedy acceptance in principle was reported by WSJ on 2026-10-08, so close risk is now low. At today's prices the arb pays about 20 cents of gross spread against about $5 of downside to the roughly $42 unaffected price if the deal breaks. Risk/reward is about 0.04:1, so the late-arc event is fully priced with nothing left to capture. Gaps: I could not confirm the exact announcement date or any collar/CVR terms because the web-search budget was exhausted. The pre-deal base is inferred from the FMP price/volume break on 2026-02-27. No numerator-provenance check is needed: this is mostly cash with a fixed exchange ratio, so the value is contractual."
   }
  ]
 }

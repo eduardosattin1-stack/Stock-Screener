@@ -3,33 +3,99 @@
  "scanned": 149,
  "scan_distribution": {
   "active": 0,
-  "watch": 3,
-  "none": 146
+  "watch": 5,
+  "none": 144
  },
  "survivors_flagged": [
   {
-   "symbol": "NWE",
+   "symbol": "NFG",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "spin_off",
+   "one_line": "Tax-free spin of the upstream and gathering business (Seneca plus gathering) announced 2026-10-14, targeted for 2H-2027. Early in the arc: at ~$79 the stock sits near its 52w low ($75) and below the 200dma, so no re-rate yet. Q4 FY26 results Nov 4 should add separation detail. The Ohio utility deal already closed Oct 1."
+  },
+  {
+   "symbol": "NSC",
    "score": 5,
    "tier": "WATCH",
    "lane": "merger_arb",
-   "one_line": "All-stock Black Hills merger (Bright Horizon): FERC, Nebraska and South Dakota approved; the Montana PSC order (docket 2025.10.078) is the last gate, with close guided by YE2026. Fixed ratio, so the spread is likely thin."
+   "one_line": "UNP-NSC merger-arb: STB unanimously rejected opponents' bids to dismiss the revised application (2026-09-22), so the review continues toward a 2027 decision. The deal is real and dated but widely covered and the spread is late-arc, so this is watch only."
+  },
+  {
+   "symbol": "OCS",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary",
+   "one_line": "PREDICT-1 registrational licaminlimab (genotype-enriched dry eye, randomization done 10-19) topline guided ~year-end 2026; real dated binary, thin coverage, no visible run-up yet."
+  },
+  {
+   "symbol": "OLMA",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary",
+   "one_line": "Pivotal Ph3 OPERA-01 (palazestrant) enrollment complete, topline guided Q1 2027; stock sold off on the delay, so this is an early-arc setup that has not re-rated."
   }
  ],
  "verified": [
   {
-   "symbol": "NWE",
-   "score": 2,
-   "tier": "NONE",
-   "lane": "merger_arb",
-   "catalyst": "The all-stock Black Hills merger (fixed 0.98 BKH per NWE share, combined company to be named Bright Horizon Energy) is waiting only on a final order from the Montana PSC, with close guided by year-end 2026.",
-   "dated_milestone": "The Montana PSC final order has no statutory deadline. The hearing was held in May 2026. In September 2026 the PSC voted that Commissioner Bushman may take part in the decision, and that question is still being challenged in Lewis and Clark County District Court. Next date: an MPSC vote, expected by about Q4 2026, then close by YE2026.",
-   "instrument": "Long NWE / short 0.98x BKH (spread trade). An outright long NWE is just a BKH/utility beta bet.",
-   "bloom_gates": "G1 (named counterparty Black Hills) and G2 (signed merger agreement with a fixed 0.98 ratio; FERC, Nebraska, South Dakota, HSR and shareholder approvals done) both pass. G3 fails: the spread is about 0.5%, so no meaningful unpriced figure remains.",
-   "edge": "L. On 2026-10-12, 0.98 x BKH $76.08 = $74.56 implied, against NWE at $74.15, a gross spread of about 0.55%. Quarterly dividends are roughly equal per share, so they add or remove almost nothing. That works out to about 2-3% annualized over a 2-3 month close, which is below T-bills. Run-up: NWE was about $57 before the August 2025 announcement (52-week low $57.12) and is now $74.15, roughly +30%. Most of that is the BKH/utility rally, since the deal premium was only about 4%. Remaining: about +0.5% to the deal value. Downside if Montana blocks the deal: NWE falls back to standalone value, likely several % below today, which is very asymmetric against a 0.5% gain. Mostly harvested.",
-   "primary_source": "FMP batch-quote NWE $74.15 / BKH $76.08 (2026-10-12); NWE Q2-2026 10-Q and earnings release (2026-07-29): Montana is the only approval left, close expected by YE2026; Black Hills 8-K (Aug 2025): 0.98 exchange ratio; Daily Montanan / States Newsroom (Sep 2026): MPSC procedural vote on Commissioner Bushman and the pending court challenge.",
+   "symbol": "NFG",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "spin_off",
+   "catalyst": "On 2026-10-14 National Fuel Gas announced a plan to separate its integrated upstream and gathering business (Seneca Resources plus gathering) from the regulated utility and pipeline company, which closed the $2.62B CenterPoint Ohio LDC purchase on 2026-10-01. The triage brief says the spin is tax-free and targeted for 2H-2027. I could not confirm those terms from the release text.",
+   "dated_milestone": "Separation plan announced 2026-10-14. NEXT: Q4/FY26 results Wednesday 2026-11-04 after the close, which should give separation detail (debt split, SpinCo capital plan). Then the Form 10 filing, IRS ruling and a 2H-2027 distribution (date from the triage brief, unverified).",
+   "instrument": "NFG common (NYSE), $79.33 on 2026-11-02 (FMP). 52-week range $75.03-$97.06, 50dma $80.31, 200dma $83.37, market cap $7.54B, about 95.0M shares.",
+   "bloom_gates": "G1 yes: a named separation of a named entity (Seneca Resources plus gathering), announced by the issuer. G2 partial: the board has announced a plan to separate (GlobeNewswire 2026-10-14). The 2H-2027 timing and tax-free structure come from the triage brief and could not be confirmed (the release fetch returned 403). G3 no: I could not derive a specific unpriced SoP figure. There is no debt-allocation or SpinCo/RemainCo EBITDA disclosure yet, and I did not check analyst SoPs.",
+   "edge": "M. The stock has not re-rated. Run-up from the pre-event base is about -1% to -2%: $80.35 on 2026-09-16, the day before the 2026-09-17 'timeline to conclude evaluation' release, and $81.09 on 2026-10-13, the day before the plan release, against $79.33 today. Measured from the August level of about $83, it is about -5%. Remaining capture is not quantified because no provenance-checked SoP is possible yet. The equity waterfall is clean: the 2026-09-17 release says 'no preferred stock outstanding', and there is no external manager. The open question is how the new Ohio acquisition debt is split between the two companies. Price sits about 5% above the 52-week low and about 5% below the 200dma, so if the event creates value, little of it is priced. The upstream piece carries gas-price beta (partly a commodity bet), and the distribution is roughly 9-12 months away.",
+   "primary_source": "Press releases found via FMP press-release search, all on GlobeNewswire: 2026-10-14 'National Fuel Gas Company Announces Plan to Separate Its Integrated Upstream and Gathering Business' (headline only, full text 403). 2026-10-15 'National Fuel Schedules Fourth Quarter and Full Year Fiscal 2026 Earnings Conference Call' (results Nov 4 after close). 2026-09-17 dividend release (no preferred stock, about 95.0M shares). 2026-09-17 'Announces Timeline to Conclude Evaluation of a Plan to Separate'. 2026-10-01 CenterPoint/NFG release ($2.62B Ohio LDC closed). Prices from FMP quote and EOD history, 2026-06-01 to 2026-11-02.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The event is real, dated and forward: Montana is the only approval left, a settlement with key intervenors is pending before the MPSC, and close is guided by YE2026. But at a fixed ratio the market prices NWE within about 0.55% of 0.98 x BKH, so almost all of the value is already captured. A Montana denial or tough conditions (and the court challenge over Commissioner Bushman's vote could slow things) carries far more downside than the remaining spread offers. Gap: I could not confirm whether the MPSC issued an order after the September procedural vote. Check docket 2025.10.078 directly."
+   "analysis": "The separation plan is real, issuer-announced (2026-10-14) and unfired. The stock has fallen through the announcement (from $81.09 on 2026-10-13 to $79.33 now), so whatever value the separation creates is largely unpriced; it is not harvested. G3 fails for now. The capital structure has no preferred stock, but the CenterPoint Ohio deal ($2.62B, closed 2026-10-01) added leverage and the debt split between SpinCo and RemainCo is undisclosed, so I could not derive an SoP numerator and capped the score at 5 rather than going higher. Gaps: web search was unavailable (budget exhausted) and the 2026-10-14 release returned 403, so the tax-free structure and the 2H-2027 target are unverified triage inputs. The 2026-11-04 FY26 results are the re-check point for debt allocation, SpinCo guidance and the Form 10 timing."
+  },
+  {
+   "symbol": "NSC",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "catalyst": "The STB's final decision on Union Pacific's acquisition of NSC for 1 UNP share plus $88.82 cash per NSC share. Approval would collapse the spread to UNP + $88.82.",
+   "dated_milestone": "2026-09-22: STB rejected the motions to dismiss the revised application (per triage; not re-verified this run). Next: STB evidentiary and comment deadlines, then a final decision expected in early 2027. The exact date is unconfirmed because no web lookup was possible.",
+   "instrument": "Long NSC / short 1.0x UNP per NSC share (hedged arb). An unhedged long NSC is mostly a UNP beta bet.",
+   "bloom_gates": "G1 yes: the counterparty is Union Pacific. G2 yes: a signed merger agreement with fixed terms of 1 UNP + $88.82 cash. G3 partial: the gross spread is about $48.9 (14.1%), which the market is pricing as STB regulatory risk rather than leaving unpriced.",
+   "edge": "M/L. The deal value is contractual, so it is exempt from the numerator-provenance rule: 306.49 + 88.82 = $395.31 against NSC at $346.45, a 14.1% gross spread (2026-11-02 FMP). (a) Run-up: NSC was roughly $255-260 before the July 2025 talks leaked (from memory, not re-verified), so it is up about 33-35%. Part of that is UNP's own rally (UNP 52-week range $216-316). (b) Remaining: 14.1% gross to approval, against about 19% downside to a standalone floor of roughly $280 (NSC 52-week low $277.8). That implies about a 57% market-implied approval probability. This is less harvested than the triage label \"late-arc\" suggests, but the spread is wide because regulatory risk is real: this is the first Class I mega-merger under the 2001 STB rules, with active opposition. The edge is only as good as our read on STB approval odds, and we have no differentiated view on that.",
+   "primary_source": "FMP batch-quote, 2026-11-02: NSC $346.45, UNP $306.49. UNP-NSC merger agreement announced 2025-07-29: 1 UNP share + $88.82 cash per NSC share. STB order of 2026-09-22 per triage, not re-fetched.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The deal is real, the terms are contractual and the STB review is still forward. With NSC at $346.45 and UNP at $306.49, the implied deal value is $395.31, a 14.1% gross spread with no CVR or preferred stock to complicate the waterfall. The spread is wide because the STB decision is a binary risk with about 19% downside to a standalone floor near $280. That risk is widely covered and not obviously mispriced, so this stays WATCH at score 5. Gap: the web-search budget was exhausted, so the STB procedural schedule, the date of the 2026-09-22 ruling and the pre-leak base price were not re-verified this run. Only the FMP quotes are fresh."
+  },
+  {
+   "symbol": "OCS",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary",
+   "catalyst": "Topline from PREDICT-1, the registrational symptom trial of topical licaminlimab (anti-TNFR1) in genotype-enriched dry eye disease, guided for around year-end 2026.",
+   "dated_milestone": "Randomization completed 2026-10-19 (176 patients, 2/3 carry the TNFR1 high-responder variant). Topline guided 'around year-end' 2026 (PR 2026-10-07), so expect late Dec 2026 to Jan 2027. Q3 results are the next checkpoint, likely mid-Nov 2026.",
+   "instrument": "OCS common (Nasdaq; also XICE). Close to the readout, defined-risk calls or call spreads are an option, but options liquidity was not checked.",
+   "bloom_gates": "G2 only: the company has made a concrete, dated commitment to a registrational topline around year-end, repeated in the 2026-10-07 and 2026-10-19 PRs. G1 fails because there is no named counterparty, partner or acquirer. G3 is weak: no specific unpriced figure is contractual, and the upside comes from a probability-weighted readout.",
+   "edge": "M-L. Run-up from the pre-catalyst base: about +8% (7.32 close on randomization day 2026-10-19 to 7.92 on 2026-11-02). Measured from the 2026-10-07 guidance PR (8.50) the stock is -7%, and it is down about -77% from the 52-week high of 34.48, so this readout is not harvested. Remaining capture: about +45% to roughly $11.5 on a clean positive result, against about -35 to -40% to roughly $5 on a miss. The $5 floor is cash of about $3.8/share plus residual value for privosegtor (optic neuritis). The capital structure is clean: no preferred, debt of only CHF 2.5M in leases, CHF 233M of current assets at 6/30/26, and market cap about $485M. Probability-weighted at about 40% success for a dry-eye symptom endpoint, expected value is close to today's price. The edge comes from the unpriced, dated binary and the cash floor, not from mispricing.",
+   "primary_source": "Oculis PR 'Oculis Completes Randomization in PREDICT-1 Registrational Trial of Licaminlimab for TNFR1-Mediated Dry Eye Disease' (GlobeNewswire, 2026-10-19); Oculis PR re Eyecelerator @ AAO, 'PREDICT-1 ... on track for topline readout around year-end' (GlobeNewswire, 2026-10-07); FMP quote and EOD history (2026-11-02); FMP Q2-2026 balance sheet (filed 2026-08-06).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The catalyst is real, specific, dated and forward. Randomization is complete and the company guided topline around year-end, so this is a true unfired binary, and the stock shows no run-up: it has fallen from about 14.5 in June to 7.9 and is flat-to-up only 8% since randomization. The risks are dry-eye trials' history of failure on symptom endpoints, the small n=176 study, and a pipeline narrative that has moved toward privosegtor in neuro-ophthalmology, which cushions a miss but dilutes the upside. The waterfall is clean (no prefs, cash covers about half the market cap), so the score is on the event. It stays WATCH rather than ACTIVE because at about 40% odds the expected value is roughly symmetric. GAP: web search budget was exhausted, so I could not verify the PREDICT-1 primary endpoint, the Phase 2 effect size in variant carriers, whether a second registrational trial is needed, or Q3 cash and runway. FMP press releases were the only source."
+  },
+  {
+   "symbol": "OLMA",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "binary",
+   "catalyst": "Topline from the pivotal Ph3 OPERA-01 trial (palazestrant monotherapy vs standard endocrine therapy, 2L/3L ER+/HER2- advanced breast cancer, n=510, PFS by blinded independent review assessed separately in ESR1-mutant and ESR1-wild-type patients), guided to Q1 2027.",
+   "dated_milestone": "Registry primary-completion (data cutoff) 31 Oct 2026, an ESTIMATED date that can be revised without a filing; next is the Q3 10-Q/8-K around 10 Nov 2026, which may narrow the timing; topline is guided to Q1 2027 (quarter only, after an unexplained slip from fall 2026 disclosed 10 Aug 2026)",
+   "instrument": "OLMA common (NASDAQ)",
+   "bloom_gates": "G2 only, partly: a concrete company commitment to a Q1 2027 topline on a fully enrolled 510-patient trial. G1 is not met: no named partner or acquirer. G3 is weak: the favorable figure ($17 broad win) is a 15%-probability tail, and the modal win (ESR1-mutant only, about $5.10) sits below the tape.",
+   "edge": "L. Run-up from the pre-catalyst base is about -81%: the stock has de-rated from the $36.26 52-week high to $6.795, and it is down about 23% from the 50-day average of $8.84 since the 10 Aug delay. So none of the event is harvested. Remaining capture to a provenance-checked broad-win value of about $17 is about +150%. Remaining capture to the probability-weighted value of about $6.00-6.18 is about -9% to -12%. To the modal ESR1-only win of about $5.10 it is about -25%. The upside is all in the tail. Floor is about $2.75-2.83 per share in cash (about -59%). The numerator check is clean: under $1M of debt, no preferred, no going-concern warning, about 101M economic shares including pre-funded warrants.",
+   "primary_source": "ClinicalTrials.gov NCT06016738 (queried 2026-10-26: 510 enrolled, primary completion 2026-10-31 ESTIMATED); Olema Q2 2026 8-K/10-Q (2026-08-10: topline moved to Q1 2027, cash $461.1M); FMP quote 2026-11-02 ($6.795, 52-week range $6.235-36.26, market cap $595M); internal dossier backend/_opus_debate/_catalyst_results/OLMA.json and _catalyst_skeptic/OLMA.json (REFUTED)",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The event is real, forward and unfired. OPERA-01 is fully enrolled at 510 and ACTIVE_NOT_RECRUITING, the estimated data cutoff was 31 Oct 2026, and topline is guided to Q1 2027. Cash of $461.1M at 30 Jun (about $380M estimated now, no debt or preferred) funds the company past the readout. However, the triage framing that the setup \"has not re-rated\" applies only to the downside: the class precedent (elacestrant, imlunestrant, vepdegestrant) points to an ESR1-mutant-only win worth about $5.10 after first-line funding dilution. That puts probability-weighted fair value of about $6.0-6.2 below the $6.795 quote, and the internal skeptic REFUTED the trade on catalyst-timing plus no-margin grounds (re-open below about $5.00 or once the Q3 report fixes a date). Gap: the web-search budget was exhausted, so I could not independently confirm post-26-Oct news. Verification relied on the FMP live quote plus the repo's primary-source-checked dossier (ClinicalTrials.gov NCT06016738 API queried 26 Oct 2026, the 10 Aug 2026 8-K/10-Q, and EDGAR through BVF's 13D/A of 16 Oct 2026)."
   }
  ]
 }

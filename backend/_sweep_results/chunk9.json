@@ -3,9 +3,33 @@
  "scanned": 150,
  "scan_distribution": {
   "active": 0,
-  "watch": 1,
-  "none": 149
+  "watch": 4,
+  "none": 146
  },
- "survivors_flagged": [],
- "verified": []
+ "survivors_flagged": [
+  {
+   "symbol": "HESM",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "structural_overhang",
+   "one_line": "10/6 definitive deal: Chevron exits HESM (78.3M units cancelled, Bakken contracts cut ~50%, new DJ contracts, ext. to 2045) creating an independent multi-basin midstream; units -20-23% on the news and close is still pending. Hard close date not verified (search budget exhausted). Widely covered, so this is a re-rated, mid-arc orphan setup."
+  }
+ ],
+ "verified": [
+  {
+   "symbol": "HESM",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "structural_overhang",
+   "catalyst": "On 10/6/2026 Chevron and HESM signed definitive agreements. Chevron exits HESM: 78.3M units are cancelled, Bakken fees are cut so that Chevron's Bakken midstream costs fall about 50%, contracts are extended to 2045, and HESM takes on Chevron's DJ Basin crude midstream assets and new DJ contracts. Only the mechanical close is still pending.",
+   "dated_milestone": "Signed and announced 2026-10-06, so the event has fired. The closing date was not verified, because the press release returned 403 and the web-search budget was exhausted. Next dated item: the Q4 distribution and 2027 guidance with the FY26 results, around late Jan/Feb 2027.",
+   "instrument": "HESM Class A shares (NYSE)",
+   "bloom_gates": "G1 passes: the counterparty is named (Chevron/CVX). G2 passes: definitive agreements are signed, with 78.3M units cancelled and contracts running to 2045. G3 fails: no currently-unpriced figure was found. The terms were disclosed on 10/6 and the units re-rated the next day.",
+   "edge": "L. The re-rating has already happened. (a) Run-up from the pre-catalyst base: -16.3% (10/6 close $38.69 to $32.39 on 11/2), and the low was $30.04 on 10/22. Price has recovered about 8% from that low since the distribution increase (10/26) and the Q3 results (10/30). (b) Remaining to the favorable-resolution value: I could not derive it from the capital structure. The only figure available is a sell-side blog claim (EBITDA -27%, EBITDA per unit +17%), which is an inherited number, not a provenance-checked one. The deal close is mechanical, not a re-pricing event. The Chevron overhang was settled at signing, because the units were cancelled rather than sold into the market. That removes the overhang thesis this lane depends on.",
+   "primary_source": "Business Wire, 2026-10-06: 'Chevron to Divest its Ownership Interests in Hess Midstream and DJ Basin Crude Midstream Assets' and the companion HESM 'Transformative Transaction' release. Business Wire, 2026-10-26: distribution increase. Business Wire, 2026-10-30: Q3 2026 results. Prices are FMP EOD, 2026-09-25 to 2026-11-02.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The deal is real and specific, but it fired on 10/6 and the market re-priced it immediately: down about 15% on 10/7 on 12x normal volume, with about 25% lower EBITDA in 2027 per coverage. The remaining case is a yield and per-unit re-rating argument (about 10% yield, distribution raised on 10/26), not a dated forward catalyst. Closing the deal does not unlock unpriced value. I could not verify the hard close date or re-derive the per-unit waterfall (pro forma debt, DJ consideration, coverage) within the budget: the press release returned 403 and web search was exhausted. Even so, the gate fails on FORWARD and G3. Tier NONE."
+  }
+ ]
 }

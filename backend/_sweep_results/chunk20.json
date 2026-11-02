@@ -1,57 +1,79 @@
 {
  "chunk": "20 (WF-ZYME)",
- "scanned": 111,
+ "scanned": 112,
  "scan_distribution": {
   "active": 1,
   "watch": 7,
-  "none": 103
+  "none": 104
  },
  "survivors_flagged": [
   {
-   "symbol": "WTRG",
+   "symbol": "WFRD",
    "score": 5,
    "tier": "WATCH",
-   "lane": "merger_arb",
-   "one_line": "Target in the all-stock merger with American Water: HSR expired 14-Aug-26, KY/OH/VA approved, Texas settled in principle, remaining state approvals still pending, close targeted by end of Q1 2027. Fixed-ratio spread is the only edge, and it is probably thin."
+   "lane": "index_inclusion_redomicile",
+   "one_line": "Irish High Court approved the scheme (8-K 2026-10-27). The move from Ireland to Delaware takes effect 2026-11-13, so it can be added to S&P 1500 indexes (likely the MidCap 400 on size). Index adds are not dated yet. The NCS Multistage deal is minor."
   },
   {
    "symbol": "ZIM",
    "score": 6,
    "tier": "ACTIVE",
    "lane": "merger_arb",
-   "one_line": "Hapag-Lloyd $35 cash deal (shareholders approved Apr-30). Price is $29.99, a ~17% gross spread. Revised terms went to Israel on Sept 24 to clear the Golden Share hurdle, and close is targeted for Q4 2026. A real complicated arb whose spread prices in the Israeli-approval risk."
+   "one_line": "Complicated merger arb: Hapag-Lloyd $35 cash vs ~$28.99 (~21% gross spread). Shareholders approved Apr-30 (97%). Blocker is the Israeli golden-share approval: the original structure was rejected and a revised application was due Oct-6 (whether it was filed is unconfirmed). Outside date Feb-2027, extendable to Jun-2027. The spread prices real break risk, not a fired event."
+  },
+  {
+   "symbol": "ZBIO",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary",
+   "one_line": "Phase 2 SunStone (SLE) readout guided for Q4-2026, so it is near but has no exact date. Obexelimab IgG4-RD PDUFA is May-27-2027 (months out). Stock ~$27.7, off the $44.6 high. A real binary, but the IgG4-RD asset is already de-risked and partly priced."
   }
  ],
  "verified": [
   {
-   "symbol": "WTRG",
-   "score": 3,
+   "symbol": "WFRD",
+   "score": 5,
    "tier": "WATCH",
-   "lane": "merger_arb",
-   "catalyst": "American Water (AWK) is buying Essential Utilities for stock only at a fixed ratio. Kentucky (21-Apr-26), Ohio (May-26) and Virginia have approved, HSR has expired, and Texas has settled in principle. Still pending: Pennsylvania PUC approval of the non-unanimous settlement (ALJ interim order 28-Aug-26) and the Illinois ALJ case (statutory deadline Nov-2026). Close is guided for Q1 2027.",
-   "dated_milestone": "28-Aug-26: PA ALJ interim order records a non-unanimous settlement, which still needs PaPUC approval. Next: Illinois statutory decision by Nov-2026, then the PaPUC final order, then close in Q1 2027.",
-   "instrument": "Long WTRG / short ~0.305 AWK per WTRG share (hedged fixed-ratio spread). Unhedged long WTRG is a regulated-utility beta bet, not arb.",
-   "bloom_gates": "G1 (named counterparty: American Water Works) + G2 (signed merger agreement, shareholder-approved Feb-2026). G3 FAILS: the only unpriced figure is a sub-1% gross spread.",
-   "edge": "L. On the 12-Oct-26 FMP quotes (WTRG $38.98, AWK $128.88), the deal value is about 0.305 x 128.88 = $39.31. Remaining capture is about +0.85% gross, roughly 2% annualized over about 5 months. WTRG's higher dividend versus 0.305 of AWK's dividend adds maybe 0.3-0.5pp of carry. The ratio is from memory; this session did not re-confirm it. Run-up from the pre-announcement base (WTRG roughly $37-40 in Oct-2025, unverified) is about 0-5%: little has been harvested, because the stock-for-stock deal pinned WTRG to AWK, which has fallen from its $145.64 52-week high. Remaining capture is about 1%, so the event is real and forward, but there is almost nothing left to earn on it.",
-   "primary_source": "SEC Form 425 (AWK 8-K signed 31-Aug-26) on the PaPUC ALJ interim order of 28-Aug-26: sec.gov/Archives/edgar/data/0000078128/000141063626000129. Essential Utilities Q2-2026 earnings call (5-Aug-26) on KY/OH/VA approvals, the TX settlement, the IL timeline and the Q1-2027 close guide. FMP batch-quote 12-Oct-26: WTRG 38.98, AWK 128.88.",
+   "lane": "index_inclusion_redomicile",
+   "catalyst": "Weatherford moves its legal home from Ireland to Delaware on 2026-11-13 (Irish High Court approved 2026-10-27). That makes it eligible for the S&P Composite 1500, but S&P has not announced an add and no date is set.",
+   "dated_milestone": "Redomicile closes 2026-11-13 (company guidance, subject to customary conditions). The next scheduled S&P quarterly rebalance is effective around 2026-12-21, with the announcement around 2026-12-04. That date is my inference from S&P's usual calendar and is not confirmed for WFRD. S&P can also add it off-cycle whenever an index slot opens.",
+   "instrument": "WFRD common stock (Nasdaq). After 2026-11-13 the same ticker becomes Weatherford International Corp (Delaware).",
+   "bloom_gates": "G2 only: the redomicile is a concrete, court-sanctioned commitment with a set close date (2026-11-13). G1 fails because S&P DJI has made no announcement, so no named counterparty has committed to an add. G3 is not met: index demand is not quantified anywhere, and the only company-given figure is $20-30M/yr of cost savings from 2027, which is small against a $6.6B market cap.",
+   "edge": "M-L. Run-up from the pre-catalyst base: about -5 to -9%. The plan became public around mid-to-late June 2026, when the stock was at $97-101 (Jun 12 close $101.31, Jun 16 $97.85). It is $91.55 today, so no index premium has built up. The +20% move from $76 (Oct 16) to $87-90 came with Q3 earnings on Oct 20-23, not with the redomicile news, and the stock is up only about 2% since the court approval ($89.64 on Oct 27). Remaining capture: about 3-6% from a typical S&P index-add pop if one is announced, weighted by perhaps 50-60% odds of an add within about 6 months. That is roughly +2-3% expected, plus the small cost savings. One open question is which index fits: at $6.6B the company may fall below the current MidCap 400 minimum size, which would mean the SmallCap 600 and less forced buying. The event has not fired and is not priced, but it is small, its timing is at S&P's discretion, and the oil-services business still drives the price.",
+   "primary_source": "Weatherford 8-K and press release 'Weatherford Announces Court Approval and Expected Closing Date for U.S. Redomestication', 2026-10-27 (sec.gov/Archives/edgar/data/0001603923/000160392326000126/pressrelease_wfrdredomicil.htm). Shareholder approval press release, 2026-09-03. FMP quote (WFRD $91.55) and EOD price history from 2026-06-01 to 2026-11-02, pulled 2026-11-02.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The deal is real, dated and still forward: three states plus HSR are done, and the PA settlement and the Illinois statutory clock both land before the Q1-2027 close. But the fixed-ratio spread is only about 0.85% gross (about 2% annualized), with tail risk if the PA PUC conditions the deal or rejects the non-unanimous settlement. For a 5-month hold that is a bad risk/reward, and the equity simply follows AWK. Gaps: the 0.305 exchange ratio and the pre-announcement price were not re-confirmed because the web-search budget ran out after 2 lookups. Whether the PaPUC has issued a final order since 28-Aug-26 was also not verified. Numerator-provenance check: not applicable, since the upside is contractual stock-for-stock with no derived SoP."
+   "analysis": "The company has confirmed the redomicile: the court approved it on 2026-10-27, shareholders approved it on 2026-09-03, and it closes on 2026-11-13. But an S&P 1500 add is only eligibility, not a commitment. S&P DJI has said nothing, the add date is unknown, and at a $6.6B market cap WFRD may go to the SmallCap 600 rather than the MidCap 400, which makes any forced buying smaller. None of the index upside is priced in (the stock is below its June announcement-day level), but the expected gain is only a few percent and depends on S&P's committee decision, so this stays WATCH at score 5 until S&P announces an add. Gaps: I did not check S&P's current MidCap 400 market-cap thresholds or WFRD's float-adjusted cap. Numerator provenance does not apply here (an index add is not a capital-structure event, and no derived SoP upside is claimed). I did not verify the NCS Multistage deal and treated it as minor, as the triage note does."
   },
   {
    "symbol": "ZIM",
    "score": 5,
-   "tier": "ACTIVE",
+   "tier": "WATCH",
    "lane": "merger_arb",
-   "catalyst": "The State of Israel's Golden Share decision on Hapag-Lloyd's $35/sh cash takeover. FIMI would carve out the Israeli-linked operations (16 vessels). This is the last gating approval, with closing targeted for Q4 2026.",
-   "dated_milestone": "Shareholders approved on 2026-04-30 (97% in favor). Israeli ministries' Golden Share ruling on the revised terms is pending. NEXT: the Golden Share decision, expected Oct-Dec 2026, with the deal targeted to close in Q4 2026 (by 2026-12-31). Q3 earnings come around mid-Nov 2026.",
-   "instrument": "ZIM common (NYSE) long, held to the $35 cash consideration. Optionally hedge with a put spread, since break risk is binary and political.",
-   "bloom_gates": "G1: named counterparty (Hapag-Lloyd, with FIMI for the Israeli carve-out). G2: concrete commitment (binding $35/sh cash merger agreement, shareholder-approved 2026-04-30). G3: specific figure ($35 vs $29.99 = $5.01, or 16.7% gross). The spread is still open because Israeli approval is unresolved.",
-   "edge": "M. (a) Run-up from the pre-catalyst base: +35% from $22.20 (2026-02-13, the last close before the 2026-02-17 deal print), or about +100% from ~$15 in early Nov 2025 when sale talk first surfaced. Much of that came from freight rates as well as the deal. (b) Remaining to the contractual $35: +16.7% gross, roughly 7-8 months to an end-Q4 close, about 70%+ annualized if it closes on time. The book is NOT mostly harvested. The edge is moderate, not high. The spread is wide because the risk is real and political (a 2026-09-02 report of fresh Israeli pushback, Gulf sovereign holders in Hapag-Lloyd). We have no informational edge on the ministerial ruling. Downside is cushioned: the 2026-10-06 guidance raise (EBITDA midpoint +30%, EBIT +72%) and ~$2.46B cash with no traditional debt suggest a break value of about $24-26 rather than the $20-22 pre-deal level. The implied market close probability is about 55-60%.",
-   "primary_source": "FMP quote 2026-10-12 ($29.99, 52w high $30.96). FMP EOD 2025-10..2026-02 (pre-deal $22.20 on 2026-02-13, $27.85 on the 2026-02-17 print). PRNewswire 'ZIM Raises Full-Year 2026 Guidance' 2026-10-06. ZIM Q2 release Aug 2026 via container-news.com 'ZIM targets Q4 closing of Hapag-Lloyd acquisition' (Golden Share approval pending). breakbulk.news (97% shareholder vote 2026-04-30). freightwaves.com 'Hapag-Lloyd revises Zim offer as Israeli approval concerns persist'. GuruFocus 2026-09-02 (Israel pushback). Seeking Alpha 2026-09-23 (government review month).",
-   "verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "kill_fact": "I confirmed some facts live. The quote is $29.99, with a 52-week high of $30.96 (set 2026-09-28), so the price sits about 3% below that high. The deal has not closed, so the event is still forward. ZIM's own primary 2026-08-19 press release says the Hapag-Lloyd deal 'remains subject to closing conditions, including regulatory approvals' and that the parties 'engage with the relevant authorities'. Approvals is plural there, which contradicts the claim that the Golden Share is the LAST/ONLY gate. I could NOT confirm from any primary source the FIMI 16-vessel carve-out, the revised terms submitted 2026-09-24, the cut of the ownership trigger from 24% to 10%, or a ministerial decision date. The web-search budget was exhausted, and FMP shows no ZIM press release on any of these. The only items I found are secondary: Seeking Alpha on 09-23 ('government reviews') and GuruFocus on 09-02 ('fresh Israel pushback'). Corrections: (a) the gating list is not proven to be the Golden Share only; (b) the Q4-2026 close has no dated decision behind it; (c) the 16.7% gross spread, roughly 70%+ annualized if the deal closes by year-end, is the market pricing a real break probability, not a free spread; (d) the 10-06 guidance raise (+30% Adj. EBITDA midpoint) plus the 08-19 'dividend expected based on 2026 results' line make a rejection more politically defensible and cushion the break price. Break downside is roughly $24-26, against $5.01 of upside. That gives near-symmetric R/R on a binary political call where my information is unverified. This is a fair arb, not an edge, and I would size it small or use the put-spread hedge.",
-   "analysis": "This is a real, contractual cash deal. The numerator is exempt from provenance re-derivation because $35 cash is contractual, and $29.99 against $35 leaves a 16.7% spread still on the table. The only gate is the State of Israel's Golden Share consent. The FIMI carve-out of the Israeli operations (16 vessels, more than the 11-vessel requirement) and the revised terms (a reported cut in the foreign-ownership trigger from 24% to 10%) are built to clear it. However, I could NOT independently confirm the triage's claim that revised terms were submitted on 2026-09-24, because the web-search budget ran out. What I could confirm: a 2026-09-23 Seeking Alpha piece frames this as the month the government reviews the deal, and a 2026-09-02 GuruFocus item reports Israeli pushback. The 2026-10-06 guidance raise lifts standalone value, which improves break-case R/R (about $5 up vs about $5-6 down to a $24-25 break). But it also gives Israeli opponents a reason to keep a national carrier, and it may tempt holders toward the 'dividend bonanza if rejected' path. Score 6 / ACTIVE fits a binary political arb with a fair-to-slightly-generous spread. It is not a mispriced certainty. Size it as an arb, and re-score on the ministerial decision."
+   "catalyst": "Israel decides whether to release its golden share for Hapag-Lloyd/FIMI's $35/sh cash takeover of ZIM, under a revised structure that has to go through a fresh review by the Government Companies Authority (GCA).",
+   "dated_milestone": "Hapag-Lloyd and FIMI have filed a revised framework (\"ten material improvements\": 10% ownership trigger instead of 24%, 16 ships for ZIM Israel, a Far East route, a 10-year job safety net) and promised complete documentation within 45 days, so around late Nov to early Dec 2026. The GCA then reviews from scratch, which reports say could take months. Next hard date is the outside date in Feb 2027, extendable to Jun 2027. A >10% holder group is pushing for a second shareholder vote, which would add another date.",
+   "instrument": "ZIM common (NYSE), long against the $35 cash consideration",
+   "bloom_gates": "G1 (named buyers Hapag-Lloyd and FIMI; named approver Israel's GCA and state) + G2 (binding merger agreement, shareholders approved 97% on 2026-04-30, revised framework filed) + G3 ($35 cash vs $29.02 = $5.98 / 20.6% gross spread). The cash deal price is contractual, so no numerator-provenance re-derivation is needed.",
+   "edge": "L-M. The 20.6% gross spread looks fairly priced given the risk. Six of eight Israeli government bodies opposed the original deal. The Finance Ministry, PMO and Transport Minister Regev are hostile and the unions oppose it. The revised application restarts the review, which could take months. Assuming a ~$19 break price, the market implies roughly 60% odds of closing. I have no evidence that odds are better than that. RESIDUAL CAPTURE: run-up from the pre-deal base (~$14-17, 52-week low $14.19) to $29.02 is about +70-100%, so most of the takeover premium is already in the price. Remaining to $35 is +20.6% gross, about 15-20% annualized if it closes by mid-2027, against a downside of about -35% if the deal breaks.",
+   "primary_source": "FMP quote ZIM $29.02 (2026-11-02); Maritime Executive, \"Hapag-Lloyd and FIMI submit framework of revised structure for Zim Israel\" (Oct 2026); Container News, \"Israeli authority closes review of original $4.2 billion Hapag-Lloyd-ZIM deal structure\" (Sep 2026, sets Oct-6 resubmission deadline); Seatrade Maritime, \"Hapag-Lloyd must resubmit Zim deal after Israeli review halted\"; Calcalist on the >10% holder demand for a second vote (Oct 2026); Container News, shareholder approval 97% (2026-04-30)",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The deal is real and forward. Shareholders approved, the agreement is binding, and Hapag-Lloyd/FIMI filed a revised framework after the GCA closed its review of the original structure. The binding constraint is Israeli political approval, and opposition is still broad: 6 of 8 bodies opposed, plus ministers and unions. On top of that, a >10% holder bloc is demanding a new shareholder vote on the revised terms. At $29.02 the expected value (about 0.6 x $35 + 0.4 x $19, roughly $28.6) is close to the price, so this is a fairly priced binary rather than a clear mispricing. WATCH for the full documentation filing (~late Nov/early Dec) and the first read from the GCA and ministries. GAP: I could not confirm the exact date of the framework submission or whether it met the Oct-6 deadline. Trade press implies it was filed. The break price of ~$19 is an estimate, not derived from filings."
+  },
+  {
+   "symbol": "ZBIO",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "binary",
+   "catalyst": "Topline overall and biomarker-population results from the Phase 2 SunStone trial of obexelimab in SLE (NCT06559163, enrolment completed Apr-2026) are guided for Q4-2026. No exact date has been given.",
+   "dated_milestone": "SunStone SLE topline in Q4-2026 (window open, no specific day; the Q3-26 earnings in mid-Nov may narrow it). Next: obexelimab IgG4-RD PDUFA on 2027-05-27.",
+   "instrument": "ZBIO common (NASDAQ). Long-dated calls spanning the Q4 window could express the binary, but IV is probably elevated.",
+   "bloom_gates": "G2 (a concrete company commitment to a Q4-2026 topline, repeated in the Q1 and Q2-2026 releases). G1 does not apply because there is no counterparty. G3 is partial: SLE success is not in the price, but there is no contractual figure.",
+   "edge": "M. This is a genuine unfired binary in a large indication with a quarter-level date. The equity has cash support: $673.9M at 6/30/26 vs a $1.81B market cap, so EV is about $1.1B net of an undisclosed debt facility, and runway runs into 2029. The IgG4-RD asset (Ph3 INDIGO hit, BLA accepted) already carries most of the EV. Run-up: +105% from the 52-week low of $13.5, but most of that was IgG4-RD de-risking, not SLE. The stock is now -38% from the $44.6 high, so SLE optionality looks only partly priced. Remaining: about +40-70% on a clean SLE win (my rough estimate, not provenance-derived because this is a binary, not a SoP lane), versus about -20-30% on failure, with the IgG4-RD/cash floor holding. The asymmetry is moderate. Phase 2 SLE readouts for B-cell modulators often fail, which caps the probability-weighted edge.",
+   "primary_source": "Zenas Q2-2026 8-K/10-Q (SEC, Aug-2026: cash $673.9M, SunStone topline Q4-2026, PDUFA 2027-05-27). Nasdaq summary of the Q2-2026 results. FMP quote 2026-11-02.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The catalyst is verified real, forward and unfired. Zenas has repeatedly guided SunStone SLE topline to Q4-2026, and no readout had been reported as of 2026-11-02. The price is $27.75 (FMP 2026-11-02), with the 50-day average at $29.5. There is no specific date and no Q3-2026 release yet, and SLE Phase 2 has a poor base rate. So this stays a WATCH binary and does not reach ACTIVE. Gap: I could not confirm the size of the debt facility or any Q3-26 change to the readout timing within the lookup budget."
   }
  ]
 }

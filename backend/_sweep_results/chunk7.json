@@ -2,78 +2,78 @@
  "chunk": "7 (ENPH-FR)",
  "scanned": 150,
  "scan_distribution": {
-  "active": 1,
-  "watch": 6,
-  "none": 143
+  "active": 0,
+  "watch": 3,
+  "none": 147
  },
  "survivors_flagged": [
-  {
-   "symbol": "ETD",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "activist",
-   "one_line": "Bergeron (~5.2%) is running a 5-nominee universal-proxy fight at the annual meeting on Nov 4, 2026 (dated vote). The $3 special dividend already went out and the fight has been public since August, so the setup is mid-arc rather than fresh."
-  },
   {
    "symbol": "EYPT",
    "score": 5,
    "tier": "WATCH",
-   "lane": "dated_binary",
-   "one_line": "LUGANO missed its primary noninferiority endpoint (Aug-17), but the shortfall traces to 9 off-target vision-loss patients and the stock was crushed. The second Ph3, LUCIA, reads out in Q4-2026 (window, no exact date) and decides the 1H27 filing: a post-washout binary with asymmetry, but late-arc and lawsuit-laden."
+   "lane": "binary",
+   "one_line": "LUCIA (second Ph3 wet AMD trial, same design as LUGANO) topline is guided for Q4 2026. Stock already sold off hard when LUGANO missed its primary endpoint in Aug-26, so expectations are reset and there is asymmetry if LUCIA is clean. Late-arc binary with only a quarter-level date. NDA targeted 1H27."
+  },
+  {
+   "symbol": "FLEX",
+   "score": 6,
+   "tier": "WATCH",
+   "lane": "spin_off",
+   "one_line": "Axiom (Cloud & Power Infrastructure) spin-off, Form 10 filed 2026-09-15, targeted for Q1 CY2027; $2.0B GC/Koch convertible preferred marks Axiom at $37.5B EV (10-05). It is real and dated, but it's well covered and the AI-power story is largely in the price (Q2 sales +25%), so it's mid-arc."
   },
   {
    "symbol": "FIP",
-   "score": 6,
-   "tier": "ACTIVE",
-   "lane": "distressed_deleveraging",
-   "one_line": "Sale of the Long Ridge plant to MARA ($1.512B) still awaits power-regulator (FERC) approval, with a Nov 30 2026 outside date and a $75M termination fee. Closing removes $1.16B of plant debt and repays about $300M at the parent; the stock is a thin residual on a big asset base."
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "capital_return",
+   "one_line": "Long Ridge Energy & Power sale was signed 2026-04-29 and is held for sale pending regulatory approvals (within about 12 months), which would delever the levered rail/W&LE holdco. Closing timing is unconfirmed, so the date is soft."
   }
  ],
  "verified": [
   {
-   "symbol": "ETD",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "activist",
-   "catalyst": "Doug Bergeron (about 5.2%, via DGB Investment) is running a 5-nominee universal-proxy contest for the Ethan Allen board at the 2026 annual meeting. The board has already made two concessions: a $3.00 special dividend and a CEO succession process announced 2026-09-21.",
-   "dated_milestone": "2026 annual meeting vote, reported as 2026-11-04. Both sides filed definitive proxies (Bergeron DEFC14A 2026-09-18, company DEFC14A 2026-09-24, revised DFRN14A 2026-09-28). The meeting date comes from triage and was not re-read from the DEFC14A. Next date to watch: the ISS/Glass Lewis recommendations, expected about 10-14 days before the vote (late October).",
-   "instrument": "ETD common (NYSE), $20.34 at the 2026-10-09 close, market cap about $518M",
-   "bloom_gates": "G1 yes: named counterparty, Bergeron/DGB Investment, with a 13D/A filed 2026-08-27. G2 partial: the dated shareholder vote is concrete, but the dissident has made no capital-return or sale commitment, only a 'restore growth' plan and a CEO search. G3 fails: no specific unpriced figure. A board win is a governance outcome with no contractual payoff number.",
-   "edge": "L. Residual capture: (a) run-up from the pre-catalyst base of $23.89 (2026-08-04 close, the day before the campaign launched 2026-08-05) to today's $20.34 plus the $3.00 special dividend, $23.34 total, is about -2.3%. The market has priced no activist premium, so the setup is not harvested. (b) Remaining % to a provenance-checked favorable-resolution value cannot be derived. A dissident win produces no contractual figure. The only upside numbers available are an inherited analyst/SA target (about $29, Seeking Alpha 2026-07-30) and GF Value, which NUMERATOR PROVENANCE excludes. The re-derived floor is mechanical: debt-free, $187.5M cash and investments at FY-end 2026-06-30, minus about $76M for the $3 special (about 25.4M shares), leaves roughly $4-5/share of cash under a $20 stock, with no preferred stock or external manager ahead of the common. So the event is unpriced but has no quantifiable numerator. The concessions already extracted (dividend, CEO succession) have also taken away part of what a win would deliver.",
-   "primary_source": "SEC EDGAR via FMP: Bergeron DEFC14A 2026-09-18, ETD DEFC14A 2026-09-24, SC 13D/A 2026-08-27, DFAN14A 2026-10-09. Press releases: GlobeNewswire 2026-08-19 ($3 special dividend, record 09-03, paid 09-17), GlobeNewswire/WSJ 2026-09-21 (CEO succession), BusinessWire 2026-10-01 (5-nominee video series). FMP EOD prices 2026-07-27 to 2026-10-09. FY26 cash from MarketBeat Q4 call recap, 2026-07-29.",
+   "symbol": "EYPT",
+   "score": 1,
+   "tier": "NONE",
+   "lane": "binary",
+   "catalyst": "The flagged catalyst, the LUCIA Phase 3 topline for DURAVYU in wet AMD, already reported on 2026-10-19. It missed its primary endpoint (BCVA non-inferiority vs aflibercept), and the company has since ended its wet AMD trials, so the 1H27 NDA is dead.",
+   "dated_milestone": "LUCIA topline FIRED 2026-10-19 (negative). Next: Q3-26 earnings in early Nov-2026 (cash runway after the 53% workforce cut). The DME pivotal readout date has not been verified and is not in the triage.",
+   "instrument": "EYPT common (NASDAQ), $0.3746, market cap about $31M (FMP quote 2026-11-02)",
+   "bloom_gates": "None pass. G2 (a dated commitment: the Q4-26 LUCIA topline) has already resolved negatively, and there is no remaining named counterparty or unpriced figure tied to the flagged event.",
+   "edge": "L. The event fired and failed, so there is nothing left to capture on the flagged thesis. (a) Move from the pre-catalyst base to today: about -67% to -80% in one session on 2026-10-19 (law-firm notices); the price now sits near the 52-week low of $0.34 vs a 50-day average of $3.21 and a 52-week high of $19.11. (b) Remaining upside to the 'clean LUCIA' value: 0%, because that outcome can no longer happen. Any residual value is a different thesis: possible cash above the $31M market cap plus the DME option. I did not verify that and found no dated catalyst for it.",
+   "primary_source": "EyePoint press release 'Topline Results from LUCIA, the Second Pivotal Phase 3 Clinical Trial of DURAVYU in Wet AMD' and 'EyePoint Announces Strategic Prioritization' (GlobeNewswire, 2026-10-19). Benzinga/Defense World on the 53% cut and wet AMD trial halt (2026-10-19/21). FMP quote 2026-11-02.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "Verified: the contest is real, dated and unfired. Both sides filed definitive proxies in September and are trading daily DFAN14A fight letters through 2026-10-09. The stock is net-flat against the pre-campaign base after adding back the $3 dividend, so nothing is harvested. But a board fight on a shrinking-sales furniture retailer (FY26 sales $579M, falling) has no contractual or derivable payoff. The likeliest gain, the special dividend and the CEO change, has already been extracted as board concessions. A dissident win means a growth-plan story, not a sale or recap, so G3 fails and the score is capped at 4. Gaps: the web search budget was exhausted, so I did not read the meeting date (Nov 4) in the DEFC14A, and I did not check proxy-advisor recommendations or the dissident's specific capital-allocation asks."
+   "analysis": "The triage premise is stale. LUCIA read out on 2026-10-19 and missed non-inferiority. That same day EyePoint announced a 53% workforce cut, early termination of both wet AMD Phase 3s and a pivot to DURAVYU in DME. Multiple securities-fraud investigations followed, including claims that LUGANO's positive result depended on excluding nine patients. The stock is now a $31M micro-cap at $0.37 with Nasdaq minimum-bid risk. A net-cash / DME-option thesis might exist, but checking it needs the Q3-26 10-Q (cash vs liabilities and wind-down costs). I could not do that because the web-search budget was exhausted, so I am not scoring it. The DME program has no verified dated readout."
   },
   {
-   "symbol": "EYPT",
-   "score": 5,
+   "symbol": "FLEX",
+   "score": 6,
    "tier": "WATCH",
-   "lane": "dated_binary",
-   "catalyst": "Topline from LUCIA, EyePoint's second Phase 3 of DURAVYU (vorolanib insert) in wet AMD, which the company has guided to Q4-2026. It has the same design as LUGANO and decides whether the planned 1H-2027 NDA goes ahead.",
-   "dated_milestone": "LUCIA topline: a company-guided Q4-2026 window (no exact date, latest about 2026-12-31). Next: Q3-2026 10-Q / earnings around early-to-mid Nov-2026, which updates cash, ATM use and LUCIA timing.",
-   "instrument": "EYPT common (NASDAQ), $3.40 last on 2026-10-12. Options could be used to define the risk on a binary readout, but I did not check the chain.",
-   "bloom_gates": "G2 is met: the company itself committed in its 17-Aug-2026 8-K/Ex.99.1 to LUCIA topline in Q4-2026 and an NDA in 1H-2027, pending LUCIA. G3 is partly met: cash of about $1.5/share against a $3.40 price, so EV is roughly $140M for a fully enrolled Phase 3 asset. G1 is not met: there is no counterparty or contract.",
-   "edge": "M. (a) Run-up: none. The stock fell about 69% on LUGANO (17-Aug) and is down a further ~24% since 31-Aug ($4.48 to $3.40), so the post-washout base has not been harvested. (b) Remaining: +135% from $3.40 to about $8 if LUCIA succeeds. I used the Jefferies $8 bull anchor, cut from $30, not the pre-LUGANO $14 level; this is a haircut for filing with one failed and one passed Phase 3. Downside if LUCIA fails is roughly cash-per-share, about $1.3-1.5 (-55% to -60%). At about 50% odds of success the expected value is around $4.7 (+38%). The edge is the depressed price plus a skeptic point: LUGANO's control arm had zero vision-loss events, while the historical rate is 3-5%. That suggests some of the 9-0 gap came from an unusually clean control arm, not the drug.",
-   "primary_source": "EyePoint 8-K/Ex.99.1, 2026-08-17 (LUGANO primary endpoint missed; LUCIA topline guided Q4-2026, NDA 1H-2027); 10-Q for the period ended 2026-06-30, filed 2026-08-05 (cash $180.5M, ATM sales, pre-funded warrants), both as cited in the local skeptic record; FMP quote 2026-10-12 ($3.40, mcap $285.1M); FMP news through 2026-10-06 (no LUCIA readout). Web search budget was used up, so I could not check directly for an exact LUCIA date or the Q3 cash figure.",
+   "lane": "spin_off",
+   "catalyst": "Flex plans to spin off Axiom Solutions International (its Cloud & Power Infrastructure segment) as a separate listed company in Q1 CY2027. General Catalyst, Koch Equity Development and co-investors have signed for $2.0B of Axiom Series A convertible preferred at an initial Axiom EV of $37.5B (announced 2026-10-05).",
+   "dated_milestone": "Form 10 filed 2026-09-15; $2.0B GC/Koch preferred agreement 2026-10-05; EPC Power acquisition closed into CPI 2026-10-14. Next: the pref closing, Form 10 amendments with Axiom carve-out financials and the debt split, then the Q3 FY27 print (late Jan 2027) and the distribution in Q1 CY2027.",
+   "instrument": "FLEX common (NASDAQ), $86.77 on 2026-11-02",
+   "bloom_gates": "G1 yes: named counterparties (General Catalyst, Koch Equity Development). G2 yes: signed $2.0B convertible preferred agreement plus a filed Form 10 with a Q1 CY2027 target. G3 partial: the $37.5B Axiom EV is a specific third-party mark and exceeds Flex's whole EV (about $32.1B market cap + $2.9B net debt + $0.77B leases = about $35.8B), but it is a structured private-pref mark, not a clean common price.",
+   "edge": "M. Not harvested; the stock has de-rated. Run-up from the pre-catalyst base is NEGATIVE: about -19.6% from $108.00 on the Form 10 date (2026-09-15) and about -25.7% from $116.76 on the pref announcement (2026-10-05) to $86.77, despite a Q2 beat (sales +25%, raised guide 2026-10-28). Remaining capture to my re-derived favorable-resolution value of about $115: +32%, in a range of about +10% (25% haircut on the private Axiom mark) to +45% (mark taken at face). The triage view that the story is 'largely in the price' is contradicted by the tape. Not H, because Axiom's trading multiple after the spin is AI-capex beta and the pref terms are unverified.",
+   "primary_source": "Flex press release 'Flex Announces $2.0 Billion Convertible Preferred Investment into Axiom Led by General Catalyst with Koch Equity Development' (PRNewswire, 2026-10-05). Flex press release 2026-10-12 (Axiom separation targeted for Q1 CY2027). Flex Q2 FY27 results (PRNewswire, 2026-10-28). FMP balance sheet for the quarter ended 2026-09-25 (filed 2026-10-30). FMP quote and EOD prices 2026-06-01 to 2026-11-02.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The event has not fired yet and is close: the company guides LUCIA to Q4-2026, and FMP news through 2026-10-06 shows no readout, only law-firm investigation notices (Pomerantz, Kessler Topaz) and conference appearances. The common stock carries most of the binary. Market cap is $285M against about $130-150M of estimated 9/30 cash ($180.5M at 6/30, plus $17.5M raised via the July ATM, minus a ~$71M/qtr burn). There is no preferred stack. The open Cantor ATM and about 88.8M share-equivalents are the main ways the common gets diluted. I keep this at WATCH, not ACTIVE: the date is a window, not a fixed day; the FDA would be looking at a one-fail/one-pass package; LUGANO's vision-loss pattern could repeat; litigation is building; and with no Q3 10-Q in hand the cash figure is my estimate, not reported."
+   "analysis": "The event is real, dated and forward: Form 10 filed 2026-09-15, a signed $2.0B GC/Koch convertible preferred at $37.5B Axiom EV on 2026-10-05, and a Q1 CY2027 spin target. FLEX has fallen from about $117 to $87 since then, so the market now values all of Flex below the private mark on Axiom alone; that undoes the triage's 'mid-arc / priced' premise. My SoP, re-derived from the 9/25/26 balance sheet rather than taken from analyst targets (about 369M shares, $5.98B debt incl. leases, $3.08B cash, no pref on Flex's books yet so the deal had not closed by quarter-end): Axiom $37.5B less the $2.0B pref claim is about $96/sh. RemainCo (Agility+Reliability, about $1.0-1.2B EBIT at 10-12x, less about $3.7B net debt+leases) adds about $19-30/sh, for roughly $115-126 face, or about $95 with a 25% haircut on the private mark. That is +10% to +45% from $86.77.\n\nGAPS (web-search budget exhausted, 10-Q text not read): not verified are the pref liquidation preference, dividend/PIK rate and conversion terms; whether the $2B proceeds stay at Axiom or go up to Flex; and how the $5.2B of long-term debt will be split. Convertible prefs priced at a headline EV usually carry downside protection that inflates that EV for the common, so I cap the score at 6 / WATCH rather than ACTIVE until the Form 10/A waterfall is read."
   },
   {
    "symbol": "FIP",
    "score": 3,
    "tier": "WATCH",
-   "lane": "distressed_deleveraging",
-   "catalyst": "MARA's $1.512B purchase of Long Ridge needs a FERC order in docket EC26-92 to close. The outside date is 30 Nov 2026, extendable to 30 Jun 2027 if regulatory conditions are still open, and MARA owes the sellers a $75M fee if the deal is not done. The guided Q3 close has already been missed.",
-   "dated_milestone": "The FERC order in EC26-92 is pending; none was found as of 2026-10-05. The outside date is 2026-11-30, which is also when the $110.9M 8.50% loan reportedly matures (that maturity is unverified). The extended outside date is 2027-06-30, the same day the Jefferson bridge loan matures. The Q3 2026 10-Q, expected early-to-mid Nov 2026, is the next disclosure.",
-   "instrument": "FIP common, $2.65 (FMP quote, 2026-10-12; 52-week range $2.59-$6.69). The event pays creditors, not the common.",
-   "bloom_gates": "G1 passes: MARA Holdings is a named counterparty. G2 passes: a binding SPA with a $785M Barclays bridge commitment, a $75M termination fee, and the change-of-control waiver on the 8.75% notes. G3 fails for the equity: the $1.16B of plant debt retired plus about $300M of parent paydown is a creditor figure. By the 10-Q, all proceeds go to prepay the secured term loan, part of that to a stepped MOIC return.",
-   "edge": "L. Run-up from the pre-catalyst base: roughly -45%. The stock was about $4.7-5 before the 2026-04-29 announcement (this is inferred from the 200-day average of $4.70 and was not verified by a dated print) and is $2.65 today, so the event is not harvested. Remaining capture to the provenance-checked favorable value: about 0% to +25% (the skeptic's $3.30 bull case). Mechanically, near-term common SoP is negative. Total equity is -$518.7M, with $1.592B of redeemable preferred at redemption value ($1.4B Series A RailCo plus $192.0M Series B, the latter PIK-accruing) ahead of the common, against $1.157B carried. The $6.75 street-style value needs about $380M of 2028 EBITDA, a sub-9.75% refinancing of the $1,403.7M term loan, and a 13.5x multiple. None of that is the event. The probability-weighted FV is about $2.40, below the price. The downside path runs to about $0.75 or zero if the deal slips into the Nov-2026 and Jun-2027 maturities.",
-   "primary_source": "FIP 10-Q for the quarter ended 2026-06-30: equity -$518.7M; Series A $1.4B and Series B $192.0M redemption values; proceeds designated to prepay the term loan; liquidity not sufficient for the Jefferson bridge. MARA 10-Q filed 2026-08-06: outside date 2026-11-30 / 2027-06-30 and the $75M fee. PJM IMM comment in FERC EC26-92 dated 2026-05-29. FMP quote 2026-10-12: $2.65. All as summarized in C:\\Users\\Bruno\\Stock-Screener\\backend\\_opus_debate\\_catalyst_skeptic\\FIP.json (2026-10-05).",
+   "lane": "capital_return",
+   "catalyst": "The sale of Long Ridge to a MARA Holdings subsidiary for a $1.512B base price has not closed and is still waiting on FERC approval (filed 2026-05-08). If it closes, about $1.16B of plant debt leaves the books and about $300M of parent term loan is prepaid. None of the proceeds go to the common.",
+   "dated_milestone": "Next date is Q3 2026 results on 2026-11-05 (FMP/GlobeNewswire release of 2026-10-13), when an update on closing is likely. The deal's outside date is 2026-11-30, extendable to 2027-06-30 on regulatory conditions, with a $75M fee owed to the sellers. As of 2026-11-02 no closing announcement has appeared in FMP news. The guided Q3 close has already slipped (Citizens, 2026-09-29, now models Q4).",
+   "instrument": "FIP common, NASDAQ, $2.715 on 2026-11-02 (FMP quote). The equity is the subordinated residual, behind $2.79B of debt and $1.59B of redeemable preferred at redemption value.",
+   "bloom_gates": "G1 passes: named buyer (a MARA Holdings subsidiary) with Barclays committed to a bridge loan of up to $785M. G2 passes: signed purchase agreement, outside date, a $75M termination fee and the waived change-of-control clause on the notes. G3 fails for the equity: the deleveraging figure is specific, but the proceeds are contractually directed to lenders, so no unpriced amount reaches the common.",
+   "edge": "L. Score the equity, not the event. Run-up from the pre-catalyst base: about -50% or worse. The stock traded roughly in the $5-6.7 range around the April 2026 signing (52-week high $6.69) and is $2.715 today, so the event has not been priced up. The decline reflects solvency risk. Remaining capture: none can be derived from the waterfall. Total equity is -$518.7M, with $1.592B of preferred at redemption value ($1.4B Series A RailCo plus $192M Series B) ahead of the common. Sale proceeds must prepay the secured term loan, which carries stepped return provisions. Unrestricted cash is $32.6M against a Jefferson bridge loan the company says it cannot cover (due 2027-06-30). The mechanical common SoP is negative, so the inherited $8.75-12 street targets are not supported. The only upside is option value, which depends on a multi-year earnings ramp plus a refinancing of the 9.75% term loan due 2028-02-01.",
+   "primary_source": "FIP 10-Q for the quarter ended 2026-06-30 (equity -$518.7M; preferred redemption amounts $1.4B + $192M; proceeds to prepay the term loan; $32.6M unrestricted cash). MARA 10-Q filed 2026-08-06 (outside date 2026-11-30, extendable to 2027-06-30; $75M fee). FMP quote 2026-11-02 ($2.715). GlobeNewswire 2026-10-13 (Q3 results on 2026-11-05).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The event is real, specific and forward: MARA is the counterparty, FERC docket EC26-92 is open, and the outside date is 30 Nov 2026 with a $75M fee. But closing deleverages the creditors. The common receives no distribution, the break fee goes to the sellers and, in substance, to the lenders, and $1.59B of preferred at redemption value sits ahead of a negative-equity common. This repeats the 2026-07 FIP lesson: score the equity, not the event, so the score is capped at 4 and taken down to 3. The guided Q3 close has already slipped, and the PJM IMM has asked for conditions, so a Nov-30 miss collides with near-term maturities. It is kept on WATCH only for the FERC order and the Q3 10-Q liquidity disclosure. Gap: web search was unavailable (the session budget was exhausted), so this rests on the FMP quote, the repo's 2026-10-05 dossier and skeptic records (which cite the MARA and FIP 10-Qs), and the IMM filing. The pre-announcement price and any FERC order after 10-05 were not freshly verified."
+   "analysis": "The event is real, dated and still ahead, but it pays creditors, not shareholders. Closing removes the worst insolvency path, but the residual common still sits behind about $1.59B of preferred at redemption value and an interest bill of roughly $420M a year against about $195M of operating profit outside Long Ridge. The skeptic check (MARA 10-Q filed 2026-08-06; FIP June-quarter 10-Q) found reward of +24% against a -72% downside, with probability-weighted fair value of $2.40, below the price. Gap: the web search budget was exhausted, so FERC docket EC26-92 status and any October closing filings could not be re-checked directly. FMP news through 2026-11-02 shows only the 2026-11-05 earnings date."
   }
  ]
 }

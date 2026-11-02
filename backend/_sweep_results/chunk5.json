@@ -1,145 +1,79 @@
 {
  "chunk": "5 (CLS-DAC)",
- "scanned": 150,
+ "scanned": 151,
  "scan_distribution": {
   "active": 0,
-  "watch": 8,
+  "watch": 9,
   "none": 142
  },
  "survivors_flagged": [
   {
-   "symbol": "CLYM",
+   "symbol": "CMPS",
    "score": 5,
    "tier": "WATCH",
-   "lane": "dated_binary",
-   "one_line": "Preliminary Ph2 PrisMN budoprutug pMN data picked for an ASN Kidney Week (early Nov) oral talk; ~$630M cap, stock $11 vs 50dma $13.9 (pulled back, not run up); a real dated readout, but the asymmetry is unproven."
-  },
-  {
-   "symbol": "COO",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "activist",
-   "one_line": "Strategic review ended 9/9 with no sale and a guidance cut. Jana (9/18) wants a new CEO and chair plus asset sales, two directors bought ~$54, and buyback raised to $3B. Next hardening trigger is the 2027 proxy nomination window (~Nov-Dec). Price is depressed and the setup is early-arc."
-  },
-  {
-   "symbol": "CRGY",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "overhang_clearing",
-   "one_line": "Oct 8 deal to buy Devon's Eagle Ford assets for ~$3.85B, funded by an 80M-share offering priced at $12.50. The stock ($12.66) is pinned at the offering price, so the supply overhang is clearing early in the arc. Deal close pending (date not verified)."
-  },
-  {
-   "symbol": "CRK",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "m&a",
-   "one_line": "SOCAR $1.65B Haynesville partnership: framework signed 9/28, definitive PSA due by 10/31/26, close by YE26. Real dated milestone, but the LOI was already public so it is partly priced."
+   "lane": "binary",
+   "one_line": "COMP360 rolling NDA to finish in Q4-26 with a National Priority Voucher (fast review), pointing to a possible approval and H1-27 launch, then DEA rescheduling; still mid-arc at about $12."
   },
   {
    "symbol": "CRTO",
    "score": 5,
    "tier": "WATCH",
-   "lane": "structural_redomicile",
-   "one_line": "Luxembourg step done 7/29. Board approved the Lux to US merger, targeted Jan 2027 and subject to a shareholder vote; a US domicile opens US-index eligibility. Early-arc, months out; meeting date not yet set."
+   "lane": "redomicile_index_inclusion",
+   "one_line": "The France-to-Luxembourg step is done (Jul 29, 2026). The board approved a US merger, which needs a shareholder vote; completion is targeted for Jan 2027, along with a Nasdaq-to-NYSE move. That could make the stock eligible for US indexes, but the thesis has been public since 2025 and the vote date is not set yet."
   },
   {
    "symbol": "CZR",
    "score": 5,
    "tier": "WATCH",
    "lane": "merger_arb",
-   "one_line": "Fertitta $31 cash take-private signed late May 2026 (go-shop ended Jul 11, no topping bid found); $29.50 = ~5.1% gross spread pending shareholder vote + multi-state gaming approvals; I couldn't confirm the close date. Plain-vanilla arb, late-arc, no asymmetry beyond the spread."
+   "one_line": "Fertitta all-cash $31 take-private (signed 2026-05-28, no financing condition, outside date 2027-05-27 extendable to Nov-27); ~$29.03 = ~6.8% gross spread gated on multi-state gaming approvals. Real but late-arc, announced five months ago and in plain sight."
   }
  ],
  "verified": [
   {
-   "symbol": "CLYM",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "dated_binary",
-   "catalyst": "Climb Bio will give an oral presentation of preliminary Phase 2 PrisMN data for budoprutug (anti-CD19) in primary membranous nephropathy at ASN Kidney Week 2026. New CLYM116 data will also be shown there.",
-   "dated_milestone": "ASN Kidney Week 2026 oral presentation, early Nov 2026 (exact session date not verified; abstract embargo/release likely late Oct). Next: CLYM116 NAVIGATE-2 IgAN initial data H1 2027, Ph3 start 2027.",
-   "instrument": "CLYM common (NASDAQ). No pref or debt ahead of it: total debt is $1.3M of leases.",
-   "bloom_gates": "G2 only, and it is weak. There is a concrete dated commitment: an oral slot at a named meeting, announced 2026-10-02. There is no G1 counterparty. G3 fails: no specific unpriced figure is known. The data are 'preliminary' from an ongoing open-label study, and the size and endpoints of the patient group are undisclosed.",
-   "edge": "L-M. Run-up from the pre-catalyst base: about -0.6% ($11.07 on 2026-10-01, before the 10-02 PR, vs $11.00 on 2026-10-09). The ASN event itself is not priced in. But the stock is up about 570% from its 52-week low of $1.635. It is also down 38% from the $17.8 high in Aug, after the CLYM116 Ph1 news sold off. So the broader B-cell/APRIL story has mostly been priced already. Remaining upside to favorable resolution is a judgement call, not something derived from the capital structure: maybe +30-50% ($14-16, which retests the Aug-Sep range) if the preliminary PrisMN data show strong anti-PLA2R depletion and proteinuria remission. Downside on a muted or 'too early' read is about -35 to -50%, toward net cash of roughly $3.8-4.2/sh. The odds are not clearly in our favour, because an oral slot for preliminary small-n data is a high bar to clear.",
-   "primary_source": "GlobeNewswire PR 2026-10-02 'Climb Bio to Present New Data at ASN Kidney Week 2026 for CLYM116 and Budoprutug'; GlobeNewswire PR 2026-09-03 (CLYM116 Ph1, NAVIGATE-2 H1 2027); FMP balance sheet Q2 2026 (period 2026-06-30); FMP quote/EOD 2026-10-09",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The catalyst is real, dated and forward-looking: GlobeNewswire 2026-10-02 confirms the PrisMN preliminary Ph2 budoprutug pMN data was selected for an oral at ASN Kidney Week 2026, and the stock has not run up on it ($11.07 to $11.00). It is still a single-asset clinical read on unquantified preliminary data, with no named counterparty and no specific currently-unpriced figure. Market cap is $630M against about $239M equity (Q2 2026 cash and investments of $239M, roughly $4.2/sh) and no pref or debt, so EV is about $390-410M. The cash floor is real, but a modest disappointment could still take the stock down 40%. Gap: web search budget was exhausted, so I could not confirm the exact session date, n, abstract content, or whether the abstract has already been released (ASN abstracts often go public before the meeting, which would partially fire the event)."
-  },
-  {
-   "symbol": "COO",
+   "symbol": "CMPS",
    "score": 5,
    "tier": "WATCH",
-   "lane": "activist",
-   "catalyst": "JANA Partners' 9/18/2026 letter demands an external CEO search, a new board chair and asset sales (reportedly a key segment, likely CooperSurgical) after the board ended its strategic review on 9/9 with no deal and cut guidance.",
-   "dated_milestone": "JANA letter 2026-09-18 (fired as a demand, not a result). Next: Q4 FY26 earnings ~early Dec 2026, and the advance-notice nomination window for the 2027 annual meeting (~Nov-Dec 2026, estimated from the usual March meeting; exact bylaw dates not checked).",
-   "instrument": "COO common (NASDAQ), $54.37",
-   "bloom_gates": "G1 partial: JANA is a named counterparty, but as an activist, not a buyer. G2 not met: the company has made no commitment to a CEO change, a new chair or a sale, and the $3B buyback raise was not confirmed this session. G3 not met: no specific unpriced figure such as a bid or a separation value.",
-   "edge": "M. The setup has not been priced in, but nothing has been committed. Run-up from the pre-catalyst base is about 0%: the stock was ~$63.7 before the 9/9 print, fell to ~$54.4 after it, was ~$54 at JANA's letter and is $54.37 now. Remaining is about +35-45% to a favorable resolution value of ~$75-80. That is a rough sum-of-the-parts I derived from the capital structure (no preferred stock, net debt $2.39B, ~195M shares, EV ~$13.0B), assuming CooperVision at ~12-13x EBITDA plus a CooperSurgical sale at ~4x sales less tax leakage. It is my estimate, not an analyst target. Directors Kurzius (two buys of 10k shares, ~$54.9 and ~$53.9) and Rosebrough (10k shares, $54.16) bought right at today's price, so insiders see value here too.",
-   "primary_source": "JANA Partners press release 'JANA Partners Sends Letter to Cooper Board of Directors' (PRNewswire, 2026-09-18), also covered by WSJ (2026-09-17) and Reuters (2026-09-18). Investopedia 2026-09-10: review ended with no deal, soft outlook. Director Form 4 buys reported by Motley Fool 2026-10-02/06/07. FMP balance sheet for Q3 FY26 (10-Q filed 2026-09-09).",
+   "lane": "binary",
+   "catalyst": "COMP360 (psilocybin, TRD) rolling NDA is due to be fully filed in Q4-26 under an FDA Commissioner's National Priority Voucher, which targets a 1-2 month review. That points to an FDA decision around Q1/H1-27, followed by DEA rescheduling and launch.",
+   "dated_milestone": "Next date: the Q3-26 results and call on 2026-11-03, where NDA completion status should be updated. Then the rolling NDA should be complete in Q4-26, with a CNPV-speed FDA action likely in Q1/Q2-27 and DEA scheduling after that.",
+   "instrument": "CMPS common (Nasdaq ADS)",
+   "bloom_gates": "G1 is met: the named counterparty is the FDA, which granted the rolling review and awarded the CNPV on 2026-04-24. G2 is met: management has committed to completing the filing in Q4-26 (Q1-26 PR, 2026-05-13). G3 is only partial: no contractual figure exists, so the approval value is my estimate, not a priced number.",
+   "edge": "M. The event is real, dated and still ahead (FDA action not yet taken), but much of it is already harvested. (a) Run-up: from about $5.75 on 2026-04-14 (before the White House psychedelic EO on 04-18 and the CNPV on 04-24) to $10.67 today is +85%, and from the 2025 low of $2.35 it is about +350%. The stock peaked at $15.87 on 2026-09 and has since fallen 33%. (b) Remaining: from $10.67 to an estimated approval value of about $18 (a market cap of about $2.5B against $1.48B now) is about +69%. Weighted at about 70% approval odds, with about $4.5 if it fails, the expected value is about $14 (+30-40%). Dilution after approval is likely and would cut into this. The approval value is my own estimate and was not taken from an analyst target.",
+   "primary_source": "Compass Pathways PR via Business Wire, 2026-04-24: \"FDA Granted NDA Rolling Review Request and Awarded Commissioner's National Priority Voucher\". Q1-26 results PR, 2026-05-13 (filing complete by Q4). Q3 results announcement PR, 2026-10-27 (call on 11-03). FMP EOD price history and quote, 2026-11-02.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "Verified via FMP news: the 9/9-10 print cut guidance and ended the strategic review with no sale (stock -14.6%), JANA's 9/18 PR/WSJ/Reuters letter asks for a new CEO, a new chair and asset sales, and three director open-market buys of about $54 each were filed 9/14 to early Oct. The equity waterfall is clean (no preferred stock, net debt $2.39B against a $10.6B market cap), so a segment sale would flow to the common and the numerator holds. The catalyst is still only a demand. The board just finished a review with no sale, JANA has not committed to a proxy fight, a pile of securities class-action investigations is an overhang, and the CooperVision destocking may reflect weaker demand. Hold at WATCH until there is a nomination notice, a settlement or board change, or a CEO search announcement. Gap: web search budget was exhausted, so the $3B buyback figure, JANA's stake size and the exact nomination deadline were not checked against primary sources."
-  },
-  {
-   "symbol": "CRGY",
-   "score": 3,
-   "tier": "NONE",
-   "lane": "overhang_clearing",
-   "catalyst": "Crescent has signed a definitive agreement to buy Devon's Eagle Ford assets for about $3.85B net, part-funded by 80M Class A shares priced at $12.50 on Oct 8. The thesis is that the stock recovers once the offering supply is absorbed and the deal closes.",
-   "dated_milestone": "Deal announced and offering priced 2026-10-08. Offering settlement is about T+1/T+2 (around Oct 9-10, so effectively done). The closing date for the Devon deal is NOT verified; next milestone is the deal close, expected Q4-2026/Q1-2027 (unconfirmed), plus Q3 earnings in early November (unconfirmed).",
-   "instrument": "CRGY common (NYSE), $12.66 close on 2026-10-09",
-   "bloom_gates": "G1 yes (named counterparty: Devon Energy). G2 yes (definitive purchase agreement plus a priced 80M-share offering). G3 NO: there is no specific unpriced figure. The upside depends on the overhang clearing and the deal being accretive, which are judgement calls, not a contractual value.",
-   "edge": "L. Run-up from the pre-catalyst base ($13.47 close on 2026-10-07) to today ($12.66) is -6.0%: the event knocked the price down rather than lifting it. Remaining capture to a favorable-resolution value (full overhang reversion to the pre-deal $13.47) is about +6.4%. That reversion is a sentiment target, not a figure re-derived from the capital structure. The equity also absorbs about $2.85B of extra non-equity funding (probably debt, unverified), which could cap the reversion. The stock is pinned near the $12.50 offering price, where the underwriter supports it, which is normal behaviour after a follow-on. No contractual price exists.",
-   "primary_source": "Business Wire, 2026-10-08: \"Crescent Energy to Acquire Eagle Ford Assets from Devon Energy\" and \"Crescent Energy Company Announces Pricing of Public Offering of Class A Common Stock\" (80M shares at $12.50), both via FMP press-releases. Prices from FMP EOD (2026-10-07 $13.47, 2026-10-09 $12.66).",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "Verified: the Oct 8 Business Wire releases confirm the definitive agreement with Devon (about $3.85B net) and the 80M-share offering at $12.50 (upsized from a $1B launch). FMP shows the stock at $12.66 on 41.8M shares of volume on Oct 9, down from $13.47 before the deal. The flagged lane is real but thin. Overhang clearing after a follow-on is a generic pattern; it has no specific currently-unpriced figure, the deal close is undated, and the most the reversion can return is about 6%. Gaps: web search budget was exhausted, so the close date, the debt-funding split, and the 10-Q waterfall were NOT checked. Whether the KKR/Class B structure still carries a manager fee (management may have been internalized in 2024) is also unverified. The numerator therefore cannot be provenance-checked, which is a further reason to cap the score."
-  },
-  {
-   "symbol": "CRK",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "m&a",
-   "catalyst": "SOCAR is buying non-operated stakes for $1.65B in cash: 20% of Comstock's Legacy Haynesville interest, 15% of Western Haynesville (stepping down to 7.5%), and 15% of Comstock's 73% stake in Pinnacle Gas Services. A framework agreement was signed 9/28, the definitive PSA is due by 10/31/26 and close is targeted for YE26.",
-   "dated_milestone": "Definitive PSA signing no later than 2026-10-31 (per framework agreement). The Q3 print 2026-11-04 (call 11-05) is the next disclosure point. Close targeted by 2026-12-31, subject to government and third-party approvals. Effective date 2026-07-01.",
-   "instrument": "CRK common (NYSE)",
-   "bloom_gates": "G1 yes: SOCAR, the Azerbaijan state oil company, is the named counterparty. G2 partial: the LOI and framework agreement bind the parties only to negotiate in good faith, not to close, so the PSA is still unsigned. G3 weak: the $1.65B figure has been public since 9/1. Whether the sale adds value depends on the implied multiple relative to CRK's ~$7.7B EV, which I could not establish. It is an asset sale at a negotiated price, not a premium paid to the common.",
-   "edge": "M-L. Run-up: the pre-catalyst base was $14.43 (8/31 close). The stock spiked to $16.02 on the 9/1 LOI (+11%) and has since round-tripped to $13.71, so the run-up is -5% and nothing is harvested. Remaining: +17% to $16.02, if PSA signing restores the LOI-day reaction. That value is a market-reaction proxy, not a provenance value. The fade tracks Henry Hub gas weakness, which is a macro driver, and that muddies whether the deal is underpriced or simply swamped by the gas tape. The upside is derived, from deleveraging. Proceeds are about 53% of the $3.12B net debt, roughly $5.6/share. But an asset sale at fair value moves value from debt to equity holders without creating it, and the 10-Q line does not show where proceeds are contractually required to go. No preferred stock is ahead of the common.",
-   "primary_source": "Comstock press release 2026-09-28, \"Comstock Announces Signing of Framework Agreement for $1.65 Billion Strategic Partnership with SOCAR\" (GlobeNewswire). LOI press release 2026-09-01. Q2-26 10-Q balance sheet filed 2026-07-30. FMP quote/EOD as of 2026-10-09 close $13.71.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The event is real, dated and forward. It is sourced from CRK's own 9/1 and 9/28 press releases. The PSA deadline is 10/31, with close by YE26. The capital structure is clean: Q2-26 10-Q shows no preferred, $3.10B long-term debt, $45M cash and $584M minority interest. A $1.65B cash inflow would cut leverage by about half, but the equity gain hinges on the sale multiple versus market-implied value, which I could not verify. The stock trades below its pre-LOI base, so the residual is not harvested. But the gas-price drag makes this partly a macro bet, and the commitment is still only to negotiate (LOI/framework), so score 5 / WATCH. Upgrade on a signed PSA that discloses price adjustments and use of proceeds. Gap: web search budget was exhausted, so I could not check analyst read-through on deal multiple, use of proceeds or regulatory (CFIUS-type) risk. Sources were FMP press releases, quote and EOD chart, and the balance sheet."
+   "analysis": "The setup checks out. The FDA granted rolling NDA review and selected COMP360 for the CNPV on 2026-04-24, and management targets a complete filing in Q4-26. Two Phase 3 programmes support the filing: COMP006 26-week data (07-07) and COMP005 52-week data (09-09). The run-up since the EO/CNPV leaves roughly +30-40% probability-weighted upside, with a real overhang from DEA rescheduling, REMS/launch execution and an equity raise. That fits WATCH, not ACTIVE, and is best revisited after the 11-03 call confirms NDA completion timing. Two gaps remain. Web search was exhausted, so neither the Q3 balance sheet (cash runway, any converts or warrants) nor the exact CNPV review clock was checked. The approval value is my estimate and was not re-derived from the 10-Q. The stock fell 7.8% today to $10.67, below its 50-day average of $12.91."
   },
   {
    "symbol": "CRTO",
    "score": 4,
    "tier": "WATCH",
-   "lane": "structural_redomicile",
-   "catalyst": "Criteo's board has approved a cross-border merger into a US subsidiary, which moves its domicile to the US and its listing from Nasdaq to NYSE. It is targeted for January 2027 and needs a shareholder vote. A US domicile could make it eligible for US indexes and loosens limits on buybacks and holding treasury shares.",
-   "dated_milestone": "Step 1 (France to Luxembourg) completed 2026-07-29. Next: Form S-4 and preliminary proxy, with the special meeting and record date not yet set (still not filed as of 2026-10-12, per FMP's SEC filing list). Merger close targeted January 2027. The first possible index event is the Russell reconstitution in about June 2027; S&P 600/400 inclusion is at the committee's discretion.",
-   "instrument": "CRTO common (NASDAQ, NYSE after the merger). Last $15.73, market cap about $790M, 52-week range $14.28-$25.29.",
-   "bloom_gates": "G2 partial: the board approval and January 2027 target are a concrete corporate commitment, but the shareholder vote and meeting date are still pending. G1 not met: there is no outside counterparty (it is an internal merger into its own subsidiary). G3 not met: no specific unpriced figure. Index inclusion is explicitly \"not guaranteed\", and there is no buyback size beyond the 11M-share authorization in the articles.",
-   "edge": "L. Run-up from the pre-catalyst base: about 0% or negative. The redomicile plan has been public since the Feb-27-2026 meeting, and the stock is near its 52-week low after the Q2 miss on 2026-08-05 (52-week high $25.29). Remaining upside to the favorable outcome: not derivable from the capital structure. The event creates no contractual value. The only mechanical lever is passive index demand (Russell 2000 / S&P 600 for a roughly $0.8B-cap name), which by rough estimate might be worth +5-15% if it happens, and it is 8+ months away and conditional. There is no preferred stock or proceeds waterfall to model, so the provenance check is not applicable. Net: real but low-value event optionality on top of a fundamental story that is weakening.",
-   "primary_source": "SEC Form 425 / 8-K, Criteo, 2026-07-29 (https://www.sec.gov/Archives/edgar/data/1576427/000162828026050330/criteo425.htm), plus 8-K 2026-07-31 and 425 2026-08-05. Quote from FMP, 2026-10-12. FMP press releases, Aug-Oct 2026.",
+   "lane": "redomicile_index_inclusion",
+   "catalyst": "Criteo plans a US merger and redomicile, with a Nasdaq-to-NYSE move targeted for January 2027, which could make the stock eligible for US indexes such as the S&P and Russell; it needs a shareholder vote that has not been scheduled.",
+   "dated_milestone": "The France-to-Luxembourg step finished on 2026-07-29 (8-K filed 2026-07-31). The US merger was announced on 2026-08-05 (8-K and Form 425). Completion is targeted for January 2027, but no S-4 or proxy has been filed and no vote date is set. The next dated event is Q3 results on 2026-11-04, which is not the event this lane is about.",
+   "instrument": "CRTO common stock (Nasdaq). No preferred stock ranks ahead of the common, so the payoff is the common stock's own value plus any re-rating if it joins an index.",
+   "bloom_gates": "G2 is only partly met: the board has committed to the merger, and Form 425s were filed on 2026-08-05 and 2026-10-29, but it is still subject to a shareholder vote with no date. G1 does not apply: there is no outside counterparty, because this is an internal reorganisation. G3 is not met: there is no specific figure the market has not yet priced, since getting into an index depends on later decisions by S&P and Russell, not on anything contractual.",
+   "edge": "L. Run-up: about -40%. The stock is $14.83 today against a 52-week high of $25.29, and it fell after Q2 / 5 Aug, drawing law-firm investigations from August to September. Nothing of the event has been harvested; the stock has de-rated instead. Remaining: no contractual number. Index-inclusion moves are usually a few percent to about 10%, depend on decisions by S&P and Russell, and would come after a closing in early 2027 at the soonest. The thesis has been public since 2025, so the market has mostly already treated the move to the US as known. What matters now is how the business itself performs, not the redomicile.",
+   "primary_source": "SEC EDGAR via FMP: 8-K and Form 425 on the US merger (2026-08-05), 8-K on the completed Luxembourg step (2026-07-31), Form 425 (2026-10-29), Q2 10-Q (2026-08-05). PRNewswire: Q3 results date set for 2026-11-04 (released 2026-10-21). FMP quote: $14.83, 52-week range $13.95-$25.29 (2026-11-02).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The step-1 conversion and the board's approval of the US merger are confirmed in the 8-K and Rule 425 filing of 2026-07-29/31, with a January 2027 close target. The S-4, meeting date and record date are still not filed. The catalyst is a domicile change whose payoff depends on index committees and future buybacks, not a priced cash event, so the upside comes from flows and is uncertain rather than a fixed figure. Meanwhile the stock sits near its 52-week low after the Q2 2026 miss, which set off several shareholder-law-firm investigations (Pomerantz, Kirby McInerney, Bragar Eagel, Aug-Sep 2026). That is why the score is held at 4 WATCH. Re-check when the S-4 is filed and the meeting is dated. Gap: the web search budget was used up, so I could not confirm current index-eligibility rules (S&P profitability test, Russell rank day) or whether a fresh buyback has been authorized. I did not read the Q2 10-Q balance sheet in detail."
+   "analysis": "The step-by-step redomicile is real and moving forward: the Luxembourg step closed on 2026-07-29, the US merger was announced on 2026-08-05, and a new 425 was filed on 2026-10-29. However, the shareholder vote has no date, no S-4 or proxy is on file, and the index-inclusion payoff depends on later decisions by S&P and Russell, not on a contractual figure. Because the stock is down about 40% from its high and near its 52-week low of $13.95, as the fundamentals have worsened, a catalyst that is not yet priced is not the same as upside to capture. This position is really a bet on the stock, with a weak option on getting into an index, so I capped it at 4 and set it to WATCH. Gaps: web search was unavailable (budget used up), so I could not confirm the January 2027 target date, the exact NYSE terms, or whether S-4 timing has been announced. I relied on the FMP filing list and press-release feed."
   },
   {
    "symbol": "CZR",
-   "score": 5,
+   "score": 4,
    "tier": "WATCH",
    "lane": "merger_arb",
-   "catalyst": "Fertitta Entertainment's $31.00 cash take-private of Caesars (signed 2026-05-28) is waiting on two things: the FTC second request issued around 2026-09-17, and multi-state gaming-regulator approvals.",
-   "dated_milestone": "Shareholders approved the deal on 2026-09-22 (133.3M for, 4.3M against, about 65.4% of shares outstanding). Next date: Q3 results 2026-10-27 (no call). Then FTC second-request compliance and state gaming approvals; no closing date is disclosed. A ticking fee of $0.00715/share/day starts if the deal has not closed by 2026-06-26 (2027).",
-   "instrument": "CZR common (NASDAQ), long the spread to the $31.00 cash price",
-   "bloom_gates": "G1 yes (Fertitta Gaming Holdco / Empire Merger Sub is the named buyer). G2 yes (signed definitive merger agreement, shareholder vote passed 9/22). G3 partial (a $1.50/share, 5.1% gross spread is still open, but it is the market's standard pricing of regulatory and timing risk, not mispricing).",
-   "edge": "L. Run-up: about +7.1% from the pre-catalyst base ($27.55 on 2026-05-20; $28.78 the day before the announcement, so +2.5% since then) to $29.50 today. Remaining: +5.1% gross to $31.00 (about 57% of the move from the pre-catalyst base to the deal price is already captured). If the deal closes in 6-9 months, that is roughly 7-10% annualized. The FTC second request is what extends the timeline. The ticking fee after 2027-06-26 provides some protection against delay. Icahn's non-binding $34 proposal (2026-07-10) went nowhere: the go-shop ended and the vote passed at $31, so a topping bid is now remote. There is no asymmetry beyond the spread. If the deal breaks, the stock likely falls toward the low-to-mid $20s (estimate, not verified).",
-   "primary_source": "CZR 8-K, 2026-09-23 (special meeting vote results, $31.00 cash plus the ticking fee after 2027-06-26). DEFM14A, 2026-08-25. WSJ, 2026-09-17 (FTC second request). Halper Sadeh release, 2026-09-02 (Icahn $34 non-binding proposal of 2026-07-10). FMP quote $29.50 and EOD history, 2026-10-12.",
+   "catalyst": "Fertitta Entertainment's all-cash $31/share take-private of Caesars (signed 2026-05-28) closes once the FTC antitrust review and multi-state gaming approvals clear.",
+   "dated_milestone": "FTC second request issued 2026-09-17 (WSJ). Next: Fertitta's compliance with the second request and the state gaming-commission hearings (NV/NJ and others; dates not verified). Outside date 2027-05-27, extendable to Nov-2027.",
+   "instrument": "CZR common (long the spread). There is no listed acquirer stock to short because the deal is all cash.",
+   "bloom_gates": "G1 (named counterparty: Fertitta Entertainment) + G2 (signed definitive agreement at $31 cash, no financing condition). G3 is weak: the $1.97 spread is public and has hardly moved since signing, so it is a known risk premium, not an unpriced figure.",
+   "edge": "L. Run-up: the pre-catalyst base is $28.78 (2026-05-27 close), but that was already about +61% above the $17.86 52-week low and almost at deal price, so the takeover was largely priced before it was announced. From announcement day ($29.08) to today ($29.03) the run-up is about 0%. Remaining: +6.8% gross from $29.03 to $31 over about 7-13 months (roughly 6-11% annualized, before break risk). The spread has stayed flat for five months, the FTC second request has extended the timeline, and the market is pricing real break or delay risk. That is fair compensation, not mispricing.",
+   "primary_source": "FMP quote CZR $29.0257 (2026-11-02); FMP EOD history 2026-05-20..06-02 (announcement-day close $29.08, prior close $28.78); WSJ 'FTC Requests Additional Information Regarding Fertitta, Caesars Merger' (2026-09-17); Caesars Q3 2026 results press release, Business Wire (2026-10-27); Caesars Q3 release-date press release noting the pending Fertitta merger announced 2026-05-28, Business Wire (2026-10-02); Motley Fool on VICI's $458M credit-loss allowance (2026-10-29).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "I verified the deal: $31 cash from Fertitta was announced 2026-05-28, and shareholders approved it on 2026-09-22 per the 8-K. That removes the vote risk the triage flagged. The open risks are now the FTC second request (WSJ, 2026-09-17) and the state gaming approvals; no closing date is disclosed, and a ticking fee starts 2027-06-26. This is plain-vanilla late-stage arbitrage. The remaining 5.1% gross (about 7-10% annualized) is fair pay for the antitrust and timing risk, not a mispriced event. Gaps: I could not confirm a guided closing quarter, Icahn's current stance, or a modeled break price (the web search budget was exhausted, so I relied on FMP and SEC)."
+   "analysis": "The deal is real, contractual and unfired. The $31 cash price is exempt from numerator re-derivation. CZR trades at $29.03 (FMP quote, 2026-11-02), essentially flat against the $29.08 close on announcement day. New frictions since signing: the FTC issued a second request (WSJ, 2026-09-17); Q3 lost $0.61/share against a -$0.12 estimate, so the standalone downside is widening (Caesars Q3 release, 2026-10-27); landlord VICI booked a $458M credit-loss allowance increase largely tied to Caesars, a sign the lease/LBO structure is contested; and shareholder-litigation firms are investigating the price. Downside if the deal breaks is probably well below $25 given the losses and leverage. A 6.8% gross spread over a 7-13 month regulatory runway is an ordinary late-arc arb that the market is already harvesting, so score is capped at 4 / WATCH. Gaps: the WebSearch budget was exhausted, so state gaming-hearing dates and the exact FTC compliance timing are unverified; there was no 10-Q lookup, which the cash price makes unnecessary."
   }
  ]
 }
