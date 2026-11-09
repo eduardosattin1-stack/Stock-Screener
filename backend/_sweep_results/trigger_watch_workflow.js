@@ -5,42 +5,98 @@ export const meta = {
 }
 const DUE = [
  {
-  "symbol": "RCI",
-  "catalyst": "Rogers now owns 100% of MLSE (closed 2026-10-01) and plans to sell a minority stake in its combined sports/media entity, which it values at more than C$25B, by H1 2027, using the cash to pay down debt. The sale would put a market price on the sports assets.",
-  "milestone": "Kilmer 25% buyout CLOSED 2026-10-01 (announced 2026-07-06). Next: Q3 2026 results around late Oct 2026, for an update on the sale process; the minority-stake sale announcement is guided for H1 2027 (no buyer, terms or date yet).",
+  "symbol": "CMPS",
+  "catalyst": "COMP360 (psilocybin, TRD) rolling NDA is due to be fully filed in Q4-26 under an FDA Commissioner's National Priority Voucher, which targets a 1-2 month review. That points to an FDA decision around Q1/H1-27, followed by DEA rescheduling and launch.",
+  "milestone": "Next date: the Q3-26 results and call on 2026-11-03, where NDA completion status should be updated. Then the rolling NDA should be complete in Q4-26, with a CNPV-speed FDA action likely in Q1/Q2-27 and DEA scheduling after that.",
   "score": 5,
   "tier": "WATCH",
-  "trigger": "2026-10-01"
+  "trigger": "2026-11-03"
  },
  {
-  "symbol": "MTN",
-  "catalyst": "Oasis Management (about 6.5%, 13G switched to 13D) has nominated Chapek, Hudson, Roberts and Street for Vail's board at the 2026 annual meeting and argues the 42 resorts are undervalued against peers; the sale or strategic-review ask has no bid price attached, and Prince's standing offer for Park Ci",
-  "milestone": "Done: 13D/notice 2026-09-10/16 and 13D/A 2026-09-29 (nominee agreements). Next: proxy filings by Vail and Oasis (not filed as of 2026-10-12), then the annual meeting, which is usually early December but has no announced date. Vail's own director search is set to finish in early 2027. Settlement risk",
+  "symbol": "GPC",
+  "catalyst": "Genuine Parts is splitting into two public companies, NAPA/Automotive (GPC) and Motion/Industrial, with completion reaffirmed for Q1 2027. Leadership and boards are named, and December investor days will show each standalone business.",
+  "milestone": "Gabelli Automotive Symposium 2026-11-03 (CEO Stengel, CEO-elect Carruthers, CFO/COO Nappier). December 2026 investor days for GPC and Motion. Separation completes Q1 2027.",
   "score": 5,
   "tier": "WATCH",
-  "trigger": "2026-09-29"
+  "trigger": "2026-11-03"
  },
  {
-  "symbol": "LNTH",
-  "catalyst": "Curium US Holdings is buying Lantheus for $102.50/sh cash at close plus a non-transferable CVR worth up to $12/sh, tied to prostate, neurology and DEFINITY commercial milestones through 2030. Signed 2026-08-03, close guided to 1H27.",
-  "milestone": "Special shareholder meeting on 2026-10-14 (majority of outstanding shares required). Next: FTC/HSR waiting period. The HSR notice was voluntarily pulled on 2026-09-17 and refiled to give the FTC more review time, refile date not confirmed. Close guided to 1H27.",
-  "score": 4,
+  "symbol": "IMXI",
+  "catalyst": "Western Union's signed $16 cash acquisition of Intermex (agreement dated 2025-08-10) needs two things to close: California DFPI must reinstate the approval it suspended on 2026-08-14, and the new 30-day HSR waiting period from the 2026-10-02 refiling must expire.",
+  "milestone": "HSR waiting period from the 2026-10-02 refiling ends around 2026-11-01/02 (early termination requested; expiry not yet confirmed). DFPI reinstatement has NO date. The 2026-10-02 8-K says only that discussions are continuing. Next checkpoint: an HSR-expiry or DFPI 8-K/PR, and the Q3 10-Q (around earl",
+  "score": 5,
   "tier": "WATCH",
-  "trigger": "2026-10-14"
+  "trigger": "2026-11-01"
  },
  {
-  "symbol": "B",
-  "catalyst": "Barrick plans a minority (about 10-15%) IPO of its North American gold business (NGM stake, Pueblo Viejo, Fourmile), targeted for year-end 2026, with Newmont's consent and settlement (a $1.95B payment to Barrick) already in hand and most net proceeds earmarked for shareholders.",
-  "milestone": "Management repeated the year-end 2026 IPO target at Mining Forum Americas on 2026-09-29. Next dated checkpoint is the Q3 2026 results on 2026-11-09, which should bring an IPO timing update. The registration filing (F-1/S-1) is still unfiled as of 2026-10-12.",
+  "symbol": "NFG",
+  "catalyst": "On 2026-10-14 National Fuel Gas announced a plan to separate its integrated upstream and gathering business (Seneca Resources plus gathering) from the regulated utility and pipeline company, which closed the $2.62B CenterPoint Ohio LDC purchase on 2026-10-01. The triage brief says the spin is tax-fr",
+  "milestone": "Separation plan announced 2026-10-14. NEXT: Q4/FY26 results Wednesday 2026-11-04 after the close, which should give separation detail (debt split, SpinCo capital plan). Then the Form 10 filing, IRS ruling and a 2H-2027 distribution (date from the triage brief, unverified).",
+  "score": 5,
+  "tier": "WATCH",
+  "trigger": "2026-11-04"
+ },
+ {
+  "symbol": "ARI",
+  "catalyst": "ARI's last NYSE trading day is expected Nov 6, 2026. After that, holders who can't hold an unlisted, non-transferable Maryland liquidating trust (index funds, mandate-bound funds) have to sell. The stub trades at $2.325 against a management-estimated residual of about $3.65-4.40/sh, which would be p",
+  "milestone": "Initial $4.10 distribution already paid Oct 29 (ex-date Oct 30, 2026); Form 25 filed ~Oct 27. NEXT: last NYSE trading day ~Nov 6, 2026, SEC deregistration ~Nov 9, 2026. After that, trust distributions at the trust board's discretion, with full liquidation targeted for 1H28.",
+  "score": 4.5,
+  "tier": "ACTIVE",
+  "trigger": "2026-11-09"
+ },
+ {
+  "symbol": "BIP",
+  "catalyst": "BIP and BIPC combine into one Canadian corporation, BIP Inc. BIP unitholders approved it on 2026-10-14. A BC Supreme Court final-order hearing is expected around 2026-11-03, with close targeted for Q4-2026. Brookfield's case rests on \"increased index demand\" and \"potential additional index inclusion",
+  "milestone": "Next date: BC Supreme Court final-order hearing on or about 2026-11-03. Before that, the BIPC shareholder vote was on 2026-10-29 (adjourned from 10-14) and its result is unconfirmed. Close is targeted for Q4-2026. The index-inclusion decisions have no dates; they follow listing and the indices' own ",
   "score": 4,
   "tier": "WATCH",
-  "trigger": "2026-09-29"
+  "trigger": "2026-11-03"
+ },
+ {
+  "symbol": "BUR",
+  "catalyst": "The Supreme Court decides whether to hear the Petersen/Eton Park v. Argentina (YPF) case. Granting review would revive a claim the market has written off since the Second Circuit reversed the roughly $16B judgment on 2026-03-27.",
+  "milestone": "Cert petition reportedly filed 2026-09-30 (I could not check this). Argentina's opposition brief and conference distribution are next, with a decision likely Dec-2026 to Jan-2027. Nearer date: 3Q26 results on 2026-11-04.",
+  "score": 4,
+  "tier": "WATCH",
+  "trigger": "2026-11-04"
+ },
+ {
+  "symbol": "CCOI",
+  "catalyst": "Cogent has to refinance about $746M of current debt (the 7% unsecured notes due Jun-2027) by mid-2027. The secured refi guided for Q3 is still unannounced, and the Q3 call on 2026-11-05 is the next point where it could be confirmed or turn into an LME.",
+  "milestone": "Q3-2026 earnings call 2026-11-05 08:30 ET (PRNewswire 2026-10-14). Hard backstop: the notes mature Jun-2027 and become a going-concern/current-liability issue at the FY26 10-K (~late Feb 2027).",
+  "score": 4,
+  "tier": "WATCH",
+  "trigger": "2026-11-05"
+ },
+ {
+  "symbol": "IP",
+  "catalyst": "International Paper is separating its EMEA packaging business (formerly DS Smith) through an LSE listing with a Level II ADR, and is also weighing unsolicited sale bids. Per the FT, two unnamed PE firms are involved at under $6B, against the $9.9B IP paid in 2024.",
+  "milestone": "EMEA Capital Markets Day in London on 2026-11-03, 13:00-17:00 GMT (information event only). No date has been given for a sale or spin decision or for completion. Next item: the Q4/FY26 print, around late Jan 2027.",
+  "score": 4,
+  "tier": "WATCH",
+  "trigger": "2026-11-03"
+ },
+ {
+  "symbol": "MFIC",
+  "catalyst": "Ares Capital (ARCC) signed a definitive agreement on 2026-10-27 to acquire MFIC for about $10.88/sh ($1.21 cash plus about $9.67 in ARCC stock, roughly $2.6B enterprise value); it closes after both shareholder votes.",
+  "milestone": "Signed 2026-10-27. Next steps: S-4/joint proxy filing, then the MFIC and ARCC shareholder votes (dates not yet set; a 1H-2027 close is likely, typical for BDC-to-BDC mergers). The Q3 earnings call set for 2026-11-05 was cancelled.",
+  "score": 4,
+  "tier": "WATCH",
+  "trigger": "2026-11-05"
+ },
+ {
+  "symbol": "TFX",
+  "catalyst": "CVC and GTCR made a joint take-private approach (reported 2026-04-22, still unconfirmed and without a price). It sits on top of Irenic's sale campaign, the $1.0B buyback funded by about $1.8B of divestiture proceeds, and the pending close of the Acute Care/Urology sale to Intersurgical.",
+  "milestone": "Q3-26 results call on 2026-11-05 (status of the bid and buyback, plus Intersurgical close timing). Next date is the Acute Care/Urology close, guided for Q4-26.",
+  "score": 4,
+  "tier": "WATCH",
+  "trigger": "2026-11-05"
  }
 ]
 const SCHEMA = { type:'object', properties:{ symbol:{type:'string'}, still_forward:{type:'boolean'}, fired:{type:'boolean'}, outcome:{type:'string', enum:['FORWARD','FIRED_GOOD','FIRED_BAD','SLIPPED','RESOLVED_OTHER','UNCLEAR']}, new_date:{type:'string'}, note:{type:'string'} }, required:['symbol','still_forward','fired','outcome','note'] }
 phase('Check')
 const results = (await parallel(DUE.map(n => () =>
-  agent(`Today is 2026-10-13. TRIGGER CHECK (fast, <=3 lookups via WebSearch/WebFetch + FMP MCP via ToolSearch). Board name ${n.symbol} carries: catalyst "${n.catalyst}" / milestone "${n.milestone}" (score ${n.score}, tier ${n.tier}). The milestone date ${n.trigger} is imminent or just passed. Determine ONLY: did the event FIRE (and favorably or adversely), SLIP (new date?), or is it still FORWARD? Do not re-underwrite the thesis. OUTCOME RULES: FIRED_GOOD/FIRED_BAD are TERMINAL only (deal closed/broke, approval/CRL issued, verdict entered, tender settled); if the situation CONTINUES with a new date -- even after an adverse interim event (TRO granted, extension, second request) -- use SLIPPED with new_date and describe the tilt in the note. Deliverable = a SINGLE StructuredOutput call: {symbol, still_forward, fired, outcome (FORWARD/FIRED_GOOD/FIRED_BAD/SLIPPED/RESOLVED_OTHER/UNCLEAR), new_date (ISO or empty), note (1-2 sentences, cite source+date)}.`,
+  agent(`Today is 2026-11-09. TRIGGER CHECK (fast, <=3 lookups via WebSearch/WebFetch + FMP MCP via ToolSearch). Board name ${n.symbol} carries: catalyst "${n.catalyst}" / milestone "${n.milestone}" (score ${n.score}, tier ${n.tier}). The milestone date ${n.trigger} is imminent or just passed. Determine ONLY: did the event FIRE (and favorably or adversely), SLIP (new date?), or is it still FORWARD? Do not re-underwrite the thesis. OUTCOME RULES: FIRED_GOOD/FIRED_BAD are TERMINAL only (deal closed/broke, approval/CRL issued, verdict entered, tender settled); if the situation CONTINUES with a new date -- even after an adverse interim event (TRO granted, extension, second request) -- use SLIPPED with new_date and describe the tilt in the note. Deliverable = a SINGLE StructuredOutput call: {symbol, still_forward, fired, outcome (FORWARD/FIRED_GOOD/FIRED_BAD/SLIPPED/RESOLVED_OTHER/UNCLEAR), new_date (ISO or empty), note (1-2 sentences, cite source+date)}.`,
     { label: `trig:${n.symbol}`, phase: 'Check', schema: SCHEMA })
 ))).filter(Boolean)
 return { checked: results.length, results }

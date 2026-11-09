@@ -1,0 +1,93 @@
+{
+  "checked": 11,
+  "results": [
+    {
+      "symbol": "CMPS",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "SLIPPED",
+      "new_date": "2026-11-17",
+      "note": "Q3-26 results/call fired on schedule 2026-11-03 (Compass press release via SEC 8-K + IR site; Fool/Investing.com transcripts): rolling NDA \"nearing completion\", final submission \"within the next two weeks\" (~mid-Nov), 52-week COMP005 safety data included, cash ~$444M funds through the H1-27 launch into 2028 -- favorable interim tilt, on the Q4-26 track. No completion announcement found as of 2026-11-09; next check = NDA-complete press release (~2026-11-17), then CNPV-speed FDA action Q1/Q2-27 remains the terminal event."
+    },
+    {
+      "symbol": "GPC",
+      "still_forward": true,
+      "fired": true,
+      "outcome": "SLIPPED",
+      "new_date": "2026-12-08",
+      "note": "The Gabelli 50th Automotive Symposium presentation occurred as scheduled on 2026-11-03 (Stengel, Carruthers, Nappier) and management reaffirmed the Q1 2027 split with separate growth/capital-allocation plans for Automotive and Motion (MarketBeat + Seeking Alpha transcript, 2026-11-03; Investing.com). Non-terminal interim event, favorable tilt; next milestones are the New York investor days GPC 2026-12-08 and Motion 2026-12-09, with completion still targeted Q1 2027."
+    },
+    {
+      "symbol": "IMXI",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "SLIPPED",
+      "new_date": "2026-11-30",
+      "note": "Favorable interim: IMXI 8-K (Item 8.01, filed 2026-11-03) states the HSR waiting period from the 2026-10-02 refiling expired at 11:59pm ET on 2026-11-02, so the federal leg is cleared; the merger still requires California DFPI to reinstate its suspended approval, with no date, no new expected close and no termination disclosed. Deal continues on the DFPI leg alone; new_date is a re-check checkpoint (no 10-Q or DFPI date is known), not a known deadline."
+    },
+    {
+      "symbol": "NFG",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "SLIPPED",
+      "new_date": "2027-07-01",
+      "note": "Q4/FY26 results published 2026-11-04 (GlobeNewswire, call 11-05): adj EPS $1.22 beat but FY27 guide $6.00-6.40 came in soft and Seneca production stalled (-7% to 104 Bcf); separation reaffirmed as a tax-free pro rata spin of >=80.1% of Seneca Resources (NYSE) in 2H calendar 2027, but no Form 10, IRS ruling or debt-split detail given. Interim event mildly adverse on fundamentals, spin still forward; next milestones are the Form 10 filing (undated) and the 2H-2027 distribution window."
+    },
+    {
+      "symbol": "ARI",
+      "still_forward": false,
+      "fired": true,
+      "outcome": "RESOLVED_OTHER",
+      "new_date": "",
+      "note": "The delisting fired on schedule: Form 25 filed 2026-10-27 (EDGAR, CIK 1467760), last NYSE print Fri 2026-11-06 at $2.32 (-3.7%, 27.0M shares, flat vs the $2.325 stub entry) with S-8 POS/POSASR shelf withdrawals filed the same day (FMP quote + EDGAR, read 2026-11-09). ARI is no longer a tradeable listed security -- holders now carry non-transferable Maryland liquidating-trust units; no Form 15 is on EDGAR yet as of 2026-11-09 and the value realization (trust distributions, full liquidation targeted 1H28) is now off-exchange and cannot be price-marked, so the board seat should be closed out at the $2.32 last print rather than carried forward."
+    },
+    {
+      "symbol": "BIP",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "SLIPPED",
+      "new_date": "2026-11-19",
+      "note": "Favorable interim: Brookfield's 2026-11-05 release \"Update on Simplification\" (bip.brookfield.com / GlobeNewswire via Yahoo Finance) says it has received all required approvals (court final order and BIPC vote implicitly cleared, though neither is named explicitly), with close expected 2026-11-19 and BIP Inc. shares trading NYSE/TSX as \"BIP\" on or about 2026-11-23. Deal not yet closed, so next date = 2026-11-19 close; index-inclusion decisions still undated."
+    },
+    {
+      "symbol": "BUR",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "SLIPPED",
+      "new_date": "2026-12-02",
+      "note": "Nearer milestone fired: 3Q26 results released 2026-11-04 (EarningsWhispers: beat, new commitments paused to cut debt; YTD net loss $1.6B on the YPF fair-value write-down). The primary SCOTUS catalyst slipped, not fired: docket 26-442 (supremecourt.gov) confirms the cert petition filed 2026-09-30, Argentina/YPF's response deadline extended 2026-10-22 from Nov 2 to Dec 2, 2026, with nine amicus briefs (incl. Missouri et al.) filed through 2026-11-02 in support; conference/cert decision now realistically Jan-2027, tilt mildly favorable on amicus support but no ruling yet."
+    },
+    {
+      "symbol": "CCOI",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "SLIPPED",
+      "new_date": "2027-02-26",
+      "note": "Q3 call fired 2026-11-05 (8-K Ex.99.1) with NO secured refi announced: the Q3-guided deal slipped, $700M of 2027 notes now sit as a current liability, the Board suspended the dividend on 2026-11-04, only $50M par of 2027s were bought back, and non-binding LOIs cover ~$100M of data-center sales; call commentary (Finviz/SingJuPost 2026-11-05) has Evercore + Latham engaged with no timeline beyond Jun-15-2027. Tilt adverse (LME-prep signals), situation continues; next hard checkpoint is the FY26 10-K / Q4 release ~late Feb 2027, with a binding refi before year-end the thing to watch."
+    },
+    {
+      "symbol": "IP",
+      "still_forward": true,
+      "fired": true,
+      "outcome": "SLIPPED",
+      "new_date": "2027-01-28",
+      "note": "The EMEA Capital Markets Day was held in London on 2026-11-03 as scheduled (Packaging Dive 2026-11-04, AJ Bell): information event only -- DS Smith guided 2026 adj. EBITDA EUR730-780m (lower y/y), EUR480m run-rate savings by end-2027, and the spin stays on track for Q1 2027 \"or sooner\"; IP gave no signal on the Lone Star/Atlas sale bids (FT, mid-Oct 2026, under $6B), so no terminal outcome. Tilt neutral; next dated item is the Q4/FY26 print around late Jan 2027 (date approximate), with the spin/sale decision undated but bounded by 2027-03-31."
+    },
+    {
+      "symbol": "MFIC",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "2027-06-30",
+      "note": "The 2026-11-05 milestone was only the Q3 release (call cancelled 10-30 due to the pending deal): MFIC printed NII $0.34 and NAV $12.86 (-3.8% q/q on credit marks) and declared a $0.31 dividend (GlobeNewswire 2026-11-05) -- an interim datapoint, not a deal event. The ARCC acquisition at $10.88/sh remains forward: S-4/joint proxy and both shareholder votes still unscheduled, 1H-2027 close guided (SEC Form 425 filings; no November approval/vote/break news found), with only routine plaintiff-firm \"fairness investigation\" releases since signing."
+    },
+    {
+      "symbol": "TFX",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "SLIPPED",
+      "new_date": "2026-12-31",
+      "note": "Q3-26 results published 2026-11-05 (Business Wire): continuing-ops revenue $567.8M (+0.2%), GAAP EPS $1.30, dividend held at $0.34; company says it remains confident in the Acute Care/Interventional Urology sale to Intersurgical and is working toward a year-end close subject to the FTC second-request process, while booking a $758.9M valuation allowance on the held-for-sale assets (mild adverse tilt). No update found on the CVC/GTCR approach; next hard date is the Acute Care/Urology close, guided year-end 2026 with analyst flags of a possible slip into 2027."
+    }
+  ]
+}
