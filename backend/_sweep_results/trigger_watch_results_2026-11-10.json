@@ -1,0 +1,21 @@
+{
+  "checked": 2,
+  "results": [
+    {
+      "symbol": "WFRD",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "",
+      "note": "Still forward as of 2026-11-10: the latest company word is the GlobeNewswire release of 2026-10-27 (Irish High Court approved the scheme; closing expected 2026-11-13, subject to customary conditions), and FMP WFRD news through 2026-11-10 shows no completion notice, delay or change of date. No S&P index-add announcement found (web search 2026-11-10); the ~2026-12-04 announcement / ~2026-12-21 rebalance dates remain an unconfirmed inference."
+    },
+    {
+      "symbol": "MFIC",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "",
+      "note": "The ARCC merger is still pending: 2026-11-05 was only the cancelled Q3 call date, and EDGAR shows just the 10-Q, an 8-K and 425s through 2026-11-05, with no S-4/proxy or vote date yet (close still guided to 1H-2027). MFIC's Q3 release (GlobeNewswire, 2026-11-05) showed NII of $0.34 and NAV down 3.8% to $12.86, and reaffirmed the $10.88 deal; per the 425 only an MFIC holder vote is required (no ARCC vote), and several plaintiff firms have opened routine deal \"investigations\"."
+    }
+  ]
+}
