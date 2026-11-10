@@ -33,7 +33,16 @@
    "invalidation": "Final-unlock date slips materially or remaining locked supply is larger than modeled; close below the $17.50 floor kills the mean-reversion setup.",
    "review_trigger": "Verify and review at the final lockup expiration date (per CRO condition, confirm the exact date and remaining share count).",
    "cro_verdict": "TRADE_WITH_CONDITIONS",
-   "resolution": null,
+   "resolution": {
+    "resolution_date": "2026-11-10",
+    "resolution_type": "FIRED_LOSS",
+    "exit_price": 18.465,
+    "realized_return_pct": -0.2446,
+    "realized_rr": -0.717,
+    "days_held": 105,
+    "catalyst_fired": true,
+    "notes": "Final lock-up tranche released 2026-08-07 (event fired); 29 target never reached on a close; Q3 results 2026-11-04 took the stock down 16.7%. Manual hold expired 2026-08-21. Stamped 2026-11-10 on Bruno's go-ahead."
+   },
    "cro_detail": {
     "live_edge_check": "Live 20.49 (FMP batch-quote, ts 2026-06-10) vs dossier 21.10 asof 2026-06-08 — down 2.9%, edge IMPROVED. R:R recomputed at 20.49: upside to FV 32 = +56%, downside to floor 17.5 = -14.6%, ~3.85:1 vs dossier computed_rr 3.02.",
     "tradeability_note": "Highly liquid — ADV ~16.6M sh x $20.5 = ~$340M/day, large cap ~$10B; listed US options confirmed (IBKR contract 802794976, NYSE). Equity expression trivially tradeable; no spread/borrow concern for a long.",
@@ -90,9 +99,17 @@
    },
    "weight_basis": "equal",
    "resolution_due": {
-    "date": "2026-10-14",
-    "reason": "milestone 2026-08-07 final extended-lockup tranche (~77.7M Class A sh) releases at commencement of trading, 2nd trading day after the 2026-08-05 AMC Q2 earnings (company-confirmed 07-15); contractual backstop 2026-08-31; review 2026-08-21 post-absorption passed +68d; weekly diagnosis: catalyst_status=FIRED; weekly diagnosis: verdict=REFUTED"
-   }
+    "date": "2026-11-09",
+    "reason": "milestone 2026-08-07 final extended-lockup tranche (~77.7M Class A sh) releases at commencement of trading, 2nd trading day after the 2026-08-05 AMC Q2 earnings (company-confirmed 07-15); contractual backstop 2026-08-31; review 2026-08-21 post-absorption passed +94d; weekly diagnosis: catalyst_status=FIRED; weekly diagnosis: verdict=REFUTED"
+   },
+   "post_track": [
+    {
+     "date": "2026-11-10",
+     "price": 18.54,
+     "since_exit_pct": 0.41
+    }
+   ],
+   "post_track_status": "TRACKING"
   },
   {
    "symbol": "AQST",
@@ -217,6 +234,36 @@
      "date": "2026-10-14",
      "price": 4.67,
      "since_exit_pct": -2.71
+    },
+    {
+     "date": "2026-10-19",
+     "price": 3.83,
+     "since_exit_pct": -20.21
+    },
+    {
+     "date": "2026-10-29",
+     "price": 4.23,
+     "since_exit_pct": -11.87
+    },
+    {
+     "date": "2026-11-04",
+     "price": 3.915,
+     "since_exit_pct": -18.44
+    },
+    {
+     "date": "2026-11-06",
+     "price": 3.61,
+     "since_exit_pct": -24.79
+    },
+    {
+     "date": "2026-11-09",
+     "price": 3.54,
+     "since_exit_pct": -26.25
+    },
+    {
+     "date": "2026-11-10",
+     "price": 3.5424,
+     "since_exit_pct": -26.2
     }
    ],
    "post_track_status": "TRACKING"
@@ -253,7 +300,16 @@
    "invalidation": "FDA declines the accelerated pathway or the AATD program is deprioritized; floor break at $3.50.",
    "review_trigger": "Mid-2026 FDA pathway feedback (soft) — hard review end-August 2026 if no communication has landed.",
    "cro_verdict": "TRADE_WITH_CONDITIONS",
-   "resolution": null,
+   "resolution": {
+    "resolution_date": "2026-11-10",
+    "resolution_type": "FIRED_LOSS",
+    "exit_price": 3.3892,
+    "realized_return_pct": -0.4202,
+    "realized_rr": -0.656,
+    "days_held": 105,
+    "catalyst_fired": true,
+    "notes": "FDA agreed the WVE-006 registration route 2026-10-01 (event went the company's way) but the stock did not re-rate; below the 3.50 floor-break level. Trade outcome = loss. Stamped 2026-11-10 on Bruno's go-ahead."
+   },
    "cro_detail": {
     "live_edge_check": "Live $5.78 (FMP batch-quote, ts 2026-06-10) vs dossier $5.70 — moved +1.4%, edge intact. Recomputed to FV $11 = +90% upside; R:R = 5.22 up : 2.28 down = ~2.29:1 (vs dossier payoff 2.41). No compression.",
     "tradeability_note": "BEST option liquidity in the batch: avg 1290 call / 135 put per day (today 3123 call), 90d ADV ~$27.8M, annual IV ~90%, OI put/call ~0.52. Both equity and a long call are genuinely tradeable; a protective put market exists. This is the one name where capping downside via a long call is realistic.",
@@ -305,9 +361,17 @@
    },
    "weight_basis": "equal",
    "resolution_due": {
-    "date": "2026-10-14",
-    "reason": "milestone 2026-07-31 passed +75d; weekly diagnosis: catalyst_status=FIRED; weekly diagnosis: verdict=REFUTED"
-   }
+    "date": "2026-11-09",
+    "reason": "milestone 2026-07-31 passed +101d; weekly diagnosis: catalyst_status=FIRED; weekly diagnosis: verdict=REFUTED"
+   },
+   "post_track": [
+    {
+     "date": "2026-11-10",
+     "price": 3.415,
+     "since_exit_pct": 0.76
+    }
+   ],
+   "post_track_status": "TRACKING"
   },
   {
    "symbol": "AMLX",
@@ -602,9 +666,19 @@
      "date": "2026-10-14",
      "price": 20.32,
      "since_exit_pct": 5.45
+    },
+    {
+     "date": "2026-10-19",
+     "price": 20.85,
+     "since_exit_pct": 8.2
+    },
+    {
+     "date": "2026-10-29",
+     "price": 20.2,
+     "since_exit_pct": 4.83
     }
    ],
-   "post_track_status": "TRACKING"
+   "post_track_status": "WINDOW_CLOSED"
   },
   {
    "symbol": "ZYME",
@@ -648,7 +722,16 @@
     "driver_confirmed": "CORRECTED: Deal_close_generic is wrong — the resolving event is the FDA PDUFA action (which contractually triggers the $250M Jazz milestone), so the true driver is FDA_approval_decision. FLAG: this collides with GERN's FDA_approval_decision driver in this same batch — Director must apply the same-driver cap across ZYME/GERN.",
     "conditions": []
    },
-   "resolution": null,
+   "resolution": {
+    "resolution_date": "2026-11-10",
+    "resolution_type": "FIRED_WIN",
+    "exit_price": 31.5226,
+    "realized_return_pct": 0.3979,
+    "realized_rr": 1.972,
+    "days_held": 105,
+    "catalyst_fired": true,
+    "notes": "FDA approved Ziihera 1L HER2+ GEA regimens 2026-08-25; Jazz paid the 250M milestone Oct 2026. Stamped late on Bruno's go-ahead 2026-11-10 at the 11-10 close."
+   },
    "board_resolution_driver": "Deal_close_generic",
    "retag_note": "2026-07-06 Fable deep-dossier: the 8/25 event is Jazz's Ziihera 1L-GEA PDUFA (triggers ZYME's contractual $250M milestone) - ZYME is the Theravance ACQUIRER, not an arb target; board's Deal_close_generic/merger_arb tag corrected. Post-VRDN-resolution the driver count is a legal 2/2 (AQST+ZYME).",
    "stamped": {
@@ -691,9 +774,17 @@
    },
    "weight_basis": "equal",
    "resolution_due": {
-    "date": "2026-10-14",
-    "reason": "milestone 2026-08-25 passed +50d; weekly diagnosis: catalyst_status=FIRED; weekly diagnosis: verdict=REFUTED"
-   }
+    "date": "2026-11-09",
+    "reason": "milestone 2026-08-25 passed +76d; close 30.81 >= target 27; weekly diagnosis: catalyst_status=FIRED; weekly diagnosis: verdict=REFUTED"
+   },
+   "post_track": [
+    {
+     "date": "2026-11-10",
+     "price": 31.5229,
+     "since_exit_pct": 0.0
+    }
+   ],
+   "post_track_status": "RERATE_COMPLETED"
   },
   {
    "symbol": "DDL",
@@ -855,9 +946,19 @@
      "date": "2026-10-14",
      "price": 2.2,
      "since_exit_pct": -11.29
+    },
+    {
+     "date": "2026-10-19",
+     "price": 2.13,
+     "since_exit_pct": -14.11
+    },
+    {
+     "date": "2026-10-29",
+     "price": 1.94,
+     "since_exit_pct": -21.77
     }
    ],
-   "post_track_status": "TRACKING"
+   "post_track_status": "WINDOW_CLOSED"
   },
   {
    "symbol": "VIR",
@@ -901,7 +1002,16 @@
     "driver_confirmed": "FDA_clinical_readout — confirmed (ECLIPSE 1 Phase 3 chronic hepatitis delta topline, tobevibart + elebsiran). Sole name in this batch; no same-driver collision to flag.",
     "conditions": []
    },
-   "resolution": null,
+   "resolution": {
+    "resolution_date": "2026-11-10",
+    "resolution_type": "FIRED_WIN",
+    "exit_price": 13.3,
+    "realized_return_pct": 0.534,
+    "realized_rr": 1.048,
+    "days_held": 105,
+    "catalyst_fired": true,
+    "notes": "ECLIPSE 1 Phase 3 topline 2026-11-08: primary endpoint met (44% vs 0%, p<0.0001). Stamped 2026-11-10 at the close on Bruno's go-ahead."
+   },
    "dossier_refresh": {
     "catalyst_status": "PENDING_HARD",
     "thesis_summary": "Held seat into a dated, unfired, idiosyncratic Phase 3 readout: ECLIPSE 1 topline (TND + ALT normalisation at week 48 vs a deferred-treatment control, n=124) guided for Q4 2026 and restated in the 5 Aug 2026 8-K with nothing on file since. The control arm is untreated, so the statistical bar is low relative to SOLSTICE's 66% undetectable / 56% composite at week 48; the real question is the magnitude of the strict TND+ALT composite versus daily bulevirtide (FDA accelerated approval 22 May 2026), which now anchors the commercial case. Balance sheet is cash-backed ($1.01B at 30 Jun 2026, no debt, runway into 2H 2028, Astellas $240M upfront + $75M equity at $10.36 already banked), so the lose leg is a cash-plus-partnered-oncology floor rather than a zero. Binary legs at $10.65: win $21, lose $4.25, p(win) 0.70; EV about $16, R:R about 1.6:1, market-implied p about 38%.",
@@ -937,7 +1047,19 @@
     "entry_price": 9.26,
     "weight_pct": 2
    },
-   "weight_basis": "equal"
+   "weight_basis": "equal",
+   "resolution_due": {
+    "date": "2026-11-09",
+    "reason": "weekly diagnosis: catalyst_status=FIRED; weekly diagnosis: verdict=REFUTED"
+   },
+   "post_track": [
+    {
+     "date": "2026-11-10",
+     "price": 13.16,
+     "since_exit_pct": -1.05
+    }
+   ],
+   "post_track_status": "TRACKING"
   },
   {
    "symbol": "OLMA",
@@ -983,7 +1105,16 @@
      "Confirm no slip past fall 2026 and no equity raise / guidance change before entry (event-accrual readouts drift)"
     ]
    },
-   "resolution": null,
+   "resolution": {
+    "resolution_date": "2026-11-10",
+    "resolution_type": "SLIPPED",
+    "exit_price": 7.22,
+    "realized_return_pct": -0.3622,
+    "realized_rr": -0.445,
+    "days_held": 105,
+    "catalyst_fired": false,
+    "notes": "OPERA-01 topline moved from fall 2026 to Q1 2027 (2026-08-10 release), no binding date; skeptic no longer backs the seat. Stamped 2026-11-10 on Bruno's go-ahead."
+   },
    "dossier_refresh": {
     "catalyst_status": "PENDING_SOFT",
     "thesis_summary": "Olema Pharmaceuticals (OLMA, $8.54, 30 Sep 2026). Binary on OPERA-01, the pivotal Phase 3 of palazestrant monotherapy vs investigator-choice endocrine therapy in 2L/3L ER+/HER2- mBC after CDK4/6i, primary = BICR PFS analysed separately in ESR1-mutant and ESR1-wild-type cohorts (n~510). Enrollment complete; top-line guided to Q1 2027 (10 Aug 2026 8-K/PR), restated unchanged at Citi 10 Sep, Morgan Stanley 15 Sep and H.C. Wainwright 16 Sep (\"fully enrolled\", \"data-maturation phase\"). Registry NCT06016738 unchanged since 13 Aug: ACTIVE_NOT_RECRUITING, est. primary completion 31 Oct 2026. Unfired: EDGAR shows nothing after a Form 4 on 2 Sep 2026. Stock re-rated from the board's $11.32 to $8.54 (year low $6.65) after AstraZeneca's SERENA-4 miss on 11 Sep 2026 (second 1L oral-SERD combo failure of 2026 after persevERA) - a class read-through, not an OLMA fact; OPERA-01 is a different setting (2L monotherapy, CDK4/6i-pretreated, ESR1-stratified) where oral SERDs have hit in ESR1m (EMERALD, EMBER-3, SERENA-6) and never in ESR1wt. The wt cohort is the coin-flip; the ESR1m cohort is the likely partial-win. Three-branch: full win (both cohorts) $28, partial (ESR1m only) ~$7, miss ~$2.1.",
@@ -1020,9 +1151,17 @@
    },
    "weight_basis": "equal",
    "resolution_due": {
-    "date": "2026-10-14",
+    "date": "2026-11-09",
     "reason": "weekly diagnosis: verdict=REFUTED"
-   }
+   },
+   "post_track": [
+    {
+     "date": "2026-11-10",
+     "price": 7.2016,
+     "since_exit_pct": -0.25
+    }
+   ],
+   "post_track_status": "TRACKING"
   },
   {
    "symbol": "AVIR",
@@ -1148,6 +1287,36 @@
      "date": "2026-10-14",
      "price": 4.98,
      "since_exit_pct": -14.58
+    },
+    {
+     "date": "2026-10-19",
+     "price": 4.39,
+     "since_exit_pct": -24.7
+    },
+    {
+     "date": "2026-10-29",
+     "price": 4.27,
+     "since_exit_pct": -26.76
+    },
+    {
+     "date": "2026-11-04",
+     "price": 4.395,
+     "since_exit_pct": -24.61
+    },
+    {
+     "date": "2026-11-06",
+     "price": 4.31,
+     "since_exit_pct": -26.07
+    },
+    {
+     "date": "2026-11-09",
+     "price": 4.41,
+     "since_exit_pct": -24.36
+    },
+    {
+     "date": "2026-11-10",
+     "price": 4.3093,
+     "since_exit_pct": -26.08
     }
    ],
    "post_track_status": "TRACKING"
@@ -1335,7 +1504,7 @@
    "entry_price": 30.54,
    "entry_price_source": "cro_structured",
    "limit_price": null,
-   "weight_pct": 5.5556,
+   "weight_pct": 16.6667,
    "risk_to_floor_pct": null,
    "score": 6.0,
    "board_priority": 5.04,
@@ -1346,9 +1515,9 @@
    "resolution_driver": "FDA_approval_decision",
    "super_cluster": "FDA/biotech",
    "valuation_method": "binary_prob",
-   "downside_floor": 23,
-   "fair_value_target": 44,
-   "dated_milestone": "2026-11-01",
+   "downside_floor": 24,
+   "fair_value_target": 38,
+   "dated_milestone": "2027-02-01",
    "staging": false,
    "expression": {
     "type": "debit_spread",
@@ -1372,21 +1541,21 @@
    "resolution": null,
    "dossier_refresh": {
     "catalyst_status": "PENDING_HARD",
-    "thesis_summary": "Binary FDA decision on the mitapivat sNDA in sickle cell disease (accelerated approval on the RISE UP hemoglobin-response endpoint; Priority Review; PDUFA goal 1 Nov 2026, a Sunday, so action is expected on or before Fri 30 Oct). Verified unfired: no extension, no advisory committee, no new company release since the 30 Jul 8-K; confirmatory REIGNITE trial dosed its first patient in Aug 2026, clearing the underway-at-decision requirement. At $33.30 the market prices roughly a 49% approval (given $44 win / $23 lose legs); pre-sNDA agency alignment on the pathway, priority review granted with the pain-crisis miss already on file, a known safety profile from two approved indications, and a live confirmatory trial support ~65%. Floor is cash (~$13.4/sh net at decision) plus a PKD/thalassemia franchise growing 258% y/y ($44.7m Q2).",
+    "thesis_summary": "FDA decision on the mitapivat sickle cell sNDA (accelerated approval pathway, Priority Review) is real, unfired and idiosyncratic, but the goal date moved from 2026-11-01 to 2027-02-01 after FDA classed Agios' REMS-related response as a major amendment (company PR 2026-10-30, reaffirmed in Q3 release 2026-11-05). Company says it is in labeling discussions including elements of a potential REMS, and reports no sickle cell liver-injury cases of the thalassemia pattern in ~9 months of extra open-label safety data. On re-derived levels ($38 approval / $24 rejection) the $31.18 price already implies ~51% approval odds; at my 60% the probability-weighted value is $32.40, only ~+4% above price.",
     "discrepancies": [
-     "live_price: board 30.54 -> live 33.30 - FMP quote 2026-09-30 (52w 22.24-46.00, mcap $1.99bn); board asof 2026-08-04 is stale",
-     "fair_value_target: board 42 -> live 44 - sell-side win-case moved up since the board mark: BofA raised PT $46->$50 on 21 Sep 2026, Scotiabank $53, another house $54; near-term approval print $42-46 with 12-mo targets $50-54 as the cap; 44 is the blend",
-     "win_prob: board null -> live 0.65 - sNDA on an already-approved molecule with pre-sNDA agency alignment on the AA pathway (31 Mar 2026 PR), priority review granted with the pain-crisis miss on file, confirmatory REIGNITE underway (first patient dosed Aug 2026); haircut from the ~80% sNDA base rate for the surrogate-only package and the voxelotor withdrawal precedent; BofA's last published PoS was 50% before its 9/21 PT raise",
-     "valuation_asof: board 2026-08-04 -> live 2026-09-30",
-     "company_name: board null -> live Agios Pharmaceuticals, Inc.",
-     "days_to_milestone: board null -> live 32 (2026-09-30 to 2026-11-01)"
+     "dated_milestone: board 2026-11-01 -> live 2027-02-01 - FDA extended the PDUFA goal date three months (major amendment on REMS information request), Agios PR 2026-10-30 and Q3 release 2026-11-05; the board date has already passed without a decision",
+     "fair_value_target: board 44 -> live 38 - board number dates from 2026-08-04, before the tebapivat setback and the delay; I cannot reproduce 44. Re-derived as rejection-case value 24 + sickle cell layer ~14/sh (~$840M), with no re-rating of the existing franchise or pipeline on an SCD approval",
+     "downside_floor: board 23 -> live 24 - rebuilt from Q3 numbers: cash $907M / ~59.7M shares = $15.2/sh plus existing mitapivat franchise at ~2.4x the $222M annualized Q3 run-rate = ~$8.9/sh",
+     "win_prob: board null -> live 0.60 - my estimate; market-implied is ~0.51 at $31.18 on the 38/24 levels",
+     "live_price: board 30.54 -> live 31.18 (FMP quote, 2026-11-10; previous close 31.38)",
+     "valuation_asof: board 2026-08-04 -> live 2026-11-10"
     ],
-    "kill_risk": "FDA declines to accept hemoglobin response as a reasonably-likely surrogate in SCD and issues a CRL asking for REIGNITE data. This is the voxelotor pattern: Oxbryta got accelerated approval in 2019 on the identical >=1 g/dL Hb-response surrogate and was withdrawn in Sept 2024 after VOC/death imbalances, so reviewers hold direct evidence that this surrogate failed to translate in this disease, and RISE UP itself missed its pain-crisis co-primary (19 Nov 2025 topline). Filing acceptance with priority review is not approval. Secondary tell: the company has never stated in a primary release that no AdCom is planned; the 29 Oct earnings call sits three days before the goal date and is where a late-cycle issue would surface.",
-    "dated_milestone": "2026-11-01",
+    "kill_risk": "Most load-bearing claim: \"labeling discussions mean the review is on an approvable track and the extension is about REMS, not efficacy.\" Residual risk I could not refute: (1) that framing is the company's own; no FDA document is public, and RISE UP missed the pain-crisis endpoint (2.6 vs 3.1 annualized, p=0.12), so the file rests on hemoglobin response under accelerated approval with the voxelotor withdrawal as the class precedent - a CRL or a second extension is still credible. (2) Even on approval, a restrictive REMS (the existing AQVESME one requires liver tests every 4 weeks for 24 weeks plus prescriber/pharmacy certification) into a 25,000-patient community setting would cap the win leg below $38. (3) An effective automatic shelf (S-3ASR, Feb-2026, per skeptic record; not re-verified by me) lets the company sell stock into an approval pop. (4) The price is only ~51% of the way from floor to target, so the payoff is close to symmetric - the event is live but the spread is thin.",
+    "dated_milestone": "2027-02-01",
     "resolution_driver": "FDA_approval_decision",
-    "fair_value_target": 44,
-    "downside_floor": 23,
-    "asof": "2026-09-30"
+    "fair_value_target": 38,
+    "downside_floor": 24,
+    "asof": "2026-11-10"
    },
    "weight_basis": "equal",
    "stamped": {
@@ -1399,9 +1568,9 @@
     "win_prob": null,
     "super_cluster": "FDA/biotech"
    },
-   "win_prob": 0.65,
+   "win_prob": 0.6,
    "resolution_due": {
-    "date": "2026-10-14",
+    "date": "2026-11-10",
     "reason": "weekly diagnosis: verdict=REFUTED"
    }
   },
@@ -1453,7 +1622,16 @@
      "Treat 12.35 as a soft floor, not a stop level. Only ~$1.77/share (the earned GENGLYCOS voucher) is hard; the 09-03 record low of 13.81 was set before a UX111 CRL was contemplated, so a refusal plausibly prints below 12.35. Do not size on the modelled downside."
     ]
    },
-   "resolution": null,
+   "resolution": {
+    "resolution_date": "2026-11-10",
+    "resolution_type": "FIRED_WIN",
+    "exit_price": 15.9234,
+    "realized_return_pct": 0.0407,
+    "realized_rr": 0.211,
+    "days_held": 63,
+    "catalyst_fired": true,
+    "notes": "FDA full approval of UX111 (FAYUVI) 2026-09-17 with a priority review voucher. Stamped late on Bruno's go-ahead 2026-11-10 at the 11-10 close."
+   },
    "dossier_refresh": {
     "catalyst_status": "FIRED",
     "thesis_summary": "Ultragenyx (RARE, $15.32 at the 29 Sep close) had a hard 19 Sep 2026 PDUFA on the UX111 (FAYUVI) BLA resubmission; the FDA approved it early on 17 Sep 2026 as a standard full approval with a priority review voucher (PR + 8-K same day). The binary has resolved on the win leg and the market has paid for it (+12.6% approval day, since round-tripped), so the Basket-13 event edge is spent. What remains is undated: a promised-but-unscheduled PRV sale (~$175-200m per 2026 comps), the 3 Nov Q3 call with the apazunersen wind-down/expense plan, and a Q4 UX701 readout. The stock trades at ~61% of the realized win-leg SoP ($19.5) with a stress floor of $12.35 that the tape already breached pre-approval; that is a valuation/financing gap, not a catalyst spread.",
@@ -1488,9 +1666,17 @@
    },
    "win_prob": 0.72,
    "resolution_due": {
-    "date": "2026-10-14",
-    "reason": "milestone 2026-09-19 passed +25d; weekly diagnosis: catalyst_status=FIRED; weekly diagnosis: verdict=REFUTED"
-   }
+    "date": "2026-11-09",
+    "reason": "milestone 2026-09-19 passed +51d; weekly diagnosis: catalyst_status=FIRED; weekly diagnosis: verdict=REFUTED"
+   },
+   "post_track": [
+    {
+     "date": "2026-11-10",
+     "price": 15.98,
+     "since_exit_pct": 0.36
+    }
+   ],
+   "post_track_status": "TRACKING"
   },
   {
    "symbol": "SVRA",
@@ -1500,7 +1686,7 @@
    "entry_price": 5.08,
    "entry_price_source": "cro_structured",
    "limit_price": null,
-   "weight_pct": 5.5556,
+   "weight_pct": 16.6667,
    "risk_to_floor_pct": null,
    "score": 6.0,
    "board_priority": 5.04,
@@ -1511,8 +1697,8 @@
    "resolution_driver": "FDA_approval_decision",
    "super_cluster": "FDA/biotech",
    "valuation_method": "binary_prob",
-   "downside_floor": 2.25,
-   "fair_value_target": 9,
+   "downside_floor": 1.25,
+   "fair_value_target": 7,
    "dated_milestone": "2026-11-22",
    "staging": false,
    "expression": {
@@ -1541,21 +1727,21 @@
    "resolution": null,
    "dossier_refresh": {
     "catalyst_status": "PENDING_HARD",
-    "thesis_summary": "Savara's MOLBREEVI (inhaled molgramostim) BLA in autoimmune PAP is under FDA Priority Review with a binding PDUFA target action date of 22 November 2026 (53 days out), no advisory committee, and a Phase 3 (IMPALA-2, NEJM) that met its primary DLco endpoint. The event is idiosyncratic and unfired: approval triggers ~$150M of non-dilutive capital (RTW $75M royalty + Hercules $75M tranche) and a 2027 US launch into ~5,500 diagnosed patients; a CRL would most likely be CMC-driven (the file was refused on CMC in May 2025 and took a major amendment in April 2026). Binary axes: win ~$9, lose ~$2.25, p(win) ~0.70 vs a market-implied ~0.42 at $5.08.",
+    "thesis_summary": "Savara's MOLBREEVI (molgramostim inhalation) application in autoimmune pulmonary alveolar proteinosis has an FDA target action date of 22 November 2026 (a Sunday; action likely by Fri 20 Nov or announced Mon 23 Nov), under priority review with Breakthrough designation and no advisory committee. The date is restated in the 10-Q filed 9 November 2026 with a clean subsequent-events note, and no 8-K or press release since. The event is real, dated, unfired and idiosyncratic. The numbers are weaker than the board's: on the 10-Q's fully diluted approval-branch share count (278.2m) the win price is about $7.00, not $9; a rejection floor is about $1.25, not $2.25. At a 75% approval probability the expected value is about $5.56 against a live $4.86 (+14%), with break-even probability about 63%.",
     "discrepancies": [
-     "fair_value_target: board 8 -> live 9 - two independent win-leg builds: (a) Jefferies US peak $500M (most conservative street number; JMP $750M US/$1.2B WW) x 3.0 EV/peak = $1.5B + ~$150M ex-US value + ~$240M post-approval cash (=$173M - 2 quarters burn + $150M non-dilutive) = ~$1.9B / 253.6M FD shares = ~$7.5-8.6; (b) street consensus PT $9.20 (range $7-16.80; Guggenheim $8, JMP $9, Jefferies $10.50) is already probability-weighted, so the win-conditional level is higher. $9 is the defensible midpoint; $8 remains the conservative low. Lift is from peak-sales/consensus provenance, NOT takeout (no verified 2026 rare-pulmonary approved-asset comp found).",
-     "downside_floor: board 2.5 -> live 2.25 - lose leg is a blend: CMC-only CRL (~80% of lose mass; asset intact, resubmission 6-12 months, precedent CMC-CRL drawdowns -40 to -55% from $5.08 = $2.30-3.05, RTF print 27 May 2025 closed $1.94) ~ $2.50, and efficacy/clinical CRL (~20% of lose mass) ~ $1.50; 0.8 x 2.50 + 0.2 x 1.50 = $2.30 -> $2.25. Hard net cash at decision is only ~$0.35/FD share ($173.0M - $30.1M Hercules - ~$52M of burn to late November over ~253.6M FD shares), so this is a precedent floor, not an asset floor. The board's $2.50 corresponds to the CMC-only case alone.",
-     "win_prob: board null -> live 0.70 - Priority Review, no adcom (Day-74 letter), extension letter cited no safety/efficacy/manufacturing concerns, positive NEJM Phase 3; haircut from the ~85-90% base rate for accepted priority-review BLAs for the May 2025 CMC Refuse-to-File and the April 2026 major amendment with no disclosed pre-approval-inspection clearance. Matches the skeptic's 70-75% band; the debate's 85% was too generous.",
-     "ev_pct: board 0.3082 -> live 0.373 - 0.70 x 9 + 0.30 x 2.25 = $6.975 vs $5.08 = +37.3% (at the board's $8/$2.50 and 0.70 it is +23.5%). Market-implied p at my axes = (5.08 - 2.25) / (9 - 2.25) = 0.42.",
-     "company_name: board null -> live Savara Inc. - FMP quote.",
-     "days_to_milestone: board null -> live 53 - 2026-09-30 to 2026-11-22; note 22 Nov 2026 is a Sunday, so the action letter realistically arrives Fri 20 Nov or Mon 23 Nov."
+     "fair_value_target: board 9 -> live 7.00 — board $9 is not reproducible; the debate's own $1.87bn approval value, less the PARI 3.5% net-sales royalty (10-Q Note 9, ~$57m) and with the RTW royalty capped at its $187.5m Maximum Payment (PV ~$120m vs $230m deducted), divided by the 10-Q approval-branch diluted count of 278.2m shares, gives about $7.0",
+     "downside_floor: board 2.25 -> live 1.25 — $2.25 (-54%) is too shallow for a second regulatory failure with $129.6m cash, $30.2m debt, and $150m of approval-gated capital forfeited; hard net backing is only ~$0.3/share, floor rests on residual asset value of ~$200-250m",
+     "win_prob: board null -> live 0.75 — binary_prob method needs an explicit probability; priority-review Breakthrough base rate haircut for the prior manufacturing refuse-to-file, the unspecified major amendment and undisclosed inspection status",
+     "live_price: board 5.08 -> live 4.86 — FMP quote 10 Nov 2026 (-3.8% on the day, previous close 5.05)",
+     "ev_pct: board 0.3082 -> live ~0.145 — 0.75 x 7.00 + 0.25 x 1.25 = 5.56 vs 4.86; board figure rested on the $9/$2.25 axes",
+     "valuation_asof: board 2026-09-30 -> live 2026-11-10 — re-underwritten on the 10-Q filed 9 Nov 2026 and today's tape"
     ],
-    "kill_risk": "The load-bearing claim is p(approval)=0.70 with CMC as the only live hazard. The live record cannot confirm the FDA has inspected and cleared the third-party manufacturing site: the Q2 release and 10-Q are silent on pre-approval inspection, the April 2026 major amendment arose from FDA information requests two months into a review that had already been refused once on CMC, and there has been no 8-K since 11 August. At my axes the tape prices only ~42% (and ~49% even at the board's $8/$2.50), a 20-28 point gap that either reflects a lower street win leg (launch into a small population with a heavy-dilution history) or genuine CMC doubt; the stock has drifted ~10% lower since 21 September on no news at above-average volume. Residual: a CMC CRL forfeits both $75M approval-gated facilities at once, leaves ~$120M cash (~$0.35/FD share net of Hercules) against ~$31M/quarter burn, and forces a raise near $2; an efficacy-based CRL would settle nearer $1.50. There is no asset-backed floor - $2.25 is a precedent-and-scenario blend, not net cash.",
+    "kill_risk": "Manufacturing/inspection status is undisclosed 12 days out. This exact file was refused in May 2025 on its manufacturing section, and the April 2026 three-month extension came from a 'major amendment' whose content Savara never specified; the word 'inspection' does not appear in the 9 Nov 10-Q. A manufacturing-driven complete response letter is the credible loss path and would also forfeit about $150m of approval-gated capital (RTW $75m royalty, Hercules up to $75m) with only $129.6m cash and roughly $35-43m quarterly burn, forcing a dilutive raise. Secondary: FDA can miss the date without notice, and at $4.86 the EV edge (+14%) is thin enough that a modestly lower approval probability (below ~63%) makes it negative.",
     "dated_milestone": "2026-11-22",
     "resolution_driver": "FDA_approval_decision",
-    "fair_value_target": 9,
-    "downside_floor": 2.25,
-    "asof": "2026-09-30"
+    "fair_value_target": 7,
+    "downside_floor": 1.25,
+    "asof": "2026-11-10"
    },
    "weight_basis": "equal",
    "stamped": {
@@ -1568,7 +1754,11 @@
     "win_prob": null,
     "super_cluster": "FDA/biotech"
    },
-   "win_prob": 0.7
+   "win_prob": 0.75,
+   "resolution_due": {
+    "date": "2026-11-10",
+    "reason": "weekly diagnosis: verdict=REFUTED"
+   }
   },
   {
    "symbol": "ANNX",
@@ -1578,7 +1768,7 @@
    "entry_price": 4.13,
    "entry_price_source": "cro_structured",
    "limit_price": null,
-   "weight_pct": 5.5556,
+   "weight_pct": 16.6667,
    "risk_to_floor_pct": null,
    "score": 6.0,
    "board_priority": 5.04,
@@ -1590,7 +1780,7 @@
    "super_cluster": "FDA/biotech",
    "valuation_method": "binary_prob",
    "downside_floor": 1.6,
-   "fair_value_target": 11,
+   "fair_value_target": 9.5,
    "dated_milestone": "2026-12-31",
    "staging": false,
    "expression": {
@@ -1619,21 +1809,22 @@
    "resolution": null,
    "dossier_refresh": {
     "catalyst_status": "PENDING_HARD",
-    "thesis_summary": "Q4-2026 independent-DMC assessment of the Month 15 primary endpoint (confirmed BCVA >=15-letter loss) in the 659-patient Phase 3 ARCHER II trial of vonaprument in geographic atrophy; a 'met' verdict makes vonaprument the first vision-preserving GA therapy and re-rates the equity toward a ~$2.3B comp-anchored value (~$11/sh), while a 'continue to Month 24' verdict drops the stock toward a cash + tanruprubart floor (~$1.60) with a residual second shot in Q3 2027.",
+    "thesis_summary": "Annexon's independent data monitoring committee will assess the Month 15 primary endpoint of the single Phase 3 ARCHER II trial of vonaprument in geographic atrophy in Q4 2026. The company restated \"on track for Q4 2026\" in its 9 November 2026 results release, and nothing has fired: the only filings since are the 10-Q and results 8-K of 9 November, and the newswire has nothing after that date. The outcome is binary inside the window: either the committee says the endpoint is met (sub-study results follow in Q1 2027), or it recommends continuing to the Month 24 endpoint. A \"met\" verdict pays about $9.50 in the window, not the board's $11; the lose leg is a \"continue to Month 24\" message at about $1.60. At $4.26 the price implies roughly a 34% chance of a win, so the edge is thin and rests entirely on the win probability being above that.",
     "discrepancies": [
-     "company_name: board null -> live 'Annexon, Inc.' - FMP profile",
-     "downside_floor: board 1.70 -> live 1.60 - re-derived: net cash at readout ~$0.55/sh (6/30 liquidity $209.2M + $50M Oxford draw - $50M debt - ~2 quarters burn at ~$50M/q ~= $110M) + tanruprubart pre-BLA risk-adjusted $150-200M (~$0.85) + Month-24 second-shot/platform residual ~$0.20 on ~205M diluted shares; skeptic's $1.40 zeroes the Month-24 leg, board's $1.70 credits it fully; $1.60 splits it",
-     "win_prob: board null -> live 0.38 - own estimate; tape-implied p = (4.13-1.60)/(11.00-1.60) = 26.9%",
-     "ev_pct: board 0.2885 -> live ~0.25 - 0.38*11.00 + 0.62*1.60 = $5.17 vs $4.13 = +25%",
-     "market_cap context: FMP $676.7M uses stale ~163.8M shares; 10-Q cover 189,579,134 common (10 Aug 2026) + 14,865,799 pre-funded warrants = 204.4M -> ~$844M equity at $4.13 (before Q3 ATM sales, unknown until mid-Nov 10-Q)",
-     "catalyst characterization: board 'Month 15 primary-endpoint topline' -> live 'independent DMC assessment of Month 15 endpoint, reported by company in Q4-2026; sub-study results Q1-2027; sponsor remains masked; no efficacy data at the DMC verdict' - per 12 Aug 2026 release (dated_milestone 2026-12-31 retained as Q4 outer bound, not a company-specified date)"
+     "fair_value_target: board 11 -> live 9.5 — $11 needs the Q1 2027 sub-study and detailed-data binary that the Q4 committee verdict does not resolve; 9.5 is the in-window 'met' print (about $1.95B on 205.5M shares including pre-funded warrants)",
+     "win_prob: board null -> live 0.40 — binary_prob needs an explicit probability; market-implied break-even is (4.26-1.6)/(9.5-1.6) = 33.7%, and 0.40 is my judgement, not a sourced figure",
+     "ev_pct: board 0.2885 -> live about 0.116 — 1.6 + 0.40 x 7.9 = 4.76 against 4.26; the board figure rested on the $11 target and the $4.13 price",
+     "live_price: board 4.13 -> live 4.26 — FMP quote 10 November 2026 (previous close 4.23)",
+     "valuation_asof: board 2026-09-30 -> live 2026-11-10 — re-underwritten on the 10-Q and results release filed 9 November 2026",
+     "share count: FMP market cap $699M implies about 164M shares -> live 190,763,984 common (5 November 2026 cover) plus 14,745,093 pre-funded warrants = 205.5M; true market cap about $813M basic, $876M including warrants",
+     "downside_floor: board 1.6 -> unchanged 1.6 — reproduced as net cash of about $0.80 per share plus a residual for the Guillain-Barre programme and the Month 24 option"
     ],
-    "kill_risk": "The Month 15 gate may be underpowered on the blinded pooled event rate: management added a Month 24 dual primary on 12 Aug 2026, roughly three months before the Month 15 lock, and the DMC's modal non-win outcome is 'continue to Month 24' rather than a clean fail. Because the sponsor stays masked and no efficacy data accompany the DMC verdict, a 'continue' verdict is priced by the tape as a miss (~$1.60) even though the trial is not over; and the Q4 window itself is tight (registry primary completion est. 31 Oct 2026, DMC review + reporting inside ~8 weeks) so a soft slip into January 2027 is a real, unguided risk. Secondary: even a 'met' verdict arrives without sub-study data until Q1 2027, so the initial re-rate may sit below $11 until the data print.",
+    "kill_risk": "The load-bearing claim is that the win probability (my 40%) exceeds the roughly 34% the price implies; I could not confirm it from the live record, and several facts cut against it. The Phase 2 vision signal was a secondary endpoint in a trial that missed its lesion-growth primary. In August 2026 the company added a Month 24 dual primary endpoint, which splits the statistical alpha and reads as a hedge on Month 15. The \"lose\" outcome is a quiet \"continue to Month 24\" recommendation with the company still masked, so no data will be available to argue with. At 34% or lower the trade has zero or negative expected value. Two further risks: the Q4 date is company guidance only (the registry does not date Month 15), so a slip into Q1 2027 would strand dated option structures; and the company has been issuing shares into the run-up (about 671,000 shares added between 30 September and 5 November) with at-the-market capacity still open, so a \"met\" print is likely to be sold into or followed by a raise, capping the win leg.",
     "dated_milestone": "2026-12-31",
     "resolution_driver": "FDA_clinical_readout",
-    "fair_value_target": 11,
+    "fair_value_target": 9.5,
     "downside_floor": 1.6,
-    "asof": "2026-09-30"
+    "asof": "2026-11-10"
    },
    "weight_basis": "equal",
    "stamped": {
@@ -1646,7 +1837,7 @@
     "win_prob": null,
     "super_cluster": "FDA/biotech"
    },
-   "win_prob": 0.38
+   "win_prob": 0.4
   }
  ],
  "non_selections": [
@@ -1662,11 +1853,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 26.85,
-   "since_pass_pct": 99.48,
-   "spy_since_pass_pct": 7.25,
-   "alpha_pp": 92.23,
-   "cf_marked": "2026-10-14"
+   "last_price": 30.89,
+   "since_pass_pct": 129.49,
+   "spy_since_pass_pct": 3.3,
+   "alpha_pp": 126.19,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "ZYME",
@@ -1680,11 +1871,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 25.07,
-   "since_pass_pct": 9.72,
-   "spy_since_pass_pct": 7.25,
-   "alpha_pp": 2.47,
-   "cf_marked": "2026-10-14"
+   "last_price": 31.5834,
+   "since_pass_pct": 38.22,
+   "spy_since_pass_pct": 3.3,
+   "alpha_pp": 34.92,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "BBIO",
@@ -1698,11 +1889,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 63.3,
-   "since_pass_pct": -6.1,
-   "spy_since_pass_pct": 7.25,
-   "alpha_pp": -13.35,
-   "cf_marked": "2026-10-14"
+   "last_price": 79.27,
+   "since_pass_pct": 17.59,
+   "spy_since_pass_pct": 3.3,
+   "alpha_pp": 14.29,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "VIR",
@@ -1716,11 +1907,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 10.61,
-   "since_pass_pct": 28.61,
-   "spy_since_pass_pct": 7.25,
-   "alpha_pp": 21.36,
-   "cf_marked": "2026-10-14"
+   "last_price": 13.16,
+   "since_pass_pct": 59.52,
+   "spy_since_pass_pct": 3.3,
+   "alpha_pp": 56.22,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "RARE",
@@ -1734,11 +1925,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 14.92,
-   "since_pass_pct": -35.05,
-   "spy_since_pass_pct": 7.25,
-   "alpha_pp": -42.3,
-   "cf_marked": "2026-10-14"
+   "last_price": 15.98,
+   "since_pass_pct": -30.43,
+   "spy_since_pass_pct": 3.3,
+   "alpha_pp": -33.73,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "MGNI",
@@ -1752,11 +1943,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 25.32,
-   "since_pass_pct": 61.58,
-   "spy_since_pass_pct": 7.25,
-   "alpha_pp": 54.33,
-   "cf_marked": "2026-10-14"
+   "last_price": 28.667,
+   "since_pass_pct": 82.94,
+   "spy_since_pass_pct": 3.3,
+   "alpha_pp": 79.64,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "ANNX",
@@ -1770,11 +1961,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 3.83,
-   "since_pass_pct": -18.86,
-   "spy_since_pass_pct": 7.25,
-   "alpha_pp": -26.11,
-   "cf_marked": "2026-10-14"
+   "last_price": 4.2737,
+   "since_pass_pct": -9.46,
+   "spy_since_pass_pct": 3.3,
+   "alpha_pp": -12.76,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "OLMA",
@@ -1788,11 +1979,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 7.02,
-   "since_pass_pct": -28.51,
-   "spy_since_pass_pct": 7.25,
-   "alpha_pp": -35.76,
-   "cf_marked": "2026-10-14"
+   "last_price": 7.2016,
+   "since_pass_pct": -26.66,
+   "spy_since_pass_pct": 3.3,
+   "alpha_pp": -29.96,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "RLMD",
@@ -1806,11 +1997,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 3.36,
-   "since_pass_pct": -47.34,
-   "spy_since_pass_pct": 7.25,
-   "alpha_pp": -54.59,
-   "cf_marked": "2026-10-14"
+   "last_price": 4.195,
+   "since_pass_pct": -34.25,
+   "spy_since_pass_pct": 3.3,
+   "alpha_pp": -37.55,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "CLVT",
@@ -1824,11 +2015,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 1.6,
-   "since_pass_pct": -29.52,
-   "spy_since_pass_pct": 7.25,
-   "alpha_pp": -36.77,
-   "cf_marked": "2026-10-14"
+   "last_price": 2.36,
+   "since_pass_pct": 3.96,
+   "spy_since_pass_pct": 3.3,
+   "alpha_pp": 0.66,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "DBVT",
@@ -1842,11 +2033,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 9.03,
-   "since_pass_pct": -43.7,
-   "spy_since_pass_pct": 7.25,
-   "alpha_pp": -50.95,
-   "cf_marked": "2026-10-14"
+   "last_price": 11.4521,
+   "since_pass_pct": -28.6,
+   "spy_since_pass_pct": 3.3,
+   "alpha_pp": -31.9,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "GLUE",
@@ -1860,11 +2051,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 9.89,
-   "since_pass_pct": -40.13,
-   "spy_since_pass_pct": 7.25,
-   "alpha_pp": -47.38,
-   "cf_marked": "2026-10-14"
+   "last_price": 10.5891,
+   "since_pass_pct": -35.9,
+   "spy_since_pass_pct": 3.3,
+   "alpha_pp": -39.2,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "PVLA",
@@ -1878,11 +2069,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 128.51,
-   "since_pass_pct": 25.76,
-   "spy_since_pass_pct": 7.25,
-   "alpha_pp": 18.51,
-   "cf_marked": "2026-10-14"
+   "last_price": 165.9538,
+   "since_pass_pct": 62.4,
+   "spy_since_pass_pct": 3.3,
+   "alpha_pp": 59.1,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "CERS",
@@ -1896,11 +2087,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 2.26,
-   "since_pass_pct": -11.72,
-   "spy_since_pass_pct": 7.25,
-   "alpha_pp": -18.97,
-   "cf_marked": "2026-10-14"
+   "last_price": 1.945,
+   "since_pass_pct": -24.02,
+   "spy_since_pass_pct": 3.3,
+   "alpha_pp": -27.32,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "NKTR",
@@ -1914,11 +2105,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 37.92,
-   "since_pass_pct": -33.22,
-   "spy_since_pass_pct": 7.25,
-   "alpha_pp": -40.47,
-   "cf_marked": "2026-10-14"
+   "last_price": 37.755,
+   "since_pass_pct": -33.51,
+   "spy_since_pass_pct": 3.3,
+   "alpha_pp": -36.81,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "EYPT",
@@ -1932,11 +2123,11 @@
    "spy0": 725.43,
    "price0_date": "2026-06-10",
    "backfilled": true,
-   "last_price": 3.07,
-   "since_pass_pct": -75.1,
-   "spy_since_pass_pct": 7.25,
-   "alpha_pp": -82.35,
-   "cf_marked": "2026-10-14"
+   "last_price": 0.3939,
+   "since_pass_pct": -96.81,
+   "spy_since_pass_pct": 3.3,
+   "alpha_pp": -100.11,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "EYPT",
@@ -1950,11 +2141,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 3.07,
-   "since_pass_pct": -76.44,
-   "spy_since_pass_pct": 4.89,
-   "alpha_pp": -81.33,
-   "cf_marked": "2026-10-14"
+   "last_price": 0.3939,
+   "since_pass_pct": -96.98,
+   "spy_since_pass_pct": 1.03,
+   "alpha_pp": -98.01,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "AMLX_note",
@@ -1977,11 +2168,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 3.83,
-   "since_pass_pct": -18.68,
-   "spy_since_pass_pct": 4.89,
-   "alpha_pp": -23.57,
-   "cf_marked": "2026-10-14"
+   "last_price": 4.2737,
+   "since_pass_pct": -9.26,
+   "spy_since_pass_pct": 1.03,
+   "alpha_pp": -10.29,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "OLMA",
@@ -1995,11 +2186,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 7.02,
-   "since_pass_pct": -28.88,
-   "spy_since_pass_pct": 4.89,
-   "alpha_pp": -33.77,
-   "cf_marked": "2026-10-14"
+   "last_price": 7.2016,
+   "since_pass_pct": -27.04,
+   "spy_since_pass_pct": 1.03,
+   "alpha_pp": -28.07,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "RLMD",
@@ -2013,11 +2204,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 3.36,
-   "since_pass_pct": -49.47,
-   "spy_since_pass_pct": 4.89,
-   "alpha_pp": -54.36,
-   "cf_marked": "2026-10-14"
+   "last_price": 4.195,
+   "since_pass_pct": -36.92,
+   "spy_since_pass_pct": 1.03,
+   "alpha_pp": -37.95,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "AVIR",
@@ -2031,11 +2222,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 4.98,
-   "since_pass_pct": 10.91,
-   "spy_since_pass_pct": 4.89,
-   "alpha_pp": 6.02,
-   "cf_marked": "2026-10-14"
+   "last_price": 4.3093,
+   "since_pass_pct": -4.02,
+   "spy_since_pass_pct": 1.03,
+   "alpha_pp": -5.05,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "GLUE",
@@ -2049,11 +2240,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 9.89,
-   "since_pass_pct": -45.78,
-   "spy_since_pass_pct": 4.89,
-   "alpha_pp": -50.67,
-   "cf_marked": "2026-10-14"
+   "last_price": 10.5891,
+   "since_pass_pct": -41.95,
+   "spy_since_pass_pct": 1.03,
+   "alpha_pp": -42.98,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "PVLA",
@@ -2067,11 +2258,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 128.51,
-   "since_pass_pct": 18.1,
-   "spy_since_pass_pct": 4.89,
-   "alpha_pp": 13.21,
-   "cf_marked": "2026-10-14"
+   "last_price": 165.9538,
+   "since_pass_pct": 52.52,
+   "spy_since_pass_pct": 1.03,
+   "alpha_pp": 51.49,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "ZYME",
@@ -2085,11 +2276,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 25.07,
-   "since_pass_pct": 9.57,
-   "spy_since_pass_pct": 4.89,
-   "alpha_pp": 4.68,
-   "cf_marked": "2026-10-14"
+   "last_price": 31.5834,
+   "since_pass_pct": 38.04,
+   "spy_since_pass_pct": 1.03,
+   "alpha_pp": 37.01,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "BBIO",
@@ -2103,11 +2294,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 63.3,
-   "since_pass_pct": -5.24,
-   "spy_since_pass_pct": 4.89,
-   "alpha_pp": -10.13,
-   "cf_marked": "2026-10-14"
+   "last_price": 79.27,
+   "since_pass_pct": 18.67,
+   "spy_since_pass_pct": 1.03,
+   "alpha_pp": 17.64,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "CERS",
@@ -2121,11 +2312,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 2.26,
-   "since_pass_pct": -11.72,
-   "spy_since_pass_pct": 4.89,
-   "alpha_pp": -16.61,
-   "cf_marked": "2026-10-14"
+   "last_price": 1.945,
+   "since_pass_pct": -24.02,
+   "spy_since_pass_pct": 1.03,
+   "alpha_pp": -25.05,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "MGNI",
@@ -2139,11 +2330,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 25.32,
-   "since_pass_pct": 55.82,
-   "spy_since_pass_pct": 4.89,
-   "alpha_pp": 50.93,
-   "cf_marked": "2026-10-14"
+   "last_price": 28.667,
+   "since_pass_pct": 76.41,
+   "spy_since_pass_pct": 1.03,
+   "alpha_pp": 75.38,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "CLVT",
@@ -2157,11 +2348,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 1.6,
-   "since_pass_pct": -27.6,
-   "spy_since_pass_pct": 4.89,
-   "alpha_pp": -32.49,
-   "cf_marked": "2026-10-14"
+   "last_price": 2.36,
+   "since_pass_pct": 6.79,
+   "spy_since_pass_pct": 1.03,
+   "alpha_pp": 5.76,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "DFTX",
@@ -2175,11 +2366,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 34.38,
-   "since_pass_pct": 38.91,
-   "spy_since_pass_pct": 4.89,
-   "alpha_pp": 34.02,
-   "cf_marked": "2026-10-14"
+   "last_price": 34.35,
+   "since_pass_pct": 38.79,
+   "spy_since_pass_pct": 1.03,
+   "alpha_pp": 37.76,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "RARE",
@@ -2193,11 +2384,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 14.92,
-   "since_pass_pct": -38.73,
-   "spy_since_pass_pct": 4.89,
-   "alpha_pp": -43.62,
-   "cf_marked": "2026-10-14"
+   "last_price": 15.98,
+   "since_pass_pct": -34.37,
+   "spy_since_pass_pct": 1.03,
+   "alpha_pp": -35.4,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "ANNX",
@@ -2211,11 +2402,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 3.83,
-   "since_pass_pct": -18.68,
-   "spy_since_pass_pct": 4.89,
-   "alpha_pp": -23.57,
-   "cf_marked": "2026-10-14"
+   "last_price": 4.2737,
+   "since_pass_pct": -9.26,
+   "spy_since_pass_pct": 1.03,
+   "alpha_pp": -10.29,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "OLMA",
@@ -2229,11 +2420,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 7.02,
-   "since_pass_pct": -28.88,
-   "spy_since_pass_pct": 4.89,
-   "alpha_pp": -33.77,
-   "cf_marked": "2026-10-14"
+   "last_price": 7.2016,
+   "since_pass_pct": -27.04,
+   "spy_since_pass_pct": 1.03,
+   "alpha_pp": -28.07,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "RLMD",
@@ -2247,11 +2438,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 3.36,
-   "since_pass_pct": -49.47,
-   "spy_since_pass_pct": 4.89,
-   "alpha_pp": -54.36,
-   "cf_marked": "2026-10-14"
+   "last_price": 4.195,
+   "since_pass_pct": -36.92,
+   "spy_since_pass_pct": 1.03,
+   "alpha_pp": -37.95,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "CERS",
@@ -2265,11 +2456,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 2.26,
-   "since_pass_pct": -11.72,
-   "spy_since_pass_pct": 4.89,
-   "alpha_pp": -16.61,
-   "cf_marked": "2026-10-14"
+   "last_price": 1.945,
+   "since_pass_pct": -24.02,
+   "spy_since_pass_pct": 1.03,
+   "alpha_pp": -25.05,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "NKTR",
@@ -2283,11 +2474,11 @@
    "spy0": 741.75,
    "price0_date": "2026-06-12",
    "backfilled": true,
-   "last_price": 37.92,
-   "since_pass_pct": -36.14,
-   "spy_since_pass_pct": 4.89,
-   "alpha_pp": -41.03,
-   "cf_marked": "2026-10-14"
+   "last_price": 37.755,
+   "since_pass_pct": -36.42,
+   "spy_since_pass_pct": 1.03,
+   "alpha_pp": -37.45,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "ZYME",
@@ -2301,11 +2492,11 @@
    "spy0": 746.77,
    "price0_date": "2026-06-30",
    "backfilled": true,
-   "last_price": 25.07,
-   "since_pass_pct": -4.09,
-   "spy_since_pass_pct": 4.18,
-   "alpha_pp": -8.27,
-   "cf_marked": "2026-10-14"
+   "last_price": 31.5834,
+   "since_pass_pct": 20.82,
+   "spy_since_pass_pct": 0.35,
+   "alpha_pp": 20.47,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "IMCR",
@@ -2319,11 +2510,11 @@
    "spy0": 746.77,
    "price0_date": "2026-06-30",
    "backfilled": true,
-   "last_price": 27.82,
-   "since_pass_pct": -12.38,
-   "spy_since_pass_pct": 4.18,
-   "alpha_pp": -16.56,
-   "cf_marked": "2026-10-14"
+   "last_price": 32.28,
+   "since_pass_pct": 1.67,
+   "spy_since_pass_pct": 0.35,
+   "alpha_pp": 1.32,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "DBVT",
@@ -2337,11 +2528,11 @@
    "spy0": 746.77,
    "price0_date": "2026-06-30",
    "backfilled": true,
-   "last_price": 9.03,
-   "since_pass_pct": -44.94,
-   "spy_since_pass_pct": 4.18,
-   "alpha_pp": -49.12,
-   "cf_marked": "2026-10-14"
+   "last_price": 11.4521,
+   "since_pass_pct": -30.17,
+   "spy_since_pass_pct": 0.35,
+   "alpha_pp": -30.52,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "ANNX",
@@ -2355,11 +2546,11 @@
    "spy0": 744.78,
    "price0_date": "2026-07-02",
    "backfilled": true,
-   "last_price": 3.83,
-   "since_pass_pct": -29.85,
-   "spy_since_pass_pct": 4.46,
-   "alpha_pp": -34.31,
-   "cf_marked": "2026-10-14"
+   "last_price": 4.2737,
+   "since_pass_pct": -21.73,
+   "spy_since_pass_pct": 0.61,
+   "alpha_pp": -22.34,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "ALTI",
@@ -2373,11 +2564,11 @@
    "spy0": 744.78,
    "price0_date": "2026-07-02",
    "backfilled": true,
-   "last_price": 2.415,
-   "since_pass_pct": -34.73,
-   "spy_since_pass_pct": 4.46,
-   "alpha_pp": -39.19,
-   "cf_marked": "2026-10-14"
+   "last_price": 2.3,
+   "since_pass_pct": -37.84,
+   "spy_since_pass_pct": 0.61,
+   "alpha_pp": -38.45,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "AXTA",
@@ -2391,11 +2582,11 @@
    "spy0": 742.09,
    "price0_date": "2026-07-20",
    "backfilled": true,
-   "last_price": 33.53,
-   "since_pass_pct": 4.39,
-   "spy_since_pass_pct": 4.84,
-   "alpha_pp": -0.45,
-   "cf_marked": "2026-10-14"
+   "last_price": 37.455,
+   "since_pass_pct": 16.61,
+   "spy_since_pass_pct": 0.98,
+   "alpha_pp": 15.63,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "MP",
@@ -2409,11 +2600,11 @@
    "spy0": 742.09,
    "price0_date": "2026-07-20",
    "backfilled": true,
-   "last_price": 42.43,
-   "since_pass_pct": -7.16,
-   "spy_since_pass_pct": 4.84,
-   "alpha_pp": -12.0,
-   "cf_marked": "2026-10-14"
+   "last_price": 36.19,
+   "since_pass_pct": -20.81,
+   "spy_since_pass_pct": 0.98,
+   "alpha_pp": -21.79,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "KDP",
@@ -2427,11 +2618,11 @@
    "spy0": 742.09,
    "price0_date": "2026-07-20",
    "backfilled": true,
-   "last_price": 32.66,
-   "since_pass_pct": 7.29,
-   "spy_since_pass_pct": 4.84,
-   "alpha_pp": 2.45,
-   "cf_marked": "2026-10-14"
+   "last_price": 37.645,
+   "since_pass_pct": 23.67,
+   "spy_since_pass_pct": 0.98,
+   "alpha_pp": 22.69,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "OLMA",
@@ -2445,11 +2636,11 @@
    "spy0": 742.09,
    "price0_date": "2026-07-20",
    "backfilled": true,
-   "last_price": 7.02,
-   "since_pass_pct": -38.15,
-   "spy_since_pass_pct": 4.84,
-   "alpha_pp": -42.99,
-   "cf_marked": "2026-10-14"
+   "last_price": 7.2016,
+   "since_pass_pct": -36.55,
+   "spy_since_pass_pct": 0.98,
+   "alpha_pp": -37.53,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "KDP",
@@ -2463,11 +2654,11 @@
    "spy0": 742.09,
    "price0_date": "2026-07-20",
    "backfilled": true,
-   "last_price": 32.66,
-   "since_pass_pct": 7.29,
-   "spy_since_pass_pct": 4.84,
-   "alpha_pp": 2.45,
-   "cf_marked": "2026-10-14"
+   "last_price": 37.645,
+   "since_pass_pct": 23.67,
+   "spy_since_pass_pct": 0.98,
+   "alpha_pp": 22.69,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "BBIO",
@@ -2481,11 +2672,11 @@
    "spy0": 748.28,
    "price0_date": "2026-07-21",
    "backfilled": true,
-   "last_price": 63.3,
-   "since_pass_pct": -23.23,
-   "spy_since_pass_pct": 3.97,
-   "alpha_pp": -27.2,
-   "cf_marked": "2026-10-14"
+   "last_price": 79.27,
+   "since_pass_pct": -3.86,
+   "spy_since_pass_pct": 0.14,
+   "alpha_pp": -4.0,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "DBVT",
@@ -2499,11 +2690,11 @@
    "spy0": 748.28,
    "price0_date": "2026-07-21",
    "backfilled": true,
-   "last_price": 9.03,
-   "since_pass_pct": -36.5,
-   "spy_since_pass_pct": 3.97,
-   "alpha_pp": -40.47,
-   "cf_marked": "2026-10-14"
+   "last_price": 11.4521,
+   "since_pass_pct": -19.46,
+   "spy_since_pass_pct": 0.14,
+   "alpha_pp": -19.6,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "GERN",
@@ -2517,11 +2708,11 @@
    "spy0": 748.28,
    "price0_date": "2026-07-21",
    "backfilled": true,
-   "last_price": 1.2,
-   "since_pass_pct": -16.67,
-   "spy_since_pass_pct": 3.97,
-   "alpha_pp": -20.64,
-   "cf_marked": "2026-10-14"
+   "last_price": 0.9579,
+   "since_pass_pct": -33.48,
+   "spy_since_pass_pct": 0.14,
+   "alpha_pp": -33.62,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "CLVT",
@@ -2535,11 +2726,11 @@
    "spy0": 748.28,
    "price0_date": "2026-07-21",
    "backfilled": true,
-   "last_price": 1.6,
-   "since_pass_pct": -28.89,
-   "spy_since_pass_pct": 3.97,
-   "alpha_pp": -32.86,
-   "cf_marked": "2026-10-14"
+   "last_price": 2.36,
+   "since_pass_pct": 4.89,
+   "spy_since_pass_pct": 0.14,
+   "alpha_pp": 4.75,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "MLYS",
@@ -2553,11 +2744,11 @@
    "price0": 27.21,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 21.0,
-   "since_pass_pct": -22.82,
-   "spy_since_pass_pct": 5.27,
-   "alpha_pp": -28.09,
-   "cf_marked": "2026-10-14"
+   "last_price": 15.3963,
+   "since_pass_pct": -43.42,
+   "spy_since_pass_pct": 1.39,
+   "alpha_pp": -44.81,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "LBTYK",
@@ -2571,11 +2762,11 @@
    "price0": 9.59,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 8.41,
-   "since_pass_pct": -12.3,
-   "spy_since_pass_pct": 5.27,
-   "alpha_pp": -17.57,
-   "cf_marked": "2026-10-14"
+   "last_price": 10.0643,
+   "since_pass_pct": 4.95,
+   "spy_since_pass_pct": 1.39,
+   "alpha_pp": 3.56,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "SRRK",
@@ -2589,11 +2780,11 @@
    "price0": 48.93,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 40.52,
-   "since_pass_pct": -17.19,
-   "spy_since_pass_pct": 5.27,
-   "alpha_pp": -22.46,
-   "cf_marked": "2026-10-14"
+   "last_price": 48.4,
+   "since_pass_pct": -1.08,
+   "spy_since_pass_pct": 1.39,
+   "alpha_pp": -2.47,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "EYPT",
@@ -2607,11 +2798,11 @@
    "price0": 12.41,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 3.07,
-   "since_pass_pct": -75.26,
-   "spy_since_pass_pct": 5.27,
-   "alpha_pp": -80.53,
-   "cf_marked": "2026-10-14"
+   "last_price": 0.3939,
+   "since_pass_pct": -96.83,
+   "spy_since_pass_pct": 1.39,
+   "alpha_pp": -98.22,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "GDOT",
@@ -2625,11 +2816,11 @@
    "price0": 13.16,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 12.4,
-   "since_pass_pct": -5.78,
-   "spy_since_pass_pct": 5.27,
-   "alpha_pp": -11.05,
-   "cf_marked": "2026-10-14"
+   "last_price": 11.33,
+   "since_pass_pct": -13.91,
+   "spy_since_pass_pct": 1.39,
+   "alpha_pp": -15.3,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "DBVT",
@@ -2643,11 +2834,11 @@
    "price0": 13.9,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 9.03,
-   "since_pass_pct": -35.04,
-   "spy_since_pass_pct": 5.27,
-   "alpha_pp": -40.31,
-   "cf_marked": "2026-10-14"
+   "last_price": 11.4521,
+   "since_pass_pct": -17.61,
+   "spy_since_pass_pct": 1.39,
+   "alpha_pp": -19.0,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "UNF",
@@ -2661,11 +2852,11 @@
    "price0": 297.46,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 258.08,
-   "since_pass_pct": -13.24,
-   "spy_since_pass_pct": 5.27,
-   "alpha_pp": -18.51,
-   "cf_marked": "2026-10-14"
+   "last_price": 237.03,
+   "since_pass_pct": -20.32,
+   "spy_since_pass_pct": 1.39,
+   "alpha_pp": -21.71,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "MP",
@@ -2679,11 +2870,11 @@
    "price0": 43.13,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 42.43,
-   "since_pass_pct": -1.62,
-   "spy_since_pass_pct": 5.27,
-   "alpha_pp": -6.89,
-   "cf_marked": "2026-10-14"
+   "last_price": 36.19,
+   "since_pass_pct": -16.09,
+   "spy_since_pass_pct": 1.39,
+   "alpha_pp": -17.48,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "KDP",
@@ -2697,11 +2888,11 @@
    "price0": 30.12,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 32.66,
-   "since_pass_pct": 8.43,
-   "spy_since_pass_pct": 5.27,
-   "alpha_pp": 3.16,
-   "cf_marked": "2026-10-14"
+   "last_price": 37.645,
+   "since_pass_pct": 24.98,
+   "spy_since_pass_pct": 1.39,
+   "alpha_pp": 23.59,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "CELC",
@@ -2715,11 +2906,11 @@
    "price0": 82.27,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 63.19,
-   "since_pass_pct": -23.19,
-   "spy_since_pass_pct": 5.27,
-   "alpha_pp": -28.46,
-   "cf_marked": "2026-10-14"
+   "last_price": 67.0149,
+   "since_pass_pct": -18.54,
+   "spy_since_pass_pct": 1.39,
+   "alpha_pp": -19.93,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "AXTA",
@@ -2733,11 +2924,11 @@
    "price0": 33.74,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 33.53,
-   "since_pass_pct": -0.62,
-   "spy_since_pass_pct": 5.27,
-   "alpha_pp": -5.89,
-   "cf_marked": "2026-10-14"
+   "last_price": 37.455,
+   "since_pass_pct": 11.01,
+   "spy_since_pass_pct": 1.39,
+   "alpha_pp": 9.62,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "VRDN",
@@ -2751,11 +2942,11 @@
    "price0": 19.7,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 18.22,
-   "since_pass_pct": -7.51,
-   "spy_since_pass_pct": 5.27,
-   "alpha_pp": -12.78,
-   "cf_marked": "2026-10-14"
+   "last_price": 30.4534,
+   "since_pass_pct": 54.59,
+   "spy_since_pass_pct": 1.39,
+   "alpha_pp": 53.2,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "BLCO",
@@ -2769,11 +2960,11 @@
    "price0": 16.28,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 15.81,
-   "since_pass_pct": -2.89,
-   "spy_since_pass_pct": 5.27,
-   "alpha_pp": -8.16,
-   "cf_marked": "2026-10-14"
+   "last_price": 21.17,
+   "since_pass_pct": 30.04,
+   "spy_since_pass_pct": 1.39,
+   "alpha_pp": 28.65,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "PRX.AS",
@@ -2787,11 +2978,11 @@
    "price0": 38.465,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 36.345,
-   "since_pass_pct": -5.51,
-   "spy_since_pass_pct": 5.27,
-   "alpha_pp": -10.78,
-   "cf_marked": "2026-10-14"
+   "last_price": 37.49,
+   "since_pass_pct": -2.53,
+   "spy_since_pass_pct": 1.39,
+   "alpha_pp": -3.92,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "FUN",
@@ -2805,11 +2996,11 @@
    "price0": 17.59,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 10.195,
-   "since_pass_pct": -42.04,
-   "spy_since_pass_pct": 5.27,
-   "alpha_pp": -47.31,
-   "cf_marked": "2026-10-14"
+   "last_price": 10.115,
+   "since_pass_pct": -42.5,
+   "spy_since_pass_pct": 1.39,
+   "alpha_pp": -43.89,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "LZM",
@@ -2823,11 +3014,11 @@
    "price0": 3.31,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 3.51,
-   "since_pass_pct": 6.04,
-   "spy_since_pass_pct": 5.27,
-   "alpha_pp": 0.77,
-   "cf_marked": "2026-10-14"
+   "last_price": 4.49,
+   "since_pass_pct": 35.65,
+   "spy_since_pass_pct": 1.39,
+   "alpha_pp": 34.26,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "THRM",
@@ -2841,11 +3032,11 @@
    "price0": 42.07,
    "spy0": 739.09,
    "source": "weekly_director",
-   "last_price": 31.05,
-   "since_pass_pct": -26.19,
-   "spy_since_pass_pct": 5.27,
-   "alpha_pp": -31.46,
-   "cf_marked": "2026-10-14"
+   "last_price": 29.7511,
+   "since_pass_pct": -29.28,
+   "spy_since_pass_pct": 1.39,
+   "alpha_pp": -30.67,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "SVRA",
@@ -2857,11 +3048,11 @@
    "resolution_driver": "FDA_approval_decision",
    "price0": 5.33,
    "spy0": 757.67,
-   "last_price": 4.78,
-   "since_pass_pct": -10.32,
-   "spy_since_pass_pct": 2.68,
-   "alpha_pp": -13.0,
-   "cf_marked": "2026-10-14"
+   "last_price": 4.8676,
+   "since_pass_pct": -8.68,
+   "spy_since_pass_pct": -1.1,
+   "alpha_pp": -7.58,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "VNDA",
@@ -2873,11 +3064,11 @@
    "resolution_driver": "FDA_approval_decision",
    "price0": 5.23,
    "spy0": 757.67,
-   "last_price": 4.3,
-   "since_pass_pct": -17.78,
-   "spy_since_pass_pct": 2.68,
-   "alpha_pp": -20.46,
-   "cf_marked": "2026-10-14"
+   "last_price": 4.0938,
+   "since_pass_pct": -21.72,
+   "spy_since_pass_pct": -1.1,
+   "alpha_pp": -20.62,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "ALVO",
@@ -2889,11 +3080,11 @@
    "resolution_driver": "FDA_approval_decision",
    "price0": 3.79,
    "spy0": 757.67,
-   "last_price": 5.38,
-   "since_pass_pct": 41.95,
-   "spy_since_pass_pct": 2.68,
-   "alpha_pp": 39.27,
-   "cf_marked": "2026-10-14"
+   "last_price": 4.865,
+   "since_pass_pct": 28.36,
+   "spy_since_pass_pct": -1.1,
+   "alpha_pp": 29.46,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "IMMX",
@@ -2905,11 +3096,11 @@
    "resolution_driver": "FDA_clinical_readout",
    "price0": 8.42,
    "spy0": 757.67,
-   "last_price": 8.69,
-   "since_pass_pct": 3.21,
-   "spy_since_pass_pct": 2.68,
-   "alpha_pp": 0.53,
-   "cf_marked": "2026-10-14"
+   "last_price": 8.2386,
+   "since_pass_pct": -2.15,
+   "spy_since_pass_pct": -1.1,
+   "alpha_pp": -1.05,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "IMTX",
@@ -2921,11 +3112,11 @@
    "resolution_driver": "FDA_clinical_readout",
    "price0": 9.02,
    "spy0": 757.67,
-   "last_price": 6.83,
-   "since_pass_pct": -24.28,
-   "spy_since_pass_pct": 2.68,
-   "alpha_pp": -26.96,
-   "cf_marked": "2026-10-14"
+   "last_price": 6.3607,
+   "since_pass_pct": -29.48,
+   "spy_since_pass_pct": -1.1,
+   "alpha_pp": -28.38,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "NAMS",
@@ -2937,11 +3128,11 @@
    "resolution_driver": "FDA_clinical_readout",
    "price0": 27.49,
    "spy0": 757.67,
-   "last_price": 20.19,
-   "since_pass_pct": -26.56,
-   "spy_since_pass_pct": 2.68,
-   "alpha_pp": -29.24,
-   "cf_marked": "2026-10-14"
+   "last_price": 19.03,
+   "since_pass_pct": -30.77,
+   "spy_since_pass_pct": -1.1,
+   "alpha_pp": -29.67,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "CMCSA",
@@ -2953,11 +3144,11 @@
    "resolution_driver": "Spin_index_flow",
    "price0": 24.56,
    "spy0": 757.67,
-   "last_price": 20.88,
-   "since_pass_pct": -14.98,
-   "spy_since_pass_pct": 2.68,
-   "alpha_pp": -17.66,
-   "cf_marked": "2026-10-14"
+   "last_price": 24.9197,
+   "since_pass_pct": 1.46,
+   "spy_since_pass_pct": -1.1,
+   "alpha_pp": 2.56,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "LBTYK",
@@ -2969,11 +3160,11 @@
    "resolution_driver": "Spin_index_flow",
    "price0": 10.64,
    "spy0": 757.67,
-   "last_price": 8.41,
-   "since_pass_pct": -20.96,
-   "spy_since_pass_pct": 2.68,
-   "alpha_pp": -23.64,
-   "cf_marked": "2026-10-14"
+   "last_price": 10.0643,
+   "since_pass_pct": -5.41,
+   "spy_since_pass_pct": -1.1,
+   "alpha_pp": -4.31,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "IFF",
@@ -2985,11 +3176,11 @@
    "resolution_driver": "Deal_close_generic",
    "price0": 80.58,
    "spy0": 757.67,
-   "last_price": 88.2,
-   "since_pass_pct": 9.46,
-   "spy_since_pass_pct": 2.68,
-   "alpha_pp": 6.78,
-   "cf_marked": "2026-10-14"
+   "last_price": 83.41,
+   "since_pass_pct": 3.51,
+   "spy_since_pass_pct": -1.1,
+   "alpha_pp": 4.61,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "XRN",
@@ -3001,11 +3192,11 @@
    "resolution_driver": "Refi_restructuring",
    "price0": 35.27,
    "spy0": 757.67,
-   "last_price": 32.67,
-   "since_pass_pct": -7.37,
-   "spy_since_pass_pct": 2.68,
-   "alpha_pp": -10.05,
-   "cf_marked": "2026-10-14"
+   "last_price": 26.56,
+   "since_pass_pct": -24.7,
+   "spy_since_pass_pct": -1.1,
+   "alpha_pp": -23.6,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "MGNI",
@@ -3017,11 +3208,11 @@
    "resolution_driver": null,
    "price0": 19.57,
    "spy0": 757.67,
-   "last_price": 25.32,
-   "since_pass_pct": 29.38,
-   "spy_since_pass_pct": 2.68,
-   "alpha_pp": 26.7,
-   "cf_marked": "2026-10-14"
+   "last_price": 28.667,
+   "since_pass_pct": 46.48,
+   "spy_since_pass_pct": -1.1,
+   "alpha_pp": 47.58,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "CLVT",
@@ -3033,11 +3224,11 @@
    "resolution_driver": "Deal_close_generic",
    "price0": 1.94,
    "spy0": 757.67,
-   "last_price": 1.6,
-   "since_pass_pct": -17.53,
-   "spy_since_pass_pct": 2.68,
-   "alpha_pp": -20.21,
-   "cf_marked": "2026-10-14"
+   "last_price": 2.36,
+   "since_pass_pct": 21.65,
+   "spy_since_pass_pct": -1.1,
+   "alpha_pp": 22.75,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "PVLA",
@@ -3049,11 +3240,11 @@
    "resolution_driver": "FDA_approval_decision",
    "price0": 118.84,
    "spy0": 757.67,
-   "last_price": 128.51,
-   "since_pass_pct": 8.14,
-   "spy_since_pass_pct": 2.68,
-   "alpha_pp": 5.46,
-   "cf_marked": "2026-10-14"
+   "last_price": 165.9538,
+   "since_pass_pct": 39.64,
+   "spy_since_pass_pct": -1.1,
+   "alpha_pp": 40.74,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "PVLA_PLACEHOLDER_REMOVED",
@@ -3076,11 +3267,11 @@
    "resolution_driver": "Foreign_regulator",
    "price0": 2.26,
    "spy0": 764.2,
-   "last_price": 2.2,
-   "since_pass_pct": -2.65,
-   "spy_since_pass_pct": 1.81,
-   "alpha_pp": -4.46,
-   "cf_marked": "2026-10-14"
+   "last_price": 1.755,
+   "since_pass_pct": -22.35,
+   "spy_since_pass_pct": -1.94,
+   "alpha_pp": -20.41,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "CAPR",
@@ -3092,11 +3283,11 @@
    "resolution_driver": "FDA_approval_decision",
    "price0": 9.4,
    "spy0": 764.2,
-   "last_price": 6.88,
-   "since_pass_pct": -26.81,
-   "spy_since_pass_pct": 1.81,
-   "alpha_pp": -28.62,
-   "cf_marked": "2026-10-14"
+   "last_price": 9.06,
+   "since_pass_pct": -3.62,
+   "spy_since_pass_pct": -1.94,
+   "alpha_pp": -1.68,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "GLUE",
@@ -3108,11 +3299,11 @@
    "resolution_driver": "FDA_clinical_readout",
    "price0": 13.84,
    "spy0": 764.2,
-   "last_price": 9.89,
-   "since_pass_pct": -28.54,
-   "spy_since_pass_pct": 1.81,
-   "alpha_pp": -30.35,
-   "cf_marked": "2026-10-14"
+   "last_price": 10.5891,
+   "since_pass_pct": -23.49,
+   "spy_since_pass_pct": -1.94,
+   "alpha_pp": -21.55,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "EYPT",
@@ -3124,11 +3315,11 @@
    "resolution_driver": null,
    "price0": 3.42,
    "spy0": 764.2,
-   "last_price": 3.07,
-   "since_pass_pct": -10.23,
-   "spy_since_pass_pct": 1.81,
-   "alpha_pp": -12.04,
-   "cf_marked": "2026-10-14"
+   "last_price": 0.3939,
+   "since_pass_pct": -88.48,
+   "spy_since_pass_pct": -1.94,
+   "alpha_pp": -86.54,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "DBVT",
@@ -3140,11 +3331,11 @@
    "resolution_driver": "FDA_approval_decision",
    "price0": 13.47,
    "spy0": 764.2,
-   "last_price": 9.03,
-   "since_pass_pct": -32.96,
-   "spy_since_pass_pct": 1.81,
-   "alpha_pp": -34.77,
-   "cf_marked": "2026-10-14"
+   "last_price": 11.4521,
+   "since_pass_pct": -14.98,
+   "spy_since_pass_pct": -1.94,
+   "alpha_pp": -13.04,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "GERN",
@@ -3156,11 +3347,11 @@
    "resolution_driver": null,
    "price0": 1.24,
    "spy0": 764.2,
-   "last_price": 1.2,
-   "since_pass_pct": -3.23,
-   "spy_since_pass_pct": 1.81,
-   "alpha_pp": -5.04,
-   "cf_marked": "2026-10-14"
+   "last_price": 0.9579,
+   "since_pass_pct": -22.75,
+   "spy_since_pass_pct": -1.94,
+   "alpha_pp": -20.81,
+   "cf_marked": "2026-11-10"
   },
   {
    "symbol": "PVLA_PLACEHOLDER_REMOVED",
@@ -3172,6 +3363,129 @@
    "resolution_driver": null,
    "price0": null,
    "spy0": 764.2
+  },
+  {
+   "symbol": "DDL",
+   "date": "2026-11-10",
+   "passed_because": "Fast-return horizon fail: the binding date is the extendable 2027-02-05 end date (the board's 2026-12-31 was fictitious), the dossier says an extension is at least as likely as a decision, and the validator hard-rejects dated milestones beyond 2026. The corrected asymmetry (about 2.9:1 to the event on a 1.10 floor) is real but rests on the unverified $280m upstream cash, which only the ~2026-11-18 Q3 print can confirm. It does not clear the median held seat for a book that resolves within 2026.",
+   "score": 5.0,
+   "edge_grade": "M",
+   "lane_canon": "merger_arb",
+   "resolution_driver": "Foreign_regulator",
+   "price0": 1.92,
+   "spy0": 749.09497,
+   "last_price": 1.755,
+   "since_pass_pct": -8.59,
+   "spy_since_pass_pct": 0.03,
+   "alpha_pp": -8.62,
+   "cf_marked": "2026-11-10"
+  },
+  {
+   "symbol": "FLEX",
+   "date": "2026-11-10",
+   "passed_because": "No edge at the live price: reward/risk is 0.94:1 at $75.66 against the $96 base and $54 bear. The CRO's own entry condition is a limit at or below $65, and the Axiom distribution is guided to Q1 2027 (2027-03-31), outside the 2026 horizon. It is also exposed to the AI-infrastructure multiple tape rather than resolving idiosyncratically.",
+   "score": 6.0,
+   "edge_grade": "M",
+   "lane_canon": "spinoff",
+   "resolution_driver": "Spin_index_flow",
+   "price0": 75.5938,
+   "spy0": 749.09497,
+   "last_price": 75.88,
+   "since_pass_pct": 0.38,
+   "spy_since_pass_pct": 0.03,
+   "alpha_pp": 0.35,
+   "cf_marked": "2026-11-10"
+  },
+  {
+   "symbol": "KBR",
+   "date": "2026-11-10",
+   "passed_because": "Best-quality survivor (debate A/4, skeptic only repriced the target to 49.5, about 1.8:1), but the Trinzic distribution is dated 2027-01-04 and the post-spin flow payoff lands in Jan-Feb 2027. That is beyond the 2026 fast-return horizon, which the validator hard-rejects. Every distribution condition (IRS ruling, effectiveness, financing, autonomous-entity amendment) is still open. Revisit only if the horizon rule is relaxed.",
+   "score": 4.0,
+   "edge_grade": "M",
+   "lane_canon": "spinoff",
+   "resolution_driver": "Spin_index_flow",
+   "price0": 39.95,
+   "spy0": 749.09497,
+   "last_price": 38.965,
+   "since_pass_pct": -2.47,
+   "spy_since_pass_pct": 0.03,
+   "alpha_pp": -2.5,
+   "cf_marked": "2026-11-10"
+  },
+  {
+   "symbol": "CLVT",
+   "date": "2026-11-10",
+   "passed_because": "Catalyst resolved: the forced-divest index event has FIRED and failed (the Russell reconstitution already happened). The fresh debate is verdict C and the skeptic is REFUTED, so it exits the on-deck book.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": null,
+   "price0": 2.36,
+   "spy0": 749.09497,
+   "last_price": 2.36,
+   "since_pass_pct": 0.0,
+   "spy_since_pass_pct": 0.03,
+   "alpha_pp": -0.03,
+   "cf_marked": "2026-11-10"
+  },
+  {
+   "symbol": "EYPT",
+   "date": "2026-11-10",
+   "passed_because": "Catalyst resolved: LUCIA topline (8-K, 19 Oct 2026) missed its primary endpoint. Status is FIRED, the skeptic is REFUTED, and the trade is gone.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": null,
+   "price0": 0.3916,
+   "spy0": 749.09497,
+   "last_price": 0.3939,
+   "since_pass_pct": 0.59,
+   "spy_since_pass_pct": 0.03,
+   "alpha_pp": 0.56,
+   "cf_marked": "2026-11-10"
+  },
+  {
+   "symbol": "DBVT",
+   "date": "2026-11-10",
+   "passed_because": "The fresh skeptic is REFUTED (the dilution base under both valuation levels is wrong per the Q3 10-Q Note 16), and the catalyst slid to SOFT_EXTENDED (only a ~2026-11-28 BLA filing-acceptance checkpoint, not an approval). A REFUTED skeptic is a hard pass.",
+   "score": 5.0,
+   "edge_grade": "H",
+   "lane_canon": "bio_convergence",
+   "resolution_driver": "FDA_approval_decision",
+   "price0": 9.05,
+   "spy0": 749.09497,
+   "last_price": 11.4521,
+   "since_pass_pct": 26.54,
+   "spy_since_pass_pct": 0.03,
+   "alpha_pp": 26.51,
+   "cf_marked": "2026-11-10"
+  },
+  {
+   "symbol": "GERN",
+   "date": "2026-11-10",
+   "passed_because": "The fresh skeptic is REFUTED: the routed catalyst (RYTELO approval) fired in June 2024, and the remaining IMpactMF OS interim is undated and event-driven with no hard 2026 date.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": null,
+   "price0": 0.9606,
+   "spy0": 749.09497,
+   "last_price": 0.9579,
+   "since_pass_pct": -0.28,
+   "spy_since_pass_pct": 0.03,
+   "alpha_pp": -0.31,
+   "cf_marked": "2026-11-10"
+  },
+  {
+   "symbol": "PVLA_PLACEHOLDER_REMOVED",
+   "date": "2026-11-10",
+   "passed_because": "This is not a tradeable symbol. It is a stale placeholder row from 2026-08-04 with no catalyst, driver or dossier, so it is removed explicitly here rather than carried.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": null,
+   "price0": null,
+   "spy0": 749.09497
   }
  ],
  "runs": [
@@ -3423,6 +3737,37 @@
     "resolved_off_deck": []
    },
    "memo": "Shape: two new seats, SVRA and ANNX, which take the book to 9 unresolved seats at 50/9 = 5.56% each. Both beat the median held seat on fresh verdict-A debates with dated 2026 milestones. SVRA is a Priority Review PDUFA on 22-Nov with CMC-only residual risk, EV ~+30%. ANNX has the rare conviction-5 debate on the ARCHER II Month 15 readout in Q4, EV ~+31%. Both are binary_prob, so both use defined-risk calls: Feb-2027 for SVRA and Apr-2027 for ANNX. This overrides the CRO's 'equity only' notes because the binary gate is hard. ANNX has an explicit liquidity gate: if its chain never tightens, the seat stays unopened rather than being forced into an unfillable fill. Passed: DDL (a 2027 contractual end date against the fast-return horizon, which costs the book its only Deal-completion diversity), CAPR (the edge halved by an unexplained gap, and no tradeable defined-risk chain), and GLUE (an ordinary edge on a public-interim, sell-the-news staging readout). Concentration: the book is now 8 of 9 seats FDA/biotech (4 FDA_approval_decision, 3 FDA_clinical_readout, 1 FDA_pathway_feedback) plus FIG as the only Idiosyncratic seat. That is a heavy lean into one family. I accept it knowingly: the non-FDA survivors this run failed on merit or horizon, and the defined-risk structure on every binary is what bounds the downside. Diversifiers to seat first when a dossier appears: MGNI and CLVT. Carried watchlist: BBIO is re-championed (dated 27-Nov PDUFA, verdict A). CLVT, PVLA and MGNI stay de-prioritized and tracked. EYPT (catalyst fired as a miss), DBVT (2027 approval), GERN (2028 final analysis, undated interim) and a junk placeholder row were demoted to passed with reasons. Macro (ADVISORY, DISCIPLINE): cash-soon catalysts get paid in this phase. SVRA's approval unlocks $150M of non-dilutive financing plus launch revenue, which fits. ANNX re-rates a longer-duration asset and is exposed to ATM dilution, which cuts against the phase, but I seat it anyway on the dated evidence and a Q4 resolution. The regime context block is dated 2026-07 and is near its ~2026-10 staleness limit, so it was read cautiously: the warm biotech tape was treated as compressing entry edges, not as a reason to loosen. No caps exist, so none needed re-checking. The only real constraint was dilution, from 7.14% to 5.56% per seat."
+  },
+  {
+   "run_date": "2026-11-10",
+   "stamped_at": "2026-11-10",
+   "restamp": false,
+   "n_picks": 0,
+   "n_passed": 8,
+   "n_added": 0,
+   "n_pending": 0,
+   "n_excluded_at_stamp": 0,
+   "n_skipped_open": 0,
+   "cap_violations": 0,
+   "retags": [],
+   "watchlist_delta": {
+    "new": [
+     "BBIO",
+     "MGNI",
+     "PVLA"
+    ],
+    "carried": [
+     "CLVT",
+     "DBVT",
+     "EYPT",
+     "GERN",
+     "PVLA_PLACEHOLDER_REMOVED"
+    ],
+    "cap_trimmed": [],
+    "graduated": [],
+    "resolved_off_deck": []
+   },
+   "memo": "NO NEW SEATS THIS RUN (picks: []). The held book stays at 3 FDA/biotech seats (AGIO, SVRA, ANNX), each 50/3 = 16.7% of NAV, with 50% of NAV in cash.\n\nWhy none of the 3 survivors made it: all three resolve in 2027. DDL is tied to the extendable 2027-02-05 end date, KBR to the 2027-01-04 spin, and FLEX to a Q1-2027 spin. The fast-return rule makes a post-2026 milestone a pass on merit, and the validator hard-rejects it. None of the three clears the median held seat once you count the dilution it would impose. FLEX also has no edge at the live price (0.94:1). KBR is the best-quality name and the one I would revisit first if the horizon rule were relaxed. DDL's asymmetry depends on the 2026-11-18 Q3 print confirming that the $280m upstream cash move happened.\n\nCarried on-deck accountability: CLVT and EYPT exit because their catalysts fired and failed (both skeptics REFUTED). DBVT and GERN are demoted because fresh skeptics REFUTED them. The placeholder row is removed explicitly. BBIO is re-nominated and is the priority on-deck name: PDUFA is 2026-11-27, debate verdict A, skeptic CONFIRMED. It needs a fresh CRO trade surface within about 2 weeks or the event passes. PVLA and MGNI carry forward unchanged.\n\nCluster mix: 100% FDA/biotech binaries, all bounded by defined-risk structures. The lean is intentional in the sense that no non-bio survivor resolved inside 2026; it is not a preference. MGNI on deck is the only diversifier queued.\n\nDebt-cycle (DISCIPLINE, advisory only): the phase favours catalysts that pay cash soon. That fits the held approval-decision seats, and in principle it would favour DDL's cash-return and KBR's spin-flow profiles. The rejection is driven by dated horizons, not by the phase.\n\nThe regime context block (as of 2026-07) is stale as of today (2026-11-10) and was ignored."
   }
  ],
  "marks": [
@@ -4425,71 +4770,474 @@
      "ret_pct": -7.26
     }
    }
+  },
+  {
+   "date": "2026-10-19",
+   "nav": 99.783,
+   "basket_ret_pct": -0.217,
+   "seats": {
+    "FIG": {
+     "price": 21.54,
+     "ret_pct": -11.88
+    },
+    "AQST": {
+     "price": 4.8,
+     "ret_pct": 31.33
+    },
+    "WVE": {
+     "price": 3.17,
+     "ret_pct": -45.77
+    },
+    "AMLX": {
+     "price": 20.17,
+     "ret_pct": 4.56
+    },
+    "AAUC": {
+     "price": 19.27,
+     "ret_pct": -10.37
+    },
+    "ZYME": {
+     "price": 25.54,
+     "ret_pct": 13.26
+    },
+    "DDL": {
+     "price": 2.48,
+     "ret_pct": 2.27
+    },
+    "VIR": {
+     "price": 10.21,
+     "ret_pct": 17.76
+    },
+    "OLMA": {
+     "price": 7.11,
+     "ret_pct": -37.19
+    },
+    "AVIR": {
+     "price": 5.83,
+     "ret_pct": 50.65
+    },
+    "CAPR": {
+     "price": 3.99,
+     "ret_pct": -31.68
+    },
+    "FIP": {
+     "price": 3.555,
+     "ret_pct": -10.57
+    },
+    "AGIO": {
+     "price": 34.9,
+     "ret_pct": 14.28
+    },
+    "RARE": {
+     "price": 15.07,
+     "ret_pct": -1.5
+    },
+    "SVRA": {
+     "price": 4.63,
+     "ret_pct": -8.86
+    },
+    "ANNX": {
+     "price": 4.01,
+     "ret_pct": -2.91
+    }
+   }
+  },
+  {
+   "date": "2026-10-29",
+   "nav": 104.552,
+   "basket_ret_pct": 4.552,
+   "seats": {
+    "FIG": {
+     "price": 23.21,
+     "ret_pct": -5.05
+    },
+    "AQST": {
+     "price": 4.8,
+     "ret_pct": 31.33
+    },
+    "WVE": {
+     "price": 3.64,
+     "ret_pct": -37.72
+    },
+    "AMLX": {
+     "price": 20.17,
+     "ret_pct": 4.56
+    },
+    "AAUC": {
+     "price": 19.27,
+     "ret_pct": -10.37
+    },
+    "ZYME": {
+     "price": 28.9,
+     "ret_pct": 28.16
+    },
+    "DDL": {
+     "price": 2.48,
+     "ret_pct": 2.27
+    },
+    "VIR": {
+     "price": 11.93,
+     "ret_pct": 37.6
+    },
+    "OLMA": {
+     "price": 7.49,
+     "ret_pct": -33.83
+    },
+    "AVIR": {
+     "price": 5.83,
+     "ret_pct": 50.65
+    },
+    "CAPR": {
+     "price": 3.99,
+     "ret_pct": -31.68
+    },
+    "FIP": {
+     "price": 3.555,
+     "ret_pct": -10.57
+    },
+    "AGIO": {
+     "price": 38.12,
+     "ret_pct": 24.82
+    },
+    "RARE": {
+     "price": 17.2,
+     "ret_pct": 12.42
+    },
+    "SVRA": {
+     "price": 5.02,
+     "ret_pct": -1.18
+    },
+    "ANNX": {
+     "price": 4.04,
+     "ret_pct": -2.18
+    }
+   }
+  },
+  {
+   "date": "2026-11-04",
+   "nav": 103.717,
+   "basket_ret_pct": 3.717,
+   "seats": {
+    "FIG": {
+     "price": 22.085,
+     "ret_pct": -9.65
+    },
+    "AQST": {
+     "price": 4.8,
+     "ret_pct": 31.33
+    },
+    "WVE": {
+     "price": 3.685,
+     "ret_pct": -36.95
+    },
+    "AMLX": {
+     "price": 20.17,
+     "ret_pct": 4.56
+    },
+    "AAUC": {
+     "price": 19.27,
+     "ret_pct": -10.37
+    },
+    "ZYME": {
+     "price": 31.1352,
+     "ret_pct": 38.07
+    },
+    "DDL": {
+     "price": 2.48,
+     "ret_pct": 2.27
+    },
+    "VIR": {
+     "price": 11.655,
+     "ret_pct": 34.43
+    },
+    "OLMA": {
+     "price": 7.422,
+     "ret_pct": -34.43
+    },
+    "AVIR": {
+     "price": 5.83,
+     "ret_pct": 50.65
+    },
+    "CAPR": {
+     "price": 3.99,
+     "ret_pct": -31.68
+    },
+    "FIP": {
+     "price": 3.555,
+     "ret_pct": -10.57
+    },
+    "AGIO": {
+     "price": 31.5,
+     "ret_pct": 3.14
+    },
+    "RARE": {
+     "price": 17.4403,
+     "ret_pct": 13.99
+    },
+    "SVRA": {
+     "price": 4.6381,
+     "ret_pct": -8.7
+    },
+    "ANNX": {
+     "price": 4.465,
+     "ret_pct": 8.11
+    }
+   }
+  },
+  {
+   "date": "2026-11-06",
+   "nav": 101.352,
+   "basket_ret_pct": 1.352,
+   "seats": {
+    "FIG": {
+     "price": 18.81,
+     "ret_pct": -23.05
+    },
+    "AQST": {
+     "price": 4.8,
+     "ret_pct": 31.33
+    },
+    "WVE": {
+     "price": 3.365,
+     "ret_pct": -42.43
+    },
+    "AMLX": {
+     "price": 20.17,
+     "ret_pct": 4.56
+    },
+    "AAUC": {
+     "price": 19.27,
+     "ret_pct": -10.37
+    },
+    "ZYME": {
+     "price": 29.63,
+     "ret_pct": 31.4
+    },
+    "DDL": {
+     "price": 2.48,
+     "ret_pct": 2.27
+    },
+    "VIR": {
+     "price": 12.21,
+     "ret_pct": 40.83
+    },
+    "OLMA": {
+     "price": 7.33,
+     "ret_pct": -35.25
+    },
+    "AVIR": {
+     "price": 5.83,
+     "ret_pct": 50.65
+    },
+    "CAPR": {
+     "price": 3.99,
+     "ret_pct": -31.68
+    },
+    "FIP": {
+     "price": 3.555,
+     "ret_pct": -10.57
+    },
+    "AGIO": {
+     "price": 29.41,
+     "ret_pct": -3.7
+    },
+    "RARE": {
+     "price": 15.43,
+     "ret_pct": 0.85
+    },
+    "SVRA": {
+     "price": 4.83,
+     "ret_pct": -4.92
+    },
+    "ANNX": {
+     "price": 4.2,
+     "ret_pct": 1.69
+    }
+   }
+  },
+  {
+   "date": "2026-11-09",
+   "nav": 103.815,
+   "basket_ret_pct": 3.815,
+   "seats": {
+    "FIG": {
+     "price": 19.4,
+     "ret_pct": -20.64
+    },
+    "AQST": {
+     "price": 4.8,
+     "ret_pct": 31.33
+    },
+    "WVE": {
+     "price": 3.48,
+     "ret_pct": -40.46
+    },
+    "AMLX": {
+     "price": 20.17,
+     "ret_pct": 4.56
+    },
+    "AAUC": {
+     "price": 19.27,
+     "ret_pct": -10.37
+    },
+    "ZYME": {
+     "price": 30.81,
+     "ret_pct": 36.63
+    },
+    "DDL": {
+     "price": 2.48,
+     "ret_pct": 2.27
+    },
+    "VIR": {
+     "price": 13.645,
+     "ret_pct": 57.38
+    },
+    "OLMA": {
+     "price": 7.36,
+     "ret_pct": -34.98
+    },
+    "AVIR": {
+     "price": 5.83,
+     "ret_pct": 50.65
+    },
+    "CAPR": {
+     "price": 3.99,
+     "ret_pct": -31.68
+    },
+    "FIP": {
+     "price": 3.555,
+     "ret_pct": -10.57
+    },
+    "AGIO": {
+     "price": 31.38,
+     "ret_pct": 2.75
+    },
+    "RARE": {
+     "price": 16.41,
+     "ret_pct": 7.25
+    },
+    "SVRA": {
+     "price": 5.05,
+     "ret_pct": -0.59
+    },
+    "ANNX": {
+     "price": 4.23,
+     "ret_pct": 2.42
+    }
+   }
+  },
+  {
+   "date": "2026-11-10",
+   "nav": 103.279,
+   "basket_ret_pct": 3.279,
+   "seats": {
+    "FIG": {
+     "price": 18.465,
+     "ret_pct": -24.46
+    },
+    "AQST": {
+     "price": 4.8,
+     "ret_pct": 31.33
+    },
+    "WVE": {
+     "price": 3.3892,
+     "ret_pct": -42.02
+    },
+    "AMLX": {
+     "price": 20.17,
+     "ret_pct": 4.56
+    },
+    "AAUC": {
+     "price": 19.27,
+     "ret_pct": -10.37
+    },
+    "ZYME": {
+     "price": 31.5226,
+     "ret_pct": 39.79
+    },
+    "DDL": {
+     "price": 2.48,
+     "ret_pct": 2.27
+    },
+    "VIR": {
+     "price": 13.3,
+     "ret_pct": 53.4
+    },
+    "OLMA": {
+     "price": 7.22,
+     "ret_pct": -36.22
+    },
+    "AVIR": {
+     "price": 5.83,
+     "ret_pct": 50.65
+    },
+    "CAPR": {
+     "price": 3.99,
+     "ret_pct": -31.68
+    },
+    "FIP": {
+     "price": 3.555,
+     "ret_pct": -10.57
+    },
+    "AGIO": {
+     "price": 31.32,
+     "ret_pct": 2.55
+    },
+    "RARE": {
+     "price": 15.9234,
+     "ret_pct": 4.07
+    },
+    "SVRA": {
+     "price": 4.8676,
+     "ret_pct": -4.18
+    },
+    "ANNX": {
+     "price": 4.2737,
+     "ret_pct": 3.48
+    }
+   }
   }
  ],
  "watchlist": [
   {
    "symbol": "BBIO",
-   "blocked_by": "No cap is full (caps abolished 2026-08-11). The only thing stopping it is that it was not a CRO survivor this run, so it has no fresh dossier and no live-price check.",
-   "would_enter_if": "A fresh CRO dossier confirms the 27-Nov-2026 BBP-418 PDUFA edge at the live price, with a defined-risk expiry past the date.",
-   "intended_weight_pct": null,
-   "note": "Repo catalyst record: PDUFA 2026-11-27 under Priority Review, no advisory committee, debate verdict A. It resolves inside the fast-return window.",
+   "blocked_by": "No cap is full; caps were abolished on 2026-08-11. Two things block it. (1) Expression gate: valuation_method=binary_prob allows only defined-risk structures, and the CRO found the only usable options untradeable (Jan-15-2027 80C quoted 3.80/7.80, about 69% wide; 80P about 45% wide; Dec-18 too close to the date and thin). The CRO's only acceptable trade is equity, which the binary gate forbids. (2) Entry price: at the live $79.2 the payoff is inverted (+4.8% / -11.6%, payoff ratio 0.41, EV +2.8%, breakeven win probability about 71%), so it does not clear the median held seat.",
+   "would_enter_if": "Before 2026-11-25 (no new entry in the last 2 sessions before the 2026-11-27 PDUFA), price trades at or below $76.50, where the payoff against the 83/70 legs is about 1:1 and EV about +6.4%, AND a defined-risk structure becomes quotable at a sane width, for example a Dec-18-2026 or Jan-15-2027 call spread with a combined bid/ask under about 15% of the debit. If the FDA extends the action date by 3 months before entry, the trade is void.",
+   "intended_weight_pct": 12.5,
+   "note": "Promotion run. The thesis is intact: Priority NDA, FORTIFY met every endpoint, no AdCom, the date was reconfirmed on 10-29, and Attruby plus $1.5B cash cushion a CRL. The trade is not intact: the stock ran from 66.8 to 79.2 into the date, so most of the approval (about 85%) is priced in, and BBP-418 is about $17/share of a $79 stock. The name stays tracked to its 2026-11-27 resolution so this call can be scored.",
    "score": null,
    "edge_grade": null,
    "lane_canon": null,
    "resolution_driver": "FDA_approval_decision",
    "super_cluster": null,
-   "valuation_method": null,
+   "valuation_method": "binary_prob",
    "ev_pct": null,
    "computed_rr": null,
-   "dated_milestone": null,
+   "dated_milestone": "2026-11-27 FDA PDUFA target action date, BBP-418 NDA for LGMD2I/R9. Priority Review, no advisory committee planned. Reconfirmed in the Q3-2026 release dated 2026-10-29.",
    "entry_price": 66.8,
    "entry_date": "2026-06-13",
    "first_seen_date": "2026-06-13",
    "expected_pct": 46.6,
-   "cro_conditions": [],
+   "cro_conditions": [
+    "Equity only, with a limit of $76.50 or lower (about a 1:1 payoff against the 83/70 legs). Do not chase above $77.50, where the payoff ratio falls below about 0.75 and EV falls below about +4%.",
+    "Entry must fill before 2026-11-25. Do not open a new position in the last 2 sessions before the 2026-11-27 PDUFA.",
+    "Exit on the FDA action: take profit on approval (target ~$83, sell-the-news shaped). On a CRL or extension, exit and do not average down. If a 3-month major-amendment extension is announced before entry, the trade is void.",
+    "Do not use options for this trade (see tradeability). Do not lift the win leg for takeout optionality; it is undated and was not comp-verified in the dossier."
+   ],
    "expression": {
-    "type": "equity"
+    "type": "debit_spread"
    },
    "expression_intended": true,
    "de_prioritized": false,
    "deprioritization_rationale": null,
-   "stance_change_rationale": "Re-championed from de-prioritized. It now has a dated 27-Nov-2026 Priority Review PDUFA inside the 2026 window and a verdict-A debate, so it is first in line for a CRO re-underwrite."
-  },
-  {
-   "symbol": "CLVT",
-   "blocked_by": "No cap is full. It waits only on a fresh CRO survivor dossier.",
-   "would_enter_if": "A CRO re-underwrite of the Altaris LS&H sale close (expected by 2026-12-31) after the 3-Nov-2026 Q3 print.",
-   "intended_weight_pct": null,
-   "note": "The tender and Russell legs have fired. The live remainder is the Altaris sale close by year-end, subject to regulatory approvals, and still inside the window.",
-   "score": 4.0,
-   "edge_grade": "H",
-   "lane_canon": "forced_seller",
-   "resolution_driver": "Forced_divest_flow",
-   "super_cluster": "Idiosyncratic",
-   "valuation_method": "sop",
-   "ev_pct": null,
-   "computed_rr": 6.31,
-   "dated_milestone": null,
-   "entry_price": 2.21,
-   "entry_date": "2026-06-13",
-   "first_seen_date": "2026-06-13",
-   "expected_pct": null,
-   "cro_conditions": [],
-   "expression": {
-    "type": "equity"
-   },
-   "expression_intended": true,
-   "de_prioritized": false,
-   "deprioritization_rationale": null,
-   "stance_change_rationale": null
+   "stance_change_rationale": "I nominated BBIO first-in-line at $66.8 in June. At $79.2 the live re-check shows the approval leg mostly priced in (risk $2.4 to make $1), and the binary gate requires defined risk while the option markets are too wide. So I am de-prioritizing it on price and expression, not on the science, rather than forcing a seat that would dilute AGIO, SVRA and ANNX for a +2.8% EV."
   },
   {
    "symbol": "PVLA",
    "blocked_by": "No cap is full. It waits only on a fresh CRO survivor dossier; there is no current catalyst record in the repo.",
-   "would_enter_if": "A fresh dossier with a dated milestone inside 2026 and a live-price edge check.",
+   "would_enter_if": "A fresh dossier and CRO TRADE survivor with a live-price check and a dated milestone inside 2026.",
    "intended_weight_pct": null,
-   "note": "Kept de-prioritized and tracked. It cannot be re-scored without a catalyst record.",
+   "note": "Carried unchanged. This promotion run supplied no fresh dossier.",
    "score": null,
    "edge_grade": null,
    "lane_canon": null,
@@ -4514,10 +5262,10 @@
   },
   {
    "symbol": "MGNI",
-   "blocked_by": "No cap is full (FIG is the only Forced_divest_flow holder and that driver is uncapped). It waits only on a fresh CRO survivor trade.",
-   "would_enter_if": "A fresh dossier confirming a dated forced-flow event inside 2026.",
+   "blocked_by": "No cap is full. It waits only on a fresh CRO survivor trade.",
+   "would_enter_if": "A fresh CRO survivor trade with a live-price check.",
    "intended_weight_pct": null,
-   "note": "Would add driver diversity to a book that is almost all FDA. There is no current catalyst record in the repo.",
+   "note": "Carried unchanged. This promotion run supplied no fresh dossier.",
    "score": null,
    "edge_grade": null,
    "lane_canon": null,
@@ -4541,11 +5289,39 @@
    "stance_change_rationale": null
   },
   {
-   "symbol": "EYPT",
-   "blocked_by": "No cap — FDA_clinical_readout and FDA/biotech carry no cap and there is no seat count. Blocked solely by the absence of a fresh CRO survivor dossier and live-price check this run.",
-   "would_enter_if": "A re-underwrite confirms the readout window still lands inside 2026 and the entry discount survives the compressed tape.",
+   "symbol": "CLVT",
+   "blocked_by": "No cap is full. It waits only on a fresh CRO survivor dossier.",
+   "would_enter_if": "A fresh CRO survivor dossier.",
    "intended_weight_pct": null,
-   "note": "Highest carried expected return (+89.6%) and therefore the name whose staleness costs the most; a +90% mark struck in June on a biotech tape that has since run is the single most likely stale number on this queue.",
+   "note": "Carried unchanged and still de-prioritized. This promotion run supplied no fresh dossier.",
+   "score": null,
+   "edge_grade": null,
+   "lane_canon": null,
+   "resolution_driver": "Forced_divest_flow",
+   "super_cluster": null,
+   "valuation_method": null,
+   "ev_pct": null,
+   "computed_rr": null,
+   "dated_milestone": null,
+   "entry_price": 2.21,
+   "entry_date": "2026-06-13",
+   "first_seen_date": "2026-06-13",
+   "expected_pct": null,
+   "cro_conditions": [],
+   "expression": {
+    "type": "equity"
+   },
+   "expression_intended": true,
+   "de_prioritized": false,
+   "deprioritization_rationale": null,
+   "stance_change_rationale": null
+  },
+  {
+   "symbol": "EYPT",
+   "blocked_by": "No cap: FDA_clinical_readout and FDA/biotech carry no cap and there is no seat count. It is blocked only because this run had no fresh CRO survivor dossier or live-price check.",
+   "would_enter_if": "A fresh CRO survivor dossier with a live-price check and a milestone inside 2026.",
+   "intended_weight_pct": null,
+   "note": "Carried unchanged and still de-prioritized.",
    "score": null,
    "edge_grade": null,
    "lane_canon": null,
@@ -4564,23 +5340,23 @@
     "type": "equity"
    },
    "expression_intended": true,
-   "de_prioritized": true,
-   "deprioritization_rationale": "The catalyst it was carried for has resolved: LUGANO missed its primary vision endpoint on 17-Aug-2026. What remains is a Q4-2026 LUCIA window, with any filing contingent on it in H1-2027 and DME readouts in Q4-2027, which is a new, weaker thesis that would need its own dossier rather than a carry.",
+   "de_prioritized": false,
+   "deprioritization_rationale": null,
    "stance_change_rationale": null
   },
   {
    "symbol": "DBVT",
-   "blocked_by": "No cap — same posture as BBIO: no head-count cap since 2026-07-28, driver and cluster uncapped. Waits on a fresh CRO dossier.",
-   "would_enter_if": "A re-sweep re-underwrites it with a dated 2026 milestone and an intact entry edge.",
+   "blocked_by": "No cap: the driver and cluster are uncapped and there is no head-count cap. It waits on a fresh CRO dossier.",
+   "would_enter_if": "A fresh CRO survivor dossier.",
    "intended_weight_pct": null,
-   "note": "Prior expected +43.6% (2026-06-23). Nothing new this run either way.",
-   "score": 4.0,
+   "note": "Carried unchanged and still de-prioritized.",
+   "score": 5.0,
    "edge_grade": "H",
    "lane_canon": "bio_convergence",
    "resolution_driver": "FDA_approval_decision",
    "super_cluster": "FDA/biotech",
    "valuation_method": "binary_prob",
-   "ev_pct": 0.7056,
+   "ev_pct": 1.5387,
    "computed_rr": null,
    "dated_milestone": "2026-11-28",
    "entry_price": 15.7,
@@ -4592,16 +5368,16 @@
     "type": "debit_spread"
    },
    "expression_intended": true,
-   "de_prioritized": true,
-   "deprioritization_rationale": "There is no binding date. The Q3-2026 submission has not been filed as of 29-Sep, and the value-resolving FDA approval decision lands around Q3-Q4 2027, beyond the 2026 fast-return horizon, so it is a pass on merit.",
+   "de_prioritized": false,
+   "deprioritization_rationale": null,
    "stance_change_rationale": null
   },
   {
    "symbol": "GERN",
-   "blocked_by": "No cap. The head-count cap cited against it was abolished 2026-07-28; driver and cluster are uncapped. It waits on a fresh CRO dossier.",
-   "would_enter_if": "A fresh dossier and live check confirm a dated 2026 milestone with the entry discount intact.",
+   "blocked_by": "No cap: the head-count cap was abolished on 2026-07-28, and the driver and cluster are uncapped. It waits on a fresh CRO dossier.",
+   "would_enter_if": "A fresh CRO survivor dossier.",
    "intended_weight_pct": null,
-   "note": "Newest carried name (2026-07-02, +45.7% expected) and therefore the least stale of the queue.",
+   "note": "Carried unchanged and still de-prioritized.",
    "score": null,
    "edge_grade": null,
    "lane_canon": null,
@@ -4620,16 +5396,16 @@
     "type": "equity"
    },
    "expression_intended": true,
-   "de_prioritized": true,
-   "deprioritization_rationale": "The carried FDA-approval driver fired back in 2024. The live IMpactMF interim-OS analysis is event-triggered, has slipped four times, and management's modal case is 'keep going' with the final analysis in H2-2028, far outside the fast-return horizon.",
+   "de_prioritized": false,
+   "deprioritization_rationale": null,
    "stance_change_rationale": null
   },
   {
    "symbol": "PVLA_PLACEHOLDER_REMOVED",
    "blocked_by": "n/a",
-   "would_enter_if": "n/a",
+   "would_enter_if": "n/a: this is a placeholder row, not a tradeable ticker.",
    "intended_weight_pct": null,
-   "note": "IGNORE — see passed[] for PVLA; this row is not a nomination.",
+   "note": "Carried unchanged because promotion mode says to re-nominate non-promoted names as they are. Flagged for the operator: this is a data artifact and should be removed from the on-deck ledger by hand.",
    "score": null,
    "edge_grade": null,
    "lane_canon": null,
@@ -4648,8 +5424,8 @@
     "type": "equity"
    },
    "expression_intended": true,
-   "de_prioritized": true,
-   "deprioritization_rationale": "This is not a real symbol: it is a leftover placeholder duplicating PVLA (still tracked on the watchlist). It is removed so it cannot be scored as a position.",
+   "de_prioritized": false,
+   "deprioritization_rationale": null,
    "stance_change_rationale": null
   }
  ],
@@ -4661,21 +5437,21 @@
    "first_seen_date": "2026-06-13",
    "de_prioritized": false,
    "deprioritization_rationale": null,
-   "lane_canon": "forced_seller",
+   "lane_canon": null,
    "resolution_driver": "Forced_divest_flow",
-   "super_cluster": "Idiosyncratic",
-   "valuation_method": "sop",
+   "super_cluster": null,
+   "valuation_method": null,
    "ev_pct": null,
-   "computed_rr": 6.31,
+   "computed_rr": null,
    "dated_milestone": null,
    "cro_conditions": [],
    "expression": {
     "type": "equity"
    },
    "blocked_by": "No cap is full. It waits only on a fresh CRO survivor dossier.",
-   "would_enter_if": "A CRO re-underwrite of the Altaris LS&H sale close (expected by 2026-12-31) after the 3-Nov-2026 Q3 print.",
+   "would_enter_if": "A fresh CRO survivor dossier.",
    "intended_weight_pct": null,
-   "note": "The tender and Russell legs have fired. The live remainder is the Altaris sale close by year-end, subject to regulatory approvals, and still inside the window."
+   "note": "Carried unchanged and still de-prioritized. This promotion run supplied no fresh dossier."
   },
   "BBIO": {
    "entry_price": 66.8,
@@ -4687,26 +5463,31 @@
    "lane_canon": null,
    "resolution_driver": "FDA_approval_decision",
    "super_cluster": null,
-   "valuation_method": null,
+   "valuation_method": "binary_prob",
    "ev_pct": null,
    "computed_rr": null,
-   "dated_milestone": null,
-   "cro_conditions": [],
+   "dated_milestone": "2026-11-27 FDA PDUFA target action date, BBP-418 NDA for LGMD2I/R9. Priority Review, no advisory committee planned. Reconfirmed in the Q3-2026 release dated 2026-10-29.",
+   "cro_conditions": [
+    "Equity only, with a limit of $76.50 or lower (about a 1:1 payoff against the 83/70 legs). Do not chase above $77.50, where the payoff ratio falls below about 0.75 and EV falls below about +4%.",
+    "Entry must fill before 2026-11-25. Do not open a new position in the last 2 sessions before the 2026-11-27 PDUFA.",
+    "Exit on the FDA action: take profit on approval (target ~$83, sell-the-news shaped). On a CRL or extension, exit and do not average down. If a 3-month major-amendment extension is announced before entry, the trade is void.",
+    "Do not use options for this trade (see tradeability). Do not lift the win leg for takeout optionality; it is undated and was not comp-verified in the dossier."
+   ],
    "expression": {
-    "type": "equity"
+    "type": "debit_spread"
    },
-   "blocked_by": "No cap is full (caps abolished 2026-08-11). The only thing stopping it is that it was not a CRO survivor this run, so it has no fresh dossier and no live-price check.",
-   "would_enter_if": "A fresh CRO dossier confirms the 27-Nov-2026 BBP-418 PDUFA edge at the live price, with a defined-risk expiry past the date.",
-   "intended_weight_pct": null,
-   "note": "Repo catalyst record: PDUFA 2026-11-27 under Priority Review, no advisory committee, debate verdict A. It resolves inside the fast-return window."
+   "blocked_by": "No cap is full; caps were abolished on 2026-08-11. Two things block it. (1) Expression gate: valuation_method=binary_prob allows only defined-risk structures, and the CRO found the only usable options untradeable (Jan-15-2027 80C quoted 3.80/7.80, about 69% wide; 80P about 45% wide; Dec-18 too close to the date and thin). The CRO's only acceptable trade is equity, which the binary gate forbids. (2) Entry price: at the live $79.2 the payoff is inverted (+4.8% / -11.6%, payoff ratio 0.41, EV +2.8%, breakeven win probability about 71%), so it does not clear the median held seat.",
+   "would_enter_if": "Before 2026-11-25 (no new entry in the last 2 sessions before the 2026-11-27 PDUFA), price trades at or below $76.50, where the payoff against the 83/70 legs is about 1:1 and EV about +6.4%, AND a defined-risk structure becomes quotable at a sane width, for example a Dec-18-2026 or Jan-15-2027 call spread with a combined bid/ask under about 15% of the debit. If the FDA extends the action date by 3 months before entry, the trade is void.",
+   "intended_weight_pct": 12.5,
+   "note": "Promotion run. The thesis is intact: Priority NDA, FORTIFY met every endpoint, no AdCom, the date was reconfirmed on 10-29, and Attruby plus $1.5B cash cushion a CRL. The trade is not intact: the stock ran from 66.8 to 79.2 into the date, so most of the approval (about 85%) is priced in, and BBP-418 is about $17/share of a $79 stock. The name stays tracked to its 2026-11-27 resolution so this call can be scored."
   },
   "EYPT": {
    "entry_price": 13.03,
    "entry_date": "2026-06-13",
    "expected_pct": 89.6,
    "first_seen_date": "2026-06-13",
-   "de_prioritized": true,
-   "deprioritization_rationale": "The catalyst it was carried for has resolved: LUGANO missed its primary vision endpoint on 17-Aug-2026. What remains is a Q4-2026 LUCIA window, with any filing contingent on it in H1-2027 and DME readouts in Q4-2027, which is a new, weaker thesis that would need its own dossier rather than a carry.",
+   "de_prioritized": false,
+   "deprioritization_rationale": null,
    "lane_canon": null,
    "resolution_driver": "FDA_clinical_readout",
    "super_cluster": null,
@@ -4718,10 +5499,10 @@
    "expression": {
     "type": "equity"
    },
-   "blocked_by": "No cap — FDA_clinical_readout and FDA/biotech carry no cap and there is no seat count. Blocked solely by the absence of a fresh CRO survivor dossier and live-price check this run.",
-   "would_enter_if": "A re-underwrite confirms the readout window still lands inside 2026 and the entry discount survives the compressed tape.",
+   "blocked_by": "No cap: FDA_clinical_readout and FDA/biotech carry no cap and there is no seat count. It is blocked only because this run had no fresh CRO survivor dossier or live-price check.",
+   "would_enter_if": "A fresh CRO survivor dossier with a live-price check and a milestone inside 2026.",
    "intended_weight_pct": null,
-   "note": "Highest carried expected return (+89.6%) and therefore the name whose staleness costs the most; a +90% mark struck in June on a biotech tape that has since run is the single most likely stale number on this queue."
+   "note": "Carried unchanged and still de-prioritized."
   },
   "PVLA": {
    "entry_price": 118.84,
@@ -4731,9 +5512,9 @@
    "de_prioritized": false,
    "deprioritization_rationale": null,
    "blocked_by": "No cap is full. It waits only on a fresh CRO survivor dossier; there is no current catalyst record in the repo.",
-   "would_enter_if": "A fresh dossier with a dated milestone inside 2026 and a live-price edge check.",
+   "would_enter_if": "A fresh dossier and CRO TRADE survivor with a live-price check and a dated milestone inside 2026.",
    "intended_weight_pct": null,
-   "note": "Kept de-prioritized and tracked. It cannot be re-scored without a catalyst record.",
+   "note": "Carried unchanged. This promotion run supplied no fresh dossier.",
    "lane_canon": null,
    "resolution_driver": "FDA_approval_decision",
    "super_cluster": null,
@@ -4751,23 +5532,23 @@
    "entry_date": "2026-06-23",
    "expected_pct": 43.6,
    "first_seen_date": "2026-06-23",
-   "de_prioritized": true,
-   "deprioritization_rationale": "There is no binding date. The Q3-2026 submission has not been filed as of 29-Sep, and the value-resolving FDA approval decision lands around Q3-Q4 2027, beyond the 2026 fast-return horizon, so it is a pass on merit.",
+   "de_prioritized": false,
+   "deprioritization_rationale": null,
    "lane_canon": "bio_convergence",
    "resolution_driver": "FDA_approval_decision",
    "super_cluster": "FDA/biotech",
    "valuation_method": "binary_prob",
-   "ev_pct": 0.7056,
+   "ev_pct": 1.5387,
    "computed_rr": null,
    "dated_milestone": "2026-11-28",
    "cro_conditions": [],
    "expression": {
     "type": "debit_spread"
    },
-   "blocked_by": "No cap — same posture as BBIO: no head-count cap since 2026-07-28, driver and cluster uncapped. Waits on a fresh CRO dossier.",
-   "would_enter_if": "A re-sweep re-underwrites it with a dated 2026 milestone and an intact entry edge.",
+   "blocked_by": "No cap: the driver and cluster are uncapped and there is no head-count cap. It waits on a fresh CRO dossier.",
+   "would_enter_if": "A fresh CRO survivor dossier.",
    "intended_weight_pct": null,
-   "note": "Prior expected +43.6% (2026-06-23). Nothing new this run either way."
+   "note": "Carried unchanged and still de-prioritized."
   },
   "MGNI": {
    "entry_price": 17.45,
@@ -4776,10 +5557,10 @@
    "first_seen_date": "2026-06-23",
    "de_prioritized": false,
    "deprioritization_rationale": null,
-   "blocked_by": "No cap is full (FIG is the only Forced_divest_flow holder and that driver is uncapped). It waits only on a fresh CRO survivor trade.",
-   "would_enter_if": "A fresh dossier confirming a dated forced-flow event inside 2026.",
+   "blocked_by": "No cap is full. It waits only on a fresh CRO survivor trade.",
+   "would_enter_if": "A fresh CRO survivor trade with a live-price check.",
    "intended_weight_pct": null,
-   "note": "Would add driver diversity to a book that is almost all FDA. There is no current catalyst record in the repo.",
+   "note": "Carried unchanged. This promotion run supplied no fresh dossier.",
    "lane_canon": null,
    "resolution_driver": null,
    "super_cluster": null,
@@ -4797,8 +5578,8 @@
    "entry_date": "2026-07-02",
    "first_seen_date": "2026-07-02",
    "expected_pct": 45.7,
-   "de_prioritized": true,
-   "deprioritization_rationale": "The carried FDA-approval driver fired back in 2024. The live IMpactMF interim-OS analysis is event-triggered, has slipped four times, and management's modal case is 'keep going' with the final analysis in H2-2028, far outside the fast-return horizon.",
+   "de_prioritized": false,
+   "deprioritization_rationale": null,
    "lane_canon": null,
    "resolution_driver": "FDA_approval_decision",
    "super_cluster": null,
@@ -4810,22 +5591,22 @@
    "expression": {
     "type": "equity"
    },
-   "blocked_by": "No cap. The head-count cap cited against it was abolished 2026-07-28; driver and cluster are uncapped. It waits on a fresh CRO dossier.",
-   "would_enter_if": "A fresh dossier and live check confirm a dated 2026 milestone with the entry discount intact.",
+   "blocked_by": "No cap: the head-count cap was abolished on 2026-07-28, and the driver and cluster are uncapped. It waits on a fresh CRO dossier.",
+   "would_enter_if": "A fresh CRO survivor dossier.",
    "intended_weight_pct": null,
-   "note": "Newest carried name (2026-07-02, +45.7% expected) and therefore the least stale of the queue."
+   "note": "Carried unchanged and still de-prioritized."
   },
   "PVLA_PLACEHOLDER_REMOVED": {
    "entry_price": null,
    "entry_date": "2026-08-04",
    "first_seen_date": "2026-08-04",
    "expected_pct": null,
-   "de_prioritized": true,
-   "deprioritization_rationale": "This is not a real symbol: it is a leftover placeholder duplicating PVLA (still tracked on the watchlist). It is removed so it cannot be scored as a position.",
+   "de_prioritized": false,
+   "deprioritization_rationale": null,
    "blocked_by": "n/a",
-   "would_enter_if": "n/a",
+   "would_enter_if": "n/a: this is a placeholder row, not a tradeable ticker.",
    "intended_weight_pct": null,
-   "note": "IGNORE — see passed[] for PVLA; this row is not a nomination.",
+   "note": "Carried unchanged because promotion mode says to re-nominate non-promoted names as they are. Flagged for the operator: this is a data artifact and should be removed from the on-deck ledger by hand.",
    "lane_canon": null,
    "resolution_driver": null,
    "super_cluster": null,
@@ -6059,6 +6840,222 @@
      "ret_pct": -6.25
     }
    }
+  },
+  {
+   "date": "2026-10-19",
+   "nav": 82.004,
+   "ret_pct": -17.996,
+   "n": 7,
+   "seats": {
+    "CLVT": {
+     "price": 1.76,
+     "ret_pct": -20.36
+    },
+    "BBIO": {
+     "price": 67.94,
+     "ret_pct": 1.71
+    },
+    "EYPT": {
+     "price": 0.44,
+     "ret_pct": -96.62
+    },
+    "PVLA": {
+     "price": 122.96,
+     "ret_pct": 3.47
+    },
+    "DBVT": {
+     "price": 8.97,
+     "ret_pct": -42.87
+    },
+    "MGNI": {
+     "price": 23.55,
+     "ret_pct": 34.96
+    },
+    "GERN": {
+     "price": 1.2,
+     "ret_pct": -6.25
+    }
+   }
+  },
+  {
+   "date": "2026-10-29",
+   "nav": 82.985,
+   "ret_pct": -17.015,
+   "n": 7,
+   "seats": {
+    "CLVT": {
+     "price": 1.76,
+     "ret_pct": -20.36
+    },
+    "BBIO": {
+     "price": 70.82,
+     "ret_pct": 6.02
+    },
+    "EYPT": {
+     "price": 0.3774,
+     "ret_pct": -97.1
+    },
+    "PVLA": {
+     "price": 147.47,
+     "ret_pct": 24.09
+    },
+    "DBVT": {
+     "price": 10.65,
+     "ret_pct": -32.17
+    },
+    "MGNI": {
+     "price": 21.77,
+     "ret_pct": 24.76
+    },
+    "GERN": {
+     "price": 0.9685,
+     "ret_pct": -24.34
+    }
+   }
+  },
+  {
+   "date": "2026-11-04",
+   "nav": 89.441,
+   "ret_pct": -10.559,
+   "n": 7,
+   "seats": {
+    "CLVT": {
+     "price": 2.165,
+     "ret_pct": -2.04
+    },
+    "BBIO": {
+     "price": 76.9942,
+     "ret_pct": 15.26
+    },
+    "EYPT": {
+     "price": 0.3857,
+     "ret_pct": -97.04
+    },
+    "PVLA": {
+     "price": 162.2,
+     "ret_pct": 36.49
+    },
+    "DBVT": {
+     "price": 9.85,
+     "ret_pct": -37.26
+    },
+    "MGNI": {
+     "price": 22.8,
+     "ret_pct": 30.66
+    },
+    "GERN": {
+     "price": 1.0242,
+     "ret_pct": -19.98
+    }
+   }
+  },
+  {
+   "date": "2026-11-06",
+   "nav": 95.534,
+   "ret_pct": -4.466,
+   "n": 7,
+   "seats": {
+    "CLVT": {
+     "price": 2.34,
+     "ret_pct": 5.88
+    },
+    "BBIO": {
+     "price": 74.29,
+     "ret_pct": 11.21
+    },
+    "EYPT": {
+     "price": 0.36,
+     "ret_pct": -97.24
+    },
+    "PVLA": {
+     "price": 175.92,
+     "ret_pct": 48.03
+    },
+    "DBVT": {
+     "price": 10.45,
+     "ret_pct": -33.44
+    },
+    "MGNI": {
+     "price": 27.39,
+     "ret_pct": 56.96
+    },
+    "GERN": {
+     "price": 0.9898,
+     "ret_pct": -22.67
+    }
+   }
+  },
+  {
+   "date": "2026-11-09",
+   "nav": 98.259,
+   "ret_pct": -1.741,
+   "n": 7,
+   "seats": {
+    "CLVT": {
+     "price": 2.37,
+     "ret_pct": 7.24
+    },
+    "BBIO": {
+     "price": 77.93,
+     "ret_pct": 16.66
+    },
+    "EYPT": {
+     "price": 0.3619,
+     "ret_pct": -97.22
+    },
+    "PVLA": {
+     "price": 174.08,
+     "ret_pct": 46.48
+    },
+    "DBVT": {
+     "price": 11.05,
+     "ret_pct": -29.62
+    },
+    "MGNI": {
+     "price": 29.04,
+     "ret_pct": 66.42
+    },
+    "GERN": {
+     "price": 0.9965,
+     "ret_pct": -22.15
+    }
+   }
+  },
+  {
+   "date": "2026-11-10",
+   "nav": 97.169,
+   "ret_pct": -2.831,
+   "n": 7,
+   "seats": {
+    "CLVT": {
+     "price": 2.36,
+     "ret_pct": 6.79
+    },
+    "BBIO": {
+     "price": 79.27,
+     "ret_pct": 18.67
+    },
+    "EYPT": {
+     "price": 0.3939,
+     "ret_pct": -96.98
+    },
+    "PVLA": {
+     "price": 165.9538,
+     "ret_pct": 39.64
+    },
+    "DBVT": {
+     "price": 11.4521,
+     "ret_pct": -27.06
+    },
+    "MGNI": {
+     "price": 28.667,
+     "ret_pct": 64.28
+    },
+    "GERN": {
+     "price": 0.9579,
+     "ret_pct": -25.16
+    }
+   }
   }
  ],
  "watchlist_history": [
@@ -6917,6 +7914,102 @@
    "prior_status": "deprioritized",
    "new_status": "watchlisted",
    "rationale": null
+  },
+  {
+   "date": "2026-11-10",
+   "symbol": "BBIO",
+   "event": "CARRIED",
+   "prior_status": "watchlisted",
+   "new_status": "watchlisted",
+   "rationale": null
+  },
+  {
+   "date": "2026-11-10",
+   "symbol": "PVLA",
+   "event": "CARRIED",
+   "prior_status": "watchlisted",
+   "new_status": "watchlisted",
+   "rationale": null
+  },
+  {
+   "date": "2026-11-10",
+   "symbol": "MGNI",
+   "event": "CARRIED",
+   "prior_status": "watchlisted",
+   "new_status": "watchlisted",
+   "rationale": null
+  },
+  {
+   "date": "2026-11-10",
+   "symbol": "CLVT",
+   "event": "PASSED_OFF_DECK",
+   "prior_status": "watchlisted",
+   "new_status": "deprioritized",
+   "rationale": "Catalyst resolved: the forced-divest index event has FIRED and failed (the Russell reconstitution already happened). The fresh debate is verdict C and the skeptic is REFUTED, so it exits the on-deck book."
+  },
+  {
+   "date": "2026-11-10",
+   "symbol": "BBIO",
+   "event": "CARRIED",
+   "prior_status": "watchlisted",
+   "new_status": "watchlisted",
+   "rationale": null
+  },
+  {
+   "date": "2026-11-10",
+   "symbol": "PVLA",
+   "event": "CARRIED",
+   "prior_status": "watchlisted",
+   "new_status": "watchlisted",
+   "rationale": null
+  },
+  {
+   "date": "2026-11-10",
+   "symbol": "MGNI",
+   "event": "CARRIED",
+   "prior_status": "watchlisted",
+   "new_status": "watchlisted",
+   "rationale": null
+  },
+  {
+   "date": "2026-11-10",
+   "symbol": "CLVT",
+   "event": "RE_CHAMPIONED",
+   "prior_status": "deprioritized",
+   "new_status": "watchlisted",
+   "rationale": null
+  },
+  {
+   "date": "2026-11-10",
+   "symbol": "EYPT",
+   "event": "RE_CHAMPIONED",
+   "prior_status": "deprioritized",
+   "new_status": "watchlisted",
+   "rationale": null
+  },
+  {
+   "date": "2026-11-10",
+   "symbol": "DBVT",
+   "event": "RE_CHAMPIONED",
+   "prior_status": "deprioritized",
+   "new_status": "watchlisted",
+   "rationale": null
+  },
+  {
+   "date": "2026-11-10",
+   "symbol": "GERN",
+   "event": "RE_CHAMPIONED",
+   "prior_status": "deprioritized",
+   "new_status": "watchlisted",
+   "rationale": null
+  },
+  {
+   "date": "2026-11-10",
+   "symbol": "PVLA_PLACEHOLDER_REMOVED",
+   "event": "RE_CHAMPIONED",
+   "prior_status": "deprioritized",
+   "new_status": "watchlisted",
+   "rationale": null
   }
  ],
  "promotions": [
@@ -6983,6 +8076,13 @@
    "pending": [],
    "cap_violations": 0,
    "memo": ""
+  },
+  {
+   "date": "2026-11-10",
+   "added": [],
+   "pending": [],
+   "cap_violations": 0,
+   "memo": "Promotion run, no seat added; the held book is unchanged: AGIO, SVRA and ANNX, each at 16.67% of NAV, all in FDA/biotech. The only survivor was BBIO, my own first-in-line nomination. It fails two separate tests at today's price and window. First, edge: at $79.2 (up 18.6% since the June $66.8 mark) the 83/70 legs give +4.8% / -11.6%, a payoff ratio of 0.41 and an EV of only +2.8%, carried entirely by the 0.88 approval probability. That is sell-the-news shaped and not as good as the median seat already held, so adding it would shrink every held seat to 12.5% for a thinner bet. Second, expression: it is a binary_prob name, so the hard gate allows only defined-risk structures, but the CRO priced the options as untradeable (Jan-27 80C about 69% wide, 80P about 45% wide) and approved equity only. There is no compliant structure. I kept BBIO on the watchlist as de-prioritized, with a concrete re-entry (at or below $76.50 plus a quotable defined-risk spread, filled before 11-25), so the call is scored at the 11-27 PDUFA rather than silently dropped. The other carried names are re-nominated unchanged, with no stance change, because this run supplied no fresh dossiers on them. Operator flag: 'PVLA_PLACEHOLDER_REMOVED' is a placeholder artifact in the on-deck ledger and should be cleaned up by hand. Cluster mix: 100% FDA/biotech across 3 seats (2 approval decisions, 1 clinical readout). This concentration is a judgement call, not a rule breach, and I would welcome driver diversity from the next full run. Regime notes: the M&A/XBI regime block is dated 2026-07 and is stale as of today (2026-11-10), so I ignored it. I did not lift the BBIO win leg for takeout. The DISCIPLINE phase is advisory only. It would actually favour BBP-418, an approval with near-term launch revenue that pays cash soon, so the pass is driven by price and expression, not by the phase."
   }
  ],
  "corrections": [
