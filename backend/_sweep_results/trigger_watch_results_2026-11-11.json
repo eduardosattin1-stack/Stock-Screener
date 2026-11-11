@@ -1,0 +1,21 @@
+{
+  "checked": 2,
+  "results": [
+    {
+      "symbol": "WFRD",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "2026-11-13",
+      "note": "As of 2026-11-11 the redomicile has not closed: the latest company disclosure (8-K / press release 2026-10-27, Irish High Court approval) still guides to completion on 2026-11-13 subject to customary conditions, and a web search found no completion notice, delay, or S&P index-add announcement. Based on one web search only; FMP was not checked."
+    },
+    {
+      "symbol": "MFIC",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "",
+      "note": "ARCC/MFIC merger still pending: MFIC's Q3 release (GlobeNewswire, 2026-11-05) restates the $10.88/sh deal ($9.67 ARCC stock + $1.21 cash) and the 11-05 date was only the cancelled earnings call, not a deal milestone; SEC filings through 2026-11-05 show only 425s/8-K/10-Q, with no S-4/joint proxy or vote dates yet, and close is still guided to 1H-2027. Tilt neutral: Q3 NII $0.34 missed and NAV fell 3.8% to $12.86, a $0.31 dividend was declared (record 12-08, pay 12-22), and only routine plaintiff-firm \"investigation\" notices have appeared."
+    }
+  ]
+}
