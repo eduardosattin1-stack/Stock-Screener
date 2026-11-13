@@ -412,6 +412,103 @@ def consume_skeptic(apx, apex_file: Path, skep_dir: Path, conviction_field: str 
     return apx
 
 
+# FRESH VIEW (2026-11-12 reliability review). Scored over 34 run dates, a record that was carried
+# forward (not re-debated that week) lagged the same week's pool by 0.6 points over the next four
+# weeks while a freshly debated one led it by 0.6, and it beat the pool on 3 of 20 dates against 24
+# of 34. A carried or stale record is therefore "no current view" for a NEW purchase: a name that is
+# not already held may only be seated on a FULL debate no older than FRESH_VIEW_D days. Held seats
+# are untouched here - they have their own monthly full refresh (_seat_triggers #4).
+FRESH_VIEW_D = 21
+FRESH_VIEW_REQUESTS = "_fresh_view_requests.json"   # read by prep: these names get a full debate next run
+
+
+def days_since_full_debate(record, today=None):
+    """Whole days since the record's last FULL underwrite, or None when it carries no such stamp."""
+    lfd = str((record or {}).get("last_full_debate") or "")[:10]
+    if not lfd:
+        return None
+    try:
+        t = _dt.fromisoformat(str(today)[:10]) if today else _dt.now()
+        return (t.date() - _dt.fromisoformat(lfd).date()).days
+    except Exception:
+        return None
+
+
+def has_fresh_view(record, today=None, max_days=FRESH_VIEW_D):
+    """True when the record is a full debate no older than max_days. With no stamp at all, a record
+    debated this run counts as fresh and a carried one does not (its age is unknown, so unproven)."""
+    age = days_since_full_debate(record, today)
+    if age is None:
+        return not bool((record or {}).get("carried"))
+    return age <= max_days
+
+
+def fresh_view_gate(apx, rows_by_sym, held, out_dir=None, today=None, max_days=FRESH_VIEW_D,
+                    memo_keys=("value_memo", "director_memo")):
+    """Deterministic backstop for the Director's NEW-SEAT FRESHNESS rule. A seat that is NOT already
+    held and rests on a record with no fresh full debate is moved to the front of runner_ups, the memo
+    gets a dated correction (same contract as the skeptic demotion), and the name is written to the
+    fresh-view request file so prep re-debates it in full next run. Runner-ups the Director itself
+    marked needs_fresh_debate are requested too. Idempotent. Returns the list of demoted symbols.
+    rows_by_sym: {symbol: grade-input row or debate record} carrying last_full_debate / carried.
+    held: set of symbols already owned (never demoted here)."""
+    held = set(held or ())
+    keep, demoted = [], []
+    for p in apx.get("apex_basket", []) or []:
+        sym = p.get("symbol")
+        row = (rows_by_sym or {}).get(sym)
+        if sym in held or row is None or has_fresh_view(row, today, max_days):
+            keep.append(p)
+            continue
+        age = days_since_full_debate(row, today)
+        p["fresh_view_demoted"] = True
+        p["seat_status"] = "NOT SEATED - no fresh full debate behind this new seat"
+        p["fresh_view_note"] = (f"last full debate {age} days ago" if age is not None
+                                else "carried record with no full-debate date")
+        demoted.append(p)
+    requests = {}
+    for p in demoted:
+        requests[p["symbol"]] = "new value seat without a fresh full debate (" + p["fresh_view_note"] + ")"
+    for r in apx.get("runner_ups", []) or []:
+        if not (isinstance(r, dict) and r.get("symbol")):
+            continue
+        if r.get("fresh_view_demoted"):                 # demoted by an earlier run of this layer - keep the request
+            requests.setdefault(r["symbol"], "new value seat without a fresh full debate ("
+                                + str(r.get("fresh_view_note") or "stale record") + ")")
+        elif r.get("needs_fresh_debate"):
+            requests.setdefault(r["symbol"], "the value Director asked for a fresh full debate before seating it")
+    if demoted:
+        dsyms = {d["symbol"] for d in demoted}
+        apx["apex_basket"] = keep
+        apx["runner_ups"] = demoted + [r for r in (apx.get("runner_ups") or [])
+                                       if (r.get("symbol") if isinstance(r, dict) else r) not in dsyms]
+        note = ("[POST-LAYER CORRECTION - " + _dt.now().strftime("%Y-%m-%d") + "] New seat(s) moved to "
+                "runner-ups because the record behind them is not a fresh full debate (limit "
+                + str(max_days) + " days): "
+                + ", ".join(f"{d['symbol']} ({d['fresh_view_note']})" for d in demoted)
+                + ". Each is scheduled for a full debate next run. Any sentence below that describes one "
+                "of them as added or seated is superseded - the apex_basket field above is the book.\n\n")
+        for mk in memo_keys:
+            if isinstance(apx.get(mk), str) and apx[mk]:
+                if "no fresh full debate" not in apx[mk][:400] and note[:60] not in apx[mk]:
+                    apx[mk] = note + apx[mk]
+                break
+        apx["fresh_view_demoted"] = sorted(dsyms)
+        print(f"WARN fresh-view: {sorted(dsyms)} moved to runner-ups - new seat(s) without a full debate "
+              f"inside {max_days} days; scheduled for a full debate next run")
+    if out_dir is not None:
+        try:
+            (Path(out_dir) / FRESH_VIEW_REQUESTS).write_text(
+                json.dumps({"written": _dt.now().strftime("%Y-%m-%d"), "requests": requests},
+                           ensure_ascii=False, indent=1), encoding="utf-8")
+        except Exception as e:
+            print(f"WARN fresh-view: could not write the request file ({e})")
+    if not demoted:
+        print(f"fresh-view: every new seat rests on a full debate inside {max_days} days"
+              + (f" | {len(requests)} runner-up(s) queued for a fresh debate: {sorted(requests)}" if requests else ""))
+    return [d["symbol"] for d in demoted]
+
+
 # EQUAL WEIGHT (2026-07-24, Bruno's call). Every book publishes equal weight. Evidence: across 2151
 # dated debate records the Director's conviction had NO monotone relation to forward return (buckets
 # 1-5: +1.36/+1.48/+1.94/+1.22/+1.69%) and its TOP grade was its WORST bucket (verdict-A -1.92%, 38%

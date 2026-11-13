@@ -180,15 +180,22 @@ def _parse_auction_rows(payload) -> list:
             btc = 0.0
         if btc <= 0:
             continue
+        # SCHEMA DRIFT (fixed 2026-11-12). TreasuryDirect renamed the three fields this parser reads -
+        # auctionDate -> competitiveAuctionCloseDate, indirectBidderAccepted ->
+        # indirectBiddersCompetitiveParAwarded, totalAccepted -> grandTotalParAwarded - and every row
+        # was then dropped at the date check with no error. The cache stopped on 2026-07-27, so
+        # auction_quality published as "missing" (a 0.5 default) for fifteen weeks. Both spellings are
+        # read; the new names reproduce the cached indirect share to four decimals on all 18
+        # auctions the two windows share (e.g. 2026-06-10 10y 0.7804, 2026-07-09 30y 0.7026).
         ind_pct = None
         try:
-            ind = float(a.get("indirectBidderAccepted") or 0)
-            tot = float(a.get("totalAccepted") or 0)
+            ind = float(a.get("indirectBidderAccepted") or a.get("indirectBiddersCompetitiveParAwarded") or 0)
+            tot = float(a.get("totalAccepted") or a.get("grandTotalParAwarded") or 0)
             if tot > 0:
                 ind_pct = ind / tot
         except (TypeError, ValueError):
             pass
-        d = str(a.get("auctionDate") or "")[:10]
+        d = str(a.get("auctionDate") or a.get("competitiveAuctionCloseDate") or "")[:10]
         if not d:
             continue
         sec_term = str(a.get("securityTerm") or "")

@@ -681,7 +681,11 @@ RUBRIC - four pillars ~25 pts each, applied ONLY to names that clear the gate:
 
 ROTATION DISCIPLINE (continuity - you are ACCOUNTABLE TO YOUR OWN PRIOR CALLS): FIRST read backend/_opus_debate/_director_ledger_value.txt - it lists your currently-HELD names (entry date + why you picked each) and EVERY name you DROPPED in 2026. Treat this run as a ROTATION of last week's book, NOT a blank re-pick: (1) KEEP each held name UNLESS its thesis is BROKEN (price through thesis_break_px, a forensic/solvency flip, or confirmed moat terminal-erosion) OR you have a STRICTLY-BETTER orthogonal name for that seat - and say which. Re-grading a hair lower is NOT a reason to drop a held compounder. (2) You MAY RE-ADD a name you previously dropped, but ONLY by citing a DOCUMENTED THESIS CHANGE since the drop date (new filing/guidance, a materially lower price, a resolved overhang) - a merely-better grade is NOT a thesis change. You may override this, but you must OWN it in writing in whats_changed (do not exit a name only to re-add it days later with no new fact). (3) SECULAR-LOAD: this is a deep-value book, so it skews to structurally-challenged names - compute book_secular_load_pct = % of your apex carrying material/terminal secular_threat OR an ERODING moat; if it exceeds ~60% you MUST defend the whole-book decline beta in the memo (theme diversification does NOT remove the shared junk/flight-to-quality factor). Seat >=2 CLEAN ANCHORS (WIDE/NARROW moat + non-eroding trend + manageable/none threat, NTES-type) as ballast; if you cannot, justify it. (4) ENTRY DISCIPLINE (2026-09-08): a KEEP is a PAPER POSITION ALREADY HELD - it means "do not sell", NEVER "buy at today's price". Every KEEP line in the memo's ROTATION subsection MUST carry the held-since date + entry price (from the ledger) and, for a seat whose debate grade is B ("wait for a better price", "wait for proof" or "wait for the event") or C ("pass for now"), the add level or event (the row's typed `entry_level_px` / `entry_event` when present, else the CRO's prose - e.g. "held since 31 Aug at NOK 111 - not a buy here; adds near NOK 105 or on the early-November print"). Do NOT write "no name graded pass for now is seated" as though it settled entry timing - grade C is "pass for now", grade B is "wait", and B IS seated on the rotation rule: say how many seats are wait-graded and what each one waits for. A seat at or above its trim line (`trim_line_hit`) or an A re-derived below the entry floor (`grade_rederived`) is not a buy at today's price either - say so on its KEEP line. The deterministic post layer reconciles entry_posture to the grade (below) and appends its own ENTRY DISCIPLINE block to your memo. (5) PENDING ENTRY (2026-10-06): a name the ledger lists under PENDING ENTRY is seated but NOT bought yet (no entry price, not in the NAV) - KEEP leaves its order resting on its gate, switching it to an enter-now posture re-dates the order to this run (it fills at the next close), and dropping it costs nothing only if its gate has not been met yet (an order whose gate was met before this run is booked as a buy, and the drop then logs a closed leg); never give a pending seat a held-since date or an entry price.
 
-BOOK SIZE IS NOT FIXED (2026-07-24, Bruno): there is no seat target. Seat EVERY name that clears the constraints below and survives the correlation stress - if that is 6, seat 6; if it is 18 and each genuinely earns its place, seat 18. Do NOT pad to a round number and do NOT stop early on one. THE DISCIPLINE THAT REPLACES A SEAT CAP IS DILUTION: the book is EQUAL-WEIGHTED, so each seat you add shrinks every other seat - add a name ONLY if it is at least as good as your CURRENT MEDIAN seat on value_score and margin of safety. State the final count in the memo with one line on why the book is that size this week.
+BOOK SIZE IS NOT FIXED (2026-07-24, Bruno): there is no seat target. Seat EVERY name that clears the constraints below and survives the correlation stress - if that is 6, seat 6; if it is 18 and each genuinely earns its place, seat 18. Do NOT pad to a round number and do NOT stop early on one. THE DISCIPLINE THAT REPLACES A SEAT CAP IS DILUTION: the book is EQUAL-WEIGHTED, so each seat you add shrinks every other seat - add a name ONLY if its `sop_mos_pct` (the discount to the reconciled fair value, computed by code from the debate numbers and the live price) is at least the MEDIAN `sop_mos_pct` of the seats you already hold. RANK CANDIDATES BY `sop_mos_pct`, NOT BY `value_score` (2026-11-12 reliability review, scored over 34 run dates and 43 closed trades): your value_score did not rank outcomes - the higher-scored half of this book's closed trades returned +2.7% against +9.3% for the lower-scored half, grade A did no better than grade B, and value_conviction 4 did no better than 3. What DID separate winners from losers was the filter (a pass grade and value_conviction 2 or lower lagged on almost every date) and, on the two dates with typed prices, the size of the gap to fair value. So: use the gates, the hard constraints and the correlation stress to decide who is ELIGIBLE, then order the eligible names by `sop_mos_pct` and take them in that order. value_score is still emitted (it is the four-pillar record of why a name qualified) but it is NOT the bar for a seat and must not be used to prefer one eligible name over another. Never ADD a name whose `debate_verdict` is C or whose `value_conviction` is 2 or lower (a seat you already hold stays governed by the ROTATION DISCIPLINE above). State the final count in the memo with one line on why the book is that size this week, and name the median `sop_mos_pct` you used as the bar.
+
+NEW-SEAT FRESHNESS (2026-11-12, hard): a name you do NOT already hold may be seated only when its row has `fresh_view`=true - a FULL debate no more than 21 days old (`days_since_full_debate`). A carried or older record is NO CURRENT VIEW: it lagged the same week's pool on 17 of 20 scored dates, so it cannot justify a new purchase however cheap it looks. Put such a name in runner_ups with `needs_fresh_debate`: true and the trigger "full debate first"; the pipeline then debates it in full next run and you can seat it on that. The deterministic post layer enforces this and moves any violating new seat to runner-ups, so do not rely on it slipping through. This rule never applies to a seat you already hold - held seats are re-debated in full at least every 28 days by the pipeline.
+
+SECOND OPINION (context, 2026-11-12): a row may carry `second_opinion` - the latest read of our record by an independent second model (status confirmed / repriced / disagreement, its base value against ours, and any value its skeptic revised ours to). It is CONTEXT for your rationale, never a gate, a score input or a reason by itself to add, drop or resize a seat: a repricing was already sent back into the debate to be checked against primary sources, and the row you are reading reflects what that check found. If a held seat carries `second_opinion`.status repriced or disagreement AND its `days_since_full_debate` is still older than the opinion week, say in its KEEP line that the correction has not yet been re-underwritten.
 
 HARD CONSTRAINTS: <=3 names per sector. Every apex name must (a) clear forensic_gate, (b) survive cyclical-peak normalization with a STILL-POSITIVE normalized MoS, (c) be cheap on TRUE peers, (d) not be a value trap, (e) MATCH the moat terminal-erosion teeth in size: a `moat_erosion`="CAP" name (falling returns OR eroding margins + decelerating revenue) MUST carry `size_units` <= 0.5 (the deterministic post already half-caps it; your number must agree) - NARROW WASHOUT EXCEPTION (2026-07-21): if that CAP name is ALSO a deep-drawdown entry (`pct_off_52w_high` >= 0.35) with `moat` WIDE/NARROW and `moat_trend` STABLE/WIDENING (never ERODING), the cap relaxes to `size_units` <= 0.75 (the post applies the same 0.75; a cyclical returns-dip during the very drawdown that creates the entry is not terminal erosion), and an `erosion_severity`="value-destroying" name (sub-cost-of-capital AND eroding - `roic_below_hurdle`=true) is apex-INELIGIBLE unless the skeptic CONFIRMS a durable moat. Use `moat`/`moat_trend`/`moat_score` as the moat read: a low multiple on a structurally-shrinking base (high-but-FALLING ROIC, eroding gross margin) is a value trap, NOT value - this is SEPARATE from the cyclical-peak gate (an earnings cycle high), which still applies.
 
@@ -745,6 +749,12 @@ def value_input():
     sys.path.insert(0, str(ROOT))
     import _post_common as _pc
     _vi_floor = _pc.entry_floor_pct(_pc.current_quadrant(ROOT))
+    # the second model's last read of each seat, in brief (2026-11-12) - context for the Director's
+    # rationale; the full claim text went into the debate bundle, where it is verified, not here
+    _so_brief = {}
+    for _s, _b in _second_opinion_blocks(run_pickup=False).items():
+        _so_brief[_s] = {k: _b.get(k) for k in ("week", "status", "their_base_fv_px", "our_base_fv_px",
+                                                "skeptic_revised_fv_px", "skeptic_severity")}
     out = []
     for f in res_files:
         try:
@@ -909,6 +919,13 @@ def value_input():
             # X5 carry-awareness: the value re-grade must SEE a carried (not re-debated) record -
             # its numbers date from carried_from, restamped only for price/as_of.
             "carried": bool(r.get("carried")), "carried_from": r.get("carried_from", ""),
+            # FRESH VIEW (2026-11-12): how old the last FULL underwrite is. `as_of` is restamped on every
+            # carry, so it says nothing about the age of the thesis work; this does. A name that is not
+            # already held needs fresh_view=true to be seated (_post_common.fresh_view_gate backs it up).
+            "last_full_debate": str(r.get("last_full_debate") or "")[:10],
+            "days_since_full_debate": _pc.days_since_full_debate(r),
+            "fresh_view": _pc.has_fresh_view(r),
+            "second_opinion": _so_brief.get(sym),
             "secular_threat": r.get("secular_threat", ""), "secular_theme": r.get("secular_theme", ""),
         })
     # Freshness stamp (the proven lesson from the weekly TTM "as of" block, applied to the one path
@@ -3162,6 +3179,21 @@ def fr_publish(push_gcs=False):
             chain_n[cid] = chain_n.get(cid, 0) + 1
     breaches = {cid: round(w, 2) for cid, w in chain_w.items() if w > 30.0 + 0.5}
     count_breaches = {cid: n for cid, n in chain_n.items() if n > 3}
+    # EQUAL-WEIGHT REGIME (2026-11-10, Bruno: "relax the guard" - port of the mining/FDT carve-out
+    # below): while _post_common.EQUAL_WEIGHT_BOOKS is on the published vector is 1/n, so a chain's
+    # share is ONLY its seat count - 3 seats of 8 IS 37.5% on every conforming slate (a 2-chain name
+    # such as PH counts toward both). That is arithmetic, not a sizing error, and every cap is
+    # advisory under equal weighting (CLAUDE.md FORK 2/B). The weight bound stops the publish only
+    # when the chain ALSO breaks the <=3-name rule or the book is genuinely size-weighted.
+    _equal = any(str(p.get("weight_basis") or "") == "equal" for p in picks)
+    if _equal:
+        advisory = {cid: w for cid, w in breaches.items() if cid not in count_breaches}
+        breaches = {cid: w for cid, w in breaches.items() if cid in count_breaches}
+        for cid, w in sorted(advisory.items()):
+            print(f"NOTE fr publish: chain:{cid} is {w}% of published weight ({chain_n.get(cid)} of "
+                  f"{len(picks)} EQUAL seats, >30%) - arithmetic under equal weighting, within the "
+                  f"<=3-name rule, NOT a publish stop. The weight bound binds again if "
+                  f"EQUAL_WEIGHT_BOOKS is flipped off (a sizing change - score the cycle ledger first).")
     if breaches or count_breaches:
         print(f"GUARD fr publish: chain cap breach AFTER post - weight {breaches} (>30%) / count "
               f"{count_breaches} (>3 names) - report and stop; fix the Director slate / re-run fr-post "
@@ -5452,7 +5484,8 @@ def _book_record_age_days(r, rf, now):
 
 
 def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant, age_allowed=None, legacy_level=None,
-                     live_px=None, hist_close_fn=None, report_rows_fn=None):
+                     live_px=None, hist_close_fn=None, report_rows_fn=None, value_seats=None,
+                     second_opinion=None, fresh_requests=None):
     """Return ("debate", reason, prior_record_or_None) or ("carry", reason, prior_record).
     The prior record rides along on the DEBATE branch too (2026-07-08 continuity fix) so prep can
     embed it in the input bundle - a re-debated name must know what it said last week.
@@ -5497,6 +5530,25 @@ def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant, age_allowed=Non
                 return "debate", f"quarterly full refresh (last full underwrite {lfd_age:.0f}d ago)", pr
         except Exception:
             pass
+    # T4b / T7 (2026-11-12 reliability review, _seat_triggers #4 + #5). The value book is followed with
+    # real money, yet its held seats were the least-examined names in the pool (a delta a week, a full
+    # underwrite only at 91 days: DUE.DE sat 78 days). A VALUE seat now re-underwrites in full at
+    # least every ST.VALUE_SEAT_FULL_D days, and ANY seat the second model repriced, disagreed with or
+    # materially corrected since its last full debate re-underwrites so the correction is checked
+    # rather than dropped. Both only schedule analysis - they never move a seat, weight or grade.
+    if value_seats and sym in value_seats:
+        _why = ST.value_seat_refresh(pr, datetime.now().strftime("%Y-%m-%d"))
+        if _why:
+            return "debate", _why, pr
+    if is_seat and second_opinion:
+        _why = ST.second_opinion_trigger(pr, second_opinion.get(sym))
+        if _why:
+            return "debate", _why, pr
+    # FRESH-VIEW REQUEST (2026-11-12): the value post layer (or the value Director) asked for a full
+    # debate before this name can be seated - a carried record is no current view for a new purchase.
+    # Without this a runner-up stays in delta mode indefinitely and could never earn its seat.
+    if fresh_requests and sym in fresh_requests and not _pc_has_fresh_view(pr):
+        return "debate", f"fresh view requested ({str(fresh_requests[sym])[:90]})", pr
     # new transcript since the prior debate. FIX 2026-07-11 (first tier-select run: seats-delta=0):
     # prior records never carry transcript_date (the debate schema doesn't write it), so the old
     # `latest > prior_tx=""` comparison fired for EVERY name with any transcript at all - spurious
@@ -5554,8 +5606,194 @@ def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant, age_allowed=Non
     return "carry", "no debate-relevant change", pr
 
 
+# ── PREP SAFETY (2026-11-12 reliability review) ──────────────────────────────────────────────────
+# Two failures on 2026-11-10 cost a week's publish and nearly a held seat:
+#   (1) THREE weekly runs shared this working directory. A forced prep archived results_regime/
+#       under a run that was still debating; that run guard-stopped and never published.
+#   (2) prep archives the prior run FIRST and reads its live inputs AFTER. gcs_io.gcs_read_json gives
+#       up after 15 s and returns None for a timeout exactly as for a missing file, so on a slow link
+#       `baskets` became {} with no error: the Director ledger said "HELD NOW (0)" and ROCK, a live
+#       position the screen no longer listed, was dropped from the universe without a word.
+# Both are closed here. prep now (a) refuses to start while another run is in flight, and (b) reads
+# and validates every live input BEFORE it moves a single file - a failure stops with nothing changed.
+RUN_LOCK_H = 24                       # a run that started within this window and has not published is "in flight"
+RUN_STATE = ROOT / "_run_state.json"
+
+
+def _read_live_json(path, tries=3, cat_timeout=420):
+    """(obj, how) for one live GCS object: the normal reader with retries, then `gcloud storage cat`
+    (which kept working at ~5 KB/s on 2026-11-10 when the 15-second HTTP read did not).
+    (None, "unreadable") when every route fails - the caller decides whether that is fatal."""
+    import time as _t
+    import subprocess as _sp
+    for i in range(tries):
+        try:
+            obj = gcs_io.gcs_read_json(path)
+        except Exception:
+            obj = None
+        if obj:
+            return obj, ("gcs" if i == 0 else f"gcs, attempt {i + 1}")
+        _t.sleep(2 * (i + 1))
+    try:
+        r = _sp.run(f'gcloud storage cat "gs://{gcs_io.GCS_BUCKET}/{path}"', shell=True,
+                    capture_output=True, timeout=cat_timeout)
+        if r.returncode == 0 and r.stdout:
+            return json.loads(r.stdout.decode("utf-8")), "gcloud storage cat"
+    except Exception:
+        pass
+    return None, "unreadable"
+
+
+def _symbols_of(rows):
+    return [p.get("symbol") for p in (rows or []) if isinstance(p, dict) and p.get("symbol")]
+
+
+def _pc_has_fresh_view(pr):
+    """_post_common.has_fresh_view without a module-level import (the post layers live in ROOT)."""
+    if str(ROOT) not in sys.path:
+        sys.path.insert(0, str(ROOT))
+    import _post_common as _pc
+    return _pc.has_fresh_view(pr)
+
+
+def _run_in_flight(now=None, state_path=None, published_path=None, window_h=RUN_LOCK_H):
+    """Reason string when another weekly run started inside the window and has not published, else None.
+    "Published" = the staged frontend baskets file is newer than that run's start (publish_to_frontend
+    writes it just before the GCS push). Pure apart from two stat/reads, so it is unit-testable."""
+    sp = Path(state_path) if state_path else RUN_STATE
+    pp = Path(published_path) if published_path else (E.FRONTEND_DIR / "public" / "speculair_baskets.json")
+    try:
+        st = json.load(open(sp, encoding="utf-8"))
+        started = datetime.fromisoformat(str(st.get("started_at"))[:19])
+    except Exception:
+        return None                                    # no state, or unreadable -> nothing to protect
+    now = now or datetime.now()
+    age_h = (now - started).total_seconds() / 3600
+    if age_h < 0 or age_h > window_h:
+        return None
+    try:
+        if datetime.fromtimestamp(pp.stat().st_mtime) > started:
+            return None                                # that run reached publish - it is finished
+    except Exception:
+        pass
+    return (f"a weekly run started {age_h:.1f}h ago (pid {st.get('pid')}, {st.get('started_at')}) "
+            f"and has not published")
+
+
+GEMINI_ROOT = Path(r"C:\Users\Bruno\Documents\Speculair")     # same root as gemini_confirm/export_week.py
+
+
+def _second_opinion_blocks(root=None, confirmations=None, run_pickup=True):
+    """{symbol: second-opinion block} from the latest collected Gemini week (2026-11-12).
+    First collects the newest hand-off week if the Antigravity routine finished it (GEMINI_DONE.json)
+    but nobody ran the pickup (no CONFIRMATION_RESULTS.json) - the pickup was a manual step and weeks 44
+    and 45 were never collected, so their corrections were lost. Best-effort throughout: a missing
+    folder, a failed pickup or an unreadable file means "no second opinion this run", never a stop."""
+    import subprocess as _sp
+    root = Path(root) if root else GEMINI_ROOT
+    conf = Path(confirmations) if confirmations else (ROOT / "gemini_confirmations.json")
+    if run_pickup:
+        try:
+            weeks = [p for p in root.glob("*/Week *") if (p / "picks.json").exists()]
+            wd = max(weeks, key=lambda p: (p.parent.name, int(p.name.split()[-1]))) if weeks else None
+            if wd is not None and (wd / "GEMINI_DONE.json").exists() and not (wd / "CONFIRMATION_RESULTS.json").exists():
+                r = _sp.run([sys.executable, os.path.join(BK, "gemini_confirm", "pickup_week.py"),
+                             "--week-dir", str(wd)], capture_output=True, text=True, timeout=420,
+                            encoding="utf-8", errors="replace")
+                tail = [ln for ln in (r.stdout or "").splitlines() if ln.strip()][-2:]
+                print(f"second opinion: collected the uncollected Gemini week {wd.name} -> "
+                      + (" | ".join(tail) if r.returncode == 0 and tail else f"pickup FAILED (exit {r.returncode})"))
+            elif wd is not None and not (wd / "GEMINI_DONE.json").exists():
+                print(f"second opinion: Gemini has not finished {wd.name} - using the last collected week")
+        except Exception as _e:
+            print(f"WARN second opinion: pickup of the latest Gemini week failed ({_e})")
+    out = {}
+    try:
+        d = json.load(open(conf, encoding="utf-8"))
+    except Exception:
+        print("second opinion: no collected Gemini verdicts on file")
+        return out
+    for sym, e in (d.get("picks") or {}).items():
+        b = ST.second_opinion_block(e, d.get("week"), d.get("generated_at"), d.get("model"))
+        if b:
+            out[sym] = b
+    _c = {}
+    for b in out.values():
+        _c[b["status"]] = _c.get(b["status"], 0) + 1
+    print(f"second opinion: {d.get('week')} collected {str(d.get('generated_at'))[:10]} - {len(out)} seat verdict(s) "
+          + " | ".join(f"{k} {v}" for k, v in sorted(_c.items())))
+    return out
+
+
+def _prep_live_inputs():
+    """Read and validate every live input prep depends on. Returns the dict, or exits(1) having changed
+    NOTHING. SPECULAIR_ALLOW_DEGRADED_PREP=1 downgrades the stop to a FAIL-LOUD warning (attended use only)."""
+    want = (("mp", "scans/methodology_picks.json"), ("baskets", "scans/speculair_baskets.json"),
+            ("value_apex", "scans/speculair_value_apex.json"),
+            ("apex_tracking", "scans/speculair_apex_tracking.json"),
+            ("value_tracking", "scans/speculair_value_tracking.json"))
+    live, how, problems = {}, {}, []
+    for key, path in want:
+        obj, src = _read_live_json(path)
+        live[key], how[key] = (obj if isinstance(obj, dict) else {}), src
+        if not isinstance(obj, dict) or not obj:
+            problems.append(f"{path} is unreadable")
+    if live["mp"] and not live["mp"].get("methodologies"):
+        problems.append("scans/methodology_picks.json has no methodologies")
+    apex_syms = _symbols_of(live["baskets"].get("apex_basket"))
+    if live["baskets"] and not apex_syms:
+        problems.append("scans/speculair_baskets.json has an empty regime book")
+    v = live["value_apex"]
+    value_syms = _symbols_of(v.get("apex_basket") or v.get("apex"))
+    if v and not value_syms:
+        problems.append("scans/speculair_value_apex.json has an empty value book")
+    for key in ("apex_tracking", "value_tracking"):
+        if live[key] and not isinstance(live[key].get("positions"), dict):
+            problems.append(f"{key} carries no positions table")
+    live["apex_syms"], live["value_syms"] = apex_syms, value_syms
+    live["apex_positions"] = sorted((live["apex_tracking"].get("positions") or {}).keys())
+    live["value_positions"] = sorted((live["value_tracking"].get("positions") or {}).keys())
+    print("prep preflight: live inputs " + ", ".join(f"{k}={how[k]}" for k, _ in want))
+    if problems:
+        msg = ("GUARD prep preflight: the live book could not be read - " + "; ".join(problems)
+               + ". NOTHING was archived or changed.")
+        if os.environ.get("SPECULAIR_ALLOW_DEGRADED_PREP") == "1":
+            print("FAIL-LOUD WARN: " + msg + " Continuing because SPECULAIR_ALLOW_DEGRADED_PREP=1 - "
+                  "the Director ledger and the held-seat union WILL be incomplete.")
+        else:
+            print(msg + " STOP - fix the connection and re-run prep.")
+            try:
+                RUN_STATE.unlink()
+            except OSError:
+                pass
+            sys.exit(1)
+    for book, seats, pos in (("regime", apex_syms, live["apex_positions"]),
+                             ("value", value_syms, live["value_positions"])):
+        if seats and pos and set(seats) != set(pos):
+            print(f"WARN prep preflight: {book} book and its tracking disagree - published seats "
+                  f"{sorted(set(seats) - set(pos))} are not tracked, tracked positions "
+                  f"{sorted(set(pos) - set(seats))} are not published. Both sets enter the universe.")
+    print(f"prep preflight: OK - regime book {len(apex_syms)} seat(s) {apex_syms} | "
+          f"value book {len(value_syms)} seat(s) {value_syms}")
+    return live
+
+
 def prep():
     E.load_api_keys()
+    # RUN LOCK + PREFLIGHT (2026-11-12) - before the self-clean, so a refusal or a failed read leaves
+    # the working directory exactly as it was. See PREP SAFETY above.
+    _busy = _run_in_flight()
+    if _busy:
+        if os.environ.get("SPECULAIR_TAKEOVER") == "1":
+            print(f"TAKEOVER: {_busy} - proceeding because SPECULAIR_TAKEOVER=1 (that run is treated as dead).")
+        else:
+            print(f"GUARD prep run-lock: {_busy}. Re-running prep now would archive its records from under "
+                  f"it (the 2026-11-10 triple-run collision). NOTHING was changed. STOP. If that run is "
+                  f"dead, re-run with SPECULAIR_TAKEOVER=1.")
+            sys.exit(1)
+    RUN_STATE.write_text(json.dumps({"started_at": datetime.now().isoformat(timespec="seconds"),
+                                     "pid": os.getpid(), "stage": "prep"}), encoding="utf-8")
+    live = _prep_live_inputs()
     # SELF-CLEAN (2026-06-06): archive the PRIOR run's debate outputs so the Director only ever sees
     # ONE coherent debate pass. Mixing vintages (today's post-fix debates + last week's, built on
     # different metrics/universe) let stale or data-quality-contaminated theses win apex slots. Keeps
@@ -5602,7 +5840,7 @@ def prep():
     # degenerated over time (observed 2026-06-06: 8 methodologies, 15 names, apex=1 after a partial
     # 01:03 write). The raw screen breaks that loop. We still UNION-in the current apex (held names)
     # so a live position is never dropped just because it aged out of the raw screen.
-    mp = gcs_io.gcs_read_json("scans/methodology_picks.json") or {}
+    mp = live["mp"]                                    # validated by the preflight, read BEFORE the archive
     meth_src = mp.get("methodologies", {})
     print(f"raw screen methodology_picks.json: last_updated={mp.get('last_updated')} "
           f"methodologies={len(meth_src)}")
@@ -5619,7 +5857,7 @@ def prep():
         for p in (b.get("picks", b) if isinstance(b, dict) else b) or []:
             if isinstance(p, dict) and p.get("symbol"):
                 sym_meths.setdefault(p["symbol"], []).append(meth)
-    baskets = gcs_io.gcs_read_json("scans/speculair_baskets.json") or {}
+    baskets = live["baskets"]
     # Fallback: if the raw screen is unexpectedly thin, also fold in the curated baskets so a
     # transient screen problem can't starve the debate.
     if len(sym_meths) < 40:
@@ -5639,7 +5877,7 @@ def prep():
     # (absent from the 184-name screen, absent from the regime apex, so absent from value_grade_input
     # entirely while still holding a seat). A name you own is re-underwritten, full stop.
     try:
-        _vapex = gcs_io.gcs_read_json("scans/speculair_value_apex.json") or {}
+        _vapex = live["value_apex"]
         _vheld = [p.get("symbol") for p in
                   (list(_vapex.get("apex_basket") or _vapex.get("apex") or [])
                    + list(_vapex.get("runner_ups") or [])) if isinstance(p, dict) and p.get("symbol")]
@@ -5650,9 +5888,30 @@ def prep():
             print(f"held value seats unioned into the universe: {len(_vadded)} not otherwise screened {_vadded}")
     except Exception as _e:
         print(f"WARN: could not union the held value seats ({_e}) - a value holding may go un-underwritten")
+    # TRACKED POSITIONS (2026-11-12): the published book and its NAV tracking can disagree (a publish
+    # that staged one file and hung on the next). A position that is being tracked is OWNED, so it is
+    # underwritten whichever file names it - ROCK fell out of the universe on 2026-11-10 because only
+    # the published book was consulted, and that read had failed.
+    _held_all = (set(live["apex_syms"]) | set(live["apex_positions"])
+                 | set(live["value_syms"]) | set(live["value_positions"]))
+    _tadded = sorted(s for s in _held_all if s not in sym_meths)
+    for s in sorted(set(live["apex_positions"]) - set(live["apex_syms"])):
+        sym_meths.setdefault(s, []).append("apex")
+    for s in sorted(set(live["value_positions"]) - set(live["value_syms"])):
+        sym_meths.setdefault(s, []).append("value_apex")
+    if _tadded:
+        print(f"tracked positions unioned into the universe: {_tadded}")
+    _uncovered_held = sorted(s for s in _held_all if s not in sym_meths)
+    if _uncovered_held:                                # cannot happen after the unions above - fail loud if it does
+        print(f"FAIL-LOUD WARN: held seat(s) missing from the debate universe: {_uncovered_held}")
+    else:
+        print(f"held-seat coverage: all {len(_held_all)} held name(s) across both books are in the universe")
 
-    scan = gcs_io.gcs_read_json("scans/latest_global.json") or json.load(
-        open("../frontend/public/latest_global.json", encoding="utf-8"))
+    scan, _scan_how = _read_live_json("scans/latest_global.json")
+    if not scan:
+        scan = json.load(open("../frontend/public/latest_global.json", encoding="utf-8"))
+        print("FAIL-LOUD WARN: scans/latest_global.json unreadable from GCS - using the local copy "
+              f"(scan_date {str(scan.get('scan_date'))[:10]}); prices and fundamentals may be a scan behind")
     scan_by_sym = {s.get("symbol"): s for s in scan.get("stocks", []) if s.get("symbol")}
 
     # -- VALUE DRAWDOWN INTAKE (2026-07-01, methodology review VB-P3 / SB#10) --------------------
@@ -5876,11 +6135,29 @@ def prep():
         s = p.get("symbol") if isinstance(p, dict) else p
         if s:
             seat_relevant.add(s)
-    _vb = gcs_io.gcs_read_json("scans/speculair_value_apex.json") or {}
+    _vb = live["value_apex"]
     for p in list(_vb.get("apex") or _vb.get("apex_basket") or []) + list(_vb.get("runner_ups") or []):
         s = p.get("symbol") if isinstance(p, dict) else p
         if s:
             seat_relevant.add(s)
+    seat_relevant |= set(live["apex_positions"]) | set(live["value_positions"])   # tracked = owned
+    # VALUE SEATS (2026-11-12): the names actually seated in the value book (published or tracked) -
+    # NOT its runner-ups. These get the monthly full re-underwrite (_seat_triggers #4).
+    value_seats = set(live["value_syms"]) | set(live["value_positions"])
+    # SECOND OPINION (2026-11-12, _seat_triggers #5): pick up any finished Gemini week that was never
+    # collected (weeks 44 and 45 never were), then load the latest verdicts so a repricing or a
+    # material correction forces a full re-debate and rides into that debate's bundle.
+    second_opinion = _second_opinion_blocks()
+    # FRESH-VIEW REQUESTS written by the last value-post: names that need a full debate before they
+    # can be seated. Requested names are treated as seat-relevant so they are never metered out.
+    fresh_requests = {}
+    try:
+        fresh_requests = (json.load(open(ROOT / "_fresh_view_requests.json", encoding="utf-8")) or {}).get("requests") or {}
+    except Exception:
+        fresh_requests = {}
+    if fresh_requests:
+        seat_relevant |= set(fresh_requests)
+        print(f"fresh-view requests: {len(fresh_requests)} name(s) queued for a full debate {sorted(fresh_requests)}")
     # WASH-OUT legacy levels (2026-10-06): before the four-question schema the only machine-readable add
     # level is the Director's cro_add_px on a B seat (regime + value books). Used by _washout_check
     # ONLY for records with no typed entry_mode; a typed AT_LEVEL record carries its own level.
@@ -5968,7 +6245,9 @@ def prep():
         # publish) consumes results_regime/ unchanged; the value rubric sees `carried`.
         _decision, _reason, _prior = _carry_or_debate(sym, sc, real, prior_res_dir, seat_relevant,
                                                       age_allowed=_age_ok, legacy_level=_legacy_levels.get(sym),
-                                                      live_px=_seat_live.get(str(sym).upper()))
+                                                      live_px=_seat_live.get(str(sym).upper()),
+                                                      value_seats=value_seats, second_opinion=second_opinion,
+                                                      fresh_requests=fresh_requests)
         # B13 TIER EXCLUSION: a Basket-13 name never debates in this lane. With a prior record it
         # carries (restamped, so the stock page keeps a dated record); brand-new B13 names are
         # skipped outright - their underwriting lives in _catalyst_weekly.mjs, and their stock-page
@@ -6000,6 +6279,10 @@ def prep():
             "company": sc.get("name") or sc.get("companyName") or "",
             "metrics_str": metrics, "dossier": "", "methodologies": meths,
             "prior_record": _prior_compact,
+            # SECOND OPINION (2026-11-12): what the independent second model said about OUR record, on
+            # every debated name that has one (not only the ones it triggered). Claims to verify against
+            # primary sources in step 1d - never facts, never a grade, a weight or a conviction input.
+            "second_opinion": (second_opinion.get(sym) if _decision == "debate" else None),
             # read by lane-stamp after the debate (carried names get neither - their prior stamps ride along)
             "transcript_date": (max(t["date"] for t in real) if real and _decision == "debate" else ""),
             "washout": _wo,
@@ -6378,10 +6661,18 @@ def prep():
     # Director rotation discipline: render the regime prior-decision ledger (the live apex book + its
     # tracking) that the Director must reconcile its new basket against. Best-effort - never blocks prep.
     try:
-        _ptrk = gcs_io.gcs_read_json("scans/speculair_apex_tracking.json") or {}
+        _ptrk = live["apex_tracking"]
         (ROOT / "_prior_regime_basket.json").write_text(json.dumps(baskets), encoding="utf-8")
         (ROOT / "_prior_regime_tracking.json").write_text(json.dumps(_ptrk), encoding="utf-8")
-        write_director_ledger("regime", ROOT / "_prior_regime_basket.json", ROOT / "_prior_regime_tracking.json")
+        _lg = write_director_ledger("regime", ROOT / "_prior_regime_basket.json", ROOT / "_prior_regime_tracking.json")
+        # LEDGER CHECK (2026-11-12): the ledger is what makes the Director accountable to its own book.
+        # On 2026-11-10 it read "HELD NOW (0)" against six live seats and nothing said so.
+        _n_listed = len(live["apex_syms"])
+        if _lg and _n_listed and isinstance(_lg, tuple) and _lg[1] == 0 \
+                and not all((_ptrk.get("positions") or {}).get(s, {}).get("entry_pending") for s in live["apex_syms"]):
+            print(f"FAIL-LOUD WARN: the regime Director ledger lists 0 held seats but the live book has "
+                  f"{_n_listed} ({live['apex_syms']}) - rotation discipline will NOT apply this run. "
+                  f"Rebuild _prior_regime_basket.json before launching the Director.")
     except Exception as _e:
         print(f"WARN: regime ledger build failed ({_e})")
     js = (_WORKFLOW_TEMPLATE
@@ -6462,6 +6753,7 @@ function debatePrompt(sym, online) {
     step1 +
     '1b. LIVE PRICE (MANDATORY, BEFORE any valuation reasoning): if the metrics block does not state a current price, you MUST fetch the live quote via the FMP MCP tools (ToolSearch, keyword "FMP quote") and state the price + currency you are using. NEVER assume or infer where the stock trades - a fabricated price inverts the entire risk/reward (the 2026-07-07 AAUC record assumed "near the C$44 offer" when the stock traded 31% below terms). For dual-listed names state WHICH listing/currency your numbers are in.\n' +
     '1c. CONTINUITY (when inputs/' + sym + '.json carries a non-null prior_record): you are the SAME committee CONTINUING coverage, not a fresh one. Read prior_record: its verdict, conviction, thesis_state, entry_mode, entry_level_px and entry_event are the answer this committee itself gave last time (dated prior_record.date); prior_record.code_derived_from_price, when present, is what the code published on top of that answer from the price and the entry floor (a derived letter, level or conviction cap, with its reason) - context only. If your verdict or conviction will DIFFER from the committee answer, you MUST cite in whats_changed_since_prior the DATED fact(s) that emerged since prior_record.date that justify the change - a re-reading of already-known facts is NOT a justification. If nothing dated changed, INHERIT the committee answer (verdict, conviction, thesis_state, entry_mode, entry_level_px, entry_event) and update prices/status only - never inherit a letter, level or conviction cap the code derived from price: the code re-derives those itself every run. An A<->C verdict flip or a conviction move of >=2 without a dated fact is a DEFECT, not an opinion. A change of thesis_state or entry_mode IS a verdict change - same dated-fact rule (when prior_record has no thesis_state or entry_mode, choose values that imply the prior verdict unless a dated fact moved it). A letter that moves only because the price crossed the entry floor is re-derived by code and is not a flip.\n' +
+    '1d. SECOND OPINION (when inputs/' + sym + '.json carries a non-null second_opinion): an independent second model (second_opinion.model) underwrote this name blind in the week shown and then attacked OUR prior record. second_opinion.status is its overall read (confirmed, repriced or disagreement), their_base_fv_px against our_base_fv_px is the value gap, and skeptic_finding with skeptic_revised_fv_px is the specific correction it claims in our numbers (a share count, a segment figure, net cash or debt, an exchange rate). Treat every item as a CLAIM, never as a fact and never as a reason by itself to change the verdict. You MUST check each numeric claim in skeptic_finding against the primary source it names (the filing, the results release, the live quote) before step 6b, and then EITHER adopt the corrected figure in your valuation and name it in whats_changed_since_prior with the source and its date, OR state in whats_changed_since_prior why the claim is wrong, with the figure you verified instead. A claim you could not verify is recorded as unverified and changes nothing. Do NOT average the two fair values and do NOT move toward theirs without a verified figure: a corrected input is a dated fact for the continuity rule in 1c, a different opinion is not.\n' +
     '1d. WASH-OUT CHECK: if inputs/' + sym + '.json carries a non-null washout block, either the price has reached the entry level this committee named last time (washout.level_source entry_level_px or cro_add_px), or a wait-graded name that reached no named level has fallen 10% or more since its last debate (level_source fall_10pct). RESOLVE it per the WASH-OUT RESOLUTION section of ' + DIR + '/cro_regime_rubric.txt; the arrival of the price is the dated fact (cite it with its date in whats_changed_since_prior). When the level was reached, do not extend the wait: buy now, wait for proof, wait for the event, or pass for now - a second price-wait (entry_mode AT_LEVEL) is a defect the code coerces. After a 10% fall (no level was named) you may name a price-wait level that obeys rules (3) and (4), and a proof or event wait may keep ON_EVENT on the same or a re-dated event - you are never forced to buy ahead of the event.\n' +
     '2. INTERROGATOR: read ' + DIR + '/interrogator_system.txt; produce the full forensic dossier (8 sections + final "CREDIBILITY_SCORE: <1-5> | TRAJECTORY: <...>"); Write it to ' + DIR + '/dossiers/' + sym + '.md.\n' +
     '3. PEER COMPS: read ' + DIR + '/peer_groups/' + sym + '.json (this name\'s peers + relative_comps + verdict) as an INDEPENDENT relative-value lever for the valuation below (skip if the file is absent). If the file carries `peer_override`/`anchor_multiple`, those are the CURRENT (live/de-rated) peer multiples - use THEM as the anchor and do NOT cite a peer multiple from memory (peer multiples de-rate; a stale anchor inflates the apparent discount - e.g. Edenred is ~10x fwd P/E today, NOT its pre-shock 20-25x). If `convergence`="sector_regulatory", the discount to that peer is shared-factor SECTOR BETA (both names move on the same unresolved driver), NOT idiosyncratic single-name alpha - say so explicitly in peer_comps_note and DO NOT credit the gap as name-specific edge.\n' +
@@ -7685,6 +7977,14 @@ if __name__ == "__main__":
         value_csv()
     elif mode == "baskets-csv":
         baskets_csv()
+    elif mode in ("signal-score", "signal_score"):
+        # 2026-11-12: score what the debate said against what prices did; one row per run appended to
+        # _signal_scorecard.jsonl. Report-only - it never changes a record, a seat, a weight or a grade.
+        E.load_api_keys()
+        sys.path.insert(0, str(ROOT))
+        import _signal_score
+        _signal_score.main(offline="--offline" in sys.argv, append="--offline" not in sys.argv,
+                           key=E.get_key("FMP_API_KEY"))
     elif mode in ("value-post", "value_post"):
         import subprocess
         subprocess.run([sys.executable, str(ROOT / "_value_post.py")] + (["--offline"] if "--offline" in sys.argv else []), check=True)

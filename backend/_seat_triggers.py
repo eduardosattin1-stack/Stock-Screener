@@ -17,12 +17,26 @@ network, no disk); weekly_opus_refresh supplies the fetchers.
    the thesis analysis; it never gates a seat, moves a weight or touches conviction (FORK 2/B -
    macro stays advisory). Fail-open: an UNKNOWN read on either side never triggers (a data gap
    must never churn the book). Capped per run, oldest full debate first.
+
+Two more, added 2026-11-12 after the reliability review (Bruno follows the VALUE book with real
+money, so its seats must not be the least-examined names in the pool):
+
+4. VALUE-SEAT MONTHLY REFRESH - a seat in the value book gets a FULL re-debate once its last full
+   underwrite is older than VALUE_SEAT_FULL_D days (the 91-day quarterly refresh stays for every
+   other seat). On 2026-11-10 DUE.DE was 78 days from its last full debate, INCH.L and 2618.HK 29.
+5. SECOND OPINION - a seat the independent second model (Gemini) repriced or disagreed with, or
+   whose skeptic recorded a material numeric correction in OUR record, re-debates in full so the
+   correction is checked against primary sources instead of being discarded. It fires once: the
+   re-debate stamps a newer last_full_debate than the opinion. It only schedules analysis; it never
+   moves a seat, a weight, a grade or conviction on its own.
 """
 import re
 
 QUADRANTS = ("GOLDILOCKS", "REFLATION", "STAGFLATION", "RISK_OFF")
 PHASES = ("EXPANSION", "DISCIPLINE", "FORCING", "MONETIZATION")
 MACRO_U_CAP = 8           # macro-change full re-debates per run; the rest stay on delta and retry next run
+VALUE_SEAT_FULL_D = 28    # a VALUE-book seat is fully re-underwritten at least this often
+SECOND_OPINION_STATUSES = ("repriced", "disagreement")
 STAMP_KEYS = ("full_debate_px", "full_debate_px_date", "full_debate_px_source", "macro_at_full_debate")
 
 
@@ -71,6 +85,65 @@ def release_trigger(pr, report_date):
     if report_date and ref and report_date > ref:
         return f"results released {report_date} after the last full debate {ref}"
     return None
+
+
+# ── 4. value-seat monthly refresh ────────────────────────────────────────────
+def value_seat_refresh(pr, today, max_days=VALUE_SEAT_FULL_D):
+    """Reason string when a VALUE-book seat's last full underwrite is older than `max_days` (or was
+    never stamped), else None. `today` is an ISO day. Pure: the caller decides who is a value seat."""
+    import datetime as _dt
+    lfd = str((pr or {}).get("last_full_debate") or "")[:10]
+    if not lfd:
+        return "value seat with no full-debate date on record"
+    try:
+        age = (_dt.date.fromisoformat(str(today)[:10]) - _dt.date.fromisoformat(lfd)).days
+    except Exception:
+        return None                      # an unreadable date never forces a debate by itself
+    if age > max_days:
+        return f"value-seat monthly refresh (last full underwrite {age}d ago, limit {max_days}d)"
+    return None
+
+
+# ── 5. second opinion ────────────────────────────────────────────────────────
+def second_opinion_block(entry, week=None, generated_at=None, model=None):
+    """The compact, prose-safe block a re-debated name's bundle carries about the second model's
+    read of OUR record. None when there is nothing usable. Everything in it is a CLAIM to verify."""
+    if not isinstance(entry, dict) or not entry.get("status"):
+        return None
+    sk = entry.get("skeptic_on_ours") if isinstance(entry.get("skeptic_on_ours"), dict) else {}
+    g = entry.get("gemini") if isinstance(entry.get("gemini"), dict) else {}
+    c = entry.get("claude") if isinstance(entry.get("claude"), dict) else {}
+    return {
+        "week": week, "generated_at": str(generated_at or "")[:10], "model": model,
+        "status": entry.get("status"), "reasons": list(entry.get("reasons") or [])[:6],
+        "their_base_fv_px": g.get("base_fv_px"), "our_base_fv_px": c.get("base_fv_px"),
+        "skeptic_verdict": sk.get("verdict"), "skeptic_scope": sk.get("kill_scope"),
+        "skeptic_severity": sk.get("correction_severity"),
+        "skeptic_revised_fv_px": sk.get("revised_fv_px"),
+        "skeptic_finding": str(sk.get("finding") or "")[:2500],
+    }
+
+
+def second_opinion_trigger(pr, block):
+    """Reason string when the second model repriced / disagreed with this seat, or its skeptic logged
+    a material correction in our record, AFTER the seat's last full debate. Else None.
+    An opinion with no date, or one the seat has already been fully re-debated after, never fires."""
+    if not isinstance(block, dict):
+        return None
+    when = str(block.get("generated_at") or "")[:10]
+    if not when:
+        return None
+    lfd = str((pr or {}).get("last_full_debate") or "")[:10]
+    if lfd and lfd > when:
+        return None                      # already re-underwritten since this opinion
+    status = str(block.get("status") or "").lower()
+    material = str(block.get("skeptic_severity") or "").lower() == "material"
+    if status not in SECOND_OPINION_STATUSES and not material:
+        return None
+    what = status if status in SECOND_OPINION_STATUSES else "confirmed, with a material correction"
+    return (f"second opinion {when} ({block.get('model') or 'second model'}): {what}"
+            + (f" - its skeptic revised our value to {block['skeptic_revised_fv_px']}"
+               if _num(block.get("skeptic_revised_fv_px")) else ""))
 
 
 # ── 3. macro change ──────────────────────────────────────────────────────────

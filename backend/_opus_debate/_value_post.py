@@ -292,6 +292,20 @@ def main():
         _ff.float_demote(apx, Path(_HERE) / "free_float.json")
     except Exception as _e:
         print(f"WARN value-post: free-float gate skipped ({_e})")
+    # FRESH VIEW (2026-11-12): a NEW seat must rest on a full debate no older than FRESH_VIEW_D days -
+    # a carried record is "no current view". Held seats (already tracked, or not an ADD / RE-ADD) are
+    # never touched here. Demoted names and Director-flagged runner-ups are queued for a full debate.
+    try:
+        _pos = set(((json.load(open(Path(BK).parent / "frontend" / "public" / "speculair_value_tracking.json",
+                                    encoding="utf-8")) or {}).get("positions") or {}).keys())
+    except Exception:
+        _pos = set()
+    _already = {p["symbol"] for p in apx.get("apex_basket", []) if p.get("symbol")
+                and (p["symbol"] in _pos or str(p.get("decision") or "").upper() not in ("ADD", "RE-ADD"))}
+    try:
+        _pc.fresh_view_gate(apx, gin, _already, out_dir=ROOT, memo_keys=("value_memo",))
+    except Exception as _e:
+        print(f"WARN value-post: fresh-view gate skipped ({_e})")
     picks = [p for p in apx.get("apex_basket", []) if p.get("symbol")]
     syms = [p["symbol"] for p in picks]
     quotes, weekly_rets, asof = get_market(syms, syms + ["XLY"], offline)

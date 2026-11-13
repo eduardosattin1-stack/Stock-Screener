@@ -109,6 +109,46 @@ existing ones (wash-out, dated catalyst, escalation, 91-day refresh, new transcr
    oldest first. It re-checks the thesis only and never gates, weights or touches conviction
    (FORK 2/B); an UNKNOWN read never triggers.
 
+### Reliability fixes — approved by Bruno 2026-11-12 (do not regress)
+
+Bruno follows the **value book with real money**. `SPECULAIR_RELIABILITY_REVIEW_2026-11-12.md` has
+the evidence (34 scored run dates): the debate is a reliable **filter** (pass grades and value
+conviction ≤2 lag on almost every date) but does **not rank the top** (A no better than B,
+conviction 4 no better than 3, the value Director's score ran backwards in its own book).
+
+- **Value seats re-underwrite monthly.** `_seat_triggers.value_seat_refresh`: a seat in the value
+  book gets a FULL debate once its last one is older than `VALUE_SEAT_FULL_D` (28) days. The
+  91-day `FULL_REFRESH_D` stays for every other seat. (DUE.DE had gone 78 days.)
+- **Second opinion is fed back, not discarded.** Prep collects the latest finished Gemini week
+  itself (`_second_opinion_blocks`), a repricing / disagreement / material skeptic correction
+  forces a full re-debate (`second_opinion_trigger`, fires once), and the claim rides in the
+  bundle as `second_opinion` — step `1d` of the debate prompt makes the agent VERIFY each number
+  against the primary source. It is a claim, never a fact; never average the two fair values.
+- **Value Director ranks by `sop_mos_pct`**, not `value_score`; the bar for adding a seat is the
+  median `sop_mos_pct` of held seats. `value_score` is still emitted but is not a seat bar.
+- **Fresh view for NEW seats** (`_post_common.fresh_view_gate`, `FRESH_VIEW_D` = 21): a name not
+  already held needs a full debate ≤21 days old. `value-post` demotes a violator to runner-ups,
+  stamps a dated memo correction, and writes `_fresh_view_requests.json`, which prep reads to
+  schedule the full debate. Held seats are never touched by this gate.
+- **Prep fails loudly BEFORE it archives.** `_run_in_flight` refuses a second prep while another
+  run started <24h ago and has not published (`_run_state.json`; override `SPECULAIR_TAKEOVER=1`,
+  never unattended). `_prep_live_inputs` reads + validates the five live GCS inputs (retries, then
+  `gcloud storage cat`) and exits with nothing changed if any is unreadable (override
+  `SPECULAIR_ALLOW_DEGRADED_PREP=1`, attended only). Tracked positions are unioned into the
+  universe; a ledger listing 0 held seats against a live book prints FAIL-LOUD.
+  **Never move a GCS read in prep back below the self-clean.**
+- **Signal scorecard**: `python backend/weekly_opus_refresh.py signal-score` appends one row per
+  run to `_opus_debate/_signal_scorecard.jsonl`. The fair-value gap had only **2** scoreable dates
+  when it was given the ranking job — if the scorecard prints `WARN: the fair-value gap is NOT
+  ranking outcomes`, revisit that rule before anything else.
+- **TreasuryDirect renamed its auction fields** (`auctionDate` → `competitiveAuctionCloseDate`,
+  `indirectBidderAccepted` → `indirectBiddersCompetitiveParAwarded`, `totalAccepted` →
+  `grandTotalParAwarded`); the parser silently returned 0 rows from 2026-07-27 to 2026-11-12 and
+  `auction_quality` published as a 0.5 default. `_parse_auction_rows` reads both spellings.
+- None of this gives macro or any cap new teeth (FORK 2/B untouched). Not done, still open from the
+  review: regional macro inputs, a base-currency view, and hard country / currency / single-name
+  limits — those are sizing changes and need Bruno's explicit call.
+
 ## Other standing notes
 
 - `apply_macro_tilt` / `regime_composite_floor` in `macro_regime.py` are imported but
@@ -116,6 +156,8 @@ existing ones (wash-out, dated catalyst, escalation, 91-day refresh, new transcr
   wire-or-delete before adding anything near them.
 - Tests: `python backend/tests/test_debt_cycle.py` (fixture = the 2026-07 tape;
   must read DISCIPLINE), `python backend/tests/test_macro_inputs.py` (fixture = the
-  2026-10-12 tape; must read REFLATION), `python backend/tests/test_seat_triggers.py` and
-  `python backend/_opus_debate/test_regime_post.py`.
+  2026-10-12 tape; must read REFLATION), `python backend/tests/test_seat_triggers.py`,
+  `python backend/tests/test_reliability_fixes.py` (the 2026-11-12 fixes; also checks the rendered
+  weekly workflow is valid, ASCII-only JavaScript) and `python backend/_opus_debate/test_regime_post.py`.
+  `_opus_debate/test_caps.py` fails on "weights sum to 1.0" (equal-weight rounding) — pre-existing.
   On Windows set `PYTHONIOENCODING=utf-8` or the arrow glyphs crash the cp1252 console.

@@ -1,0 +1,4 @@
+_intake_waitlist.json
+# 2026-11-12 reliability fixes: machine-local state, never committed
+_px_cache/
+_run_state.json
