@@ -1,0 +1,585 @@
+{
+ "built": "2026-11-12",
+ "scan_date": "2026-11-07",
+ "scan_names": 3430,
+ "picks_last_updated": "2026-11-07T21:16:15.822743+00:00Z",
+ "methodology_version": "2026-06-iv15trend",
+ "tracking": {
+  "tracking_year": 2026,
+  "reconstruction_note": "2026-09-22: GCS scans/ was wiped ~2026-09-12; this state was rebuilt from the 2026-09-07 scan snapshot inside speculair_baskets.json (published 09-08). Each basket's YTD as of 09-07 is folded into realized_ytd and the 09-07 picks are held from their 09-07 prices. Lost for good: the pre-09-07 rebalance log, exits list and daily NAV history.",
+  "rebalance_cadence": "biweekly-14d since 2026-07-20 (calendar-month before)",
+  "rebalance_cadence_days": 14,
+  "rebalance_dates": [
+   "2026-01-26",
+   "2026-02-23",
+   "2026-03-30"
+  ],
+  "holdings_status": "live"
+ },
+ "regime_seats": [
+  "0175.HK",
+  "INCH.L",
+  "DUE.DE",
+  "LRN",
+  "9980.HK"
+ ],
+ "value_seats": [
+  "DUE.DE",
+  "LRN",
+  "1698.HK",
+  "INCH.L",
+  "2618.HK",
+  "MGNS.L",
+  "DECK"
+ ],
+ "baskets": {
+  "dcf_fcff": {
+   "n_picks": 30,
+   "qualifiers_in_scan": 1555,
+   "cutoff_metric_of_basket": 0.5694,
+   "names_tied_at_cutoff_in_scan": 0,
+   "debate_grades_of_picks": {
+    "B": 15,
+    "C": 10,
+    "A": 5
+   },
+   "median_metric_of_picks": 0.6587,
+   "median_debate_discount_pct_of_picks": 13.2,
+   "regime_seats_from_basket": [
+    "0175.HK",
+    "DUE.DE"
+   ],
+   "value_seats_from_basket": [
+    "DUE.DE",
+    "2618.HK"
+   ],
+   "mean_excess_vs_acwi_since_entry": 0.0401,
+   "share_of_picks_beating_acwi": 0.67,
+   "n_exits_2026_logged": 14,
+   "mean_excess_AFTER_exit_vs_acwi": -0.0112,
+   "tracking": {
+    "ytd_return": 0.1425,
+    "realized_ytd": 0.1425,
+    "tracking_start": "2026-05-27",
+    "rebalance_count": 5,
+    "rebalances_before_reconstruction": 10
+   }
+  },
+  "earnings_yield_gap": {
+   "n_picks": 30,
+   "qualifiers_in_scan": 3430,
+   "cutoff_metric_of_basket": 0.1203,
+   "names_tied_at_cutoff_in_scan": 0,
+   "debate_grades_of_picks": {
+    "B": 19,
+    "A": 3,
+    "C": 8
+   },
+   "median_metric_of_picks": 0.1226,
+   "median_debate_discount_pct_of_picks": 12.7,
+   "regime_seats_from_basket": [],
+   "value_seats_from_basket": [],
+   "mean_excess_vs_acwi_since_entry": 0.016,
+   "share_of_picks_beating_acwi": 0.5,
+   "n_exits_2026_logged": 18,
+   "mean_excess_AFTER_exit_vs_acwi": 0.016,
+   "tracking": {
+    "ytd_return": 0.0162,
+    "realized_ytd": 0.0162,
+    "tracking_start": "2026-05-27",
+    "rebalance_count": 5,
+    "rebalances_before_reconstruction": 10
+   }
+  },
+  "ev_gross_profit": {
+   "n_picks": 30,
+   "qualifiers_in_scan": 3286,
+   "cutoff_metric_of_basket": 0.1461,
+   "names_tied_at_cutoff_in_scan": 0,
+   "debate_grades_of_picks": {
+    "B": 22,
+    "C": 6,
+    "A": 2
+   },
+   "median_metric_of_picks": 0.1477,
+   "median_debate_discount_pct_of_picks": 5.7,
+   "regime_seats_from_basket": [],
+   "value_seats_from_basket": [],
+   "mean_excess_vs_acwi_since_entry": 0.0551,
+   "share_of_picks_beating_acwi": 0.63,
+   "n_exits_2026_logged": 22,
+   "mean_excess_AFTER_exit_vs_acwi": 0.0334,
+   "tracking": {
+    "ytd_return": 0.0984,
+    "realized_ytd": 0.0984,
+    "tracking_start": "2026-05-27",
+    "rebalance_count": 5,
+    "rebalances_before_reconstruction": 10
+   }
+  },
+  "rd_capitalized_dcf": {
+   "n_picks": 30,
+   "qualifiers_in_scan": 2105,
+   "cutoff_metric_of_basket": 0.5872,
+   "names_tied_at_cutoff_in_scan": 0,
+   "debate_grades_of_picks": {
+    "B": 18,
+    "A": 3,
+    "C": 9
+   },
+   "median_metric_of_picks": 0.7082,
+   "median_debate_discount_pct_of_picks": 18.2,
+   "regime_seats_from_basket": [
+    "0175.HK",
+    "DUE.DE"
+   ],
+   "value_seats_from_basket": [
+    "DUE.DE"
+   ],
+   "mean_excess_vs_acwi_since_entry": -0.002,
+   "share_of_picks_beating_acwi": 0.5,
+   "n_exits_2026_logged": 16,
+   "mean_excess_AFTER_exit_vs_acwi": 0.0299,
+   "tracking": {
+    "ytd_return": 0.0684,
+    "realized_ytd": 0.0684,
+    "tracking_start": "2026-05-27",
+    "rebalance_count": 5,
+    "rebalances_before_reconstruction": 10
+   }
+  },
+  "owner_earnings": {
+   "n_picks": 30,
+   "qualifiers_in_scan": 1869,
+   "cutoff_metric_of_basket": 0.5734,
+   "names_tied_at_cutoff_in_scan": 0,
+   "debate_grades_of_picks": {
+    "B": 12,
+    "C": 14,
+    "A": 4
+   },
+   "median_metric_of_picks": 0.6615,
+   "median_debate_discount_pct_of_picks": 12.0,
+   "regime_seats_from_basket": [],
+   "value_seats_from_basket": [
+    "2618.HK"
+   ],
+   "mean_excess_vs_acwi_since_entry": 0.0563,
+   "share_of_picks_beating_acwi": 0.77,
+   "n_exits_2026_logged": 15,
+   "mean_excess_AFTER_exit_vs_acwi": 0.0721,
+   "tracking": {
+    "ytd_return": 0.1206,
+    "realized_ytd": 0.1206,
+    "tracking_start": "2026-05-27",
+    "rebalance_count": 5,
+    "rebalances_before_reconstruction": 10
+   }
+  },
+  "epv": {
+   "n_picks": 30,
+   "qualifiers_in_scan": 998,
+   "cutoff_metric_of_basket": 0.346,
+   "names_tied_at_cutoff_in_scan": 0,
+   "debate_grades_of_picks": {
+    "B": 13,
+    "C": 12,
+    "A": 5
+   },
+   "median_metric_of_picks": 0.4974,
+   "median_debate_discount_pct_of_picks": 14.2,
+   "regime_seats_from_basket": [],
+   "value_seats_from_basket": [
+    "2618.HK"
+   ],
+   "mean_excess_vs_acwi_since_entry": 0.0426,
+   "share_of_picks_beating_acwi": 0.7,
+   "n_exits_2026_logged": 19,
+   "mean_excess_AFTER_exit_vs_acwi": 0.0548,
+   "tracking": {
+    "ytd_return": 0.0912,
+    "realized_ytd": 0.0912,
+    "tracking_start": "2026-05-27",
+    "rebalance_count": 5,
+    "rebalances_before_reconstruction": 10
+   }
+  },
+  "graham_revised": {
+   "n_picks": 30,
+   "qualifiers_in_scan": 1882,
+   "cutoff_metric_of_basket": 0.7529,
+   "names_tied_at_cutoff_in_scan": 0,
+   "debate_grades_of_picks": {
+    "C": 10,
+    "B": 19,
+    "A": 1
+   },
+   "median_metric_of_picks": 0.8258,
+   "median_debate_discount_pct_of_picks": 9.6,
+   "regime_seats_from_basket": [
+    "0175.HK",
+    "DUE.DE"
+   ],
+   "value_seats_from_basket": [
+    "DUE.DE"
+   ],
+   "mean_excess_vs_acwi_since_entry": 0.0342,
+   "share_of_picks_beating_acwi": 0.63,
+   "n_exits_2026_logged": 9,
+   "mean_excess_AFTER_exit_vs_acwi": 0.0043,
+   "tracking": {
+    "ytd_return": 0.047,
+    "realized_ytd": 0.047,
+    "tracking_start": "2026-05-27",
+    "rebalance_count": 5,
+    "rebalances_before_reconstruction": 10
+   }
+  },
+  "acquirers_multiple": {
+   "n_picks": 30,
+   "qualifiers_in_scan": 2693,
+   "cutoff_metric_of_basket": 0.1927,
+   "names_tied_at_cutoff_in_scan": 0,
+   "debate_grades_of_picks": {
+    "B": 20,
+    "C": 6,
+    "A": 4
+   },
+   "median_metric_of_picks": 0.1962,
+   "median_debate_discount_pct_of_picks": 6.3,
+   "regime_seats_from_basket": [
+    "INCH.L"
+   ],
+   "value_seats_from_basket": [
+    "INCH.L"
+   ],
+   "mean_excess_vs_acwi_since_entry": 0.0235,
+   "share_of_picks_beating_acwi": 0.6,
+   "n_exits_2026_logged": 20,
+   "mean_excess_AFTER_exit_vs_acwi": 0.0545,
+   "tracking": {
+    "ytd_return": 0.1048,
+    "realized_ytd": 0.1048,
+    "tracking_start": "2026-05-27",
+    "rebalance_count": 5,
+    "rebalances_before_reconstruction": 10
+   }
+  },
+  "ev_gp": {
+   "n_picks": 30,
+   "qualifiers_in_scan": 3183,
+   "cutoff_metric_of_basket": 0.1891,
+   "names_tied_at_cutoff_in_scan": 0,
+   "debate_grades_of_picks": {
+    "A": 3,
+    "B": 22,
+    "C": 5
+   },
+   "median_metric_of_picks": 0.1919,
+   "median_debate_discount_pct_of_picks": 3.4,
+   "regime_seats_from_basket": [],
+   "value_seats_from_basket": [
+    "MGNS.L"
+   ],
+   "mean_excess_vs_acwi_since_entry": 0.0181,
+   "share_of_picks_beating_acwi": 0.57,
+   "n_exits_2026_logged": 17,
+   "mean_excess_AFTER_exit_vs_acwi": 0.0838,
+   "tracking": {
+    "ytd_return": 0.0125,
+    "realized_ytd": 0.0125,
+    "tracking_start": "2026-06-10",
+    "rebalance_count": 5,
+    "rebalances_before_reconstruction": 7
+   }
+  },
+  "iv15_deep_value": {
+   "n_picks": 14,
+   "qualifiers_in_scan": 796,
+   "cutoff_metric_of_basket": 0.1074,
+   "names_tied_at_cutoff_in_scan": 0,
+   "debate_grades_of_picks": {
+    "B": 5,
+    "A": 4,
+    "C": 5
+   },
+   "median_metric_of_picks": 0.5326,
+   "median_debate_discount_pct_of_picks": 17.6,
+   "regime_seats_from_basket": [],
+   "value_seats_from_basket": [
+    "2618.HK"
+   ],
+   "mean_excess_vs_acwi_since_entry": 0.0074,
+   "share_of_picks_beating_acwi": 0.64,
+   "n_exits_2026_logged": 6,
+   "mean_excess_AFTER_exit_vs_acwi": -0.0503,
+   "tracking": {
+    "ytd_return": 0.1962,
+    "realized_ytd": 0.1962,
+    "tracking_start": "2026-05-27",
+    "rebalance_count": 5,
+    "rebalances_before_reconstruction": 8
+   }
+  },
+  "convergence": {
+   "n_picks": 30,
+   "qualifiers_in_scan": 40,
+   "cutoff_metric_of_basket": 0.1529,
+   "names_tied_at_cutoff_in_scan": 0,
+   "debate_grades_of_picks": {
+    "B": 19,
+    "A": 7,
+    "C": 4
+   },
+   "median_metric_of_picks": 0.2199,
+   "median_debate_discount_pct_of_picks": 16.6,
+   "regime_seats_from_basket": [],
+   "value_seats_from_basket": [],
+   "mean_excess_vs_acwi_since_entry": 0.0215,
+   "share_of_picks_beating_acwi": 0.6,
+   "n_exits_2026_logged": 38,
+   "mean_excess_AFTER_exit_vs_acwi": 0.038,
+   "tracking": {
+    "ytd_return": 0.0525,
+    "realized_ytd": 0.0525,
+    "tracking_start": "2026-06-02",
+    "rebalance_count": 5,
+    "rebalances_before_reconstruction": 8
+   }
+  },
+  "fundamental_momentum": {
+   "n_picks": 28,
+   "qualifiers_in_scan": 28,
+   "cutoff_metric_of_basket": 0.3199,
+   "names_tied_at_cutoff_in_scan": 1,
+   "debate_grades_of_picks": {
+    "None": 27,
+    "C": 1
+   },
+   "median_metric_of_picks": 0.6464,
+   "median_debate_discount_pct_of_picks": 28.9,
+   "regime_seats_from_basket": [],
+   "value_seats_from_basket": [],
+   "mean_excess_vs_acwi_since_entry": -0.1194,
+   "share_of_picks_beating_acwi": 0.25,
+   "n_exits_2026_logged": 0,
+   "mean_excess_AFTER_exit_vs_acwi": null,
+   "tracking": {
+    "ytd_return": -0.303,
+    "realized_ytd": -0.303,
+    "tracking_start": "2026-06-04",
+    "rebalance_count": 5,
+    "rebalances_before_reconstruction": 4
+   }
+  }
+ },
+ "overlap_shared_names": {
+  "dcf_fcff": {
+   "dcf_fcff": 30,
+   "earnings_yield_gap": 4,
+   "ev_gross_profit": 1,
+   "rd_capitalized_dcf": 6,
+   "owner_earnings": 11,
+   "epv": 12,
+   "graham_revised": 6,
+   "acquirers_multiple": 1,
+   "ev_gp": 1,
+   "iv15_deep_value": 7,
+   "convergence": 1,
+   "fundamental_momentum": 0
+  },
+  "earnings_yield_gap": {
+   "dcf_fcff": 4,
+   "earnings_yield_gap": 30,
+   "ev_gross_profit": 0,
+   "rd_capitalized_dcf": 6,
+   "owner_earnings": 4,
+   "epv": 2,
+   "graham_revised": 7,
+   "acquirers_multiple": 3,
+   "ev_gp": 0,
+   "iv15_deep_value": 1,
+   "convergence": 0,
+   "fundamental_momentum": 0
+  },
+  "ev_gross_profit": {
+   "dcf_fcff": 1,
+   "earnings_yield_gap": 0,
+   "ev_gross_profit": 30,
+   "rd_capitalized_dcf": 0,
+   "owner_earnings": 1,
+   "epv": 0,
+   "graham_revised": 1,
+   "acquirers_multiple": 2,
+   "ev_gp": 4,
+   "iv15_deep_value": 0,
+   "convergence": 0,
+   "fundamental_momentum": 0
+  },
+  "rd_capitalized_dcf": {
+   "dcf_fcff": 6,
+   "earnings_yield_gap": 6,
+   "ev_gross_profit": 0,
+   "rd_capitalized_dcf": 30,
+   "owner_earnings": 9,
+   "epv": 6,
+   "graham_revised": 7,
+   "acquirers_multiple": 0,
+   "ev_gp": 0,
+   "iv15_deep_value": 2,
+   "convergence": 1,
+   "fundamental_momentum": 0
+  },
+  "owner_earnings": {
+   "dcf_fcff": 11,
+   "earnings_yield_gap": 4,
+   "ev_gross_profit": 1,
+   "rd_capitalized_dcf": 9,
+   "owner_earnings": 30,
+   "epv": 16,
+   "graham_revised": 6,
+   "acquirers_multiple": 1,
+   "ev_gp": 0,
+   "iv15_deep_value": 4,
+   "convergence": 0,
+   "fundamental_momentum": 0
+  },
+  "epv": {
+   "dcf_fcff": 12,
+   "earnings_yield_gap": 2,
+   "ev_gross_profit": 0,
+   "rd_capitalized_dcf": 6,
+   "owner_earnings": 16,
+   "epv": 30,
+   "graham_revised": 5,
+   "acquirers_multiple": 1,
+   "ev_gp": 2,
+   "iv15_deep_value": 6,
+   "convergence": 0,
+   "fundamental_momentum": 0
+  },
+  "graham_revised": {
+   "dcf_fcff": 6,
+   "earnings_yield_gap": 7,
+   "ev_gross_profit": 1,
+   "rd_capitalized_dcf": 7,
+   "owner_earnings": 6,
+   "epv": 5,
+   "graham_revised": 30,
+   "acquirers_multiple": 1,
+   "ev_gp": 1,
+   "iv15_deep_value": 5,
+   "convergence": 2,
+   "fundamental_momentum": 0
+  },
+  "acquirers_multiple": {
+   "dcf_fcff": 1,
+   "earnings_yield_gap": 3,
+   "ev_gross_profit": 2,
+   "rd_capitalized_dcf": 0,
+   "owner_earnings": 1,
+   "epv": 1,
+   "graham_revised": 1,
+   "acquirers_multiple": 30,
+   "ev_gp": 1,
+   "iv15_deep_value": 0,
+   "convergence": 0,
+   "fundamental_momentum": 0
+  },
+  "ev_gp": {
+   "dcf_fcff": 1,
+   "earnings_yield_gap": 0,
+   "ev_gross_profit": 4,
+   "rd_capitalized_dcf": 0,
+   "owner_earnings": 0,
+   "epv": 2,
+   "graham_revised": 1,
+   "acquirers_multiple": 1,
+   "ev_gp": 30,
+   "iv15_deep_value": 1,
+   "convergence": 0,
+   "fundamental_momentum": 0
+  },
+  "iv15_deep_value": {
+   "dcf_fcff": 7,
+   "earnings_yield_gap": 1,
+   "ev_gross_profit": 0,
+   "rd_capitalized_dcf": 2,
+   "owner_earnings": 4,
+   "epv": 6,
+   "graham_revised": 5,
+   "acquirers_multiple": 0,
+   "ev_gp": 1,
+   "iv15_deep_value": 14,
+   "convergence": 3,
+   "fundamental_momentum": 0
+  },
+  "convergence": {
+   "dcf_fcff": 1,
+   "earnings_yield_gap": 0,
+   "ev_gross_profit": 0,
+   "rd_capitalized_dcf": 1,
+   "owner_earnings": 0,
+   "epv": 0,
+   "graham_revised": 2,
+   "acquirers_multiple": 0,
+   "ev_gp": 0,
+   "iv15_deep_value": 3,
+   "convergence": 30,
+   "fundamental_momentum": 0
+  },
+  "fundamental_momentum": {
+   "dcf_fcff": 0,
+   "earnings_yield_gap": 0,
+   "ev_gross_profit": 0,
+   "rd_capitalized_dcf": 0,
+   "owner_earnings": 0,
+   "epv": 0,
+   "graham_revised": 0,
+   "acquirers_multiple": 0,
+   "ev_gp": 0,
+   "iv15_deep_value": 0,
+   "convergence": 0,
+   "fundamental_momentum": 28
+  }
+ },
+ "unique_names_across_baskets": 247,
+ "names_by_number_of_baskets": {
+  "1": 195,
+  "2": 26,
+  "3": 14,
+  "4": 8,
+  "5": 3,
+  "6": 1
+ },
+ "seat_origin": {
+  "0175.HK": [
+   "dcf_fcff",
+   "graham_revised",
+   "rd_capitalized_dcf"
+  ],
+  "1698.HK": [],
+  "2618.HK": [
+   "dcf_fcff",
+   "epv",
+   "iv15_deep_value",
+   "owner_earnings"
+  ],
+  "9980.HK": [],
+  "DECK": [],
+  "DUE.DE": [
+   "dcf_fcff",
+   "graham_revised",
+   "rd_capitalized_dcf"
+  ],
+  "INCH.L": [
+   "acquirers_multiple"
+  ],
+  "LRN": [],
+  "MGNS.L": [
+   "ev_gp"
+  ]
+ },
+ "debate_universe_size": 249,
+ "debate_universe_from_baskets": 220
+}
