@@ -1116,6 +1116,10 @@ class Stock:
     years_history: int = 99             # count of standalone annual statements used (99 = safe default)
     structural_break: bool = False      # ipoDate within N years OR share-count discontinuity
     structural_break_reason: str = ""   # e.g. "ipo_2024-02" | "share_count_jump_2025" | ""
+    # Basket audit 2026-11-13, fix 3 (declared fields so asdict() keeps them in the scan JSON):
+    statement_shares: float = 0.0       # diluted weighted shares from the latest annual statement
+    share_count_ratio: Optional[float] = None   # statement_shares / (market value / price); None = not checkable
+    basket_exclusion: str = ""          # non-empty = barred from every basket, with the reason
     ipo_date: str = ""                  # from FMP company profile
 
     # G3: growth / terminal sanity
@@ -1282,8 +1286,13 @@ REGIONS = {
     #      Solvay, Umicore) could not appear in any scan. Prague (PRA) is
     #      supported by FMP but returns 0 names ≥$1B, so it is left out.
     #
-    # Limits are set well above the observed row counts so they never bind —
-    # market cap is the real gate (there is deliberately no volume filter).
+    # CORRECTED 2026-11-13 (basket audit): the EUROPEAN limits below sit above the observed row
+    # counts, but several others BIND - the 2026-11-07 scan held exactly 100 SIX, 100 JPX, 200 HKSE,
+    # 50 KSC and 50 SAO names. Those lists are "the top N by market value", so a name near the
+    # cut-off flickers in and out of the scan. get_symbols now logs a warning whenever a limit
+    # binds, and held names are re-scanned regardless (_held_names_to_rescan). Raising a limit
+    # grows the universe (run time, vendor calls) and is a deliberate decision, not a bug fix.
+    # Market cap is the other gate (there is deliberately no volume filter).
     "europe": [
         ("LSE", "GB", 1_000_000_000, 300),   # was country="UK" → 0 rows
         ("XETRA", "DE", 1_000_000_000, 300), # Lowered floor, higher stock limit (DHER)
@@ -1359,6 +1368,49 @@ EARNINGS_CAL_CACHE: dict[str, list] = {}  # {sym: [events]} 90-day forward earni
 
 # PT revision velocity now uses FMP price-target-summary endpoint directly
 # via get_analyst(), dropping the local caching bootstrap.
+
+HELD_RESCAN_MAX = 120      # safety valve: never let a corrupt state file balloon the universe
+
+
+def _held_names_to_rescan(already: set) -> list:
+    """Symbols that are HELD - in last week's baskets or seated in a published book - but absent from
+    this week's universe lists. Each is confirmed with the vendor's profile (still trading, priced)
+    and gets its sector / exchange / country / name recorded exactly as a screener row would.
+    Read-only on GCS. Returns [] when nothing is held outside the lists or the state is unreadable."""
+    held = set()
+    picks = gcs_download("scans/methodology_picks.json") or {}
+    for meth in (picks.get("methodologies") or {}).values():
+        for p in (meth.get("picks") or []):
+            if isinstance(p, dict) and p.get("symbol"):
+                held.add(p["symbol"])
+    for path in ("scans/speculair_apex_tracking.json", "scans/speculair_value_tracking.json"):
+        trk = gcs_download(path) or {}
+        held |= set((trk.get("positions") or {}).keys())
+    missing = sorted(s for s in held if s not in already and not _non_ordinary_listing(s))
+    if len(missing) > HELD_RESCAN_MAX:
+        log.warning(f"  universe: {len(missing)} held names outside the lists - capping the rescan at "
+                    f"{HELD_RESCAN_MAX} (check the state files)")
+        missing = missing[:HELD_RESCAN_MAX]
+    out = []
+    for sym in missing:
+        prof = fmp("profile", {"symbol": sym})
+        d = prof[0] if isinstance(prof, list) and prof else None
+        if not d or not d.get("isActivelyTrading", True) or not (d.get("price") or 0) > 0:
+            continue                        # genuinely gone - the tracker prices its exit (fix 4)
+        if d.get("isEtf") or d.get("isFund"):
+            continue
+        out.append(sym)
+        if d.get("sector"):
+            SECTOR_MAP[sym] = d["sector"]
+        if d.get("industry"):
+            INDUSTRY_MAP[sym] = d["industry"]
+        SECTOR_EXCHANGE_MAP[sym] = d.get("exchange") or d.get("exchangeShortName") or ""
+        if d.get("country"):
+            COUNTRY_MAP[sym] = str(d["country"]).upper()
+        if d.get("companyName"):
+            COMPANY_NAME_MAP[sym] = d["companyName"]
+    return out
+
 
 def get_symbols(region: str) -> list[str]:
     """Fetch universe of symbols for a region/index using FMP company-screener.
@@ -1477,6 +1529,14 @@ def get_symbols(region: str) -> list[str]:
                 if cn:
                     COMPANY_NAME_MAP[sym] = cn
             log.info(f"  {exchange}/{country or 'all'}: {len(batch)} stocks")
+            # Fix 2 (2026-11-13): say so when the row limit BINDS. The 2026-11-07 scan held exactly
+            # 200 HKSE, 100 JPX, 100 SIX, 50 KSC and 50 SAO names - their limits - so those lists
+            # are "the top N by market value", and a name near the cut-off drops in and out week to
+            # week. Raising a limit is a universe-size (run time and cost) decision, so it is only
+            # reported here; held names are protected separately by _held_names_to_rescan.
+            if len(data) >= limit:
+                log.warning(f"  {exchange}/{country or 'all'}: row limit {limit} BINDS - this list is the "
+                            f"top {limit} by market value, names near the cut-off will flicker")
             symbols.extend(batch)
 
     # v1.2 (May 2026): allowlist intersect REMOVED per Bruno's Option A.
@@ -1490,7 +1550,26 @@ def get_symbols(region: str) -> list[str]:
     # no longer needs an external allowlist since universe-build now catches
     # the full NYSE/NASDAQ ≥$1B set via limit=5000.
 
-    return list(dict.fromkeys(symbols))
+    symbols = list(dict.fromkeys(symbols))
+    # Fix 3 (2026-11-13): lines that are not a company's ordinary share never enter the scan.
+    _dropped = [s for s in symbols if _non_ordinary_listing(s)]
+    if _dropped:
+        log.info(f"  universe: dropped {len(_dropped)} non-ordinary listing(s): {_dropped[:12]}")
+        symbols = [s for s in symbols if not _non_ordinary_listing(s)]
+    # Fix 2 (2026-11-13): HELD NAMES ARE ALWAYS RE-SCANNED. A name that sits in a basket or holds a
+    # seat in a published book must not lose its data because it slipped under a universe floor or
+    # past a capped exchange list this week.
+    if region == "global":
+        try:
+            _extra = _held_names_to_rescan(set(symbols))
+        except Exception as _e:
+            log.warning(f"  universe: held-name rescan list unavailable ({_e})")
+            _extra = []
+        if _extra:
+            log.info(f"  universe: +{len(_extra)} held name(s) outside this week's lists re-scanned: {_extra[:20]}")
+            symbols.extend(_extra)
+
+    return symbols
 
 # ---------------------------------------------------------------------------
 # v7.2: Sector performance bulk fetcher (1 call per sector, shared across universe)
@@ -2858,7 +2937,8 @@ def get_value(sym: str, price: float, price_currency: str = "USD", forward_eps_g
         # Latest annual EPS (point-in-time for Graham formula)
         eps_latest = float(latest_inc.get("epsDiluted") or latest_inc.get("eps") or 0)
         v["eps_latest"] = eps_latest
-        
+        v["statement_shares"] = shares      # fix 3: checked against market value / price downstream
+
         # Store raw local inputs for leverage gate (latest year, not averaged)
         # FIX (2026-06, AUDIT_PIPELINE_REPORT.md): net debt = total debt − (cash + ST investments),
         # the standard definition. The prior formula (LTD − working capital) sign-flipped into a
@@ -5379,7 +5459,12 @@ def screen(symbols: list[str], top_n: int = TOP_N) -> list[Stock]:
         # resolved from the profile instead, so the UI can render the right
         # unit and downstream consumers can convert.
         s.currency = value.get("price_currency", s.currency)
-      
+        # Fix 3 (2026-11-13): after the currency is resolved, check that the statements describe
+        # THIS listed line. A mismatch bars the name from every basket; its values are still stored.
+        s.statement_shares = value.get("statement_shares", 0.0) or 0.0
+        s.basket_exclusion, s.share_count_ratio = _basket_exclusion(
+            s.symbol, s.market_cap, s.price, s.currency, s.statement_shares)
+
         # Override method label when upside used the analyst fallback
         if upside.get("_valuation_method") == "fallback_analyst":
             s.buffett_method = "fallback_analyst"
@@ -6195,9 +6280,53 @@ def _save_tracking_state(tracking: dict, no_gcs: bool):
             log.warning(f"GCS upload of tracking state failed: {e}")
 
 
+# ── Basket audit 2026-11-13, fix 4: price a held name the scan no longer lists ───────────────
+# A held name missing from a scan used to be marked at its last known price - a 0% return for the
+# period - both when a period closed and when it exited. Names go missing because they FELL (under
+# the universe floor, or out of a capped exchange list), so the 0% flattered the record: the 35
+# priceable cases since 2026-09-22 averaged -6.7% and year-to-date was overstated in 8 of 12 baskets
+# by 0.8 to 2.7 points (TEAM was booked as a +16.3% exit; it was -21.5%). Such a name is now marked at
+# the vendor's own last quote. The 0% carry survives only as the last resort, and stays flagged.
+VANISHED_PRICE_BAND = 3.0   # a quote beyond x3 or /3 of the last known price is a unit glitch, not a
+                            # return (50GP.L read 77 -> 0.77 -> 74.75: pounds against pence)
+
+
+def _vendor_last_closes(symbols) -> dict:
+    """{symbol: last price} from the vendor's batch quote, for held names absent from this scan.
+    Best-effort: {} for anything it cannot price. Never raises."""
+    out = {}
+    syms = sorted({s for s in (symbols or []) if s})
+    for i in range(0, len(syms), 50):
+        try:
+            rows = fmp("batch-quote", {"symbols": ",".join(syms[i:i + 50])}) or []
+        except Exception as e:
+            log.warning(f"  tracking: vendor quote for vanished holdings failed ({e})")
+            rows = []
+        for q in rows if isinstance(rows, list) else []:
+            try:
+                px = float(q.get("price") or 0)
+            except (TypeError, ValueError):
+                px = 0.0
+            if q.get("symbol") and px > 0:
+                out[q["symbol"]] = px
+    return out
+
+
+def _vanished_mark(sym: str, last_known: float, fallback_px: dict):
+    """(mark, source) for a held name absent from the scan.
+    source = "vendor_quote" when the vendor still prices it inside the plausibility band, else
+    "last_known" (the old 0% carry) - which callers must flag, never present as a real mark."""
+    px = (fallback_px or {}).get(sym)
+    if px and last_known and last_known > 0 \
+            and (1.0 / VANISHED_PRICE_BAND) <= (px / last_known) <= VANISHED_PRICE_BAND:
+        return float(px), "vendor_quote"
+    return last_known, "last_known"
+
+
 def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
                                    rebalance_date: str,
-                                   stock_map: Optional[dict] = None):
+                                   stock_map: Optional[dict] = None,
+                                   fallback_px: Optional[dict] = None):
     """Update paper-tracking state for each methodology.
 
     Rebalances are booked on a BI-WEEKLY cadence (since 2026-07-20, Bruno's
@@ -6226,6 +6355,17 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
 
     # Current prices for YTD marks + exit pricing
     price_map = {sym: s.price for sym, s in (stock_map or {}).items()}
+    # Fix 4: held names the scan no longer lists are priced from the vendor's own quote. Callers may
+    # pass fallback_px (tests do); otherwise it is fetched once for every vanished holding.
+    _held_missing = sorted({h["symbol"]
+                            for m in (tracking.get("methodologies") or {}).values()
+                            for h in (m.get("current_holdings") or [])
+                            if h.get("symbol") and h["symbol"] not in price_map})
+    if fallback_px is None:
+        fallback_px = _vendor_last_closes(_held_missing) if _held_missing else {}
+    if _held_missing:
+        log.info(f"Tracking: {len(_held_missing)} held name(s) absent from this scan; "
+                 f"{sum(1 for s in _held_missing if s in fallback_px)} priced from the vendor quote")
     REBALANCE_CADENCE_DAYS = 14   # bi-weekly since 2026-07-20 (was calendar-month first-scan)
 
     methodology_metrics = {
@@ -6304,9 +6444,10 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
                     if mark is None:
                         # Phase 10e (survivorship): a held name absent from the
                         # scan (delisted/acquired) must not silently shrink the
-                        # equal-weight denominator — carry it at its last known
-                        # price (a 0% contribution) so the close still counts it.
-                        mark = psp
+                        # equal-weight denominator. Fix 4 (2026-11-13): mark it at
+                        # the vendor's last quote; the 0% carry at its last known
+                        # price is only the last resort.
+                        mark, _src = _vanished_mark(sym, psp, fallback_px)
                     if psp and psp > 0 and mark:
                         period_rets.append((mark - psp) / psp)
                 if period_rets:
@@ -6336,10 +6477,15 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
                     # (period_start_price, else entry_price) and flag it
                     # "unpriced_exit" so the audit trail shows no live mark existed.
                     unpriced = sym not in price_map
+                    _exit_src = "scan"
                     if unpriced:
-                        log.warning(f"  {key}: {sym} exited but absent from scan "
-                                    f"(delisted/acquired?) — booking exit at last known price")
-                        exit_price = h.get("period_start_price") or h.get("entry_price") or 0.0
+                        _last = h.get("period_start_price") or h.get("entry_price") or 0.0
+                        exit_price, _exit_src = _vanished_mark(sym, _last, fallback_px)
+                        exit_price = exit_price or 0.0
+                        unpriced = _exit_src != "vendor_quote"   # only a 0% carry is "unpriced"
+                        log.warning(f"  {key}: {sym} exited but absent from scan (delisted/acquired?) — "
+                                    + ("booking exit at the vendor's last quote" if not unpriced
+                                       else "no vendor quote either: booking exit at last known price"))
                         exit_metric = 0.0
                     else:
                         exit_price = price_map[sym]
@@ -6359,6 +6505,8 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
                     }
                     if unpriced:
                         exit_rec["unpriced_exit"] = True
+                    if _exit_src == "vendor_quote":
+                        exit_rec["exit_price_source"] = "vendor_quote"   # absent from the scan, still priced
                     exits.append(exit_rec)
                     meth_track.setdefault("all_exits_2026", []).append(exit_rec)
 
@@ -6411,7 +6559,7 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
             if _h.get("period_start_price") is None and _h.get("entry_price"):
                 _h["period_start_price"] = round(float(_h["entry_price"]), 4)
         # 4. Always refresh the live YTD mark (open period since last rebalance).
-        meth_track["ytd_return"] = _compute_ytd_return(meth_track, price_map)
+        meth_track["ytd_return"] = _compute_ytd_return(meth_track, price_map, fallback_px)
         # 4b. Persist the nightly NAV point (base-100 on the tracking year) — the
         #     per-basket pages chart this series. A same-date re-run replaces the
         #     point instead of duplicating it; capped at ~3 years of dailies.
@@ -6439,7 +6587,8 @@ def _append_rebalance_to_tracking(tracking: dict, methodology_picks: dict,
              f"rebalanced on {rebalance_date} (bi-weekly 14d cadence); YTD marks refreshed for all")
 
 
-def _compute_ytd_return(meth_track: dict, price_map: Optional[dict] = None) -> float:
+def _compute_ytd_return(meth_track: dict, price_map: Optional[dict] = None,
+                        fallback_px: Optional[dict] = None) -> float:
     """Live YTD = realized return from closed periods compounded with the open one.
 
     ``realized_ytd`` chains the equal-weight return of every completed monthly
@@ -6459,6 +6608,11 @@ def _compute_ytd_return(meth_track: dict, price_map: Optional[dict] = None) -> f
     for h in holdings:
         psp = h.get("period_start_price") or h.get("entry_price")
         cur = price_map.get(h["symbol"])
+        if cur is None and fallback_px is not None:
+            # Fix 4: a held name absent from the scan used to be DROPPED from the open-period mean
+            # (the close then counted it at 0%). It now stays in the mean, at the vendor's last quote
+            # where one exists and at its last known price otherwise - the same rule as the close.
+            cur, _ = _vanished_mark(h["symbol"], psp, fallback_px)
         if psp and psp > 0 and cur:
             open_rets.append((cur - psp) / psp)
     open_ret = sum(open_rets) / len(open_rets) if open_rets else 0.0
@@ -6520,6 +6674,9 @@ def _rank_ey_gap(all_results: list):
     for s in all_results:
         ey = (s.eps_latest * s.fx_to_price) / s.price if s.price > 0 else 0.0
         s.ey_gap = ey - _local_risk_free(getattr(s, "country", ""))
+        if _excluded_from_baskets(s):                  # fix 3: EPS is not this line's EPS - never ranked
+            s.earnings_yield_gap_mos = -1.0
+            continue
         valid_ey_gap.append(s)
 
     valid_ey_gap.sort(key=lambda x: x.ey_gap)
@@ -6528,6 +6685,83 @@ def _rank_ey_gap(all_results: list):
         rank_pct = i / (N - 1) if N > 1 else 0.5
         s.earnings_yield_gap_mos = (rank_pct - 0.5) * 0.25
     return valid_ey_gap
+
+
+# ── Basket audit 2026-11-13, fix 1: ONE unit for enterprise value ───────────────────────────
+# FMP quotes the PRICE of a pence-quoted London stock in pence but reports marketCap in POUNDS.
+# The 2026-08-20 currency fix scaled the statement figures into the PRICE currency (net_debt, ebit
+# and gross_profit are x100 for a GBp name: fx_to_price = 100), and the two enterprise-value ranks
+# then added pounds to pence. Rightmove read EV/EBIT 0.016 against a real ~14.8, and any UK name
+# with net cash above 1% of its market value got a NEGATIVE enterprise value, which sorts first.
+# Pence names are 5% of the scan (178 of 3,430 on 2026-11-07) but were 24 of 30 acquirers_multiple
+# picks and 29 of 30 ev_gp picks. Every enterprise value must go through _market_cap_in_price_units.
+# ZAc / ILA carry the same factor by the vendor's convention; the universe holds none today.
+_MINOR_UNIT_QUOTE = {"GBp": 100.0, "GBX": 100.0, "ZAc": 100.0, "ILA": 100.0}
+
+
+def _market_cap_in_price_units(s) -> float:
+    """Market value in the unit net_debt / ebit / gross_profit are stored in (the price currency)."""
+    mc = getattr(s, "market_cap", 0.0) or 0.0
+    return float(mc) * _MINOR_UNIT_QUOTE.get(getattr(s, "currency", "") or "", 1.0)
+
+
+# ── Basket audit 2026-11-13, fix 3: is this listed line what the statements describe? ───────
+# Every per-share method divides company-level statements by the statement share count and
+# compares the result with THIS line's price. Three ways that goes wrong were found in the baskets:
+#   (a) a stale share count - SBSP3.SA is valued on 684m shares while its own market value and
+#       price imply 3,517m, so every per-share value is 5.1x too high (in five baskets at 73-94%);
+#       8035.T the same at 4.9x, PAH3.DE at exactly 2.0x, DRX.L at ~90x;
+#   (b) a second share class or a preference share valued on the whole group's accounts
+#       (50GP.L = Croda 5.9% preference shares, LISP.SW = one tenth of a Lindt registered share);
+#   (c) a second listing of the same company holding its own seat (82020.HK is the yuan counter
+#       of 2020.HK, ANTA Sports).
+# (a) and most of (b) show up as a gap between the statement share count and market value / price.
+# On the 2026-11-07 scan 3,060 of 3,275 checkable names sit within 0.8-1.25x; the band below keeps
+# ordinary buybacks and issuance in and excludes about 50 names (1.5%). The scan's own structural-
+# break test (`ratio < 0.5`) missed an exact halving - hence the explicit, slightly wider band.
+# What this CANNOT see: a preference share or a note whose vendor market value matches its own
+# price and count (ATH-PA) and that carries no symbol pattern. That needs the vendor's security
+# type, which the scan does not fetch.
+SHARE_COUNT_BAND = (0.55, 1.8)        # statement shares / (market value / price); outside = excluded
+MISSING_SCAN_GRACE = 2                # fix 2: scans a held name may be absent before it leaves a basket
+_US_PREFERRED = re.compile(r"-P[A-Z]?$")          # ATH-PA, CTA-PA: US preferred series
+_HK_RMB_COUNTER = re.compile(r"^8\d{4}\.HK$")     # 82020.HK: yuan counter of an HK-dollar listing
+
+
+def _non_ordinary_listing(symbol: str) -> str:
+    """Reason string when the SYMBOL alone marks a line that is not the company's ordinary share,
+    else "". Deliberately narrow: only patterns that are unambiguous."""
+    sym = str(symbol or "")
+    if _US_PREFERRED.search(sym):
+        return "US preferred share series"
+    if _HK_RMB_COUNTER.match(sym):
+        return "yuan counter of a Hong Kong dollar listing"
+    return ""
+
+
+def _basket_exclusion(symbol, market_cap, price, currency, statement_shares):
+    """(reason, ratio). reason "" = eligible. ratio = statement shares / implied shares, or None
+    when it cannot be computed (missing data never excludes a name by itself)."""
+    why = _non_ordinary_listing(symbol)
+    ratio = None
+    try:
+        mc = float(market_cap or 0) * _MINOR_UNIT_QUOTE.get(currency or "", 1.0)
+        px = float(price or 0)
+        sh = float(statement_shares or 0)
+        if mc > 0 and px > 0 and sh > 0:
+            ratio = sh / (mc / px)
+    except (TypeError, ValueError):
+        ratio = None
+    if not why and ratio is not None and not (SHARE_COUNT_BAND[0] <= ratio <= SHARE_COUNT_BAND[1]):
+        why = (f"statement share count is {ratio:.2f}x the count implied by market value and price "
+               f"(allowed {SHARE_COUNT_BAND[0]}-{SHARE_COUNT_BAND[1]}x)")
+    return why, (round(ratio, 4) if ratio is not None else None)
+
+
+def _excluded_from_baskets(s) -> bool:
+    """Fix 3: a name whose statements do not describe the listed line takes no part in any rank
+    or basket. Its valuations are still computed and stored - only basket eligibility changes."""
+    return bool(getattr(s, "basket_exclusion", ""))
 
 
 def _rank_ev_gp(all_results: list):
@@ -6544,8 +6778,8 @@ def _rank_ev_gp(all_results: list):
     for s in all_results:
         nd = getattr(s, "net_debt", None)
         gp = getattr(s, "gross_profit", 0.0)
-        mc = getattr(s, "market_cap", 0.0)
-        if (gp or 0.0) > 0.0 and (mc or 0.0) > 0.0 and nd is not None:
+        mc = _market_cap_in_price_units(s)             # fix 1: same unit as nd and gp
+        if (gp or 0.0) > 0.0 and (mc or 0.0) > 0.0 and nd is not None and not _excluded_from_baskets(s):
             s.ev_gp = (mc + nd) / gp
             qualified_evgp.append(s)
         else:
@@ -6593,7 +6827,7 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         # Phase 10a-1 eligibility: zero/missing-asset names used to park at
         # gp_ta=0 mid-pack; exclude them from the ranked pool instead
         # (mos stays -1.0 so the basket loop never sees them as candidates).
-        if s.total_assets and s.total_assets > 0 and s.gross_profit is not None:
+        if s.total_assets and s.total_assets > 0 and s.gross_profit is not None and not _excluded_from_baskets(s):
             s.gp_ta = s.gross_profit / s.total_assets
             valid_gp_ta.append(s)
         else:
@@ -6615,9 +6849,9 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
     # Acquirer's Multiple
     qualified_am = []
     for s in all_results:
-        ev = (s.market_cap or 0.0) + (s.net_debt or 0.0)
+        ev = _market_cap_in_price_units(s) + (s.net_debt or 0.0)   # fix 1: same unit as net_debt / ebit
         ebit = s.ebit or 0.0
-        if ev > 0.0 and ebit > 0.0:
+        if ev > 0.0 and ebit > 0.0 and not _excluded_from_baskets(s):
             multiple = ev / ebit
             if 0.0 < multiple <= 100.0:
                 s.acquirers_multiple = multiple
@@ -6683,9 +6917,15 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
                 log.info("Loaded previous methodology picks from GCS")
         except Exception as e:
             log.warning(f"GCS previous picks not available: {e}")
+    # Fix 2 (2026-11-13): the FULL previous pick, so a held name that is missing from this scan can
+    # be carried for a grace period instead of silently dropping out (see MISSING_SCAN_GRACE).
+    prev_full_picks = {}  # methodology -> ticker -> the previous pick dict, verbatim
+    scanned_syms = {s.symbol for s in all_results}
     if old_data and "methodologies" in old_data:
         for meth_path, meth_val in old_data["methodologies"].items():
             prev_picks_map[meth_path] = {}
+            prev_full_picks[meth_path] = {p["symbol"]: p for p in meth_val.get("picks", [])
+                                          if isinstance(p, dict) and "symbol" in p}
             for p in meth_val.get("picks", []):
                 if "symbol" in p:
                     prev_picks_map[meth_path][p["symbol"]] = {
@@ -6889,6 +7129,8 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         candidates = []
         for s in all_results:
             mos_val = getattr(s, mos_field, -1.0)
+            if _excluded_from_baskets(s):
+                continue        # fix 3: the statements do not describe this listed line
             if mos_val is not None and mos_val > -1.0:
                 # G4: Sector-methodology applicability
                 sc = _sector_class(s)
@@ -6962,22 +7204,45 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         # fundamental_momentum exempt: its score is not a margin of safety).
         candidates = _apply_mos_floor(key, candidates)
 
+        # Fix 2 (2026-11-13): A NAME MISSING FROM ONE SCAN IS "NO DATA", NOT AN EXIT. Since the
+        # 2026-09-22 rebuild roughly half of all basket exits were held names that were simply
+        # absent from that week's scan (an exchange list capped at its row limit, a market value
+        # hovering at the universe floor, a vendor hiccup) - and 2618.HK, a value seat, was absent
+        # from 3 of 8 scans, each time losing its seat and its entry date. A held name the scan
+        # does not list keeps its seat, carried verbatim from the previous file, for up to
+        # MISSING_SCAN_GRACE consecutive scans; only then does it leave. Carried names use seats, so
+        # the basket never exceeds PICKS_PER_METHODOLOGY.
+        carried_picks = []
+        for _sym in sorted(incumbent_syms):
+            if _sym in scanned_syms or _non_ordinary_listing(_sym):
+                continue
+            _prev = dict((prev_full_picks.get(key) or {}).get(_sym) or {})
+            _n_miss = int(_prev.get("missing_scans") or 0) + 1
+            if _prev and _n_miss <= MISSING_SCAN_GRACE:
+                _prev["missing_scans"] = _n_miss
+                _prev["carried_missing_scan"] = True
+                carried_picks.append(_prev)
+        if carried_picks:
+            log.info(f"  {key}: {len(carried_picks)} held name(s) absent from this scan carried "
+                     f"(grace {MISSING_SCAN_GRACE} scans): {[c['symbol'] for c in carried_picks]}")
+        seats = max(0, PICKS_PER_METHODOLOGY - len(carried_picks))
+
         if key == "fundamental_momentum":
             # Thematic sleeve: hard-tech is Tech-concentrated by design, so the 30%/sector
             # diversification cap (built for value baskets) gutted it (20 qualifiers → 6,
             # dropping the AI/semis core: AVGO/ASML/AMD/ARM/MPWR…). Take the top names by
             # score, UNCAPPED — concentration in the leading wave is the strategy here.
-            portfolio = candidates[:PICKS_PER_METHODOLOGY]
+            portfolio = candidates[:seats]
         else:
             portfolio = None
-            for target_T in range(min(PICKS_PER_METHODOLOGY, len(candidates)), 0, -1):
+            for target_T in range(min(seats, len(candidates)), 0, -1):
                 portfolio = get_best_portfolio_of_size(candidates, target_T)
                 if portfolio:
                     break
             if not portfolio:
                 portfolio = []
-            
-        portfolio_symbols = set(s.symbol for s in portfolio)
+
+        portfolio_symbols = set(s.symbol for s in portfolio) | {c["symbol"] for c in carried_picks}
         metric_field = methodology_metrics[key]
         
         # Load previous exits to keep history of recent exits
@@ -7027,7 +7292,7 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
         final_exits = combined_exits[:15]
 
         picks = []
-        count = len(portfolio)
+        count = len(portfolio) + len(carried_picks)      # fix 2: carried names hold seats too
         weight = 1.0 / count if count > 0 else 0.0
         total_mos = 0.0
         for s in portfolio:
@@ -7094,7 +7359,14 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
                 "pct_off_52w_high": round((_price - _yr_high) / _yr_high, 4) if _yr_high > 0 else None,
             })
             total_mos += mos_val
-            
+
+        # Fix 2: held names absent from this scan ride along verbatim (last scanned price and
+        # metric), flagged so every reader can see the figures are a scan old.
+        for _c in carried_picks:
+            _c["weight"] = round(weight, 4)
+            picks.append(_c)
+            total_mos += float(_c.get("mos") or 0.0)
+
         avg_mos = total_mos / count if count > 0 else 0.0
         methodology_picks[key] = {
             "picks": picks,
