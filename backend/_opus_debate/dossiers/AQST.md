@@ -1,110 +1,67 @@
-# AQST — Aquestive Therapeutics, Inc. — Forensic Catalyst Dossier
+# Aquestive Therapeutics (AQST) - deep dive on management and the setup
 
-**Event-driven special situation — FDA approval decision on Anaphylm (sublingual epinephrine film).**
-Verified live as of 2026-06-29.
+Event-driven special situation, judged on the event, not the franchise. Verified 16 November 2026.
 
-## The headline: the dossier's catalyst is stale
+**The takeaway.** This is a single, firmly dated regulatory decision. The Food and Drug Administration (FDA) must act on Anaphylm - a needle-free epinephrine film that dissolves under the tongue, for severe allergic reactions - by 16 March 2027, 120 days from today. The date is real and binding on the agency's own clock. What is weaker than the catalyst board suggests is the payoff: the realistic approval value is about $5.25 a share, not $8.50, and the realistic failure price is about $1.75, not $2.75. At $3.75 the bet is close to symmetric, and its edge comes entirely from the odds of approval, not from a cushioned floor.
 
-The watch-board entry frames this as a hard, dated catalyst — an FDA approval decision on
-2026-09-30 — with the stock at about $4.17 versus a target of $8.50 and a floor of $2.75. That
-framing no longer holds, and the gap matters enormously.
+## 1. Narrative arc
 
-What actually happened: the original decision date (the FDA's scheduled action date, in the
-industry called the PDUFA date) was January 31, 2026. The FDA did not approve. On January 30, 2026
-the agency issued a Complete Response Letter — a formal "not yet," sending the application back for
-more work. So the load-bearing event the board is pointing at has, in its original form, already
-fired — and it fired as a rejection, not an approval. There is no FDA decision scheduled for
-September 30, 2026. That date appears to be a placeholder, not a real agency action date.
+- **Into January 2026:** management guided to approval on the original 31 January 2026 goal date and a first-quarter 2026 launch. On 9 January the FDA signalled deficiencies and the shares fell from about $6.21 to $3.91 in a day; the complete response letter (the FDA's formal written refusal to approve as filed) followed on 30 January.
+- **February to August 2026:** the story narrowed to repair. The company's own filing said the deficiencies were limited to packaging and administration - how the pouch opens and how people place the film - with no safety, efficacy or manufacturing finding disclosed. A post-refusal meeting in March 2026 gave FDA feedback on the design of two new studies: a human-factors study (a formal test of whether ordinary people use the product correctly under pressure) and a confirmatory absorption study.
+- **August to October 2026:** both studies read out positively on 10 August (median pouch-opening time 3 seconds versus 17; no protocol-defined use errors in the self-dosing arm). The application was resubmitted on 16-17 September, inside the guided third-quarter window. On 15 October the FDA accepted it as complete, classified it a Class 2 response (a six-month review), and set the 16 March 2027 goal date.
+- **November 2026:** third-quarter results on 3 November reaffirmed the date and launch preparation; data were presented at the allergy congress (ACAAI, 12-16 November), including an oral session on what happens when the film is placed on top of the tongue instead of under it.
 
-## What the rejection actually said, and where the path stands now
+The arc is a clean contraction from 'approval imminent' to 'one narrow fix, one date'. The story did not expand to paper over the setback.
 
-The good news inside the bad news: the deficiencies were narrow. The FDA did not question the
-science — it asked for additional packaging/human-factors work (how patients open and use the film)
-and one more pharmacokinetic study (how the drug is absorbed). The biology was effectively
-validated; the issues were about delivery and labeling.
+## 2. Claims versus the record
 
-The company then ran the standard recovery play:
-- **March 30, 2026 — Type A meeting completed.** The FDA gave preliminary feedback on the
-  pharmacokinetic and human-factors study designs, aligned on labeling to manage chewing rather
-  than demanding new clinical trials, and acknowledged the revised container-opening mechanism.
-  Final meeting minutes were expected by early May 2026.
-- **Q3 2026 — planned NDA resubmission.** Management has repeatedly reaffirmed this. Because the
-  resubmission will include clinical (pharmacokinetic) data, it is a Class 2 resubmission, which
-  triggers a fresh six-month FDA review clock.
-- **~Q1 2027 — the actual re-decision.** Six months after a Q3 filing lands the next binding FDA
-  answer in the first quarter of 2027. Management's own framing: approval expected in Q1 2027,
-  launch into 2027.
+| Management claim | What the record shows | Verdict |
+|---|---|---|
+| Refusal was limited to packaging and administration | Company filing language; no safety, efficacy or manufacturing deficiency has been disclosed by anyone | Holds, but it is the company's own characterisation of a letter investors have not seen |
+| Resubmission in Q3 2026 | Resubmitted 16-17 September 2026 | Delivered |
+| Review confined to the refusal items | Class 2 acceptance on 15 October; regulatory lead said on 4 November the review will focus on the resubmission scope | Consistent with FDA practice for Class 2 responses |
+| Funded to launch without equity | Cash $90.3M at 30 September plus a $10M Libervant upfront in October; year-end guide above $70M; up to $75M from RTW Investments and $20M more from the Oaktree loan, both conditional on approval | True only if approved - the launch money and the approval are the same event |
+| Revenue guidance $46-50M for 2026 maintained | Nine months $35.8M (helped by $5M of Zevra royalties); Q3 revenue $7.6M versus $12.8M a year earlier; manufacturing revenue $6.7M versus $11.5M | The legacy base is shrinking; Q4 needs $10-14M to hit the range |
 
-So the next genuinely hard, binding catalyst is roughly two to three quarters out, not 105 days
-out. The only event that lands inside the board's window is the Q3 resubmission filing itself — and
-that is a company-controlled milestone, undated within the quarter, and a step in the process
-rather than the re-rating moment. It would derisk the thesis (the clock starts; the FDA accepts the
-package) but it does not resolve it.
+## 3. Tone and confidence trajectory
 
-## Sponsor / management credibility on hitting it
+Rising, but more carefully worded than a year ago. Into January 2026 the language was launch-ready. Since the refusal, management has been specific and date-bound ('resubmission in the third quarter', then the goal date) and has avoided promising approval. On payers it was candid on 4 November that contracting will be needed because Anaphylm will be priced at a premium to generic auto-injectors. On the factory inspection it said it is prepared if the agency chooses to come - an honest non-answer.
 
-Mixed, leaning constructive. The negative: management guided this approval to the original date and
-took a Complete Response Letter — they were wrong on the first attempt, which is exactly the
-credibility hit you weight in a binary-FDA name. The positive: the deficiencies were operational,
-not scientific; the Type A meeting produced concrete alignment (no new efficacy trials, labeling
-agreed) rather than open-ended demands; and the company has held the Q3 resubmission timeline
-steady across multiple public appearances (Oppenheimer conference in February, the Type A release in
-March, the Q1 call in May). For a CRL recovery, "narrow deficiencies + aligned path + reaffirmed
-timeline" is about as good a setup as exists — but it is still a second swing at the same regulator,
-and resubmissions slip.
+## 4. Guidance credibility
 
-## The verified downside floor — what actually backstops the price
+Medium. Every regulatory date guided in 2026 was met (study readout, resubmission window, acceptance). Against that, the January 2026 approval guidance failed outright, which produced securities class actions in March 2026 and a law-firm investigation notice as recently as 7 October 2026. Third-quarter revenue and the per-share loss ($0.13 versus an expected $0.10) missed. Reliability on regulatory process: high. Reliability on commercial numbers: low.
 
-This is the part of the thesis that genuinely improved. The balance sheet, which is usually the
-thing that breaks a small-cap binary before the catalyst, has been materially de-risked:
-- **About $110M cash at the end of Q1 2026**, with management projecting more than $150M of
-  available liquidity at launch when combined funding sources are drawn.
-- **A new $150M debt facility from Oaktree** that refinances costlier obligations, extends the
-  interest-only window, and saves roughly $45M of principal over three years.
-- **An extended RTW strategic funding agreement.**
-- **No going-concern language.** Revenue is growing — Q1 2026 revenue was $14.4M, up 66% year over
-  year, with license-and-royalty revenue up to $5.4M from $0.8M; the adjusted operating-cash loss
-  narrowed to about -$1.7M from -$17.6M a year earlier. 2026 revenue guidance is roughly $46–50M.
+## 5. Analyst pressure points
 
-So there is a real, cash-generative base business underneath the binary: the existing commercial
-film franchise (Libervant buccal diazepam for seizure emergencies, plus contract manufacturing and
-royalties). The price floor is not "cash minus burn until zero" — it is "a funded company with a
-growing base business and a still-live, narrowly-deficient lead asset." A bear value in the
-$2.75–3.00 area (roughly the 52-week low of $2.93) is defensible as the "resubmission slips or a
-second CRL" outcome; an outright wipe is not on the table at current liquidity.
+- Whether the top-of-tongue absorption result - in the August study the peak blood level was roughly 113 picograms per millilitre on top of the tongue against about 392 under it, with time to peak stretching from 12 to 35 minutes - becomes a labelling or study demand. The company chose to present on exactly this at the November congress, which tells you it expects the question.
+- Payer coverage against cheap generic auto-injectors, given that the closest comparable (ARS Pharmaceuticals' neffy nasal spray) has sold steadily but seen its shares fall from a 52-week high of about $13 to $3.74.
+- The manufacturing-site inspection, which has not been confirmed for this cycle.
 
-## Red flags
+## 6. Red flags and green flags
 
-- **The headline catalyst already fired as a rejection.** Anyone underwriting a "September approval"
-  is underwriting a date that does not exist.
-- **Second-swing regulatory risk.** A Class 2 resubmission can itself draw another CRL; the FDA has
-  already said no once.
-- **Timeline is company-controlled and undated within Q3.** Resubmissions slip a quarter routinely;
-  the re-decision then slips with them.
-- **Dilution/financing optics.** The funding is layered (Oaktree debt + RTW + cash) — it removes the
-  going-concern risk but adds leverage and structural complexity, and a launch will need capital.
-- **The in-window "edge" is a filing, not a decision** — limited re-rating power on its own.
+**Red flags**
+- The failure case is structurally bad: the $95M of approval-conditional funding vanishes on the same day it would be needed, leaving roughly $55-65M of cash against $58.8M of floating-rate debt (three-month SOFR plus 6.25%, interest-only to May 2031). A second refusal almost certainly means a dilutive equity raise near the lows.
+- The shares fell about 12% on 15 October, the day the goal date was set, and another 7% the next day. No dated source explains the move; the most plausible reading is disappointment that the FDA chose the six-month review rather than the two-month one, pushing the decision from December 2026 to March 2027. It is a reminder of how price-sensitive holders are to any delay.
+- The chief executive sold 25,000 shares at $4.22 on 15 October (about 4% of his holding; whether under a pre-set trading plan was not verified).
+- Unusual put buying (6,009 contracts, about 2.4 times normal) around the 3 November results.
+- Contract manufacturing revenue is shrinking (doses down from about 44 million to 26 million year on year).
 
-## Green flags
+**Green flags**
+- A Class 2 review after a non-efficacy refusal is the most favourable kind of second review: narrow scope, fixed clock, and the FDA itself shaped the repair studies.
+- The repair data were strong on every measured use-error dimension.
+- Libervant (a diazepam film for seizure clusters) is licensed to Eton Pharmaceuticals - $10M upfront received, up to $47.5M in milestones, a mid-teens royalty, and Aquestive keeps manufacturing. Its ages-12-and-over approval becomes possible after a competitor's orphan exclusivity lapses on 10 January 2027; a separate ages 6-11 decision is due 29 March 2027. This value survives an Anaphylm failure.
+- About 29M shares are sold short, roughly 26% of the tradeable float, which amplifies an approval move.
 
-- Deficiencies are operational, not scientific — the hard part (does the drug work) is behind it.
-- Concrete FDA alignment from the Type A meeting; no new efficacy trials demanded.
-- Genuinely de-risked balance sheet; no going concern; growing, cash-improving base business.
-- First-and-only oral epinephrine if approved — a real differentiated product, large allergy market.
-- Sell-side still constructive (average target near $8.89), so a clean resubmission + acceptance
-  could re-rate the stock well before the 2027 decision.
+## 7. Hidden signals
 
-## Capital-allocation verdict (for the director)
+- The drug is now consistently described by its chemical name, dibutepinephrine (a prodrug that the body converts to epinephrine), rather than simply 'epinephrine film'. That is precise regulatory language, not a change in the product.
+- The company is preparing Canada (filing in Q4 2026) and Europe (Q1 2027) in parallel - a sign it believes the dossier is approvable, and a residual option if the US decision fails.
+- A new board member with large-pharma commercial experience (Richard Daly, effective 14 October 2026) was added just before launch preparation, consistent with a company planning to sell the product itself rather than license it.
 
-The single most important thing to weigh: **the binding catalyst is not in the window.** The
-original decision fired as a CRL; the real re-decision is ~Q1 2027, and the only near-term event is
-a company-controlled Q3 resubmission that starts the clock rather than resolving it. Treat this as a
-soft, non-binding, serially-extendable setup for now — the asymmetry to the eventual approval is
-real and the floor is genuinely funded, but the timing edge the funnel is built to harvest does not
-exist at the 105-day horizon. This is a watch-for-the-filing name, not an imminent-decision name.
+## 8. Verdict for the director
 
-Moat and secular-threat dimensions are largely not applicable — this is an event-driven biotech, not
-a compounding franchise. The "moat" such as it is rests on a proprietary film-delivery platform and
-first-mover oral-epinephrine position, neither of which is the load-bearing variable here.
+Trajectory: strengthening. The single most important thing to weigh before sizing is that the floor does not protect you: the price is about 114% above the realistic failure value, so this must be sized as money you can afford to see more than halved. The edge is a probability judgement - we estimate roughly 72% odds of approval against about 57% implied by the price - not a shape-of-payoff advantage.
 
-CREDIBILITY_SCORE: 3 | TRAJECTORY: STABLE | MOAT: NARROW | MOAT_TREND: STABLE | SECULAR_THREAT: none
+On the business itself: there is no durable moat here in the usual sense. Anaphylm would be the first oral rescue epinephrine, which is a real product distinction, but patents and first-mover status do not protect pricing against generic auto-injectors and payer pushback. The structural threat to the win value is payer resistance to premium branded rescue products - material to how big the approval is worth, but not a force that shrinks an existing earnings base, because there is no earnings base yet.
+
+CREDIBILITY_SCORE: 3 | TRAJECTORY: STRENGTHENING | MOAT: NONE | MOAT_TREND: STABLE | SECULAR_THREAT: manageable

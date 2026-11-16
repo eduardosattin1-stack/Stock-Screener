@@ -1,71 +1,70 @@
-# Forensic Dossier — Boyd Gaming Corporation (BYD)
+# Boyd Gaming (NYSE: BYD) — a deep dive on management and the setup
 
-*A deep dive on management and the setup, built from five consecutive earnings calls (April 2025 through April 2026) cross-referenced against the screener's hard financials. Note on identity: the ticker "BYD" here is Boyd Gaming, the US regional casino operator — not the Chinese electric-vehicle maker. All analysis below is of Boyd Gaming.*
+*Covers five earnings calls: Q3 2025 (2025-10-23), Q4 2025 (2026-02-05), Q1 2026 (2026-04-23), Q2 2026 (2026-07-23) and Q3 2026 (2026-10-22), checked against the screener's financials and the FMP quarterly statements through 2026-09-30. Note: this is Boyd Gaming, the US regional and Las Vegas locals casino operator, not the Chinese carmaker BYD Co.*
+
+**Bottom line:** Boyd is a steady, honestly run regional casino operator whose earnings have gone flat. Property margins have held near 38-40% for years and management delivers what it says. But since the July 2025 FanDuel stake sale, almost all per-share progress has come from buybacks, and from 2026 those buybacks are being paid for partly with new debt while free cash flow is squeezed by a heavy building program. The story is credible. The growth is mostly scheduled for 2027-2028.
 
 ## 1. NARRATIVE ARC
 
-The story Boyd's management tells has been remarkably consistent across all five calls, and that consistency is itself the point. The spine of every call is the same: a "diversified, resilient" regional casino operator whose core local customer keeps showing up and spending, whose property-level margins hold near 40%, and whose balance sheet is the strongest in company history.
+- **Q3 2025 (2025-10-23):** The FanDuel transaction dominated. Management had just received about $1.8 billion for its FanDuel stake, cut leverage (debt divided by annual operating earnings) to about 1.5x, and spoke openly about what to do with that balance-sheet room: "could be M&A, could be other things, could tick back up." Core-customer play was "strengthening"; destination (out-of-town visitor) business was soft, mainly at the Orleans.
+- **Q4 2025 (2026-02-05):** A victory lap on 2025: record revenue, roughly $1.4 billion of EBITDAR (earnings before interest, taxes, depreciation, amortization and rent), more than $800 million returned to shareholders and an 11% cut in the share count. The 2026 pitch was a list of projects: Cadence Crossing (opened end of Q1 2026), the Suncoast modernization, the St. Charles convention center, the Sky River expansion, and a tax-bill tailwind for consumers.
+- **Q1-Q2 2026:** The message moved from "growth" to "steady." Midwest and South kept delivering; Las Vegas Locals stayed weighed down by the Orleans and Suncoast construction.
+- **Q3 2026 (2026-10-22):** The language now leans on adjustments. Reported revenue and EBITDAR both fell about 1%; management pointed to the Tunica closure (November 2025), the Shreveport sale (2026-08-01), higher Kansas Star property taxes and a lower tax pass-through to say that, adjusted, revenue grew 2% and EBITDAR 1%. Destination softness in Las Vegas is now described as "increased softness," not improving. The growth story has moved out to Norfolk (opening November 2027), Par-A-Dice (construction late 2027) and the Sky River hotel (2028; it was "mid-2027" on the Q3 2025 call).
 
-What changed over the window was not the core thesis but a single transformational event layered on top of it. In the April 2025 (first-quarter 2025) call, the FanDuel stake was described only as a passive asset — "our 5% equity stake in FanDuel represents significant and growing value for our shareholders." By the July 2025 (second-quarter) call, that passive asset had been monetized: management had "reached an agreement to sell our 5% equity interest in FanDuel to Flutter Entertainment for $1.755 billion in cash." From that point forward the narrative pivots to capital deployment — paying leverage down below 2x, then to roughly 1.5x by the October 2025 call, and returning more than $800 million to shareholders in 2025 (an 11% reduction in share count).
-
-A second, quieter arc is the steady drumbeat of organic reinvestment: Cadence Crossing (opened March 2026), the Suncoast modernization, the Ameristar St. Charles convention center, and the $750 million Virginia resort (Norfolk, opening late 2027). These are framed as the company's growth engine now that the one-time FanDuel windfall is spent. A growth driver that was quietly de-emphasized is the online segment — guided down from $63 million of 2025 earnings before interest, taxes, depreciation, amortization and rent (EBITDAR) to just $30–35 million for 2026, a direct consequence of the FanDuel deal's revised market-access economics.
+The arc: from a cash windfall and an open question about how to use it, to a flat operating base where buybacks and future openings carry the per-share story.
 
 ## 2. CLAIMS vs FINANCIALS (forensic)
 
-The screener's headline figures carry one large distortion that must be cleared first: the reported net income of $1.84 billion and earnings per share (EPS) of $22.56 for fiscal 2025 (up 264.5% year over year) are dominated by the one-time, pre-tax $1.755 billion FanDuel sale gain. The underlying operating business did not grow profits 265% — it grew low-single-digits. This is the single most important forensic correction in the file: the "deep value, 369% margin of safety" signal is built on a Buffett/owner-earnings model fed a windfall-inflated earnings number.
-
-| Management claim | The hard numbers | Verdict |
+| Claim | Evidence | Verdict |
 |---|---|---|
-| "Record company-wide revenues," steady growth (every call) | Revenue 3.93B (2024) → 4.09B (2025), +4.1%; 3-yr CAGR +4.8% | Matches — but it is slow, GDP-like growth, not a growth story |
-| EPS up 264.5%, "another successful year" | True as reported, but ~$1.755B is the FanDuel gain; operating EPS growth is mid-single-digit | Narrative far richer than the operating trajectory justifies |
-| "Property-level margins consistently above 40%" since 2021 | Gross margin 42.1% but flagged contracting; Q3 2025 company margin slipped to 37% | Mostly holds; some erosion at the company level |
-| "Strongest balance sheet in our history," leverage below 2x then ~1.5x | Confirmed by the FanDuel paydown; but live balance sheet still shows net debt of $2.55B (total debt $2.92B less cash $0.37B) | True directionally; this is still a net-debt company, not net-cash |
-| "Robust free cash flow," $800M returned in 2025 | Trailing-twelve-month free cash flow only $281M (as of 2026-03-31); annual free cash flow growth −30.2% year over year | Divergence — the $800M of returns was funded substantially by the one-time FanDuel cash, not by recurring free cash flow |
-| Return on equity 42.6% | Real, but flattered by the same one-time gain in the numerator; return on invested capital is a more sober 12.2% | The 12.2% return on invested capital is the honest read |
-
-The cleanest tell in the whole file: trailing free cash flow is $281 million against a company the screener fair-values (on its Buffett model) at $420/share. A free-cash-flow yield that thin does not support a 369% margin of safety — the margin of safety is a model artifact of the windfall-inflated earnings.
+| "Margins consistent" (every call) | Midwest and South adjusted margin 38% in Q3 2026, "consistent with our third quarter margins over the last several years"; company EBITDAR $319.6M vs $321.8M a year earlier on revenue of $990M vs $1,004M | Holds |
+| Core customer strength | Las Vegas Locals ex-Orleans/Suncoast revenue and EBITDAR +3% in Q3 2026; Midwest and South EBITDAR $201.6M, flat year on year | Holds, but growth is low single digits |
+| Las Vegas Locals recovery | Segment EBITDAR $87.4M in Q3 2026 vs $92.1M (-5%); Downtown $12.9M vs $16.1M (-20%) | Weaker than the story; destination softness widened |
+| Capital investments paying off | Sky River fees drive Managed & Other EBITDAR to $29.8M vs $26.3M (+13%); Treasure Chest and St. Charles cited | Holds where the projects have opened |
+| "Robust free cash flow" (Q4 2025) | TTM (trailing twelve months) free cash flow to 2026-06-30 only $35M. Q2 2026 operating cash flow was -$24M because of the roughly $360M tax bill on the FanDuel gain (accrued expenses fell from $602M to $342M); capital spending runs about $140-155M a quarter | Distorted by the one-off tax; normalized free cash flow after all building is roughly $250-300M a year, not "robust" against a $600M+ buyback pace |
+| Buybacks reduce share count | Diluted shares 73.0M in Q3 2026 vs 80.9M in Q3 2025 (-10%); $164M repurchased in Q3 2026, $387M authorization left | Holds |
+| Balance sheet conservatism | Long-term debt rose from $2.27B (2026-03-31) to $2.61B (2026-06-30) to about $2.7B total debt (2026-09-30); cash $297M. Net debt including leases about $3.0B | Leverage is drifting back up from 1.5x as buybacks outrun free cash flow |
+| EPS +264% (fiscal 2025) | Fiscal 2025 EPS $22.56 includes the FanDuel gain (Q3 2025 EPS $17.81 alone). Underlying EPS is about $6.6 TTM (Q4 2025 $1.79, Q1 2026 $1.37, Q2 $1.75, Q3 $1.71 GAAP; Q3 adjusted $1.67 vs $1.72 a year earlier) | The headline growth is a one-off; underlying EPS is flat to slightly down |
 
 ## 3. TONE & CONFIDENCE TRAJECTORY
 
-**Trajectory: Stable, tilting subtly defensive.** Management's tone is even-keeled and credible throughout — no euphoria, no panic. But the language shifts from offense toward defense as Las Vegas Strip / destination softness builds.
-
-- Q1 2025: confident, "we have not seen any meaningful shift in consumer behavior." Defensive hedge appears: "we recognize that the last several weeks have brought an increased level of economic uncertainty."
-- Q2 2025: most offensive call — "property-level revenue and EBITDAR growth was the strongest in more than 3 years"; FanDuel deal closed from a "position of real strength."
-- Q3 2025 onward: defensive vocabulary dominates — "softer demand trends," "destination business," "weakness in destination," repeatedly ring-fenced to "the Orleans" and "the IP" in Biloxi. The recurring move is to isolate weakness to two named properties so the rest of the portfolio reads clean.
-- Q1 2026: defensive posture entrenched — Fremont Street pedestrian traffic down 11% year over year; Suncoast construction disruption now a real, quantified drag ($1.5M in the quarter, $2.5–3M expected per quarter into Q3).
+**Stable, drifting slightly defensive.** Q3 2025 was confident and forward-leaning ("customer trends ... have continued into October"). Q4 2025 was celebratory. By Q3 2026 the prepared remarks spend a full paragraph on adjustments before getting to growth, and the CFO declined to give sequential guidance on the fly: "I have tried to do it in past, and hopefully, I have learned to stop doing that." On M&A, management was disciplined rather than eager: "we are not gonna buy assets just because they are cheap." On online, it played down expectations for new licenses: "not anything that will be a tailwind for us." The tone is measured and candid, not promotional.
 
 ## 4. GUIDANCE CREDIBILITY
 
-**Reliability: High.** This is the strongest part of Boyd's profile. The screener shows a 6-of-7-quarter earnings-beat rate (86%), and the transcripts corroborate a management team that under-promises. They explicitly refuse formal guidance ("we don't typically provide guidance") yet repeatedly hand analysts enough segment detail to model the business, and their qualitative calls have held — weather impacts quantified accurately ("$5 million in January… that's what it looks like this year"), Suncoast disruption flagged early and then delivered as warned, online segment guided down honestly. There is a mild sandbagging pattern (Treasure Chest "after-tax returns probably over 25%" disclosed only in passing). No instance in the window of a confident claim that later blew up.
+Boyd gives little formal guidance, which limits the test. Where it did guide, it delivered: the Online segment guide was raised to $60M of EBITDAR for 2025 and set at about $30M for 2026 after the FanDuel change; Cadence Crossing opened on schedule; Norfolk is "on time and on budget." The screener shows a beat in 6 of 7 recent quarters (86%), and Q3 2026 adjusted EPS of $1.67 beat the $1.65 consensus. One timeline slipped: the Sky River hotel phase moved from "mid-2027" (2025-10-23) to "2028" (2026-10-22), though that is a managed property and a fee stream, not Boyd's own capital. **Reliability: High.**
 
 ## 5. ANALYST PRESSURE POINTS
 
-Analysts circled three themes repeatedly:
-
-1. **Las Vegas destination / Strip weakness bleeding into the locals business.** Pushed every call from Q3 2025 on (Politzer, Hargreaves, Bender). Management consistently ring-fences it to the Orleans and the IP and insists the true local resident "is not seeing anything bleed over." This is the live risk analysts do not fully believe is contained.
-2. **What to do with the post-FanDuel balance sheet at ~1.5x leverage.** Asked directly (Grambling, Q3 2025). Management deflected — "we don't have an answer for you right now… could be M&A, could be other things, could tick back up." This non-answer is the unresolved capital-allocation question that still hangs over the stock.
-3. **Tariffs and capital-expenditure cost inflation.** Pushed in Q1–Q2 2025; management credibly walked through mitigation and the issue faded.
+- **Leverage and capital use:** analysts asked repeatedly from Q3 2025 where leverage would settle after the windfall; management said leverage "could tick back up." It has: debt is rising while buybacks run near $150M+ a quarter.
+- **Las Vegas destination softness:** raised every quarter since Q3 2025; management has called each bottom ("90-day booking pattern ... much more positive," 2025-10-23) and the softness has instead widened by Q3 2026.
+- **Strip and mid-market M&A:** pressed in Q3 2026; management deflected with discipline language.
+- **Online growth and new markets:** management answered that it is a small, well-run piece and will not "juice it."
 
 ## 6. RED FLAGS / GREEN FLAGS
 
-🔴 The headline EPS and "deep value" margin of safety are inflated by the one-time FanDuel gain — the recurring business is a slow-grower (free cash flow trailing at $281M, down ~30% year over year).
-🔴 Destination/Strip softness is widening, not narrowing — Fremont Street traffic −11% (Q1 2026), and the "it's just the Orleans" containment story is being tested.
-🔴 Insider behavior contradicts the value story: zero open-market buys versus 24 sellers (802,022 shares) — no insider is treating this as cheap.
-🔴 Stock sits at 97% of its 52-week high with a consensus analyst target of only +4% upside and analyst-target velocity −3% — the market has already absorbed the good news.
-🟢 Genuinely strong, honest management with a high beat rate and conservative balance-sheet philosophy (1.5x leverage, the lowest in company history).
-🟢 Aggressive, value-accretive buyback — share count cut 11% in 2025, authorization raised to $3.3B in April 2026 — a real per-share value lever.
-🟢 The local-resident core customer has not had a down quarter since COVID; Southern Nevada demographics (population +16% over a decade) are a durable tailwind.
+- 🔴 Las Vegas Locals EBITDAR -5% and Downtown -20% year on year in Q3 2026, after four quarters of being told destination business was close to turning.
+- 🔴 Debt-funded buybacks: long-term debt up about $430M in the first nine months of 2026 while operating earnings were flat.
+- 🔴 Insiders: 0 open-market buys against 23 sales (about 700,000 shares) in the screener's lookback.
+- 🔴 Reported free cash flow is thin because the building program (Norfolk, Suncoast, Orleans, Par-A-Dice) is front-loaded; the payoff is 2027-2028.
+- 🟢 Margins steady around 38% in Midwest and South for "the last several years."
+- 🟢 Share count down about 10% in a year; dividend maintained at $0.20 a quarter (paid 2026-10-15).
+- 🟢 Sky River management fees growing double digits; Online growing double digits on a clean comparison.
+- 🟢 Kept its margins through the 2021-22 inflation (gross margin 47.8% in 2019 to 56.0% in 2022).
 
 ## 7. HIDDEN SIGNALS
 
-The most telling subtle shift is the move from "FanDuel is growing value" (Q1 2025) to monetizing it and then refusing to commit the proceeds (Q3 2025) — a management team sitting on a clean balance sheet with no obvious high-return use for it, defaulting to buybacks. The portfolio pruning (closing Sam's Town Tunica, selling Sam's Town Shreveport) signals discipline but also a maturing, low-growth asset base. The repeated, almost scripted isolation of weakness to "the Orleans" and "the IP" is a tell that destination softness is the issue management most wants to keep contained in the narrative. The accelerated-depreciation tax benefit ($45–50M for 2026) is correctly described as timing, not a windfall — a credibility point. Live M&A optionality has surfaced in the press (chatter around picking up assets from a potential Caesars-related sale), but the CFO frames it as "best position ever to make an acquisition" while explicitly declining to commit — optionality, not a dated catalyst.
+- The shift to "adjusted for these items" framing in Q3 2026 is new; earlier calls led with reported growth.
+- "Destination business" has gone from a temporary drag (2025) to a standing caveat attached to every Las Vegas comment.
+- Management now says plainly that it does not "have to do anything" on M&A; the excess capital is going to buybacks by default.
+- The Sky River hotel slipping from mid-2027 to 2028 is small but is the first timeline slip in the set.
 
 ## 8. CAPITAL-ALLOCATION VERDICT (for the director)
 
-**Classification: STABLE.** Boyd is a well-run, slow-growing regional casino operator with an honest, disciplined management team and a fortress balance sheet — but the transformational event that powers its "deep value" screen (the FanDuel sale) has already happened and the cash is largely spent. The single most important thing the director must weigh before sizing: **the 369% margin of safety is a model illusion built on windfall-inflated earnings; on recurring free cash flow ($281M trailing) the stock is roughly fairly valued, sits at 97% of its 52-week high, and the only forward catalyst is non-binding M&A optionality that management explicitly refuses to commit to.**
+**Trajectory: STABLE.** The operating base is flat; the per-share result depends on buybacks and on the 2027-2028 openings. The single most important thing to weigh: the buyback is now partly funded with debt while operating earnings are not growing, so the equity is getting more levered on a flat base until Norfolk opens in November 2027.
 
-**Economic moat:** NARROW, of the regulatory-license and local-density type — gaming licenses and entrenched locals-market positions (the Las Vegas Locals segment runs >50% margins) are real but geographically capped, with no Macau/Singapore growth premium. Return on invested capital of 12.2% sits modestly above the cost of capital but is not rising, and gross margin is flagged contracting — so the moat is durable but not widening.
+**Moat:** a narrow but real regulatory-license moat. State gaming licenses limit new competition in most of Boyd's regional markets, and its Las Vegas locals network has scale and loyalty-program advantages. Returns are respectable (ROIC, return on invested capital, about 12%) and property margins are stable, though the scan flags gross margin as contracting; the evidence supports a stable, not widening, moat.
 
-**Secular threat:** MANAGEABLE. Regional casinos face slow structural pressure from online gaming (iGaming/iCasino), which management argues is complementary, plus a cyclical-not-secular destination-travel soft patch. Neither threatens terminal value the way a true secular displacement would. The cheapness, properly recomputed off recurring earnings, is not a deep fear-print and not a value trap — it is simply a fairly-priced, steady compounder whose headline screen is distorted by a one-time gain.
+**Secular threat:** manageable. Online casino and sports-betting apps could pull some play away from physical casinos, but Boyd participates through Boyd Interactive and its retained FanDuel market-access fees. No terminal-value threat is visible; the cheapness looks like flat earnings plus rising leverage, not a structurally shrinking base.
 
 CREDIBILITY_SCORE: 4 | TRAJECTORY: STABLE | MOAT: NARROW | MOAT_TREND: STABLE | SECULAR_THREAT: manageable

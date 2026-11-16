@@ -1,50 +1,80 @@
 {
  "regime": "NEUTRAL",
- "score": 0.5475,
+ "score": 0.5325,
  "regime_detail": {
   "growth": "accelerating",
-  "inflation": "accelerating",
+  "inflation": "sticky",
   "rates": "neutral",
-  "credit": "stable"
+  "credit": "fearful"
+ },
+ "quadrant": "REFLATION",
+ "quadrant_basis": "growth up (gdp 1.00) x inflation hot/sticky (cpi 0.50) | real GDP +3.37% ann. (2026-07)",
+ "quadrant_inputs": {
+  "ok": true,
+  "problems": [],
+  "cpi": {
+   "source": "fmp_points",
+   "n_points": 13,
+   "score": 0.5,
+   "latest": "2026-10-01",
+   "yoy_pct": null,
+   "ann_6m_pct": 3.07,
+   "ann_3m_pct": 5.72,
+   "level_basis": "6m_annualized",
+   "trend": "stable",
+   "age_days": 46
+  },
+  "gdp": {
+   "source": "fmp_points",
+   "n_points": 6,
+   "latest": "2026-07-01",
+   "ann_growth_pct": 3.37,
+   "age_days": 138
+  }
  },
  "features": {
-  "macro_vix": 18.4,
-  "macro_yield_spread": 31.0
+  "macro_regime_score": 0.5325,
+  "macro_yield_spread": 27.0,
+  "macro_yield_level": 4.32,
+  "macro_vix": 21.19,
+  "macro_vix_vs_avg": 1.1483,
+  "macro_cpi_score": 0.5,
+  "macro_gdp_score": 1
  },
  "version": "",
- "asof": "2026-06-29",
+ "asof": "2026-11-16",
  "debt_cycle": {
   "debt_cycle_phase": "DISCIPLINE",
   "prior_phase": "DISCIPLINE",
-  "weeks_in_phase": 1,
-  "cycle_score": 0.665,
-  "cycle_target": "DISCIPLINE",
+  "weeks_in_phase": 18,
+  "cycle_score": 0.751,
+  "cycle_target": "FORCING",
   "transition_blocked": false,
   "transition_implied": null,
-  "pending_target": null,
-  "pending_count": 0,
-  "confidence": "low",
+  "pending_target": "FORCING",
+  "pending_count": 1,
+  "confidence": "high",
   "seeded": true,
-  "phase_basis": "real 30y 2.90% (rising) x 30y-3m +120bp",
+  "phase_basis": "real 30y 3.24% (rising) x 30y-3m +115bp x auction demand score 0.79 x interest/receipts score 1.00",
   "cycle_sub_scores": {
    "real_long_rate": 1.0,
    "term_premium": 0.7,
-   "auction_quality": 0.5,
-   "debt_service": 0.5,
-   "credit_stress": 0.5,
-   "cb_balance_sheet": 0.5
+   "auction_quality": 0.79,
+   "debt_service": 1.0,
+   "credit_stress": 0.35,
+   "cb_balance_sheet": 0.4
   },
   "cycle_sub_sources": {
    "real_long_rate": "live",
    "term_premium": "live",
-   "auction_quality": "missing",
-   "debt_service": "missing",
-   "credit_stress": "missing",
-   "cb_balance_sheet": "missing"
+   "auction_quality": "live",
+   "debt_service": "live",
+   "credit_stress": "live",
+   "cb_balance_sheet": "live"
   },
   "reserve_asset_check": {
-   "consistent_with_phase": null,
-   "note": "gold data unavailable — check skipped"
+   "consistent_with_phase": true,
+   "note": "gold -16% over 6mo — consistent with successfully imposed positive real rates"
   },
   "phase_detail": "Positive real long rates being imposed and holding. Duration punished, cash flow rewarded. Real assets not yet.",
   "duration_caps": {
@@ -52,6 +82,6 @@
    "cash_now_min": 0.35
   },
   "expected_horizon_months": 18,
-  "asof": "2026-07-27"
+  "asof": "2026-11-16"
  }
 }

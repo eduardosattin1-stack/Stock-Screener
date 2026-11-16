@@ -1,13 +1,41 @@
 {
-  "symbol": "SWON.SW",
-  "verdict": "REFUTED",
-  "kill_fact": "The load-bearing valuation floor is a STALE PRE-CRAYON ANCHOR and it inverts post-merger. The debate underwrites 'NET CASH ~CHF 360m (cash 434m vs debt 74m)' on a ~152m share count, explicitly calling it 'the hard, verifiable component' / 'the floor under the thesis' worth +CHF 2.4/sh. The primary FY2025 Annual Report (period end 31-Dec-2025, Crayon consolidated from 2-Jul-2025) shows the OPPOSITE: total financial liabilities CHF 867.4m (term loan CHF 575.0m + RCF drawn CHF 100.0m + leases CHF 74.5m) vs cash CHF 419.1m => the company is in NET DEBT (~CHF 256m ex-leases, ~CHF 448m incl. leases; leverage 1.3x adj. EBITDA), NOT net cash. The CHF 74m debt the bull used is the standalone pre-deal figure before the Crayon term loan was drawn to fund the cash portion of the offer. Compounding it, the FY2025 share count is 221,102,953 (62.5m new shares issued for Crayon), NOT ~152m. Both SoP per-share calcs and the 'P/FCF 5.5x'/upside math use the ~152m pre-merger denominator, overstating per-share value ~45%. Re-running the bear's own distressed SoP with correct inputs (operating EV ~CHF 1.5bn at 6x, LESS net debt ~CHF 256m, / 221m shares) yields ~CHF 5.6/sh -- BELOW the current ~CHF 8.4-8.7 price. The thesis's signature 'deep-value tell' (bear/break SoP sits ABOVE market, net-cash-protected downside) is an artifact of the two stale inputs; corrected, the floor is gone, the per-share intrinsic collapses, and FCF must now service real debt rather than back a cash add-back. The value case as constructed does not survive the primary filing.",
-  "corrections": "(1) NET DEBT, not net cash: 31-Dec-2025 borrowings term loan CHF 575.0m + RCF CHF 100.0m (=CHF 675m ex-leases) vs cash CHF 419.1m => ~CHF 256m NET DEBT ex-leases (~CHF 448m incl. CHF 74.5m leases), leverage ~1.3x adj. EBITDA -- NOT 'net cash CHF 360m'. The per-share floor is -~CHF 1.2/sh (net debt/221m), not +CHF 2.4/sh. (2) SHARE COUNT 221,102,953 at 31-Dec-2025, not ~152m -- every per-share SoP and the P/FCF multiple are computed on a denominator ~45% too small; correct per-share intrinsic is ~31% lower across the board. (3) FY2025 IFRS net income CHF 0.9m and reported revenue CHF 1,243m (+22.5%, M&A-inflated) VERIFY -- the GAAP-thin / optically-inflated-growth bear points stand. (4) Combined LFL revenue was CHF ~1.52bn and combined-basis adj. EBITDA CHF 317m / 20.9%; FY2026 guide >23% margin verifies. The cash engine and synergy delivery are real, but with a 221m share base and a net-debt balance sheet they no longer produce the claimed net-cash-protected, sub-market downside.",
-  "value_conviction_cap": 2,
-  "evidence": [
-    "SoftwareOne FY2025 Annual Report, Note 20 Financial liabilities (period end 31-Dec-2025): total financial liabilities CHF 867.4m; term loan carrying CHF 575.0m; RCF drawn CHF 100.0m; lease liabilities CHF 74.5m; covenant leverage <1.50x -- report.softwareone.com/ar25/financial-liabilities",
-    "SoftwareOne FY2025 Annual Report, share capital at 31-Dec-2025 = CHF 2,211,029.53 / 221,102,953 registered shares (62,521,493 new shares issued as Crayon consideration); cash & equivalents CHF 419.1m; net debt leverage 1.3x adj. EBITDA -- report.softwareone.com/ar25/ (Annual Report 2025)",
-    "SoftwareOne media release 'successfully completes Crayon transaction' (2-Jul-2025): Crayon consolidated from 2-Jul-2025; total SoftwareOne shares issued 221,102,953 post-offer -- softwareone.com/en/media-releases/2025/07/02/softwareone-successfully-completes-crayon-transaction",
-    "SoftwareOne FY2025 results: IFRS net income CHF 0.9m, reported revenue CHF 1,243m (+22.5% YoY, Crayon H2 only), combined-LFL revenue CHF ~1.52bn, combined adj. EBITDA CHF 317m / 20.9%, FY2026 guide adj. EBITDA margin >23% -- investing.com FY2025 slides / channelweb FY25 results"
-  ]
+ "symbol": "SWON.SW",
+ "verdict": "CONFIRMED_WITH_CORRECTIONS",
+ "kill_fact": null,
+ "corrections": [
+  "Share denominator: the record's levels divide equity by ~214.5m basic shares (CHF 1,630m / CHF 7.60). The H1 2026 statement shows 217.06m weighted diluted shares (215.58m basic). On the diluted count the bear case is ~CHF 7.51, base ~CHF 11.89, bull ~CHF 14.33 (about -1.2%). Footnote-level; the arithmetic is otherwise intact.",
+  "Cash flow on the statement basis is softer than the CHF ~200m company figure: H2 2025 FCF CHF 146.1m + H1 2026 FCF CHF 28.1m (operating cash flow CHF 64.6m less capex CHF 36.5m, after a CHF 79.4m working-capital outflow) = ~CHF 174m over the last twelve months. This supports the bear's 'pass-through working capital is not free cash' point but does not move a valuation level, because the record values the business on EBITDA multiples.",
+  "Financing cost is rising: H1 2026 interest expense was CHF 31.9m (net CHF -26.1m), against CHF 18.9m in H1 2025, on CHF 865.8m of gross debt (CHF 310.8m short-term, CHF 555.0m long-term). This is consistent with the bear's floating-rate term-loan point; no level change.",
+  "Verified as stated: net debt CHF 483.0m at 2026-06-30 (debt CHF 865.8m less cash CHF 382.8m); pass-through receivables of CHF 4.52bn against payables of CHF 4.52bn; H1 2026 net income CHF 54.3m; price CHF 8.78, 52-week low CHF 5.83, market cap CHF 1.886bn. The Q3 2026 trading-update figures (7.4% like-for-like growth, channel +7.3%, margin guide raised to above 24%) could not be independently re-checked in this pass because the web-search budget was exhausted and FMP had no Q3 data for this semiannual reporter. They rest on the dossier."
+ ],
+ "correction_severity": "minor",
+ "kill_scope": "numbers",
+ "revised_fv_px": 11.89,
+ "corrections_typed": [
+  {
+   "field": "bear_px",
+   "from": 7.6,
+   "to": 7.51,
+   "basis": "H1 2026 income statement (period end 2026-06-30, FMP): 217.06m weighted diluted shares; record equity CHF 1,630m / 217.06m = CHF 7.51"
+  },
+  {
+   "field": "base_fv_px",
+   "from": 12.02,
+   "to": 11.89,
+   "basis": "H1 2026 diluted share count 217.06m (2026-06-30, FMP) against the record's ~214.5m basic shares implied; 12.02 x 214.5 / 217.06 = CHF 11.89"
+  },
+  {
+   "field": "bull_px",
+   "from": 14.5,
+   "to": 14.33,
+   "basis": "Same diluted denominator (217.06m, H1 2026 statement, 2026-06-30): 14.50 x 214.5 / 217.06 = CHF 14.33"
+  }
+ ],
+ "evidence": [
+  "FMP balance sheet, SoftwareONE Holding AG, period ending 2026-06-30 (H1 2026): total debt CHF 865.8m, cash CHF 382.8m, net debt CHF 483.0m, receivables CHF 4,524m, payables CHF 4,518m",
+  "FMP income statement, H1 2026 (2026-06-30): revenue CHF 818.3m, EBITDA CHF 185.4m, interest expense CHF 31.9m, net income CHF 54.3m, weighted shares 215.58m basic / 217.06m diluted",
+  "FMP cash-flow statement, H1 2026 (2026-06-30): operating cash flow CHF 64.6m, capex CHF 36.5m, FCF CHF 28.1m; H2 2025 (2025-12-31) FCF CHF 146.1m",
+  "FMP quote SIX:SWON 2026-11-16: CHF 8.78, 52-week range CHF 5.83-10.04, market cap CHF 1.886bn"
+ ],
+ "carried_from_book": "regime"
 }

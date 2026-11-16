@@ -1,57 +1,83 @@
 {
   "inception_date": "2026-06-08",
-  "nav": 103.0104,
-  "last_date": "2026-07-02",
+  "nav": 108.9452,
+  "last_date": "2026-11-16",
   "last_prices": {
-    "FIP": 4.51,
-    "AAUC": 23.71,
-    "KBR": 34.67,
-    "THC": 191.2,
-    "UHS": 150.58,
-    "NTES": 129.7,
-    "CTSH": 41.07,
-    "EEFT": 75.22
+    "0175.HK": 13.41,
+    "INCH.L": 651.0,
+    "DUE.DE": 16.4,
+    "LRN": 75.82,
+    "9980.HK": 99.45
   },
   "positions": {
-    "NTES": {
-      "entry_price": 116.55,
-      "entry_date": "2026-06-14",
-      "conviction": 65
+    "LRN": {
+      "entry_price": 82.51,
+      "entry_date": "2026-08-18",
+      "conviction": 50
     },
-    "THC": {
-      "entry_price": 172.57,
-      "entry_date": "2026-06-21",
+    "DUE.DE": {
+      "entry_price": 17.98,
+      "entry_date": "2026-08-31",
       "conviction": 64
     },
-    "CTSH": {
-      "entry_price": 43.7,
-      "entry_date": "2026-06-21",
-      "conviction": 66
+    "9980.HK": {
+      "entry_price": 94.0,
+      "entry_date": "2026-10-05",
+      "conviction": 50
     },
-    "EEFT": {
-      "entry_price": 65.84,
-      "entry_date": "2026-06-21",
-      "conviction": 68
+    "0175.HK": {
+      "entry_price": 15.56,
+      "entry_date": "2026-10-13",
+      "conviction": 80,
+      "pending_since": "2026-10-12",
+      "gate": {
+        "kind": "next_close",
+        "source": "entry_gate",
+        "posture": "scale_in",
+        "since": "2026-10-12"
+      },
+      "decision_px": 15.11,
+      "entry_price_source": "next_close_eod",
+      "filled_from_pending": {
+        "pending_since": "2026-10-12",
+        "gate": {
+          "kind": "next_close",
+          "source": "entry_gate",
+          "posture": "scale_in",
+          "since": "2026-10-12"
+        },
+        "fill_date": "2026-10-13",
+        "fill_px": 15.56,
+        "decision_px": 15.11,
+        "waited_days": 1
+      }
     },
-    "UHS": {
-      "entry_price": 141.17,
-      "entry_date": "2026-06-21",
-      "conviction": 66
-    },
-    "FIP": {
-      "entry_price": 4.36,
-      "entry_date": "2026-06-30",
-      "conviction": 80
-    },
-    "KBR": {
-      "entry_price": 33.71,
-      "entry_date": "2026-06-30",
-      "conviction": 78
-    },
-    "AAUC": {
-      "entry_price": 23.71,
-      "entry_date": "2026-07-01",
-      "conviction": 76
+    "INCH.L": {
+      "entry_price": 638.0,
+      "entry_date": "2026-10-27",
+      "conviction": 72,
+      "pending_since": "2026-10-26",
+      "gate": {
+        "kind": "next_close",
+        "source": "entry_gate",
+        "posture": "scale_in",
+        "since": "2026-10-26"
+      },
+      "decision_px": 649.5,
+      "entry_price_source": "next_close_eod",
+      "filled_from_pending": {
+        "pending_since": "2026-10-26",
+        "gate": {
+          "kind": "next_close",
+          "source": "entry_gate",
+          "posture": "scale_in",
+          "since": "2026-10-26"
+        },
+        "fill_date": "2026-10-27",
+        "fill_px": 638.0,
+        "decision_px": 649.5,
+        "waited_days": 1
+      }
     }
   },
   "history": [
@@ -102,6 +128,432 @@
       "nav": 103.0104,
       "ret": 0.023273,
       "n": 8
+    },
+    {
+      "date": "2026-07-07",
+      "nav": 105.7211,
+      "ret": 0.0,
+      "n": 9
+    },
+    {
+      "date": "2026-07-09",
+      "nav": 106.319,
+      "ret": 0.005655,
+      "n": 9
+    },
+    {
+      "date": "2026-07-10",
+      "nav": 106.6065,
+      "ret": 0.002704,
+      "n": 9
+    },
+    {
+      "date": "2026-07-11",
+      "nav": 105.8918,
+      "ret": 0.0,
+      "n": 10
+    },
+    {
+      "date": "2026-07-12",
+      "nav": 105.8918,
+      "ret": 0.0,
+      "n": 10
+    },
+    {
+      "date": "2026-07-13",
+      "nav": 105.8918,
+      "ret": 0.0,
+      "n": 10
+    },
+    {
+      "date": "2026-07-14",
+      "nav": 108.3831,
+      "ret": 0.023526,
+      "n": 10
+    },
+    {
+      "date": "2026-07-15",
+      "nav": 106.6452,
+      "ret": -0.016035,
+      "n": 10
+    },
+    {
+      "date": "2026-07-16",
+      "nav": 107.9911,
+      "ret": 0.012621,
+      "n": 10
+    },
+    {
+      "date": "2026-07-17",
+      "nav": 107.9911,
+      "ret": 0.0,
+      "n": 9
+    },
+    {
+      "date": "2026-07-18",
+      "nav": 107.2364,
+      "ret": -0.006988,
+      "n": 9
+    },
+    {
+      "date": "2026-07-19",
+      "nav": 107.2364,
+      "ret": 0.0,
+      "n": 9
+    },
+    {
+      "date": "2026-07-20",
+      "nav": 107.2364,
+      "ret": 0.0,
+      "n": 9
+    },
+    {
+      "date": "2026-07-21",
+      "nav": 106.4993,
+      "ret": 0.0,
+      "n": 9
+    },
+    {
+      "date": "2026-07-22",
+      "nav": 105.8572,
+      "ret": -0.006029,
+      "n": 9
+    },
+    {
+      "date": "2026-07-23",
+      "nav": 106.327,
+      "ret": 0.004438,
+      "n": 9
+    },
+    {
+      "date": "2026-07-24",
+      "nav": 105.2618,
+      "ret": -0.010018,
+      "n": 9
+    },
+    {
+      "date": "2026-07-25",
+      "nav": 107.8436,
+      "ret": 0.0,
+      "n": 9
+    },
+    {
+      "date": "2026-07-26",
+      "nav": 107.8436,
+      "ret": 0.0,
+      "n": 9
+    },
+    {
+      "date": "2026-07-27",
+      "nav": 107.8436,
+      "ret": 0.0,
+      "n": 5
+    },
+    {
+      "date": "2026-07-28",
+      "nav": 111.7003,
+      "ret": 0.0,
+      "n": 5
+    },
+    {
+      "date": "2026-07-29",
+      "nav": 117.0236,
+      "ret": 0.047657,
+      "n": 5
+    },
+    {
+      "date": "2026-07-30",
+      "nav": 116.9332,
+      "ret": -0.000772,
+      "n": 5
+    },
+    {
+      "date": "2026-07-31",
+      "nav": 115.3324,
+      "ret": -0.01369,
+      "n": 5
+    },
+    {
+      "date": "2026-08-01",
+      "nav": 114.489,
+      "ret": -0.007313,
+      "n": 5
+    },
+    {
+      "date": "2026-08-02",
+      "nav": 114.489,
+      "ret": 0.0,
+      "n": 5
+    },
+    {
+      "date": "2026-08-03",
+      "nav": 114.489,
+      "ret": 0.0,
+      "n": 3
+    },
+    {
+      "date": "2026-08-04",
+      "nav": 116.9129,
+      "ret": 0.021171,
+      "n": 3
+    },
+    {
+      "date": "2026-08-05",
+      "nav": 116.3332,
+      "ret": -0.004959,
+      "n": 3
+    },
+    {
+      "date": "2026-08-06",
+      "nav": 115.9696,
+      "ret": -0.003126,
+      "n": 3
+    },
+    {
+      "date": "2026-08-07",
+      "nav": 117.9042,
+      "ret": 0.0,
+      "n": 3
+    },
+    {
+      "date": "2026-08-09",
+      "nav": 117.9042,
+      "ret": 0.0,
+      "n": 3
+    },
+    {
+      "date": "2026-08-10",
+      "nav": 117.9042,
+      "ret": 0.0,
+      "n": 5
+    },
+    {
+      "date": "2026-08-11",
+      "nav": 117.9139,
+      "ret": 0.0,
+      "n": 5
+    },
+    {
+      "date": "2026-08-12",
+      "nav": 115.7341,
+      "ret": -0.018486,
+      "n": 5
+    },
+    {
+      "date": "2026-08-18",
+      "nav": 117.7642,
+      "ret": 0.0,
+      "n": 5
+    },
+    {
+      "date": "2026-08-20",
+      "nav": 113.6689,
+      "ret": -0.034775,
+      "n": 5
+    },
+    {
+      "date": "2026-08-21",
+      "nav": 113.3276,
+      "ret": -0.003002,
+      "n": 5
+    },
+    {
+      "date": "2026-08-22",
+      "nav": 113.1286,
+      "ret": -0.001756,
+      "n": 5
+    },
+    {
+      "date": "2026-08-23",
+      "nav": 113.1286,
+      "ret": 0.0,
+      "n": 5
+    },
+    {
+      "date": "2026-08-24",
+      "nav": 113.1286,
+      "ret": 0.0,
+      "n": 7
+    },
+    {
+      "date": "2026-08-25",
+      "nav": 112.8027,
+      "ret": -0.002881,
+      "n": 7
+    },
+    {
+      "date": "2026-08-26",
+      "nav": 114.1036,
+      "ret": 0.011532,
+      "n": 7
+    },
+    {
+      "date": "2026-08-27",
+      "nav": 114.2659,
+      "ret": 0.001422,
+      "n": 7
+    },
+    {
+      "date": "2026-08-28",
+      "nav": 113.4587,
+      "ret": -0.007064,
+      "n": 7
+    },
+    {
+      "date": "2026-08-29",
+      "nav": 114.0336,
+      "ret": 0.005067,
+      "n": 7
+    },
+    {
+      "date": "2026-08-30",
+      "nav": 114.0336,
+      "ret": 0.0,
+      "n": 7
+    },
+    {
+      "date": "2026-08-31",
+      "nav": 114.0336,
+      "ret": 0.0,
+      "n": 7
+    },
+    {
+      "date": "2026-09-01",
+      "nav": 114.5946,
+      "ret": 0.004919,
+      "n": 7
+    },
+    {
+      "date": "2026-09-02",
+      "nav": 114.1204,
+      "ret": -0.004138,
+      "n": 7
+    },
+    {
+      "date": "2026-09-03",
+      "nav": 114.0639,
+      "ret": -0.000495,
+      "n": 7
+    },
+    {
+      "date": "2026-09-04",
+      "nav": 115.0635,
+      "ret": 0.008763,
+      "n": 7
+    },
+    {
+      "date": "2026-09-05",
+      "nav": 116.0691,
+      "ret": 0.008739,
+      "n": 7
+    },
+    {
+      "date": "2026-09-06",
+      "nav": 116.0691,
+      "ret": 0.0,
+      "n": 7
+    },
+    {
+      "date": "2026-09-07",
+      "nav": 116.0691,
+      "ret": 0.0,
+      "n": 7
+    },
+    {
+      "date": "2026-09-22",
+      "nav": 112.3788,
+      "ret": 0.0,
+      "n": 8
+    },
+    {
+      "date": "2026-09-26",
+      "nav": 109.8907,
+      "ret": -0.02214,
+      "n": 8
+    },
+    {
+      "date": "2026-09-29",
+      "nav": 109.8907,
+      "ret": 0.0,
+      "n": 7
+    },
+    {
+      "date": "2026-10-03",
+      "nav": 109.6533,
+      "ret": -0.002161,
+      "n": 7
+    },
+    {
+      "date": "2026-10-05",
+      "nav": 109.6533,
+      "ret": 0.0,
+      "n": 6
+    },
+    {
+      "date": "2026-10-10",
+      "nav": 113.468,
+      "ret": 0.034789,
+      "n": 6
+    },
+    {
+      "date": "2026-10-12",
+      "nav": 113.468,
+      "ret": 0.0,
+      "n": 6
+    },
+    {
+      "date": "2026-10-19",
+      "nav": 113.468,
+      "ret": 0.0,
+      "n": 7
+    },
+    {
+      "date": "2026-10-24",
+      "nav": 111.8339,
+      "ret": -0.014402,
+      "n": 8
+    },
+    {
+      "date": "2026-10-26",
+      "nav": 111.8339,
+      "ret": 0.0,
+      "n": 6
+    },
+    {
+      "date": "2026-10-31",
+      "nav": 112.6208,
+      "ret": 0.007037,
+      "n": 7
+    },
+    {
+      "date": "2026-11-02",
+      "nav": 112.6208,
+      "ret": 0.0,
+      "n": 6
+    },
+    {
+      "date": "2026-11-07",
+      "nav": 110.5698,
+      "ret": -0.018212,
+      "n": 6
+    },
+    {
+      "date": "2026-11-10",
+      "nav": 110.5698,
+      "ret": 0.0,
+      "n": 5
+    },
+    {
+      "date": "2026-11-14",
+      "nav": 108.9452,
+      "ret": -0.014693,
+      "n": 5
+    },
+    {
+      "date": "2026-11-16",
+      "nav": 108.9452,
+      "ret": 0.0,
+      "n": 5
     }
   ],
   "closed": [
@@ -311,6 +763,410 @@
       "exit_price": 8.734,
       "return_pct": -8.08,
       "conviction": 60
+    },
+    {
+      "symbol": "AAUC",
+      "entry_date": "2026-07-01",
+      "exit_date": "2026-07-07",
+      "entry_price": 23.71,
+      "exit_price": 24.06,
+      "return_pct": 1.48,
+      "conviction": 76
+    },
+    {
+      "symbol": "KBR",
+      "entry_date": "2026-06-30",
+      "exit_date": "2026-07-07",
+      "entry_price": 33.71,
+      "exit_price": 37.43,
+      "return_pct": 11.04,
+      "conviction": 78
+    },
+    {
+      "symbol": "GDOT",
+      "entry_date": "2026-07-07",
+      "exit_date": "2026-07-07",
+      "entry_price": 13.26,
+      "exit_price": 13.395,
+      "return_pct": 1.02,
+      "conviction": 72
+    },
+    {
+      "symbol": "LZM",
+      "entry_date": "2026-07-07",
+      "exit_date": "2026-07-07",
+      "entry_price": 3.86,
+      "exit_price": 3.665,
+      "return_pct": -5.05,
+      "conviction": 70
+    },
+    {
+      "symbol": "FIP",
+      "entry_date": "2026-06-30",
+      "exit_date": "2026-07-07",
+      "entry_price": 4.36,
+      "exit_price": 4.36,
+      "return_pct": 0.0,
+      "conviction": 62
+    },
+    {
+      "symbol": "EEFT",
+      "entry_date": "2026-06-21",
+      "exit_date": "2026-07-11",
+      "entry_price": 65.84,
+      "exit_price": 77.29,
+      "return_pct": 17.39,
+      "conviction": 66
+    },
+    {
+      "symbol": "CTSH",
+      "entry_date": "2026-06-21",
+      "exit_date": "2026-07-13",
+      "entry_price": 43.7,
+      "exit_price": 42.57,
+      "return_pct": -2.59,
+      "conviction": 62
+    },
+    {
+      "symbol": "THC",
+      "entry_date": "2026-06-21",
+      "exit_date": "2026-07-13",
+      "entry_price": 172.57,
+      "exit_price": 204.25,
+      "return_pct": 18.36,
+      "conviction": 52
+    },
+    {
+      "symbol": "HNR1.DE",
+      "entry_date": "2026-07-07",
+      "exit_date": "2026-07-13",
+      "entry_price": 243.6,
+      "exit_price": 250.0,
+      "return_pct": 2.63,
+      "conviction": 60
+    },
+    {
+      "symbol": "1698.HK",
+      "entry_date": "2026-07-07",
+      "exit_date": "2026-07-13",
+      "entry_price": 34.9,
+      "exit_price": 35.04,
+      "return_pct": 0.4,
+      "conviction": 60
+    },
+    {
+      "symbol": "SPSC",
+      "entry_date": "2026-07-13",
+      "exit_date": "2026-07-17",
+      "entry_price": 60.85,
+      "exit_price": 64.11,
+      "return_pct": 5.36,
+      "conviction": 66
+    },
+    {
+      "symbol": "NTES",
+      "entry_date": "2026-06-14",
+      "exit_date": "2026-07-17",
+      "entry_price": 116.55,
+      "exit_price": 129.76,
+      "return_pct": 11.33,
+      "conviction": 66
+    },
+    {
+      "symbol": "ZTS",
+      "entry_date": "2026-07-07",
+      "exit_date": "2026-07-17",
+      "entry_price": 75.42,
+      "exit_price": 76.89,
+      "return_pct": 1.95,
+      "conviction": 58
+    },
+    {
+      "symbol": "UHS",
+      "entry_date": "2026-06-21",
+      "exit_date": "2026-07-27",
+      "entry_price": 141.17,
+      "exit_price": 155.75,
+      "return_pct": 10.33,
+      "conviction": 63
+    },
+    {
+      "symbol": "INTU",
+      "entry_date": "2026-07-11",
+      "exit_date": "2026-07-27",
+      "entry_price": 274.96,
+      "exit_price": 296.33,
+      "return_pct": 7.77,
+      "conviction": 62
+    },
+    {
+      "symbol": "DUE.DE",
+      "entry_date": "2026-07-13",
+      "exit_date": "2026-07-27",
+      "entry_price": 17.08,
+      "exit_price": 17.88,
+      "return_pct": 4.68,
+      "conviction": 56
+    },
+    {
+      "symbol": "7974.T",
+      "entry_date": "2026-07-17",
+      "exit_date": "2026-07-27",
+      "entry_price": 7080.0,
+      "exit_price": 6969.0,
+      "return_pct": -1.57,
+      "conviction": 50
+    },
+    {
+      "symbol": "CNX",
+      "entry_date": "2026-07-11",
+      "exit_date": "2026-07-27",
+      "entry_price": 31.99,
+      "exit_price": 34.29,
+      "return_pct": 7.19,
+      "conviction": 48
+    },
+    {
+      "symbol": "BAH",
+      "entry_date": "2026-07-07",
+      "exit_date": "2026-07-27",
+      "entry_price": 62.31,
+      "exit_price": 72.53,
+      "return_pct": 16.4,
+      "conviction": 46
+    },
+    {
+      "symbol": "LNC",
+      "entry_date": "2026-07-27",
+      "exit_date": "2026-08-02",
+      "entry_price": 41.36,
+      "exit_price": 45.61,
+      "return_pct": 10.28,
+      "conviction": 58
+    },
+    {
+      "symbol": "WKL.AS",
+      "entry_date": "2026-07-13",
+      "exit_date": "2026-08-03",
+      "entry_price": 60.5,
+      "exit_price": 67.88,
+      "return_pct": 12.2,
+      "conviction": 72
+    },
+    {
+      "symbol": "YELP",
+      "entry_date": "2026-07-27",
+      "exit_date": "2026-08-03",
+      "entry_price": 25.1,
+      "exit_price": 26.43,
+      "return_pct": 5.3,
+      "conviction": 68
+    },
+    {
+      "symbol": "GPOR",
+      "entry_date": "2026-08-02",
+      "exit_date": "2026-08-10",
+      "entry_price": 161.37,
+      "exit_price": 162.76,
+      "return_pct": 0.86,
+      "conviction": 50
+    },
+    {
+      "symbol": "YELP",
+      "entry_date": "2026-08-10",
+      "exit_date": "2026-08-18",
+      "entry_price": 25.56,
+      "exit_price": 25.56,
+      "return_pct": 0.0,
+      "conviction": 66
+    },
+    {
+      "symbol": "DECK",
+      "entry_date": "2026-07-13",
+      "exit_date": "2026-08-18",
+      "entry_price": 105.99,
+      "exit_price": 97.46,
+      "return_pct": -8.05,
+      "conviction": 62
+    },
+    {
+      "symbol": "KVYO",
+      "entry_date": "2026-08-10",
+      "exit_date": "2026-08-18",
+      "entry_price": 16.615,
+      "exit_price": 16.615,
+      "return_pct": 0.0,
+      "conviction": 56
+    },
+    {
+      "symbol": "JD.L",
+      "entry_date": "2026-08-24",
+      "exit_date": "2026-08-31",
+      "entry_price": 84.54,
+      "exit_price": 86.7,
+      "return_pct": 2.56,
+      "conviction": 60
+    },
+    {
+      "symbol": "MAT",
+      "entry_date": "2026-08-18",
+      "exit_date": "2026-08-31",
+      "entry_price": 14.79,
+      "exit_price": 15.14,
+      "return_pct": 2.37,
+      "conviction": 54
+    },
+    {
+      "symbol": "VNT",
+      "entry_date": "2026-07-17",
+      "exit_date": "2026-08-31",
+      "entry_price": 29.68,
+      "exit_price": 32.76,
+      "return_pct": 10.38,
+      "conviction": 50
+    },
+    {
+      "symbol": "RWAY.MI",
+      "entry_date": "2026-08-31",
+      "exit_date": "2026-09-07",
+      "entry_price": 4.525,
+      "exit_price": 4.545,
+      "return_pct": 0.44,
+      "conviction": 64
+    },
+    {
+      "symbol": "ODF.OL",
+      "entry_date": "2026-08-31",
+      "exit_date": "2026-09-22",
+      "entry_price": 111.2,
+      "exit_price": 133.6,
+      "return_pct": 20.14,
+      "conviction": 70
+    },
+    {
+      "symbol": "APP",
+      "entry_date": "2026-08-18",
+      "exit_date": "2026-09-22",
+      "entry_price": 346.8,
+      "exit_price": 330.17,
+      "return_pct": -4.8,
+      "conviction": 60
+    },
+    {
+      "symbol": "2618.HK",
+      "entry_date": "2026-08-24",
+      "exit_date": "2026-09-22",
+      "entry_price": 11.81,
+      "exit_price": 10.46,
+      "return_pct": -11.43,
+      "conviction": 56
+    },
+    {
+      "symbol": "YELP",
+      "entry_date": "2026-09-22",
+      "exit_date": "2026-09-29",
+      "entry_price": 19.41,
+      "exit_price": 17.73,
+      "return_pct": -8.66,
+      "conviction": 78
+    },
+    {
+      "symbol": "INGR",
+      "entry_date": "2026-09-22",
+      "exit_date": "2026-09-29",
+      "entry_price": 97.03,
+      "exit_price": 96.72,
+      "return_pct": -0.32,
+      "conviction": 72
+    },
+    {
+      "symbol": "DNLM.L",
+      "entry_date": "2026-09-07",
+      "exit_date": "2026-10-05",
+      "entry_price": 882.5,
+      "exit_price": 780.0,
+      "return_pct": -11.61,
+      "conviction": 60
+    },
+    {
+      "symbol": "WAL",
+      "entry_date": "2026-08-10",
+      "exit_date": "2026-10-05",
+      "entry_price": 81.39,
+      "exit_price": 76.38,
+      "return_pct": -6.16,
+      "conviction": 50
+    },
+    {
+      "symbol": "PTEC.L",
+      "entry_date": "2026-10-13",
+      "exit_date": "2026-10-19",
+      "entry_price": 362.6,
+      "exit_price": 362.6,
+      "return_pct": 0.0,
+      "conviction": 60,
+      "filled_from_pending": {
+        "pending_since": "2026-10-12",
+        "gate": {
+          "kind": "next_close",
+          "source": "entry_gate",
+          "posture": "scale_in",
+          "since": "2026-10-12"
+        },
+        "fill_date": "2026-10-13",
+        "fill_px": 362.6,
+        "decision_px": 362.6,
+        "waited_days": 1
+      }
+    },
+    {
+      "symbol": "267260.KS",
+      "entry_date": "2026-10-20",
+      "exit_date": "2026-10-26",
+      "entry_price": 487500.0,
+      "exit_price": 470000.0,
+      "return_pct": -3.59,
+      "conviction": 58,
+      "filled_from_pending": {
+        "pending_since": "2026-10-19",
+        "gate": {
+          "kind": "next_close",
+          "source": "entry_gate",
+          "posture": "scale_in",
+          "since": "2026-10-19"
+        },
+        "fill_date": "2026-10-20",
+        "fill_px": 487500.0,
+        "decision_px": 527000.0,
+        "waited_days": 1
+      }
+    },
+    {
+      "symbol": "INTU",
+      "entry_date": "2026-09-29",
+      "exit_date": "2026-10-26",
+      "entry_price": 275.79,
+      "exit_price": 343.39,
+      "return_pct": 24.51,
+      "conviction": 60
+    },
+    {
+      "symbol": "MMS",
+      "entry_date": "2026-09-22",
+      "exit_date": "2026-11-02",
+      "entry_price": 55.97,
+      "exit_price": 63.72,
+      "return_pct": 13.85,
+      "conviction": 64
+    },
+    {
+      "symbol": "ROCK",
+      "entry_date": "2026-09-22",
+      "exit_date": "2026-11-10",
+      "entry_price": 41.72,
+      "exit_price": 31.4009,
+      "return_pct": -24.73,
+      "conviction": 68
     }
   ]
 }

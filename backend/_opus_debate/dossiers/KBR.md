@@ -1,55 +1,73 @@
-# KBR, Inc. (KBR) — Event-Driven Special Situation Dossier
+# KBR, Inc. - Interrogator dossier (event-driven special situation)
 
-**Setup:** Sum-of-the-parts spin-off. KBR is splitting itself in two. The thesis is the gap between today's blended price (~$33) and what the two halves are worth once they trade separately and each gets valued against its own peer group.
+Prepared 16 November 2026. Share price used throughout: $35.67 (live quote, 16 November 2026; Friday 13 November closed at $35.59). KBR has 126.1 million shares outstanding, a market value of about $4.50 billion, and a 52-week range of $29.94 to $45.37.
 
-## 1. THE EVENT — what is being separated
+This is a judgement on one event, not on KBR as a business to own forever: the planned separation of KBR's government-services arm into a new New York Stock Exchange company called Trinzic (ticker TZIC), targeted for 4 January 2027. The questions are whether the event is real, whether the date is firm, and what catches the share price if the event disappoints.
 
-On September 24, 2025, KBR's board unanimously approved a plan to spin off its Mission Technology Solutions business (the government-services arm — national security and space, roughly $5.8 billion in annual revenue and ~20,000 employees) into a separate, independent, publicly traded company. What remains — "New KBR" — keeps the Sustainable Technology Solutions business, a high-margin licensing and process-technology franchise (ammonia, chemicals, refining, clean-energy / circular-economy process tech, with 85-plus licensed processes).
+## What changed since the last review (9 November 2026)
 
-The logic is a classic conglomerate-discount unlock: a slow-growth-but-stable government services contractor and a high-margin, IP-driven energy-transition technology licensor do not belong in the same wrapper. Each appeals to a different buyer, and the market currently values the bundle at a single blended multiple (~10x EBITDA, ~10-11x earnings) that flatters neither. Split apart, the defense-services half can be valued against CACI, Leidos and Booz Allen, and the technology half against process-tech and clean-energy peers that trade richer.
+Two things, and they pull in opposite directions.
 
-## 2. CATALYST STATUS — is it real, dated, and binding?
+First, the information event happened and it disappointed the market. KBR held its investor day on 11 November and Trinzic on 12 November 2026 in New York, publishing standalone figures for the first time. The stock fell from $38.90 (10 November close) to $36.29 on 11 November (down 6.7%) and to $35.32 on 12 November (down a further 2.7%), on roughly two to three times normal volume. Two days of new standalone disclosure took about 9% off the bundle.
 
-This is the strongest part of the case. The catalyst is no longer a vague "strategic intent." As of the most recent disclosures it is a firm, scheduled corporate event with a named completion date and a named management team:
+Second, the date got firmer. Both management teams restated 4 January 2027 at their own events, and Trinzic's chief executive called the separation "on track." That is now seven weeks away.
 
-- **Completion date: January 4, 2027.** The separation is scheduled to take effect on that date — a hard, dated event roughly six months out.
-- **June 25, 2026:** KBR named the leadership of the spun-off company — Michael LaRouche (from Serco North America, ex-SAIC/Raytheon/Lockheed) as CEO-designate and Nicholas Veasey (ex-MAG Aerospace CFO) as CFO-designate. Naming the standalone executive team is a concrete step that companies take only when a spin is genuinely proceeding, not stalling.
-- **July 1, 2026 / September 24, 2026:** Veasey and LaRouche join, respectively, to stand up the independent company ahead of launch.
-- **Earnings-call confirmation:** management has reaffirmed the separation is proceeding on schedule.
+## 1. NARRATIVE ARC
 
-The remaining gates are the customary, low-drama ones for a tax-free U.S. spin: a favorable IRS private-letter ruling / tax opinion, the effectiveness of the Form 10 registration statement with the SEC, and final board sign-off. None of these is a regulatory antitrust hurdle or a financing contingency — there is no acquirer, no second request, no deal that can be voted down. The risk here is *slippage*, not *failure*.
+KBR announced on 24 September 2025 that it would split in two, under the headline "Expected to be Completed Mid-to-Late 2026." That first timetable was missed: completion was reset to 4 January 2027 (the first business day of KBR's 2027 fiscal year) in August 2026 and has held since. Since then every stated step has landed on time: the name Trinzic (30 July 2026), a chief financial officer designate (Nicholas Veasey, 1 July 2026), a chief executive designate (Michael LaRouche, 24 September 2026), the registration statement every American spin-off must file - a Form 10 - on 30 September 2026, its first amendment on 9 November 2026 (confirmed on the Securities and Exchange Commission's filing index for Trinzic, filer 0002101664; no further amendment has been filed as of 16 November), the eight-person Trinzic board on 9 November, and both investor days on 11-12 November.
 
-One timing nuance worth flagging honestly: the original September 2025 guidance said "mid-to-late 2026," and the date has since moved to early January 2027 — a roughly one-quarter slip. That is mild for a spin of this size, and the appointment of the standalone leadership team in June 2026 reads as the company de-risking the timeline rather than letting it drift indefinitely. It is a real, dated, binding event inside a defined window.
+The business story is a deliberate split of fortunes. The retained KBR keeps the faster-growing process-technology and advisory business; Trinzic takes the larger, slower government-services business together with most of the new borrowing.
 
-**Verdict on the event: a hard, dated catalyst (a firm, scheduled event).** Not an already-fired re-rate, not a non-binding soft promise.
+## 2. CLAIMS vs FINANCIALS (forensic)
 
-## 3. THE FLOOR — what actually backstops the price if the event disappoints
+| Management claim | What the numbers show | Verdict |
+|---|---|---|
+| Separation on track for 4 January 2027 | Restated by both companies on 11-12 November; every dated step since August 2026 has landed. Record date, distribution ratio and financing still not announced. | Supported, not yet committed |
+| Retained KBR is a growth company | Standalone 2026 revenue about $2.90 billion; target of 10% or more organic revenue growth a year from 2026 to 2029 (to about $3.85 billion), adjusted EBITDA margin of 12% or more, free cash flow conversion of 85% or more. These are stated as objectives, not guidance. | Plausible, unproven |
+| Retained KBR earning power | Standalone accounting baseline of about $425 million of adjusted earnings before interest, tax, depreciation and amortisation (adjusted EBITDA) - built from the segment's roughly $550 million, less $107 million of allocated corporate and shared cost and an $18 million pension item. 2027 target "more than $425 million" despite a roughly $100 million headwind as a liquefied-natural-gas joint venture winds down. Standalone corporate cost about $55 million a year. | Lower than the market assumed |
+| Trinzic is a steady compounder | Last-twelve-month revenue about $5.1 billion and adjusted EBITDA $483 million (9.5% margin); adjusted EBITDA $357 million (2023), $400 million (2024), $444 million (2025). Targets: 3-6% annual revenue growth excluding NASA insourcing, margin of 9% or more, more than $700 million of cumulative operating cash flow after interest over three years. NASA bringing work in-house costs about $200 million, or about 4%, of 2027 revenue; 2027 described as "a modest growth year," with formal guidance in February. | Steady, not growing |
+| Trinzic leverage is manageable | Net leverage at separation about 3.15 times adjusted EBITDA (about $1.52 billion of net debt), to be brought to 2.5 times or below from cash flow; debt reduction is the stated first priority, dividend to be revisited in 12-24 months. | Heavier than the 3.0 times modelled last week |
+| Group guidance intact | Full-year 2026 guidance reaffirmed on 29 October 2026: revenue $7.90-8.36 billion, adjusted EBITDA $980 million to $1.04 billion, adjusted earnings per share $3.87-4.22. | Supported |
 
-The downside here is unusually well-defined for a special situation, because there is no deal to break — the two businesses keep operating regardless. The floor is the *standalone-bundle* value, not zero.
+The key forensic number is the retained company's $425 million baseline. Last week's work assumed about $460 million. The difference is the full allocation of corporate and shared cost plus the joint-venture wind-down, and it is the most likely reason the stock fell on the KBR investor day rather than the Trinzic one.
 
-KBR has spent most of 2026 trading in a $30-34 band, near its 52-week low of $29.94 (the high was $52.23). At ~$33, the whole company trades at roughly 10x EBITDA and ~10-11x earnings — i.e., the market is already pricing the conglomerate discount, not a premium. Even if the spin slipped a year, the combined business still generates a little over $1 billion of EBITDA and pays a ~2% dividend, so the price is supported by ongoing cash earnings, not by hope. The verified downside floor is roughly the current trough — call it ~$33 — below which you are buying a profitable, cash-generative defense-plus-tech conglomerate at a single-digit-to-low-double-digit multiple. That is a real backstop, not a CVR or a recovery estimate on a broken deal.
+## 3. TONE & CONFIDENCE TRAJECTORY
 
-## 4. THE SPREAD — upside to the parts
+Confident and specific on the event; careful on the numbers. Both companies framed medium-term figures as objectives, not guidance, and Trinzic deferred 2027 guidance to February. The separation language has moved from aspiration to logistics: standalone systems are live, the board is named, the leadership teams presented separately.
 
-The parts are worth more than the whole. Using verified trailing segment EBITDA:
+## 4. GUIDANCE CREDIBILITY
 
-- **New KBR / Sustainable Technology Solutions:** ~$479M EBITDA on ~$2.2B revenue at a ~22% margin — a high-margin IP licensor. Process-tech / clean-energy peers support ~11-14x. At ~12x that is ~$5.7B of enterprise value.
-- **SpinCo / Mission Technology Solutions:** ~$571M EBITDA on ~$5.8B revenue (~10% margin) — government services valued against CACI/Leidos/Booz Allen at ~10-12x. At ~11x that is ~$6.3B of enterprise value.
+Medium to high. One documented timetable slip (mid-to-late 2026 became 4 January 2027), followed by fifteen months of hitting every stated date. Operating guidance reaffirmed three quarters running, with an earnings beat in the latest quarter. Four insiders bought in the open market in May 2026 between $30.60 (chief financial officer Shad Evans) and $32.47 (director Carlos Sabater).
 
-Combined enterprise value lands around $12 billion. Subtract roughly $1.7-1.9 billion of net debt and divide by ~127 million shares, and the parts imply something in the high-$70s to mid-$80s per share if both halves re-rate fully to peer medians — clearly above the dossier's published $53 target and Wall Street's ~$46-47 average target. The reason targets sit below the full re-rate is sensible: spins rarely close the entire gap on day one, SpinCo carries debt and a dis-synergy cost-base as a new standalone, and the energy-transition multiple for STS is contested. The honest reading is that the verified target zone is ~$47-53 (Street to dossier), with genuine optionality to the $70s if the re-rate runs.
+## 5. ANALYST PRESSURE POINTS
 
-## 5. RED FLAGS / GREEN FLAGS
+- What multiple the retained company earns. At 10.0 times $425 million it is worth about $27 a KBR share; at 8.0 times about $20. That range is most of the uncertainty in the whole situation.
+- How fast KBR sells its retained 19.9% of Trinzic. Management now says "within approximately 12 months, subject to market conditions," with proceeds to repay debt, taking net leverage below about one times. That is faster than the five-year window in the Form 10 and creates a disclosed block of Trinzic supply in 2027.
+- Trinzic's financing. Roughly $1.7 billion of notes and term loans must be raised and about $1.68 billion paid across to KBR before the split. No financing 8-K had been filed by either company as of 16 November 2026.
 
-- Green: dated completion (Jan 4, 2027), standalone team named, board-approved, tax-free, no antitrust or financing gate, profitable on both sides, price already at the trough.
-- Green: the conglomerate discount is demonstrable — blended ~10x vs. parts at 11-14x — so the mispricing is structural, not a story.
-- Amber: timeline has already slipped one quarter (mid-2026 → Jan 2027); a further slip is the main risk and would push out the re-rate, not destroy it.
-- Amber: SpinCo (MTS) is the lower-margin half (~10%) and will carry standalone costs and likely debt; its 11x peer multiple assumes it re-rates cleanly, which a newly-public, lower-margin government contractor may not do immediately.
-- Amber: the full Form 10 financial carve-outs are the swing factor for sentiment into the event; weak standalone disclosures could compress the SpinCo multiple.
+## 6. RED FLAGS / GREEN FLAGS
 
-## 6. MOAT / SECULAR (largely N/A for an event)
+Red flags.
+- The investor days lowered the earning-power base: about $425 million for retained KBR against roughly $460 million assumed, and Trinzic at 3.15 times leverage against roughly 3.0 times.
+- The market's verdict on the new information was a 9% fall in two days.
+- Seven weeks out, the record date, distribution ratio and financing amounts are still blank, and no condition to the distribution has been satisfied. The Form 10 amendment states KBR "has the right to terminate or modify the distribution, even if all of the conditions are satisfied." Nothing here is contractual.
+- Trinzic launches with falling revenue (NASA insourcing), about 83% United States federal revenue, and a peer group whose valuation multiples have compressed from about 13 times in mid-2024 to about 9 times.
+- A disclosed seller: KBR's 19.9% stake is to be sold within about a year.
 
-This is a defined-risk special situation, not a compounder bet, so franchise moat is secondary. For completeness: New KBR's technology-licensing IP is a narrow but real moat (switching costs and installed-base licensing), and the government-services half is a scale/relationship/clearance moat that is stable rather than eroding. No terminal secular threat — if anything, both halves (energy-transition process tech, national-security/space services) sit in structurally supported end-markets. The cheapness is a structure-and-bundling artifact, not a melting base.
+Green flags.
+- Firm, repeatedly restated date; machinery real (Form 10 amended, listing applied for, board and executives named, systems cut over).
+- The bundle now trades at about 6.55 times guided 2026 adjusted EBITDA (enterprise value of about $6.62 billion: $4.50 billion of market value plus $2.12 billion of net debt, on $1.01 billion at the guidance midpoint) - roughly where a disappointed conglomerate would trade.
+- Retained KBR leaves with net leverage below two times, falling below about one times after the stake sale, and owns the growing half.
+- Liquidity about $1.1 billion; quarterly dividend of 16.5 cents declared 14 October 2026.
 
-**Bottom line for the director:** A hard, dated, board-approved tax-free spin (effective January 4, 2027) with standalone leadership already named, a live price (~$33) sitting at its 52-week trough and well below both Street targets (~$46) and a parts value in the high-$70s, with a real floor at the current standalone-bundle price. The defined-risk asymmetry is strong; the only meaningful risk is a further timeline slip, which delays rather than kills the thesis.
+## 7. HIDDEN SIGNALS
 
-CREDIBILITY_SCORE: 4 | TRAJECTORY: STRENGTHENING | MOAT: NARROW | MOAT_TREND: STABLE | SECULAR_THREAT: none
+The price now sits almost exactly on the value of the "split happens, nobody re-rates" outcome: Trinzic at 7 times $483 million less $1.52 billion of net debt (about $14.75 a KBR share) plus retained KBR at 8 times $425 million less about $0.85 billion of net debt (about $20.20) gives about $35. The market has priced the disappointment and is giving the re-rating away. The capital structure still says what management believes: the debt goes with the shrinking half, the chief executive stays with the growing one, and the stake sale is being accelerated to deleverage the parent.
+
+## 8. CAPITAL-ALLOCATION VERDICT (for the director)
+
+The event is real, dated and seven weeks away; management has earned credibility on separation logistics since its one early slip. The floor is not contractual: a spin-off is not a takeover, and nobody owes a holder a price. What backstops the shares if the split slips is the conglomerate's own multiple - about $33 at 6.0-6.5 times guided earnings - corroborated by the May 2026 insider buying at $30.60-32.47 and a 52-week low of $29.94. The new information lowered the parts value, but the price fell further than the parts did, so the gap between price and floor has narrowed from about 15% to about 7.5%.
+
+Moat and secular risk are secondary here. Retained KBR owns a genuine but narrow intangible-asset advantage (more than 85 licensed process technologies); Trinzic has incumbency in federal contracting with shrinking revenue. Narrow and stable overall; the secular pressures (federal procurement squeeze on one side, energy-transition demand on the other) are manageable.
+
+CREDIBILITY_SCORE: 4 | TRAJECTORY: PIVOTING | MOAT: NARROW | MOAT_TREND: STABLE | SECULAR_THREAT: manageable
