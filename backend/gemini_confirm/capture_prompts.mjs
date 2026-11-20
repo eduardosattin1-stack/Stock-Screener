@@ -16,6 +16,23 @@ set('COVERAGE_SYMS', '[]')
 set('RECHECK_SYMS', '[]')
 src = src.replace(/^const N_RADAR = \d+/m, 'const N_RADAR = 0')
 
+// BLINDNESS (2026-11-19): the skeptic prompt embeds PRIOR_SEATS (every name we hold) and the lane/hint
+// maps for every Tier-U name. A prompt exported for ONE symbol must say nothing about any other name,
+// or the second model learns which names we hold before it debates them. Keep only this symbol's entry;
+// a line that cannot be parsed stops the capture rather than passing through unfiltered.
+const keepOnly = (name) => {
+  src = src.replace(new RegExp('^const ' + name + ' = (.*)$', 'm'), (whole, rhs) => {
+    let v
+    for (const body of [rhs, rhs.replace(/\s*\/\/[^"]*$/, '')]) {
+      try { v = JSON.parse(body.trim()); break } catch { /* try the next form */ }
+    }
+    if (v === undefined) throw new Error('capture_prompts: cannot parse ' + name + ' - refusing to export it unfiltered')
+    const out = Array.isArray(v) ? v.filter(s => s === SYM) : Object.fromEntries(Object.entries(v).filter(([k]) => k === SYM))
+    return 'const ' + name + ' = ' + JSON.stringify(out)
+  })
+}
+for (const name of ['PRIOR_SEATS', 'SKEPTIC_LANES', 'SKEPTIC_HINTS', 'RECHECK_INFO']) keepOnly(name)
+
 const captured = []
 const agent = async (prompt, opts = {}) => {
   captured.push({ label: opts.label || '', model: opts.model || '', phase: opts.phase || '', prompt: String(prompt) })

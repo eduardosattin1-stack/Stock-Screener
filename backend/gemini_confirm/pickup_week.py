@@ -36,6 +36,11 @@ D = REPO / "backend" / "_opus_debate"
 sys.path.insert(0, str(D)); sys.path.insert(0, str(REPO / "backend"))
 from _post_common import derive_grade      # noqa: E402
 from _numeric_gate import check_record    # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import _disagree as DIS                   # noqa: E402  what each disagreement is about + the ledger (2026-11-19)
+
+LEDGER = D / "_disagreements.jsonl"
+EXPORT_INDEX = D / "gemini_export_index.json"
 
 ROOT = Path(r"C:\Users\Bruno\Documents\Speculair")
 BUCKET = "screener-signals-carbonbridge"
@@ -92,11 +97,22 @@ def pickup(week_dir, push=True):
     quad = json.load(open(D / "macro_regime.json", encoding="utf-8")).get("quadrant")
     out = {"week": picks["week"], "generated_at": datetime.now().isoformat(timespec="seconds"),
            "model": "gemini-4-argon", "method": "blind second debate + two-way skeptic, graded with our rules",
-           "picks": {}}
+           "scope": picks.get("scope") or "seats", "picks": {}}
+    # which names we hold: the universe export keeps this map OUT of the week folder (blindness)
+    try:
+        held = (json.load(open(EXPORT_INDEX, encoding="utf-8")).get(picks["week"]) or {}).get("books") or {}
+    except Exception:
+        held = {}
+    ledger_rows = []
     for p in picks["picks"]:
         s = p["symbol"]
         g = week_dir / s / "gemini"
-        e = {"symbol": s, "books": p.get("books"), "issues": []}
+        e = {"symbol": s, "books": p.get("books") or held.get(s) or [], "issues": []}
+        if not g.exists() or not any(g.glob("*")):
+            e.update(status="not_run", reasons=["Gemini did not reach this name this week"])
+            out["picks"][s] = e
+            print(f"{s:10} not_run")
+            continue
 
         def load(n):
             try:
@@ -106,13 +122,18 @@ def pickup(week_dir, push=True):
                 e["issues"].append(f"{n} unreadable ({type(ex).__name__})")
                 return None
 
-        rec, skA, skB, run = load("record.json"), load("skeptic_on_claude.json"), load("skeptic_on_gemini.json"), load("run.json")
+        # universe weeks (2026-11-19): the skeptic passes are optional per name - a blind record alone is
+        # still a comparison (value and grade); only the record and the dossier are required
+        opt = lambda n: load(n) if (g / n).exists() else None     # noqa: E731
+        rec, skA, skB, run = load("record.json"), opt("skeptic_on_claude.json"), opt("skeptic_on_gemini.json"), load("run.json")
         load("dossier.md")
         claude = json.load(open(D / "results_regime" / f"{s}.json", encoding="utf-8"))
         cv = claude.get("valuation") or {}
-        # blindness: Gemini's own record must be saved before it opened our record (skeptic pass A)
+        # blindness: Gemini's own record must be saved before it opened our record (skeptic pass A);
+        # with no pass A it never opened our record, so the record is blind by construction
         try:
-            blind = os.path.getmtime(g / "record.json") < os.path.getmtime(g / "skeptic_on_claude.json")
+            blind = (not (g / "skeptic_on_claude.json").exists()
+                     or os.path.getmtime(g / "record.json") < os.path.getmtime(g / "skeptic_on_claude.json"))
         except OSError:
             blind = False
         if not blind:
@@ -124,7 +145,9 @@ def pickup(week_dir, push=True):
             for k, ok in ENUM.items():
                 if rec.get(k) not in ok:
                     e["issues"].append(f"{k} not a valid value ({rec.get(k)!r})")
-        if (run or {}).get("status") != "complete":
+        if not skA:
+            e["issues"].append("no skeptic pass on our record this week (value and grade compared only)")
+        if (run or {}).get("status") not in ("complete", "partial"):
             e["issues"].append(f"run status {(run or {}).get('status')!r}")
         gv = (rec or {}).get("valuation") or {}
         gg = copy.deepcopy(rec or {})
@@ -147,15 +170,33 @@ def pickup(week_dir, push=True):
                            thesis_state=claude.get("thesis_state"), entry_mode=claude.get("entry_mode"))
         e["skeptic_on_ours"] = {k: (skA or {}).get(k) for k in ("verdict", "kill_scope", "revised_fv_px", "correction_severity")}
         e["skeptic_on_ours"]["finding"] = str((skA or {}).get("kill_fact") or (skA or {}).get("corrections") or "")[:600]
+        e["skeptic_on_ours"]["corrections_typed"] = [
+            {k: (c or {}).get(k) for k in ("field", "from", "to")} | {"basis": str((c or {}).get("basis") or "")[:400]}
+            for c in ((skA or {}).get("corrections_typed") or []) if isinstance(c, dict)][:8]
+        e["skeptic_on_ours"]["fact_disputes"] = DIS.fact_disputes(skA)
         e["skeptic_on_its_own"] = {k: (skB or {}).get(k) for k in ("verdict", "kill_scope", "revised_fv_px")}
         e["blind"] = blind
-        valid = bool(rec) and bool(skA) and blind and ccy_ok and not any(i.startswith(("missing", "currency")) for i in e["issues"])
+        valid = bool(rec) and blind and ccy_ok and not any(i.startswith(("missing", "currency")) for i in e["issues"])
         if not valid:
             e["status"], e["reasons"] = "unverified", list(e["issues"])
         else:
             price = e["gemini"]["live_price"] or e["claude"]["live_price"]
             e["status"], e["reasons"] = classify(e["gemini"]["base_fv_px"], e["claude"]["base_fv_px"], price,
                                                  e["gemini"]["grade"], skA)
+            dis = DIS.classify(claude, rec, skA, gemini_grade=e["gemini"]["grade"])
+            e["disagreement_kind"], e["gap_pct"], e["disagreement"] = dis["kind"], dis["gap_pct"], dis
+            ledger_rows.append({
+                "week": picks["week"], "picked_up_at": out["generated_at"], "symbol": s, "held_in": e["books"],
+                "status": e["status"], "kind": dis["kind"], "direction": dis["direction"], "gap_pct": dis["gap_pct"],
+                "grades": dis["grades"], "disputes": dis["disputes"], "newer_facts": dis["newer_facts"],
+                "claude": {"base_fv_px": e["claude"]["base_fv_px"], "live_price": e["claude"]["live_price"],
+                           "as_of": dis["claude_as_of"], "grade": e["claude"]["grade"]},
+                "gemini": {"base_fv_px": e["gemini"]["base_fv_px"], "live_price": e["gemini"]["live_price"],
+                           "grade": e["gemini"]["grade"], "currency": e["gemini"]["currency"]},
+                "skeptic": {k: e["skeptic_on_ours"].get(k) for k in ("verdict", "kill_scope", "revised_fv_px",
+                                                                     "correction_severity")},
+                "price_at_pickup": e["gemini"]["live_price"] or e["claude"]["live_price"],
+                "resolution": None})
         gb, cb, ccy = e["gemini"]["base_fv_px"], e["claude"]["base_fv_px"], e["gemini"]["currency"] or ""
         lead = {"confirmed": "Second opinion agrees", "repriced": "Second opinion agrees on direction, not on the number",
                 "disagreement": "Second opinion disagrees", "unverified": "Second opinion not usable this week"}[e["status"]]
@@ -168,10 +209,27 @@ def pickup(week_dir, push=True):
     for path in (D / "gemini_confirmations.json", REPO / "frontend" / "public" / "speculair_gemini_confirm.json",
                  week_dir / "CONFIRMATION_RESULTS.json"):
         path.write_text(json.dumps(out, indent=1, ensure_ascii=False), encoding="utf-8")
-    counts = {}
+    counts, kinds = {}, {}
     for e in out["picks"].values():
         counts[e["status"]] = counts.get(e["status"], 0) + 1
+        if e.get("disagreement_kind"):
+            kinds[e["disagreement_kind"]] = kinds.get(e["disagreement_kind"], 0) + 1
     print(f"gemini-pickup {out['week']}: {counts}")
+    # DISAGREEMENT LEDGER: resolve open rows from our latest records, then log this week's comparisons
+    try:
+        records = {}
+        for f in (D / "results_regime").glob("*.json"):
+            try:
+                records[f.stem] = json.load(open(f, encoding="utf-8"))
+            except Exception:
+                continue
+        rows, resolved = DIS.update_ledger(LEDGER, out["week"], ledger_rows, records)
+        open_n = sum(1 for r in rows if r.get("resolution") is None)
+        print(f"disagreements {out['week']}: " + (" | ".join(f"{k} {v}" for k, v in
+              sorted(kinds.items(), key=lambda kv: DIS.KIND_ORDER.index(kv[0]) if kv[0] in DIS.KIND_ORDER else 9))
+              or "none compared") + f" | ledger {len(rows)} row(s), {resolved} resolved now, {open_n} open -> {LEDGER.name}")
+    except Exception as ex:
+        print(f"WARN disagreements: ledger not updated ({type(ex).__name__}: {ex})")
     if push:
         local = REPO / "frontend" / "public" / "speculair_gemini_confirm.json"
         r = subprocess.run(f'gcloud storage cp "{local}" "gs://{BUCKET}/scans/speculair_gemini_confirm.json"',

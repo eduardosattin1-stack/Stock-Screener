@@ -149,6 +149,26 @@ conviction 4 no better than 3, the value Director's score ran backwards in its o
   review: regional macro inputs, a base-currency view, and hard country / currency / single-name
   limits — those are sizing changes and need Bruno's explicit call.
 
+### Second opinion on every debated pick + disagreement ledger (2026-11-19, do not regress)
+
+Bruno: "disagreements backed by dated evidence are where the value is" - they must cover every debated
+pick, not only the ~10 seats.
+- `gemini_confirm/export_week.py` exports every name debated this run (`--scope debated`, default; full
+  debates + seat updates + every seat). The week folder must not reveal what we hold: books live in
+  `_opus_debate/gemini_export_index.json`, and `capture_prompts.mjs` filters PRIOR_SEATS / SKEPTIC_LANES /
+  SKEPTIC_HINTS / RECHECK_INFO to the one symbol. `strip_inputs` nulls prior_record, washout,
+  second_opinion and dossier; `leak_scan` stops the export on any leak (the second_opinion block leaked
+  Claude's base value into Week 47 until 2026-11-19).
+- `pickup_week.py` + `_disagree.py` classify each name (kill / fact / new_fact / judgement / agree) and keep
+  `_opus_debate/_disagreements.jsonl` (one row per name per Gemini week; resolved by our next full
+  debate's typed `second_opinion_check`, step 1d of the debate prompt).
+- Non-seat names with an evidence-backed dispute (kill / fact / new_fact) get at most
+  `_seat_triggers.SECOND_OPINION_U_CAP` (10) full re-debates per run; a pure judgement split never buys
+  one. Advisory only: none of this moves a seat, weight, grade or conviction.
+- Antigravity instructions: `gemini_confirm/GEMINI_MASTER_PROMPT.md` (copied into each week folder) and
+  `gemini_confirm/INDEPENDENT_CHECK_HANDOVER.md`. Tests: `backend/tests/test_disagreements.py`,
+  `backend/tests/test_gemini_export_blind.py`.
+
 ## Other standing notes
 
 - `apply_macro_tilt` / `regime_composite_floor` in `macro_regime.py` are imported but
@@ -158,6 +178,7 @@ conviction 4 no better than 3, the value Director's score ran backwards in its o
   must read DISCIPLINE), `python backend/tests/test_macro_inputs.py` (fixture = the
   2026-10-12 tape; must read REFLATION), `python backend/tests/test_seat_triggers.py`,
   `python backend/tests/test_reliability_fixes.py` (the 2026-11-12 fixes; also checks the rendered
-  weekly workflow is valid, ASCII-only JavaScript) and `python backend/_opus_debate/test_regime_post.py`.
+  weekly workflow is valid, ASCII-only JavaScript), `python backend/tests/test_disagreements.py`,
+  `python backend/tests/test_gemini_export_blind.py` and `python backend/_opus_debate/test_regime_post.py`.
   `_opus_debate/test_caps.py` fails on "weights sum to 1.0" (equal-weight rounding) — pre-existing.
   On Windows set `PYTHONIOENCODING=utf-8` or the arrow glyphs crash the cp1252 console.

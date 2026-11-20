@@ -1,0 +1,44 @@
+{
+ "2026-W47": {
+  "scope": "debated",
+  "exported_at": "2026-11-20T11:25:52",
+  "books": {
+   "000270.KS": [
+    "value"
+   ],
+   "0175.HK": [
+    "apex"
+   ],
+   "1698.HK": [
+    "value"
+   ],
+   "2618.HK": [
+    "value"
+   ],
+   "9980.HK": [
+    "apex"
+   ],
+   "DECK": [
+    "value"
+   ],
+   "DUE.DE": [
+    "apex",
+    "value"
+   ],
+   "INCH.L": [
+    "apex",
+    "value"
+   ],
+   "LRN": [
+    "apex",
+    "value"
+   ],
+   "MGNS.L": [
+    "value"
+   ],
+   "SWON.SW": [
+    "value"
+   ]
+  }
+ }
+}

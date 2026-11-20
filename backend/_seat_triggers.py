@@ -37,6 +37,10 @@ PHASES = ("EXPANSION", "DISCIPLINE", "FORCING", "MONETIZATION")
 MACRO_U_CAP = 8           # macro-change full re-debates per run; the rest stay on delta and retry next run
 VALUE_SEAT_FULL_D = 28    # a VALUE-book seat is fully re-underwritten at least this often
 SECOND_OPINION_STATUSES = ("repriced", "disagreement")
+SECOND_OPINION_U_CAP = 10   # NON-seat names a second-opinion dispute may pull into a full re-debate per run
+# only evidence-backed splits earn a non-seat slot: a refuted thesis, a disputed input, or a newer dated
+# fact. A pure judgement split is logged in the disagreement ledger but does not buy a re-debate.
+SECOND_OPINION_EVIDENCE_KINDS = ("kill", "fact", "new_fact")
 STAMP_KEYS = ("full_debate_px", "full_debate_px_date", "full_debate_px_source", "macro_at_full_debate")
 
 
@@ -108,7 +112,7 @@ def value_seat_refresh(pr, today, max_days=VALUE_SEAT_FULL_D):
 def second_opinion_block(entry, week=None, generated_at=None, model=None):
     """The compact, prose-safe block a re-debated name's bundle carries about the second model's
     read of OUR record. None when there is nothing usable. Everything in it is a CLAIM to verify."""
-    if not isinstance(entry, dict) or not entry.get("status"):
+    if not isinstance(entry, dict) or not entry.get("status") or entry.get("status") == "not_run":
         return None
     sk = entry.get("skeptic_on_ours") if isinstance(entry.get("skeptic_on_ours"), dict) else {}
     g = entry.get("gemini") if isinstance(entry.get("gemini"), dict) else {}
@@ -121,7 +125,41 @@ def second_opinion_block(entry, week=None, generated_at=None, model=None):
         "skeptic_severity": sk.get("correction_severity"),
         "skeptic_revised_fv_px": sk.get("revised_fv_px"),
         "skeptic_finding": str(sk.get("finding") or "")[:2500],
+        # 2026-11-19: the same claims, field by field, and the code's read of what the split is about
+        # (a fact, a newer dated fact, or judgement) - so the re-debate can check each one by name.
+        "skeptic_corrections_typed": [{k: c.get(k) for k in ("field", "from", "to")} | {"basis": str(c.get("basis") or "")[:400]}
+                                      for c in (sk.get("corrections_typed") or []) if isinstance(c, dict)][:8],
+        "fact_disputes": [f for f in (sk.get("fact_disputes") or []) if isinstance(f, dict)][:8],
+        "disagreement_kind": entry.get("disagreement_kind"),
     }
+
+
+def second_opinion_allowed(blocks, prior_dir, seats, cap=SECOND_OPINION_U_CAP):
+    """(allowed, deferred): the NON-seat names a second-opinion dispute may pull into a full re-debate
+    this run (2026-11-19, Bruno: the disagreement must cover every debated pick, not only the seats).
+    Only evidence-backed kinds qualify (SECOND_OPINION_EVIDENCE_KINDS); strongest kind first, then the
+    biggest value gap; at most `cap`. Seats are excluded - they keep their own uncapped trigger."""
+    import json as _json
+    from pathlib import Path as _P
+    order = {k: i for i, k in enumerate(SECOND_OPINION_EVIDENCE_KINDS)}
+    cand = []
+    for sym, b in (blocks or {}).items():
+        if sym in (seats or ()) or not isinstance(b, dict):
+            continue
+        kind = str(b.get("disagreement_kind") or "")
+        if kind not in order:
+            continue
+        try:
+            pr = _json.load(open(_P(prior_dir) / f"{sym}.json", encoding="utf-8"))
+        except Exception:
+            continue
+        if not second_opinion_trigger(pr, b):
+            continue
+        tb, ob = _num(b.get("their_base_fv_px")), _num(b.get("our_base_fv_px"))
+        gap = abs(tb / ob - 1) if tb and ob else 0.0
+        cand.append((order[kind], -gap, sym))
+    cand.sort()
+    return {s for _, _, s in cand[:cap]}, [s for _, _, s in cand[cap:]]
 
 
 def second_opinion_trigger(pr, block):
