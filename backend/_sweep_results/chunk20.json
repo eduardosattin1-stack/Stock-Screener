@@ -1,79 +1,11 @@
 {
  "chunk": "20 (WF-ZYME)",
- "scanned": 112,
+ "scanned": 111,
  "scan_distribution": {
-  "active": 1,
-  "watch": 7,
-  "none": 104
+  "active": 0,
+  "watch": 2,
+  "none": 109
  },
- "survivors_flagged": [
-  {
-   "symbol": "WFRD",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "index_inclusion_redomicile",
-   "one_line": "Irish High Court approved the scheme (8-K 2026-10-27). The move from Ireland to Delaware takes effect 2026-11-13, so it can be added to S&P 1500 indexes (likely the MidCap 400 on size). Index adds are not dated yet. The NCS Multistage deal is minor."
-  },
-  {
-   "symbol": "ZIM",
-   "score": 6,
-   "tier": "ACTIVE",
-   "lane": "merger_arb",
-   "one_line": "Complicated merger arb: Hapag-Lloyd $35 cash vs ~$28.99 (~21% gross spread). Shareholders approved Apr-30 (97%). Blocker is the Israeli golden-share approval: the original structure was rejected and a revised application was due Oct-6 (whether it was filed is unconfirmed). Outside date Feb-2027, extendable to Jun-2027. The spread prices real break risk, not a fired event."
-  },
-  {
-   "symbol": "ZBIO",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "binary",
-   "one_line": "Phase 2 SunStone (SLE) readout guided for Q4-2026, so it is near but has no exact date. Obexelimab IgG4-RD PDUFA is May-27-2027 (months out). Stock ~$27.7, off the $44.6 high. A real binary, but the IgG4-RD asset is already de-risked and partly priced."
-  }
- ],
- "verified": [
-  {
-   "symbol": "WFRD",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "index_inclusion_redomicile",
-   "catalyst": "Weatherford moves its legal home from Ireland to Delaware on 2026-11-13 (Irish High Court approved 2026-10-27). That makes it eligible for the S&P Composite 1500, but S&P has not announced an add and no date is set.",
-   "dated_milestone": "Redomicile closes 2026-11-13 (company guidance, subject to customary conditions). The next scheduled S&P quarterly rebalance is effective around 2026-12-21, with the announcement around 2026-12-04. That date is my inference from S&P's usual calendar and is not confirmed for WFRD. S&P can also add it off-cycle whenever an index slot opens.",
-   "instrument": "WFRD common stock (Nasdaq). After 2026-11-13 the same ticker becomes Weatherford International Corp (Delaware).",
-   "bloom_gates": "G2 only: the redomicile is a concrete, court-sanctioned commitment with a set close date (2026-11-13). G1 fails because S&P DJI has made no announcement, so no named counterparty has committed to an add. G3 is not met: index demand is not quantified anywhere, and the only company-given figure is $20-30M/yr of cost savings from 2027, which is small against a $6.6B market cap.",
-   "edge": "M-L. Run-up from the pre-catalyst base: about -5 to -9%. The plan became public around mid-to-late June 2026, when the stock was at $97-101 (Jun 12 close $101.31, Jun 16 $97.85). It is $91.55 today, so no index premium has built up. The +20% move from $76 (Oct 16) to $87-90 came with Q3 earnings on Oct 20-23, not with the redomicile news, and the stock is up only about 2% since the court approval ($89.64 on Oct 27). Remaining capture: about 3-6% from a typical S&P index-add pop if one is announced, weighted by perhaps 50-60% odds of an add within about 6 months. That is roughly +2-3% expected, plus the small cost savings. One open question is which index fits: at $6.6B the company may fall below the current MidCap 400 minimum size, which would mean the SmallCap 600 and less forced buying. The event has not fired and is not priced, but it is small, its timing is at S&P's discretion, and the oil-services business still drives the price.",
-   "primary_source": "Weatherford 8-K and press release 'Weatherford Announces Court Approval and Expected Closing Date for U.S. Redomestication', 2026-10-27 (sec.gov/Archives/edgar/data/0001603923/000160392326000126/pressrelease_wfrdredomicil.htm). Shareholder approval press release, 2026-09-03. FMP quote (WFRD $91.55) and EOD price history from 2026-06-01 to 2026-11-02, pulled 2026-11-02.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The company has confirmed the redomicile: the court approved it on 2026-10-27, shareholders approved it on 2026-09-03, and it closes on 2026-11-13. But an S&P 1500 add is only eligibility, not a commitment. S&P DJI has said nothing, the add date is unknown, and at a $6.6B market cap WFRD may go to the SmallCap 600 rather than the MidCap 400, which makes any forced buying smaller. None of the index upside is priced in (the stock is below its June announcement-day level), but the expected gain is only a few percent and depends on S&P's committee decision, so this stays WATCH at score 5 until S&P announces an add. Gaps: I did not check S&P's current MidCap 400 market-cap thresholds or WFRD's float-adjusted cap. Numerator provenance does not apply here (an index add is not a capital-structure event, and no derived SoP upside is claimed). I did not verify the NCS Multistage deal and treated it as minor, as the triage note does."
-  },
-  {
-   "symbol": "ZIM",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "merger_arb",
-   "catalyst": "Israel decides whether to release its golden share for Hapag-Lloyd/FIMI's $35/sh cash takeover of ZIM, under a revised structure that has to go through a fresh review by the Government Companies Authority (GCA).",
-   "dated_milestone": "Hapag-Lloyd and FIMI have filed a revised framework (\"ten material improvements\": 10% ownership trigger instead of 24%, 16 ships for ZIM Israel, a Far East route, a 10-year job safety net) and promised complete documentation within 45 days, so around late Nov to early Dec 2026. The GCA then reviews from scratch, which reports say could take months. Next hard date is the outside date in Feb 2027, extendable to Jun 2027. A >10% holder group is pushing for a second shareholder vote, which would add another date.",
-   "instrument": "ZIM common (NYSE), long against the $35 cash consideration",
-   "bloom_gates": "G1 (named buyers Hapag-Lloyd and FIMI; named approver Israel's GCA and state) + G2 (binding merger agreement, shareholders approved 97% on 2026-04-30, revised framework filed) + G3 ($35 cash vs $29.02 = $5.98 / 20.6% gross spread). The cash deal price is contractual, so no numerator-provenance re-derivation is needed.",
-   "edge": "L-M. The 20.6% gross spread looks fairly priced given the risk. Six of eight Israeli government bodies opposed the original deal. The Finance Ministry, PMO and Transport Minister Regev are hostile and the unions oppose it. The revised application restarts the review, which could take months. Assuming a ~$19 break price, the market implies roughly 60% odds of closing. I have no evidence that odds are better than that. RESIDUAL CAPTURE: run-up from the pre-deal base (~$14-17, 52-week low $14.19) to $29.02 is about +70-100%, so most of the takeover premium is already in the price. Remaining to $35 is +20.6% gross, about 15-20% annualized if it closes by mid-2027, against a downside of about -35% if the deal breaks.",
-   "primary_source": "FMP quote ZIM $29.02 (2026-11-02); Maritime Executive, \"Hapag-Lloyd and FIMI submit framework of revised structure for Zim Israel\" (Oct 2026); Container News, \"Israeli authority closes review of original $4.2 billion Hapag-Lloyd-ZIM deal structure\" (Sep 2026, sets Oct-6 resubmission deadline); Seatrade Maritime, \"Hapag-Lloyd must resubmit Zim deal after Israeli review halted\"; Calcalist on the >10% holder demand for a second vote (Oct 2026); Container News, shareholder approval 97% (2026-04-30)",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The deal is real and forward. Shareholders approved, the agreement is binding, and Hapag-Lloyd/FIMI filed a revised framework after the GCA closed its review of the original structure. The binding constraint is Israeli political approval, and opposition is still broad: 6 of 8 bodies opposed, plus ministers and unions. On top of that, a >10% holder bloc is demanding a new shareholder vote on the revised terms. At $29.02 the expected value (about 0.6 x $35 + 0.4 x $19, roughly $28.6) is close to the price, so this is a fairly priced binary rather than a clear mispricing. WATCH for the full documentation filing (~late Nov/early Dec) and the first read from the GCA and ministries. GAP: I could not confirm the exact date of the framework submission or whether it met the Oct-6 deadline. Trade press implies it was filed. The break price of ~$19 is an estimate, not derived from filings."
-  },
-  {
-   "symbol": "ZBIO",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "binary",
-   "catalyst": "Topline overall and biomarker-population results from the Phase 2 SunStone trial of obexelimab in SLE (NCT06559163, enrolment completed Apr-2026) are guided for Q4-2026. No exact date has been given.",
-   "dated_milestone": "SunStone SLE topline in Q4-2026 (window open, no specific day; the Q3-26 earnings in mid-Nov may narrow it). Next: obexelimab IgG4-RD PDUFA on 2027-05-27.",
-   "instrument": "ZBIO common (NASDAQ). Long-dated calls spanning the Q4 window could express the binary, but IV is probably elevated.",
-   "bloom_gates": "G2 (a concrete company commitment to a Q4-2026 topline, repeated in the Q1 and Q2-2026 releases). G1 does not apply because there is no counterparty. G3 is partial: SLE success is not in the price, but there is no contractual figure.",
-   "edge": "M. This is a genuine unfired binary in a large indication with a quarter-level date. The equity has cash support: $673.9M at 6/30/26 vs a $1.81B market cap, so EV is about $1.1B net of an undisclosed debt facility, and runway runs into 2029. The IgG4-RD asset (Ph3 INDIGO hit, BLA accepted) already carries most of the EV. Run-up: +105% from the 52-week low of $13.5, but most of that was IgG4-RD de-risking, not SLE. The stock is now -38% from the $44.6 high, so SLE optionality looks only partly priced. Remaining: about +40-70% on a clean SLE win (my rough estimate, not provenance-derived because this is a binary, not a SoP lane), versus about -20-30% on failure, with the IgG4-RD/cash floor holding. The asymmetry is moderate. Phase 2 SLE readouts for B-cell modulators often fail, which caps the probability-weighted edge.",
-   "primary_source": "Zenas Q2-2026 8-K/10-Q (SEC, Aug-2026: cash $673.9M, SunStone topline Q4-2026, PDUFA 2027-05-27). Nasdaq summary of the Q2-2026 results. FMP quote 2026-11-02.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The catalyst is verified real, forward and unfired. Zenas has repeatedly guided SunStone SLE topline to Q4-2026, and no readout had been reported as of 2026-11-02. The price is $27.75 (FMP 2026-11-02), with the 50-day average at $29.5. There is no specific date and no Q3-2026 release yet, and SLE Phase 2 has a poor base rate. So this stays a WATCH binary and does not reach ACTIVE. Gap: I could not confirm the size of the debt facility or any Q3-26 change to the readout timing within the lookup budget."
-  }
- ]
+ "survivors_flagged": [],
+ "verified": []
 }

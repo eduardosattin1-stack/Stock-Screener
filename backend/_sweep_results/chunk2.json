@@ -1,32 +1,32 @@
 {
  "chunk": "2 (AMP-AZN)",
- "scanned": 140,
+ "scanned": 150,
  "scan_distribution": {
-  "active": 1,
-  "watch": 5,
-  "none": 134
+  "active": 0,
+  "watch": 6,
+  "none": 144
  },
  "survivors_flagged": [
   {
    "symbol": "ANNX",
    "score": 5,
    "tier": "WATCH",
-   "lane": "dated_binary",
-   "one_line": "ARCHER II Phase 3 GA month-15 vision readout due Q4 2026 (investor event 11/3), and the tanruprubart GBS BLA filing is also due Q4. A real binary but late-arc and already on the board; exact date unknown."
+   "lane": "binary_readout",
+   "one_line": "Phase 3 ARCHER II geographic-atrophy month-15 readout guided for Q4-2026. Stock is about $3.6-3.9, down rather than run up, with cash into 2028. A real near-term binary, but late in the arc for a bi-weekly pipeline. The US GBS filing (BLA) still has no PDUFA date."
   },
   {
    "symbol": "AQST",
    "score": 5,
    "tier": "WATCH",
    "lane": "binary_pdufa",
-   "one_line": "Anaphylm NDA resubmitted 9/16 after the Jan-2026 CRL; FDA accepted it as a Class 2 response with a PDUFA date of 2027-03-16. The CRL issues were human-factors and PK only. This is a months-out dated binary, and the price move after the acceptance still needs checking."
+   "one_line": "Anaphylm NDA resubmission accepted as a Class 2 response, PDUFA 2027-03-16. The Jan-2026 CRL was about human factors and packaging, not efficacy. The event is months out and still live, but its asymmetry and the run-up are unverified."
   },
   {
-   "symbol": "ARI",
-   "score": 6,
-   "tier": "ACTIVE",
-   "lane": "forced_seller_overhang",
-   "one_line": "Liquidation approved 9/29. The last NYSE trading day is expected Nov 6, then holders get non-transferable trust units. Price is $2.33 against my estimate of ~$3.75-4.80/sh remaining (proxy total $7.75-8.50 less the $3.70-4.00 initial payout), so delist forced selling is likely. Not yet confirmed: the initial payout amount and the ex-date. Entry window is 4 days, then the position is locked in to 1H28."
+   "symbol": "AVIR",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "one_line": "C-FORWARD Ph3 HCV topline guided early 2027 (slipped from YE26), NDA mid-2027; same regimen as the positive C-BEYOND (Jul-26). De-risked replicate binary, stock flat near cash; asymmetry real but months out."
   }
  ],
  "verified": [
@@ -34,46 +34,46 @@
    "symbol": "ANNX",
    "score": 5,
    "tier": "WATCH",
-   "lane": "dated_binary",
-   "catalyst": "The ARCHER II Phase 3 Month-15 primary analysis (vonaprument in GA, vision endpoint of at least 15 letters of BCVA loss, n=659) is guided for Q4 2026, and the US BLA for tanruprubart in GBS is also guided for submission in Q4 2026.",
-   "dated_milestone": "Month-15 primary analysis and DMC recommendation in Q4 2026 (exact date not disclosed; the 11/3 investor event and Q3 print are possible venues). If the DMC says Month 15 was met, the sub-study results follow in Q1 2027. The Month-24 dual primary endpoint lands in Q3 2027. The tanruprubart BLA is due in Q4 2026.",
-   "instrument": "ANNX common stock (NASDAQ). Long-dated calls are an option to cap the binary loss.",
-   "bloom_gates": "G2 holds: a concrete company commitment to the Q4 2026 Month-15 analysis and the Q4 BLA submission, restated in the Aug-2026 Q2 update. G3 holds partly: the GA replication value is not priced at a $651M market cap against roughly $209M of cash. G1 is not applicable (no counterparty).",
-   "edge": "M. Run-up is negative: at $3.975 the stock is about 24% below its 200-day average of $5.22 and 45% below its 52-week high of $7.18, so nothing has been harvested ahead of the event. Remaining upside to a favorable Month-15 result is about +150% (roughly $10/sh on a de-risked GA franchise, judgement-based, not an analyst target). The failure floor is about $1.5/sh (around 0.6-0.7x net cash after burn). The edge is capped at M for two reasons. The Month-15 output is a DMC recommendation that can simply say 'continue to Month 24' instead of a clean pass/fail. And Phase 2 missed its anatomic primary endpoint, so the vision signal being replicated was a secondary endpoint.",
-   "primary_source": "Annexon Q2 2026 results and update (Aug 12, 2026): Month-15 on track for Q4 2026, Month-24 in Q3 2027, BLA in Q4, cash $209.2M at 6/30/26. Annexon PR on the ARCHER II expansion adding the Month-24 dual primary endpoint (ir.annexonbio.com, 2026). Annexon Retina Society PR (GlobeNewswire, Sep 24, 2026). FMP quote of Nov 2, 2026: $3.975, market cap $651M.",
+   "lane": "binary_readout",
+   "catalyst": "Topline from the Phase 3 ARCHER II trial of vonaprument in geographic atrophy (month-15 primary endpoint, vision protection measured as BCVA loss of 15 letters or more), which the company says is on track for Q4 2026.",
+   "dated_milestone": "ARCHER II month-15 topline guided for Q4 2026, so by about 2026-12-31 (reconfirmed in the Q3 release of 2026-11-09). Next: tanruprubart GBS BLA submission guided for Q4 2026, with the PDUFA date roughly 10-12 months after it is filed; the EU MAA is under review.",
+   "instrument": "ANNX common (Nasdaq). Size it as a binary: small position or defined-risk options. Do not hold it as a value seat.",
+   "bloom_gates": "G2 is met: the company publicly committed to a Q4 2026 date for the month-15 primary readout and reconfirmed it 2026-11-09. G1 does not apply (no counterparty). G3 is only partly met: the upside depends on approval odds and the size of the GA market, not on a contractual figure.",
+   "edge": "M. Run-up from the pre-catalyst base is about -33% to -50%, not positive: the price is $3.41 against a 200-day average of $5.06 and a 52-week high of $7.18. The stock sits at its 52-week low ($3.355) going into the readout, so none of the result has been harvested. Remaining capture: a success case of roughly $10-13/share (a GA franchise competing with Syfovre/Izervay plus the GBS asset) is about +190% to +280% from $3.41. A failure floor of about $1.3/share net cash plus about $0.5-1.0 for GBS/ANX1502 gives $1.8-2.3, about -35% to -45%. At an assumed 35-40% chance of success, the probability-weighted value is about $5.5-6.0, roughly +65% expected. The edge is only M because the Phase 2 ARCHER result came from a secondary/exploratory vision endpoint (it missed lesion growth), so the replication risk is real.",
+   "primary_source": "Annexon Q3 2026 results and milestones press release, GlobeNewswire, 2026-11-09 (globenewswire.com/news-release/2026/11/09/3398918). Retina Society ARCHER II baseline release, 2026-09-24. FMP quote for ANNX, 2026-11-20 ($3.41, market cap $558.7M, 52-week range $3.355-$7.18).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "ANNX is a real, dated, forward, non-macro binary. Month-15 is still guided for Q4 2026, no readout has been found as of 11/2, and the stock is de-rated, so the residual capture is intact rather than harvested. The binary is less clean than the triage framing suggests. The Q4 event is a DMC recommendation with three outcomes: met (sub-studies in Q1 2027), continue to Month 24 (Q3 2027, which is ambiguous and likely negative for the stock), or fail. The Phase 2 vision signal came from a secondary endpoint after a missed primary. The exact date is also unknown. Gaps: the Q3 2026 10-Q and the 11/3 event details were not verified, and runway sources disagree on the size of the Q2 debt facility ($50M tranche vs $200M facility), so share-count dilution risk was not re-derived."
+   "analysis": "I verified the core facts. The Q3 release (2026-11-09) says the ARCHER II month-15 primary assessment is \"on track for Q4 2026\", cash and investments were $213M at 2026-09-30 with runway into 2028, the GBS BLA submission is expected in Q4 2026 (so no PDUFA date yet), and the EU MAA is under review. Per FMP on 2026-11-20 the price is $3.41 and market cap $559M, so EV is about $346M with no debt or preferred stock ahead of the common. Because the stock is at its 52-week low, this is a forward binary with positive expected value and nothing priced in, not a harvested event. The trial risk is real, though. Phase 2 was positive only on the vision-loss endpoint and missed lesion growth. A positive result would probably also bring an equity raise. The readout is under about 6 weeks away, which is late for a bi-weekly pipeline. GAP: my web search budget was used up, so I could not check the 10-Q share count, independent probability-of-success estimates, or analyst positioning. The share count (~164M) is inferred from market cap divided by price."
   },
   {
    "symbol": "AQST",
    "score": 6,
    "tier": "WATCH",
    "lane": "binary_pdufa",
-   "catalyst": "The FDA decides on the Anaphylm (epinephrine oral film) NDA resubmission by the 2027-03-16 PDUFA goal date. The resubmission was accepted as a Class 2 response after the 2026-01-30 CRL, with new human-factors and PK data.",
-   "dated_milestone": "PDUFA 2027-03-16. Before that, the Health Canada NDS filing is due in Q4 2026, and the Q3 earnings and cash update is due early/mid Nov 2026.",
-   "instrument": "AQST common (NASDAQ). Options could express the binary, but the date is about 4.5 months out, so time decay argues for buying stock now and options only near the date.",
-   "bloom_gates": "G1 (named counterparty: the FDA, with a set PDUFA goal date) + G2 (concrete dated regulatory commitment: Class 2 acceptance, 2027-03-16). G3 is only partial: no unpriced contractual figure; the upside is a derived approval re-rating.",
-   "edge": "M. Run-up from the pre-catalyst base is about 0%: about $3.70 in late July 2026, before the August HF/PK data, versus $3.66 today. The stock sold off 12% on the 10-15 acceptance (4.61 to 4.06, 5.5M shares), probably because the market wanted a 2-month Class 1 clock rather than a 6-month Class 2 clock, and it has drifted down since. Remaining upside to the favorable-resolution value (about $5.75, a partial retrace toward the $6.85 52-week high) is about +57%. Downside on a second CRL is about -40% (to about $2.2; the CRL-day low was $2.95, before 9 more months of cash burn). The probability-weighted value at 70% approval is about $4.69, roughly +28%. Nothing is harvested, but the date is far off and the commercial ceiling is limited by neffy's slow launch.",
-   "primary_source": "Aquestive PR via Finviz, 2026-10-15: \"FDA Acceptance of Anaphylm NDA Resubmission and PDUFA Goal Date of March 16, 2027\". HCPLive, 2026-09-17: resubmission. FMP quote/EOD history, 2026-11-02 ($3.66) and 2026-01/07-10 price series. Q1-2026 10-Q (sec.gov) on the financing need.",
+   "catalyst": "The FDA has accepted the Anaphylm (dibutepinephrine sublingual film) NDA resubmission as a Class 2 response, with a PDUFA goal date of 2027-03-16. If approved, it would be the first oral rescue drug for anaphylaxis.",
+   "dated_milestone": "PDUFA 2027-03-16. Before then: Piper Sandler conference Dec 1-3, 2026, Health Canada filing in Q4 2026, EU filing in Q1 2027.",
+   "instrument": "AQST common stock (NASDAQ). Long equity into the PDUFA; staging the position is better than one buy, because of dilution risk around approval.",
+   "bloom_gates": "G1 (FDA is the named counterparty) and G2 (a set PDUFA goal date of 2027-03-16 under a Class 2 resubmission) both pass. G3 passes only partly: the unpriced figure is the gap back to the pre-CRL price of about $6.2 (about $780M market cap) against $3.71 today ($466M). That gap is derived from price history, not contractual.",
+   "edge": "M. The run-up from the pre-catalyst base is NEGATIVE. The resubmission became knowable with the August 2026 human-factors/PK topline; the price was $3.94 on 2026-08-07 and is $3.71 now, about -6%. Measured from the post-CRL low of $2.95 (2026-01-30) it is +26%. The stock fell from $4.61 to $3.78 when the FDA accepted the resubmission (2026-10-14 to 10-16), so the date is not being bid up. Remaining capture to a favorable-resolution value of about $6.0 (pre-CRL level, less some dilution) is about +62%. Probability-weighted with an assumed 80% approval chance and a $2.0 floor on a second CRL, it is about $5.2, or +40%. Most of the event is unharvested. Edge is held at M rather than H because the market's discount probably reflects a real commercial ceiling (neffy is already on the market), cash runway, and an expected raise.",
+   "primary_source": "Aquestive press release 'FDA Acceptance of Anaphylm NDA Resubmission and PDUFA Goal Date of March 16, 2027' (GlobeNewswire, 2026-10-15); Q3 2026 results PR (2026-11-03); FMP Q3-2026 balance sheet (filed 2026-11-03); FMP EOD prices through 2026-11-19 and quote of 2026-11-20 ($3.705).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "Verified: Aquestive resubmitted 9/16-17/2026 and announced on 2026-10-15 that the FDA accepted it as a complete Class 2 response with a 2027-03-16 PDUFA. The CRL fixes were human-factors and PK studies, both reported positive in Aug 2026, which is a cleaner path than an efficacy CRL. The market has not priced any approval odds: AQST trades at $3.66 (11/2), below its pre-data July base and down 20% from before the acceptance. That makes this an unharvested, dated, forward binary, but it is 4.5 months out and the trend is negative. The stack ahead of the common is real but serviceable: about $98.5M cash at Q2, a $150M Oaktree facility, the late-2025 $75M launch financing and royalty liabilities. More financing before or at launch is likely, so on approval the dilution risk trims the remaining upside. Gaps: Q3 10-Q debt and royalty redemption amounts were not checked line by line, and the reason for the 10-15 drop was inferred (no offering found)."
+   "analysis": "The event is real, dated and forward. The FDA classed the resubmission as Class 2 with a PDUFA date of 2026-03-16 2027 per the 2026-10-15 press release, and the resubmission rests on positive August-2026 human-factors and PK data. That fits the triage claim that the January 2026 CRL was about human factors and packaging, but I could not re-verify the CRL text: the web-search budget was exhausted. The price has not run up. AQST trades at $3.71, below its pre-resubmission level and about 40% under the pre-CRL $6.2. The equity waterfall: no preferred stock, $90.3M cash, $8.1M lease and debt, about $147M of other non-current liabilities that are most likely royalty-monetization obligations (unverified) and sit ahead of the common's share of Anaphylm economics, and a $70.8M equity deficit. That leaves room for a re-rate on approval, but a post-approval raise is likely, and the royalty stack caps how much of the upside reaches the common. It stays WATCH, not ACTIVE, because the binary is 4 months out, there is a pending securities-suit investigation, and the commercial competition from neffy was not quantified."
   },
   {
-   "symbol": "ARI",
-   "score": 4.5,
-   "tier": "ACTIVE",
-   "lane": "forced_seller_overhang",
-   "catalyst": "ARI's last NYSE trading day is expected Nov 6, 2026. After that, holders who can't hold an unlisted, non-transferable Maryland liquidating trust (index funds, mandate-bound funds) have to sell. The stub trades at $2.325 against a management-estimated residual of about $3.65-4.40/sh, which would be paid out through 1H28.",
-   "dated_milestone": "Initial $4.10 distribution already paid Oct 29 (ex-date Oct 30, 2026); Form 25 filed ~Oct 27. NEXT: last NYSE trading day ~Nov 6, 2026, SEC deregistration ~Nov 9, 2026. After that, trust distributions at the trust board's discretion, with full liquidation targeted for 1H28.",
-   "instrument": "ARI common, bought before the Nov 6 close. After delisting it converts into non-transferable liquidating-trust units held to 1H28 with no exit. Size for zero liquidity for about 18 months.",
-   "bloom_gates": "G2 + G3. G2: the board-approved plan of dissolution with a dated delisting and trust conversion (8-K Oct 16, 2026). G3: a specific unpriced figure, the proxy total of $7.75-8.50 less the $4.10 already paid, leaving a $3.65-4.40 residual against a $2.325 price. G1 is not met for the residual: the named-counterparty event (the ~$9B Athene loan sale, Apr 24, 2026) has already fired. The residual depends on future REO sales with no named buyers.",
-   "edge": "M. The residual comes from management's estimate rather than a contract. The proxy's $7.75-8.50 already nets out the preferred liquidation preference, and the manager waived its termination fee; the trust pays a 0.5%/yr fee on net assets. Remaining assets are about 3 REO properties (DC hotel, Brooklyn multifamily, Atlanta hotel — per a third-party summary, unverified) carrying about $0.4B of debt. That makes the stub levered: a roughly 20% haircut on gross REO value brings it to about the current price. Run-up from the pre-catalyst base: about -1% to -6% (pre-June-15 buybacks averaged $10.76; $3.75 + $4.10 paid + $2.325 stub = $10.18 per share of value), so none of the event is harvested. Remaining: +57% to +89% to the provenance-checked $3.65-4.40, or about 35-45%/yr IRR over ~1.5 years. The discount is mostly a payment for illiquidity and lock-up plus REO and litigation risk, not a mispricing.",
-   "primary_source": "ARI 8-K Ex.99.1, Oct 16, 2026 (delisting, Form 25 ~Oct 27, last trade ~Nov 6, deregistration Nov 9, trust managed by ACREFI). ARI press release, Oct 9, 2026 ($4.10 initial distribution, record Oct 20, paid Oct 29, ex Oct 30). DEFM14A 2026 ($7.75-8.50 total, net of preferred; Athene $9B sale closed Apr 24, 2026; ~$0.4B REO debt; termination fee waived; 0.5% trust fee). FMP quote, Nov 2, 2026: $2.325.",
-   "verdict": "CONFIRMED_WITH_CORRECTIONS",
-   "kill_fact": "The dates and terms check out against the primary 8-K Ex-99.1 (Oct 16, 2026). The last NYSE trading day is expected Nov 6, Form 25 was filed around Oct 27, and deregistration is expected Nov 9. Beneficial interests in the Maryland liquidating trust will not be transferable and will not trade, and further distributions are at the trust board's sole discretion. The FMP press releases and quote confirm the $4.10 initial distribution (record date Oct 20, paid Oct 29) and the $2.325 price (market cap $298.9M, 52-week low $2.28). The weak point is the numerator. The $3.65-4.40 residual is not a current management estimate. It is third-party arithmetic: the proxy's total range of $7.75-8.50 minus the $4.10 already paid. Paying $4.10, above the $3.70-4.00 initial range, may only have pulled cash forward rather than raised the total. There is no Q3 net-assets-in-liquidation per share and no waterfall that reconciles about $0.9B of REO against about $0.4B of debt. The 8-K also confirms that ACREFI, Apollo's external manager, stays on as trust manager, so fees on assets will run for 18+ months and reduce what reaches holders. A market discount of about 36-47% to the claimed residual, rather than a typical forced-selling spread, suggests the market is pricing REO markdowns, the fee drag and possible AmBase litigation, which remains unquantified and from a third-party source. The forced-seller flow is real, but the stub has already fallen to its low, and the best entry may be on Nov 5-6. Size it as a speculative, illiquid lock-up, not a spread trade.",
-   "analysis": "Verified: the initial distribution came in at $4.10, above the proxy's $3.70-4.00 range, so management's estimates have been conservative so far. It was paid Oct 29 with an Oct 30 ex-date, and the last trading day is Nov 6. That leaves a $2.325 stub (market cap ~$299M, ~128.5M shares) against a residual of $3.65-4.40 (~$470-565M of equity) backed by about $0.9B of gross REO and ~$0.4B of debt. The delisting overhang is real and dated within 4 days, but the residual is levered REO equity. Distributions are at the trust board's sole discretion, and there is a possible reinstated AmBase litigation liability (third-party report, unverified), so the payoff is a lock-up and asset-sale bet rather than a contractual spread. Gaps: no per-asset fair-value table or net assets in liquidation per share from the Q2 10-Q, the AmBase exposure is not quantified, and the AmBase and REO-asset details come from a third-party source."
+   "symbol": "AVIR",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "catalyst": "C-FORWARD Phase 3 topline for bemnifosbuvir/ruzasvir (BEM/RZR) in HCV, guided for early 2027. It is a replicate of the positive C-BEYOND trial, and an NDA would follow in mid-2027 if C-FORWARD is positive.",
+   "dated_milestone": "C-FORWARD topline, guided early 2027 (Q1 2027 per the board dossier). Then NDA submission around Q2/mid-2027. Next hard date: the Q4/FY26 report, roughly Mar 2027.",
+   "instrument": "AVIR common (NASDAQ), $3.93 on 2026-11-20",
+   "bloom_gates": "G2 (company-guided topline window and NDA plan). Partial G3: the cash floor is quantifiable from the 10-Q. G1 not met: no named counterparty or partner. The Hercules facility is financing and does not validate the thesis.",
+   "edge": "M. Run-up from the pre-catalyst base is NEGATIVE. The stock is $3.93, against $5.10 at the board's last pass, a 50-day average of $4.68 and a 52-week high of $6.45, so nothing has been harvested and the C-BEYOND win from July 2026 has been given back. Remaining capture is about +75-80% to roughly $7 on a C-FORWARD win; that $7 is inherited from the board's +37% from $5.10 and NOT re-derived from a commercial model. Downside to a burn-adjusted cash floor is about -45 to -55% (roughly $1.8-2.4 per share). Edge comes from a de-risked replicate trading at only about $125M EV. It is capped by the months-long wait and a crowded HCV market dominated by generics and incumbents.",
+   "primary_source": "Atea Q3 2026 results and business update press release (GlobeNewswire, 2026-11-09); Hercules credit facility press release (GlobeNewswire, 2026-11-09); FMP balance sheet for the 2026-09-30 quarter (filed 2026-11-09); FMP quote (2026-11-20)",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "FMP 10-Q data (filed 2026-11-09) shows Q3 cash plus investments of $191.2M, no debt (lease $0.2M) and no preferred stock. Against a $316M market cap that is about $2.39 per share of cash and about $125M EV, so the triage line \"flat near cash\" overstates the cushion: the price is about 1.6x cash. The Hercules facility of up to $200M (2026-11-09) will sit ahead of the common once drawn. The event is real, dated and unfired, and a replicate of a trial that already met its endpoints carries high probability. A rough expected value is about +30% (0.65 x $7 + 0.35 x $1.9, against $3.93), but the payoff is 2-4+ months out and the commercial value of the win is unverified. That justifies WATCH at 5 rather than ACTIVE. GAP: the web search budget was exhausted and the Q3 press release returned HTTP 403, so the exact C-FORWARD timing (\"early 2027\" vs Q1 2027), Q3 burn and HEV milestones were not confirmed first-hand. They come from the triage note and the board dossier (_catalyst_results/AVIR.json)."
   }
  ]
 }

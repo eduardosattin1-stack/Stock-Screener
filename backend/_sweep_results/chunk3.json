@@ -2,9 +2,9 @@
  "chunk": "3 (AZO-BSY)",
  "scanned": 150,
  "scan_distribution": {
-  "active": 1,
-  "watch": 15,
-  "none": 134
+  "active": 0,
+  "watch": 5,
+  "none": 145
  },
  "survivors_flagged": [
   {
@@ -12,35 +12,21 @@
    "score": 5,
    "tier": "WATCH",
    "lane": "spin-off",
-   "one_line": "IPO of the North American gold unit (NGM + Pueblo Viejo + Fourmile) targeted for end-2026 but slipping to Jan-2027; widely known, some shareholders oppose it; a real sum-of-parts unlock, but late-arc and famous."
+   "one_line": "S-11 filed 10-Nov-2026 to IPO 10-15% of American Barrick Gold (ABGC: Nevada/Pueblo Viejo/Fourmile). No price range yet; the new CEO hints at early-2027 pricing. A sum-of-parts unlock, but widely covered and gold-beta driven."
   },
   {
    "symbol": "BHF",
    "score": 6,
-   "tier": "ACTIVE",
+   "tier": "WATCH",
    "lane": "merger_arb",
-   "one_line": "Aquarian $70 cash deal still pending (DE/NY/MA insurance approvals); outside date auto-extended to 2026-12-06; stock ~$43.7, a ~60% gross spread, so the market prices heavy break/financing risk. Complicated arb with a hard date; verify the cause of the spread before seating."
+   "one_line": "$70 cash Aquarian deal; stock ~$41.55 (~68% gross spread) prices high break risk; Dec 6 2026 outside date, regulators (DE/NY/MA) not done, extension talks ongoing -> extension 8-K is the dated asymmetric trigger"
   },
   {
-   "symbol": "BIOA",
-   "score": 6,
-   "tier": "WATCH",
-   "lane": "binary",
-   "one_line": "QUELL-CV Ph2 topline (hsCRP endpoint, a low bar given Ph1 showed hsCRP normalization) is due H2-2026. Stock is down ~80% on read-across from Novo's NLRP3 class failure, so asymmetry looks mispriced and unmoved. Exact date unconfirmed."
-  },
-  {
-   "symbol": "BIP",
+   "symbol": "BHVN",
    "score": 5,
    "tier": "WATCH",
-   "lane": "corporate_simplification",
-   "one_line": "BIP/BIPC collapse into one Canadian corporation (BIP Inc.) was approved by unitholders 10/14 and is expected to close Q4-2026. The new vehicle is index- and ETF-eligible, giving a possible index-inclusion flow; the announcement (Jul-26) is partly priced."
-  },
-  {
-   "symbol": "BLTE",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "pdufa_binary",
-   "one_line": "Tinlarebant (Stargardt) NDA has Priority Review, PDUFA 2027-02-12, after a positive Ph3 DRAGON (-35.7% lesion growth). The stock fell ~7% on acceptance, so not run up; early-arc binary about 3 months out."
+   "lane": "briefing_doc",
+   "one_line": "Troriluzole SCA NDA resubmission accepted Oct 2026, PDUFA Q1 2027, FDA plans PCNS AdCom (date TBA); briefing-doc release is the trade once the panel is dated"
   }
  ],
  "verified": [
@@ -49,75 +35,45 @@
    "score": 4,
    "tier": "WATCH",
    "lane": "spin-off",
-   "catalyst": "Barrick Mining plans an IPO of a minority stake in \"North American Barrick\" (its 61.5% of Nevada Gold Mines, Pueblo Viejo and the Fourmile project). The primary listing would be in New York with a secondary in Toronto. The aim is to mark a market value on the Tier-1 North American gold assets and narrow the conglomerate discount.",
-   "dated_milestone": "Q2-2026 release (Aug 2026) said the IPO was on track for end-2026. Bloomberg (2026-09-03) and CEO Mark Hill (2026-09-30) both flagged a possible slide to Jan-2027. Next checkpoints: Q3-2026 results (expected early-mid Nov 2026), then the IPO registration filing and pricing (Dec-2026 to Jan-2027).",
-   "instrument": "B common (NYSE), $38.38 on 2026-11-02 (FMP quote)",
-   "bloom_gates": "G1 yes: Newmont consented in Aug-2026, with Fourmile moved into NGM and a $1.95B cash top-up paid to Barrick, and the new company has a named CEO (Hill). G2 partial: management committed to completing the IPO by end-2026 / Jan-2027, but there is no filed registration statement, offer size or stake percentage. G3 fails: there is no specific unpriced figure, such as an IPO valuation or proceeds-use commitment.",
-   "edge": "L. Run-up from the pre-catalyst base (about $33.06 on 2025-11-03, before split reports and the Feb-2026 go-ahead) to $38.38 today is about +16%, mostly gold beta: the stock peaked at $54.69 and is now below its 50d/200d averages of about $42. Remaining capture to a provenance-checked value cannot be derived. An IPO of a minority stake moves no cash to the common, and the upside depends on the market re-rating the stub, not on any contractual figure. There is no IPO valuation to set against the about $63B market cap. The event is famous, well telegraphed and slipping, and the stock trades as a gold proxy.",
-   "primary_source": "Barrick Q2-2026 results release (barrick.com, Aug 2026). Engineering News, 2026-08-11 (Newmont deal clears path) and 2026-09-30 (Hill: IPO could slide into January). Miningmx/Bloomberg, 2026-09-03 (may delay to 2027). FMP quote and EOD history, 2026-11-02.",
+   "catalyst": "Barrick Mining is putting its North American gold assets into American Barrick Gold Corp (Nevada Gold Mines share, Pueblo Viejo, Fourmile) and plans to sell a minority stake in an IPO. The registration statement was filed on 10-Nov-2026, and the IPO is meant to show the market what the parts are worth.",
+   "dated_milestone": "Barrick press release and IPO registration on 10-Nov-2026 (done). Next: the amended filing with a price range, then pricing. Both are undated; management only says late 2026 or early 2027. No firm date exists.",
+   "instrument": "B (NYSE common, $33.39 on 2026-11-20). The listing of ABGC itself is not yet priced and not tradeable.",
+   "bloom_gates": "G2 only, and weakly. A registration statement for the IPO is on file, a concrete step. G1 fails: no named buyer or anchor investor, and the underwriters were not verified. G3 fails: there is no price range, IPO size or ABGC valuation, so nothing specific is left unpriced. Triage error: Barrick's release calls the filing an S-1, not an S-11 (the S-11 is a REIT form). The flagged 10-15% stake size is unverified.",
+   "edge": "L. Run-up from the pre-catalyst base: about -21%, not a run-up. B closed at $42.27 on 9-Nov, the day before the filing announcement, and is $33.39 now (FMP 2026-11-20). That is a 52-week low, against a $54.69 high and a $40.27 50-day average. Remaining % to a favorable resolution: cannot be re-derived. Without a price range or ABGC valuation there is no figure for the parts. Barrick has no preferred stock in front of the common, but selling 10-15% of a subsidiary still leaves about 85-90% inside B. Any re-rating comes from the market multiple put on ABGC, which is judgement plus gold beta, not a contracted amount. The 21% fall since the filing tracks gold and costs, not the event. The IPO did not stop it, so the stock trades on gold.",
+   "primary_source": "GlobeNewswire, Barrick press release \"Barrick Announces American Barrick and S-1 Filing for Proposed Initial Public Offering\", 10-Nov-2026. Seeking Alpha, \"American Barrick Gold Launches IPO For Separation And Production Growth\", 16-Nov-2026. FMP quote and daily price history for B through 2026-11-19/20.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The event is real and dated: Newmont's consent removed the main legal blocker, Barrick says it is still targeting end-2026, and the CEO allows for Jan-2027. Large holders VanEck and Mackenzie oppose it. The upside is a derived sum-of-parts re-rating with no IPO size or valuation disclosed, so the numerator cannot be re-derived from the capital structure. The equity is a gold-beta play, not an event payoff. I did not check the 10-Q (no pref stack is expected at Barrick), and Q3-2026 results were not found, so the latest IPO status after 2026-09-30 is unverified."
+   "analysis": "The event is real, dated and still ahead. Barrick's 10-Nov-2026 release names American Barrick Gold Corp and the IPO filing, and the Q3 call says the IPO is coming. But nothing in it can be priced: no range, no size, no valuation, and pricing is only \"late 2026 or early 2027\". The sum-of-parts gain cannot be re-derived from the capital structure, so per the numerator rule this scores the equity, not the event, and is capped at 4. The equity is dominated by the gold price (down 21% since the filing, at a 52-week low on cost pressure and gold), which makes this mostly a macro bet. Gap: web search budget was exhausted, so the filing itself, the stake size, the underwriters and the latest 10-Q/40-F debt figures were not read directly. Re-check when an amended filing shows a price range. That is the first point where G3 could pass."
   },
   {
    "symbol": "BHF",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "merger_arb",
-   "catalyst": "Pending $70/sh all-cash merger with an Aquarian Capital affiliate. Closing waits on insurance Form A approvals in Delaware, New York and Massachusetts, and the outside date has auto-extended to 2026-12-06.",
-   "dated_milestone": "Outside date 2026-12-06 (auto-extended from 2026-09-06). Next date: the Delaware DOI public hearing on the Form A, which must precede the Commissioner's Final Order and was unscheduled as of the Aug-Sep 2026 reporting. Q3 2026 results are also due in early November.",
-   "instrument": "BHF common (NASDAQ)",
-   "bloom_gates": "G1 (named counterparty Aquarian, with Sixth Street/Talcott a named fallback bidder per Bloomberg 2026-09-22). G2 (signed merger agreement at $70 cash, stockholder-approved 2026-02-12, HSR expired, FINRA approved 2026-05-19). G3 partial: the $70 is contractual, but the spread is a priced break risk rather than an unpriced figure.",
-   "edge": "L-M. The spread is explained, not mispriced. Delaware DOI publicly confirmed a formal Form A review (2026-08-17) and had no hearing date. Per Bloomberg, the regulator questioned Aquarian founder Sahay on sources of capital and balance-sheet plans. There is also an accounting question around Brighthouse Reinsurance Co of Delaware (SA 2026-08-07). Residual capture: (a) run-up from the pre-catalyst base is about -16%: the undisturbed price was about $51.80 (deal at a 35.14% premium), and today is $43.69, so the stock trades BELOW undisturbed. (b) Remaining to the contractual $70 is +60%. With an estimated break value of about $35-40, the market implies roughly a 15-25% close probability. EV is only modestly positive unless you hold a differentiated view on Delaware, with optionality from Talcott/Sixth Street re-bidding.",
-   "primary_source": "BHF 10-Q for Q2 2026 (SEC, period ended 2026-06-30): outside-date auto-extension to 2026-12-06 and remaining DE/NY/MA approvals. Delaware DOI release 2026-08-17 (news.delaware.gov): Form A review, hearing not scheduled. Bloomberg 2026-09-22: Sixth Street renews bid as the Aquarian deal faces review. FMP quote 2026-11-02: $43.69.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The deal and its dates are real and forward, but the 60% gross spread is not a mispricing to exploit. It is the market pricing a probable regulatory break or renegotiation. Delaware is scrutinizing Aquarian's capital sources and the BRCD reinsurance affiliate, and no hearing was scheduled as of the latest reporting. That makes a close by 2026-12-06 unlikely without a further extension, and the stock has fallen from a ~$59 200-day average to below its undisturbed price. WATCH, not ACTIVE: re-score on (1) Delaware scheduling the Form A hearing, (2) an amendment or extension of the outside date or a price cut, or (3) a formal Talcott/Sixth Street bid. GAP: no October 2026 primary-source news was found, NY DFS/MA status is unverified, and the break value is estimated rather than derived from the 10-Q."
-  },
-  {
-   "symbol": "BIOA",
    "score": 6,
    "tier": "WATCH",
-   "lane": "binary",
-   "catalyst": "The company has guided topline data for H2-2026 from QUELL-CV, a Phase 2 trial of BGE-102 (oral NLRP3 inhibitor) in about 160 obese, inflamed adults on 30/60/90mg versus placebo. The primary endpoint is percent change in hsCRP at 12 weeks.",
-   "dated_milestone": "Company guidance is QUELL-CV topline in H2-2026, reaffirmed in the Q2-26 release dated 2026-08-05. There is no exact date and no enrollment-complete notice yet. First patient was dosed in June 2026 and dosing runs 12 weeks, so the year-end window is tight and a slip into Q1-2027 is a real risk. The next checkpoint is the Q3-26 10-Q/PR in early-to-mid November 2026, which should confirm the timing. QUELL-DME data is due mid-2027.",
-   "instrument": "BIOA common (NASDAQ)",
-   "bloom_gates": "G2 holds: a concrete company-guided readout window with a defined endpoint, dose arms and n. G3 holds: the company trades below cash. The 2026-11-02 market cap was $212.7M against $381M cash at Q2-26, or roughly $354M after about $27M of Q3 burn (my estimate). That is about 0.6x net cash, or about $9.4/share of cash against a $5.65 price. G1 does not apply (in-house asset, no named counterparty event).",
-   "edge": "M. Run-up from the pre-catalyst base is about -65%, not a run-up. The trial was public from the 2025 R&D day, and the stock has fallen from a 52-week high of $25.96 (about $16 pre-ZEUS) to $5.65. So there is no harvest: the event is unpriced, and the tape even discounts it below cash. Remaining capture to favorable resolution is about +95%, from $5.65 to about $11 (estimated cash per share of about $9.4 plus a modest pipeline premium). Downside on a miss or slip is about -20%, to a floor near $4.5. The cash floor is the real edge. The weak point is the endpoint itself. The triage note calls ZEUS an \"NLRP3 class failure\", but ziltivekimab is an IL-6 antibody, so the read-across is to the inflammation-CV hypothesis, not to the NLRP3 mechanism. Because ZEUS failed on MACE despite lowering inflammation markers, a clean hsCRP hit now re-rates less than it would have pre-July. The binary is mostly worth \"back to cash\", not a full re-rate.",
-   "primary_source": "BioAge Q2-2026 results PR and 10-Q (2026-08-05, sec.gov bioa-20260630.htm): QUELL-CV design, H2-2026 topline guidance, $381M cash. Sahm Capital (2026-07-31): stock drop on Novo ZEUS Phase 3 failure; Jefferies target cut $62 to $21. FMP quote 2026-11-02: $5.65, market cap $212.7M.",
+   "lane": "merger_arb",
+   "catalyst": "Brighthouse and Aquarian must amend the merger agreement before the Dec 6, 2026 outside date. An extension 8-K, followed later by approvals from the DE/NY/MA insurance regulators, would re-rate a stock that prices the $70 cash deal as roughly a 20-25% probability.",
+   "dated_milestone": "2026-12-06 outside date (either side can terminate after it). Watch for an extension or termination 8-K before then. Next fixed date is the preferred record date, 2026-12-10, which is not a deal event.",
+   "instrument": "BHF common (cash deal at $70/sh). The non-cumulative preferreds (BHFAP etc.) are the lower-beta alternative.",
+   "bloom_gates": "G1: named counterparty (Aquarian Holdings VI L.P., merger agreement dated 2025-11-06). G2: concrete commitment (contractual $70 cash per share, outside date auto-extended 2026-09-06 to 2026-12-06, and both parties say they 'remain committed' and are negotiating a further extension). G3: specific unpriced figure ($70 vs $41.55).",
+   "edge": "M. Run-up from the pre-announcement base is about -15% to -25%: the stock now trades BELOW where it was before the deal and sits near its 52-week low of $41.01. So nothing is harvested, and the market is actively pricing a break. Remaining from $41.55 to the $70 contractual value is +68.5%. Assuming a break value of about $35, the implied completion probability is about 20%. The edge is real only if Aquarian's financing and regulatory issues are less bad than the tape implies. This is a binary bet with an informed-looking market on the other side, hence M, not H.",
+   "primary_source": "BHF Form 10-Q for Q3 2026, filed 2026-11-05 (sec.gov/Archives/edgar/data/1685040/000168504026000037/bhf-20260930.htm), merger note on the Outside Date. FMP quote 2026-11-20 ($41.55). Seeking Alpha 2026-10-06 on financing and regulatory scrutiny.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The catalyst is real, dated to a half-year window, forward and unfired, and it is not a macro bet. The stock trades at about 0.6x estimated net cash (I derived share count of about 37.6M from market cap; dilution since Q2 is not verified). That gives asymmetry with a cash-backed floor. hsCRP reduction is a low bar given the Phase 1 hsCRP data. Two things keep this at WATCH rather than ACTIVE. First, there is no exact date and timing risk is material: dosing started in June, enrollment completion is unconfirmed, and dosing is 12 weeks. Second, after ZEUS the hsCRP surrogate carries less valuation weight, so even a positive readout mostly closes the cash discount. Biggest gaps: the Q3-26 cash balance and share count, and whether a cash burn path or ATM use erodes the floor. Re-check after the Q3 print."
+   "analysis": "The Q3 10-Q (2026-11-05) confirms the outside date auto-extended to 2026-12-06. It also says regulatory approvals are 'not expected to be received in time' and that the parties are discussing an extension, with 'no assurance' they agree. So the deal is live, unfired and contractual (exempt from numerator provenance), and the near-term dated trigger is an extension or termination 8-K within about two weeks. A cash deal price needs no waterfall re-derivation, but the falling price (50-day average $47 to $41.55 now, below the pre-deal level) shows the market treating Aquarian's financing and the regulatory scrutiny (Seeking Alpha, 2026-10-06) as serious break risk. An extension 8-K buys time but not approval, so the asymmetric payoff needs regulatory approval, which is undated. Gap: web search was unavailable (budget exhausted), so I could not check for news after Nov 5 on extension terms, price renegotiation or regulator status, and the pre-deal base price is estimated, not fetched."
   },
   {
-   "symbol": "BIP",
+   "symbol": "BHVN",
    "score": 4,
    "tier": "WATCH",
-   "lane": "corporate_simplification",
-   "catalyst": "BIP and BIPC combine into one Canadian corporation, BIP Inc. BIP unitholders approved it on 2026-10-14. A BC Supreme Court final-order hearing is expected around 2026-11-03, with close targeted for Q4-2026. Brookfield's case rests on \"increased index demand\" and \"potential additional index inclusion\".",
-   "dated_milestone": "Next date: BC Supreme Court final-order hearing on or about 2026-11-03. Before that, the BIPC shareholder vote was on 2026-10-29 (adjourned from 10-14) and its result is unconfirmed. Close is targeted for Q4-2026. The index-inclusion decisions have no dates; they follow listing and the indices' own review calendars.",
-   "instrument": "BIP common units (NYSE/TSX), $37.84 on 2026-11-02. BIPC trades at $37.97, near 1:1 parity, so the BIPC exchange spread offers nothing.",
-   "bloom_gates": "G2 only: the structure change is concrete, dated and approved, and its last step is the court order. G1 fails because there is no named counterparty or buyer. G3 fails because no index is named and there is no estimate of passive demand; the issuer only says \"potential additional index inclusion\", so the upside cannot be put in figures.",
-   "edge": "L. The event itself is near-certain to close, but the payoff is a fuzzy passive-flow story that cannot be put in figures, not a re-rating tied to a contract. (a) Run-up from before the announcement: -7.4%. The 2026-07-24 close was $40.88. The price spiked to $42.62 on 07-29, then gave the spike back; it is now $37.84. The \"partly priced\" claim in the triage is not supported: the stock trades below where it was before the event. (b) Remaining capture to a favorable outcome: cannot be quantified. There is no contractual value, and the numerator cannot be derived from the capital structure, because simplification changes the wrapper, not net asset value (NAV). Any index-flow uplift is a few-percent multiple effect at most, and nothing confirms it.",
-   "primary_source": "BIP press release \"Unitholders Approve Proposed Corporate Simplification\", 2026-10-14 (finviz.com/news/402770). BIPC new-meeting-date release, Oct-2026 (finviz.com/news/401032). BIPC 6-K ex99-2 on SEC EDGAR (0001788348/000110465926103589). Original announcement at bip.brookfield.com, Jul-2026. FMP BIP EOD prices for 2026-07-20 to 08-05 and quote on 2026-11-02.",
+   "lane": "briefing_doc",
+   "catalyst": "FDA review of the resubmitted Vyglxia (troriluzole) NDA in spinocerebellar ataxia, with a user-fee goal date in 1Q27. The triage note's PCNS AdCom, whose briefing-document release would be the trade, is not confirmed by any source I could reach and has no date.",
+   "dated_milestone": "PDUFA goal date in 1Q27; the company has given only the quarter, not a day. The AdCom date and briefing-doc release are unconfirmed and undated. Next checkpoint: an FDA Federal Register AdCom notice, which usually comes 2-8 weeks before the meeting.",
+   "instrument": "BHVN common (NYSE)",
+   "bloom_gates": "G1 partial: the counterparty (FDA) is named and the resubmission was accepted. G2: there is a 1Q27 PDUFA quarter but no day-level date, and the AdCom is not dated. G3 not met: no specific unpriced figure; approval value sits inside a $2.06B multi-asset pipeline.",
+   "edge": "L-M. Run-up: the stock was $11.75 on 2026-10-21, the day before the resubmission was accepted. It closed $14.69 on 10-22 (+25%) and is $13.65 now (+16% versus the pre-catalyst base). Remaining: I estimate about +20-30% to roughly $16.5-17.5 on approval, since the 52-week high of $18.24 was set before the earlier rejection. A second rejection probably sends it back to the ~$11 base or lower (about -20% or more). The acceptance re-rating has already been partly harvested. The SCA asset is diluted by other pipeline noise: the opakalim partial clinical hold (Sep 2026), the BHV-1530 cancer-drug data that lifted the stock +8% on 11-19, and the Ono/SK licensing deals. So a briefing-doc move is a smaller share of value than in a single-asset name. Odds of a favourable outcome are not high either: the FDA rejected this drug once before, on a real-world-evidence external-control trial design.",
+   "primary_source": "Biohaven Q3 2026 results press release, PRNewswire 2026-10-29 (FDA accepted the troriluzole SCA resubmission, PDUFA 1Q27). Barron's/Benzinga 2026-10-22 on the acceptance-day move. FMP EOD prices 2026-10-15 to 10-27 and quote 2026-11-20 ($13.65, market cap $2.06B).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The simplification is real and nearly done. BIP's approval is in hand (more than 99% of votes cast), and per BIP's FAQ the BIP leg does not depend on the BIPC vote. Only the BC court final order (~11-03) and the Q4 close remain. The flagged upside is unspecified index-inclusion flow on top of an unchanged asset base. The structure change creates no NAV, so I am scoring the equity, not the event, and capping the score at 4. The BIPC 10-29 vote result and the court date are unconfirmed (single secondary source). Lookup budget gap: I did not check the preferred stack ahead of the common (BIP LP preferreds and perpetual subordinated notes moving into BIP Inc.) or any change to the Brookfield incentive distribution. No upside figure depends on that check."
-  },
-  {
-   "symbol": "BLTE",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "pdufa_binary",
-   "catalyst": "FDA decision on the tinlarebant NDA for Stargardt disease (STGD1), filed under Priority Review with Breakthrough and Fast Track designations, with a PDUFA date of 2027-02-12.",
-   "dated_milestone": "PDUFA 2027-02-12 (NDA acceptance with Priority Review announced around the Q2 report on 2026-08-13; management did not expect an AdCom). The next interim item is the Q3 2026 report (date not found) and any mid-cycle or late-cycle commentary.",
-   "instrument": "BLTE common (NASDAQ). Last price $153.99 on 2026-11-02, market cap about $6.2B, about 40.3M shares.",
-   "bloom_gates": "G1 yes: the counterparty is the FDA, and the action date is set by PDUFA. G2 yes: the PDUFA date 2027-02-12 is a dated regulatory commitment. G3 weak: there is no unpriced number. The positive Ph3 DRAGON readout (-35.7% lesion growth, 2025-12-01) was priced on the day, and the stock has gone sideways since.",
-   "edge": "L. Run-up: from the pre-catalyst base of $109.18 (2025-11-20, before DRAGON became knowable) to $153.99 today is +41%. The stock went from $109 to $154 into and on the DRAGON topline, then was flat for 11 months ($150-179 range). Remaining: about +15-25% to an approval value of roughly $180-190 (the HCW target of $185 is taken only as a ceiling marker, not used as the numerator). The derived value is about $5.4B EV for a single orphan asset, which leaves little room for re-rating on an approval the market already expects at high odds (BTD + Priority Review + positive Ph3). Downside on a CRL is about -50% or more toward cash of about $19/sh (cash and T-bills of $780M at 2026-06-30). Probability-weighted, that gives about +5-12%, which is mostly harvested.",
-   "primary_source": "Belite Bio Q2 2026 results/6-K (2026-08-13; NDA accepted with Priority Review, PDUFA 2027-02-12, liquidity $780M) via RTTNews/sec.gov 6-K tm2622827d1_ex99-1. FMP quote 2026-11-02 ($153.99, market cap $6.20B). FMP EOD 2025-11-20 $109.18 and 2025-12-01 $154.02 (DRAGON topline day).",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The event is real, dated and forward: the NDA is accepted with Priority Review, PDUFA is 2027-02-12, and no AdCom is currently planned. On approval odds this is a high-quality binary. However, the efficacy re-rating already happened on the 2025-12-01 DRAGON readout (+41% from the pre-event base), and the stock has gone flat since at about $5.4B EV. Approval looks largely priced, while a CRL would be severe, so the remaining capture is skewed. Score is capped at 4 as mostly harvested. Gaps: Q3 2026 results and any mid-cycle FDA commentary were not found, and the share count is inferred from market cap divided by price."
+   "analysis": "FMP sources confirm the resubmission was accepted with a 1Q27 goal date (Q3 release 2026-10-29) and the stock's +25% day on 2026-10-22. I could not verify the claimed PCNS AdCom: the shared web-search budget was used up, and no FMP press release or news item mentions an advisory committee, so the briefing_doc lane has no dated trigger. This is a multi-asset equity with no preferred stock ahead of the common, but I did not re-check cash and burn in the 10-Q. A third of the flagged upside is already priced since acceptance, and the PDUFA date is quarter-only. WATCH at score 4: upgrade if an FDA Federal Register notice dates the PCNS meeting, which would make the briefing-doc release (two business days before the meeting) a dated catalyst."
   }
  ]
 }

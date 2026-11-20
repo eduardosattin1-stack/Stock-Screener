@@ -3,8 +3,8 @@
  "scanned": 150,
  "scan_distribution": {
   "active": 0,
-  "watch": 5,
-  "none": 145
+  "watch": 9,
+  "none": 141
  },
  "survivors_flagged": [
   {
@@ -12,68 +12,68 @@
    "score": 5,
    "tier": "WATCH",
    "lane": "merger_arb",
-   "one_line": "Ares Capital (ARCC) agreed on 2026-10-27 to buy MFIC for about $10.88/sh, partly in ARCC stock. MFIC trades at $10.33, about 5% below the headline price. The deal already re-rated the stock, so this is now a plain BDC-merger spread that closes after shareholder votes. Thin edge."
+   "one_line": "Ares Capital (ARCC) agreed 2026-10-27 to buy MFIC in stock plus cash at $10.88/sh ($9.67 ARCC stock + $1.21 cash). The close is the forward event, but it is a mostly-stock BDC deal, the spread is likely thin and NAV just fell 3.8%. Check the spread vs the ARCC ratio before any interest."
+  },
+  {
+   "symbol": "MLYS",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "pdufa_binary",
+   "one_line": "Lorundrostat PDUFA is 2026-12-22. Stock has fallen from 45 to 14 on worries about competing with AZ's Baxfendy, so approval is largely de-risked and the setup is washed-out rather than run-up. Payoff skew depends on launch, not the decision."
   },
   {
    "symbol": "MTN",
    "score": 5,
    "tier": "WATCH",
    "lane": "activist",
-   "one_line": "Oasis Management proxy fight for 2 board seats (Chapek, Hudson); annual meeting is Dec 14, 2026. Largest holder backs management, so the activist's odds are lower. Stock only +7% since earnings, so not re-rated."
-  },
-  {
-   "symbol": "NATL",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "merger_arb",
-   "one_line": "Pending ~$4B acquisition by Brink's: CMA accepted the NoteMachine divestiture remedy in principle 10/8 (avoids Phase 2) and close is guided for early Q1 2027. A late-arc, well-known arb, so the spread needs checking vs deal terms (NATL $46.83, BCO $108.20)."
+   "one_line": "Oasis (9.6%) proxy fight cut to 2 nominees (Chapek, Hudson) with an NDA for settlement talks, vote likely Dec-2026. Baron (18%) backs management, Oasis disavows a breakup, so structural upside is limited."
   }
  ],
  "verified": [
   {
    "symbol": "MFIC",
-   "score": 4,
+   "score": 5,
    "tier": "WATCH",
    "lane": "merger_arb",
-   "catalyst": "Ares Capital (ARCC) signed a definitive agreement on 2026-10-27 to acquire MFIC for about $10.88/sh ($1.21 cash plus about $9.67 in ARCC stock, roughly $2.6B enterprise value); it closes after both shareholder votes.",
-   "dated_milestone": "Signed 2026-10-27. Next steps: S-4/joint proxy filing, then the MFIC and ARCC shareholder votes (dates not yet set; a 1H-2027 close is likely, typical for BDC-to-BDC mergers). The Q3 earnings call set for 2026-11-05 was cancelled.",
-   "instrument": "MFIC common (long). Optional short of ARCC against the stock leg if the exchange ratio is fixed.",
-   "bloom_gates": "G1 (named buyer, ARCC) + G2 (signed definitive merger agreement). G3 fails: the deal price was public on 2026-10-27 and the stock re-priced the same day.",
-   "edge": "L. Run-up from the pre-announcement close (8.36 on 2026-10-26) to 10.33 today is +23.6%. Remaining to the $10.88 headline is +5.3% gross. If the stock leg is a fixed share count priced at ARCC's 10-26 close of 18.61, ARCC at 19.36 lifts implied value to about $11.27 (+9%), but that move is beta to ARCC, not event edge. If the ratio floats NAV-for-NAV, it is about 5%. Roughly 80% of the event is already harvested. What is left is a standard BDC-merger spread plus MFIC's dividend carry, with timing (vote, months to close) and ARCC-price risk.",
-   "primary_source": "Business Wire, 'Ares Capital Corporation Agrees to Acquire MidCap Financial Investment Corporation', 2026-10-27. Consideration split from the Newsfile/Brodsky & Smith release, 2026-10-27. MFIC call cancellation: GlobeNewswire, 2026-10-30. Prices: FMP EOD, 2026-10-15 to 2026-11-02 (MFIC 8.36 -> 10.33; ARCC 18.61 -> 19.36).",
+   "catalyst": "Ares Capital (ARCC) signed a definitive merger agreement on 2026-10-27 to acquire MFIC for about $10.88/sh: $9.67 in ARCC stock (implied about 0.52 ARCC per MFIC) plus $1.21 cash. The forward event is the close.",
+   "dated_milestone": "Signed 2026-10-27. Next: proxy/S-4 filing and the shareholder votes, date not yet set (not verified; BDC mergers usually close in 1H-mid 2027). Near term: MFIC $0.31 dividend, record 2026-12-08, paid 2026-12-22.",
+   "instrument": "Long MFIC common, hedged by shorting about 0.52 ARCC per MFIC share. Unhedged, the trade is a bet on the ARCC price.",
+   "bloom_gates": "G1 (named counterparty: Ares Capital) + G2 (definitive merger agreement signed 2026-10-27) + G3 (a specific gap of about 9.7% between the $9.91 price and the ~$10.88 deal value at today's ARCC $18.60)",
+   "edge": "M. Run-up from the pre-deal base: $8.36 (2026-10-26 close) to $9.91 today = +18.5%, about 61% of the move to deal value is already taken. Remaining: $9.91 to $10.875 (0.5196 x ARCC $18.60 + $1.21) = +9.7% gross. Carry is positive: MFIC pays $0.31/qtr against about $0.25 of ARCC dividend per hedge ratio. A 9.7% spread on a signed deal with an A-rated-scale acquirer is too wide for a routine stock-for-stock BDC merger. The market is pricing something: a likely NAV-based adjustment to the exchange ratio after MFIC's NAV fell 3.8% to $12.86, a long timeline, or break risk. Unresolved, that keeps the edge at M, not H.",
+   "primary_source": "Business Wire, 'Ares Capital Corporation Agrees to Acquire MidCap Financial Investment Corporation', 2026-10-27; MFIC Q3-2026 results (GlobeNewswire, 2026-11-05: NAV $12.86, -3.8%, $10.88 = $9.67 ARCC stock + $1.21 cash); FMP EOD prices MFIC/ARCC to 2026-11-19",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "Verified: the deal is real, signed and dated (Business Wire, 2026-10-27, $10.88 = $1.21 cash + $9.67 ARCC stock). MFIC jumped from 8.36 to 10.26 on the announcement and now trades at 10.33. Of the ~29.7% total move from 8.36 to the $10.88 headline, ~23.6% has already happened, so residual capture is about 5%, which caps the score at 4 under the mostly-harvested rule. Numerator provenance is exempt because the price is contractual, but there is one gap: the web search budget was exhausted, so I could not confirm whether the stock leg uses a fixed exchange ratio or a NAV-for-NAV ratio set near closing (this decides whether the spread is 5% or about 9%). The shareholder-litigation 'investigations' (Halper Sadeh, Ademi, KSF) are routine and do not threaten the deal."
+   "analysis": "The deal is real, dated and unfired. Today's spread is about 9.7% gross against the ARCC ratio, not thin as triage assumed. MFIC $9.91 vs implied $10.875 at ARCC $18.60, ratio inferred as $9.67 / $18.61 (the 2026-10-26 ARCC close) = about 0.5196. KEY GAP: the exact exchange-ratio mechanics could not be verified. The ARCC release returned 403 and the web-search budget was used up. If the ratio is NAV-for-NAV, fixed at closing (common in BDC deals), then the 3.8% NAV markdown in Q3 and any further credit losses before close come straight out of the consideration. That would explain the wide spread, and the true remaining capture could be well under 9.7%. Downside on a break is about $8.0-8.4 (pre-deal $8.36, with NAV lower since), roughly -16%, against about +9.7% upside. Reward/risk is under 1 before probability weighting. Plaintiff-firm 'investigations' are routine and do not change this. Keep WATCH. Upgrade only after the S-4 confirms a fixed exchange ratio and gives a closing timeline."
+  },
+  {
+   "symbol": "MLYS",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "pdufa_binary",
+   "catalyst": "The FDA decision on lorundrostat for uncontrolled or resistant hypertension is due by the PDUFA target date of 2026-12-22. The company reaffirmed the date and said launch preparations were on track in its Q3 release on 2026-11-04.",
+   "dated_milestone": "PDUFA 2026-12-22. Next: launch and first scripts, then Q4/FY26 results (~early March 2027), where the first ramp read lands against Baxfendy (approved 2026-05-18).",
+   "instrument": "MLYS common (NASDAQ), $14.16 on 2026-11-20",
+   "bloom_gates": "G1 (named counterparty: the FDA, with a positive Phase 3 Launch-HTN and a class precedent in Baxfendy) and G2 (dated commitment: PDUFA 2026-12-22, primary-sourced and not slipped). G3 fails: no specific figure is still unpriced. The uncertain number is the launch ramp, and the SA 2026-11-05 piece models a peak of about $800M on a slow ramp in step with Baxfendy.",
+   "edge": "M-L. (a) Run-up from the pre-catalyst base: none, about -45%. The PDUFA date became public on 2026-03-09 with the stock in the mid-$20s. It traded at $25.52 at end-July and peaked at $45. It now sits at $14.16, 2% above its 52-week low of $13.72, below its 50-day ($21.7) and 200-day ($25.9) averages. The setup is washed out, not run up. (b) Remaining to a favorable resolution: about +40-60%. My rough re-derived approval-branch value is about $20-22 a share: net cash of about $5.9/sh plus the launch franchise at about 2.5-3x an $800M peak, haircut for Pharmakon debt costs and dilution. The stale street $43 and our earlier $38 approval-branch figure both predate Baxfendy's slow launch and are not used. The CRL branch is about $6-7, net cash after burn, roughly -55%. Approval is probably about 85-90% likely, so the PDUFA itself is mostly priced as approval. The asymmetry sits in the launch ramp, not the decision. Probability-weighted value is about $19-20, roughly 1.1:1 reward to risk. The washed-out tape is real but does not create a dated edge on its own.",
+   "primary_source": "Mineralys Q3 2026 results release, GlobeNewsWire 2026-11-04 (PDUFA 2026-12-22 reaffirmed). FMP Q3 balance sheet, period 2026-09-30, filed 2026-11-04. FMP quote 2026-11-20 ($14.16, 52-week range $13.72-$45.00). Transform-HTN AHA release 2026-11-08. Seeking Alpha 2026-11-05 Hold upgrade (~$17 fair value, ~$800M peak). Local skeptic shard _catalyst_skeptic/MLYS.json (consensus $43 as of 2026-07-31, now stale).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The catalyst is real, dated and forward. The PDUFA of 2026-12-22 was reaffirmed in the Q3 release on 2026-11-04, and new AHA data on 2026-11-08 showed blood pressure lowering holding through 48 weeks. The binary is largely de-risked: positive Phase 3 and the same drug class already approved in Baxfendy (2026-05-18). The price collapse from $45 to $14 reflects worry about second-to-market economics: AstraZeneca's cardiorenal reach, step-therapy barriers and a slow class ramp. Approval alone therefore probably re-rates the stock only modestly. Capital-structure check from the Q3 10-Q balance sheet (2026-09-30): $624.7M of cash and investments against $98.3M of senior secured Pharmakon debt gives about $526M net, about $5.9/sh on about 88.6M shares. No preferred stock. Up to $265M of Tanabe commercial milestones is contingent on sales. Net cash supports a CRL floor near $6-7 and an approval value around $20-22, so the equity can carry the flagged upside but only at about 1:1 odds, and the edge depends on launch execution. Gaps: the web-search budget was exhausted, so no current consensus target, short interest or options-implied move was checked. Approval probability is my estimate, not sourced."
   },
   {
    "symbol": "MTN",
    "score": 3,
    "tier": "WATCH",
    "lane": "activist",
-   "catalyst": "Oasis Management is running a contested proxy fight (BLUE card) for 2 Vail Resorts board seats (Robert Chapek, M. Ashton Hudson), with the vote at the Dec 14, 2026 annual meeting. Oasis is asking for operating and loyalty fixes, not a sale, spin or capital return.",
-   "dated_milestone": "2026-12-14 annual meeting vote (definitive proxy DEFC14A filed 2026-10-30). Before that, watch for ISS/Glass Lewis recommendations, likely late Nov to early Dec 2026.",
-   "instrument": "MTN common (NYSE), $151.82 on 2026-11-02, market cap about $5.4B",
-   "bloom_gates": "G1 only: Oasis Management is a named counterparty and its nominees are named. G2 fails: there is no concrete commitment such as a sale process, buyback, spin or asset disposal, only a call for operating 'initiatives'. G3 fails: no specific unpriced figure. Even a full win puts 2 directors on the board, a minority.",
-   "edge": "L. Run-up: about +7% from the pre-catalyst base. The nominations window closed 2026-09-10, after earnings the price was about $141, and it is $151.82 now. Zacks has it +7.2% since the 2026-09-28 report, above the 50-day $143 and 200-day $138 averages. Remaining: no favorable-resolution value can be derived. Winning 2 board seats has no contractual or capital-structure value attached, so the remaining capture is unquantifiable and plausibly about 0% from the event itself. The largest holder backs management (Reuters 2026-10-30), which lowers the odds of a win. Any re-rating depends on snowfall and pass sales (a weather/macro-like driver), not on the vote.",
-   "primary_source": "SEC EDGAR: Vail Resorts DEFC14A, 2026-10-30 (Annual Meeting Dec 14, 2026). Oasis Management PRNewswire letter, 2026-11-02 (BLUE card, Chapek/Hudson). Reuters, 2026-10-30, 'Vail Resorts' biggest investor backs company in fight with activist Oasis'. FMP quote, 2026-11-02 ($151.82).",
+   "catalyst": "Oasis Management (about 9.6%) is running a short-slate proxy contest for 2 board seats (Chapek, Hudson) at Vail's Annual Meeting on Dec 14, 2026. Both sides have filed definitive proxies (DEFC14A, Oct 30 and Nov 2), and the largest holder (Baron, about 18%) backs management.",
+   "dated_milestone": "FQ1-27 earnings 2026-12-09 (after close). Annual Meeting and vote 2026-12-14. Last day to buy an Epic Pass 2026-12-06 (season pass-unit print).",
+   "instrument": "MTN common (NYSE), $152.06 close 2026-11-19",
+   "bloom_gates": "G1 yes: named counterparties (Oasis Management, with nominees Robert Chapek and M. Ashton Hudson; Baron backs the company). G2 partial: a dated vote on Dec 14, but no concrete value commitment such as a sale, breakup, buyback size or dividend action. G3 no: Oasis disavows a breakup, and its plan (\"Lifting the Vail\") is operational, so there is no specific unpriced figure. At most 2 minority seats.",
+   "edge": "L. Run-up: about +14% from the pre-catalyst base (about $133 on 2026-09-10, before the Oasis campaign became public; PREC14A filed 2026-10-13) to $152.06 today, though part of that is the Q4 print and ski-season seasonality, not the activist. Remaining: not quantifiable. A win gives 2 minority seats and no contractual value event, Baron (18%) is opposed, and the stock already sits near the top of its 52-week range ($118.51-$163.99). An operational-reform thesis gives no re-derivable numerator, so this scores the EQUITY (a weather- and pass-unit-driven, FCF-strained 6% dividend payer), not the event.",
+   "primary_source": "SEC EDGAR MTN filings: DEFC14A (company) 2026-10-30; DEFC14A (Oasis) 2026-11-02; SC 13D/A 2026-11-03; DEFA14A investor presentation 2026-11-18. PRNewswire: Oasis presentation 2026-11-16; Vail meeting date of Dec 14 per release of 2026-11-18. Reuters 2026-10-30, 'Vail Resorts' biggest investor backs company'. FMP quote and EOD prices as of 2026-11-19.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The proxy fight is real and dated. The company filed a DEFC14A on 2026-10-30 for the Dec 14 meeting, and Oasis sent its BLUE-card letter on 2026-11-02. A second dissident PREC14A, a 'meyer' filing dated 2026-10-30, also appears on EDGAR and was not resolved here. But the event is a minority 2-seat governance contest with no committed value-unlock mechanism. Reuters reported on 2026-10-30 that the biggest investor backs management. That leaves no specific forward figure for the market to price, and the equity case rests on winter visit and pass trends plus a dividend funded with debt (FCF short of the $8.88 payout). The event clears the dated and forward tests but fails G2 and G3, so this is a watch-list governance item, not an actionable catalyst. Gap: the web-search budget was exhausted, so the Oasis letter, the Reuters piece and the 10-K capital structure were not read in full. Numerator provenance does not apply because no derived upside is claimed."
-  },
-  {
-   "symbol": "NATL",
-   "score": 2,
-   "tier": "NONE",
-   "lane": "merger_arb",
-   "catalyst": "Brink's (BCO) acquisition of NCR Atleos for $30.00 cash + 0.1574 BCO shares per NATL share. The UK CMA accepted the Brink's divestiture remedy in principle on 2026-10-08, avoiding a Phase 2 review, and close is guided for early Q1 2027.",
-   "dated_milestone": "CMA formal acceptance of the undertakings, then close in early Q1 2027 (guided). Next dated item: NATL Q3 results on 2026-11-04, released with no call or outlook because the deal is pending.",
-   "instrument": "NATL common, long NATL / short 0.1574 BCO hedge",
-   "bloom_gates": "G1 (named acquirer, Brink's) + G2 (signed merger agreement; CMA remedy accepted in principle). G3 fails: no unpriced figure is left, because the spread is about 0.4%.",
-   "edge": "L. Implied deal value = 30.00 + 0.1574 x 108.20 = $47.03 vs NATL $46.83, so the gross spread is 0.43% (about 1.2-1.5% annualized over 3-5 months). That is below cash yield and before the BCO dividend paid on the short hedge. Run-up from the pre-announcement base ($41.87 close on 2026-02-26, before the 8.2M-volume jump on 02-27): +11.8%. Remaining to the deal value: +0.43%. Essentially fully harvested.",
-   "primary_source": "Kahn Swick & Foti investor alert stating the deal terms (Business Wire, 2026-06-09). WSJ, \"U.K. Regulator Says Brink's Disposals Could Clear Way for $4 Billion NCR Atleos Takeover\" (2026-10-08). NATL Q3 date release (Business Wire, 2026-10-20). FMP quotes on 2026-11-02 (NATL 46.83, BCO 108.20) and FMP EOD history.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The deal is real and contractual. Terms of $30 cash + 0.1574 BCO are confirmed in the KSF release of 2026-06-09, and the CMA remedy acceptance in principle was reported by WSJ on 2026-10-08, so close risk is now low. At today's prices the arb pays about 20 cents of gross spread against about $5 of downside to the roughly $42 unaffected price if the deal breaks. Risk/reward is about 0.04:1, so the late-arc event is fully priced with nothing left to capture. Gaps: I could not confirm the exact announcement date or any collar/CVR terms because the web-search budget was exhausted. The pre-deal base is inferred from the FMP price/volume break on 2026-02-27. No numerator-provenance check is needed: this is mostly cash with a fixed exchange ratio, so the value is contractual."
+   "analysis": "The proxy fight is real, dated (vote Dec 14, 2026) and unfired. But it is a 2-seat minority contest with the 18% holder siding with management and the activist ruling out a breakup, so even an Oasis win leaves no specific, unpriced value event to capture. The near-term drivers are FQ1 earnings on Dec 9 and the pass-unit trend (pass sales -12% in FY26), which are operating and weather risks, not a catalyst. Gaps: web search budget was exhausted, so the NDA and settlement talks in the triage note could not be checked beyond FMP news and EDGAR. EDGAR also lists a separate DEFC14A and PREC14A from a different filer agent (Nov 10 and Oct 30, 'meyer_*' file names), which may be a second solicitation and was not checked. The 10-Q capital-structure lookup was skipped because there is no derived numerator to provenance-check."
   }
  ]
 }

@@ -3,99 +3,99 @@
  "scanned": 150,
  "scan_distribution": {
   "active": 0,
-  "watch": 6,
-  "none": 144
+  "watch": 8,
+  "none": 142
  },
  "survivors_flagged": [
   {
-   "symbol": "RNW",
+   "symbol": "RWT",
    "score": 5,
    "tier": "WATCH",
-   "lane": "merger_arb",
-   "one_line": "CPP Investments/Sinha UK scheme take-private at $7.02 cash (Aug-11 agreement, Oct-28 side letter, 51.1% irrevocables); stock at $6.865 = ~2.3% gross spread; court and general meeting dates not confirmed; thin spread, low asymmetry."
+   "lane": "activist_structural",
+   "one_line": "Converting from REIT to C-corp for tax year 2027, with a 1-for-5 reverse split dated 31-Dec-2026, a $50m Series B preferred exchange offer and an activist (Radoff, Sep-2026) urging a sale; dividend-cut selling may be suppressing the price. Verify the activist and price reaction."
   },
   {
    "symbol": "RYAM",
    "score": 5,
    "tier": "WATCH",
    "lane": "m_and_a",
-   "one_line": "Formal strategic review (Morgan Stanley/Wachtell, since Apr-2026). Management says it will conclude and announce a path in Q4-2026. AIP's rejected $11-12 bid sets a reference price. Dated window is real, but the bid premium is known and the outcome could be the standalone plan."
+   "one_line": "Strategic review (Morgan Stanley; unsolicited approaches incl. reported AIP interest) now guided to conclude Q1-2027, slipped from Q4; Temiscaming idled by tariffs at $2-3m/month. A sale or part-sale outcome is dated but uncertain."
   },
   {
-   "symbol": "RZLT",
-   "score": 5,
+   "symbol": "SGRY",
+   "score": 6,
    "tier": "WATCH",
-   "lane": "dated_binary",
-   "one_line": "upLIFT tumor-HI pivotal (n~16, single-arm) is fully enrolled with topline guided mid-Dec 2026 and 6/8 hit the primary at interim; stock ~$3.9 vs $11.46 52w high after the sunRIZE failure, so not re-rated. Asymmetric, but small-n and dropout risk."
+   "lane": "merger_arb",
+   "one_line": "Contested take-private: amended HealthSpan/Bon Secours deal at $25 cash (ticking fee up to $26.61 after Mar-1-2027) vs an unnamed rival's $28; Bain's 39% backs HealthSpan; close expected Q1-2027. Late arc: the stock already re-rated about 46%."
   },
   {
    "symbol": "SLAB",
    "score": 5,
    "tier": "WATCH",
    "lane": "merger_arb",
-   "one_line": "TI $231 cash deal (ann. 2026-02-04), HSR expired 05-22, Singapore cleared 08-07; SAMR acceptance/approval outstanding, close guided 1H27. Px $222.48 = ~3.8% gross spread, so mostly priced; the edge is pricing China risk."
+   "one_line": "TI cash deal at $231 vs $221.55 (about 4.3% gross spread); holders approved and HSR plus Singapore cleared, but China's SAMR review (wireless-chip focus) is the open gate, with close guided for 1H27. A mid-arc arb, not early."
   }
  ],
  "verified": [
   {
-   "symbol": "RNW",
+   "symbol": "RWT",
    "score": 4,
    "tier": "WATCH",
-   "lane": "merger_arb",
-   "catalyst": "A consortium of CPP Investments and CEO Sumant Sinha is taking ReNew private for $7.02 per share in cash through a UK scheme of arrangement. Holders of about 51.1% of the voting power have signed irrevocable undertakings, and close is guided to Q1 2027.",
-   "dated_milestone": "Scheme agreement 2026-08-11 (final $7.02 proposal dated 2026-07-27, confirmatory letter 2026-08-06). Next steps are the court meeting and general meeting, then the sanction hearing. The scheme-meeting dates were not found in any public source (gap). Expected close is Q1 2027.",
-   "instrument": "RNW common (NASDAQ). Cash-election arb; anyone not electing the rollover by the court hearing gets the cash by default.",
-   "bloom_gates": "G1 passes: named counterparties (CPP Investments as Purchaser, plus Sumant Sinha). G2 passes: signed scheme with 51.1% irrevocables. G3 is weak: the only unpriced figure left is a 2.3% gross spread.",
-   "edge": "L. The deal is real, contractual and forward, but almost all of it is already in the price. Run-up from the pre-proposal base (about $5.8-6.0, using the 200-day average of $5.97; 52-week low $4.385) to $6.865 today is roughly +15-17%. Remaining from $6.865 to the $7.02 cash price is +2.26% gross, about 5-6% annualized over a Q1 2027 close. That is near cash yield. Against it, the break downside is about -15-20% back to the base, and an earlier 2025 consortium bid for RNW did not complete.",
-   "primary_source": "FMP quote, 2026-11-02 ($6.865, 200-day average $5.97). InsideArbitrage, Aug 2026: CPP and Sinha consortium at $7.02, Q1 2027 close, 51.1% irrevocables. ReNew investor-relations 6-K files: the $7.02 BAFO and the 2026-08-06 confirmatory letter. SEC 6-K FY2026 d104914dex992.htm: scheme General Meeting definitions.",
+   "lane": "activist_structural",
+   "catalyst": "Redwood Trust is restructuring itself, and an activist is pressing for a sale. On 2026-11-17 it launched an exchange offer that swaps up to 17.36M common shares (about $50m) into a 12% junior Series B preferred. It cut the dividend to $0.02, plans a 1-for-5 reverse split and will convert to a C-corp for tax year 2027. Separately, Bradley Radoff's open letter of 2026-09-14 asks for a sale and threatens a board fight at the 2027 annual meeting.",
+   "dated_milestone": "The Series B exchange offer launched 2026-11-17 and should expire around mid-Dec-2026; the expiry date is unverified. The 1-for-5 reverse split takes effect 2027-01-04 at market open; most sources say this, one says 2026-12-31. The C-corp conversion is effective for FY2027. Next: the nomination window for the 2027 annual meeting (about Q1-2027), where Radoff could launch a proxy fight if the board does not run a sale.",
+   "instrument": "RWT common (NYSE); Series B preferred available via exchange offer",
+   "bloom_gates": "G1 partial: Radoff is a named activist, but no named buyer exists and there is no sale process. G2 holds for the company's own steps (exchange offer launched, reverse split dated, C-corp conversion, dividend reset). None of those steps commits to delivering value. G3 fails: there is no contractual or specific unpriced per-share figure. The only number is the book value of $6.56, and a mortgage REIT trading at 0.41x book with a GAAP loss is not unpriced on that basis alone.",
+   "edge": "L-M. No run-up: pre-catalyst base about $3.94 at the 2026-09-14 Radoff letter, now $2.68 (-32%; it closed at $3.24 the day before the 2026-11-03 Q3 print). Remaining upside: +34% to my provenance-checked value of about $3.60 (0.55x book of $6.56), which assumes a sale or re-rating. The case is mostly forced selling after the dividend cut from $0.18 to $0.02, plus possible tax-loss selling into year-end. Re-deriving the equity cuts the upside: the new 12% preferred (up to $50m at $25 liquidation preference) and the $185m of 7% converts issued in Sep-2026 sit ahead of the common. Recourse leverage is 5.2x, and the Q3 GAAP loss of -$0.39 is still eroding book value. The exchange offer implies roughly $2.88 per common share ($50m / 17.36M shares), a soft reference about 7% above the current price.",
+   "primary_source": "Redwood Trust 8-K ex99-1 Q3-2026 release, 2026-11-03 (sec.gov 0001104659-26-122170). Finviz coverage of the 2026-11-03 Q3 report and the C-corp/dividend reset. Redwood exchange-offer launch press release, 2026-11-13, with the commencement headline of 2026-11-17. Radoff open letter, 2026-09-14 (goldesel.de / FMP market-news). FMP quote 2026-11-20: $2.68, 52-week low $2.63, high $6.97.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The cash price is contractual, so the numerator provenance check does not apply, and 51.1% irrevocables make approval at the scheme vote very likely. Remaining capture is about 2.3% gross against about -15-20% downside if the deal breaks. On top of that, the 2025 bid failed and Indian regulatory and court timing is uncertain, so the trade is mostly harvested and the asymmetry is poor. Score is capped at 4 under the residual-capture rule. Keep it on WATCH for a spread widening (for example above 6%) or for the court-meeting date to be confirmed. Gap: I could not verify the court and general meeting dates or the Oct-28 side letter."
+   "analysis": "The flagged facts check out. The C-corp conversion, the 1-for-5 reverse split, the $50m Series B preferred-for-common exchange (launched 2026-11-17) and the Radoff letter of 2026-09-14 are all confirmed. There is one discrepancy: most sources give the split date as 2027-01-04, not 2026-12-31. The price reaction looks like dividend-cut and year-end selling: $3.94 in mid-September, $3.24 before Q3, and $2.68 today, a fresh 52-week low at 0.41x book. The 2026-09-15 CFO purchase at $3.85 is underwater. There is no forward contractual figure. Radoff named no buyer, and the board is choosing self-help (retained cash, deleveraging, NOL use) over a sale. The fresh 12% preferred and the $185m converts sit ahead of the common, so this scores the equity, not the event (cap 4). Gaps: I did not open the 10-Q to confirm total recourse debt, the exact tender-offer expiry, or the current size of Radoff's stake."
   },
   {
    "symbol": "RYAM",
-   "score": 5,
+   "score": 4,
    "tier": "WATCH",
    "lane": "m_and_a",
-   "catalyst": "Rayonier Advanced Materials is running a formal strategic review (sale of all or part, strategic investment, merger, or the standalone plan) with Morgan Stanley and Wachtell. Management has guided that it will conclude the review and announce a path in Q4-2026.",
-   "dated_milestone": "Q3-2026 earnings around 2026-11-04 (estimated; first chance for a review update). Review outcome guided for Q4-2026, so by 2026-12-31. The April release said the board set no firm timetable.",
-   "instrument": "RYAM common (NYSE)",
-   "bloom_gates": "G2 partial: the Q4-2026 conclusion is a concrete, dated management commitment, but only to announce a path, not to sell. G1 not met: AIP is a named bidder, but its offer was made around Nov-2025, rejected in Dec-2025 and disclosed in Feb-2026, with no evidence it is still live. G3 not met: there is no contractual price; the $11-12 is a stale, rejected indication.",
-   "edge": "M-L. Run-up: none. The stock is $6.77, about 22% below its 200-day average of $8.67, 43% below the $11.85 52-week high, and +26% off the $5.38 low. Whatever bid premium was priced in after the AIP disclosure has largely bled out. Remaining: +62-77% to the old $11-12 AIP level only if a sale happens at that price. The downside if the review ends standalone is roughly the low end ($5.4-5.5, -20%). A rough binary (about 40% sale at about $10, 60% standalone at about $5.5) gives an expected value near $7.3, about +8%. The capital structure has no preferred ahead of the common but about $779M of debt against a $458M market cap with interest coverage near 0.1x, so any sale value flows to the equity only after a heavy debt load. That leverage makes a rejected 2025 per-share bid an unreliable anchor today.",
-   "primary_source": "RYAM Q2-2026 earnings release, 8-K dated 2026-08-04 (sec.gov ex99-1), and the 10-Q for the period ended 2026-06-27: both state the review will conclude in Q4-2026. Jax Daily Record 2026-04-20 on the review launch and the AIP bid history. FMP quote 2026-11-02: $6.77, market cap $458M, 200-day average $8.67, 52-week range $5.38-11.85.",
+   "catalyst": "The Morgan Stanley-run strategic review (sale of all or part, strategic investment or merger) is now targeted to conclude in Q1-2027, after slipping from Q4-2026 because of tariff uncertainty at Temiscaming; AIP's earlier $11-12 cash approach was rejected in Dec-2025 and has not been renewed in public.",
+   "dated_milestone": "Review conclusion targeted Q1-2027 (soft, already slipped once). Next check: Q4/FY26 results, about late Feb/early Mar 2027.",
+   "instrument": "RYAM common (NYSE), $4.89 on 2026-11-20, at its 52-week low; market cap about $331m.",
+   "bloom_gates": "G1 partial: there is a named historical counterparty (AIP's 13D, an $11-12 proposal dated 2025-11-18, rejected 2025-12-11, about a 5.1% stake) and a named advisor (Morgan Stanley), but no current bidder is named; management acknowledged unnamed MBO interest in Temiscaming. G2 not met: no commitment, LOI or definitive agreement. G3 not met: the $11-12 figure is stale and cannot be supported by the current capital structure.",
+   "edge": "L-M. RUN-UP: about -12% from the pre-catalyst base (about $5.5 close before the Nov-2025 AIP letter; peak $10.45 on the 2026-02-25 disclosure), so the event premium has fully round-tripped and nothing has been harvested. REMAINING: about +20-50% to a provenance-checked sale value of $5.85-7.25/share, not the +125-145% the AIP $11-12 number implies. That AIP price is pre-tariff and pre-$221m impairment and cannot be re-derived from today's balance sheet. The equity is a thin stub under an 11.2% term loan with an equity deficit, and continuing independently is an explicit possible outcome.",
+   "primary_source": "RYAM Form 10-Q for quarter ended 2026-09-26 (SEC EDGAR, filed Nov-2026); RYAM Q3-2026 8-K/press release (Nov-2026, review targeted Q1-2027); AIP Schedule 13D exhibits (filed 2026-02-25: $11-12 proposal 2025-11-18, rejection 2025-12-11); Business Wire 2026-04-20 strategic review announcement; FMP quote 2026-11-20 $4.89.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The dated window is real: the Q2 release (2026-08-04) and the 10-Q both say the review concludes in Q4-2026. But there is no named live counterparty and no price, and the falling price says the market thinks a sale at the old AIP level is unlikely. The option value is cheap because the bid premium has largely been given back, but the event is a coin flip with a credible standalone downside on a heavily levered balance sheet. It stays WATCH, to be revisited at Q3 earnings (about 11-04). Gap: I found no Q3 release, 8-K or October news on the review. Debt is from an undated Simply Wall St snapshot, not re-derived from the latest 10-Q."
+   "analysis": "The review is real and dated, with a named advisor and a known historical suitor (AIP). But no current bidder or commitment exists, the date has already slipped once, and Temiscaming (idled 2026-10-03 at $2-3m/month) is the stated obstacle, so a whole-company sale or a 'remain independent' outcome is genuinely uncertain. NUMERATOR PROVENANCE: the 10-Q (Sep 26, 2026) shows $805.9m debt principal ($689.5m 2029 term loan at 11.2% plus $33.4m ABL) less $61.1m cash, so about $745m net debt. There is no parent preferred, only the roughly 14% BioNova subsidiary redeemable NCI, and 67.64m shares. At 6.0-6.5x a roughly $190m run-rate EBITDA, a sale implies EV of $1.14-1.24B and equity of about $395-490m, or $5.85-7.25/share. AIP's $11-12 would need EV of about $1.5B, which the impaired asset base no longer supports. So I score the equity, not the event (cap 4). Not fully verified: current run-rate EBITDA guidance after the idling, and whether AIP is still engaged."
   },
   {
-   "symbol": "RZLT",
-   "score": 5,
+   "symbol": "SGRY",
+   "score": 2,
    "tier": "WATCH",
-   "lane": "dated_binary",
-   "catalyst": "Topline data are due in mid-December 2026 from upLIFT, the single-arm pivotal Phase 3 of ersodetug in tumor hyperinsulinism (n=16). The primary endpoint is the share of patients reaching at least a 50% cut in IV glucose infusion, and it passes if the lower bound of the 95% CI is at least 30%, meaning roughly 9 of 16 responders.",
-   "dated_milestone": "upLIFT topline guided for mid-Dec 2026 (enrollment completed, PR 2026-10-14). Next after that is an NDA/BLA filing decision with Breakthrough Therapy designation (granted May 2025), timing not yet guided.",
-   "instrument": "RZLT common (NASDAQ), $3.795 on 2026-11-02, market cap about $367M",
-   "bloom_gates": "G2: a concrete company commitment to mid-Dec 2026 topline with a predefined statistical bar. G3 is only partial: the readout itself is unpriced, but the interim (7 of the first 8 responders) is already public and was traded in June 2026. G1 is not applicable (no counterparty).",
-   "edge": "M. This is a binary with a favorable starting point. 7 of the first 8 patients met the responder bar (one cancer death counts as a non-responder), so the trial needs only about 2 more responders among the last 8. Run-up from the pre-catalyst base: +15% from the $3.30 close before the interim (2026-05-29), and about +115-200% from the post-sunRIZE crash range of $1.23-1.77 (Dec 2025). Remaining capture: about +45-70% to a success value of roughly $5.5-6.5 (the June-August post-interim range of $4.9-5.3 plus some readout de-risking), against about -65-70% to roughly $1.1-1.3 (cash backing, about $108M at 6/30/26 less burn) on failure. The probability-weighted value is about $5.0 at roughly 80% success odds, so about +30% expected. The stock has already given back from $4.87 to $3.58-3.95 on the October update, so this is not re-rated, but it is not deep value either.",
-   "primary_source": "Rezolute PR 'Completion of Enrollment in Phase 3 upLIFT Study' (GlobeNewswire, 2026-10-14); June 2026 positive interim PR (BioSpace); FY2026 10-K/8-K (SEC, cash $107.8M at 2026-06-30); FMP quote and EOD history (2026-11-02); Clinical Trials Arena on sunRIZE failure (2025-12-11).",
+   "lane": "merger_arb",
+   "catalyst": "Amended HealthSpan/Bon Secours cash merger at $25.00/sh (ticking fee up to +$1.61, so $26.61 max if closing slips past Mar-1-2027), backed by Bain's 39% voting agreement, versus an unnamed third party's non-binding $28 proposal that the special committee rejected as not Superior.",
+   "dated_milestone": "Amended agreement 2026-11-09; rival proposal 2026-11-03, updated 2026-11-08. Next: the special-meeting stockholder vote (date not yet found, needs the DEFM14A), then the Q1-2027 close, with the ticking fee accruing from 2027-03-01.",
+   "instrument": "SGRY common (NASDAQ), $26.69 on FMP quote 2026-11-20",
+   "bloom_gates": "G1 yes (HealthSpan / Bon Secours named, Bain 39% rollover plus voting agreement). G2 yes (signed amended merger agreement at $25 cash plus ticking fee). G3 FAILS: the stock trades above every contractual figure, so no currently unpriced figure is left. The only upside is the non-binding $28 from an unnamed rival, which the board rejected.",
+   "edge": "L. Run-up: about +46% from the pre-rival tape (50-day average about $18.3, year low $11.41) to $26.69 today, and more than 100% from the year low. Remaining capture to the provenance-checked contractual value: -6.3% to $25.00 on a pre-Mar-1 close, and -0.3% even at the $26.61 ticking-fee maximum. Only if the unnamed rival goes binding at $28 is there about +4.9%. Negative spread on the signed deal means this is fully harvested, with the market pricing a bump or topping bid.",
+   "primary_source": "SEC 8-K / DEFA14A ex99-1 (sec.gov/Archives/edgar/data/0001638833/000110465926124236), amended merger agreement announced 2026-11-09; Becker's ASC coverage November 2026; FMP quote 2026-11-20 ($26.69)",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The catalyst is confirmed as real, dated and forward. Rezolute's 2026-10-14 PR says upLIFT is fully enrolled with topline mid-Dec 2026, and 7 of the first 8 patients met the responder criterion, so the 56% responder-rate threshold looks very achievable. The upside is limited by the small market (tumor HI is ultra-rare and ersodetug is now the company's only viable indication after the Dec-2025 sunRIZE congenital-HI failure, which cut the stock 88%). Other limits: a one-death/non-responder pattern in a cancer population, an open-label single-arm design, and likely dilution after the data, since cash was $107.8M at 6/30/26 against about $78M a year of burn. Gaps: I did not pull the latest 10-Q for exact share count or cash at 9/30, I did not verify the remaining-8 responder count beyond the October PR, and the success-case value is a heuristic from the post-interim trading range, not a rNPV."
+   "analysis": "The deal is real, signed and forward (vote pending, close expected Q1-2027). But SGRY at $26.69 trades above both the $25 amended price and the $26.61 ticking-fee ceiling, so buying now is a negative-spread bet that HealthSpan raises again or the rival's non-binding $28 becomes binding and wins. The board has already rejected that bid on timing and regulatory grounds, and Bain's 39% is locked behind HealthSpan. If the signed deal closes as written the downside is about -6%, and the upside is capped at about +5%, contingent on an unnamed party. Gap: special-meeting date and any majority-of-minority condition not verified. Re-score only if a binding superior proposal of $28 or more, or a further HealthSpan bump, is filed."
   },
   {
    "symbol": "SLAB",
    "score": 4,
    "tier": "WATCH",
    "lane": "merger_arb",
-   "catalyst": "Texas Instruments' $231/sh all-cash acquisition of Silicon Labs (signed 2026-02-04) closes on China SAMR clearance, guided for 1H27.",
-   "dated_milestone": "Done: signed 2026-02-04, stockholders approved 2026-04-30, Singapore CCS cleared 2026-08-07. Still open: SAMR had not formally accepted the filing as of the MLex report of 2026-06-11, and I found no later update. Next date: SAMR acceptance/decision, then close in 1H27 (by about 2027-06-30).",
-   "instrument": "SLAB common, long against the $231 cash consideration. Cash deal, so no TXN hedge is needed.",
-   "bloom_gates": "G1 (named counterparty: Texas Instruments) and G2 (definitive merger agreement at $231 cash, stockholders approved). G3 not met: the remaining figure is the $8.52 spread, which is already almost fully priced.",
-   "edge": "L. Run-up from the pre-catalyst base: $136.62 close on 2026-02-03 to $222.48 = +62.8%. Remaining to the contractual $231 = +3.83% gross, about 6% annualized to a mid-2027 close. Break downside: the undisturbed price was around $137-145, so a break costs about 35-38%. The spread implies roughly a 10-11% break probability. This is a pure bet on how China's SAMR handles a US-semi deal during trade friction, and the market is already pricing that risk sensibly. The payoff is asymmetric to the downside, and about 90%+ of the event value is already in the price.",
-   "primary_source": "Silicon Labs 10-Q for the period ending 2026-07-04 (stockholder approval 2026-04-30, $231 cash, close 1H27); TXN Q1-2026 10-Q; CCS Singapore clearance release 2026-08-07; MLex 2026-06-11 (SAMR not yet accepted the filing); FMP quote 2026-11-02 at $222.48 and FMP EOD closes for 2026-02-03 ($136.62) and 2026-02-04 ($203.41).",
+   "catalyst": "China SAMR clearance of Texas Instruments' $231/share all-cash takeover of Silicon Labs, the last open gate before a guided 1H27 close.",
+   "dated_milestone": "Announced 2026-02-04; SAMR filing went in April 2026 and was formally accepted early August 2026; the review clock is running. Next date: a SAMR Phase decision or remedy, then the close, guided 1H27 (outside date per the merger agreement).",
+   "instrument": "SLAB common (cash arb; long only, since the consideration is cash and there is no TXN hedge leg)",
+   "bloom_gates": "G1 (named acquirer TI) + G2 (signed definitive agreement at $231 cash, holders approved, HSR and Singapore cleared). G3 is weak: the only unpriced figure is the 4.3% gross spread.",
+   "edge": "L - Run-up from the unaffected base: about +62% (unaffected close about $137 = $231/1.69, to $221.55 today). Remaining capture: +4.3% gross to $231 ($9.45), about 8-15% annualized depending on a Jan-Jun 2027 close. The break downside is roughly -30 to -38% (to about $137-155), so the market-implied close probability is about 88%. The spread is fair compensation for SAMR wireless-overlap risk, not mispricing. This is mostly harvested, so the score is capped at 4.",
+   "primary_source": "TI/Silicon Labs press release 2026-02-04 (news.silabs.com, investor.ti.com): $231 cash, ~$7.5B EV, 1H27 close. ION Analytics/Mergermarket PaRR 'SAMR formally accepts SLAB/TI for review' (early Aug 2026). MLex 2026-06-11 (filing not yet accepted then). Reuters via AOL 2026-02-04 (~69% premium to unaffected close). FMP quote 2026-11-20: $221.55.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The deal is real and contractual: TXN pays $231 cash, HSR expired, stockholders approved on 04-30, Singapore cleared on 08-07. That leaves SAMR as the only meaningful condition. I could not verify SAMR acceptance after the 2026-06-11 MLex report that it had not been accepted, so this is an evidence gap. At $222.48 the stock has captured about 63% from the $136.62 unaffected close, and only 3.8% gross remains against about 36% break downside. That makes it a mostly-harvested event, capped at score 4. The numerator-provenance rule does not apply because the cash price is contractual. Keep on WATCH: the actionable trigger is SAMR formally accepting the filing, or the spread widening on trade-tension headlines."
+   "analysis": "The deal is real, contractual and forward. The single open gate is SAMR, which formally accepted the filing in early August 2026 and whose information requests focus on wireless connectivity overlap, with domestic complainants. China is about 15% of SLAB sales and about 20% of TI's, amid US-China semiconductor tension. That leaves a non-trivial tail risk of delay or remedy that a 4.3% spread only roughly prices. Numerator provenance does not apply because the price is contractual cash. On residual capture, about 94% of the move from the unaffected price to the deal price is already in the stock, so this is a low-edge carry trade, not a re-rating. Gap: I did not verify the outside date / termination-fee terms or any SAMR timeline signal after August."
   }
  ]
 }

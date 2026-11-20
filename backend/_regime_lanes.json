@@ -1,6 +1,6 @@
 {
-  "as_of": "2026-11-02",
-  "source": "CATALYST_WATCH_REGIME.md §3/§4-D (v10 instance, 2026-11-02 bi-weekly refresh)",
+  "as_of": "2026-11-20",
+  "source": "CATALYST_WATCH_REGIME.md §3/§4-D (v11 instance, 2026-11-20 bi-weekly refresh)",
   "written_by": "catalyst-watch-regime-refresh Phase 1b — regenerate this file whenever §3's lane ranking changes; _post_board.py reads it at import and WARNs if it is missing or drifts from the canon lane set",
   "lane_priority": {
     "spinoff": 1,
@@ -17,12 +17,13 @@
     "unknown": 9
   },
   "notes": [
-    "NO rank change vs 2026-10-12 (fourth consecutive unchanged run). Brief D proposed activism 5->2, fresh_crash 2->3, distressed 3->5; Fable refuter D: activism promotion NOT SUPPORTED (zero contests resolved in-window; BBWI +36% had no activist catalyst), demotions only WEAKLY supported (3 of 4 fresh-crash level tests contaminated: SKYD warrant-dividend ex-date 10/14, TMUS/FDXF broke earlier than scored). Held per doctrine: no re-rank on one window.",
-    "spinoff/forced_seller stay 1, SUPPORTED on behaviour: MMED flowback flush 10/14 (low $16.56) -> +11%; FDXF first standalone print 10/29 -> +24%; MSGR regular-way open $176 (10/27) -> $220 (+24%). Every fixed LEVEL test failed; re-tests are re-registered on behaviour (buy the flush / first print / first sessions).",
-    "distressed holds 3: first hard court event (Braskem America Finance involuntary Ch.11, SDNY 10/21; end-Nov Brazilian plan deadline) while CCC-BB stays >1,100bp (credit tripwire still BREACHED). Breach adds supply, not rank.",
-    "merger_arb holds 4: vanilla spreads closed/compressed (KVUE, ACVA closed; MG/OPCH/PCRX <1%); live objects are IMXI (outside date 11/10 inferred, not in filings), Cintas/UniFirst FTC threat, CART 13.2%, CZR 6.9% credit spread.",
-    "index_flow stays 8 but is now PILOTED as a shadow test: Brief D proposed a separate index-event lane; refuter: 'reasonable to pilot, not yet earned'. New December Russell recon (rank 10/30, effective 12/11) + OKTA S&P 500 add 11/4. No new canon lane needed -- canon_lane() already maps index_flow.",
-    "bio_convergence / briefing_doc stay 9 (thinnest a NINTH run). Promotion test 0 of 0 scoreable (the one drug adcomm in-window, 10/30, had a private sponsor); still open.",
-    "Tripwires 2026-11-02: OIL/HORMUZ BREACHED (first under the 10-12 re-spec), AI-CAPEX BREACHED (legs b+c), CREDIT BREACHED (continuing) -- these act through the 1.7 driver caps, not lane rank."
+    "NO rank change vs 2026-11-02 (fifth consecutive unchanged run). Fable refuter D: holds SUPPORTED only as a no-change default; nothing clean enough to reorder.",
+    "spinoff/forced_seller stay 1, WEAKLY supported: MSGR +14.6% since 11/2 in a -4.8% tape carries the lane; spin basket (MSGR/FDXF/VYLR/MMED) avg -2.9% vs SPY -4.8%; FDXF flush paid +7.6%.",
+    "fresh_crash stays 2 with STRIKE 1: INTC, GRAL, ETD kept drifting after their events (3 of 3 clean; IONS contaminated by its own 11/9 print). A second failed window next run -> demote.",
+    "distressed holds 3: Braskem judicial-recovery binary 11/22 (creditor support 39.6%, single-source); BAK < $1; CCC-BB 1,148bp. Breach adds supply, not rank.",
+    "merger_arb holds 4; Brief D's 'up-bias' NOT adopted (refuter: IMXI break was pre-priced, CART spread mis-measured). REGULATORY tripwire BREACHED 11/13 (FTC + 13 states sued to block Covetrus/MWI): antitrust-dependent arb is now one shared driver under 1.7 -- a cap/underwriting change, not a rank change.",
+    "index_flow stays 8; shadow test re-specified: score the Russell December preliminary ADD list (11/13; lockdown 11/30; effective 12/11), not member spins (which enter at the spin date). No new canon lane needed: busted-deal litigation -> merger_arb; Brazilian judicial-recovery deadlines/debt tenders -> distressed.",
+    "bio_convergence / briefing_doc stay 9 (thinnest a TENTH run). Promotion test 0 of 0 scoreable again (no listed-sponsor drug panel in-window). XBI 0.5% above its 200-DMA.",
+    "Tripwires 2026-11-20: REGULATORY BREACHED (first), AI-CAPEX BREACHED (b+c latch), CREDIT BREACHED (tail), OIL/HORMUZ BREACHED-held (PortWatch 2.3/day fails un-breach) -- all act through the 1.7 driver caps, not lane rank."
   ]
 }

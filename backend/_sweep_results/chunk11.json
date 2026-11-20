@@ -3,9 +3,77 @@
  "scanned": 150,
  "scan_distribution": {
   "active": 0,
-  "watch": 5,
-  "none": 145
+  "watch": 14,
+  "none": 136
  },
- "survivors_flagged": [],
- "verified": []
+ "survivors_flagged": [
+  {
+   "symbol": "KYTX",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "one_line": "Rolling BLA for miv-cel in stiff person syndrome completed Nov 12, 2026 with a priority-review request (RMAT). FDA filing acceptance and a PDUFA date are due around mid-Jan 2027, with an approval decision likely mid-2027. Early-arc, but how much is priced is unverified."
+  },
+  {
+   "symbol": "LBTYK",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "spin_off",
+   "one_line": "Ziggo Group (VodafoneZiggo + Telenet) spin to Amsterdam listing guided Q2 2027, confidential SEC/AFM filings planned for December; the Vodafone buyout closed 2026-08-03. Real and months out, but the plan is already public, so early-to-mid arc."
+  },
+  {
+   "symbol": "LXRX",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "one_line": "Zynquista T1D NDA resubmission guided for ~end Oct 2026; a filing acceptance would set a PDUFA ~mid-2027; SONATA-HCM data Q1 2027. Submission not yet confirmed."
+  }
+ ],
+ "verified": [
+  {
+   "symbol": "KYTX",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "catalyst": "Kyverna finished its BLA submission for miv-cel (a CAR-T) in stiff person syndrome on 2026-11-12 and asked for priority review. FDA's 60-day filing decision, which would set a PDUFA date, is due around 2027-01-11. The approval decision itself would come around mid-to-late 2027.",
+   "dated_milestone": "BLA submission completed 2026-11-12 (fired). Next: FDA filing acceptance and priority-review call around 2027-01-11 (60-day clock). Then PDUFA around Q3 2027 if priority review is granted (8 months from submission), or around Q4 2027 under standard review. The gMG Phase 3 (KYSA-6) is due to finish enrolling in mid-2027.",
+   "instrument": "KYTX common (NASDAQ). Last $4.37 on 2026-11-19, market cap about $276M.",
+   "bloom_gates": "G1 partial: the counterparty is a regulator (FDA), not a commercial party. G2 yes: the BLA is fully submitted with a priority-review request, so a statutory 60-day filing decision follows. G3 yes, approximately: enterprise value is about $130M ($276M market cap less $170.6M cash and investments plus about $32M debt and leases at 2026-09-30). That is a low price for what could be the first approved autoimmune CAR-T, but no approval-case value has been derived from a primary source.",
+   "edge": "M. Run-up from the pre-catalyst base: -55%. The stock was $9.81 on 2026-07-09 and is $4.37 now. It fell through the whole run of SPS one-year data (10-21), the JAMA Neurology paper (11-09) and the BLA completion (11-12), so none of the event is priced in as a gain. Remaining to the favorable value: about +130% to an approval case of roughly $10/share, against a net-cash floor of about $2.20/share. This is a rough prior, not built bottom-up: SPS is a small orphan market, and the launch will probably need dilutive financing. Prob-weighted fair value is about $6.5, or +49%. Edge is M rather than H for three reasons: the January acceptance is mostly procedural, so the real binary is mid/late 2027; I could not find out why the stock halved; and IPO-prospectus securities litigation is open.",
+   "primary_source": "Kyverna press release, GlobeNewswire 2026-11-12: \"Completion of BLA Submission for Miv-cel in SPS and Q3 2026 Results\". Q3 10-Q balance sheet filed 2026-11-12 via FMP: cash and short-term investments $170.6M, long-term debt $25.0M, no preferred. FMP quote and EOD history pulled 2026-11-20. Securities-suit notice: KSF / Business Wire 2026-11-11.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The event is real, dated and still ahead: the BLA was completed 2026-11-12 with a priority-review request, and FDA's filing and priority decision is due around 2027-01-11. Residual capture is high. The stock has fallen about 55% from July to an EV of about $130M, with $170.6M of cash at Q3 and no preferred stock ahead of the common. So the event is unharvested, not front-run. Score is held at 5 (WATCH, not ACTIVE) for three reasons. The near catalyst (filing acceptance) has little information in it, and the true approval binary is 6-10 months out. The cause of the slide since July is unverified: it could be a financing overhang, a commercial or CMC worry, or the IPO securities suit. And a launch probably needs fresh equity. GAP: the web-search budget was exhausted, so I could not check the reason for the drawdown, quarterly burn and runway, or the analyst approval-case value."
+  },
+  {
+   "symbol": "LBTYK",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "spin_off",
+   "catalyst": "Liberty Global plans to spin off Ziggo Group (VodafoneZiggo plus Telenet, about EUR 6.6bn revenue) to shareholders through a listing on Euronext Amsterdam in mid-2027; it is clearing non-core assets beforehand, including the EUR 669m Dutch tower sale.",
+   "dated_milestone": "Done: Vodafone buyout closed 2026-08-03 (PR); Ziggo Group leadership named 2026-09-15; EU cleared the tower sale 2026-10-14. Next: tower sale closes by year-end 2026, then the spin filings (the triage's 'confidential filings in December' is NOT verified), Q4/FY results around Feb 2027, listing mid-2027.",
+   "instrument": "LBTYK common stock (Nasdaq), $9.91 on 2026-11-20",
+   "bloom_gates": "G1 yes: named buyers for the towers (DigitalBridge, TD Greystone, L&G) and Vodafone as counterparty on the closed buyout. G2 yes: the company has publicly committed to a spin-off listing on Euronext Amsterdam in mid-2027 and repeated it in its 2026-09-15 and 2026-10-14 press releases. G3 partial: the Ziggo FCF target (EUR 500m by 2028 at about 4.5x leverage) is specific, but the sum-of-parts gap is derived, not contractual.",
+   "edge": "M. Run-up: about -2% from the post-buyout reference ($10.10 on 2026-08-17) to $9.91 today. The price is below its 200-day average ($10.67) and in the middle of its 52-week range ($7.32-13.12), so the event shows no harvest. Remaining: about +61% to the skeptic's re-derived event-win value of $16.00 (corrected for double-counted cash and the $340m asset-backed loan), against about -27% to the corrected floor of $7.25. That is roughly 2.3:1, not the 9:1 in the original record. The edge is only medium because a spin re-rates a sum of parts and creates no contractual value. The Liberty Growth private marks and the VMO2 contingency drive most of the spread.",
+   "primary_source": "GlobeNewswire / Liberty Global press releases: 2026-08-03 (VodafoneZiggo buyout completed), 2026-09-15 (Ziggo Group leadership, listing mid-2027), 2026-10-14 (EU clears EUR 669m tower sale, 'intended listing of Ziggo Group in Amsterdam in the middle of 2027 pursuant to a spin-off'). Price from FMP quote, 2026-11-20. Corrected waterfall from the local skeptic shard backend/_opus_debate/_catalyst_skeptic/LBTYK.json (built on the 10-Q at 30 June 2026).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The catalyst is real, dated, forward and specific. The buyout closed, Ziggo Group is staffed, and the pre-listing disposals are signed and cleared; three company press releases (Aug-Oct 2026) restate a mid-2027 Amsterdam spin. Nothing is harvested: the stock is at or below where it traded when the plan became concrete. But the upside numerator does not hold on the original record. The 2026-08 skeptic found the cash floor double-counted against the Liberty Growth mark and including a $340m asset-backed loan, which cut the event-win value to about $16 and the floor to about $7.25. I did not pull the Q3 10-Q this run (web search budget exhausted), so the post-Q3 cash bridge is a GAP. The triage's 'confidential December SEC/AFM filing' is also unverified. Score stays 5 / WATCH, not ACTIVE, until the Q3 capital structure re-confirms the corrected waterfall."
+  },
+  {
+   "symbol": "LXRX",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "catalyst": "The main catalyst is now topline data from the Phase 3 SONATA-HCM trial of sotagliflozin, guided for Q1 2027. The ZYNQUISTA T1D NDA resubmission has slipped from the triage's \"end Oct 2026\" to Q1 2027, so a PDUFA date would fall around late Q3 or Q4 2027, not mid-2027.",
+   "dated_milestone": "Q1 2027: SONATA-HCM topline data (quarter only, no day given; the trial over-enrolled). Q1 2027: ZYNQUISTA NDA resubmission (guided). Next: FDA acceptance about 30 days after resubmission, then a 6-month Class 2 PDUFA, so around Q3/Q4 2027.",
+   "instrument": "LXRX common (Nasdaq) at $1.67",
+   "bloom_gates": "G2 only: management has publicly committed to Q1 2027 guidance for both the SONATA-HCM topline and the NDA resubmission. G1 fails (no named commercial counterparty; Novo's LX9851 milestones are small, $10M each, and not dated). G3 fails (no specific unpriced figure, because the HCM label value is a derived judgement, not a contract).",
+   "edge": "M/L. Run-up: the stock is about -12% vs its 200-day average ($1.90) and -38% from its 52-week high ($2.68), but +52% from its 52-week low ($1.10). Since the Q3 call on 2026-11-05 it has drifted flat to down ($1.72 -> $1.67), so the binary is not visibly bid up. Remaining capture: not provenance-checked. A positive HCM readout could plausibly be worth +50-100%, but that is a judgement estimate, not something derived from the capital structure. The capital structure is clean: no preferred, about $52M term debt, $183M cash and investments (9/30/26), EV about $620M on a $744M market cap. Cash burn (Q3 loss about $0.03/share, roughly $13M) gives runway into 2027 but makes a raise after the data likely. The triage premise was stale: the resubmission did not happen in October.",
+   "primary_source": "Lexicon Q3 2026 results press release (GlobeNewswire, 2026-11-05); MarketBeat Q3 call summary (2026-11-06: \"two key milestones in Q1 2027\" = SONATA-HCM results + ZYNQUISTA resubmission); FMP balance sheet 10-Q 9/30/26 (filed 2026-11-05); FMP quote 2026-11-20 ($1.67).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The triage claim of an end-Oct 2026 resubmission is wrong. The Q3 2026 call (2026-11-05) moved the ZYNQUISTA NDA resubmission to Q1 2027, citing the STENO1 safety data, so there is no near-term filing acceptance and the PDUFA moves to about H2 2027. The real dated binary is the SONATA-HCM Phase 3 topline in Q1 2027. It is forward and unfired, the stock has not run up into it, and the balance sheet has no preferred or waterfall problem. It is quarter-dated only, the Phase 3 binary is high-variance, dilution after the data is likely, and the size of the upside could not be checked here. Web search was unavailable this turn (budget exhausted), so there is no independent check of the Q1 2027 resubmission guidance beyond FMP news and press releases."
+  }
+ ]
 }

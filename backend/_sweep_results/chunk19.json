@@ -2,78 +2,100 @@
  "chunk": "19 (UCB-WEX)",
  "scanned": 150,
  "scan_distribution": {
-  "active": 0,
-  "watch": 9,
-  "none": 141
+  "active": 1,
+  "watch": 6,
+  "none": 143
  },
  "survivors_flagged": [
   {
    "symbol": "UNF",
-   "score": 6,
-   "tier": "WATCH",
+   "score": 7,
+   "tier": "ACTIVE",
    "lane": "merger_arb",
-   "one_line": "Cintas deal ($155 cash + 0.772 CTAS) is in a complicated merger-arb setup. Both sides certified Second Request compliance and agreed with the FTC not to close before Dec 11, 2026. A late-Oct Semafor report (unconfirmed) says the FTC told Cintas it will sue to block. The FTC suit/vote binary is the real catalyst, but the spread has likely already repriced on the news."
+   "one_line": "Cintas $155 cash + 0.772 CTAS (~$324 implied at CTAS $218.92) vs UNF $230.40, a ~40% spread. Shares fell 10% on Oct 27 after a report that the FTC will sue, and fell another $10.8 today. The FTC has not voted. The no-close date is Dec 11, 2026, so expect an FTC vote or suit, or a remedy, around then. A $350M reverse termination fee (~$19/sh) protects the downside if antitrust blocks the deal. A contested arb with a dated decision. The spread looks mispriced, but litigation risk is real."
   },
   {
-   "symbol": "VIR",
+   "symbol": "VECO",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "one_line": "All-stock target of Axcelis (0.3575 ACLS/sh); Nov 2 delay to end-Q1 2027 on pending China SAMR plus a new HSR filing - arb spread on regulatory risk, stock-for-stock so no clean cash anchor."
+  },
+  {
+   "symbol": "VREX",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "one_line": "Teledyne all-cash deal at $18.90 (announced Aug-2026), close expected early 2027; price $18.14 leaves a ~4.2% gross spread with low antitrust risk. A plain arb with moderate return."
+  },
+  {
+   "symbol": "VNDA",
    "score": 5,
    "tier": "WATCH",
    "lane": "dated_binary",
-   "one_line": "Ph3 ECLIPSE-1 (tobevibart+elebsiran, HDV) topline guided Q4 2026, ECLIPSE-2/3 Q1 2027; AASLD oral Nov 8; stock up ~130% off lows near 52w high so the binary is partly priced."
-  },
-  {
-   "symbol": "VLRS",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "merger_arb",
-   "one_line": "Viva Aerobus/Volaris 50/50 combination (Grupo Mas Vuelos): FTC, Colombia and shareholders (Mar-26) cleared. Mexico CNA is the last gate, approval expected before YE26 (Reuters, Oct-26) likely with route/low-cost conditions. Mid-arc, since the deal has been known since Dec-25."
+   "one_line": "Imsidolimab (GPP) PDUFA Dec 12, 2026. The stock at ~$3.67 has not run into it, but GPP is a niche indication, launch is 2027, and Hetlioz jet-lag is still in dispute. A real dated binary with modest asymmetry."
   }
  ],
  "verified": [
   {
    "symbol": "UNF",
    "score": 5,
-   "tier": "WATCH",
+   "tier": "ACTIVE",
    "lane": "merger_arb",
-   "catalyst": "The FTC is expected to vote on whether to sue to block Cintas's $155 cash + 0.772 CTAS-per-share acquisition of UniFirst before the parties' agreed Dec 11, 2026 no-close date. A suit would push the deal into litigation, toward a break and the $350M reverse termination fee. No suit would mean a close at roughly $328/share.",
-   "dated_milestone": "Dec 11, 2026: the date the parties agreed with the FTC not to close before. The FTC vote or complaint is expected on or before it. Next check: any FTC complaint filing in Nov 2026. Last news was the Oct 27-28 Semafor report, which is unconfirmed. The FTC spokesperson said it has not voted.",
-   "instrument": "Long UNF / short 0.772 CTAS per share (hedged merger-arb spread). An unhedged long UNF carries CTAS beta, since about 53% of the consideration is in stock.",
-   "bloom_gates": "G1: named counterparties (Cintas as acquirer, the FTC as regulator). G2: concrete commitments (signed merger agreement, $350M antitrust reverse termination fee, agreed timing not to close before Dec 11). G3: a specific spread figure. Deal value is $155 + 0.772 x $224.36 = $328.2 against UNF at $256.76, a 27.8% gross spread. The gross spread is quantified, but much of the FTC risk is already in that price.",
-   "edge": "L-M. Run-up from the pre-catalyst base is +51%: about $170 on 2025-12-19, before Cintas's renewed approach, to $256.76 today. Remaining to favorable resolution is +27.8% ($256.76 to $328.2 deal value at CTAS $224.36). Implied deal probability is about 50-55%, using a ~$175-185 standalone break price and the $350M RTF (about $19/share, payable only if blocked under antitrust law, not on the suit alone). The spread already repriced about -10.5% on Oct 27, from $279.64 to $250.40, on the Semafor report. The market treats this as a coin flip. I have no information edge on the FTC vote, so this is a fairly priced binary, not mispricing. Remaining capture is large but symmetric (roughly +71 up vs -70 to -80 down).",
-   "primary_source": "Semafor via TheStandard/TIKR/Newsquawk (2026-10-27/28): FTC reportedly told Cintas it will sue; FTC spokesperson says no vote yet. FMP batch-quote 2026-11-02 (UNF $256.76, CTAS $224.36). FMP EOD history (UNF $170.16 on 2025-12-19; $279.64 on 2026-10-26 to $250.40 on 2026-10-27). Deal terms and the $350M RTF as reported in the TIKR/Finimize coverage (Oct 2026).",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The event is real, dated and unfired. The FTC has not voted, and the Semafor report that it told Cintas it would sue is unconfirmed. Both sides certified Second Request compliance and agreed not to close before Dec 11, 2026, so the vote or complaint should land by then. UNF fell from $279.64 to $250.40 (-10.5%) on Oct 27 and has drifted back to about $257. At $256.76 the gross spread to $328.2 is 27.8%, and the implied deal probability is about 50-55% against a $175-185 break value plus a partial RTF floor. That is roughly a fair price for a likely-but-unfiled FTC suit followed by litigation, not an unpriced edge. Gap: I could not confirm whether anything happened between Oct 30 and Nov 2 because the web search budget was exhausted. The standalone break value is an estimate from the Dec 2025 pre-approach price, not a fresh DCF. The cash deal price is contractual, so it is exempt from numerator provenance."
+   "catalyst": "The FTC decides whether to sue to block, settle with divestitures, or let the Cintas deal ($155 cash + 0.772 CTAS per share) close; the parties' agreed no-close date is Dec 11, 2026, and Cintas still guides to close before year-end.",
+   "dated_milestone": "Dec 11, 2026: timing agreement expires, so expect an FTC vote and complaint, or a consent decree, around then. Next: if the FTC sues, a PI/Part 3 schedule in early 2026-27, with the outside date running about 10 months plus extensions from Mar 2026.",
+   "instrument": "UNF common, ideally hedged by shorting 0.772 CTAS per UNF share to lock the stock leg. Unhedged, it carries CTAS beta on about 52% of the consideration.",
+   "bloom_gates": "G1 named counterparty (Cintas, signed merger agreement, shareholder-approved Jun 2026). G2 concrete commitment ($155.00 cash + 0.7720 CTAS per share; $350M antitrust reverse termination fee). G3 specific unpriced figure: a 40.6% gross spread ($324.01 implied vs $230.40), which prices only about 25-30% odds of closing.",
+   "edge": "M. The spread pays about 3:1 (+$94 if it closes vs about -$30 if blocked), but whether the FTC sues or accepts a remedy can't be known in advance, and it is a contested litigation binary. Residual capture: (a) run-up from the pre-catalyst base (about $168, the 90-day average before Cintas went public with its Dec 2025 offer, implied by the 64% premium on $275) to $230.40 is about +37%, and most of that gain was given back after the Oct 27 FTC leak; (b) remaining to the favorable resolution value of $324.01 (at CTAS $218.92) is +40.6%. The event is not harvested: the market is pricing a block, not the close. Downside floor about $195-200, which is standalone value near the pre-deal base plus about $19/sh of fee. That floor is soft because an FTC suit alone does not trigger the fee; it pays only on termination on antitrust grounds.",
+   "primary_source": "FMP batch-quote 2026-11-20 (UNF $230.40, CTAS $218.92); Semafor/Reuters via Investing.com and TIKR, 2026-10-27 (FTC intends to sue, not yet voted); MLex 2026 (parties agree not to close before Dec 11 unless the FTC closes its probe); Cintas/UniFirst merger announcement, Barchart, Mar 2026 ($155 + 0.7720 CTAS, $5.5B EV); UniFirst Form 425 on SEC EDGAR.",
+   "verdict": "CONFIRMED_WITH_CORRECTIONS",
+   "kill_fact": "Prices check out: FMP live quote on 2026-11-20 has UNF at $230.40 (-$10.82, -4.5%) and CTAS at $218.92. The deal is worth $155 + 0.772 x $218.92 = $324.01, a gross spread of 40.6%. Semafor reported on Oct 27 that the FTC would sue; the FTC spokesperson said it has not voted; I found no complaint or remedy filed as of today. The no-close-before-Dec-11 date and the $350M reverse fee are confirmed, and the fee does not fire on a suit alone. Correction: today's drop is not clearly a new leak. UNF rose about 6.6% on Nov 18 (Zacks), so today mostly gives that back, and CTAS also fell 1.4%. That makes the drop in the deal-implied value larger than UNF's own move. Score cut: the event has not fired, but it is a binary FTC vote with staff already leaning to sue. A suit at or after Dec 11 does not trigger the fee and would tie up capital in litigation for 6-12 months. The floor rests on the pre-deal standalone price; the 52-week low is $159.82, so the real downside could be well below $198. Run it hedged only, and size it as a lottery-like binary, not as a 40% spread.",
+   "analysis": "The deal terms are verified: $155 cash + 0.772 CTAS, $310 at signing in Mar 2026, a $350M reverse fee on antitrust grounds, and no closing before Dec 11, 2026. FMP quote 2026-11-20: UNF $230.40 (-4.5%, -$10.82), CTAS $218.92, for a gross spread of about 40.6%. Semafor reported on Oct 27 that the FTC told Cintas it would sue; the FTC says it has not voted, and I found no complaint or remedy filing through today. I could not find the cause of today's -$10.82 drop (gap), so a fresh negative leak is possible. A cash/stock deal price is contractual, so the numerator provenance check is exempt. At a blended floor of about $198, the price implies roughly 25-30% odds of closing. That is cheap if a divestiture settlement is plausible (UNF+CTAS is a horizontal overlap, and the fix is likely regional route divestitures), and fair if the FTC litigates to a PI win. Score 6, not 7: the outcome depends on an agency vote with negative leaks and an unexplained drop today, the fee does not fire on a suit alone, and the downside path, a suit plus litigation, could tie up capital for 6-12 months."
   },
   {
-   "symbol": "VIR",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "dated_binary",
-   "catalyst": "Phase 3 ECLIPSE-1 topline for tobevibart+elebsiran in chronic hepatitis delta vs deferred treatment (composite: undetectable HDV RNA + ALT normalization at Wk48), guided for Q4 2026; ECLIPSE-2/3 follow in Q1 2027.",
-   "dated_milestone": "Q3-2026 earnings/corporate update 2026-11-05 (could confirm or slip the timing); AASLD oral ~2026-11-08 (per triage, not verified); ECLIPSE-1 topline by 2026-12-31; ECLIPSE-2/3 topline Q1 2027.",
-   "instrument": "VIR common (NASDAQ). Simple capital structure: no preferred stack. Cash about $1.01B at Q2-26, about $5.6/sh net.",
-   "bloom_gates": "G2 (concrete dated commitment: company-guided Q4 2026 ECLIPSE-1 topline in the Feb-2026 8-K, reaffirmed after Q2). G1 only partially met: Norgine holds the EU/ANZ rights and Astellas paid $315M on another program, so neither is a counterparty to this readout. G3 is weak: there is no contractual figure; value is derived from the US HDV launch.",
-   "edge": "M-L. Phase 2 SOLSTICE gave 88% (21/24) undetectable HDV RNA at Wk96, and the comparator is deferred treatment, so P(success) is high, about 75-80%. But the tape already reflects it. (a) Run-up from the pre-readout base: the 52-week low was $4.82 (about the cash floor), today $11.12, so +131%, with part of that driven by the Astellas cash and not the readout. (b) Remaining: a favorable read to about $15-17 is +35-50%, while a fail falls toward cash at about $5.5-6.0 (-45-50%). Probability-weighted EV is about $13.9, roughly +25%. The event is real and forward but about half-harvested.",
-   "primary_source": "Vir Q4-2025 earnings 8-K Ex-99.2 (sec.gov, 2026-02-23): ECLIPSE-1 topline Q4 2026, ECLIPSE-2/3 Q1 2027. Q2-2026 results (2026-08-05, via pulse2/marketbeat): cash about $1.01B, runway 2H-2028. FMP quote 2026-11-02: $11.12, 52w range 4.815-12.19, mcap $1.88B.",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The dated forward binary is real and has not fired. The company guided ECLIPSE-1 topline to Q4 2026 (Feb-2026 8-K) and all three ECLIPSE trials are fully enrolled. Cash of about $1.01B gives a runway into 2H-2028, which puts a hard floor near $5.6/sh with no preferred or debt waterfall to worry about. The trouble is that the stock sits at $11.12, 9% below its $12.19 52-week high and +131% off the lows, so the high-probability success case is largely priced. What is left is a roughly 1.6:1 skew (+40% vs -48%) on a high-P(success) binary, which is a reasonable WATCH but not an ACTIVE entry; it would upgrade on a pullback toward $8-9 before the readout. Gaps: the Nov-8 AASLD oral and any October timing update were not verified because the search budget ran out, and the Nov-2025 enrollment PR had put topline in Q1 2027, so the 11-05 call carries real slip risk to the dated milestone."
-  },
-  {
-   "symbol": "VLRS",
+   "symbol": "VECO",
    "score": 3,
    "tier": "WATCH",
    "lane": "merger_arb",
-   "catalyst": "Mexico's CNA ruling on the Volaris/Viva Aerobus 50/50 combination into Grupo Mas Vuelos, the last open regulatory gate, is expected before YE26 and likely with conditions on fares, routes and slots.",
-   "dated_milestone": "CNA decision expected by 2026-12-31 (Reuters, six sources). FTC, Colombia and shareholder approvals were already done by Mar-26. Next dated item: CNA resolution, then the closing/share-exchange date. Neither date is set.",
-   "instrument": "VLRS common (NYSE ADS) at $6.86 on 2026-11-02",
-   "bloom_gates": "G1 yes (named counterparty: Viva Aerobus / Grupo Mas Vuelos). G2 partial (signed combination agreement, but it is a stock-for-stock merger of equals with no cash price). G3 fail (there is no specific unpriced figure, and the upside is only a derived synergy story).",
-   "edge": "L. This is not a real arb: holders roll into 50% of a combined, levered ULCC, so there is no contractual spread to capture. Run-up from the pre-announcement base ($7.95 on 2025-12-17, before the 2025-12-19 announcement jump to $9.49) to today ($6.86) is -14%. The deal pop has fully reversed and the stock sits below its undisturbed price. Remaining capture to a provenance-checked favorable-resolution value cannot be stated: there is no contractual deal value, and the cap table and lease/debt waterfall of the combined entity were not re-derived (lookup budget exhausted). An approval that Reuters already widely reported as likely is probably not a re-rating event by itself. The tail risks are conditions that bite (fare caps, slot divestitures) or a block.",
-   "primary_source": "Mexico News Daily citing Reuters (six sources), 'Viva-Volaris airlines merger likely to proceed', Oct-2026. mexicobusiness.news, 'US FTC Clears Volaris-Viva Merger into Grupo Mas Vuelos' (2026). DLA Piper, 'Volaris-Viva Aerobus merger', 2026-04-03. FMP quote 2026-11-02 ($6.855). FMP EOD 2025-12-17 ($7.95) / 2025-12-19 ($9.49). Volaris Q3-26 results, GlobeNewswire 2026-10-26.",
+   "catalyst": "Axcelis/Veeco all-stock merger (fixed 0.3575 ACLS per VECO, shareholder-approved) needs China SAMR clearance and a new HSR waiting period (the Nov-2025 clearance has lapsed); the companies now guide to closing by end-Q1 2027.",
+   "dated_milestone": "2026-11-02: closing pushed to end-Q1 2027 (SAMR pending, HSR refile). Next: the new HSR waiting period ends about 30 days after refiling (~Dec 2026); SAMR decision by 2027-03-31.",
+   "instrument": "VECO common (a hedged arb would be long VECO / short 0.3575 ACLS), but the spread is currently inverted",
+   "bloom_gates": "G1 (named counterparty Axcelis, fixed 0.3575 ratio) + G2 (signed, shareholder-approved merger agreement). G3 fails: no unpriced figure, because VECO trades above deal value.",
+   "edge": "L. FMP 2026-11-20: VECO $37.49, ACLS $99.94, so the deal is worth 0.3575 x 99.94 = $35.73. VECO is 4.9% ABOVE deal value, i.e. a negative spread. Run-up from the pre-announcement base (~$22-23 at end-Sep 2025, before the 2025-10-01 announcement) is roughly +65%. Remaining capture to favorable resolution is about -4.7%: closing turns each VECO share into $35.73 of ACLS at today's prices. Fully harvested and then some.",
+   "primary_source": "Axcelis/Veeco joint press release 'Update on Expected Timing of Merger Closing', 2026-11-02 (finviz/webull, MLex 2026-11); Joint Proxy Statement/Prospectus, Jan 2026 (fixed 0.3575 ratio); FMP batch-quote, 2026-11-20",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The event is real and forward: the CNA is the last gate, and the Reuters/Mexico News Daily report says approval is expected before YE26 with consumer-protection, route and low-cost conditions. But the event belongs to the wrong lane. It is a 50/50 all-stock combination, so approval only unlocks synergy value whose size depends on what the CNA imposes, and nothing contractual pins a price. The stock has round-tripped below its pre-deal base ($6.86 vs $7.95) on an ULCC loss cycle (Q3-26 EPS -$0.23, Zacks Rank 5 on 2026-10-16), so this is an airline-fundamentals call, not an event spread. Gap: I did not re-derive the combined-entity equity waterfall or look for a CNA ruling after October; the search budget ran out."
+   "analysis": "The deal and the regulatory timeline are real. The 2026-11-02 joint release confirms SAMR is still pending, HSR has to be refiled, and closing is now expected by end-Q1 2027. But at today's quotes VECO trades about 4.9% above the 0.3575 x ACLS implied value, so a long VECO earns nothing if the deal closes. The inversion suggests the market is pricing VECO's standalone/break value, a short-ACLS borrow cost, or a quote anomaly, not a regulatory-risk discount. The stock-for-stock structure means no cash anchor. Treat this as WATCH only: re-check whether the spread turns positive (VECO below 0.3575 x ACLS) on SAMR headlines. Gaps: no outside date or termination fees verified from the primary merger agreement (a secondary summary cites $108.7M payable by ACLS and $77.5M payable by VECO), and one quote snapshot was not cross-checked intraday."
+  },
+  {
+   "symbol": "VREX",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "catalyst": "Teledyne Technologies has agreed to buy Varex Imaging for $18.90 per share in cash (about $1.1B including net debt and equity awards; signed 2026-08-10), with closing expected in early 2027 once Varex stockholders vote and regulators clear it.",
+   "dated_milestone": "Deal signed 2026-08-10, definitive proxy around 2026-09-08. Next: the Varex special meeting (date not confirmed in these lookups; majority of outstanding shares needed), then regulatory clearances and closing in early 2027 (guided, no fixed date).",
+   "instrument": "VREX common, long merger-arb spread to the $18.90 cash price",
+   "bloom_gates": "G1 (named buyer: Teledyne) + G2 (signed merger agreement at $18.90 cash, approved unanimously by both boards). G3 only weak: the remaining spread of about 4.2% is the only unpriced figure.",
+   "edge": "L. Run-up from the pre-deal base of $12.41 (close 2026-08-07) to $18.14 today is +46.2%, so about 89% of the move to the deal price is already captured. Remaining: +4.19% gross to $18.90, roughly 13-16% annualized if it closes Feb-Mar 2027. This is a plain spread with no edge from information: the market already prices it as a near-certain deal, and the drift from $18.58 (2026-08-11) to $18.14 suggests the market is pricing timing or regulatory risk (China/foreign reviews, not verified here).",
+   "primary_source": "Varex 8-K press release Ex-99.1 'Teledyne to Acquire Varex Imaging Corporation' (SEC EDGAR 0001104659-26-093349, 2026-08-10); Varex 10-Q for quarter ended 2026-07-03 (merger consideration $18.90 cash); FMP EOD prices (VREX $12.41 on 2026-08-07, $18.46 on 2026-08-10) and FMP quote $18.14 (2026-11-20)",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The deal is real, contractual and forward. All-cash $18.90 from Teledyne, signed 2026-08-10, with stockholder vote and regulatory approvals still pending (I found no report of either being completed), so the payout needs no capital-structure re-derivation. But about 89% of the move has already been captured (+46% from $12.41), so only the roughly 4.2% gross spread is left, a standard arb return that is mostly harvested. The rule for mostly-harvested events caps the score at 4. Gaps: I did not confirm the special-meeting date or the HSR/foreign-review status, and the spread has widened since mid-August without a cause I could verify."
+  },
+  {
+   "symbol": "VNDA",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "dated_binary",
+   "catalyst": "FDA action on the imsidolimab (Quimilza) BLA for generalized pustular psoriasis, PDUFA target date December 12, 2026.",
+   "dated_milestone": "PDUFA 2026-12-12 (about 22 days out). Next after that: DC Circuit ruling on the Hetlioz/FDA dispute (briefing done mid-Nov 2026), Bysanti commercial launch Q4 2026, and Bysanti MDD Phase III readout in 1H 2027.",
+   "instrument": "VNDA common (NASDAQ), $3.67. Market cap $222M, about 60.5M shares.",
+   "bloom_gates": "G1 yes: the counterparty is named (FDA, BLA accepted Feb 2026). G2 yes: a concrete dated commitment (PDUFA 12/12/2026, still stated in the Q3 release of 10/28/2026). G3 weak: approval brings only a $5M milestone to AnaptysBio plus a 10% royalty. GPP is niche and Spevigo is already the incumbent. There is no large, specific, unpriced figure, just a modest re-rating on a $222M cap.",
+   "edge": "M-L. Run-up: about -35 to -40% from the pre-catalyst base (BLA acceptance Feb 2026, stock roughly $5.5-6; the 200-day average is $5.94 and the 52-week high is $9.94). The event is plainly not harvested, and the stock has fallen into it on cash burn and a guidance cut. Remaining: about +25% to an approval value of roughly $4.60, and about +17% probability-weighted (0.82 x 4.60 + 0.18 x 3.00 = $4.31). On a CRL the floor is net cash of $140.5M, about $2.32/share, which is shrinking by about $30M a quarter. The asymmetry is modest: the binary is clean, but the value it unlocks is small and launch revenue arrives in 2027.",
+   "primary_source": "Vanda Q3 2026 financial results release, 2026-10-28 (ariva.de / company IR): PDUFA 12/12/2026, cash $140.5M. FDA BLA acceptance, HCPLive 2026-02-25. AnaptysBio 8-K, 2025-01-31, and 10-Q Q3 2025 for license terms. FMP quote 2026-11-20: $3.67, market cap $221.9M.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The PDUFA date is real, dated and forward. The Q3 release of 10/28/2026 still gives Dec 12, the pivotal GEMINI data were robust (53% vs 13% clear or almost clear at week 4, published in NEJM Evidence), and the stock has de-rated rather than run up. That leaves the residual capture fully intact. The upside is capped by the size of the indication: GPP is an orphan flare market with Spevigo already approved, Vanda owes a 10% royalty to AnaptysBio plus milestones, and the company is burning about $30M a quarter. Cash is $140.5M against a $222M cap, and the \"funded through end-2027\" language was dropped, so a post-approval raise is a real overhang. GAPS: I did not confirm whether priority review was granted or whether there is an AdCom, I did not size Spevigo or GPP sales, and the jet-lag outcome of the Hetlioz Jan-2026 re-review was not found. No 10-Q waterfall check was done; this is not a derived-upside lane, and there is no preferred stock ahead of the common to my knowledge."
   }
  ]
 }

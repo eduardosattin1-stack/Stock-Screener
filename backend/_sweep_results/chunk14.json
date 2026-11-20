@@ -2,10 +2,56 @@
  "chunk": "14 (OLPX-PLTR)",
  "scanned": 150,
  "scan_distribution": {
-  "active": 0,
-  "watch": 5,
-  "none": 145
+  "active": 1,
+  "watch": 7,
+  "none": 142
  },
- "survivors_flagged": [],
- "verified": []
+ "survivors_flagged": [
+  {
+   "symbol": "PERI",
+   "score": 6,
+   "tier": "ACTIVE",
+   "lane": "merger_arb",
+   "one_line": "Affle all-cash $11.70/sh deal signed 2026-11-01; go-shop ends 2026-12-11 (topping-bid optionality), close early 2027; px 11.08 = ~5.6% gross spread, early-arc."
+  },
+  {
+   "symbol": "PEN",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "one_line": "Boston Scientific $374 cash/stock deal (Jan 2026) still pending remaining regulatory clearances, guided year-end close; px 320 - spread depends on BSX stock leg/proration, check before acting; late-arc."
+  }
+ ],
+ "verified": [
+  {
+   "symbol": "PERI",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "catalyst": "On 2026-11-01 Affle signed a definitive all-cash merger to buy Perion at $11.70/sh (~$420M equity, Citibank debt financing, no financing condition). A 40-day go-shop runs to 2026-12-11 and closing is expected in early 2027.",
+   "dated_milestone": "Go-shop expires 2026-12-11, 11:59pm Israel time. The next milestones are the proxy, the shareholder EGM (date not yet set) and HSR clearance, with close in early 2027.",
+   "instrument": "PERI common (NASDAQ), long the merger spread",
+   "bloom_gates": "G1 (named acquirer: Affle) + G2 (signed definitive agreement at a contractual $11.70 cash price, board unanimous, committed financing). G3 is only partial: the one unpriced item is a possible topping bid in the go-shop, and no rival bid has been reported.",
+   "edge": "L-M. The deal price is contractual, so the numerator provenance check does not apply. Run-up: from the pre-announcement base of about $8.70 (30 Oct close, implied by the 34.5% premium) to $11.08 today is +27.4%. Remaining: $11.08 to $11.70 is +5.6% gross, about 15-18% annualized over a 3-5 month close. About 79% of the move from base to deal price is already in the price. Downside on a break is about -21% back to about $8.70, so the reward/risk is roughly 0.26:1. The only extra optionality is a go-shop topping bid, and Perion said it will not disclose go-shop progress. This is a plain arb spread, not an asymmetric edge.",
+   "primary_source": "Perion Form 6-K Ex 99-3 / 99-1 (SEC EDGAR 0001338940, filed 2026-11-01/02): merger agreement press release with $11.70 cash, 34.5% premium to the 2026-10-30 close, go-shop to 2026-12-11, close early 2027. Corroborated by PR Newswire / Business Wire on 2026-11-01. FMP quote on 2026-11-20 shows PERI at $11.08.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The event is real, specific, dated and forward-looking. Signed definitive agreement on 2026-11-01, unanimous board, Citibank financing with no financing condition. It still needs a Perion shareholder vote and HSR clearance, and closing is expected in early 2027. Score is capped at 4 by the residual-capture rule: the +27% jump at announcement has already been harvested, and only a 5.6% gross spread is left, against about 21% downside if the deal breaks. The open question is whether a topping bid arrives before the 2026-12-11 go-shop deadline. Gaps: I did not find the EGM date or the proxy, I did not check the Israeli Companies Law or any Indian outbound-investment (ODI) approvals for Affle, and I did not re-check Perion's net cash, which would set where the downside floor really sits."
+  },
+  {
+   "symbol": "PEN",
+   "score": 2,
+   "tier": "NONE",
+   "lane": "merger_arb",
+   "catalyst": "Boston Scientific's acquisition of Penumbra closes. Holders elect $374 cash or 3.8721 BSX shares per PEN share, prorated to 73.26% cash and 26.74% stock. BSX now guides an early Q1-2027 close (it was year-end 2026) after talks with regulators.",
+   "dated_milestone": "Signed 2026-01-15. Penumbra shareholder vote was set for 2026-05-06. BSX Q3 call (Oct 2026): close pushed to early Q1 2027. Next: the remaining regulatory clearances (agencies not named in the sources), then close around Jan-Mar 2027.",
+   "instrument": "PEN common (merger arb). It only works hedged: long PEN, short about 1.035 BSX per PEN share (0.2674 x 3.8721). At today's prices that hedge locks in a negative spread.",
+   "bloom_gates": "G1 yes (named buyer: Boston Scientific). G2 yes (signed merger agreement, shareholder-approved). G3 FAILS: no unpriced figure remains. The $374 headline is not the deal value. With BSX at $42.99, prorated value is about 0.7326 x 374 + 0.2674 x 3.8721 x 42.99 = 274.0 + 44.5 = about $318.5.",
+   "edge": "L. Run-up from the pre-deal base: about +25-30% (approximate; the base was not re-fetched). Remaining capture: about -0.5% (PEN $320.01 against about $318.5 prorated value), so the spread is zero to negative. The stock leg has no collar as far as the sources show; the 3.8721 ratio looks fixed, though the merger agreement was not checked. The stock leg has fallen from about $374 to $166 per elected share as BSX dropped about 57% (no split was found). Proration fixes the blend at about 73/27 whatever holders elect. The flag's \"$374\" figure is badly stale.",
+   "primary_source": "Boston Scientific press release, 2026-01-15 (terms: $374 cash or 3.8721 BSX shares, about 73/27 proration). Penumbra proxy summary via Quartr (73.26%/26.74% split, meeting 2026-05-06). MLex, Oct 2026 ('Boston Scientific says Penumbra close will push into Q1 2027'). FMP batch quote 2026-11-20: PEN $320.01, BSX $42.99.",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The deal is real, signed and shareholder-approved. It is still pending regulatory clearance, and BSX now guides an early Q1-2027 close. But the consideration is about 27% fixed-ratio BSX stock. BSX is down about 57% this year ($42.99), so the blended value is about $318.5 per PEN share against a $320.01 price: there is no spread, and an unhedged long PEN is just a regulatory-timing bet plus about 1.03 BSX shares of exposure. Fully harvested, with a slight negative carry and added risk from the delay. Gaps: did not check the merger agreement for a collar or a cash top-up (none found in coverage), or which agency is holding up clearance."
+  }
+ ]
 }

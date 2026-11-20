@@ -3,33 +3,33 @@
  "scanned": 150,
  "scan_distribution": {
   "active": 0,
-  "watch": 4,
-  "none": 146
+  "watch": 6,
+  "none": 144
  },
  "survivors_flagged": [
   {
-   "symbol": "HESM",
+   "symbol": "HPK",
    "score": 5,
    "tier": "WATCH",
-   "lane": "structural_overhang",
-   "one_line": "10/6 definitive deal: Chevron exits HESM (78.3M units cancelled, Bakken contracts cut ~50%, new DJ contracts, ext. to 2045) creating an independent multi-basin midstream; units -20-23% on the news and close is still pending. Hard close date not verified (search budget exhausted). Widely covered, so this is a re-rated, mid-arc orphan setup."
+   "lane": "deleveraging",
+   "one_line": "$450M Danantara/EMP preferred plus an $800M RBL to repay the $1.17B term loan, closing Q4 2026 with a sale review still open; stock down ~28% in a month, so not re-rated (check preferred dilution)."
   }
  ],
  "verified": [
   {
-   "symbol": "HESM",
+   "symbol": "HPK",
    "score": 3,
    "tier": "NONE",
-   "lane": "structural_overhang",
-   "catalyst": "On 10/6/2026 Chevron and HESM signed definitive agreements. Chevron exits HESM: 78.3M units are cancelled, Bakken fees are cut so that Chevron's Bakken midstream costs fall about 50%, contracts are extended to 2045, and HESM takes on Chevron's DJ Basin crude midstream assets and new DJ contracts. Only the mechanical close is still pending.",
-   "dated_milestone": "Signed and announced 2026-10-06, so the event has fired. The closing date was not verified, because the press release returned 403 and the web-search budget was exhausted. Next dated item: the Q4 distribution and 2027 guidance with the FY26 results, around late Jan/Feb 2027.",
-   "instrument": "HESM Class A shares (NYSE)",
-   "bloom_gates": "G1 passes: the counterparty is named (Chevron/CVX). G2 passes: definitive agreements are signed, with 78.3M units cancelled and contracts running to 2045. G3 fails: no currently-unpriced figure was found. The terms were disclosed on 10/6 and the units re-rated the next day.",
-   "edge": "L. The re-rating has already happened. (a) Run-up from the pre-catalyst base: -16.3% (10/6 close $38.69 to $32.39 on 11/2), and the low was $30.04 on 10/22. Price has recovered about 8% from that low since the distribution increase (10/26) and the Q3 results (10/30). (b) Remaining to the favorable-resolution value: I could not derive it from the capital structure. The only figure available is a sell-side blog claim (EBITDA -27%, EBITDA per unit +17%), which is an inherited number, not a provenance-checked one. The deal close is mechanical, not a re-pricing event. The Chevron overhang was settled at signing, because the units were cancelled rather than sold into the market. That removes the overhang thesis this lane depends on.",
-   "primary_source": "Business Wire, 2026-10-06: 'Chevron to Divest its Ownership Interests in Hess Midstream and DJ Basin Crude Midstream Assets' and the companion HESM 'Transformative Transaction' release. Business Wire, 2026-10-26: distribution increase. Business Wire, 2026-10-30: Q3 2026 results. Prices are FMP EOD, 2026-09-25 to 2026-11-02.",
+   "lane": "deleveraging",
+   "catalyst": "The $450M Series A 6% perpetual convertible preferred (Danantara $250M, EMP/Tunas Harapan $200M, conversion price $9.50) and the $800M Citi/Fifth Third credit line ($750M RBL plus $50M TLA) are set to close and retire the ~$1.17B term loan. Management guided closing to the end of November 2026.",
+   "dated_milestone": "Announced 2026-10-06. Closing guided by late November 2026 on the Q3 call (2026-11-09). Next date to watch is the 8-K confirming the close and the term-loan payoff, around 2026-11-30.",
+   "instrument": "HPK common (NASDAQ), $7.10 on 2026-11-19",
+   "bloom_gates": "G1 yes: named counterparties (PT Danantara Energy International, PT Tunas Harapan Perkasa/EMP, Citibank, Fifth Third). G2 yes: committed preferred subscription and committed bank arrangers. G3 fails: there is no specific unpriced figure. The interest saving from replacing the term loan with RBL debt plus 6% preferred (roughly $40-50M a year by my estimate, about $0.30-0.40 per share, not verified against the 10-Q) has been public since 2026-10-06. It is offset by about 27% dilution if the preferred converts (47.4M new shares on ~126.5M outstanding).",
+   "edge": "L. (a) Run-up from the pre-catalyst base: -12%. The stock was $8.09 on 2026-10-05, ran to $11.57 on 2026-10-23, and has since given it all back, to $7.10, as crude fell (-15% on 11-02 with no company news). (b) Remaining capture from the closing itself: about 0-5%. The close is high-probability and was public 45 days ago, and it lowers leverage from ~2.1x to ~1.2x, but it does not re-rate the common. Any upside from here is mostly a crude-oil bet, which is macro. The sale review the triage cited could not be found in any source.",
+   "primary_source": "HighPeak Energy press release 'HighPeak Energy Announces Comprehensive Refinancing' (GlobeNewswire via financialcontent.com, 2026-10-06). HPK Q3 2026 results release and call (finviz/earningswhispers, 2026-11-09), with closing guided to late November 2026. Price history from the FMP historical-price endpoint (2026-09-21 to 2026-11-19).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The deal is real and specific, but it fired on 10/6 and the market re-priced it immediately: down about 15% on 10/7 on 12x normal volume, with about 25% lower EBITDA in 2027 per coverage. The remaining case is a yield and per-unit re-rating argument (about 10% yield, distribution raised on 10/26), not a dated forward catalyst. Closing the deal does not unlock unpriced value. I could not verify the hard close date or re-derive the per-unit waterfall (pro forma debt, DJ consideration, coverage) within the budget: the press release returned 403 and web search was exhausted. Even so, the gate fails on FORWARD and G3. Tier NONE."
+   "analysis": "The refinancing is real, specific and dated, with named counterparties and committed financing, and it has not closed yet. But it is a balance-sheet repair, not a value-unlock event. The $450M convertible preferred sits ahead of the common at its full $450M liquidation value, paying 6% in cash (about $27M a year). At $7.10, well below the $9.50 conversion price, it acts as senior paper, and it caps the common's upside with about 27% dilution above $9.50. The price round-trip shows the market already priced the deal and then sold off with oil. NUMERATOR GAP: I did not pull the 10-Q, so the preferred's redemption and liquidation terms, any PIK option, change-of-control protection and the net debt after closing are unverified. The 'sale review still open' claim in the triage could not be confirmed, so the event is scored on the closing alone and on the equity's remaining upside, which is small."
   }
  ]
 }

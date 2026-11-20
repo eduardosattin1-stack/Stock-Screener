@@ -8,50 +8,28 @@
  },
  "survivors_flagged": [
   {
-   "symbol": "SVRA",
+   "symbol": "SLS",
    "score": 5,
    "tier": "WATCH",
-   "lane": "binary_pdufa",
-   "one_line": "MOLBREEVI (aPAP) BLA PDUFA 2026-11-22 after a 3-month major-amendment extension; no AdCom planned. Stock ~$5 and flat (not run up), ~34% short interest, ~$150M non-dilutive capital unlocks on approval; real dated binary with asymmetry, but ~3 weeks out."
-  },
-  {
-   "symbol": "SYNA",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "merger_arb",
-   "one_line": "onsemi deal amended 2026-10-01 from 1.35x stock to $123 cash after a rival strategic party made a non-binding proposal on 9-02. Price $118.04 is a ~4.2% gross spread; the shareholder vote is pending (DEFM14A filed), FTC has reportedly cleared, foreign/FDI approvals remain, and close is guided for mid-2027. That annualizes thin unless a topping bid comes."
+   "lane": "dated_binary",
+   "one_line": "REGAL Ph3 (GPS in AML CR2, OS endpoint) hit its 80th event on 2026-10-28; topline guided for Q4-2026. Real dated binary, stock fell 18% on the trigger so not run up, but it is a late-arc coin-flip with heavy retail history."
   }
  ],
  "verified": [
   {
-   "symbol": "SVRA",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "binary_pdufa",
-   "catalyst": "FDA action on the MOLBREEVI (molgramostim, inhaled GM-CSF) BLA for autoimmune PAP, with PDUFA goal date 2026-11-22 after the April 2026 major-amendment 3-month extension; FDA approval also unlocks up to $150M of non-dilutive capital.",
-   "dated_milestone": "2026-11-22 FDA PDUFA action date (a Sunday, so the decision may come on Fri 11-20 or earlier). Next: UK MHRA decision in Q4 2026, then EMA decision in Q1 2027.",
-   "instrument": "SVRA common (NASDAQ). Use a small pre-PDUFA position, or defined-risk calls or call spreads, because a CRL means roughly a 45-50% gap down.",
-   "bloom_gates": "G1 (named counterparty: the FDA, plus the lender/partner behind the $150M tranche) and G2 (concrete commitment: a dated PDUFA goal of 2026-11-22, and the $150M is contractually triggered by approval). G3 is partial: the $150M is a specific figure but is non-dilutive financing, not equity value, so the approval value itself is derived.",
-   "edge": "M. (a) Run-up: none. At $4.705 (FMP, 2026-11-02) the stock is below its 50-day ($5.07) and 200-day ($5.39) averages and about 33% under the 52-week high of $7.01, so the base is fading into the event rather than running up. Measured from the post-resubmission base (~$4-5), the run-up is about 0-15%. (b) Remaining: about +40-50% to an estimated approval value of ~$6.50-7.00 (prior high plus de-risked launch and the $150M unlock; my estimate, not an analyst target). CRL floor is ~$2.50 (cash ~$0.6-0.8/share plus residual EU/UK optionality), about -47%. At an assumed ~75-80% approval probability the expected value is roughly +20-25%. This is clearly unharvested, but it is a true binary.",
-   "primary_source": "Savara 10-Q for Q2 2026 (SEC EDGAR svra-20260630, filed Aug 2026) and Q2 2026 results release (2026-08-11): PDUFA 2026-11-22 after a major-amendment extension, ~$173M cash, up to $150M non-dilutive capital on approval. FMP quote 2026-11-02: $4.705, market cap $966.7M, 52-week range $3.86-7.01.",
+   "symbol": "SLS",
+   "score": 2,
+   "tier": "NONE",
+   "lane": "dated_binary",
+   "catalyst": "REGAL Ph3 final analysis (GPS maintenance in AML CR2, OS endpoint) read out POSITIVE on 2026-11-17: mOS 24.0 vs 14.7 months, HR 0.59, two-sided p=.035. The binary has resolved.",
+   "dated_milestone": "FIRED 2026-11-17 (topline). Next: an FDA meeting (undated), then a BLA submission guided for 1H-2027, with a PDUFA likely in 2028. The $150M offering (JPM/TD Cowen) was launched after the close on 11-17; its pricing has not been confirmed.",
+   "instrument": "SLS common (NASDAQ)",
+   "bloom_gates": "G2 met historically (protocol-specified 80-event final analysis, met). G3 has failed: the readout is now public and priced. There is no forward G1, G2 or G3 with a near date. The BLA in 1H-27 is a company guidance window, not a dated binary.",
+   "edge": "L. Run-up: pre-readout close ~$7.47 (implied by the +156% day to $19.15) to $14.86 today = about +99%, with a $3.03B market cap on a 52-week low of $1.39. Remaining: no provenance-checked favorable-resolution value is left to capture. The binary is harvested, and the 17% slide today reflects $150M+ of offering supply and a sell-the-news fade, not unpriced upside. Further upside would rest on BLA approval and the commercial ramp, which is an undated, 2027-28 equity call and is no longer an event. Mostly harvested, so the cap applies.",
+   "primary_source": "SELLAS press release / Form 8-K, 2026-11-17 (positive REGAL topline). OncLive, 2026-11-18 (mOS 24.0 vs 14.7, HR 0.59, p=.035, BLA 1H-27). SELLAS proposed $150M underwritten offering release, 2026-11-17 (finviz). FMP quote, 2026-11-20: $14.86, mcap $3.03B, 52-week range $1.39-$24.89.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The catalyst is verified: the MOLBREEVI BLA has a 2026-11-22 PDUFA after the FDA classified Savara's information-request responses as a major amendment (10-Q filings for Q1 and Q2 2026; Q2 release 2026-08-11). No decision is reported yet. Cash was about $173M at 2026-06-30, the Q2 net loss was $40.2M, and up to $150M of non-dilutive capital is tied to approval. At about $967M market cap and $4.70 the event looks unpriced, since the stock trades below its 50/200-day averages. Score is held at 5/WATCH rather than higher for four reasons: the major amendment signals CMC/data questions behind a prior refuse-to-file and resubmission history; the downside is a symmetric-magnitude binary; the 34% short interest and the no-AdCom claim could not be verified within the lookup budget; and my Q3 2026 10-Q lookup did not surface. Numerator provenance does not apply: this is a single-asset biotech with no preferred stack, and the approval value is re-derived from market cap and cash, not inherited."
-  },
-  {
-   "symbol": "SYNA",
-   "score": 4,
-   "tier": "WATCH",
-   "lane": "merger_arb",
-   "catalyst": "The onsemi deal was amended on 2026-10-01 to $123 per share in cash with committed Morgan Stanley financing and no financing condition. It now awaits the Synaptics shareholder vote (DEFM14A filed, record date 2026-10-13) and non-US regulatory approvals. Close is guided for mid-2027.",
-   "dated_milestone": "Amended agreement signed 2026-10-01. The DEFM14A sets a 2026-10-13 record date, but the virtual special meeting date was not confirmed in these lookups (a summary says it falls within about 30 days of SEC clearance, so roughly Nov/Dec 2026). Next: the shareholder vote, then the remaining foreign/FDI clearances, then close by mid-2027.",
-   "instrument": "SYNA common (long spread vs the $123 cash consideration); no hedge leg is needed now that the deal is all-cash",
-   "bloom_gates": "G1 (named counterparty: onsemi, plus the unsolicited strategic \"Party A\", reportedly Cirrus Logic per Bloomberg 2026-10-09 and unconfirmed). G2 (concrete commitment: signed amended merger agreement, $123 cash, committed debt financing, no financing condition, FTC cleared). G3 is weak: the only currently unpriced figure is the ~$4.98 gross spread. The topping-bid optionality is not a specific figure.",
-   "edge": "L. Run-up from the pre-amendment base (2026-09-30 close $106.15, per Stocktwits) to $118.03 today is about +11.2%. Remaining capture to the contractual $123 is about +4.2% gross over about 7-8 months, which is about 6-7% annualized, roughly a risk-free-plus-small-premium arb return. The upside tail is a topping bid. But the board has already formally found that Party A's proposal no longer qualifies as superior, and the amendment cut aggregate value from about $7B to $5.7B (cash certainty traded for a lower headline). A renewed bid is possible but not dated or evidenced. Downside on a break is large: about $106 pre-amendment, and the stock traded as low as $58 within the past 12 months. Most of the event's value is already harvested.",
-   "primary_source": "onsemi/Synaptics press release \"onsemi and Synaptics Announce Revised Merger Agreement\" (2026-10-01; Synaptics 8-K/DEFA14A, SEC accession 0001140361-26-038301/038302). Synaptics DEFM14A (SEC accession 0001140361-26-039983, record date 2026-10-13). FMP quote SYNA $118.025 (2026-11-02). Stocktwits, 2026-10-01 (pre-amendment close $106.15).",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "The deal is real, signed, financed and FTC-cleared, and the vote and foreign approvals are forward, dated-ish milestones, so the event qualifies. But the $123 cash price is contractual and already about 96% priced: the 4.2% gross spread annualizes to roughly 6-7% against a break downside of more than 10%, and the board has already rejected Party A as non-superior. Score is capped at 4 (mostly harvested, thin residual). Gaps: the exact special-meeting date and the list of remaining foreign jurisdictions (likely including China SAMR, the main timing risk for a semis deal) were not confirmed. The DEFM14A also cites an \"unaffected\" $125.62 price for 2026-06-25 that conflicts with the trading base and was not reconciled. Numerator provenance check is not needed (cash deal price, exempt)."
+   "analysis": "The triage premise is stale. REGAL was not pending: the 80th event on 2026-10-28 triggered the final analysis, and topline came out positive on 2026-11-17 (HR 0.59, p=.035). The stock went +156% on the day, and SLS then launched a $150M underwritten offering. The -17% move the triage read as \"fell on the trigger\" is the post-readout offering and fade, not a decline before the event. With the dated binary fired and about 99% captured from the pre-readout base, nothing forward and dated is left inside the lane. The next step (BLA in 1H-27, PDUFA about 2028) is an undated regulatory and commercial thesis on a $3B single-asset name with a marginal p-value (.035) that FDA review could scrutinize. Gaps: I did not open the 11-17 press release or the 8-K directly, the offering price and size are unconfirmed, and the pre-event base is derived from the reported +156% close."
   }
  ]
 }

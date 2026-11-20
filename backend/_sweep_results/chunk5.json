@@ -1,79 +1,79 @@
 {
  "chunk": "5 (CLS-DAC)",
- "scanned": 151,
+ "scanned": 150,
  "scan_distribution": {
   "active": 0,
-  "watch": 9,
-  "none": 142
+  "watch": 12,
+  "none": 138
  },
  "survivors_flagged": [
   {
-   "symbol": "CMPS",
+   "symbol": "CMCSA",
    "score": 5,
    "tier": "WATCH",
-   "lane": "binary",
-   "one_line": "COMP360 rolling NDA to finish in Q4-26 with a National Priority Voucher (fast review), pointing to a possible approval and H1-27 launch, then DEA rescheduling; still mid-arc at about $12."
+   "lane": "spin_off",
+   "one_line": "Tax-free spin of NBCUniversal+Sky announced June 2026, targeted ~mid-2027; announced 5 months ago so partly known, but the Form 10/when-issued phase is still ahead."
   },
   {
    "symbol": "CRTO",
-   "score": 5,
+   "score": 6,
    "tier": "WATCH",
-   "lane": "redomicile_index_inclusion",
-   "one_line": "The France-to-Luxembourg step is done (Jul 29, 2026). The board approved a US merger, which needs a shareholder vote; completion is targeted for Jan 2027, along with a Nasdaq-to-NYSE move. That could make the stock eligible for US indexes, but the thesis has been public since 2025 and the vote date is not set yet."
+   "lane": "structural_redomicile",
+   "one_line": "Dec 29 2026 EGM (2/3 vote) on the cross-border merger into a US sub. If approved, Criteo is a US company from Jan 1 2027 and moves from Nasdaq to NYSE, which opens S&P/Russell index eligibility. Known since July, so partly priced. The index-inclusion step is the real asymmetry."
   },
   {
    "symbol": "CZR",
    "score": 5,
    "tier": "WATCH",
    "lane": "merger_arb",
-   "one_line": "Fertitta all-cash $31 take-private (signed 2026-05-28, no financing condition, outside date 2027-05-27 extendable to Nov-27); ~$29.03 = ~6.8% gross spread gated on multi-state gaming approvals. Real but late-arc, announced five months ago and in plain sight."
+   "one_line": "Fertitta $31 cash take-private, approved by shareholders 9/22; FTC second request and state gaming approvals pending, outside date 6/26/2027 with a ticking fee after it. At $29.27 the gross spread is ~5.9% (~9-10% annualized). Icahn's $34 bid was rejected. Real but plain-vanilla regulatory-duration arb."
   }
  ],
  "verified": [
   {
-   "symbol": "CMPS",
+   "symbol": "CMCSA",
    "score": 5,
    "tier": "WATCH",
-   "lane": "binary",
-   "catalyst": "COMP360 (psilocybin, TRD) rolling NDA is due to be fully filed in Q4-26 under an FDA Commissioner's National Priority Voucher, which targets a 1-2 month review. That points to an FDA decision around Q1/H1-27, followed by DEA rescheduling and launch.",
-   "dated_milestone": "Next date: the Q3-26 results and call on 2026-11-03, where NDA completion status should be updated. Then the rolling NDA should be complete in Q4-26, with a CNPV-speed FDA action likely in Q1/Q2-27 and DEA scheduling after that.",
-   "instrument": "CMPS common (Nasdaq ADS)",
-   "bloom_gates": "G1 is met: the named counterparty is the FDA, which granted the rolling review and awarded the CNPV on 2026-04-24. G2 is met: management has committed to completing the filing in Q4-26 (Q1-26 PR, 2026-05-13). G3 is only partial: no contractual figure exists, so the approval value is my estimate, not a priced number.",
-   "edge": "M. The event is real, dated and still ahead (FDA action not yet taken), but much of it is already harvested. (a) Run-up: from about $5.75 on 2026-04-14 (before the White House psychedelic EO on 04-18 and the CNPV on 04-24) to $10.67 today is +85%, and from the 2025 low of $2.35 it is about +350%. The stock peaked at $15.87 on 2026-09 and has since fallen 33%. (b) Remaining: from $10.67 to an estimated approval value of about $18 (a market cap of about $2.5B against $1.48B now) is about +69%. Weighted at about 70% approval odds, with about $4.5 if it fails, the expected value is about $14 (+30-40%). Dilution after approval is likely and would cut into this. The approval value is my own estimate and was not taken from an analyst target.",
-   "primary_source": "Compass Pathways PR via Business Wire, 2026-04-24: \"FDA Granted NDA Rolling Review Request and Awarded Commissioner's National Priority Voucher\". Q1-26 results PR, 2026-05-13 (filing complete by Q4). Q3 results announcement PR, 2026-10-27 (call on 11-03). FMP EOD price history and quote, 2026-11-02.",
+   "lane": "spin_off",
+   "catalyst": "Comcast plans a tax-free spin-off of NBCUniversal and Sky into a separately listed media company. It was announced 2026-06-29 and is expected to close about one year later. Comcast keeps up to a 19.9% stake for up to a year, and each company gets an investment-grade balance sheet.",
+   "dated_milestone": "Announced 2026-06-29; close targeted ~mid-2027 (\"approximately one year\"). NEXT: Form 10 filing with the debt-allocation terms and NBCU carve-out financials. No filing or date found as of 2026-11-20; expect H1-2027 (undated). Final board approval and regulatory clearances are still pending.",
+   "instrument": "CMCSA common (NASDAQ). Later, possibly NBCU when-issued shares once the Form 10 is effective.",
+   "bloom_gates": "G1 yes (named spinco NBCUniversal+Sky; named CEOs Cavanagh and Angelakis). G2 partial: a public plan with a ~1-year target, but final board approval, regulatory clearance and financing are still conditions. G3 NO: no specific unpriced figure has been disclosed. The split of the >$90B debt pile, NBCU carve-out EBITDA and the retained-stake mechanics are all still unknown, so any upside depends on a multiple re-rating, not a contracted number.",
+   "edge": "M-L. Run-up from the pre-catalyst base: $23.17 close on 2026-06-26, now $24.86 = +7.3%. The stock spiked to $24.55 on the announcement, then faded to ~$22.9 (50-day average). Remaining capture (my own rough SoP, not an analyst target): about +17% bear ($29), +40% mid ($35), +65% bull ($41) to a provenance-checked value. Most of the event is NOT harvested. But the gain is a sum-of-the-parts re-rating that depends on unknown debt allocation and on cable multiples, which keep compressing as broadband and video losses continue. There is no contractual numerator.",
+   "primary_source": "Comcast press release 'Comcast Announces Plans to Separate Media and Technology Businesses Into Two Leading Public Companies' (Business Wire, 2026-06-28/29). Comcast Q3-2026 results release (Oct 2026; Zacks/TelecomLead coverage: total debt $87.37B, net debt $76.6B, adj. EBITDA $9.106B, buyback paused through separation). FMP quote $24.86 (2026-11-20) and EOD $23.17 (2026-06-26).",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The setup checks out. The FDA granted rolling NDA review and selected COMP360 for the CNPV on 2026-04-24, and management targets a complete filing in Q4-26. Two Phase 3 programmes support the filing: COMP006 26-week data (07-07) and COMP005 52-week data (09-09). The run-up since the EO/CNPV leaves roughly +30-40% probability-weighted upside, with a real overhang from DEA rescheduling, REMS/launch execution and an equity raise. That fits WATCH, not ACTIVE, and is best revisited after the 11-03 call confirms NDA completion timing. Two gaps remain. Web search was exhausted, so neither the Q3 balance sheet (cash runway, any converts or warrants) nor the exact CNPV review clock was checked. The approval value is my estimate and was not re-derived from the 10-Q. The stock fell 7.8% today to $10.67, below its 50-day average of $12.91."
+   "analysis": "The spin is real, named and forward: 2026-06-29 announcement (Business Wire), not fired, Form 10 not yet filed. The stock is only +7% above the pre-announcement close, so the residual is mostly unharvested. Numerator provenance: the capital structure has no preferred stock and no external manager. Debt is $87.4B total / ~$76.6B net (Q3-2026 release; net-debt figure from secondary coverage, 10-Q not opened), net leverage 2.3x. EV is about $165B against ~$36B annualized adjusted EBITDA (Q3 $9.1B x4), roughly 4.5x. I re-derived the SoP using assumed segment-EBITDA splits, not reported ones: Connectivity ~$26-27B at 4.5-5.5x plus NBCU/Sky ~$10B at 6-7.5x, less net debt, over ~3.54B shares, gives $29-41. That supports positive equity upside. Score is held at 5 / WATCH because G3 fails: no specific unpriced figure, no dated next milestone, and the value rests on market multiples while Connectivity keeps shrinking (Q3: -144k broadband, -274k video). Gaps: the 10-Q was not opened directly, so the debt and segment-EBITDA splits are unverified. Upgrade when the Form 10 discloses debt allocation and NBCU standalone EBITDA, or when when-issued trading prices the parts."
   },
   {
    "symbol": "CRTO",
-   "score": 4,
+   "score": 5,
    "tier": "WATCH",
-   "lane": "redomicile_index_inclusion",
-   "catalyst": "Criteo plans a US merger and redomicile, with a Nasdaq-to-NYSE move targeted for January 2027, which could make the stock eligible for US indexes such as the S&P and Russell; it needs a shareholder vote that has not been scheduled.",
-   "dated_milestone": "The France-to-Luxembourg step finished on 2026-07-29 (8-K filed 2026-07-31). The US merger was announced on 2026-08-05 (8-K and Form 425). Completion is targeted for January 2027, but no S-4 or proxy has been filed and no vote date is set. The next dated event is Q3 results on 2026-11-04, which is not the event this lane is about.",
-   "instrument": "CRTO common stock (Nasdaq). No preferred stock ranks ahead of the common, so the payoff is the common stock's own value plus any re-rating if it joins an index.",
-   "bloom_gates": "G2 is only partly met: the board has committed to the merger, and Form 425s were filed on 2026-08-05 and 2026-10-29, but it is still subject to a shareholder vote with no date. G1 does not apply: there is no outside counterparty, because this is an internal reorganisation. G3 is not met: there is no specific figure the market has not yet priced, since getting into an index depends on later decisions by S&P and Russell, not on anything contractual.",
-   "edge": "L. Run-up: about -40%. The stock is $14.83 today against a 52-week high of $25.29, and it fell after Q2 / 5 Aug, drawing law-firm investigations from August to September. Nothing of the event has been harvested; the stock has de-rated instead. Remaining: no contractual number. Index-inclusion moves are usually a few percent to about 10%, depend on decisions by S&P and Russell, and would come after a closing in early 2027 at the soonest. The thesis has been public since 2025, so the market has mostly already treated the move to the US as known. What matters now is how the business itself performs, not the redomicile.",
-   "primary_source": "SEC EDGAR via FMP: 8-K and Form 425 on the US merger (2026-08-05), 8-K on the completed Luxembourg step (2026-07-31), Form 425 (2026-10-29), Q2 10-Q (2026-08-05). PRNewswire: Q3 results date set for 2026-11-04 (released 2026-10-21). FMP quote: $14.83, 52-week range $13.95-$25.29 (2026-11-02).",
+   "lane": "structural_redomicile",
+   "catalyst": "The Dec 29 2026 EGM (2/3 vote) on merging Lux Criteo into Criteo Holdings, Inc. (Delaware). On approval Criteo becomes a US-domiciled company around January 2027 and moves from Nasdaq to NYSE, which makes it eligible for Russell and S&P US indices.",
+   "dated_milestone": "2026-12-29 EGM vote (11:00 Luxembourg time). Merger close expected January 2027. Earliest realistic index event: the FTSE Russell 2027 reconstitution (rank day about 2027-04-30, effective late June 2027). The S&P SmallCap 600 is not reachable at today's $0.88B market cap.",
+   "instrument": "CRTO common (Nasdaq; NYSE after the merger)",
+   "bloom_gates": "G2 only (concrete commitment): the board approved the merger on 2026-07-29, the DEFM14A sets the vote date, and closing is guided for January 2027. G1 fails because the counterparty is Criteo's own subsidiary and no third party is involved. G3 fails because no specific unpriced figure exists: index buying is an estimated flow, not a contractual number, and no provider has announced an addition or a date.",
+   "edge": "L-M. Run-up from the pre-catalyst base: about -15% (the US step was board-approved on 2026-07-29 at $22.63 and the 07-28 close was $21.15; today $17.95; the 2026-08-05 drop to $17.05 came with results). So nothing has been harvested on price. Remaining capture is only the flow effect from joining an index, roughly +5-10% at best. That gain is unproven: Russell 2000 entry is plausible at about $0.9B, but the S&P 600 needs about $1.1B+ plus GAAP profitability, the next Russell window is about 7 months away, and the MSCI addition (effective 2026-11-30) has already used up part of the flow story. No figure from the capital structure supports a larger event-driven gain.",
+   "primary_source": "Criteo S.A. DEFM14A, SEC EDGAR (filed November 2026; vote set for 2026-12-29); 8-K12B dated 2026-07-29 (Luxembourg redomicile done, board approves the US merger, January 2027 close guidance); Form 425 Q&A dated 2026-07-29 (index eligibility not guaranteed); FMP quote dated 2026-11-20 ($17.95, market cap $883M) and FMP end-of-day prices 2026-07-20 to 2026-08-10",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The step-by-step redomicile is real and moving forward: the Luxembourg step closed on 2026-07-29, the US merger was announced on 2026-08-05, and a new 425 was filed on 2026-10-29. However, the shareholder vote has no date, no S-4 or proxy is on file, and the index-inclusion payoff depends on later decisions by S&P and Russell, not on a contractual figure. Because the stock is down about 40% from its high and near its 52-week low of $13.95, as the fundamentals have worsened, a catalyst that is not yet priced is not the same as upside to capture. This position is really a bet on the stock, with a weak option on getting into an index, so I capped it at 4 and set it to WATCH. Gaps: web search was unavailable (budget used up), so I could not confirm the January 2027 target date, the exact NYSE terms, or whether S-4 timing has been announced. I relied on the FMP filing list and press-release feed."
+   "analysis": "The event checks out and is forward and dated. A DEFM14A sets the vote for Dec 29 2026, the merger needs 2/3, closing is guided for January 2027, and the NYSE move takes effect at completion. The upside the flag calls the real asymmetry is not contractual. Criteo's own Form 425 Q&A says index eligibility is not guaranteed and depends on each provider's methodology. At the current $883M market cap, the S&P SmallCap 600 looks out of reach, which leaves Russell as the realistic route, and its first possible window is the 2027 reconstitution (about June 2027). The stock trades about 15% below its level when the US step was announced, so the event is not priced as a gain. But what is left is a modest, uncertain index-buying effect on top of an equity whose direction depends on its ad-tech fundamentals (which caused the August drop). This makes it a WATCH structural kicker, not an ACTIVE event trade. Gap: I did not confirm the exact FTSE Russell 2027 schedule or the S&P eligibility thresholds against primary sources, and I did not read the 10-Q for the capital structure (Criteo has no preferred stock and is understood to hold net cash, but this was not re-verified)."
   },
   {
    "symbol": "CZR",
    "score": 4,
    "tier": "WATCH",
    "lane": "merger_arb",
-   "catalyst": "Fertitta Entertainment's all-cash $31/share take-private of Caesars (signed 2026-05-28) closes once the FTC antitrust review and multi-state gaming approvals clear.",
-   "dated_milestone": "FTC second request issued 2026-09-17 (WSJ). Next: Fertitta's compliance with the second request and the state gaming-commission hearings (NV/NJ and others; dates not verified). Outside date 2027-05-27, extendable to Nov-2027.",
-   "instrument": "CZR common (long the spread). There is no listed acquirer stock to short because the deal is all cash.",
-   "bloom_gates": "G1 (named counterparty: Fertitta Entertainment) + G2 (signed definitive agreement at $31 cash, no financing condition). G3 is weak: the $1.97 spread is public and has hardly moved since signing, so it is a known risk premium, not an unpriced figure.",
-   "edge": "L. Run-up: the pre-catalyst base is $28.78 (2026-05-27 close), but that was already about +61% above the $17.86 52-week low and almost at deal price, so the takeover was largely priced before it was announced. From announcement day ($29.08) to today ($29.03) the run-up is about 0%. Remaining: +6.8% gross from $29.03 to $31 over about 7-13 months (roughly 6-11% annualized, before break risk). The spread has stayed flat for five months, the FTC second request has extended the timeline, and the market is pricing real break or delay risk. That is fair compensation, not mispricing.",
-   "primary_source": "FMP quote CZR $29.0257 (2026-11-02); FMP EOD history 2026-05-20..06-02 (announcement-day close $29.08, prior close $28.78); WSJ 'FTC Requests Additional Information Regarding Fertitta, Caesars Merger' (2026-09-17); Caesars Q3 2026 results press release, Business Wire (2026-10-27); Caesars Q3 release-date press release noting the pending Fertitta merger announced 2026-05-28, Business Wire (2026-10-02); Motley Fool on VICI's $458M credit-loss allowance (2026-10-29).",
+   "catalyst": "Fertitta Entertainment's $31.00 cash take-private of Caesars closes after the FTC second-request review and the state gaming approvals clear.",
+   "dated_milestone": "Shareholders approved the deal 2026-09-22 and both sides got an FTC second request 2026-09-14 (still pending). Next date: initial outside date 2027-05-27, which auto-extends to 2027-08-27 and 2027-11-27. A ticking fee of $0.00715/share/day starts 2027-07-01 if the deal has not closed by 2027-06-26. Closing guidance is H1 to mid/late 2027.",
+   "instrument": "CZR common (NASDAQ)",
+   "bloom_gates": "G1 yes (named buyer Fertitta Entertainment, Tilman Fertitta). G2 yes (signed merger agreement, $31.00 cash, no financing condition, 10-bank committed debt, $450M reverse termination fee, shareholder-approved). G3 weak: the remaining figure is only a ~5.9% spread, and it is priced as a duration and regulatory spread, not an unpriced number.",
+   "edge": "L. Run-up from the unaffected base: the price on 2026-02-25 was ~$20.8 ($31 is a 49% premium to it), so ~+41% has already been captured to $29.27. Remaining: +5.9% to $31.00 (~7-9% annualized for a close between mid and late 2027), plus a small ticking-fee kicker after 2027-06-26. The event is mostly harvested and the spread is plain-vanilla FTC/gaming duration risk. The Icahn $34 bid was rejected, so the market is not pricing a topping bid. Downside if the deal breaks is back toward the low $20s.",
+   "primary_source": "FMP quote CZR $29.27 (2026-11-20). Caesars/Fertitta merger release 2026-05-28 ($31 cash, 49% premium to the 2026-02-25 unaffected price, $17.6B EV). CDC Gaming / casino.org on the FTC second request (2026-09-14) and the shareholder approval (2026-09-22). iGaming Business on the ticking fee (2026-06-26 trigger) and the $450M reverse termination fee. All trade press; the SEC 8-K was not read directly.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The deal is real, contractual and unfired. The $31 cash price is exempt from numerator re-derivation. CZR trades at $29.03 (FMP quote, 2026-11-02), essentially flat against the $29.08 close on announcement day. New frictions since signing: the FTC issued a second request (WSJ, 2026-09-17); Q3 lost $0.61/share against a -$0.12 estimate, so the standalone downside is widening (Caesars Q3 release, 2026-10-27); landlord VICI booked a $458M credit-loss allowance increase largely tied to Caesars, a sign the lease/LBO structure is contested; and shareholder-litigation firms are investigating the price. Downside if the deal breaks is probably well below $25 given the losses and leverage. A 6.8% gross spread over a 7-13 month regulatory runway is an ordinary late-arc arb that the market is already harvesting, so score is capped at 4 / WATCH. Gaps: the WebSearch budget was exhausted, so state gaming-hearing dates and the exact FTC compliance timing are unverified; there was no 10-Q lookup, which the cash price makes unnecessary."
+   "analysis": "The deal is real, contractual and dated: a $31 cash Fertitta take-private, shareholder-approved 2026-09-22, with FTC second requests issued 2026-09-14 and multi-state gaming approvals (NV, NJ and others) still outstanding. The numerator is a cash deal price, so no waterfall re-derivation is needed. Residual capture is ~5.9% gross against ~41% already harvested from the unaffected $20.8, and the break risk (FTC remedy or asset sales, gaming-review delays) is asymmetric to the downside. Score is capped at 4 as mostly harvested; it stays a WATCH, and a wider spread or an FTC clearance would be the trigger to re-look. Gap: I did not read the 8-K or the merger agreement directly, and the ticking fee and outside dates come from trade press (iGaming Business, CDC Gaming); I found no news after September 2026."
   }
  ]
 }

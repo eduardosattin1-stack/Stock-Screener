@@ -1,57 +1,79 @@
 {
  "chunk": "8 (FRHC-GTY)",
- "scanned": 150,
+ "scanned": 151,
  "scan_distribution": {
   "active": 0,
-  "watch": 10,
-  "none": 140
+  "watch": 6,
+  "none": 145
  },
  "survivors_flagged": [
   {
-   "symbol": "FRVO",
+   "symbol": "GDOT",
    "score": 5,
    "tier": "WATCH",
-   "lane": "overhang",
-   "one_line": "180-day IPO lockup on ~97% of Class A shares (May-13 IPO at $27) expires around Nov 9, the same day as Q3 results. The stock already trades ~46% below the IPO price after a short report and law-firm notices. The lockup date is my estimate; the 424B4 prospectus will confirm it. This is an early-arc overhang-clearing setup: watch whether supply clears once the lockup ends."
+   "lane": "merger_arb",
+   "one_line": "Two-way break-up (bank to CommerceOne for $8.11 cash plus 0.2215 new-holdco shares; fintech to Smith Ventures). Shareholder votes and HSR are done; Fed/AL/UT bank approvals are pending and the close slipped to Q1-2027. Complex arb with a stub, but it is late-arc and widely known."
   },
   {
-   "symbol": "GPC",
+   "symbol": "GFR",
    "score": 5,
    "tier": "WATCH",
-   "lane": "spin_off",
-   "one_line": "Automotive/Industrial separation reaffirmed for early 2027. Stock de-rated after the Q3 miss and EPS cut (separation costs), so not re-rated, but the spin is widely known (mid-arc). Gabelli talk 11/3, CEO-elect named."
+   "lane": "merger_arb",
+   "one_line": "Strathcona deal (Nov 8): holders elect C$11 cash or 0.25 SCR shares, no proration. WEF (72%) takes stock and supports the deal. Majority-of-minority votes in Jan 2027, close early 2027. The premium already jumped 38%, so check the spread against C$11 and the SCR ratio before entering."
+  },
+  {
+   "symbol": "GSAT",
+   "score": 5,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "one_line": "Amazon deal at $90 cash or 0.321 AMZN (capped at $90). Written consent already done and FCC approved 2026-10-27. Close guided to 2027 and tied to deployment milestones, with up to $110M downward adjustment. Px 86.13 = ~4.5% gross spread; the stock leg is worth ~$82.6 at AMZN 257. Plain arb, late-arc, no mispricing edge."
   }
  ],
  "verified": [
   {
-   "symbol": "FRVO",
-   "score": 3,
-   "tier": "NONE",
-   "lane": "overhang",
-   "catalyst": "The estimated 180-day IPO lockup expiry (May-13 IPO + 180 days ≈ Nov 9, 2026) falls on the same day as Q3 results, which are confirmed for Nov 9. The thesis is that a known supply overhang clears.",
-   "dated_milestone": "Q3-2026 results come out before the open on Mon 2026-11-09, with a call at 10:00 ET (confirmed). Lockup expiry is ~2026-11-09 but unconfirmed because the 424B4 was not checked. Next milestone: the first post-lockup Form 4/144 insider-sale filings in the week of Nov 9-16.",
-   "instrument": "FRVO common (NASDAQ). No position is warranted before lockup supply hits and Q3 results answer the short report.",
-   "bloom_gates": "None passed. G1: no named counterparty (the lockup release is a supply event, not a buyer). G2: no concrete commitment such as a buyback, take-out or financing backstop. G3: no specific unpriced figure, since the lockup is a public, widely known date and the Q3 numbers are unknown. Dated: yes (results confirmed, lockup estimated). Forward: yes. Not a macro bet: yes.",
-   "edge": "L. A lockup expiry is a known, scheduled event, and the supply is usually priced in or hits on the day. 'Overhang clearing' is a hoped-for price pattern after the event, not a value-unlocking event. (a) Run-up from the pre-catalyst base: NEGATIVE, about -43%. The stock was $14.33 at the Oct-6 Morpheus short-report close and is $8.16 now (FMP quote 2026-11-02), about 70% below the $27 IPO price, not the 46% stated in the triage. So nothing is harvested, but a falling knife is not residual capture. (b) Remaining % to a favorable-resolution value: not derivable. There is no contractual or SoP numerator, and the company is pre-revenue (Q2 revenue $113k vs $241k estimated; EPS -0.38). Any upside figure would be a guess about sentiment, not a re-derived value.",
-   "primary_source": "GlobeNewswire 'Fervo Energy to Report Third Quarter 2026 Results on November 9, 2026' (2026-10-30). PRNewswire item on the Morpheus Research report (2026-10-30, report dated 2026-10-06). FMP quote FRVO $8.16 (2026-11-02). FMP earnings calendar (updated 2026-11-02). Lockup terms not verified against the 424B4.",
+   "symbol": "GDOT",
+   "score": 4,
+   "tier": "WATCH",
+   "lane": "merger_arb",
+   "catalyst": "Green Dot is being split two ways. The bank goes to CommerceOne, and each GDOT share gets $8.11 cash plus 0.2215 shares of the new listed bank holding company. The non-bank fintech business goes to Smith Ventures for $690M cash. The deal closes once the Fed, the Alabama State Banking Department and the Utah Department of Financial Institutions approve it.",
+   "dated_milestone": "Both companies' shareholders approved on 2026-06-23. Applications were filed 2026-02-20. The Q3-2026 release guides to a close by Q1-2027. Next marker: if approvals arrive before 2026-12-21, the 2026 annual meeting is cancelled, so watch for a regulatory-approval 8-K by about mid-Dec 2026. The backstop is the Q1-2027 close.",
+   "instrument": "GDOT common (NYSE), $11.20 on 2026-11-20. Long GDOT alone means owning $8.11 cash plus an implied stub of $3.09 (implied $13.95 per new-holdco share). A hedge is not possible because the new holdco does not trade yet.",
+   "bloom_gates": "G1 yes: named counterparties CommerceOne Financial and Smith Ventures. G2 yes: signed merger agreement, shareholder votes done, $8.11 cash per share is contractual. G3 partial: the cash leg is specific, but the stub value (0.2215 new-holdco shares) is derived, not contractual. Management's $14.23-$19.18 range rests on an assumed 1.0x-1.8x tangible-book multiple from Nov 2025. I did not re-derive it.",
+   "edge": "M-L. Run-up from the pre-catalyst base ($10.95 close on 2025-11-20, before the 2025-11-23 announcement) to $11.20 today is only +2.3%. So this is not harvested in the VISN sense, and the downside if the deal breaks looks like roughly the old $10.6-11.0 range. Remaining upside depends entirely on the unverified stub. At management's 1.0x TBV floor ($14.23) it is +27%. If the new holdco trades at 0.6x TBV (about $11.78) it is about +5%. At today's implied stub (about 0.5x of management's TBV figure) it is 0%. The market is discounting either a weak bank franchise or an approval delay, and three slips (Q2, then Q3-2026, then Q1-2027) suggest regulators have real friction. The setup is widely known.",
+   "primary_source": "GDOT Q3-2026 earnings release (finviz/BusinessWire, Nov 2026): close expected by Q1-2027, Fed/AL/UT approvals pending. Joint shareholder-approval press release, 2026-06-23. 2025-11-23 deal announcement and Form 425 (sec.gov, Nov 2025): $8.11 cash + 0.2215 shares, implied $14.23-$19.18 at 1.0x-1.8x TBV. FMP quote 2026-11-20: $11.20. FMP EOD prices: $10.95 on 2025-11-20, the pre-announcement base.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "Confirmed: Q3 results on 2026-11-09 (GlobeNewswire release 2026-10-30, FMP earnings calendar), the Morpheus short report of 2026-10-06 (thermal decline, water loss, seismicity damage) and repeated law-firm investigation notices. The stock has kept falling, to $8.16 versus $14.33 on Oct 6, so the triage figure of '46% below the IPO price' is stale. Gap: the lockup date and its ~97% coverage were not checked against the 424B4 (the web-search budget for this turn was used up), and no 10-Q capital-structure lookup was done. That lookup matters less here because the thesis has no derived upside numerator. The setup does not pass any Bloom gate: it is lockup supply landing on a binary results/short-report rebuttal day for a pre-revenue name under litigation, so it is a sentiment trade, not a catalyst. Re-look only if, after Nov 9, there is visible insider or sponsor non-selling, a named strategic investor, or Q3 data that specifically refutes the short report's operating claims."
+   "analysis": "The deal is real and late-stage (votes done, HSR done). Only the bank approvals remain, and the close has already slipped three times, to Q1-2027. The $8.11 cash is locked in. The rest of the upside sits in a stub whose value is management's Nov-2025 tangible-book multiple, never re-derived from the current 10-Q (bank tangible book after the $155M capital injection and the ~$65M debt payoff, and how much the bank's deposits depend on the departing fintech business). Under the numerator-provenance rule I scored the equity, not the event, and capped at 4. Next step: before upgrading, pull the Q3-2026 10-Q / S-4/A pro-forma tangible book per new-holdco share and the reason for the regulatory delay. A 2024-era Fed enforcement action on the bank is a plausible cause, unverified."
   },
   {
-   "symbol": "GPC",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "spin_off",
-   "catalyst": "Genuine Parts is splitting into two public companies, NAPA/Automotive (GPC) and Motion/Industrial, with completion reaffirmed for Q1 2027. Leadership and boards are named, and December investor days will show each standalone business.",
-   "dated_milestone": "Gabelli Automotive Symposium 2026-11-03 (CEO Stengel, CEO-elect Carruthers, CFO/COO Nappier). December 2026 investor days for GPC and Motion. Separation completes Q1 2027.",
-   "instrument": "GPC common (NYSE). Cap structure checked: no preferred and no external manager; investment-grade debt only.",
-   "bloom_gates": "G2 (concrete commitment: dated Q1-2027 separation, named leadership teams and boards per the 2026-09-09 release, investor days scheduled). G1 does not apply (no counterparty). G3 is weak: the unpriced figure is a derived SoP gap, not a disclosed number.",
-   "edge": "M. (a) Run-up from the pre-catalyst base: about +6% (2026-07-01 close $117.40, the day before the +13% gap to $132.57 on 07-02, to $124.2 today). Measured from the June lows around $98 it is about +27%. After the Q3 miss the stock gave back the whole post-announcement premium. (b) Remaining to the provenance-checked SoP: about +15-20%, to roughly $140-150. Motion at about 14x EBITDA on ~$1.2B, Automotive at about 9x on ~$1.45B, less about $3B capitalized corporate cost, less $6.06B net debt incl leases, over 137.9M shares. Edge is moderate: mostly unharvested, but the gap depends on the multiples assumed, and dis-synergies plus separation costs eat into it.",
-   "primary_source": "GPC PRNewswire 2026-09-09 (leadership named, separation on track Q1 2027, December investor days). GPC Q3 2026 results 2026-10-20 (EPS outlook narrowed to $7.50-7.75). GPC Gabelli presentation notice 2026-10-22. FMP balance sheet, 10-Q 2026-09-30 (filed 2026-10-20). FMP quote/EOD 2026-11-02 ($124.17).",
+   "symbol": "GFR",
+   "score": 2,
+   "tier": "NONE",
+   "lane": "merger_arb",
+   "catalyst": "Strathcona (SCR.TO) is buying Greenfire for C$11.00 cash or 0.25 SCR shares per GFR share, with no proration; WEF (72% of GFR, 57% of SCR) supports the deal and elects shares; majority-of-minority votes are expected in January 2027 and closing early 2027.",
+   "dated_milestone": "Announced 2026-11-08. Joint circular mailing late Nov-2026. Next date: special meetings at both companies, January 2027 (MI 61-101 majority of minority plus two-thirds). Close shortly after, early 2027, subject to court and regulatory approval.",
+   "instrument": "GFR.TO common (TSX) / GFR (NYSE). There is no spread to capture: the stock trades at the C$11.00 cash option.",
+   "bloom_gates": "G1 (named counterparty: Strathcona, with WEF's support agreement) and G2 (signed definitive agreement, fixed C$11 cash with no proration). G3 fails: no currently unpriced figure remains, because the cash price is fully reflected at C$11.00.",
+   "edge": "L. Run-up from the pre-catalyst base (Nov 6 close about C$7.91) to today's C$11.00 is +39%. Remaining capture to the C$11.00 cash option is about 0.0% (GFR.TO last C$11.00, day high 11.025). The share option is worth 0.25 x C$37.60 = C$9.40, about 15% BELOW market. Upside comes only from a free call on SCR above about C$44.00 (+17%) before elections close. Downside is a deal break back toward the C$8 area (about -28%).",
+   "primary_source": "Strathcona Resources press release 'Strathcona Resources Ltd. Announces Agreement to Acquire Greenfire Resources Ltd.', 2026-11-08 (via BOE Report); FMP batch-quote GFR.TO C$11.00 / SCR.TO C$37.60 / GFR US$7.67, as of 2026-11-20",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The separation is real, dated and committed: Q1-2027 completion was reaffirmed on 2026-09-09 with leadership named, and the Q3 release (2026-10-20) narrowed adj EPS guidance to $7.50-7.75 from $7.50-8.00, citing separation costs. The capital structure is clean: 10-Q 2026-09-30 shows $5.11B debt + $1.71B leases, $0.76B cash, no preferred, 137.9M shares. So the SoP numerator holds for the equity, but the upside is a multiple-arbitrage on Motion that the market already knows about, not a hidden figure. The 2026-07-02 announcement premium is fully round-tripped. That keeps roughly 15-20% on the table into the December investor days, so this rates WATCH, not ACTIVE. Gap: web search budget was exhausted, so segment EBITDA and peer multiples are estimates, not taken from the filing segment note."
+   "analysis": "The deal is real, signed and dated, and the controlling holder (WEF, 72%) supports it, so the event passes on quality. But GFR.TO trades exactly at the C$11 cash consideration, with no time value for a close roughly 2-3 months away, so the event is about 100% harvested. Entering now earns about 0% gross (negative after carry) against about -28% break risk. The only optionality is the 0.25 SCR election, which is out of the money (C$9.40 vs C$11) and would need SCR above about C$44. Gaps: the termination fee amount is undisclosed, and the cash leg depends on Strathcona's reserves-based credit facility, which the filing names as a risk factor (no formal financing condition). One older article describes an earlier hostile WEF approach; the current release supersedes it with a signed support agreement."
+  },
+  {
+   "symbol": "GSAT",
+   "score": 3,
+   "tier": "NONE",
+   "lane": "merger_arb",
+   "catalyst": "Amazon is buying Globalstar for $90 cash or 0.3210 AMZN per share (stock leg capped at $90). Cash elections are prorated to a 40% cap. Closing is guided to 2027 and depends on HIBLEO-4 replacement-satellite milestones and the remaining approvals, with up to $110M of downward adjustment.",
+   "dated_milestone": "Announced 2026-04-14. Written consent from about 58% of the vote has already been given. FCC approval was reported 2026-10-27/28. Next: Amazon's S-4 becoming effective, the information statement, the satellite milestones and the remaining foreign-investment approvals. Close is guided only to \"2027\", with no specific date.",
+   "instrument": "GSAT common (86.13, 2026-11-20). There is no clean hedge, because the $90 cap removes AMZN upside above about $280.4.",
+   "bloom_gates": "G1 yes (Amazon is the named counterparty). G2 yes (signed merger agreement at $90 cash / 0.3210 AMZN). G3 no: no unpriced figure remains, and the prorated consideration is already at or below the current price.",
+   "edge": "L. (a) Run-up: the pre-catalyst base is about $68.7 (the 2026-04-01 close implied by Reuters' 31% premium; the 2026-04-13 close was $72.89). To 86.13 that is +25% (+18% from the 04-13 close). (b) Remaining: with the 40% cash cap and AMZN at 257.37, blended value is 0.4x90 + 0.6x82.62 = $85.57, which is -0.6% vs today. The best case is $90 (+4.5% gross over roughly 12 months or more) and needs AMZN at or above about $280. The event is real and contractual, but already fully harvested.",
+   "primary_source": "Amazon press release \"Amazon to acquire Globalstar and expand Amazon Leo satellite network\" (press.aboutamazon.com, 2026-04-14). TIKR/Stocktwits on FCC approval (updated 2026-10-28). FMP batch-quote GSAT 86.13 / AMZN 257.37 (2026-11-20).",
+   "verdict": null,
+   "kill_fact": null,
+   "analysis": "The deal itself checks out: Amazon is the counterparty, written consent is done, and FCC approval was reported in late October 2026. The triage flag's \"4.5% gross spread\" is wrong. Because cash elections are prorated to 40%, an arb holder receives a blend worth about $85.57 at AMZN 257, which is below the 86.13 price. The position is really a long-AMZN option capped at $90, with timing and milestone risk (up to $110M downward adjustment, 2027 close with no date). The 40% cash cap comes from deal summaries (Barchart, Amazon press, 2026-04) and should be checked against the merger agreement or S-4. There is no derived numerator to check, since the consideration is contractual. The event has been nearly fully harvested since the April announcement, so the score is capped at 4 and set lower because the expected residual is near zero or negative."
   }
  ]
 }

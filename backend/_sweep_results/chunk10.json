@@ -2,100 +2,78 @@
  "chunk": "10 (IMVT-KRUS)",
  "scanned": 149,
  "scan_distribution": {
-  "active": 2,
+  "active": 0,
   "watch": 5,
-  "none": 142
+  "none": 144
  },
  "survivors_flagged": [
-  {
-   "symbol": "IMXI",
-   "score": 6,
-   "tier": "ACTIVE",
-   "lane": "merger_arb",
-   "one_line": "Western Union deal at $16 cash; stock at ~$9.65, a ~66% gross spread. California's DFPI suspended its approval (Aug-14), and a new HSR filing on Oct-2 started a 30-day wait ending ~Nov-1/2. The open question is when DFPI reinstates. Complicated arb priced near a coin-flip break; deal walk-away and outside-date terms are unverified."
-  },
   {
    "symbol": "INBX",
    "score": 5,
    "tier": "WATCH",
-   "lane": "pdufa",
-   "one_line": "Ozekibart (chondrosarcoma) BLA has a PDUFA date of 2027-04-14, with updated PFS at CTOS on Nov-20. The stock has roughly halved from its $155 high to $73, so the binary is months out and unpriced. Early-arc, but balance-sheet and debt risk (Oxford facility) are not yet checked."
+   "lane": "binary_pdufa",
+   "one_line": "Ozekibart BLA (chondrosarcoma) accepted with PDUFA 2027-04-14 and positive registrational PFS. Stock has halved from its $155 high to $74, so it is unmoved/early-arc, about 5 months out."
   },
   {
    "symbol": "IP",
-   "score": 6,
-   "tier": "ACTIVE",
+   "score": 5,
+   "tier": "WATCH",
    "lane": "spin_off",
-   "one_line": "Planned separation of EMEA packaging (UK listing) with live sale-bid speculation (10/15 statement); EMEA CMD London 11/3; $1.38B EMEA goodwill impairment; separation/sale decision still forward, partly priced by 10/15 jump"
+   "one_line": "EMEA Packaging (ex-DS Smith) spin announced 2026-01-29, reaffirmed for Q1 2027 or sooner with dual LSE/NYSE listing and IP keeping a stake. It's real and dated but widely known, so it's mid-arc. Record and distribution dates not verified."
   },
   {
    "symbol": "KBR",
    "score": 5,
    "tier": "WATCH",
    "lane": "spin_off",
-   "one_line": "Split into KBR and Trinzic (Mission Tech) on track for Jan 4, 2027, reaffirmed on the Q3 call (Oct 29). A real dated spin, but announced in 2025 and largely known; the edge is post-spin forced selling of the spun entity."
+   "one_line": "Spin of Mission Technology Solutions as Trinzic targeted for 2027-01-04 (10-Q), pushed back from mid-to-late 2026; Investor Day already held on Nov-11, so this is mid-to-late arc, but the spin has a hard date and the parent/spinco split could be mispriced."
   }
  ],
  "verified": [
   {
-   "symbol": "IMXI",
-   "score": 5,
-   "tier": "WATCH",
-   "lane": "merger_arb",
-   "catalyst": "Western Union's signed $16 cash acquisition of Intermex (agreement dated 2025-08-10) needs two things to close: California DFPI must reinstate the approval it suspended on 2026-08-14, and the new 30-day HSR waiting period from the 2026-10-02 refiling must expire.",
-   "dated_milestone": "HSR waiting period from the 2026-10-02 refiling ends around 2026-11-01/02 (early termination requested; expiry not yet confirmed). DFPI reinstatement has NO date. The 2026-10-02 8-K says only that discussions are continuing. Next checkpoint: an HSR-expiry or DFPI 8-K/PR, and the Q3 10-Q (around early-to-mid Nov 2026), which should restate the outside date.",
-   "instrument": "IMXI common (long merger-arb). WU is the cash payer, so no hedge leg is needed.",
-   "bloom_gates": "G1 (named counterparty: Western Union) + G2 (signed merger agreement, $16/sh cash, stockholder-approved 2025-12-09, NYDFS approved 2026-08-14) + G3 (64% gross spread, $9.75 vs $16, still open). The DATED test is only partly met: the HSR clock is dated, but the gating DFPI decision is not.",
-   "edge": "M. Run-up: about -35% from the pre-suspension level of ~$15 and roughly flat to slightly negative versus the pre-deal undisturbed ~$10-11 (Aug 2025), so nothing is harvested. Remaining: +64% from $9.75 to the contractual $16. The market implies only about 20-25% close odds (floor ~$8.3, the 52w low), so the edge is real if the DFPI suspension is curable. But the reason for the suspension, the outside date and the reverse-fee terms are all unverified. The spread may correctly price a regulator-driven break, not a mispricing.",
-   "primary_source": "IMXI Form 8-K Item 8.01, filed 2026-10-02 (sec.gov 0001140361-26-038416); WU/IMXI joint PR 2026-08-14 'Update on Pending Acquisition' (BusinessWire/GlobeNewswire via FMP news); IMXI 10-Q for Q2-2026, filed 2026-08-10; FMP quote 2026-11-02 ($9.75)",
-   "verdict": null,
-   "kill_fact": null,
-   "analysis": "Verified from the 2026-10-02 8-K: the merger agreement is unchanged at $16 cash. The original HSR clearance lapsed after 2026-10-06, and a new filing on 2026-10-02 started a 30-day wait. The DFPI suspended its approval on 2026-08-14 \"pending further review\", and the parties said they did not expect reinstatement before 2026-10-06. Closing now requires both DFPI reinstatement and HSR expiry. The stock trades at $9.75 (+6.4% on the day, near the 52w low of $8.32, against a 200d average of $14.23), which prices a likely break, not a coin-flip. The contractual numerator is exempt from provenance re-derivation; June-30 10-Q shows cash $150.6M vs debt $113.8M, so standalone downside is cushioned, not zero. Gaps (web-search budget was exhausted, so these were not checked): why the DFPI suspended its approval (possibly compliance/AML), the outside date and extension mechanics, the termination and reverse-termination fees, and whether HSR expired or got early termination on ~Nov-1. Kept at WATCH because the gating approval is undated and the outside date is unknown. Upgrade to ACTIVE on a DFPI reinstatement filing or a confirmed outside date that leaves time."
-  },
-  {
    "symbol": "INBX",
-   "score": 5,
+   "score": 4,
    "tier": "WATCH",
-   "lane": "pdufa",
-   "catalyst": "FDA action on the ozekibart (INBRX-109) BLA for unresectable/metastatic conventional chondrosarcoma, PDUFA goal date 2027-04-14. The BLA was accepted with no filing review issues. Updated PFS and subgroup data come first, at CTOS on 2026-11-20.",
-   "dated_milestone": "2026-11-20 CTOS oral presentation (updated PFS and subgroups, ChonDRAgon), then the PDUFA goal date of 2027-04-14. Also in between: Q3 10-Q (Nov 2026) for cash and Oxford covenant terms.",
-   "instrument": "INBX common (NASDAQ), $72.93 on 2026-11-02, market cap about $1.07B",
-   "bloom_gates": "G1 yes: the counterparty is the FDA, and the BLA is formally accepted (PR 2026-06-15). G2 yes: the PDUFA goal date is set at 2027-04-14. G3 weak: there is no specific unpriced figure. The approval value is not contractual, and the only external number is an analyst PT of $197.50 (MarketBeat 2026-10-02), which per the rules is not inherited.",
-   "edge": "M-L. Run-up from the pre-catalyst base: +157% ($28.36 close on 2025-10-23, the day before the ChonDRAgon topline gap to $57, to $72.93 now). The stock has since given back 53% from the $155.29 high, and the binary is still forward. Remaining to a favorable resolution: about +30%, on my rough estimate of a return to the ~$95-100 pre-2026-10-28 level. This is NOT provenance-checked: approval value for a small orphan indication cannot be derived from contracts, and the market already holds a high approval probability given the 52% PFS risk reduction. Downside on a CRL: roughly -35-40%, to ~$45-50, with INBRX-106 HNSCC value as the floor. The asymmetry is roughly even, not clearly unpriced.",
-   "primary_source": "Inhibrx PR 'FDA Acceptance of BLA for Ozekibart' (PRNewswire, 2026-06-15); Inhibrx PR 'Amended Loan Agreement with Oxford Finance, $500M facility' (2026-07-16); Inhibrx PR conference schedule incl. CTOS 2026-11-20 (2026-10-13); FMP Q2-2026 balance sheet (filed 2026-08-13); FMP EOD price history (2025-09 to 2026-11-02)",
+   "lane": "binary_pdufa",
+   "catalyst": "FDA action on the ozekibart (INBRX-109) BLA for unresectable or metastatic conventional chondrosarcoma, PDUFA target date 2027-04-14, backed by the randomized registrational ChonDRAgon Phase 2 (about 52% reduction in risk of progression).",
+   "dated_milestone": "PDUFA 2027-04-14. The next dated item is today, 2026-11-20: the updated PFS and subgroup oral at CTOS in Seoul. Also watch the INBRX-106 HPV+ expansion and Phase 3 start, and any draw on the Oxford Term D loan or an equity raise.",
+   "instrument": "INBX common (NASDAQ), $74.33 on 2026-11-20 per FMP quote; market cap about $1.10B; 52-week range $57.30-$155.29",
+   "bloom_gates": "G1 (named counterparty: FDA, accepted BLA) + G2 (concrete dated commitment: PDUFA 2027-04-14). G3 is weak: chondrosarcoma is a small orphan market, so the approval value is not a clearly unpriced number on a $1.1B market cap that already carries INBRX-106 value.",
+   "edge": "M-L. The event is real, dated and forward, but most of the gain is already in the price. (a) Run-up: from the pre-ChonDRAgon base (52-week low about $28, MarketBeat 2026-10-02) to $74 is about +165%, so the registrational PFS win is already priced. The fall from the $155 high reflects other things, mainly the sell-off after the 2026-09-08 HNSCC data, not a doubt about the BLA. (b) Remaining: probability-weighted value about $88 (85% approval at about $97, 15% CRL at about $40), so about +19% expected. Approval alone gives about +30%; a CRL gives about -45%. Balance sheet: cash $199M against Oxford debt $277M (equity -$86M at Q3), with an up-to-$225M Term D at lender discretion. Debt sits ahead of the common, and burn makes dilution likely before or around launch.",
+   "primary_source": "FMP quote INBX 2026-11-20. FMP Q3-2026 balance sheet (10-Q filed 2026-11-13). Seeking Alpha 2026-09-14 and 2026-07-17 (BLA accepted, PDUFA 2027-04-14). Inhibrx PR 2026-07-16 (Oxford $500M facility). Inhibrx PR 2026-10-13 (CTOS ChonDRAgon updated-PFS oral on 2026-11-20). Gap: the BLA-acceptance PR itself was not retrieved because the web search budget was used up.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The PDUFA date of 2027-04-14 checks out against the company's own BLA-acceptance PR (2026-06-15, no filing review issues). The debt risk flagged in triage is real. Oxford expanded the facility to $500M on 2026-07-16 and funded $100M (Term C) on signing. That puts senior secured debt at about $275M+ (the Q2 balance sheet already carried ~$176M of non-current liabilities) against Q2 cash of $133M, plus the $100M, which is about $233M pro forma. Burn is about $28M+ per quarter, book equity is -$53M, and the further $225M Term D is at the lenders' sole discretion. So the equity sits behind a growing secured stack, and a CRL would likely mean a dilutive raise. One gap I could not close: a -23% drop on 2026-10-28 (from $95.66 to $73.29 on about 4x normal volume) came the day before the MSTS secondary-endpoints oral, and no press release explains it. It may have been a negative OS/secondary-endpoint signal, and that needs checking before CTOS. The web-search budget was exhausted, so the 10-Q covenant and milestone terms on the Oxford tranches were also not checked. Insider buying in Sep 2026 (CEO $2.6M at ~$106, director $1M at $100) and ~28% short interest are supportive, but those buys are now underwater. The score holds at 5 WATCH until the cause of the 10-28 drop and the CTOS PFS update are known."
+   "analysis": "The flag holds up: BLA accepted, PDUFA 2027-04-14 (Seeking Alpha 2026-07-17 and 2026-09-14), and the registrational PFS was positive. I could not confirm this in the company's own press release because the web search budget was used up, so the PDUFA date rests on secondary sources. But the stock is not 'unmoved'. It is still about 165% above the pre-readout base. The halving from $155 came with the HNSCC sell-off, an Oct-Nov slide whose cause I have not verified, and a levered balance sheet: $281M of debt against $199M of cash, with stockholders' equity of -$86M. The approval itself is a small orphan revenue event against a $1.1B market cap. The expected remaining gain is about +19%, with an asymmetric drop on a CRL and dilution risk, so the score is capped at 4 and the name stays on WATCH. Re-check after the CTOS PFS update (2026-11-20) and any financing news."
   },
   {
    "symbol": "IP",
    "score": 4,
    "tier": "WATCH",
    "lane": "spin_off",
-   "catalyst": "International Paper is separating its EMEA packaging business (formerly DS Smith) through an LSE listing with a Level II ADR, and is also weighing unsolicited sale bids. Per the FT, two unnamed PE firms are involved at under $6B, against the $9.9B IP paid in 2024.",
-   "dated_milestone": "EMEA Capital Markets Day in London on 2026-11-03, 13:00-17:00 GMT (information event only). No date has been given for a sale or spin decision or for completion. Next item: the Q4/FY26 print, around late Jan 2027.",
-   "instrument": "IP common (NYSE); also LSE: IPC",
-   "bloom_gates": "G2 partial: the separation is a board commitment (announced 2026-01-29, LSE-listing route confirmed 2026-10-14) but has no date. G1 fails: bidders are unnamed and IP calls the process early stage. G3 fails: the only figure is an FT estimate below $6B, at a loss to the purchase price, and the stock has already moved on it.",
-   "edge": "L. Run-up from the pre-event base of $31.90 (close 2026-10-14) to $36.83 (2026-11-02) is +15.5%: +6.9% on the 10/15 bid leak, the rest on the Q3 beat. Remaining upside is about 0-10% at best and could not be pinned down. Rough SoP: Packaging Solutions North America (PSNA) at about 8x a ~$2.6B midcycle EBITDA, plus EMEA at the reported sub-$6B value, less an estimated ~$10B of net debt. That gives roughly $30-36 per share, which sits at or below today's price. The figures are estimates; the 10-Q was not pulled. There are no preferreds ahead of the common, and any sale proceeds most likely go to paying down debt.",
-   "primary_source": "IP press releases on PRNewswire: 'Statement Regarding Possible EMEA Packaging Business Sale' (2026-10-15), 'EMEA Packaging Business Leaders to Host Capital Markets Day' (2026-10-14), 'Reports Third Quarter 2026 Results' (2026-10-28). FT bid report as cited by Motley Fool (2026-10-15). FMP EOD prices (2026-10-14 to 2026-11-02).",
+   "catalyst": "International Paper plans to spin off its EMEA Packaging business (ex-DS Smith) as a standalone listed company, keeping about a 20% stake. The standalone company held its Capital Markets Day on 2026-11-03 and is targeting EUR 480M of savings. On 2026-10-15 IP also issued a statement about press reports of a possible outright sale.",
+   "dated_milestone": "Capital Markets Day held 2026-11-03 (done). Next: Form 10 / UK prospectus, then record and distribution dates, targeted for Q1 2027 or earlier. No record or distribution date found in any press release up to 2026-11-20. The possible-sale statement (2026-10-15) has no follow-up yet.",
+   "instrument": "IP common (NYSE), $31.11 on 2026-11-20. There is no preferred stock. Net debt is $9.3B against a $16.5B market cap.",
+   "bloom_gates": "G2 only: a concrete, repeated separation commitment with a retained stake and a Capital Markets Day already held. G1 fails: no named buyer, and the sale is press speculation only. G3 fails: there is no specific unpriced figure. EMEA took a $1.38B goodwill impairment in Q3 2026 and IP has stopped giving EMEA guidance, so the separation looks like a value-neutral clean-up, not a hidden-value release.",
+   "edge": "L. (a) Run-up from the pre-catalyst base: negative. The stock is about 38% below its 52-week high of $50.25 (from FMP quote; the exact price before the 2026-01-29 announcement was not checked) and trades near its low of $29.26. The event has not re-rated the stock; the tape has punished it. (b) Remaining capture: cannot be re-derived. IP no longer gives EMEA numbers, EMEA was just written down by $1.38B, and on the Q3 numbers below a mechanical sum-of-parts shows no clear premium. Treat it as about 0% contractual upside, with any gain depending on North America re-rating. The equity, not the event, sets the score.",
+   "primary_source": "IP press releases on PRNewswire: Q3 2026 results (2026-10-28, $1.38B EMEA goodwill impairment, EMEA guidance withdrawn); statement on a possible EMEA sale (2026-10-15); Capital Markets Day notice (2026-10-14). FMP Q3 2026 balance sheet (10-Q filed 2026-11-04). MarketBeat and Fool coverage of the Baird conference (2026-11-11, 20% retained stake). FMP quote for 2026-11-20.",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The event is real and still ahead: a committed spin of EMEA via an LSE listing runs in parallel with a possible PE sale. But there are no named counterparties, no deadline and no price beyond an FT estimate below $6B, and the business has just taken a $1.38B goodwill impairment. The market has already added +15.5% since 10/14, and a rough SoP check does not support material upside above $36.83. FCF was -$267M in Q3, the dividend is being covered from borrowing, and IP has dropped EMEA guidance altogether. Score the equity, not the event: capped at 4 and WATCH. Upgrade only on a signed sale with a stated price and use of proceeds, or a dated spin record date. Gaps: web search was exhausted and the 10-Q was not read, so net debt (~$10B) and the EMEA debt allocation are estimates."
+   "analysis": "The spin is real and dated (announced 2026-01-29, Capital Markets Day 2026-11-03, about 20% retained stake), but no record or distribution date has been set. A possible-sale statement from 2026-10-15 adds a second, unconfirmed way the separation could happen. The capital-structure check (Q3 2026 balance sheet, filed 2026-11-04) shows no preferred stock ahead of the common, $10.1B of debt, negative quarterly free cash flow (-$267M), and a $1.38B EMEA goodwill impairment. The separation does not unlock a specific figure that is still unpriced, and the CEO called 2027 a \"slog\" (2026-11-11), so the score is capped at 4 (equity-driven, no G3). Gaps: only 4 of the ~6 lookups were made because the web-search budget ran out, so the record and distribution dates and the status of the sale talks could not be checked against SEC filings or LSE RNS."
   },
   {
    "symbol": "KBR",
-   "score": 4,
+   "score": 5,
    "tier": "WATCH",
    "lane": "spin_off",
-   "catalyst": "KBR plans to spin off Mission Technology Solutions as a separate listed company, Trinzic, Inc., on Jan 4, 2027. Management reaffirmed the timing on the Q3 call (Oct 29, 2026), and the board declared a pre-spin dividend payable Jan 15, 2027.",
-   "dated_milestone": "Spin expected to take effect 2027-01-04. Other dates: the record date for the regular dividend is 2026-12-15. When-issued trading in Trinzic and the record date for the distribution should start in mid/late Dec 2026; that date is not yet confirmed. After that, watch the first 2-6 weeks of Trinzic trading (Jan-Feb 2027) for index and mandate-driven forced selling.",
-   "instrument": "KBR common now. The better instrument is probably Trinzic common after the spin (bought into post-spin forced selling in Jan-Feb 2027) or post-spin RemainCo KBR (Sustainable Tech). There is no preferred stock or listed derivative specific to the event.",
-   "bloom_gates": "G2 (concrete commitment: separation into a named entity, Trinzic, Inc., with a specific Jan 4, 2027 date, reaffirmed 2026-10-29/30 and referenced in the 2026-10-14 dividend press release). G1 does not apply: no outside counterparty. G3 fails: no specific unpriced figure. The SoP gap is my rough estimate, not a disclosed number.",
-   "edge": "L-M. The spin was announced May 20, 2025 and has been public for about 17 months. The date is known and widely covered, so the event itself is fully known. The real edge comes after the spin: forced selling of Trinzic by holders whose mandates fit a Sustainable-Tech/engineering parent but not a government-services stub. That edge has a date but has not started yet. Run-up from the pre-catalyst base is NEGATIVE: about $55.5 before the announcement (2025-05-19 close $55.45) vs $39.89 today, a -28% drawdown. The stock is +33% off its 52-week low of $29.94 and +13% since Oct 8 ($35.18), helped by the Q3 beat (adj EPS $1.12 vs $1.01). Remaining capture: my rough SoP (MTS about 9x, ST about 12x, corporate cost and about $2.5B net debt deducted; not checked against the 10-Q) gives about $46-50 per share, roughly +15-25% from $39.89. That is a modest gap, and it depends on the market re-rating the parts rather than on any contractual amount.",
-   "primary_source": "GlobeNewswire 2026-10-29: \"KBR Reports Third Quarter Fiscal 2026 Results\" (revenue $2.0B +5%, adj EPS $1.12, outlook reaffirmed). MarketBeat 2026-10-30: Q3 call highlights (separation into KBR and Trinzic on track for Jan 4). GlobeNewswire 2026-10-14: KBR dividend declaration (Trinzic spin in Jan 2027, dividend paid 2027-01-15 to holders of record 2026-12-15). FMP quote 2026-11-02: $39.89, mkt cap $5.03B. FMP EOD 2025-05-19: $55.45, the base before the spin announcement.",
+   "catalyst": "KBR spins Mission Technology Solutions off as Trinzic, Inc. on 2027-01-04. Spinco financing is under way: Solar MTS Holdings priced $500M of 7.25% notes due 2035 on 2026-11-19, closing around 2026-12-04.",
+   "dated_milestone": "2026-12-04 Trinzic notes close; 2026-12-15 dividend record date; 2027-01-04 Trinzic launch (spin effective); when-issued trading should start late Dec 2026. Record and distribution ratio are not yet confirmed in what I read.",
+   "instrument": "KBR common (NYSE). After the spin, consider the parent and Trinzic separately. Forced index and mandate selling of either side in Jan 2027 is the classic entry window.",
+   "bloom_gates": "G2 met: hard spin date of 2027-01-04 per KBR PR of 2026-11-09, Form 10 filed 2026-09-30, $500M spinco notes priced 2026-11-19, Trinzic board named. G1 not applicable (no outside counterparty). G3 weak: the SoP gap is my own derivation, not a disclosed unpriced figure.",
+   "edge": "M. The event is real and dated, and the setup is the opposite of harvested. (a) Run-up from the pre-catalyst base is about -30%: the stock is $31.99 against a 52-week high of $45.37, about 7% above the 52-week low of $29.94, and below its 50-day and 200-day averages of about $36.5. (b) Remaining is about +31% to my provenance-checked SoP of about $42. Edge is capped at M for three reasons. The spin is fully known. The derating may reflect fundamentals (Q3 book-to-bill was 0.9x and the stock fell 3.3% on 11-20) rather than mispricing. And a spin does not by itself close a conglomerate discount.",
+   "primary_source": "KBR press release \"KBR Announces Future Board of Directors for Trinzic\" (GlobeNewswire, 2026-11-09; launch expected 2027-01-04); KBR press release \"Pricing of Trinzic's Senior Notes Offering\" (2026-11-19; $500M 7.25% due 2035, close ~2026-12-04); Form 10 public filing PR (2026-09-30); KBR Q3 FY26 10-Q balance sheet via FMP (filed 2026-10-29); FMP quote 2026-11-20 at $31.99",
    "verdict": null,
    "kill_fact": null,
-   "analysis": "The spin is real, dated, forward and reaffirmed (Q3 release 2026-10-29, call highlights 2026-10-30, dividend PR 2026-10-14). It is not a macro bet. Value has not been harvested: KBR trades about 28% below its pre-announcement price, so the market is not pricing a big spin premium. But the parts value is my own estimate and only about 15-25% above today's price. Gap in numerator provenance: the web search budget was used up, so I could not pull the latest 10-Q to check net debt, how debt will be split between KBR and Trinzic, or any leakage to the common from preferreds or pensions. I know of no preferred stock at KBR, but under the provenance rule I score the equity, not the event, and cap at 4. Keep as WATCH and re-score in mid-December, once the Form 10 shows the debt split and when-issued prices exist. The better entry is likely Trinzic during post-spin forced selling in Jan-Feb 2027, not KBR now."
+   "analysis": "The spin is confirmed with a hard date of 2027-01-04, and the spinco has already raised its own debt. That makes the date high-certainty, but the date is not itself the value driver. Capital structure from the Q3 FY26 balance sheet (2026-10-02): no preferred stock, total debt $2.78B, cash $0.44B, net debt $2.34B, market cap $4.03B, so EV is about $6.4B. Q3 adjusted EBITDA of $268M annualizes to about $1.05B, which is roughly 6.1x EV/EBITDA. A conservative 7.5x blended SoP gives about $5.5B of equity, or about $42 a share. Nothing in the waterfall blocks the common, and the new spinco notes only move existing leverage to Trinzic. Gaps: web search was unavailable this turn (budget exhausted), and the FMP segment split was garbled, so I could not check MTS against STS EBITDA or the distribution ratio. The SoP is a blended-multiple estimate, not a segment-by-segment build. Score stays at 5 (WATCH) until the Form 10 segment EBITDA and peer multiples confirm the parts are worth more than the whole."
   }
  ]
 }
