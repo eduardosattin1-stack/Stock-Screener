@@ -36,14 +36,30 @@ def gemini(base=782.0, verdict="A", sources=()):
 k = DIS.classify(claude(), gemini(), {"verdict": "REFUTED", "kill_scope": "moat"})
 check("kill: a refuted moat is a kill", k["kind"] == "kill")
 
-k = DIS.classify(claude(), gemini(), {"verdict": "CONFIRMED_WITH_CORRECTIONS", "kill_scope": "numbers",
-                                      "fact_disputes": [{"fact": "Americas operating profit", "ours": 285, "theirs": 230,
-                                                         "source": "FY25 results RNS", "source_date": "2026-03-03"}]})
-check("fact: a typed input dispute is a fact dispute", k["kind"] == "fact" and k["disputes"][0]["theirs"] == 230)
+FD = [{"fact": "Americas operating profit", "record_value": 285, "source_value": 230, "source": "FY25 results RNS",
+       "source_date": "2026-03-03"}]
+k = DIS.classify(claude(), gemini(), {"verdict": "CONFIRMED_WITH_CORRECTIONS", "kill_scope": "numbers", "fact_disputes": FD})
+check("fact: a typed input dispute that moves the value is a fact dispute", k["kind"] == "fact" and k["disputes"][0]["source_value"] == 230)
+
+legacy = DIS.fact_disputes({"fact_disputes": [{"fact": "net debt", "ours": 137, "theirs": 100}]})[0]
+check("legacy Week-47 ours/theirs: theirs is our record, ours the source, flagged as assumed",
+      legacy["record_value"] == 100 and legacy["source_value"] == 137 and legacy.get("orientation_assumed") is True)
+
+# Week 47 calibration: disputes on every name, self-labelled "material", values within a few percent
+k = DIS.classify(claude(base=100.0), gemini(base=104.0), {"verdict": "CONFIRMED_WITH_CORRECTIONS", "kill_scope": "numbers",
+                                                          "correction_severity": "material", "revised_fv_px": 97.0,
+                                                          "fact_disputes": FD})
+check("agree: disputes that barely move the value are not a disagreement (self-label ignored)",
+      k["kind"] == "agree" and len(k["disputes"]) == 1)
+k = DIS.classify(claude(base=100.0), gemini(base=104.0), {"verdict": "CONFIRMED_WITH_CORRECTIONS", "revised_fv_px": 85.0,
+                                                          "fact_disputes": FD})
+check("fact: disputes whose revised value moves ours by more than 10%", k["kind"] == "fact")
+k = DIS.classify(claude(base=100.0, verdict="A"), gemini(base=103.0, verdict="B"), {"verdict": "CONFIRMED"})
+check("agree: buy-now vs wait on the same value is not a split", k["kind"] == "agree")
 
 k = DIS.classify(claude(), gemini(), {"verdict": "REFUTED", "kill_scope": "numbers", "correction_severity": "material",
                                       "corrections_typed": [{"field": "base_fv_px", "from": 950, "to": 891}]})
-check("fact: a material correction to our numbers counts as a fact dispute", k["kind"] == "fact")
+check("fact: a refuted number in our record counts as a fact dispute", k["kind"] == "fact")
 check("output-only corrections are not listed as disputed inputs", k["disputes"] == [])
 
 k = DIS.classify(claude(as_of="2026-11-10"), gemini(sources=[{"what": "Q3 trading update", "date": "2026-11-12"}]),
@@ -113,6 +129,24 @@ with tempfile.TemporaryDirectory() as td:
     check("trigger: a pure judgement split never buys a non-seat re-debate", "CCC" not in ok)
     check("trigger: seats are left to their own trigger", "HELD" not in ok)
     check("trigger: a name already re-debated after the opinion does not fire", "OLD" not in ok)
+
+    # 5/5 split (2026-11-21): upside disputes get half the slots even when kills outnumber them
+    for s in ("K1", "K2", "K3", "UP1", "UP2", "DOWN"):
+        (pd / f"{s}.json").write_text(json.dumps({"last_full_debate": "2026-11-09"}), encoding="utf-8")
+
+    def blk2(kind, direction, theirs):
+        return {"generated_at": "2026-11-21", "status": "disagreement", "disagreement_kind": kind,
+                "disagreement_direction": direction, "their_base_fv_px": theirs, "our_base_fv_px": 100.0}
+    b2 = {"K1": blk2("kill", "more_bearish", 80), "K2": blk2("kill", None, 98), "K3": blk2("kill", "more_bearish", 70),
+          "UP1": blk2("fact", "more_bullish", 125), "UP2": blk2("new_fact", "more_bullish", 140),
+          "DOWN": blk2("fact", "more_bearish", 60)}
+    ok, deferred = ST.second_opinion_allowed(b2, pd, seats=set(), cap=4)
+    check("split: half the slots go to upside disputes, biggest gap first", {"UP1", "UP2"} <= ok)
+    check("split: the other half to kills, strongest first", len(ok & {"K1", "K2", "K3"}) == 2 and "DOWN" in deferred)
+    ok, _ = ST.second_opinion_allowed({k: v for k, v in b2.items() if k != "UP1" and k != "UP2"}, pd, seats=set(), cap=4)
+    check("split: with no upside candidates the protective side gets every slot", len(ok) == 4)
+    ok, _ = ST.second_opinion_allowed({"UP1": b2["UP1"], "UP2": b2["UP2"], "K1": b2["K1"]}, pd, seats=set(), cap=4)
+    check("split: unused protective slots are lent to upside", ok == {"UP1", "UP2", "K1"})
 
     b = ST.second_opinion_block({"status": "not_run"})
     check("block: a name Gemini never reached carries no second opinion", b is None)

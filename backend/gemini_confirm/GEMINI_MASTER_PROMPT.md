@@ -114,8 +114,8 @@ using the prompt's step-4 schema, PLUS one extra list:
   {
     "fact": "the input in plain words, e.g. Americas adjusted operating profit FY2025",
     "field": "short name, e.g. segment_operating_profit | shares_outstanding | net_debt | fx_rate | revenue | event_date",
-    "ours": 285,
-    "theirs": 230,
+    "record_value": 285,
+    "source_value": 230,
     "unit": "GBP m",
     "source": "Inchcape FY2025 results RNS, segment table",
     "source_date": "2026-03-03",
@@ -123,6 +123,9 @@ using the prompt's step-4 schema, PLUS one extra list:
   }
 ]
 ```
+
+`record_value` is the figure **in the first model's record** (what you are disputing);
+`source_value` is the figure **the primary source gives** (what you found). Never swap them.
 
 `fact_disputes` lists only **inputs** the first record got wrong or used without support: share
 counts, segment figures, net debt or cash, exchange rates, revenue or margins, event dates, the

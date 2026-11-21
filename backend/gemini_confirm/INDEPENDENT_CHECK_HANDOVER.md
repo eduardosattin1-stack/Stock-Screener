@@ -526,8 +526,10 @@ classified by code (`backend/gemini_confirm/_disagree.py`) as one of:
 | judgement | same facts, different value or grade | logged only; scored later on prices |
 | agree | within 15% and the same grade | logged only |
 
-Non-seat names get at most 10 re-debate slots a week (`SECOND_OPINION_U_CAP`), strongest evidence
-first. Claude's re-debate writes `second_opinion_check`: one entry per claim, ADOPTED, REJECTED or
+Non-seat names get at most 10 re-debate slots a week (`SECOND_OPINION_U_CAP`), split 5/5: five for
+names Gemini values materially higher with a disputed input or a newer dated fact (possible missed
+buys, biggest gap first), five for kills and downward disputes. A slot winner is re-debated even if
+that week's screen dropped it. Claude's re-debate writes `second_opinion_check`: one entry per claim, ADOPTED, REJECTED or
 UNVERIFIED with the source. The next pickup marks the ledger row resolved with those counts and how
 Claude's value moved. Over the weeks that answers which model gets its facts right. Still to build:
 scoring forward returns on judgement splits (step 4) and a "Disagreements" panel (step 5).

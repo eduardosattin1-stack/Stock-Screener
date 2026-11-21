@@ -163,8 +163,14 @@ pick, not only the ~10 seats.
   `_opus_debate/_disagreements.jsonl` (one row per name per Gemini week; resolved by our next full
   debate's typed `second_opinion_check`, step 1d of the debate prompt).
 - Non-seat names with an evidence-backed dispute (kill / fact / new_fact) get at most
-  `_seat_triggers.SECOND_OPINION_U_CAP` (10) full re-debates per run; a pure judgement split never buys
-  one. Advisory only: none of this moves a seat, weight, grade or conviction.
+  `_seat_triggers.SECOND_OPINION_U_CAP` (10) full re-debates per run, SPLIT 5/5 (Bruno 2026-11-21):
+  half to UPSIDE disputes (the second model values it >15% higher, backed by a disputed input or a newer
+  dated fact - possible missed buys), half to PROTECTIVE ones (kills first); unused slots are lent across.
+  Slot winners are unioned into the universe even when the week's screen dropped them. A pure judgement
+  split never buys a slot. Advisory only: none of this moves a seat, weight, grade or conviction.
+- Kinds are judged by MEASURED effect, not the second model's own "material" label (Week 47: it called
+  70 of 70 corrections material). `fact_disputes` fields are `record_value` (ours) / `source_value`
+  (the filing); Week 47 used ambiguous ours/theirs, mapped theirs->record and flagged `orientation_assumed`.
 - Antigravity instructions: `gemini_confirm/GEMINI_MASTER_PROMPT.md` (copied into each week folder) and
   `gemini_confirm/INDEPENDENT_CHECK_HANDOVER.md`. Tests: `backend/tests/test_disagreements.py`,
   `backend/tests/test_gemini_export_blind.py`.

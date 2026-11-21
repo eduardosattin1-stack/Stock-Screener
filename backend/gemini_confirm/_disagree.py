@@ -22,6 +22,7 @@ import re
 from pathlib import Path
 
 CONFIRM_GAP = 0.15
+REVISION_GAP = 0.10
 HARD_KILL_SCOPES = {"thesis", "moat", "catalyst"}
 OUTPUT_FIELDS = {"bear_px", "base_fv_px", "bull_px", "downside_floor_px", "sop_fair_value", "risk_reward",
                  "verdict", "conviction", "catalyst_status_note"}
@@ -71,15 +72,27 @@ def fact_disputes(skA):
     master prompt asks for since 2026-11-19; falls back to typed corrections on input fields."""
     sk = skA or {}
     out = []
+    # record_value = the figure in OUR record; source_value = the figure the primary source gives.
+    # Week 47 (the first run) used "ours"/"theirs", which the second model read from ITS side: in 38 of
+    # the 43 disputes whose text names the record's figure, "theirs" was our record. So legacy rows map
+    # theirs -> record_value, ours -> source_value, flagged orientation_assumed (the re-debate verifies
+    # every figure against the filing anyway).
     for f in sk.get("fact_disputes") or []:
-        if isinstance(f, dict) and (f.get("fact") or f.get("field")):
-            out.append({"fact": str(f.get("fact") or f.get("field"))[:160], "ours": f.get("ours"),
-                        "theirs": f.get("theirs"), "source": str(f.get("source") or "")[:200],
-                        "source_date": str(f.get("source_date") or "")[:10] or _first_date(f.get("source"))})
+        if not (isinstance(f, dict) and (f.get("fact") or f.get("field"))):
+            continue
+        legacy = "record_value" not in f and "source_value" not in f
+        out.append({"fact": str(f.get("fact") or f.get("field"))[:160],
+                    "field": str(f.get("field") or "")[:60] or None,
+                    "record_value": f.get("theirs") if legacy else f.get("record_value"),
+                    "source_value": f.get("ours") if legacy else f.get("source_value"),
+                    "unit": f.get("unit"), "source": str(f.get("source") or "")[:200],
+                    "source_date": str(f.get("source_date") or "")[:10] or _first_date(f.get("source")),
+                    **({"orientation_assumed": True} if legacy and ("ours" in f or "theirs" in f) else {})})
     for c in sk.get("corrections_typed") or []:
         if isinstance(c, dict) and c.get("field") and c.get("field") not in OUTPUT_FIELDS:
-            out.append({"fact": str(c["field"])[:160], "ours": c.get("from"), "theirs": c.get("to"),
-                        "source": str(c.get("basis") or "")[:200], "source_date": _first_date(c.get("basis"))})
+            out.append({"fact": str(c["field"])[:160], "field": str(c["field"])[:60], "record_value": c.get("from"),
+                        "source_value": c.get("to"), "unit": None, "source": str(c.get("basis") or "")[:200],
+                        "source_date": _first_date(c.get("basis"))})
     return out
 
 
@@ -99,14 +112,22 @@ def classify(claude_rec, gemini_rec, skA, gemini_grade=None):
     disputes = fact_disputes(sk)
     asof = claude_as_of(claude_rec)
     newer = [{"date": d, "what": w} for d, w in dated_sources(gemini_rec, sk) if asof and d > asof][:6]
-    differs = (gap is not None and abs(gap) > CONFIRM_GAP) or grade_split
+    # MEASURED effect, not the second model's own label (2026-11-21, Week 47: Gemini called 70 of 70
+    # corrections "material" - including ones that moved our value 2% - and listed disputed inputs on
+    # every name). A split counts when the values differ by more than 15%, its skeptic's revised value
+    # moves ours by more than 10%, or one side would pass while the other would buy or wait.
+    rev = _num(sk.get("revised_fv_px"))
+    rev_moves = bool(rev and cb and abs(rev / cb - 1) > REVISION_GAP)
+    pass_split = grade_split and "C" in (c_grade, g_grade)
+    differs = (gap is not None and abs(gap) > CONFIRM_GAP) or pass_split
     why = []
     if verdict == "REFUTED" and scope in HARD_KILL_SCOPES:
         kind = "kill"
         why.append(f"its skeptic refuted our {scope}")
-    elif disputes or (verdict in ("REFUTED", "CONFIRMED_WITH_CORRECTIONS") and scope == "numbers" and severity == "material"):
+    elif (disputes and (differs or rev_moves)) or verdict == "REFUTED":
         kind = "fact"
-        why.append(f"{len(disputes)} disputed input(s)" if disputes else "a material correction to our numbers")
+        why.append(f"{len(disputes)} disputed input(s) that move the value" if disputes
+                   else "its skeptic refuted a number in our record")
     elif newer and differs:
         kind = "new_fact"
         why.append(f"it cites {len(newer)} source(s) dated after our record ({asof})")
@@ -115,6 +136,8 @@ def classify(claude_rec, gemini_rec, skA, gemini_grade=None):
         why.append("same facts, different value or grade")
     else:
         kind = "agree"
+        if disputes:
+            why.append(f"{len(disputes)} disputed input(s) that do not change the value much")
     if gap is not None:
         why.append(f"its value is {gap * 100:+.0f}% from ours")
     if grade_split:

@@ -131,18 +131,23 @@ def second_opinion_block(entry, week=None, generated_at=None, model=None):
                                       for c in (sk.get("corrections_typed") or []) if isinstance(c, dict)][:8],
         "fact_disputes": [f for f in (sk.get("fact_disputes") or []) if isinstance(f, dict)][:8],
         "disagreement_kind": entry.get("disagreement_kind"),
+        "disagreement_direction": entry.get("disagreement_direction"),
     }
 
 
 def second_opinion_allowed(blocks, prior_dir, seats, cap=SECOND_OPINION_U_CAP):
     """(allowed, deferred): the NON-seat names a second-opinion dispute may pull into a full re-debate
     this run (2026-11-19, Bruno: the disagreement must cover every debated pick, not only the seats).
-    Only evidence-backed kinds qualify (SECOND_OPINION_EVIDENCE_KINDS); strongest kind first, then the
-    biggest value gap; at most `cap`. Seats are excluded - they keep their own uncapped trigger."""
+    Only evidence-backed kinds qualify (SECOND_OPINION_EVIDENCE_KINDS). Seats are excluded - they keep
+    their own uncapped trigger.
+    SPLIT (2026-11-21, Bruno: "split 5/5"): half the slots go to UPSIDE disputes - the second model
+    values the name materially higher, backed by a disputed input or a newer dated fact (the possible
+    missed buys) - biggest gap first; the other half to PROTECTIVE ones (kills, then downward fact /
+    new-fact disputes), strongest kind first. A side with too few candidates lends its slots to the other."""
     import json as _json
     from pathlib import Path as _P
     order = {k: i for i, k in enumerate(SECOND_OPINION_EVIDENCE_KINDS)}
-    cand = []
+    up, prot = [], []
     for sym, b in (blocks or {}).items():
         if sym in (seats or ()) or not isinstance(b, dict):
             continue
@@ -157,9 +162,24 @@ def second_opinion_allowed(blocks, prior_dir, seats, cap=SECOND_OPINION_U_CAP):
             continue
         tb, ob = _num(b.get("their_base_fv_px")), _num(b.get("our_base_fv_px"))
         gap = abs(tb / ob - 1) if tb and ob else 0.0
-        cand.append((order[kind], -gap, sym))
-    cand.sort()
-    return {s for _, _, s in cand[:cap]}, [s for _, _, s in cand[cap:]]
+        if kind in ("fact", "new_fact") and str(b.get("disagreement_direction") or "") == "more_bullish":
+            up.append((-gap, sym))
+        else:
+            prot.append((order[kind], -gap, sym))
+    up.sort()
+    prot.sort()
+    up_s, prot_s = [s for _, s in up], [s for _, _, s in prot]
+    half = cap // 2
+    take_up, take_prot = up_s[:half], prot_s[:cap - half]
+    spare = cap - len(take_up) - len(take_prot)
+    if spare > 0:                                  # lend unused slots to the other side
+        extra_up = up_s[len(take_up):len(take_up) + spare]
+        take_up += extra_up
+        spare -= len(extra_up)
+        take_prot += prot_s[len(take_prot):len(take_prot) + spare]
+    allowed = set(take_up) | set(take_prot)
+    deferred = [s for s in prot_s + up_s if s not in allowed]
+    return allowed, deferred
 
 
 def second_opinion_trigger(pr, block):

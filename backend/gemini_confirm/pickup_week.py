@@ -185,6 +185,7 @@ def pickup(week_dir, push=True):
                                                  e["gemini"]["grade"], skA)
             dis = DIS.classify(claude, rec, skA, gemini_grade=e["gemini"]["grade"])
             e["disagreement_kind"], e["gap_pct"], e["disagreement"] = dis["kind"], dis["gap_pct"], dis
+            e["disagreement_direction"] = dis["direction"]
             ledger_rows.append({
                 "week": picks["week"], "picked_up_at": out["generated_at"], "symbol": s, "held_in": e["books"],
                 "status": e["status"], "kind": dis["kind"], "direction": dis["direction"], "gap_pct": dis["gap_pct"],
