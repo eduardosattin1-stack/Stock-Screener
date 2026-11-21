@@ -1,0 +1,53 @@
+{
+  "checked": 6,
+  "results": [
+    {
+      "symbol": "CAPR",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "2026-11-22",
+      "note": "As of 2026-11-19, web searches found no approval and no new CRL for deramiocel. The 2026-11-22 PDUFA date still stands (the major-amendment extension moved it from 08-22). Roth Capital puts the odds at 25% approval and 75% delay or CRL (lifesciencedaily.news / capricor.com IR). Re-check after 11-22."
+    },
+    {
+      "symbol": "CMPS",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "SLIPPED",
+      "new_date": "2027-01-15",
+      "note": "Interim milestone went favorably: Compass said on 2026-11-09 that the rolling COMP360 NDA for TRD is complete (Psychiatric Times / HCPLive, 2026-11-09), backed by COMP005, COMP006 and the Ph2b. The terminal FDA action is still ahead and now has a firm clock: under the CNPV's targeted 1-2 month review that points to about Jan 2027 (new_date is my estimate), with launch guided for H1-27 after DEA rescheduling."
+    },
+    {
+      "symbol": "INBX",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "",
+      "note": "CTOS updated PFS/subgroup oral presentation is still scheduled for 2026-11-20 in Seoul (preview coverage), and the terminal PDUFA date of 2027-04-14 is unchanged (Inhibrx PR 2026-06-15). The Q3 results (2026-11-13, BioSpace) show $199.5M cash against a $275M loan; one secondary source (panabee) mentions FDA Form 483 observations at both CMOs, which I could not confirm and which should be checked."
+    },
+    {
+      "symbol": "SVRA",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "",
+      "note": "As of 2026-11-19, two web searches turned up no FDA approval and no complete response letter for the MOLBREEVI BLA. The PDUFA goal date is still 2026-11-22, set by the April 2026 three-month extension (oindpnews 2026-04; mychesco/panabee pre-PDUFA coverage). Check again on 11-20 to 11-23, because the goal date is a Sunday and the action could come early."
+    },
+    {
+      "symbol": "BIP",
+      "still_forward": false,
+      "fired": true,
+      "outcome": "FIRED_GOOD",
+      "new_date": "",
+      "note": "Fired favorably. On 2026-11-05 Brookfield said in a GlobeNewswire release that it had all required approvals (BIPC vote and BC final order), and on 2026-11-19 a second release announced the simplification complete, with BIP and BIPC now combined as Brookfield Infrastructure Partners Inc. Any index-inclusion demand comes after the close and was not checked here."
+    },
+    {
+      "symbol": "MFIC",
+      "still_forward": true,
+      "fired": false,
+      "outcome": "FORWARD",
+      "new_date": "",
+      "note": "The ARCC-MFIC merger signed on 2026-10-27 (about $10.88/sh) is still pending. Searches on 2026-11-19 found no S-4 or vote date and no break, and the 2026-11-05 date was only the cancelled Q3 call, not a deal step. Inside Arbitrage still expects a 1H-2027 close (SEC Form 425, MFIC; insidearbitrage.com)."
+    }
+  ]
+}
