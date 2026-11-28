@@ -175,6 +175,30 @@ pick, not only the ~10 seats.
   `gemini_confirm/INDEPENDENT_CHECK_HANDOVER.md`. Tests: `backend/tests/test_disagreements.py`,
   `backend/tests/test_gemini_export_blind.py`.
 
+### Screen checks in prep (2026-11-28, Bruno, after the Week 48 basket audit)
+
+Three independent checks of the 235 basket names (our debates, agent checks, Gemini) agreed: the screen
+picks the cheap side of the market (blind control test: median +6% vs -4.5% for matched non-basket names)
+but the SIZE of its discount ranks nothing - 0 of 42 names it called >80% undervalued held up, and the six
+earnings / cash-flow baskets held in about 2 of 167 entries. Results: `_opus_debate/basket_screen_check_2026-11-27.csv`,
+`_opus_debate/screen_control_test_2026-11-27.json`, `Documents\Speculair\2026\Week 48 baskets\`.
+- `graham_revised` joins `fundamental_momentum` in prep's `RETIRED_METHS` (debate universe only; the scan
+  still emits both baskets) and is dropped from the compounder-discount lane's model count.
+- Intake ranks on basket AGREEMENT (2 baskets +2, 3+ +3, convergence +1), and a name whose only screen
+  support is a fair value above `SCREEN_FV_FLAG_X` (3x) its price loses 3.
+- `_screen_checks` adds a "SCREEN DATA CHECKS" block to the bundle's metrics for >3x fair values, splits and
+  spin-offs in the last 450 days (FMP `/stable/splits`, which also lists spin-offs), and a screen price far
+  from the live quote. Advisory only: no grade, weight, seat or conviction. Test: `backend/tests/test_screen_checks.py`.
+- Scan side (built 2026-11-28 on ux-revamp, live only after a deploy to main - Bruno's call):
+  `save_methodology_picks` ranks the six earnings / cash-flow baskets (`AGREEMENT_RANKED`, graham included -
+  it stays a published basket) on how many methods see a plausible 10-67% discount first, capped discount
+  second; drops a fair value above 3x the price unless two OTHER methods agree; drops names with a spin-off
+  in `SPINOFF_LOOKBACK_D` (450d). Each pick publishes `methods_agree`. Rank baskets and convergence unchanged.
+  Replay of the 2026-11-21 scan, judged by independent valuations: the 24 names it dropped had a median
+  -1.9% (62% not cheap), the 18 it added +3.5% (35% not cheap); six-basket entries 6.9% -> 9.0% median.
+  A real but modest gain - the larger defects (financials in non-financial baskets, debt/minorities,
+  European by-nature gross profit) are untouched. Test: `backend/tests/test_basket_agreement.py`.
+
 ## Other standing notes
 
 - `apply_macro_tilt` / `regime_composite_floor` in `macro_regime.py` are imported but

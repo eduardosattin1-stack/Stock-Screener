@@ -5621,6 +5621,102 @@ def _carry_or_debate(sym, sc, real_tx, prior_dir, seat_relevant, age_allowed=Non
 RUN_LOCK_H = 24                       # a run that started within this window and has not published is "in flight"
 RUN_STATE = ROOT / "_run_state.json"
 
+# SCREEN CHECKS (2026-11-28, Bruno, after the Week 48 basket audit). Three independent checks of the
+# 235 basket names found that the screen's discount SIZE ranks nothing: of 42 names it called >80%
+# undervalued none held, and the biggest claims were broken inputs - CTVA's spin-off (2026-10-01) left
+# pre-spin cash flows against the post-spin price, SNDK's 8:1 split (2026-11-20) was not rescaled, KD
+# counted amortisation twice. The screen does pick the cheap side of the market (blind control test:
+# median +6% vs -4.5% for matched non-basket names), so it stays the net; these checks only stop its
+# right tail from buying debate slots and tell the committee which inputs to distrust.
+# Advisory only: they reorder intake and add a note to the bundle, never a grade, weight or seat.
+SCREEN_FV_FLAG_X = 3.0                # a screen fair value above this multiple of the price is unverified
+CORP_ACTION_LOOKBACK_D = 450          # splits / spin-offs this recent make the per-share history suspect
+SCREEN_PRICE_BAND = (0.67, 1.5)       # screen price vs live quote outside this band -> flag
+SCREEN_TAGS = {"apex", "value_apex", "value_drawdown", "neglect_orphan", "quality_discount",
+               "fresh_crash", "second_opinion"}     # universe tags that are not screen baskets
+
+
+def _corp_actions(syms, fmp_key, lookback_d=CORP_ACTION_LOOKBACK_D, today=None):
+    """{SYM: [{date, kind, ratio}]} for splits and spin-offs inside the lookback, from FMP /stable/splits
+    (its splitType carries "spin-off" as well as "stock-split"). {} for a name on any failure."""
+    from concurrent.futures import ThreadPoolExecutor
+    from datetime import timedelta
+    if not fmp_key or not syms:
+        return {}
+    cutoff = ((today or datetime.now()) - timedelta(days=lookback_d)).strftime("%Y-%m-%d")
+
+    def one(s):
+        try:
+            r = requests.get("https://financialmodelingprep.com/stable/splits",
+                             params={"symbol": s, "apikey": fmp_key}, timeout=20).json()
+        except Exception:
+            return s, []
+        out = []
+        for e in (r if isinstance(r, list) else []):
+            d = str(e.get("date") or "")[:10]
+            if d >= cutoff:
+                out.append({"date": d, "kind": str(e.get("splitType") or "split"),
+                            "ratio": f"{e.get('numerator')}:{e.get('denominator')}"})
+        return s, out
+
+    with ThreadPoolExecutor(max_workers=8) as ex:
+        return {s: v for s, v in ex.map(one, sorted(syms)) if v}
+
+
+def _num(v):
+    """Plain number for agent-facing text: 397,100 / 39.86 / 9.135 - never 3.971e+05."""
+    a = abs(v)
+    return f"{v:,.0f}" if a >= 1000 else (f"{v:,.2f}" if a >= 10 else f"{v:,.4g}")
+
+
+def _screen_checks(sym_meths, meth_src, retired, live_px, corp):
+    """Per-name screen-data warnings -> ({SYM: [plain sentences]}, implausible_only set).
+    implausible_only = every live screen basket the name sits in prices it above SCREEN_FV_FLAG_X x
+    its price, so nothing but the screen's least trustworthy claim brought it in."""
+    fv = {}
+    for meth, b in (meth_src or {}).items():
+        if meth in retired:
+            continue
+        for p in (b.get("picks", b) if isinstance(b, dict) else b) or []:
+            if isinstance(p, dict) and p.get("symbol"):
+                fv.setdefault(p["symbol"], []).append((meth, p.get("fair_value"), p.get("price")))
+    notes, implausible_only = {}, set()
+    for s in sym_meths:
+        msgs, ratios = [], []
+        for meth, f, px in fv.get(s, []):
+            if isinstance(f, (int, float)) and isinstance(px, (int, float)) and px > 0 and f > 0:
+                x = f / px
+                ratios.append(x)
+                if x > SCREEN_FV_FLAG_X:
+                    msgs.append(f"the {meth} screen puts fair value at {_num(f)} against a screen price of "
+                                f"{_num(px)} ({x:.1f}x). Treat that figure as unverified: check one-off gains, "
+                                f"debt and minority interests, the share count and the currency before using it.")
+        if ratios and all(x > SCREEN_FV_FLAG_X for x in ratios):
+            implausible_only.add(s)
+        for a in corp.get(s, []):
+            msgs.append(f"a {a['kind']} took effect on {a['date']} (ratio {a['ratio']}). Per-share history and "
+                        f"any screen figure built from it before that date may not be comparable - adjust or "
+                        f"value the business as it stands after the event.")
+        lp = live_px.get(str(s).upper())
+        spx = next((px for _, _, px in fv.get(s, []) if isinstance(px, (int, float)) and px > 0), None)
+        if isinstance(lp, (int, float)) and lp > 0 and spx:
+            r = spx / lp
+            if not (SCREEN_PRICE_BAND[0] <= r <= SCREEN_PRICE_BAND[1]):
+                msgs.append(f"the screen's price ({_num(spx)}) is {abs(r - 1) * 100:.0f}% away from the live "
+                            f"quote ({_num(lp)}) - a split, corporate action or unit/currency error is likely.")
+        if msgs:
+            notes[s] = msgs
+    return notes, implausible_only
+
+
+def _screen_checks_block(msgs):
+    """The bundle text the debate agents read (appended to metrics_str)."""
+    if not msgs:
+        return ""
+    return ("\n\n=== SCREEN DATA CHECKS (automatic; the screen's numbers below did not pass a plausibility "
+            "check - verify against primary sources, never use them as given) ===\n"
+            + "\n".join(f"- {m}" for m in msgs))
+
 
 def _read_live_json(path, tries=3, cat_timeout=420):
     """(obj, how) for one live GCS object: the normal reader with retries, then `gcloud storage cat`
@@ -5852,7 +5948,10 @@ def prep():
     # it, but it no longer feeds the debate universe, the intake, or the published baskets. The
     # scan-side screen is deliberately untouched (production job stays as-is; retirement is
     # consumption-side). A name also carried by any OTHER methodology still enters via that one.
-    RETIRED_METHS = {"fundamental_momentum"}
+    # graham_revised joined 2026-11-28 (Bruno, Week 48 basket audit): 0 of 30 entries held up in any of
+    # three independent checks, 24 of 30 claimed >80% undervalued, and its names were the worst group after
+    # debate (33% graded a pass). A name also in another basket still enters through that one.
+    RETIRED_METHS = {"fundamental_momentum", "graham_revised"}
     for meth, b in meth_src.items():
         if meth in RETIRED_METHS:
             continue
@@ -6110,7 +6209,8 @@ def prep():
     # (extreme cheapness is the trap signature and is deliberately NOT rewarded). The grader is
     # untouched - this changes what reaches the judges, never how they judge.
     CD_CAP = 3
-    _CD_MODELS = ("dcf_fcff_mos", "epv_mos", "graham_revised_mos", "owner_earnings_mos",
+    # graham_revised_mos left out 2026-11-28 with the basket (see RETIRED_METHS)
+    _CD_MODELS = ("dcf_fcff_mos", "epv_mos", "owner_earnings_mos",
                   "rd_capitalized_dcf_mos", "iv15_deep_value_mos")
     _cd = []
     for _s0 in scan.get("stocks", []):
@@ -6146,6 +6246,23 @@ def prep():
               + ", ".join(f"{t[2]} [{t[3]}]" for t in (_cd_new + _cd_old)))
     else:
         print("compounder-discount intake: 0 qualified this week")
+
+    # SCREEN CHECKS (2026-11-28): plausibility of the screen's own numbers, see SCREEN_FV_FLAG_X.
+    # Best-effort: any failure leaves every name unflagged and prep carries on unchanged.
+    screen_notes, screen_implausible = {}, set()
+    try:
+        _fk = E.get_key("FMP_API_KEY")
+        _sc_live = _numeric_core.fetch_live_quotes(sorted(sym_meths), fmp_key=_fk)
+        _sc_corp = _corp_actions(sorted(sym_meths), _fk)
+        screen_notes, screen_implausible = _screen_checks(sym_meths, meth_src, RETIRED_METHS, _sc_live, _sc_corp)
+        _fvx = sorted(s for s, m in screen_notes.items() if any("screen puts fair value" in x for x in m))
+        _ca = sorted(_sc_corp)
+        _pm = sorted(s for s, m in screen_notes.items() if any("away from the live quote" in x for x in m))
+        print(f"screen checks: {len(screen_notes)} name(s) flagged | fair value >{SCREEN_FV_FLAG_X:g}x price: "
+              f"{len(_fvx)} (only support: {len(screen_implausible)}) | split/spin-off in {CORP_ACTION_LOOKBACK_D}d: "
+              f"{_ca} | screen price off live: {_pm} | live quotes {len(_sc_live)}/{len(sym_meths)}")
+    except Exception as _e:
+        print(f"WARN screen checks skipped ({_e}) - no plausibility notes this week")
 
     # SEAT-RELEVANT finalists (apex + runners, BOTH books) always re-debate - the money layer stays weekly.
     seat_relevant = set()
@@ -6258,6 +6375,7 @@ def prep():
         # TTM/latest-quarter override is now appended inside E._build_debate_metrics (_ttm_block),
         # so it applies to BOTH the production debate and this Opus prep - no duplicate needed here.
         metrics = (metrics or "") + _fmp_segments(sym)   # segment revenue for a true SoP (best-effort)
+        metrics += _screen_checks_block(screen_notes.get(sym))   # 2026-11-28 plausibility notes (advisory)
         meths = sym_meths[sym]
         # Structured row for the Radar peer-clustering phase (relative-value lever, see _WORKFLOW_TEMPLATE).
         radar_universe.append({"symbol": sym, "sector": sc.get("sector", ""),
@@ -6542,8 +6660,18 @@ def prep():
                 score += 2
             if r.startswith("wash-out arrived"):  # WASHOUT_U_CAP overflow: the wait was answered
                 score += 5
-            if len([m for m in meths if m not in ("apex", "value_drawdown")]) >= 2:
-                score += 2
+            # AGREEMENT, NOT DISCOUNT SIZE (2026-11-28, Bruno): names several screen baskets agree on were
+            # the best group after debate (42% at a 20%+ debated discount vs 18% overall), and convergence
+            # - itself an agreement basket - held best in all three Week 48 checks. Two baskets +2 (as
+            # before), three or more +3, convergence +1. A name whose ONLY screen support is a fair value
+            # above SCREEN_FV_FLAG_X x its price loses 3: those claims held up 0 times in 42.
+            n_screen = len({m for m in meths if m not in SCREEN_TAGS})
+            if n_screen >= 2:
+                score += 2 if n_screen == 2 else 3
+            if "convergence" in meths:
+                score += 1
+            if s in screen_implausible:
+                score -= 3
             if r.startswith("prior catalyst PENDING_HARD") or r.startswith("escalated"):
                 score += 2
             if "value_drawdown" in meths:

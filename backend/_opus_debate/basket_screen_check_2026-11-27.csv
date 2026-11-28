@@ -1,0 +1,348 @@
+symbol,basket,screen_discount_pct,our_debate_discount_pct,gemini_discount_pct,result,screen_fair_value_x_price,debate_grade,debate_carried_forward
+OKEA.OL,acquirers_multiple,20.0,10.5,,HOLDS,1.2,B,True
+JET2.L,acquirers_multiple,19.9,12.8,8.5,HOLDS,1.2,B,False
+CNA.L,acquirers_multiple,19.8,2.4,,NOT_CHEAP,1.2,C,True
+SOFF.OL,acquirers_multiple,19.8,6.0,,HOLDS,1.2,B,True
+000270.KS,acquirers_multiple,19.8,26.7,31.4,HOLDS,1.2,A,False
+0762.HK,acquirers_multiple,19.8,19.0,,HOLDS,1.2,C,True
+PNOR.OL,acquirers_multiple,19.7,14.8,,HOLDS,1.2,B,True
+DAN.MI,acquirers_multiple,19.6,3.5,13.5,NOT_CHEAP,1.2,C,False
+HBR.L,acquirers_multiple,19.5,-29.6,,NOT_CHEAP,1.2,B,True
+0135.HK,acquirers_multiple,19.5,11.5,,HOLDS,1.2,B,True
+CTY,acquirers_multiple,19.5,0.0,-27.1,NOT_CHEAP,1.19,C,False
+1898.HK,acquirers_multiple,19.5,14.6,12.3,HOLDS,1.19,C,False
+009540.KS,acquirers_multiple,19.4,16.9,25.1,HOLDS,1.19,A,False
+9973.HK,acquirers_multiple,19.4,22.6,,HOLDS,1.19,A,True
+1919.HK,acquirers_multiple,19.4,1.2,,NOT_CHEAP,1.19,B,True
+CALM,acquirers_multiple,19.4,11.3,,HOLDS,1.19,B,True
+DBC.WA,acquirers_multiple,19.3,3.4,,NOT_CHEAP,1.19,B,True
+EQNR.OL,acquirers_multiple,19.3,-1.4,1.6,NOT_CHEAP,1.19,B,False
+PDD,acquirers_multiple,19.3,18.3,13.6,HOLDS,1.19,A,False
+TFI.PA,acquirers_multiple,19.2,3.6,6.1,NOT_CHEAP,1.19,C,False
+DOFG.OL,acquirers_multiple,19.2,5.9,13.4,HOLDS,1.19,C,False
+AKRBP.OL,acquirers_multiple,19.2,6.9,,HOLDS,1.19,B,True
+0914.HK,acquirers_multiple,19.1,18.1,,HOLDS,1.19,B,True
+2600.HK,acquirers_multiple,19.1,18.2,,HOLDS,1.19,A,True
+INCH.L,acquirers_multiple,18.9,19.0,11.5,HOLDS,1.19,A,False
+IAG.L,acquirers_multiple,17.4,8.0,,HOLDS,1.17,B,True
+SFM,convergence,45.8,22.5,,OVERSTATED,1.46,B,True
+JD.L,convergence,40.7,-1.3,,NOT_CHEAP,1.41,C,True
+2097.HK,convergence,38.0,16.7,,OVERSTATED,1.38,B,True
+NWG.L,convergence,33.8,15.5,12.1,OVERSTATED,1.34,C,False
+ELEC.PA,convergence,29.4,7.9,,NOT_CHEAP,1.29,B,True
+ANIM.MI,convergence,27.4,15.3,9.9,HOLDS,1.27,B,False
+6690.HK,convergence,27.4,9.8,,NOT_CHEAP,1.27,B,True
+NORION.ST,convergence,26.7,-2.3,11.7,NOT_CHEAP,1.27,B,False
+BBWI,convergence,24.3,18.6,15.1,HOLDS,1.24,A,False
+AX,convergence,24.1,17.0,14.6,HOLDS,1.24,A,False
+6936.HK,convergence,23.9,12.1,20.3,HOLDS,1.24,B,False
+WKL.AS,convergence,23.2,22.5,13.2,HOLDS,1.23,A,False
+GNTX,convergence,23.2,20.4,,HOLDS,1.23,A,True
+PSSA3.SA,convergence,21.8,8.8,12.6,HOLDS,1.22,B,False
+ANF,convergence,21.8,5.6,-3.8,NOT_CHEAP,1.22,B,False
+2020.HK,convergence,21.7,18.5,,HOLDS,1.22,B,True
+8725.T,convergence,21.3,-4.0,,NOT_CHEAP,1.21,B,True
+KARE.AT,convergence,20.9,20.7,12.7,HOLDS,1.21,A,False
+POST,convergence,20.8,13.2,22.2,HOLDS,1.21,B,False
+FNTN.DE,convergence,20.8,9.3,,HOLDS,1.21,B,True
+EVO.ST,convergence,20.6,-0.9,5.3,NOT_CHEAP,1.21,B,False
+SFD,convergence,19.7,12.4,14.0,HOLDS,1.2,B,False
+STRA,convergence,18.8,26.0,23.9,HOLDS,1.19,A,False
+WBD.MI,convergence,18.7,11.2,,HOLDS,1.19,B,True
+NOG,convergence,18.4,3.3,,NOT_CHEAP,1.18,B,True
+0168.HK,convergence,16.7,23.9,21.3,HOLDS,1.17,B,False
+MCY,convergence,16.3,9.8,,HOLDS,1.16,B,True
+FHB,convergence,16.3,13.2,14.8,HOLDS,1.16,B,False
+ORI,convergence,16.0,1.6,,HOLDS,1.16,B,True
+2333.HK,dcf_fcff,82.3,22.9,18.3,OVERSTATED,5.64,B,False
+FRVIA.PA,dcf_fcff,80.0,16.9,10.4,OVERSTATED,5.0,C,False
+JET2.L,dcf_fcff,79.4,12.8,8.5,OVERSTATED,4.85,B,False
+CEC.DE,dcf_fcff,76.7,-0.7,,NOT_CHEAP,4.29,C,True
+GIII,dcf_fcff,74.8,-2.2,14.6,NOT_CHEAP,3.96,B,False
+KGN.WA,dcf_fcff,71.7,-2.7,,NOT_CHEAP,3.54,B,True
+CGAS3.SA,dcf_fcff,71.7,4.0,,NOT_CHEAP,3.53,B,True
+FGR.PA,dcf_fcff,71.6,15.4,24.4,OVERSTATED,3.52,B,False
+2618.HK,dcf_fcff,70.9,24.1,28.6,OVERSTATED,3.43,A,False
+0175.HK,dcf_fcff,68.8,42.9,32.3,OVERSTATED,3.21,A,False
+PETR3.SA,dcf_fcff,68.8,20.2,24.7,OVERSTATED,3.2,A,False
+1928.HK,dcf_fcff,67.2,19.6,12.7,OVERSTATED,3.05,A,False
+DUE.DE,dcf_fcff,67.0,26.2,29.1,OVERSTATED,3.03,B,False
+EFOR,dcf_fcff,66.9,14.4,15.4,OVERSTATED,3.02,B,False
+CDI.PA,dcf_fcff,65.0,2.0,,NOT_CHEAP,2.86,B,True
+EEFT,dcf_fcff,64.9,11.8,,OVERSTATED,2.85,B,True
+JUN3.DE,dcf_fcff,63.7,21.5,21.1,OVERSTATED,2.75,B,False
+CA.PA,dcf_fcff,63.3,7.4,14.7,NOT_CHEAP,2.73,B,False
+DNLM.L,dcf_fcff,62.4,4.3,14.4,NOT_CHEAP,2.66,B,False
+STP.WA,dcf_fcff,61.9,20.4,14.1,OVERSTATED,2.63,A,False
+SOLB.BR,dcf_fcff,61.6,6.2,,NOT_CHEAP,2.6,B,True
+AEGN.AT,dcf_fcff,61.6,15.4,,OVERSTATED,2.6,B,True
+DMLP,dcf_fcff,60.9,11.3,,OVERSTATED,2.56,C,True
+HRMY,dcf_fcff,60.9,5.1,7.6,NOT_CHEAP,2.55,B,False
+BOUV.OL,dcf_fcff,59.9,9.1,,NOT_CHEAP,2.5,B,True
+PTEC.L,earnings_yield_gap,12.5,26.4,,HOLDS,1.12,A,True
+VEFAB.ST,earnings_yield_gap,12.5,21.2,30.4,HOLDS,1.12,A,False
+ZEAL.CO,earnings_yield_gap,12.5,9.7,20.3,HOLDS,1.12,B,False
+LYFT,earnings_yield_gap,12.4,11.0,,HOLDS,1.12,B,True
+OTEC.OL,earnings_yield_gap,12.4,13.1,12.8,HOLDS,1.12,B,False
+NWL.MI,earnings_yield_gap,12.4,15.2,,HOLDS,1.12,B,True
+MAU.PA,earnings_yield_gap,12.4,2.7,,HOLDS,1.12,C,True
+SEA1.OL,earnings_yield_gap,12.4,20.6,,HOLDS,1.12,B,True
+BYD,earnings_yield_gap,12.3,15.8,15.8,HOLDS,1.12,C,False
+2628.HK,earnings_yield_gap,12.3,20.4,27.9,HOLDS,1.12,A,False
+SOFF.OL,earnings_yield_gap,12.3,6.0,,HOLDS,1.12,B,True
+MNC.WA,earnings_yield_gap,12.3,-22.6,,NOT_CHEAP,1.12,C,True
+SMIN.L,earnings_yield_gap,12.3,8.7,,HOLDS,1.12,B,True
+2601.HK,earnings_yield_gap,12.3,30.7,26.8,HOLDS,1.12,A,False
+1988.HK,earnings_yield_gap,12.3,16.1,,HOLDS,1.12,B,True
+2333.HK,earnings_yield_gap,12.2,22.9,18.3,HOLDS,1.12,B,False
+1339.HK,earnings_yield_gap,12.2,24.1,19.9,HOLDS,1.12,A,False
+BION.SW,earnings_yield_gap,12.2,2.3,,HOLDS,1.12,C,True
+0RG4.L,earnings_yield_gap,12.2,17.6,0.4,HOLDS,1.12,A,False
+IMC.MC,earnings_yield_gap,12.2,12.9,,HOLDS,1.12,B,True
+000270.KS,earnings_yield_gap,12.2,26.7,31.4,HOLDS,1.12,A,False
+SLM,earnings_yield_gap,12.2,21.2,,HOLDS,1.12,B,True
+CMCSA,earnings_yield_gap,12.2,23.4,,HOLDS,1.12,B,True
+MPCC.OL,earnings_yield_gap,12.2,14.2,,HOLDS,1.12,B,True
+III.L,earnings_yield_gap,12.2,11.0,9.8,HOLDS,1.12,C,False
+PAH3.DE,earnings_yield_gap,12.1,9.8,3.0,HOLDS,1.12,C,False
+KGN.WA,earnings_yield_gap,12.1,-2.7,,HOLDS,1.12,B,True
+PROX.BR,earnings_yield_gap,12.0,18.7,15.8,HOLDS,1.12,B,False
+NAS.OL,earnings_yield_gap,12.0,5.1,,HOLDS,1.12,B,True
+UPBD,epv,86.1,3.6,5.3,NOT_CHEAP,7.22,B,False
+CNA.L,epv,80.8,2.4,,NOT_CHEAP,5.22,C,True
+JUN3.DE,epv,65.4,21.5,21.1,OVERSTATED,2.89,B,False
+000270.KS,epv,65.2,26.7,31.4,OVERSTATED,2.87,A,False
+1605.T,epv,56.4,17.6,,OVERSTATED,2.29,A,True
+0135.HK,epv,56.1,11.5,,OVERSTATED,2.28,B,True
+TFI.PA,epv,56.0,3.6,6.1,NOT_CHEAP,2.27,C,False
+EQNR.OL,epv,54.4,-1.4,1.6,NOT_CHEAP,2.19,B,False
+CEC.DE,epv,52.5,-0.7,,NOT_CHEAP,2.11,C,True
+SWON.SW,epv,51.9,32.0,9.2,OVERSTATED,2.08,A,False
+2333.HK,epv,49.5,22.9,18.3,OVERSTATED,1.98,B,False
+RENT3.SA,epv,48.9,18.8,,OVERSTATED,1.96,A,True
+WPP.L,epv,48.3,3.9,,NOT_CHEAP,1.93,B,True
+CDI.PA,epv,48.3,2.0,,NOT_CHEAP,1.93,B,True
+2618.HK,epv,47.5,24.1,28.6,OVERSTATED,1.9,A,False
+EOLU-B.ST,epv,44.5,21.2,14.2,OVERSTATED,1.8,A,False
+2607.HK,epv,44.1,10.2,,OVERSTATED,1.79,B,True
+FGR.PA,epv,43.6,15.4,24.4,OVERSTATED,1.77,B,False
+MMT.PA,epv,42.9,-21.3,,NOT_CHEAP,1.75,C,True
+JET2.L,epv,42.1,12.8,8.5,OVERSTATED,1.73,B,False
+OPM.PA,epv,41.7,13.7,,OVERSTATED,1.72,B,True
+1208.HK,epv,40.4,7.1,20.6,NOT_CHEAP,1.68,B,False
+JD.L,epv,39.4,-1.3,,NOT_CHEAP,1.65,C,True
+PBT,ev_gp,20.0,-7.5,-58.2,NOT_CHEAP,1.2,B,False
+WISE.L,ev_gp,20.0,17.0,,HOLDS,1.2,A,True
+PLX.PA,ev_gp,19.7,18.4,,HOLDS,1.2,B,True
+9927.HK,ev_gp,19.6,19.5,4.5,HOLDS,1.2,B,False
+ZEAL.CO,ev_gp,19.4,9.7,20.3,HOLDS,1.19,B,False
+DAN.MI,ev_gp,19.3,3.5,13.5,NOT_CHEAP,1.19,C,False
+BYIT.L,ev_gp,19.3,12.3,,HOLDS,1.19,B,True
+NRC.OL,ev_gp,19.2,15.9,3.5,HOLDS,1.19,B,False
+9618.HK,ev_gp,19.2,28.9,23.3,HOLDS,1.19,A,False
+TKA.DE,ev_gp,19.2,6.2,5.6,HOLDS,1.19,B,False
+JET2.L,ev_gp,19.2,12.8,8.5,HOLDS,1.19,B,False
+YELP,ev_gp,19.1,21.7,,HOLDS,1.19,B,True
+1024.HK,ev_gp,19.0,27.7,36.6,HOLDS,1.19,C,False
+VEI.OL,ev_gp,19.0,-30.6,,NOT_CHEAP,1.19,C,True
+000270.KS,ev_gp,19.0,26.7,31.4,HOLDS,1.19,A,False
+CNA.L,ev_gp,18.9,2.4,,NOT_CHEAP,1.19,C,True
+WBD.MI,ev_gp,18.9,11.2,,HOLDS,1.19,B,True
+FNAC.PA,ev_gp,18.8,4.4,,HOLDS,1.19,B,True
+0762.HK,ev_gp,18.8,19.0,,HOLDS,1.19,C,True
+MULTI.OL,ev_gp,18.8,8.0,8.0,HOLDS,1.19,B,False
+UHS,ev_gp,18.8,6.1,11.1,HOLDS,1.19,B,False
+TDOC,ev_gp,18.8,14.8,-0.3,HOLDS,1.19,C,False
+9973.HK,ev_gp,18.7,22.6,,HOLDS,1.19,A,True
+CECV.DE,ev_gp,18.7,0.0,,NOT_CHEAP,1.19,C,True
+CEC.DE,ev_gp,18.6,-0.7,,NOT_CHEAP,1.19,C,True
+POL.OL,ev_gp,18.6,1.6,,NOT_CHEAP,1.19,B,True
+HBR.L,ev_gp,18.5,-29.6,,NOT_CHEAP,1.19,B,True
+PBT,ev_gross_profit,15.0,-7.5,-58.2,NOT_CHEAP,1.15,B,False
+RMV.L,ev_gross_profit,15.0,2.8,,HOLDS,1.15,B,True
+VEI.OL,ev_gross_profit,15.0,-30.6,,NOT_CHEAP,1.15,C,True
+BRKN.SW,ev_gross_profit,14.9,8.0,,HOLDS,1.15,B,True
+FOUR.L,ev_gross_profit,14.9,4.1,20.0,HOLDS,1.15,B,False
+BCRX,ev_gross_profit,14.9,27.1,21.9,HOLDS,1.15,A,False
+TRST.L,ev_gross_profit,14.9,12.9,,HOLDS,1.15,B,True
+NRC.OL,ev_gross_profit,14.9,15.9,3.5,HOLDS,1.15,B,False
+YELP,ev_gross_profit,14.9,21.7,,HOLDS,1.15,B,True
+MULTI.OL,ev_gross_profit,14.9,8.0,8.0,HOLDS,1.15,B,False
+DNLM.L,ev_gross_profit,14.9,4.3,14.4,HOLDS,1.15,B,False
+CARG,ev_gross_profit,14.9,-11.5,,NOT_CHEAP,1.15,B,True
+CHWY,ev_gross_profit,14.8,13.2,13.2,HOLDS,1.15,B,False
+VRSN,ev_gross_profit,14.8,-0.7,-4.0,NOT_CHEAP,1.15,B,False
+BONEX.ST,ev_gross_profit,14.8,-36.4,-0.8,NOT_CHEAP,1.15,B,False
+AJB.L,ev_gross_profit,14.8,21.1,13.7,HOLDS,1.15,A,False
+GAW.L,ev_gross_profit,14.8,-2.4,,NOT_CHEAP,1.15,B,True
+UHS,ev_gross_profit,14.8,6.1,11.1,HOLDS,1.15,B,False
+DAVE,ev_gross_profit,14.8,20.7,11.6,HOLDS,1.15,A,False
+APOTEA.ST,ev_gross_profit,14.8,-17.3,,NOT_CHEAP,1.15,C,True
+SEZL,ev_gross_profit,14.7,-1.9,,NOT_CHEAP,1.15,B,True
+CFT.SW,ev_gross_profit,14.7,8.8,,HOLDS,1.15,B,True
+TPR,ev_gross_profit,14.7,10.0,9.2,HOLDS,1.15,B,False
+BKNG,ev_gross_profit,14.7,22.8,17.2,HOLDS,1.15,A,False
+ANF,ev_gross_profit,14.7,5.6,-3.8,HOLDS,1.15,B,False
+AOF.DE,ev_gross_profit,14.7,16.2,,HOLDS,1.15,B,True
+GRG.L,ev_gross_profit,14.6,-13.1,,NOT_CHEAP,1.15,B,True
+INSP,ev_gross_profit,14.6,-3.3,,NOT_CHEAP,1.15,B,True
+WDC,fundamental_momentum,82.1,-13.8,,NOT_CHEAP,2.39,C,True
+OTEC.OL,graham_revised,94.7,13.1,12.8,OVERSTATED,18.81,B,False
+WWI.OL,graham_revised,90.9,5.3,20.5,NOT_CHEAP,11.02,C,False
+VAL,graham_revised,89.5,0.3,,NOT_CHEAP,9.49,C,True
+CMCSA,graham_revised,89.4,23.4,,OVERSTATED,9.46,B,True
+0175.HK,graham_revised,88.2,42.9,32.3,OVERSTATED,8.51,A,False
+KGN.WA,graham_revised,87.1,-2.7,,NOT_CHEAP,7.74,B,True
+JET2.L,graham_revised,86.1,12.8,8.5,OVERSTATED,7.21,B,False
+2333.HK,graham_revised,85.8,22.9,18.3,OVERSTATED,7.03,B,False
+DUE.DE,graham_revised,85.2,26.2,29.1,OVERSTATED,6.75,B,False
+MNC.WA,graham_revised,85.0,-22.6,,NOT_CHEAP,6.65,C,True
+BYD,graham_revised,84.7,15.8,15.8,OVERSTATED,6.53,C,False
+1378.HK,graham_revised,84.4,17.2,24.3,OVERSTATED,6.4,A,False
+A2A.MI,graham_revised,83.3,11.2,,OVERSTATED,5.99,C,True
+SSRM,graham_revised,83.2,9.8,4.0,NOT_CHEAP,5.97,B,False
+012330.KS,graham_revised,82.0,12.0,24.8,OVERSTATED,5.54,C,False
+JD.L,graham_revised,81.8,-1.3,,NOT_CHEAP,5.5,C,True
+COLR.BR,graham_revised,81.7,-5.0,,NOT_CHEAP,5.47,C,True
+UHS,graham_revised,81.7,6.1,11.1,NOT_CHEAP,5.45,B,False
+DVL.WA,graham_revised,81.3,-10.9,7.1,NOT_CHEAP,5.35,B,False
+2382.HK,graham_revised,81.1,15.1,21.9,OVERSTATED,5.3,C,False
+9022.T,graham_revised,81.1,5.2,,NOT_CHEAP,5.3,B,True
+ELEC.PA,graham_revised,80.7,7.9,,NOT_CHEAP,5.18,B,True
+DBC.WA,graham_revised,79.9,3.4,,NOT_CHEAP,4.98,B,True
+2883.HK,graham_revised,79.9,10.4,,OVERSTATED,4.97,A,True
+GNS.L,graham_revised,78.7,9.4,27.0,NOT_CHEAP,4.69,B,False
+GHC,graham_revised,78.6,-1.9,,NOT_CHEAP,4.67,B,True
+PPC,graham_revised,76.3,18.0,,OVERSTATED,4.22,B,True
+2333.HK,iv15_deep_value,92.5,22.9,18.3,OVERSTATED,13.31,B,False
+2618.HK,iv15_deep_value,77.1,24.1,28.6,OVERSTATED,4.36,A,False
+MMB.PA,iv15_deep_value,73.5,12.7,,OVERSTATED,3.78,C,True
+EEFT,iv15_deep_value,67.8,11.8,,OVERSTATED,3.11,B,True
+2883.HK,iv15_deep_value,58.1,10.4,,OVERSTATED,2.39,A,True
+FGR.PA,iv15_deep_value,57.9,15.4,24.4,OVERSTATED,2.37,B,False
+JET2.L,iv15_deep_value,50.0,12.8,8.5,OVERSTATED,8.69,B,False
+0175.HK,iv15_deep_value,50.0,42.9,32.3,HOLDS,7.9,A,False
+HRMY,iv15_deep_value,50.0,5.1,7.6,NOT_CHEAP,5.2,B,False
+TOR.WA,iv15_deep_value,50.0,1.2,,NOT_CHEAP,2.54,B,True
+MBB.DE,iv15_deep_value,43.3,7.4,,NOT_CHEAP,1.76,B,True
+1208.HK,iv15_deep_value,26.4,7.1,20.6,NOT_CHEAP,1.36,B,False
+WEX,iv15_deep_value,2.6,11.3,5.8,HOLDS,1.03,B,False
+UPBD,owner_earnings,92.4,3.6,5.3,NOT_CHEAP,13.12,B,False
+PTEC.L,owner_earnings,80.4,26.4,,OVERSTATED,5.1,A,True
+ODF.OL,owner_earnings,78.8,14.6,,OVERSTATED,4.71,B,True
+CNA.L,owner_earnings,77.5,2.4,,NOT_CHEAP,4.45,C,True
+JUN3.DE,owner_earnings,74.5,21.5,21.1,OVERSTATED,3.92,B,False
+CEC.DE,owner_earnings,72.5,-0.7,,NOT_CHEAP,3.64,C,True
+SOLB.BR,owner_earnings,72.4,6.2,,NOT_CHEAP,3.63,B,True
+CMCSA,owner_earnings,68.2,23.4,,OVERSTATED,3.14,B,True
+BYD,owner_earnings,67.5,15.8,15.8,OVERSTATED,3.07,C,False
+SAX.DE,owner_earnings,67.4,1.9,,NOT_CHEAP,3.06,B,True
+RENT3.SA,owner_earnings,67.3,18.8,,OVERSTATED,3.06,A,True
+FGR.PA,owner_earnings,67.1,15.4,24.4,OVERSTATED,3.04,B,False
+2618.HK,owner_earnings,66.4,24.1,28.6,OVERSTATED,2.98,A,False
+JD.L,owner_earnings,66.2,-1.3,,NOT_CHEAP,2.96,C,True
+AEGN.AT,owner_earnings,65.6,15.4,,OVERSTATED,2.91,B,True
+VRLA.PA,owner_earnings,64.9,12.8,3.9,OVERSTATED,2.85,B,False
+CURY.L,owner_earnings,64.8,7.6,,NOT_CHEAP,2.84,B,True
+0788.HK,owner_earnings,63.7,18.9,,OVERSTATED,2.76,B,True
+ITV.L,owner_earnings,63.7,14.2,,OVERSTATED,2.76,B,True
+TFI.PA,owner_earnings,63.4,3.6,6.1,NOT_CHEAP,2.74,C,False
+2333.HK,owner_earnings,61.1,22.9,18.3,OVERSTATED,2.57,B,False
+DNLM.L,owner_earnings,60.3,4.3,14.4,NOT_CHEAP,2.52,B,False
+MMT.PA,owner_earnings,59.8,-21.3,,NOT_CHEAP,2.49,C,True
+EFOR,owner_earnings,58.5,14.4,15.4,OVERSTATED,2.41,B,False
+NOS.LS,owner_earnings,55.6,6.3,,NOT_CHEAP,2.25,B,True
+FR.PA,rd_capitalized_dcf,89.8,-1.5,-24.7,NOT_CHEAP,9.82,B,False
+PTEC.L,rd_capitalized_dcf,89.4,26.4,,OVERSTATED,9.47,A,True
+SOLB.BR,rd_capitalized_dcf,87.7,6.2,,NOT_CHEAP,8.15,B,True
+GMAB.CO,rd_capitalized_dcf,85.3,17.5,,OVERSTATED,6.82,A,True
+2333.HK,rd_capitalized_dcf,85.2,22.9,18.3,OVERSTATED,6.75,B,False
+000270.KS,rd_capitalized_dcf,77.8,26.7,31.4,OVERSTATED,4.5,A,False
+OPM.PA,rd_capitalized_dcf,75.3,13.7,,OVERSTATED,4.05,B,True
+HPQ,rd_capitalized_dcf,74.5,-9.3,,NOT_CHEAP,3.92,B,True
+VC,rd_capitalized_dcf,73.2,18.9,15.4,OVERSTATED,3.73,B,False
+NOD.OL,rd_capitalized_dcf,73.0,1.1,,NOT_CHEAP,3.7,B,True
+BYD,rd_capitalized_dcf,72.4,15.8,15.8,OVERSTATED,3.63,C,False
+DUE.DE,rd_capitalized_dcf,71.5,26.2,29.1,OVERSTATED,3.51,B,False
+KWS.DE,rd_capitalized_dcf,69.9,19.4,19.6,OVERSTATED,3.32,A,False
+LYFT,rd_capitalized_dcf,68.7,11.0,,OVERSTATED,3.19,B,True
+HUSQ-B.ST,rd_capitalized_dcf,67.3,22.2,-6.3,OVERSTATED,3.06,B,False
+0175.HK,rd_capitalized_dcf,67.0,42.9,32.3,OVERSTATED,3.03,A,False
+CMCSA,rd_capitalized_dcf,65.6,23.4,,OVERSTATED,2.91,B,True
+PROX.BR,rd_capitalized_dcf,64.4,18.7,15.8,OVERSTATED,2.81,B,False
+SLVM,rd_capitalized_dcf,62.7,7.3,,NOT_CHEAP,2.68,B,True
+DRW3.DE,rd_capitalized_dcf,62.5,2.3,7.1,NOT_CHEAP,2.66,B,False
+2607.HK,rd_capitalized_dcf,60.9,10.2,,OVERSTATED,2.56,B,True
+0763.HK,rd_capitalized_dcf,82.1,,,ARTIFACT (agent check: growth_assumption),,,
+9888.HK,rd_capitalized_dcf,68.9,,,OVERSTATED (agent check: growth_assumption),,,
+ACMR,fundamental_momentum,42.4,,,OVERSTATED (agent check: growth_assumption),,,
+AMD,fundamental_momentum,71.6,,,OVERSTATED (agent check: growth_assumption),,,
+ANET,fundamental_momentum,88.9,,,OVERSTATED (agent check: growth_assumption),,,
+ARM,fundamental_momentum,65.7,,,ARTIFACT (agent check: growth_assumption),,,
+ASML,fundamental_momentum,78.2,,,OVERSTATED (agent check: growth_assumption),,,
+AVGO,fundamental_momentum,74.2,,,OVERSTATED (agent check: growth_assumption),,,
+AXON,fundamental_momentum,53.4,,,OVERSTATED (agent check: growth_assumption),,,
+BETS-B.ST,graham_revised,83.4,,,OVERSTATED (agent check: growth_assumption),,,
+BETS-B.ST,iv15_deep_value,71.1,,,OVERSTATED (agent check: stale_financials),,,
+BETS-B.ST,rd_capitalized_dcf,65.9,,,OVERSTATED (agent check: stale_financials),,,
+BETS-B.ST,owner_earnings,63.5,,,OVERSTATED (agent check: stale_financials),,,
+BETS-B.ST,epv,46.9,,,OVERSTATED (agent check: stale_financials),,,
+BETS-B.ST,acquirers_multiple,19.3,,,HOLDS (agent check: -),,,
+BTU,acquirers_multiple,19.2,,,OVERSTATED (agent check: stale_financials),,,
+CORT,ev_gross_profit,14.6,,,OVERSTATED (agent check: method_does_not_fit),,,
+CTVA,dcf_fcff,79.8,,,ARTIFACT (agent check: corporate_action),,,
+CTVA,rd_capitalized_dcf,80.2,,,ARTIFACT (agent check: corporate_action),,,
+CTVA,epv,78.5,,,ARTIFACT (agent check: corporate_action),,,
+CTVA,acquirers_multiple,19.7,,,HOLDS (agent check: -),,,
+CTVA,ev_gp,19.2,,,HOLDS (agent check: -),,,
+DFH,rd_capitalized_dcf,71.7,,,ARTIFACT (agent check: method_does_not_fit),,,
+DFH,owner_earnings,75.0,,,ARTIFACT (agent check: method_does_not_fit),,,
+DFH,epv,52.5,,,ARTIFACT (agent check: cyclical_peak),,,
+DUNI.ST,graham_revised,78.8,,,ARTIFACT (agent check: growth_assumption),,,
+FAG.ST,dcf_fcff,70.9,,,ARTIFACT (agent check: stale_financials),,,
+FAG.ST,rd_capitalized_dcf,79.1,,,ARTIFACT (agent check: stale_financials),,,
+FAG.ST,owner_earnings,75.2,,,ARTIFACT (agent check: stale_financials),,,
+FAG.ST,epv,54.6,,,ARTIFACT (agent check: debt_not_deducted),,,
+FSLR,fundamental_momentum,57.2,,,ARTIFACT (agent check: cyclical_peak),,,
+FTAI,fundamental_momentum,68.2,,,OVERSTATED (agent check: growth_assumption),,,
+GE,fundamental_momentum,36.5,,,OVERSTATED (agent check: growth_assumption),,,
+GSF.OL,acquirers_multiple,20.0,,,ARTIFACT (agent check: stale_financials),,,
+GSF.OL,ev_gp,18.9,,,ARTIFACT (agent check: stale_financials),,,
+HEI,fundamental_momentum,50.9,,,OVERSTATED (agent check: data_error_other),,,
+HUBG,ev_gross_profit,14.9,,,ARTIFACT (agent check: stale_financials),,,
+HUBG,ev_gp,19.1,,,ARTIFACT (agent check: stale_financials),,,
+IEP,dcf_fcff,88.4,,,ARTIFACT (agent check: method_does_not_fit),,,
+INVA,graham_revised,87.0,,,OVERSTATED (agent check: one_off_earnings),,,
+INVA,iv15_deep_value,40.7,,,OVERSTATED (agent check: one_off_earnings),,,
+IT,rd_capitalized_dcf,72.2,,,ARTIFACT (agent check: data_error_other),,,
+KD,owner_earnings,83.0,,,ARTIFACT (agent check: data_error_other),,,
+KD,epv,74.5,,,ARTIFACT (agent check: data_error_other),,,
+KTN.VI,rd_capitalized_dcf,69.5,,,ARTIFACT (agent check: data_error_other),,,
+LIGHT.AS,dcf_fcff,67.9,,,OVERSTATED (agent check: growth_assumption),,,
+LIGHT.AS,rd_capitalized_dcf,74.3,,,OVERSTATED (agent check: growth_assumption),,,
+LIGHT.AS,epv,50.2,,,OVERSTATED (agent check: cyclical_peak),,,
+LITE,fundamental_momentum,80.9,,,OVERSTATED (agent check: corporate_action),,,
+LRCX,fundamental_momentum,83.9,,,ARTIFACT (agent check: growth_assumption),,,
+MOH,iv15_deep_value,29.4,,,ARTIFACT (agent check: cyclical_peak),,,
+MOH,convergence,18.9,,,ARTIFACT (agent check: cyclical_peak),,,
+MPWR,fundamental_momentum,64.6,,,OVERSTATED (agent check: growth_assumption),,,
+MTSI,fundamental_momentum,57.7,,,OVERSTATED (agent check: growth_assumption),,,
+MU,fundamental_momentum,109.5,,,OVERSTATED (agent check: cyclical_peak),,,
+NVDA,fundamental_momentum,112.5,,,OVERSTATED (agent check: growth_assumption),,,
+NXT,fundamental_momentum,47.7,,,OVERSTATED (agent check: growth_assumption),,,
+RMBS,fundamental_momentum,56.0,,,OVERSTATED (agent check: growth_assumption),,,
+SHLS,fundamental_momentum,33.5,,,OVERSTATED (agent check: growth_assumption),,,
+SKHY,fundamental_momentum,79.7,,,OVERSTATED (agent check: cyclical_peak),,,
+SMTC,fundamental_momentum,57.1,,,OVERSTATED (agent check: growth_assumption),,,
+SNDK,fundamental_momentum,105.0,,,ARTIFACT (agent check: corporate_action),,,
+STX,fundamental_momentum,83.7,,,ARTIFACT (agent check: cyclical_peak),,,
+TDG,fundamental_momentum,46.2,,,OVERSTATED (agent check: growth_assumption),,,
+TEP.PA,dcf_fcff,74.8,,,OVERSTATED (agent check: growth_assumption),,,
+TEP.PA,owner_earnings,73.8,,,OVERSTATED (agent check: data_error_other),,,
+TEP.PA,epv,54.0,,,OVERSTATED (agent check: growth_assumption),,,
+TEP.PA,iv15_deep_value,53.0,,,OVERSTATED (agent check: growth_assumption),,,
+TPE.WA,earnings_yield_gap,12.1,,,OVERSTATED (agent check: cyclical_peak),,,
+UI,fundamental_momentum,44.3,,,ARTIFACT (agent check: data_error_other),,,
+VRT,fundamental_momentum,57.1,,,OVERSTATED (agent check: growth_assumption),,,
+WLDN,fundamental_momentum,34.0,,,OVERSTATED (agent check: growth_assumption),,,
+WWD,fundamental_momentum,46.4,,,OVERSTATED (agent check: growth_assumption),,,

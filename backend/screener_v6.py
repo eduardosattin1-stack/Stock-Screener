@@ -6813,6 +6813,64 @@ def _apply_mos_floor(key: str, candidates: list) -> list:
     return [s for s in candidates if s._temp_mos > 0]
 
 
+# ── Plausibility + agreement ranking (2026-11-28, Bruno, after the Week 48 basket audit) ──────────
+# Three independent checks of the 235 basket names (the Opus debates, per-name agent checks and a
+# blind Gemini pass) found that inside the six earnings / cash-flow baskets the SIZE of the discount
+# ranks nothing: 0 of 42 names priced >80% below fair value held up, the top half by screen discount
+# debated no cheaper than the bottom half (13% vs 12%), and the extreme claims were broken inputs - an
+# unadjusted spin-off (CTVA, 2026-10-01), an unadjusted 8:1 split (SNDK), amortisation counted twice
+# (KD), a DCF run on a holding company (IEP). What did carry signal was AGREEMENT: names several
+# methods agree on were the best group after debate (42% at a 20%+ debated discount vs 18%). So these
+# baskets now (1) refuse a fair value above 3x the price unless two OTHER methods independently see a
+# 10-67% discount, (2) drop names with a spin-off inside SPINOFF_LOOKBACK_D (pre-spin cash flows against
+# a post-spin price), and (3) rank on how many methods agree first, capped discount second.
+PLAUSIBLE_MOS_MAX = 1.0 - 1.0 / 3.0          # margin of safety at a fair value of 3x the price
+AGREE_MOS_MIN = 0.10                          # a method "agrees" at a 10%..67% discount
+AGREE_RANK_CAP = 4                            # beyond four agreeing methods, more adds nothing
+AGREE_MODELS = ("dcf_fcff_mos", "rd_capitalized_dcf_mos", "owner_earnings_mos", "epv_mos",
+                "iv15_deep_value_mos", "acquirers_multiple_mos", "ev_gp_mos", "earnings_yield_gap_mos")
+AGREEMENT_RANKED = {"dcf_fcff", "rd_capitalized_dcf", "owner_earnings", "epv",
+                    "graham_revised", "iv15_deep_value"}
+SPINOFF_LOOKBACK_D = 450
+
+
+def _agreeing_models(s, exclude: str = None) -> int:
+    """How many valuation methods (graham excluded - its claims held 0 of 30 times) see a plausible
+    10%..67% discount on this name. `exclude` leaves out the basket's own method."""
+    n = 0
+    for f in AGREE_MODELS:
+        if f == exclude:
+            continue
+        v = getattr(s, f, None)
+        if isinstance(v, (int, float)) and AGREE_MOS_MIN <= v <= PLAUSIBLE_MOS_MAX:
+            n += 1
+    return n
+
+
+def _recent_spinoffs(symbols, lookback_d: int = SPINOFF_LOOKBACK_D, today=None) -> dict:
+    """{SYMBOL: date} for spin-offs inside the lookback. FMP /stable/splits lists spin-offs as well as
+    stock splits (splitType). Pure splits are left to the 3x gate: FMP restates statement history for
+    them, and an unadjusted one shows up as an implausible fair value. Any failure -> {} (fail open)."""
+    from concurrent.futures import ThreadPoolExecutor
+    if not symbols or os.environ.get("FMP_OFFLINE", "").lower() in ("1", "true", "yes"):
+        return {}
+    cutoff = ((today or datetime.now(timezone.utc)) - timedelta(days=lookback_d)).strftime("%Y-%m-%d")
+
+    def one(sym):
+        rows = fmp("splits", {"symbol": sym}) or []
+        hits = [str(r.get("date") or "")[:10] for r in rows if isinstance(r, dict)
+                and "spin" in str(r.get("splitType") or "").lower()
+                and str(r.get("date") or "")[:10] >= cutoff]
+        return sym, (max(hits) if hits else None)
+
+    try:
+        with ThreadPoolExecutor(max_workers=6) as ex:
+            return {s: d for s, d in ex.map(one, sorted(set(symbols))) if d}
+    except Exception as e:
+        log.warning(f"spin-off check skipped ({e}) - no names excluded for a recent spin-off")
+        return {}
+
+
 def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
     """Generate and serialize the portfolio picks for the 12 methodologies to GCS and local public folder."""
     # 1. Compute cross-sectional ranking logic for the rank-based methods:
@@ -7112,6 +7170,21 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
     def _hyst_boost(k):
         return HYST_FRAC * _MOS_AMPLITUDE.get(k, 0.50)  # absolute methods: 0.10*0.50 = 0.05 (unchanged)
 
+    # 2026-11-28 spin-off check: only names that could enter an agreement-ranked basket (any of those
+    # methods positive) are looked up, one FMP call each.
+    _spin_pool = [s.symbol for s in all_results
+                  if not _excluded_from_baskets(s)
+                  and any((getattr(s, f, -1.0) or -1.0) > 0 for f in
+                          ("dcf_fcff_mos", "rd_capitalized_dcf_mos", "owner_earnings_mos", "epv_mos",
+                           "graham_revised_mos", "iv15_deep_value_mos"))]
+    recent_spinoffs = _recent_spinoffs(_spin_pool)
+    log.info(f"spin-off check: {len(_spin_pool)} names looked up, {len(recent_spinoffs)} with a spin-off in "
+             f"{SPINOFF_LOOKBACK_D}d: {dict(sorted(recent_spinoffs.items()))}")
+    for _s in all_results:
+        _d = recent_spinoffs.get(_s.symbol)
+        _s.recent_spinoff = _d or ""
+    gate_drops = {k: {"implausible": [], "spinoff": []} for k in AGREEMENT_RANKED}
+
     for key, (mos_field, fv_field) in methodology_fields.items():
         # Build set of currently-held symbols for this methodology
         incumbent_syms = set()
@@ -7196,9 +7269,30 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
                         # rank by the composite agreement score (set in the consensus
                         # block above), not raw MoS; MoS-unit hysteresis doesn't apply.
                         s._temp_mos = getattr(s, "_conv_score", mos_val)
+                    if key in AGREEMENT_RANKED:
+                        # 2026-11-28 plausibility + agreement (see PLAUSIBLE_MOS_MAX): a spin-off inside
+                        # the lookback leaves pre-spin cash flows against a post-spin price - out.
+                        if getattr(s, "recent_spinoff", ""):
+                            gate_drops[key]["spinoff"].append(s.symbol)
+                            continue
+                        n_other = _agreeing_models(s, exclude=mos_field)
+                        # a fair value above 3x the price stands only if two OTHER methods agree
+                        if eff_mos > PLAUSIBLE_MOS_MAX and n_other < 2:
+                            gate_drops[key]["implausible"].append(s.symbol)
+                            continue
+                        n_agree = n_other + (1 if eff_mos >= AGREE_MOS_MIN else 0)
+                        s._agree_rank = min(n_agree, AGREE_RANK_CAP)
+                        s._temp_mos = min(s._temp_mos, PLAUSIBLE_MOS_MAX + boost)
                     candidates.append(s)
-                    
-        candidates.sort(key=lambda x: x._temp_mos, reverse=True)
+
+        if key in AGREEMENT_RANKED:
+            # agreement first, capped discount (incl. the incumbency boost) second
+            candidates.sort(key=lambda x: (x._agree_rank, x._temp_mos), reverse=True)
+            log.info(f"  {key}: agreement ranking - dropped {len(gate_drops[key]['implausible'])} "
+                     f"implausible (>3x, <2 other methods agree) and {len(gate_drops[key]['spinoff'])} "
+                     f"recent spin-off(s) {gate_drops[key]['spinoff']}")
+        else:
+            candidates.sort(key=lambda x: x._temp_mos, reverse=True)
 
         # Phase 10d: MoS > 0 floor before taking top-N (see _apply_mos_floor —
         # fundamental_momentum exempt: its score is not a margin of safety).
@@ -7333,6 +7427,9 @@ def save_methodology_picks(all_results: list[Stock], no_gcs: bool):
                 # and informative for every basket (how many methods agree, how tightly):
                 "consensus_agreement": getattr(s, "_conv_agree", None),
                 "consensus_votes": getattr(s, "_conv_votes", None),
+                # 2026-11-28: how many methods see a plausible 10-67% discount (the basket's ranking key
+                # in the six earnings / cash-flow baskets); null for the other baskets
+                "methods_agree": (_agreeing_models(s) if key in AGREEMENT_RANKED else None),
                 "sector": s.sector or "Unknown",
                 # G1 — travels into methodology_picks.json → debate → Director:
                 "cycle_flag": getattr(s, "cycle_flag", "NORMAL"),

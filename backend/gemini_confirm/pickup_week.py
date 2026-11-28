@@ -39,6 +39,37 @@ from _numeric_gate import check_record    # noqa: E402
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import _disagree as DIS                   # noqa: E402  what each disagreement is about + the ledger (2026-11-19)
 
+
+def _quotes_value(text, v):
+    """True when `text` states the number v as a standalone figure (70 / 70.0 / 70.00, commas ignored)."""
+    t = text.replace(",", "")
+    forms = {"%g" % v, "%.1f" % v, "%.2f" % v}
+    return any(re.search(r"(?<![\d.])" + re.escape(f) + r"(?!\d|\.\d)", t) for f in forms)
+
+
+def _late_resave_evidence(g, rec):
+    """A record re-saved after the skeptic step: which earlier file of Gemini's own proves the base
+    value did not move. Returns "dossier" (step 1, before it opened ours), "self-check" (before the
+    re-save), or None. The dossier must predate the skeptic pass in either case."""
+    try:
+        base = float((rec.get("valuation") or {}).get("base_fv_px"))
+        t_rec = os.path.getmtime(g / "record.json")
+        t_sk = os.path.getmtime(g / "skeptic_on_claude.json")
+        t_dos = os.path.getmtime(g / "dossier.md")
+    except (TypeError, ValueError, OSError):
+        return None
+    if not (t_dos < t_sk < t_rec):
+        return None
+    try:
+        if _quotes_value((g / "dossier.md").read_text(encoding="utf-8-sig"), base):
+            return "dossier"
+        sg = g / "skeptic_on_gemini.json"
+        if sg.exists() and os.path.getmtime(sg) < t_rec and _quotes_value(sg.read_text(encoding="utf-8-sig"), base):
+            return "self-check"
+    except OSError:
+        pass
+    return None
+
 LEDGER = D / "_disagreements.jsonl"
 EXPORT_INDEX = D / "gemini_export_index.json"
 
@@ -116,7 +147,7 @@ def pickup(week_dir, push=True):
 
         def load(n):
             try:
-                t = (g / n).read_text(encoding="utf-8")
+                t = (g / n).read_text(encoding="utf-8-sig")   # Week 48: 54 run.json files carried a BOM
                 return json.loads(t) if n.endswith(".json") else t
             except Exception as ex:
                 e["issues"].append(f"{n} unreadable ({type(ex).__name__})")
@@ -136,6 +167,16 @@ def pickup(week_dir, push=True):
                      or os.path.getmtime(g / "record.json") < os.path.getmtime(g / "skeptic_on_claude.json"))
         except OSError:
             blind = False
+        # Late re-save (Bruno 2026-11-26, Week 48): Gemini's closing clean-up re-saved 49 record files
+        # hours after the skeptic step, so the timestamp alone called them not blind. A re-saved record
+        # still counts when an EARLIER file of its own quotes the same base value: the step-1 dossier
+        # (written before it opened ours) or its fresh-context self-check (written before the re-save).
+        # No corroborating file -> stays not blind.
+        if not blind and rec:
+            how = _late_resave_evidence(g, rec)
+            if how:
+                blind = True
+                e["blind_evidence"] = how
         if not blind:
             e["issues"].append("not blind: its record was saved after it had read ours")
         if rec:
